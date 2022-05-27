@@ -161,7 +161,7 @@ export default function RrightTrace(props: any) {
   }, [data]);
 
   useEffect(() => {
-    getNoiseList({ pageIndex: -1, pageSize: -1, isEnable: true }).then((res) => {
+    getNoiseList({ pageIndex: -1, pageSize: -1, isEnable: true }).then((res: any) => {
       if (res?.success) {
         const data = res?.data?.dataSource;
         const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName }));
@@ -196,8 +196,7 @@ export default function RrightTrace(props: any) {
               onChange={(id) => {
                 setSelectTraceId(id);
               }}
-              showSearch
-              style={{ width: 240, marginLeft: '10px' }}
+              style={{ width: 350, marginLeft: '10px' }}
             />
             <CopyToClipboard text={selectTraceId} onCopy={() => message.success('复制成功！')}>
               <span style={{ marginLeft: 8, color: 'royalblue' }}>
@@ -284,22 +283,33 @@ export default function RrightTrace(props: any) {
                       switcherIcon={<span className="span-icon"></span>}
                       titleRender={(node: any) => {
                         return (
-                          <div
-                            className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${
-                              node.isError ? 'error-node' : ''
-                            } span-item`}
-                            onClick={() => {
-                              setDetailData(node);
-                              setVisible(true);
-                            }}
+                          <Tooltip
+                            title={
+                              <ul>
+                                <li style={{ whiteSpace: 'nowrap' }}>{node?.endpointName || ''}</li>
+                                <li>TotalDurations:{`${node?.durations || 0}ms`}</li>
+                                <li>selfDurations:{`${node?.selfDurations || 0}ms`}</li>
+                              </ul>
+                            }
                           >
-                            <div className="span-item-wrapper">
-                              <span className={`span-title ${node.isError ? 'error' : ''}`}>
-                                <Tooltip title={node?.endpointName || ''}>{node?.endpointName || ''}</Tooltip>
-                              </span>
-                              <TraceTime {...node} />
+                            <div
+                              className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${
+                                node.isError ? 'error-node' : ''
+                              } span-item`}
+                              onClick={() => {
+                                setDetailData(node);
+                                setVisible(true);
+                              }}
+                            >
+                              <div className="span-item-wrapper">
+                                <span className={`span-title ${node.isError ? 'error' : ''}`}>
+                                  {node?.endpointName || ''}
+                                  {/* <Tooltip title={node?.endpointName || ''}>{node?.endpointName || ''}</Tooltip> */}
+                                </span>
+                                <TraceTime {...node} />
+                              </div>
                             </div>
-                          </div>
+                          </Tooltip>
                         );
                       }}
                     />

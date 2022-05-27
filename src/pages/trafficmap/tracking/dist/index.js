@@ -70,6 +70,7 @@ function Tracking() {
     var _p = react_1.useState(1), pageIndex = _p[0], setPageIndex = _p[1];
     var _q = react_1.useState(Number(15 * 60 * 1000)), timeOption = _q[0], setTimeOption = _q[1];
     var _r = react_1.useState([]), noiseList = _r[0], setNoiseList = _r[1];
+    var _s = react_1.useState(true), first = _s[0], setFirst = _s[1];
     var btnMessageList = [
         { expand: true, label: '收起更多', icon: React.createElement(icons_1.CaretUpOutlined, null) },
         { expand: false, label: '更多查询', icon: React.createElement(icons_1.CaretDownOutlined, null) },
@@ -95,19 +96,26 @@ function Tracking() {
         }
     }, [envOptions]);
     react_1.useEffect(function () {
-        if (selectTime && selectEnv) {
-            form.setFieldsValue({ appID: '', instanceCode: '' });
+        if (selectEnv) {
+            form.resetFields();
+            setFirst(true);
             setApplicationList([]);
-            queryTraceList({ pageIndex: 1, pageSize: 20 });
+            // queryTraceList({ pageIndex: 1, pageSize: 20 });
             setInstanceList([]);
             getAppList();
         }
-    }, [selectTime, selectEnv]);
+    }, [selectEnv]);
     react_1.useEffect(function () {
-        if (selectTime && selectEnv && appID) {
+        if (!first) {
+            queryTraceList({ pageIndex: 1, pageSize: 20 });
+        }
+    }, [selectTime]);
+    react_1.useEffect(function () {
+        if (selectEnv && appID) {
+            form.setFieldsValue({ instanceCode: '' });
             getIns();
         }
-    }, [selectTime, selectEnv, appID]);
+    }, [selectEnv, appID]);
     // 获取右侧图的数据
     react_1.useEffect(function () {
         var _a;
@@ -145,8 +153,9 @@ function Tracking() {
     };
     // 获取左侧list数据
     var queryTraceList = function (params) {
+        setFirst(false);
         setLoading(true);
-        setListData([]);
+        // setListData([]);
         var values = form.getFieldsValue();
         var start = moment_1["default"](selectTime.start).format('YYYY-MM-DD HH:mm:ss');
         var end = moment_1["default"](selectTime.end).format('YYYY-MM-DD HH:mm:ss');
@@ -276,7 +285,7 @@ function Tracking() {
                     expand && (React.createElement(antd_1.Form.Item, { label: "\u7AEF\u70B9\uFF1A", name: "endpoint" },
                         React.createElement(antd_1.Input, { placeholder: "\u8BF7\u8F93\u5165\u7AEF\u70B9\u4FE1\u606F", style: { width: 140 } }))),
                     React.createElement(antd_1.Form.Item, { label: "traceID\uFF1A", name: "traceID" },
-                        React.createElement(antd_1.Input, { placeholder: "\u8BF7\u8F93\u5165traceID", style: { width: 160 } })),
+                        React.createElement(antd_1.Input, { placeholder: "\u8BF7\u8F93\u5165traceID", style: { width: 300 } })),
                     React.createElement(antd_1.Form.Item, null,
                         React.createElement(antd_1.Button, { type: "primary", htmlType: "submit" }, "\u67E5\u8BE2")),
                     React.createElement(antd_1.Form.Item, null,
@@ -286,7 +295,7 @@ function Tracking() {
                         } }, btnMessage === null || btnMessage === void 0 ? void 0 :
                         btnMessage.label,
                         React.createElement("span", { style: { marginLeft: '3px' } }, btnMessage === null || btnMessage === void 0 ? void 0 : btnMessage.icon)))),
-            React.createElement("div", { className: "detail-main" },
-                React.createElement(resiable_pro_1["default"], { leftComp: React.createElement(left_list_1["default"], { listData: listData || [], total: total, loading: loading, changeItem: leftItemChange, pageChange: queryTraceList }), rightComp: listData && (listData === null || listData === void 0 ? void 0 : listData.length) !== 0 ? (React.createElement(right_trace_1["default"], { item: currentItem || {}, data: rightData, envCode: selectEnv, selectTime: selectTime, noiseChange: noiseChange, loading: rightLoading })) : (React.createElement(antd_1.Empty, { image: antd_1.Empty.PRESENTED_IMAGE_SIMPLE, style: { width: '100%', overflow: 'hidden' } })), leftWidth: 240 })))));
+            React.createElement("div", { className: "detail-main" }, first ? React.createElement("div", { className: "empty-holder" }, "\u8BF7\u70B9\u51FB\u67E5\u8BE2\u8FDB\u884C\u641C\u7D22") :
+                React.createElement(resiable_pro_1["default"], { leftComp: React.createElement(left_list_1["default"], { listData: listData || [], total: total, loading: loading, changeItem: leftItemChange, pageChange: queryTraceList }), rightComp: listData && (listData === null || listData === void 0 ? void 0 : listData.length) !== 0 ? (React.createElement(right_trace_1["default"], { item: currentItem || {}, data: rightData, envCode: selectEnv, selectTime: selectTime, noiseChange: noiseChange, loading: rightLoading })) : (React.createElement(antd_1.Empty, { image: antd_1.Empty.PRESENTED_IMAGE_SIMPLE, style: { width: '100%', overflow: 'hidden' } })), isShowExpandIcon: true, defaultClose: true, leftWidth: 240 })))));
 }
 exports["default"] = Tracking;

@@ -60,6 +60,7 @@ export default function Tracking() {
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [timeOption, setTimeOption] = useState<number>(Number(15 * 60 * 1000));
   const [noiseList, setNoiseList] = useState<any>([]);
+  const [first, setFirst] = useState<boolean>(true);
 
   const btnMessageList = [
     { expand: true, label: '收起更多', icon: <CaretUpOutlined /> },
@@ -89,20 +90,28 @@ export default function Tracking() {
   }, [envOptions]);
 
   useEffect(() => {
-    if (selectTime && selectEnv) {
-      form.setFieldsValue({ appID: '', instanceCode: '' });
+    if (selectEnv) {
+      form.resetFields();
+      setFirst(true);
       setApplicationList([]);
-      queryTraceList({ pageIndex: 1, pageSize: 20 });
+      // queryTraceList({ pageIndex: 1, pageSize: 20 });
       setInstanceList([]);
       getAppList();
     }
-  }, [selectTime, selectEnv]);
+  }, [selectEnv]);
 
   useEffect(() => {
-    if (selectTime && selectEnv && appID) {
+    if (!first) {
+      queryTraceList({ pageIndex: 1, pageSize: 20 });
+    }
+  }, [selectTime]);
+
+  useEffect(() => {
+    if (selectEnv && appID) {
+      form.setFieldsValue({ instanceCode: '' });
       getIns();
     }
-  }, [selectTime, selectEnv, appID]);
+  }, [selectEnv, appID]);
 
   // 获取右侧图的数据
   useEffect(() => {
@@ -143,8 +152,9 @@ export default function Tracking() {
 
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
+    setFirst(false);
     setLoading(true);
-    setListData([]);
+    // setListData([]);
     const values = form.getFieldsValue();
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
@@ -322,7 +332,7 @@ export default function Tracking() {
               </Form.Item>
             )}
             <Form.Item label="traceID：" name="traceID">
-              <Input placeholder="请输入traceID" style={{ width: 160 }}></Input>
+              <Input placeholder="请输入traceID" style={{ width: 300 }}></Input>
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -347,32 +357,38 @@ export default function Tracking() {
         </div>
 
         <div className="detail-main">
-          <ResizablePro
-            leftComp={
-              <LeftList
-                listData={listData || []}
-                total={total}
-                loading={loading}
-                changeItem={leftItemChange}
-                pageChange={queryTraceList}
-              />
-            }
-            rightComp={
-              listData && listData?.length !== 0 ? (
-                <RrightTrace
-                  item={currentItem || {}}
-                  data={rightData}
-                  envCode={selectEnv}
-                  selectTime={selectTime}
-                  noiseChange={noiseChange}
-                  loading={rightLoading}
+          {first ? (
+            <div className="empty-holder">请点击查询进行搜索</div>
+          ) : (
+            <ResizablePro
+              leftComp={
+                <LeftList
+                  listData={listData || []}
+                  total={total}
+                  loading={loading}
+                  changeItem={leftItemChange}
+                  pageChange={queryTraceList}
                 />
-              ) : (
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
-              )
-            }
-            leftWidth={240}
-          ></ResizablePro>
+              }
+              rightComp={
+                listData && listData?.length !== 0 ? (
+                  <RrightTrace
+                    item={currentItem || {}}
+                    data={rightData}
+                    envCode={selectEnv}
+                    selectTime={selectTime}
+                    noiseChange={noiseChange}
+                    loading={rightLoading}
+                  />
+                ) : (
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
+                )
+              }
+              isShowExpandIcon
+              defaultClose
+              leftWidth={240}
+            ></ResizablePro>
+          )}
         </div>
       </ContentCard>
     </PageContainer>

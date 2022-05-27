@@ -1,3 +1,7 @@
+.ant-tooltip {
+  max-width: inherit;
+}
+
 // 左边的list样式
 //右边的追踪图样式
 .trace-wrapper {
@@ -84,7 +88,7 @@
       font-size: 12px;
       max-width: 12%;
       text-overflow: ellipsis;
-      overflow: auto;
+      overflow: hidden;
 
       &.error {
         color: red;
@@ -159,6 +163,8 @@
 
 .trace-wrapper-top {
   line-height: 28px;
+  background-color: #ededed;
+  padding: 5px;
 
   .top-select-btn {
     display: flex;

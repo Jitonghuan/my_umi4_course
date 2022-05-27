@@ -7,16 +7,19 @@ interface Props {
   leftComp: React.ReactNode | React.FunctionComponent;
   rightComp?: React.ReactNode | React.FunctionComponent;
   style?: any;
-  leftWidth?: number;
+  leftWidth?: number; //左侧的宽度
+  isShowExpandIcon: boolean; //是否要显示可折叠icon 默认不显示
+  defaultClose: boolean; //是否一开始就折叠 默认不折叠
 }
 
 // 可以拖拽宽度的组件
 const ResizablePro = (props: Props) => {
-  const { leftComp, rightComp, leftWidth, ...rest } = props;
+  const { leftComp, rightComp, isShowExpandIcon = false, leftWidth, defaultClose = false, ...rest } = props;
   const [resizeState, setResizeState] = useState<{ width: number }>({
-    width: leftWidth || 500,
+    width: defaultClose ? 0 : leftWidth || 500,
   });
-  const [close, setClose] = useState(false);
+
+  const [close, setClose] = useState(defaultClose);
 
   const onClose = (e: any) => {
     e.stopPropagation();
@@ -34,17 +37,17 @@ const ResizablePro = (props: Props) => {
         onResize={onResize}
         width={resizeState.width}
         handle={
-          <div className="react-resizable-handle resizable-handle" onClick={(e) => e.stopPropagation()}>
-            {/* <span
-              onClick={onClose}
-              className={`resizable-handle-triangle ${close ? 'close' : ''}`}
-            /> */}
-            {close ? (
-              <RightCircleFilled className="resizable-click " onClick={onClose} />
-            ) : (
-              <LeftCircleFilled className="resizable-click close" onClick={onClose} />
-            )}
-          </div>
+          isShowExpandIcon ? (
+            <div className="react-resizable-handle resizable-handle" onClick={(e) => e.stopPropagation()}>
+              {close ? (
+                <RightCircleFilled className="resizable-click " onClick={onClose} />
+              ) : (
+                <LeftCircleFilled className="resizable-click close" onClick={onClose} />
+              )}
+            </div>
+          ) : (
+            <div className="react-resizable-handle resizable-handle"></div>
+          )
         }
         height={0}
       >

@@ -30,7 +30,7 @@ export default function DetailModal(props: any) {
     <div>
       <div className="log-item">
         <div className="log-item-label">时间</div>
-        <div className="log-item-value">{moment(time).format('YYYY-MM-DD HH:mm:ss:SSS')}</div>
+        <div className="log-item-value">{moment(time).format('YYYY-MM-DD HH:mm:ss')}</div>
       </div>
       {data.map((item: any) => (
         <div className="log-item">
@@ -47,9 +47,16 @@ export default function DetailModal(props: any) {
         <div className="detail-wrapper">
           <div>
             <span className="title">标记</span>
-            {Object.keys(displayTag).map((k) => (
-              <Tag label={displayTag[k] || k} value={k in detailData ? detailData[k].toString() : ''} />
-            ))}
+            {Object.keys(displayTag).map((k) => {
+              return k === 'endpointName' ? (
+                <Tag
+                  label="端点"
+                  value={k in detailData ? detailData[k].toString() || '' : detailData?.oriLabel || ''}
+                />
+              ) : (
+                <Tag label={displayTag[k] || k} value={k in detailData ? detailData[k].toString() : ''} />
+              );
+            })}
             {tagList.map((item: any) => (
               <Tag label={item.key} value={item.value} />
             ))}
