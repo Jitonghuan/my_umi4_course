@@ -78,7 +78,7 @@ function PopularContent() {
       <Card style={{ width: '100%' }}>
         <BorderBox8
           dur={6}
-          style={{ height: 'calc(100vh - 332px)' }}
+          style={{ height: 'calc(100vh - 390px)' }}
           color={['rgb(29, 193, 245)', 'blue']}
           reverse="{true}"
         >
@@ -97,10 +97,10 @@ function PopularContent() {
         </div> */}
 
           {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}> */}
-          <div style={{ position: 'absolute' }}>
+          {/* <div style={{ position: 'absolute' }} >
             <img src={whiteBg} style={{ top: 4, filter: 'opacity(0.3)', height: '50vh', width: '54vw' }}></img>
-          </div>
-          <div style={{ paddingTop: 30, position: 'relative', zIndex: 4 }}>
+          </div> */}
+          <div style={{ paddingTop: 10, position: 'relative', zIndex: 4 }}>
             <Row style={{ display: 'flex', justifyContent: 'center' }}>
               <Decoration9 style={{ width: '200px', height: '200px' }} dur={7}>
                 研发协同
