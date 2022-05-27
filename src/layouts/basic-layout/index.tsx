@@ -93,7 +93,8 @@ export default function Layout(props: any) {
   let deptitle = { modal_title: '切换部门' };
   ConfigProvider.config({
     theme: {
-      primaryColor: '#86a0bb',
+      primaryColor: '#1973CC',
+
       //#92a6bb
     },
   });
