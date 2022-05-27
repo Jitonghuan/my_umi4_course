@@ -108,17 +108,6 @@ export default defineConfig({
     loading: '@/components/source-loading',
   },
   extraBabelPlugins: [
-    "@babel/syntax-dynamic-import",
-    ["@babel/plugin-proposal-private-methods", { "loose": true }],
-    ["@babel/proposal-class-properties", { "loose": true }],
-    [
-      "import",
-      {
-        "libraryName": "antd",
-        "libraryDirectory": "lib",
-        "style": true
-      }
-    ],
     [
       require.resolve('babel-plugin-import'),
       {
