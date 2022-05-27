@@ -8,7 +8,7 @@ import moment from 'moment';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
-import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form, message, Tooltip } from 'antd';
+import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form, message, Tooltip, Modal } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ParameterEditModal from './editModal';
 import {
@@ -57,6 +57,7 @@ export default function ProductConfig() {
   const [configInfoLoading, setConfigInfoLoading] = useState<boolean>(false);
   const [curIndentPackageStatus, setCurIndentPackageStatus] = useState<string>('未知');
   const cacheRef = useRef<any>(null);
+  const [visible, setVisible] = useState<boolean>(false);
   const [tabActiveKey, setTabActiveKey] = useState<string>('1');
 
   const queryPackageStatus = async (id: number) => {
@@ -195,11 +196,15 @@ export default function ProductConfig() {
   };
   const saveConfig = () => {
     const value = configForm.getFieldsValue();
-    editIndentConfigYaml(configInfo.id, value.configInfo).then(() => {
-      queryIndentInfo(configInfo.id);
-      setReadOnly(true);
-      setButtonText('编辑');
-    });
+    editIndentConfigYaml(configInfo.id, value.configInfo)
+      .then(() => {
+        queryIndentInfo(configInfo.id);
+        setReadOnly(true);
+        setButtonText('编辑');
+      })
+      .then(() => {
+        setVisible(false);
+      });
   };
   const afreshText = '由最新的交付参数等配置生成新的制品配置，会覆盖原有的自定义配置';
   const updateText = '获取产品版本里最新的交付参数并更新到此处，不会改动参数值';
@@ -282,32 +287,30 @@ export default function ProductConfig() {
         </div>
 
         <div style={{ paddingTop: 10 }}>
-          <Tabs
-            activeKey={tabActiveKey}
-            onChange={tabOnclick}
-            type="card"
-            tabBarExtraContent={
-              tabActiveKey === '1' && (
-                <Button
-                  type="primary"
-                  loading={updateLoading}
-                  onClick={() => {
-                    updateParamIndent(configInfo.id).then(() => {
-                      queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
-                      queryIndentParamList({ id: configInfo.id, isGlobal: false });
-                    });
-                  }}
-                >
-                  更新交付参数{' '}
-                  <Tooltip placement="topRight" title={updateText}>
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </Button>
-              )
-            }
-          >
+          <Tabs type="card">
             <TabPane tab="配置交付参数" key="1">
-              <Tabs defaultActiveKey="1">
+              <Tabs
+                defaultActiveKey="1"
+                activeKey={tabActiveKey}
+                onChange={tabOnclick}
+                tabBarExtraContent={
+                  <Button
+                    type="primary"
+                    loading={updateLoading}
+                    onClick={() => {
+                      updateParamIndent(configInfo.id).then(() => {
+                        queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+                        queryIndentParamList({ id: configInfo.id, isGlobal: false });
+                      });
+                    }}
+                  >
+                    更新交付参数{' '}
+                    <Tooltip placement="topRight" title={updateText}>
+                      <QuestionCircleOutlined />
+                    </Tooltip>
+                  </Button>
+                }
+              >
                 <TabPane tab="全局参数" key="1">
                   <Table columns={configTableColumns} dataSource={configDataSource} loading={configLoading}></Table>
                 </TabPane>
@@ -377,27 +380,28 @@ export default function ProductConfig() {
                   <Button
                     type={buttonText === '编辑' ? 'primary' : 'default'}
                     onClick={() => {
-                      if (readOnly) {
-                        setReadOnly(false);
-                        setButtonText('取消编辑');
-                      } else {
-                        setReadOnly(true);
-                        setButtonText('编辑');
-                      }
+                      setVisible(true);
+                      // if (readOnly) {
+                      //   setReadOnly(false);
+                      //   setButtonText('取消编辑');
+                      // } else {
+                      //   setReadOnly(true);
+                      //   setButtonText('编辑');
+                      // }
                     }}
                   >
-                    {buttonText}
+                    编辑
                   </Button>
-                  <Button type="primary" style={{ marginLeft: 8 }} onClick={saveConfig} loading={editConfigLoading}>
+                  {/* <Button type="primary" style={{ marginLeft: 8 }} onClick={saveConfig} loading={editConfigLoading}>
                     保存配置
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
               <div>
                 <Form form={configForm}>
                   <Spin spinning={configInfoLoading}>
                     <Form.Item name="configInfo" noStyle>
-                      <AceEditor mode="yaml" height={550} value={indentConfigInfo} readOnly={readOnly} />
+                      <AceEditor mode="yaml" height={550} value={indentConfigInfo} readOnly={true} />
                     </Form.Item>
                   </Spin>
 
@@ -408,6 +412,29 @@ export default function ProductConfig() {
           </Tabs>
         </div>
       </ContentCard>
+      <Modal
+        title="编辑配置"
+        visible={visible}
+        width={800}
+        onOk={saveConfig}
+        maskClosable={false}
+        onCancel={() => {
+          setVisible(false);
+        }}
+        confirmLoading={editConfigLoading}
+      >
+        <div>
+          <Form form={configForm}>
+            <Spin spinning={configInfoLoading}>
+              <Form.Item name="configInfo" noStyle>
+                <AceEditor mode="yaml" height={550} value={indentConfigInfo} />
+              </Form.Item>
+            </Spin>
+
+            <Form.Item></Form.Item>
+          </Form>
+        </div>
+      </Modal>
     </PageContainer>
   );
 }
