@@ -7,10 +7,10 @@
  */
 
 import React, { useState, useRef, useContext, useEffect } from 'react';
-import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message } from 'antd';
+import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
@@ -58,7 +58,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     changeBranchName,
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
-  const { metadata } = deployInfo || {};
+  const { metadata, branchInfo } = deployInfo || {};
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
@@ -138,10 +138,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     if (masterListData.length !== 0) {
       const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
-      // const initValue = option.find((item: any) => item.label === 'master');
-      // setSelectMaster(initValue?.value);
+      if (branchInfo?.masterBranch) {
+        const initValue = option.find((item: any) => item.label === branchInfo?.masterBranch);
+        setSelectMaster(initValue?.value);
+        masterBranchChange(initValue?.value);
+      }
     }
-  }, [masterListData]);
+  }, [masterListData, branchInfo?.masterBranch]);
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -173,6 +176,11 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     return (
       <div>
         <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+        <span style={{ marginLeft: 8, color: 'royalblue' }}>
+          <CopyToClipboard text={branchName} onCopy={() => message.success('复制成功！')}>
+            <CopyOutlined />
+          </CopyToClipboard>
+        </span>
       </div>
     );
   };
@@ -188,7 +196,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             ref={selectRef}
             options={masterBranchOptions}
             value={selectMaster}
-            style={{ width: '200px', marginRight: '20px' }}
+            style={{ width: '300px', marginRight: '20px' }}
             onChange={handleChange}
             showSearch
             optionFilterProp="label"

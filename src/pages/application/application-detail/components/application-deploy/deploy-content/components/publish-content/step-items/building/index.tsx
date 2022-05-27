@@ -94,15 +94,27 @@ export default function BuildingStep(props: StepItemProps) {
           // isLoading && (
           <>
             {/* 浙一日常环境下的部署步骤显示jenkins链接,构建步骤下不显示。其他环境都是构建步骤下显示Jenkins详情 */}
-            {url && !envInfo?.deployEnvs?.includes('zy-daily') ? (
-              <div style={{ marginTop: 2 }}>
+            {url && (
+              <div style={{ marginTop: -5 }}>
                 <a target="_blank" href={url}>
                   构建详情
                 </a>
               </div>
-            ) : null}
+            )}
+            {confirm && confirm.waitConfirm && (
+              <div style={{ marginTop: -2 }}>
+                <a
+                  style={{ marginTop: 2 }}
+                  onClick={() => {
+                    setDeployVisible(true);
+                  }}
+                >
+                  确认部署
+                </a>
+              </div>
+            )}
             {isError && (
-              <Button style={{ marginTop: 4, paddingLeft: 4, paddingRight: 4 }} onClick={handleRebuildClick}>
+              <Button style={{ paddingLeft: 4, paddingRight: 4 }} size="small" onClick={handleRebuildClick}>
                 重新构建
               </Button>
             )}
@@ -112,8 +124,8 @@ export default function BuildingStep(props: StepItemProps) {
               isNotFrontend && (
                 <Button
                   download
-                  style={{ marginTop: 4 }}
                   target="_blank"
+                  size="small"
                   disabled={disabled}
                   href={`${downloadSource}?id=${metadata?.id}&envCode=${env}`}
                   // disabled={downLoadStatus}
@@ -128,18 +140,6 @@ export default function BuildingStep(props: StepItemProps) {
                   下载镜像
                 </Button>
               )}
-            {confirm && confirm.waitConfirm && (
-              <div>
-                <a
-                  style={{ marginTop: 4 }}
-                  onClick={() => {
-                    setDeployVisible(true);
-                  }}
-                >
-                  确认部署
-                </a>
-              </div>
-            )}
           </>
           // )
         }

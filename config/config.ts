@@ -19,9 +19,23 @@ export default defineConfig({
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
   alias: {},
+  esbuild: {},
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
+  extraBabelPlugins: [
+    "@babel/syntax-dynamic-import",
+    ["@babel/plugin-proposal-private-methods", { "loose": true }],
+    ["@babel/proposal-class-properties", { "loose": true }],
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "lib",
+        "style": true
+      }
+    ]
+  ],
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
@@ -29,7 +43,6 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      // target:'http://matrix-bf-daily.cfuture.shop',
       target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
@@ -39,9 +52,9 @@ export default defineConfig({
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',
       // target: 'http://10.10.129.73:8080',//木南本地
-      // target: 'http://10.10.129.33:8080',//时雨本地
+      // target: 'http://10.10.129.167:8080',//时雨本地
       // target: 'http://10.10.129.54:8080',//习习本地
-      // target: 'http://10.10.129.116:8080',//不辣本地
+      // target: 'http://10.10.129.145:8080',//不辣本地
 
 
       changeOrigin: true,
@@ -87,7 +100,7 @@ export default defineConfig({
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
-  targets: { chrome: 65, firefox: 64, safari: 11, edge: 13 },
+  targets: { chrome: 65, firefox: false, safari: false, edge: false, ios: false },
 
   publicPath: publicPathPrefix,
 
@@ -107,5 +120,5 @@ export default defineConfig({
   // 开启动态资源加载
   dynamicImport: {
     loading: '@/components/source-loading',
-  },
+  }
 });

@@ -10,7 +10,7 @@ import { StepItemProps } from '../../types';
 
 /** 发布HTML */
 export default function PushVersionStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, status, env = '', ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
 
   // const isLoading = deployStatus === 'pushVersion';
@@ -37,7 +37,7 @@ export default function PushVersionStep(props: StepItemProps) {
       {...others}
       title="推送版本"
       icon={isLoading && <LoadingOutlined />}
-      status={isError ? 'error' : others.status}
+      status={status}
       description={
         <>
           {isWait && <span>等待推送</span>}

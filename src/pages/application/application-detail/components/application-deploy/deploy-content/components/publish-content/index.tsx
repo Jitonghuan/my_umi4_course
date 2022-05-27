@@ -3,8 +3,8 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
-import { Modal, Button, Table, Tag, Tooltip } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Modal, Button, Table, Tag, Tooltip, Badge } from 'antd';
+import { ExclamationCircleOutlined, QuestionCircleOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
@@ -161,6 +161,10 @@ export default function PublishContent(props: IProps) {
     setIsShow(false);
   };
 
+  let resubmitText =
+    '重新提交选择的分支，会将选中的分支最新的提交追加合并到部署分支（release分支）上，未选中的分支则不会合并';
+  let exitBranch = '将选中的分支从部署分支（release分支）中退出，则会将剩下的分支重新合并到新的部署分支中';
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
@@ -212,14 +216,23 @@ export default function PublishContent(props: IProps) {
         <h4>内容列表</h4>
         <div className="caption-right">
           {!isProd && (
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-              重新提交
-            </Button>
+            <span style={{ marginRight: 14 }}>
+              <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
+                重新提交
+                <Tooltip placement="topRight" title={resubmitText}>
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              </Button>
+            </span>
           )}
 
           <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
             退出分支
+            <Tooltip placement="topRight" title={exitBranch}>
+              <QuestionCircleOutlined />
+            </Tooltip>
           </Button>
+
           {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"

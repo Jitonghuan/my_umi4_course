@@ -14,6 +14,7 @@ import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
 import { queryDeployList, queryFeatureDeployed, queryActiveDeployInfo } from '@/pages/application/service';
 import './index.less';
+import { Spin } from 'antd';
 
 const rootCls = 'deploy-content-compo';
 
@@ -37,6 +38,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
     unDeployed: any[];
   }>({ deployed: [], unDeployed: [] });
   const masterBranchName = useRef<string>('master');
+  const [loading, setLoading] = useState(false);
 
   const requestData = async () => {
     if (!appCode || !pipelineCode) return;
@@ -114,44 +116,57 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
     timerHandle('do', true);
   };
 
+  const onSpin = () => {
+    setLoading(true);
+  };
+
+  const stopSpin = () => {
+    setLoading(false);
+  };
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
-        <PublishDetail
-          env={env}
-          deployInfo={deployInfo}
-          pipelineCode={pipelineCode}
-          onOperate={(type) => {
-            if (type === 'deployNextEnvSuccess') {
-              onDeployNextEnvSuccess();
-              return;
-            }
-            requestData();
-            onOperate(type);
-          }}
-        />
-        <PublishContent
-          appCode={appCode!}
-          envTypeCode={env}
-          deployInfo={deployInfo}
-          deployedList={branchInfo.deployed}
-          onOperate={onOperate}
-        />
-        <PublishBranch
-          deployInfo={deployInfo}
-          hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
-          dataSource={branchInfo.unDeployed}
-          env={env}
-          pipelineCode={pipelineCode}
-          onSearch={searchUndeployedBranch}
-          onSubmitBranch={(status) => {
-            timerHandle(status === 'start' ? 'stop' : 'do', true);
-          }}
-          masterBranchChange={(masterBranch: string) => {
-            masterBranchName.current = masterBranch;
-            timerHandle('do', true);
-          }}
-        />
+        <Spin spinning={loading}>
+          <PublishDetail
+            env={env}
+            deployInfo={deployInfo}
+            pipelineCode={pipelineCode}
+            onOperate={(type) => {
+              if (type === 'deployNextEnvSuccess') {
+                onDeployNextEnvSuccess();
+                return;
+              }
+              requestData();
+              onOperate(type);
+            }}
+          />
+          <PublishContent
+            appCode={appCode!}
+            pipelineCode={pipelineCode}
+            envTypeCode={env}
+            deployInfo={deployInfo}
+            deployedList={branchInfo.deployed}
+            onOperate={onOperate}
+            onSpin={onSpin}
+            stopSpin={stopSpin}
+          />
+          <PublishBranch
+            deployInfo={deployInfo}
+            hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
+            dataSource={branchInfo.unDeployed}
+            env={env}
+            pipelineCode={pipelineCode}
+            onSearch={searchUndeployedBranch}
+            onSubmitBranch={(status) => {
+              timerHandle(status === 'start' ? 'stop' : 'do', true);
+            }}
+            masterBranchChange={(masterBranch: string) => {
+              masterBranchName.current = masterBranch;
+              timerHandle('do', true);
+            }}
+          />
+        </Spin>
       </div>
       <div className={`${rootCls}-sider`}>
         <PublishRecord env={env} appCode={appCode} />

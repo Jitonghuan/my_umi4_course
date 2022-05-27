@@ -36,6 +36,7 @@
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
     "@cffe/h2o-design": "^1.0.51",
+    "@cffe/hulk-wave-chart": "^0.0.4",
     "@cffe/internal-icon": "^1.0.1",
     "@cffe/layout": "^0.1.21",
     "@cffe/pc-editor-table": "~1.0.10",
@@ -45,7 +46,6 @@
     "@cffe/vc-custom-icon": "1.0.6",
     "@cffe/vc-error-page": "1.0.2",
     "@cffe/vc-hulk-table": "1.0.14",
-    "@cffe/vc-layout": "1.0.53",
     "@cffe/vc-loading": "1.0.4",
     "@cffe/vc-request": "2.0.16",
     "@hbos/component-position-switcher": "^1.0.7",
@@ -54,6 +54,7 @@
     "@types/diff-match-patch": "^1.0.32",
     "@types/react-resizable": "^1.7.4",
     "@umijs/hooks": "~1.9.3",
+    "@umijs/plugin-esbuild": "^1.4.1",
     "ace-diff": "^3.0.3",
     "ahooks": "~2.10.8",
     "ansi-up": "^1.0.0",
@@ -86,10 +87,19 @@
   },
   "devDependencies": {
     "@hbos/umi-loaders": "^1.0.0",
+    "@hbos/umi-plugin-builder-optimize": "^1.5.7",
     "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@types/react-copy-to-clipboard": "^5.0.2",
     "@umijs/preset-react": "~1.8.23",
-    "prettier": "2.6.0"
+    "prettier": "2.6.0",
+    "@babel/cli": "^7.12.17",
+    "@babel/core": "^7.12.17",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-proposal-private-methods": "^7.13.0",
+    "@babel/preset-env": "^7.12.17",
+    "@babel/preset-react": "^7.12.13",
+    "@babel/preset-typescript": "^7.12.17",
+    "babel-plugin-import": "~1.13.3"
   },
   "__npminstall_done": false
 }

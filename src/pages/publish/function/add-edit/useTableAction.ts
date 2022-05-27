@@ -154,6 +154,7 @@ const useTableAction = (props: IProps) => {
     editingKey,
     setEditingKey,
     selectedRowKeys,
+    setSelectedRowKeys,
     edit,
     isEditing,
     addTableRow,

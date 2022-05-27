@@ -78,6 +78,8 @@ export default function ConfigContent({ env, configType }: IProps) {
         currentEnvCode = listEnv[0]?.data?.envCode;
         if (fixString(listEnv[0]?.data?.envCode)) {
           setEditDisable(true);
+        } else {
+          setEditDisable(false);
         }
         setCurrentEnvData(listEnv[0]?.data?.envCode);
 
@@ -107,6 +109,8 @@ export default function ConfigContent({ env, configType }: IProps) {
     getEnvCode = getEnvCodes;
     if (fixString(getEnvCodes)) {
       setEditDisable(true);
+    } else {
+      setEditDisable(false);
     }
 
     editVersionForm.setFieldsValue({

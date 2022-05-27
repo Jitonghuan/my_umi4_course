@@ -22,7 +22,7 @@ const { confirm } = Modal;
 export default function PublishBranch(props: IProps) {
   const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, pipelineCode, onSearch, masterBranchChange } =
     props;
-  const { metadata } = deployInfo || {};
+  const { metadata, branchInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, appCode } = appData || {};
 
@@ -32,7 +32,7 @@ export default function PublishBranch(props: IProps) {
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
-  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [selectMaster, setSelectMaster] = useState<any>('master');
   const [searchText, setSearchText] = useState<string>('');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const selectRef = useRef(null) as any;
@@ -41,10 +41,13 @@ export default function PublishBranch(props: IProps) {
     if (masterListData.length !== 0) {
       const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
-      const initValue = option.find((item: any) => item.label === 'master');
-      setSelectMaster(initValue?.value || '');
+      if (branchInfo?.masterBranch) {
+        const initValue = option.find((item: any) => item.label === branchInfo?.masterBranch);
+        setSelectMaster(initValue?.value);
+        masterBranchChange(initValue?.value);
+      }
     }
-  }, [masterListData]);
+  }, [masterListData, branchInfo?.masterBranch]);
 
   const submit = () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
@@ -125,7 +128,7 @@ export default function PublishBranch(props: IProps) {
             ref={selectRef}
             options={masterBranchOptions}
             value={selectMaster}
-            style={{ width: '200px', marginRight: '20px' }}
+            style={{ width: '300px', marginRight: '20px' }}
             onChange={handleChange}
             showSearch
             optionFilterProp="label"

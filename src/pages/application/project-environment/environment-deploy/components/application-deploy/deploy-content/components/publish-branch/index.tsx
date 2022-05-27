@@ -9,8 +9,9 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Table, Input, Button, Modal, message, Tag, Tooltip, Select } from 'antd';
+import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '../../../../../context';
 import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
@@ -47,7 +48,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, onSearch, masterBranchChange, pipelineCode } =
     publishBranchProps;
   const { appData } = useContext(DetailContext);
-  const { metadata } = deployInfo || {};
+  const { metadata, branchInfo } = deployInfo || {};
   const { appCategoryCode, appCode, id } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
 
@@ -56,7 +57,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [envDataList, setEnvDataList] = useState<any>([]);
   const [deployEnv, setDeployEnv] = useState<any[]>();
-  const [selectMaster, setSelectMaster] = useState<any>('');
+  const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const selectRef = useRef(null) as any;
@@ -161,6 +162,11 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     return (
       <div>
         <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+        <span style={{ marginLeft: 8, color: 'royalblue' }}>
+          <CopyToClipboard text={branchName} onCopy={() => message.success('复制成功！')}>
+            <CopyOutlined />
+          </CopyToClipboard>
+        </span>
       </div>
     );
   };
@@ -168,10 +174,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     if (masterListData.length !== 0) {
       const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
       setMasterBranchOptions(option);
-      const initValue = option.find((item: any) => item.label === 'master');
-      setSelectMaster(initValue?.value || '');
+      if (branchInfo?.masterBranch) {
+        const initValue = option.find((item: any) => item.label === branchInfo?.masterBranch);
+        setSelectMaster(initValue?.value);
+        masterBranchChange(initValue?.value);
+      }
     }
-  }, [masterListData]);
+  }, [masterListData, branchInfo?.masterBranch]);
 
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
@@ -190,7 +199,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             ref={selectRef}
             options={masterBranchOptions}
             value={selectMaster}
-            style={{ width: '240px', marginRight: '20px' }}
+            style={{ width: '300px', marginRight: '20px' }}
             onChange={handleChange}
             showSearch
             optionFilterProp="label"
