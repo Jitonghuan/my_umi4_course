@@ -19,7 +19,6 @@ export default defineConfig({
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
   alias: {},
-  esbuild: {},
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
