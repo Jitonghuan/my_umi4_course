@@ -158,7 +158,7 @@ export default function NoiseReduction() {
           <Input style={{ width: 160 }} placeholder="请输入降噪组件" ></Input>
         </Form.Item>
         <Form.Item label="降噪措施：" name="noiseReductionMeasure">
-          <Select style={{ width: 120 }}>
+          <Select style={{ width: 120 }} allowClear>
             <Select.Option value='merge'>merge</Select.Option>
             <Select.Option value='ignore'>ignore</Select.Option>
           </Select>
