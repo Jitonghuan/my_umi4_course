@@ -20,7 +20,7 @@ const { Paragraph } = Typography;
 export default function ComponentCenter() {
   const identification: any = history.location.state;
   const [productLineForm] = Form.useForm();
-  const [tabActiveKey, setTabActiveKey] = useState<string>('app');
+  const [tabActiveKey, setTabActiveKey] = useState<string>('');
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
@@ -140,7 +140,7 @@ export default function ComponentCenter() {
                               }
                             }}
                           >
-                            {pageTypes[tabActiveKey].text}
+                            {pageTypes[tabActiveKey]?.text}
                           </Button>
                         )}
                       </span>
