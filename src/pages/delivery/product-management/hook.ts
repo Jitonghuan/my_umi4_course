@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
-import { getRequest, postRequest, delRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 // 查询产品列表
 export function useQueryIndentList(): [
   boolean,
@@ -206,10 +206,10 @@ export function useQueryIndentParamList(): [
 // 编辑交付配置参数值
 export function useSaveIndentParam(): [boolean, (id: number, configParamValue: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const saveIndentParam = async (id: number, configParamValue: string) => {
+  const saveIndentParam = async (id: number, paramValue: string) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.saveIndentParam}?id=${id}&configParamValue=${configParamValue}`)
+      await postRequest(`${APIS.saveIndentParam}?id=${id}&configParamValue=${paramValue}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);
@@ -239,7 +239,7 @@ export function useCreatePackageInde(): [boolean, (id: number) => Promise<void>]
           if (res.success) {
             message.success(res.data);
           } else {
-            message.error('编辑失败！');
+            message.error('出包失败！');
             return;
           }
         })
@@ -284,7 +284,12 @@ export function useEditIndentConfigYaml(): [boolean, (id: number, indentConfigYa
   const editIndentConfigYaml = async (id: number, indentConfigYaml: string) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.editIndentConfig}?id=${id}&indentConfigYaml=${indentConfigYaml}`)
+      await postRequest(APIS.editIndentConfig, {
+        data: {
+          id,
+          indentConfigYaml,
+        },
+      })
         .then((res) => {
           if (res.success) {
             message.success(res.data);
@@ -300,4 +305,27 @@ export function useEditIndentConfigYaml(): [boolean, (id: number, indentConfigYa
     }
   };
   return [loading, editIndentConfigYaml];
+}
+//updateParamIndent
+export function useUpdateParamIndent(): [boolean, (id: number) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const updateParamIndent = async (id: number) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.updateParamIndent}?id=${id}`)
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, updateParamIndent];
 }

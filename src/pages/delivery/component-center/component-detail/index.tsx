@@ -3,16 +3,47 @@ import { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
-import { queryComponentInfoApi } from '../../service';
-import { getRequest } from '@/utils/request';
+import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } from '../../service';
+import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
-import { Form, Tabs, Select, Button, Descriptions, Typography, Divider, Spin } from 'antd';
+import ReactMarkdown from 'react-markdown';
+import UserModal from '../../component-center/components/UserModal';
+import BasicDataModal from '../../component-center/components/basicDataModal';
+import {
+  Form,
+  Tabs,
+  Select,
+  Button,
+  Descriptions,
+  Typography,
+  Divider,
+  Spin,
+  Modal,
+  Table,
+  Popconfirm,
+  message,
+} from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { useQueryComponentList, useUpdateDescription, useUpdateConfiguration } from './hooks';
+import { useQueryComponentList, useQueryProductlineList } from '../../component-center/hook';
+import { useUpdateDescription, useUpdateConfiguration } from './hooks';
+
 import './index.less';
 export default function ComponentDetail() {
-  const { initRecord, componentName, componentVersion, componentDescription, componentType, activeTab, type }: any =
-    history.location.state;
+  const {
+    initRecord,
+    productVersionId,
+    componentName,
+    componentVersion,
+    componentDescription,
+    componentType,
+    componentId,
+    activeTab,
+    versionDescription,
+    releaseStatus,
+    type,
+    optType,
+    descriptionInfoData,
+  }: any = history.location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => {};
   const [configForm] = Form.useForm();
@@ -24,14 +55,73 @@ export default function ComponentDetail() {
   const [editableStr, setEditableStr] = useState('');
   const [editLoading, updateDescription] = useUpdateDescription();
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
-  const [loading, versionOptions, queryComponentVersionList] = useQueryComponentList();
-
+  const [loading, setLoading] = useState(false);
+  const [versionOptions, setVersionOptions] = useState<any>([]);
+  const [showVersionModal, setShowVersionModal] = useState<boolean>(false);
+  const [curVersion, setCurVersion] = useState<any>({});
+  const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
+  const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
+  const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
+  const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
+  // console.log('productVersionId', productVersionId);
+  const deletVersion = async (id: number) => {
+    await postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
+      if (res.success) {
+        message.success(res.data);
+        getComponentVersionList(initRecord.id);
+        // queryComponentInfo(componentName, curVersion?.version, componentType, curVersion.componentId);
+      } else {
+        return;
+      }
+    });
+  };
+  const getComponentVersionList = async (componentId: string) => {
+    setLoading(true);
+    try {
+      await getRequest(queryComponentVersionList, {
+        data: { componentId, pageIndex: -1, pageSize: -1 },
+      })
+        .then((res) => {
+          if (res.success) {
+            let dataSource = res.data;
+            const option = dataSource?.map((item: any) => ({
+              label: item.componentVersion,
+              value: item.componentVersion,
+              id: item.id,
+              createUser: item.createUser,
+              componentId: item.componentId,
+            }));
+            setVersionOptions(option);
+            if (optType && optType !== 'versionDetail') {
+              queryComponentInfo(componentName, option[0]?.value, componentType, option[0]?.componentId);
+            }
+            setCurVersion({
+              version: option[0]?.value || componentVersion,
+              componentId: option[0]?.componentId || initRecord.componentId,
+            });
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   //查询组件配置详情
-  const queryComponentInfo = async (componentName: string, componentVersion: string, componentType: string) => {
+  const queryComponentInfo = async (
+    componentName: string,
+    componentVersion: string,
+    componentType: string,
+    componentId: number,
+  ) => {
     setInfoLoading(true);
     try {
       await getRequest(queryComponentInfoApi, {
-        data: { componentName, componentVersion, componentType },
+        data: { componentName, componentVersion, componentType, componentId },
       })
         .then((res) => {
           if (res.success) {
@@ -53,25 +143,121 @@ export default function ComponentDetail() {
     }
   };
   useEffect(() => {
-    if (componentVersion && componentName) {
-      queryComponentVersionList(componentName, componentType);
-      queryComponentInfo(componentName, componentVersion, componentType);
-    } else {
+    if (!initRecord.id) {
       return;
+    }
+    // if(componentVersion && componentName&&optType==='versionDetail'){
+    //   //componentId
+    //   console.log('进入这里1111')
+    //   queryComponentInfo(componentName, componentVersion, componentType, componentId);
+    //   getComponentVersionList(initRecord.id);
+    //   setCurVersion({
+    //     version: componentVersion,
+    //     componentId: componentId,
+    //   });
+
+    // }componentVersion
+    if (componentVersion && componentName) {
+      getComponentVersionList(initRecord.id);
+
+      queryComponentInfo(componentName, componentVersion, componentType, componentId);
+
+      setCurVersion({
+        version: componentVersion,
+        componentId: componentId,
+      });
+    } else {
+      getComponentVersionList(initRecord.id);
     }
   }, [componentName, componentVersion]);
 
-  const changeVersion = (value: string) => {
-    queryComponentInfo(componentName, value, componentType);
+  const changeVersion = (versionInfo: any) => {
+    setCurVersion({
+      version: versionInfo.value,
+      componentId: initRecord.id,
+    });
+
+    queryComponentInfo(componentName, versionInfo.value, componentType, initRecord.id);
   };
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
-    updateConfiguration(configuration.config);
+    updateConfiguration(componentInfo.id, configuration.config);
     setReadOnly(true);
     setButtonText('编辑');
   };
+  useEffect(() => {
+    if (componentType === 'app') {
+      getProductlineList();
+    }
+  }, []);
+  useEffect(() => {
+    if (optType === 'versionDetail') {
+      setAddVersionDisabled(true);
+    }
+
+    return () => {
+      setAddVersionDisabled(false);
+    };
+  }, [optType]);
   return (
     <PageContainer>
+      <Modal
+        title="版本详情"
+        visible={showVersionModal}
+        onCancel={() => {
+          setShowVersionModal(false);
+        }}
+        footer={false}
+      >
+        <Table dataSource={versionOptions}>
+          <Table.Column dataIndex="id" title="版本Id"></Table.Column>
+          <Table.Column dataIndex="value" title="版本号"></Table.Column>
+          <Table.Column dataIndex="createUser" title="创建人"></Table.Column>
+          <Table.Column
+            fixed="right"
+            title="操作"
+            align="center"
+            width={110}
+            render={(item, record: any) => (
+              <Popconfirm
+                title="确定要删除该版本吗？"
+                onConfirm={() => {
+                  deletVersion(record.id);
+                }}
+              >
+                <a color="red">删除</a>
+              </Popconfirm>
+            )}
+          />
+        </Table>
+      </Modal>
+      <UserModal
+        visable={userModalVisiable}
+        productLineOptions={productLineOptions || []}
+        tabActiveKey={componentType}
+        curProductLine={initRecord.productLine}
+        curVersion={curVersion.version}
+        initData={initRecord || {}}
+        queryComponentList={({ componentType: componentType }) => queryComponentList({ componentType: componentType })}
+        onClose={() => {
+          setUserModalVisiable(false);
+          getComponentVersionList(initRecord.id);
+        }}
+        optType="comdetailReadOnly"
+      />
+      <BasicDataModal
+        visable={basicDataModalVisiable}
+        tabActiveKey={componentType}
+        curProductLine={initRecord.productLine}
+        curVersion={curVersion.version}
+        initData={initRecord || {}}
+        queryComponentList={({ componentType: componentType }) => queryComponentList({ componentType: componentType })}
+        onClose={() => {
+          setBasicDataModalVisiable(false);
+          getComponentVersionList(initRecord.id);
+        }}
+      />
+
       <ContentCard className="component-detail">
         <div className="table-caption">
           <div className="caption-left">
@@ -79,18 +265,67 @@ export default function ComponentDetail() {
             <Select
               style={{ width: 220, marginLeft: 20 }}
               loading={loading}
+              labelInValue
               options={versionOptions}
-              defaultValue={componentVersion}
+              value={curVersion.version}
               onChange={changeVersion}
             ></Select>
+            <span>
+              <Button
+                type="primary"
+                style={{ marginLeft: 10 }}
+                disabled={componentType === 'middleware' || addVersionDisabled}
+                onClick={() => {
+                  if (componentType === 'app') {
+                    setUserModalVisiable(true);
+                  }
+                  //  if (componentType === 'middleware') {
+                  //    // setMiddlewareModalVisibale(true);
+                  //  }
+                  if (componentType === 'sql') {
+                    setBasicDataModalVisiable(true);
+                  }
+                }}
+              >
+                添加版本
+              </Button>
+              <Button
+                style={{ marginLeft: 10 }}
+                onClick={() => {
+                  setShowVersionModal(true);
+                }}
+                disabled={!versionOptions.length || addVersionDisabled}
+              >
+                删除版本
+              </Button>
+            </span>
           </div>
           <div className="caption-right">
             <Button
               type="primary"
               onClick={() => {
-                history.push({
-                  pathname: '/matrix/delivery/component-center',
-                });
+                if (optType === 'versionDetail') {
+                  history.push({
+                    pathname: '/matrix/delivery/version-detail',
+                    state: {
+                      optType: 'componentDetail',
+                      versionId: productVersionId,
+                      versionDescription: versionDescription,
+                      releaseStatus: releaseStatus,
+                      productName: descriptionInfoData.productName,
+                      productDescription: descriptionInfoData.productDescription,
+                      productGmtCreate: descriptionInfoData.gmtCreate,
+                      versionName: descriptionInfoData.versionName,
+                    },
+                  });
+                } else {
+                  history.push({
+                    pathname: '/matrix/delivery/component-center',
+                    state: {
+                      identification: componentType,
+                    },
+                  });
+                }
               }}
             >
               返回
@@ -107,7 +342,7 @@ export default function ComponentDetail() {
                     <Paragraph
                       editable={{
                         onChange: (componentDescription: string) => {
-                          updateDescription({ ...componentInfo, componentDescription }).then(() => {
+                          updateDescription({ id: initRecord.id, componentDescription }).then(() => {
                             setEditableStr(componentDescription);
                           });
                         },
@@ -133,7 +368,14 @@ export default function ComponentDetail() {
                 <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: 8, height: 20, fontSize: 16 }}>组件说明:</h3>
                 <div className="instruction">
                   <div className="instruction-info">
-                    <Spin spinning={infoLoading}>{componentInfo?.componentExplanation}</Spin>
+                    <Spin spinning={infoLoading}>
+                      <ReactMarkdown
+                        children={componentInfo?.componentExplanation}
+                        className="markdown-html"
+                        // escapeHtml={false}  //不进行HTML标签的转化
+                      />
+                      {/* {componentInfo?.componentExplanation} */}
+                    </Spin>
                   </div>
                 </div>
               </div>
@@ -142,22 +384,21 @@ export default function ComponentDetail() {
           <TabPane tab="组件配置" key="component-config">
             <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 2 }}>
               <p>
-                {type !== 'componentCenter' && (
-                  <Button
-                    type={buttonText === '编辑' ? 'primary' : 'default'}
-                    onClick={() => {
-                      if (readOnly) {
-                        setReadOnly(false);
-                        setButtonText('取消编辑');
-                      } else {
-                        setReadOnly(true);
-                        setButtonText('编辑');
-                      }
-                    }}
-                  >
-                    {buttonText}
-                  </Button>
-                )}
+                <Button
+                  type={buttonText === '编辑' ? 'primary' : 'default'}
+                  disabled={type === 'componentCenter'}
+                  onClick={() => {
+                    if (readOnly) {
+                      setReadOnly(false);
+                      setButtonText('取消编辑');
+                    } else {
+                      setReadOnly(true);
+                      setButtonText('编辑');
+                    }
+                  }}
+                >
+                  {buttonText}
+                </Button>
               </p>
             </div>
             <div>

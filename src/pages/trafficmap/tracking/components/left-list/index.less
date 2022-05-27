@@ -1,0 +1,39 @@
+.list-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  font-weight: 800;
+  line-height: 18px;
+  padding: 5px;
+
+  &-active {
+    background-color: #ededed;
+
+    // .item-traceId {
+    //   color: #448dfe;
+    // }
+  }
+
+  .item-traceId {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #448dfe;
+  }
+
+  .item-message {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    color: #a7aebb;
+    font-size: 12px;
+
+    .ant-tag {
+      padding: 0 2px;
+    }
+  }
+}
+
+.list-page {
+  margin-top: 20px;
+  display: flex;
+  justify-content: end;
+}

@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
-type AnyObject = Record<string, any>;
 // 创建产品
 export function useCreateProduct(): [boolean, (productName: string, productDescription: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);

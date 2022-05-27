@@ -1,81 +1,96 @@
 /* 组件中心
- * @Author: your name
+ * @Author: muxi.jth
  * @Date: 2022-03-07 01:01:37
- * @LastEditTime: 2022-03-07 14:11:26
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
-import { Tabs, Radio, Space, Descriptions, Button, Input, Form, Typography } from 'antd';
+import { Tabs, Button, Typography, Select, Form, Input } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
-import UserModal from './components/UserModal';
+import { history } from 'umi';
 import BasicDataModal from './components/basicDataModal';
-import MiddlewareModal from './components/middlewareModal';
-import { useQueryComponentList } from './hook';
+import { useQueryComponentList, useQueryProductlineList } from './hook';
+import AddApplicationDraw from './components/addApplicationDraw';
+import './index.less';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
-export const productLineOptions = [
-  {
-    label: 'hbos',
-    value: 'hbos',
-  },
-  {
-    label: 'gmc',
-    value: 'gmc',
-  },
-];
 
-export default function VersionDetail() {
-  const [matchlabels, setMatchlabels] = useState<any[]>([]);
-  const [editableStr, setEditableStr] = useState('This is an editable text.');
+export default function ComponentCenter() {
+  const identification: any = history.location.state;
+  const [productLineForm] = Form.useForm();
   const [tabActiveKey, setTabActiveKey] = useState<string>('app');
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
-  const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
+  const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
-  const [middlewareModalVisibale, setMiddlewareModalVisibale] = useState<boolean>(false);
-
-  const matchlabelsFun = (value: any[]) => {
-    setMatchlabels(value);
-  };
+  const [curProductLine, setCurProductLine] = useState<string>('');
+  const [queryParams, setQueryParams] = useState<any>({});
   const pageTypes: any = {
     app: { text: '应用组件接入' },
     middleware: { text: '中间件组件接入' },
     sql: { text: '基础数据接入' },
   };
+  const getCurProductLine = (value: string) => {
+    setCurProductLine(value);
+    const param = productLineForm.getFieldsValue();
+    queryComponentList({ componentType: tabActiveKey, ...param });
+    setQueryParams(param);
+  };
+  useEffect(() => {
+    if (tabActiveKey === 'app') {
+      getProductlineList();
+    }
+  }, []);
+  useEffect(() => {
+    if (identification?.identification) {
+      setTabActiveKey(identification?.identification);
+    }
+  }, [identification?.identification]);
+  const onSearch = () => {
+    const param = productLineForm.getFieldsValue();
+    queryComponentList({ componentType: tabActiveKey, ...param });
+    setQueryParams(param);
+  };
 
   return (
     <PageContainer>
       <ContentCard>
-        <UserModal
-          visable={userModalVisiable}
-          productLineOptions={productLineOptions}
+        <AddApplicationDraw
+          mode={batchAddMode}
+          productLineOptions={productLineOptions || []}
           tabActiveKey={tabActiveKey}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+          curProductLine={curProductLine}
+          onClose={() => setBatchAddMode('HIDE')}
+          onSave={() => {
+            const param = productLineForm.getFieldsValue();
+            queryComponentList({ componentType: tabActiveKey, ...param });
+            setBatchAddMode('HIDE');
+          }}
+        />
+
+        {/* <UserModal
+          visable={userModalVisiable}
+          productLineOptions={productLineOptions || []}
+          tabActiveKey={tabActiveKey}
+          curProductLine={curProductLine}
+          queryParams={queryParams}
+          queryComponentList={({ componentType: tabActiveKey }) => queryComponentList({ componentType: tabActiveKey })}
           onClose={() => {
             setUserModalVisiable(false);
           }}
-        />
+        /> */}
         <BasicDataModal
           visable={basicDataModalVisiable}
           tabActiveKey={tabActiveKey}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+          curProductLine={curProductLine}
+          queryParams={queryParams}
+          queryComponentList={({ componentType: tabActiveKey }) => queryComponentList({ componentType: tabActiveKey })}
           onClose={() => {
             setBasicDataModalVisiable(false);
           }}
         />
-        <MiddlewareModal
-          visable={middlewareModalVisibale}
-          tabActiveKey={tabActiveKey}
-          queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
-          onClose={() => {
-            setMiddlewareModalVisibale(false);
-          }}
-        />
-
         <>
           <FilterCard className="layout-compact">
             <Tabs
@@ -84,26 +99,52 @@ export default function VersionDetail() {
                 setTabActiveKey(key);
               }}
               tabBarExtraContent={
-                <div className="tab-right-extra">
-                  <span>
-                    {tabActiveKey !== 'middleware' && (
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          if (tabActiveKey === 'app') {
-                            setUserModalVisiable(true);
-                          }
-                          //  if (tabActiveKey === 'middleware') {
-                          //    // setMiddlewareModalVisibale(true);
-                          //  }
-                          if (tabActiveKey === 'sql') {
-                            setBasicDataModalVisiable(true);
-                          }
-                        }}
-                      >
-                        {pageTypes[tabActiveKey].text}
-                      </Button>
-                    )}
+                <div className="tab-right-extra" style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ marginRight: 10 }}>
+                    <Form form={productLineForm} layout="inline">
+                      <Form.Item name="componentName">
+                        <Input.Search
+                          style={{ width: 220 }}
+                          placeholder="请输入名称进行查找"
+                          onSearch={onSearch}
+                        ></Input.Search>
+                      </Form.Item>
+                      {tabActiveKey === 'app' && (
+                        <Form.Item name="productLine" label="切换产品线">
+                          <Select
+                            style={{ width: 160 }}
+                            defaultValue={curProductLine || ''}
+                            options={productLineOptions || []}
+                            onChange={getCurProductLine}
+                            loading={selectLoading}
+                            showSearch
+                            allowClear
+                          />
+                        </Form.Item>
+                      )}
+
+                      <span>
+                        {tabActiveKey !== 'middleware' && (
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              if (tabActiveKey === 'app') {
+                                setBatchAddMode('ADD');
+                                // setUserModalVisiable(true);
+                              }
+                              //  if (tabActiveKey === 'middleware') {
+                              //    // setMiddlewareModalVisibale(true);
+                              //  }
+                              if (tabActiveKey === 'sql') {
+                                setBasicDataModalVisiable(true);
+                              }
+                            }}
+                          >
+                            {pageTypes[tabActiveKey].text}
+                          </Button>
+                        )}
+                      </span>
+                    </Form>
                   </span>
                 </div>
               }
@@ -116,8 +157,11 @@ export default function VersionDetail() {
           <div>
             <InfoTable
               currentTab={tabActiveKey}
+              curProductLine={curProductLine}
               dataSource={dataSource}
-              queryComponentList={(tabActiveKey: any) => queryComponentList(tabActiveKey)}
+              queryComponentList={({ componentType: tabActiveKey }) =>
+                queryComponentList({ componentType: tabActiveKey, productLine: curProductLine })
+              }
               tableLoading={loading}
             />
           </div>
