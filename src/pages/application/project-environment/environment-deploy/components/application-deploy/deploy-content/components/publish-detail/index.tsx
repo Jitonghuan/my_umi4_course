@@ -39,6 +39,15 @@ export default function PublishDetail(props: IProps) {
     if (!envTypeCode) return;
   }, [appCategoryCode, envTypeCode, metadata?.id]);
 
+  useEffect(() => {
+    if (masterListData.length !== 0) {
+      const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
+      setMasterBranchOptions(option);
+      const initValue = option.find((item: any) => item.label === 'master');
+      setSelectMaster(initValue?.value);
+    }
+  }, [masterListData]);
+
   // 取消发布
   const handleCancelPublish = () => {
     onOperate('cancelDeployStart');
@@ -85,7 +94,7 @@ export default function PublishDetail(props: IProps) {
     try {
       const res = await deployMaster({
         pipelineCode,
-        envCodes: envCode,
+        envCodes: [envCode],
         buildType: getBuildType(),
         masterBranch: selectMaster, //主干分支
       });
