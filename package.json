@@ -6,7 +6,7 @@
     "dev": "NODE_ENV=development MOCK=none umi dev",
     "mock": "cross-env NODE_ENV=development umi dev",
     "start": "fnpm i && npm run dev",
-    "build": "cross-env umi build",
+    "build": "umi build",
     "build:analyze": "cross-env ANALYZE=1 umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
