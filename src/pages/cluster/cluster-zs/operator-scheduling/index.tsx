@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Card, Select, Input, Table, message, Divider } from 'antd';
+import { Form, Button, Card, Select, Input, Table, message, Divider, Modal } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import * as APIS from './service';
 import appConfig from '@/app.config';
@@ -16,6 +16,7 @@ import './index.less';
 export default function OperatorScheduling(props: any) {
   const { visable } = props;
   const [commonEnvCode, setCommonEnvCode] = useState<string>('');
+  const [logger, setLogger] = useState<string>();
   const [clusterA_patientData, setClusterA_patientData] = useState<any[]>(
     localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : [],
   ); //A集群患者信息
@@ -287,6 +288,7 @@ export default function OperatorScheduling(props: any) {
     postRequest(`${APIS.addMultipleClusterUser}?envCode=${commonEnvCode}`, { data: [...arryParams] }).then((res) => {
       if (res.success) {
         message.success('提交成功！');
+        setLogger(res.data || '');
       }
     });
   };
@@ -403,6 +405,16 @@ export default function OperatorScheduling(props: any) {
           </div>
         </div>
       </div>
+      <Modal
+        visible={!!logger}
+        title="同步日志"
+        maskClosable={false}
+        footer={false}
+        onCancel={() => setLogger(undefined)}
+        width={800}
+      >
+        <pre className="pre-block">{logger}</pre>
+      </Modal>
     </div>
     // </ContentCard>
   );
