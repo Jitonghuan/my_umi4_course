@@ -107,19 +107,51 @@ export default function DemoPageTb(porps: any) {
       return prev;
     }, {} as any);
 
+    let javaParamsObj = {
+      templateName: value.templateName,
+      templateType: value.templateType,
+      templateValue: value.templateValue,
+      appCategoryCode: value.appCategoryCode || '',
+      envCodes: value.envCodes || [],
+      tmplConfigurableItem: tmplConfigurableItem || {},
+      languageCode: value?.languageCode,
+      jvm: value?.jvm,
+      remark: value?.remark,
+    };
+    let javaSecretParamsObj = {
+      templateName: value.templateName,
+      templateType: value.templateType,
+      templateValue: value.templateValue,
+      appCategoryCode: value.appCategoryCode || '',
+      envCodes: value.envCodes || [],
+      languageCode: value?.languageCode,
+      jvm: value?.jvm,
+      remark: value?.remark,
+    };
+    let paramsObj = {
+      templateName: value.templateName,
+      templateType: value.templateType,
+      templateValue: value.templateValue,
+      appCategoryCode: value.appCategoryCode || '',
+      envCodes: value.envCodes || [],
+      tmplConfigurableItem: tmplConfigurableItem || {},
+      languageCode: value?.languageCode,
+      remark: value?.remark,
+    };
+
+    let secretParamsObj = {
+      templateName: value.templateName,
+      templateType: value.templateType,
+      templateValue: value.templateValue,
+      appCategoryCode: value.appCategoryCode || '',
+      envCodes: value.envCodes || [],
+      languageCode: value?.languageCode,
+      remark: value?.remark,
+    };
+
     if (value?.languageCode === 'java') {
       postRequest(APIS.create, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: value.envCodes || [],
-          tmplConfigurableItem: tmplConfigurableItem || {},
-          languageCode: value?.languageCode,
-          jvm: value?.jvm,
-          remark: value?.remark,
-        },
+        data: isDeployment !== 'secret' ? javaParamsObj : javaSecretParamsObj,
       }).then((resp: any) => {
         if (resp.success) {
           const datas = resp.data || [];
@@ -133,16 +165,7 @@ export default function DemoPageTb(porps: any) {
       });
     } else {
       postRequest(APIS.create, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: value.envCodes || [],
-          tmplConfigurableItem: tmplConfigurableItem || {},
-          languageCode: value?.languageCode,
-          remark: value?.remark,
-        },
+        data: isDeployment !== 'secret' ? paramsObj : secretParamsObj,
       }).then((resp: any) => {
         if (resp.success) {
           const datas = resp.data || [];
@@ -204,21 +227,26 @@ export default function DemoPageTb(porps: any) {
             </Col>
 
             <Col span={10} offset={2}>
-              <div style={{ fontSize: 15, color: '#696969' }}>可配置项：</div>
-              <Form.Item name="tmplConfigurableItem">
-                <EditorTable
-                  value={source}
-                  onChange={handleChange}
-                  columns={[
-                    { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
-                    {
-                      title: '缺省值',
-                      dataIndex: 'value',
-                      colProps: { width: 280 },
-                    },
-                  ]}
-                />
-              </Form.Item>
+              {isDeployment !== 'secret' && (
+                <>
+                  <div style={{ fontSize: 15, color: '#696969' }}>可配置项：</div>
+                  <Form.Item name="tmplConfigurableItem">
+                    <EditorTable
+                      value={source}
+                      onChange={handleChange}
+                      columns={[
+                        { title: 'Key', dataIndex: 'key', colProps: { width: 240 } },
+                        {
+                          title: '缺省值',
+                          dataIndex: 'value',
+                          colProps: { width: 280 },
+                        },
+                      ]}
+                    />
+                  </Form.Item>
+                </>
+              )}
+
               {isDeployment === 'deployment' && languageCurrent === 'java' ? <span>JVM参数:</span> : ''}
               {isDeployment === 'deployment' && languageCurrent === 'java' ? (
                 <Form.Item name="jvm" rules={[{ required: true, message: '这是必填项' }]}>

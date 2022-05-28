@@ -75,7 +75,7 @@ export default function OperatorScheduling(props: any) {
   const [form] = Form.useForm();
   const clusterA_patientColumns = [
     {
-      title: '患者',
+      title: '用户',
       dataIndex: 'userId',
       key: 'userId',
     },
@@ -96,7 +96,7 @@ export default function OperatorScheduling(props: any) {
   ];
   const clusterB_patientColumns = [
     {
-      title: '患者',
+      title: '用户',
       dataIndex: 'userId',
       key: 'userId',
     },
@@ -315,7 +315,7 @@ export default function OperatorScheduling(props: any) {
                 <Select style={{ width: 180 }}>
                   <Select.Option key="patient" value="patient">
                     {' '}
-                    患者
+                    用户
                   </Select.Option>
                   <Select.Option key="operator" value="operator">
                     {' '}
