@@ -9,7 +9,8 @@ function mapData(arr: any) {
   return arr.map(({ id, key, endpointName, children, ...other }: any) => {
     return {
       ...other,
-      // id: id+'',
+      // id: id + 'key',
+      // id: endpointName + '',
       // label: endpointName,
       label: formatText(endpointName, 20),
       oriLabel: endpointName,
@@ -54,7 +55,25 @@ export default function rightTree(props: any) {
       height: container.clientHeight,
       plugins: [tooltip], // 插件
       modes: {
-        default: ['drag-canvas', 'zoom-canvas'],
+        default: [
+          {
+            type: 'collapse-expand',
+            onChange: function onChange(item: any, collapsed: any) {
+              const data = item.get('model');
+              data.collapsed = collapsed;
+              return true;
+            },
+            shouldBegin: (e: any) => {
+              if (e.target?.cfg?.type === 'text') {
+                return false;
+              } else {
+                return true;
+              }
+            },
+          },
+          'drag-canvas',
+          'zoom-canvas',
+        ],
       },
       defaultNode: {
         size: 26,
@@ -78,7 +97,6 @@ export default function rightTree(props: any) {
     });
     g.node(function (node: any) {
       return {
-        label: node.id,
         labelCfg: {
           position: node.children && node.children.length > 0 ? 'left' : 'right',
           offset: 5,
@@ -114,7 +132,9 @@ export default function rightTree(props: any) {
 
   const bindListener = (graph: any) => {
     graph.on('node:click', (evt: any) => {
-      showModal(evt.item._cfg.model);
+      if (evt.target?.cfg?.type === 'text') {
+        showModal(evt.item._cfg.model);
+      }
     });
     // graph.on('node:mouseenter', (evt: any) => {
     //   const { item } = evt;
