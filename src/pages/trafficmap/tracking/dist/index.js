@@ -121,7 +121,6 @@ function Tracking() {
         var _a;
         if (currentItem && ((_a = currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds) === null || _a === void 0 ? void 0 : _a.length) !== 0) {
             queryTreeData(noiseList);
-            console.log(111);
         }
     }, [currentItem]);
     //获取应用
@@ -204,7 +203,6 @@ function Tracking() {
                     return data;
                 };
                 var rightData_1 = handleData_1(res === null || res === void 0 ? void 0 : res.data);
-                console.log(rightData_1);
                 setRightData([rightData_1]);
             }
         })["finally"](function () {
@@ -307,6 +305,6 @@ function Tracking() {
                         } }, btnMessage === null || btnMessage === void 0 ? void 0 :
                         btnMessage.label,
                         React.createElement("span", { style: { marginLeft: '3px' } }, btnMessage === null || btnMessage === void 0 ? void 0 : btnMessage.icon)))),
-            React.createElement("div", { className: "detail-main" }, first ? (React.createElement("div", { className: "empty-holder" }, "\u8BF7\u70B9\u51FB\u67E5\u8BE2\u8FDB\u884C\u641C\u7D22")) : (React.createElement(resiable_pro_1["default"], { leftComp: React.createElement(left_list_1["default"], { listData: listData || [], total: total, loading: loading, changeItem: leftItemChange, pageChange: queryTraceList }), rightComp: ((rightData === null || rightData === void 0 ? void 0 : rightData.length) !== 0 || rightLoading) ? (React.createElement(right_trace_1["default"], { item: currentItem || {}, data: rightData, envCode: selectEnv, selectTime: selectTime, noiseChange: noiseChange, loading: rightLoading })) : (React.createElement(antd_1.Empty, { image: antd_1.Empty.PRESENTED_IMAGE_SIMPLE, style: { width: '100%', overflow: 'hidden' } })), isShowExpandIcon: true, defaultClose: true, leftWidth: 240 }))))));
+            React.createElement("div", { className: "detail-main" }, first ? (React.createElement("div", { className: "empty-holder" }, "\u8BF7\u70B9\u51FB\u67E5\u8BE2\u8FDB\u884C\u641C\u7D22")) : (React.createElement(resiable_pro_1["default"], { leftComp: React.createElement(left_list_1["default"], { listData: listData || [], total: total, loading: loading, changeItem: leftItemChange, pageChange: queryTraceList }), rightComp: (rightData === null || rightData === void 0 ? void 0 : rightData.length) !== 0 || rightLoading ? (React.createElement(right_trace_1["default"], { item: currentItem || {}, data: rightData, envCode: selectEnv, selectTime: selectTime, noiseChange: noiseChange, loading: rightLoading })) : (React.createElement(antd_1.Empty, { image: antd_1.Empty.PRESENTED_IMAGE_SIMPLE, style: { width: '100%', overflow: 'hidden' } })), isShowExpandIcon: true, defaultClose: true, leftWidth: 240 }))))));
 }
 exports["default"] = Tracking;

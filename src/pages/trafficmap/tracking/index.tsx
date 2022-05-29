@@ -117,7 +117,6 @@ export default function Tracking() {
   useEffect(() => {
     if (currentItem && currentItem?.traceIds?.length !== 0) {
       queryTreeData(noiseList);
-      console.log(111);
     }
   }, [currentItem]);
 
@@ -202,7 +201,6 @@ export default function Tracking() {
             return data;
           };
           const rightData = handleData(res?.data);
-          console.log(rightData);
 
           setRightData([rightData]);
         }
