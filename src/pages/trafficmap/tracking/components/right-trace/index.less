@@ -1,0 +1,187 @@
+.ant-tooltip {
+  max-width: inherit;
+}
+
+// 左边的list样式
+//右边的追踪图样式
+.trace-wrapper {
+  .ant-table-tbody > tr td {
+    font-size: 13px;
+  }
+
+  .ant-table-tbody > .error-line td {
+    color: red;
+  }
+
+  .process-wrapper {
+  }
+
+  &-title {
+    margin-right: 10px;
+    // width: 200px;
+    display: flex;
+
+    span {
+      margin-left: 15px;
+      background-color: #c5c0c0;
+      color: white;
+      padding: 5px;
+    }
+  }
+
+  .ant-tree-switcher-leaf-line::before {
+    right: 16px;
+  }
+
+  .ant-tree-switcher-leaf-line::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    top: 14px;
+    left: 12px;
+    border-radius: 50%;
+    background-color: #3277d1;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .scale-warpper {
+    width: 100%;
+    height: 30px;
+    padding: 0 4px;
+  }
+
+  .span-item-wrapper {
+    .trace-time {
+      min-width: 300px;
+      position: absolute;
+      right: 0px;
+    }
+  }
+
+  // .scale,
+  // .span-progress {
+  //   width: 300px;
+  // }
+
+  .span-item {
+    display: flex;
+    justify-content: space-between;
+
+    // &.leaf::before {
+    //   content: '';
+    //   display: inline-block;
+    //   width: 8px;
+    //   height: 8px;
+    //   border-radius: 50%;
+    //   background-color: #3e8fe2;
+    //   margin: 0px 8px;
+    //   align-self: center;
+    //   // margin-left: -27px;
+    // }
+
+    .span-title {
+      margin-right: 10px;
+      // font-weight: bold;
+      white-space: nowrap;
+      font-size: 12px;
+      max-width: 12%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+
+      &.error {
+        color: red;
+      }
+    }
+
+    .span-detail {
+      // display: none;
+      color: #999;
+      white-space: nowrap;
+    }
+  }
+
+  .span-icon {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4e59d3;
+    display: inline-block;
+    // margin-right: 5px;
+  }
+
+  .parent-icon {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4e59d3;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .ant-tree.ant-tree-block-node .ant-tree-list-holder-inner {
+    width: 100%;
+  }
+
+  .ant-tree .ant-tree-treenode {
+    position: relative;
+  }
+
+  .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
+  .ant-tree .ant-tree-node-content-wrapper:hover {
+    background: initial;
+  }
+
+  .span-item {
+    width: 100%;
+    display: flex;
+
+    .ant-progress-line {
+      // width: 30%;
+    }
+
+    &-wrapper {
+      width: 100%;
+      justify-content: space-between;
+      display: flex;
+    }
+  }
+
+  .ant-progress-outer {
+    width: 100%;
+  }
+
+  .ant-tree-list-holder-inner {
+    line-height: 33px;
+  }
+}
+
+.trace-wrapper-top {
+  line-height: 28px;
+  background-color: #ededed;
+  padding: 5px;
+
+  .top-select-btn {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .top-final {
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .top-trace-btn {
+    background-color: #137eec;
+    color: white;
+    padding: 0px 4px;
+    border-radius: 2px;
+    margin-right: 10px;
+  }
+}

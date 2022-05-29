@@ -59,7 +59,7 @@ export default function addEnvData(props: IProps) {
           message.success('新增NG配置成功！');
           onSave?.();
         } else {
-          message.error(result.errorMsg);
+          // message.error(result.errorMsg);
         }
       });
     } else if (mode === 'EDIT') {
@@ -83,7 +83,7 @@ export default function addEnvData(props: IProps) {
           message.success('编辑配置成功！');
           onSave?.();
         } else {
-          message.error(result.errorMsg);
+          // message.error(result.errorMsg);
         }
       });
     }
