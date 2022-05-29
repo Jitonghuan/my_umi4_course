@@ -1,9 +1,18 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { Tag, Divider, Progress, Select, Table } from 'antd';
 
-export default function TraceTime({ durations = 0, allDurations = 0, selfDurations = 0 }: any) {
-  const allP = (durations / allDurations) * 100;
-  const selfP = (selfDurations / durations) * 100;
+export default function TraceTime({ durations, allDurations, selfDurations }: any) {
+  let allP = 0;
+  let selfP = 0;
+  if (durations !== 0) {
+    allP = (durations / allDurations) * 100;
+  }
+  if (selfDurations !== 0 && durations !== 0) {
+    selfP = (selfDurations / durations) * 100;
+  }
+
+  // const allP = (durations / allDurations) * 100;
+  // const selfP = (selfDurations / durations) * 100;
 
   return (
     <div className="trace-time">

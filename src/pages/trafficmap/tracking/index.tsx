@@ -116,7 +116,8 @@ export default function Tracking() {
   // 获取右侧图的数据
   useEffect(() => {
     if (currentItem && currentItem?.traceIds?.length !== 0) {
-      queryTreeData([]);
+      queryTreeData(noiseList);
+      console.log(111);
     }
   }, [currentItem]);
 
@@ -155,6 +156,7 @@ export default function Tracking() {
     setFirst(false);
     setLoading(true);
     // setListData([]);
+    setRightLoading(true);
     const values = form.getFieldsValue();
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
@@ -165,8 +167,12 @@ export default function Tracking() {
           setTotal(res?.data?.pageInfo?.total);
         }
       })
+      .catch((e) => {
+        setRightLoading(false);
+      })
       .finally(() => {
         setLoading(false);
+        // setRightLoading(false)
       });
   };
 
@@ -192,9 +198,12 @@ export default function Tracking() {
             data.durations = parseInt(data.endTime) - parseInt(data.startTime); //执行时间
             const self = data.durations - data.children.reduce((p: number, c: any) => p + c.durations, 0);
             data.selfDurations = self < 0 ? 0 : self; //自身执行时间
+
             return data;
           };
           const rightData = handleData(res?.data);
+          console.log(rightData);
+
           setRightData([rightData]);
         }
       })
@@ -280,7 +289,7 @@ export default function Tracking() {
           </div>
         </div>
         <Divider />
-        <div style={{ marginBottom: '20px' }}>
+        <div className="search-form" style={{ marginBottom: '20px' }}>
           <Form
             layout="inline"
             form={form}
@@ -308,13 +317,26 @@ export default function Tracking() {
                   }}
                   allowClear
                   showSearch
+                  optionFilterProp="label"
+                  filterOption={(input, option) => {
+                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                  }}
                   style={{ width: 160 }}
                 />
               </Form.Item>
             )}
             {expand && (
               <Form.Item label="实例" name="instanceCode">
-                <Select options={instanceList} showSearch allowClear style={{ width: 150 }} />
+                <Select
+                  options={instanceList}
+                  showSearch
+                  allowClear
+                  style={{ width: 150 }}
+                  optionFilterProp="label"
+                  filterOption={(input, option) => {
+                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                  }}
+                />
               </Form.Item>
             )}
             {expand && (
@@ -371,7 +393,7 @@ export default function Tracking() {
                 />
               }
               rightComp={
-                listData && listData?.length !== 0 ? (
+                rightData?.length !== 0 || rightLoading ? (
                   <RrightTrace
                     item={currentItem || {}}
                     data={rightData}
