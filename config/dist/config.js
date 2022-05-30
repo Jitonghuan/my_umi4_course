@@ -23,24 +23,10 @@ exports["default"] = umi_1.defineConfig({
     // ------------------- 可以根据实际情况修改的配置项 -------------------
     // 文件依赖路径别名，默认支持 @/ 指向 src/
     alias: {},
-    esbuild: {},
     chainWebpack: function (config, _a) {
         var webpack = _a.webpack;
         config.plugin('monaco-editor').use(monaco_editor_webpack_plugin_1["default"]);
     },
-    // extraBabelPlugins: [
-    //   "@babel/syntax-dynamic-import",
-    //   ["@babel/plugin-proposal-private-methods", { "loose": true }],
-    //   ["@babel/proposal-class-properties", { "loose": true }],
-    //   [
-    //     "import",
-    //     {
-    //       "libraryName": "antd",
-    //       "libraryDirectory": "lib",
-    //       "style": true
-    //     }
-    //   ]
-    // ],
     // 本地开发请求代理规则
     proxy: {
         '/user_backend': {
