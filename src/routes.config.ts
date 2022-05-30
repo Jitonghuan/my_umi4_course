@@ -624,7 +624,7 @@ export default [
         name: '追踪',
         key: 'trafficmap-track',
         component: '@/pages/trafficmap/tracking',
-        hideInMenu: process.env.BUILD_ENV === 'prod',
+        // hideInMenu: process.env.BUILD_ENV === 'prod',
       },
       {
         path: 'config',
