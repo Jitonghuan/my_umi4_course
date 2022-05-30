@@ -42,6 +42,9 @@ export default function RrightTrace(props: any) {
       setTraceIdOptions([{ label: item?.traceIds[0], value: item?.traceIds[0] }]);
       setSelectTraceId(item?.traceIds[0]);
     }
+    if (!item?.traceIds) {
+      setSelectTraceId('');
+    }
   }, [item]);
   const containerRef = useCallback(
     (node: any) => {
@@ -293,9 +296,8 @@ export default function RrightTrace(props: any) {
                             }
                           >
                             <div
-                              className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${
-                                node.isError ? 'error-node' : ''
-                              } span-item`}
+                              className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${node.isError ? 'error-node' : ''
+                                } span-item`}
                               onClick={() => {
                                 setDetailData(node);
                                 setVisible(true);

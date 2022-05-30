@@ -119,7 +119,7 @@ function Tracking() {
     // 获取右侧图的数据
     react_1.useEffect(function () {
         var _a;
-        if (currentItem && ((_a = currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds) === null || _a === void 0 ? void 0 : _a.length) !== 0) {
+        if (currentItem && (currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds) && ((_a = currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds) === null || _a === void 0 ? void 0 : _a.length) !== 0) {
             queryTreeData(noiseList);
         }
     }, [currentItem]);
@@ -162,10 +162,14 @@ function Tracking() {
         var end = moment_1["default"](selectTime.end).format('YYYY-MM-DD HH:mm:ss');
         service_1.getTrace(__assign(__assign(__assign({}, params), values), { end: end, start: start, envCode: selectEnv, noiseReductionIDs: noiseList }))
             .then(function (res) {
-            var _a, _b, _c;
+            var _a, _b, _c, _d, _e;
             if (res) {
                 setListData((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.dataSource);
                 setTotal((_c = (_b = res === null || res === void 0 ? void 0 : res.data) === null || _b === void 0 ? void 0 : _b.pageInfo) === null || _c === void 0 ? void 0 : _c.total);
+                if (((_e = (_d = res === null || res === void 0 ? void 0 : res.data) === null || _d === void 0 ? void 0 : _d.dataSource) === null || _e === void 0 ? void 0 : _e.length) === 0 || !(res === null || res === void 0 ? void 0 : res.success)) {
+                    setRightData([]);
+                    setRightLoading(false);
+                }
             }
         })["catch"](function (e) {
             setRightLoading(false);
@@ -176,7 +180,7 @@ function Tracking() {
     };
     // 获取右侧数据
     var queryTreeData = function (value) {
-        if (!(currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds[0]))
+        if (!(currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds) || !(currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds[0]))
             return;
         setRightLoading(true);
         service_1.getTraceInfo({ traceID: currentItem === null || currentItem === void 0 ? void 0 : currentItem.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
@@ -247,7 +251,7 @@ function Tracking() {
         }
         return roots;
     }
-    return (React.createElement(page_container_1["default"], { className: 'tracking-container' },
+    return (React.createElement(page_container_1["default"], { className: "tracking-container" },
         React.createElement(vc_page_content_1.ContentCard, { className: "trace-detail-page", style: { height: '100%' } },
             React.createElement("div", { className: "detail-top" },
                 React.createElement("div", null,
@@ -270,6 +274,7 @@ function Tracking() {
                         });
                     }, onReset: function () {
                         form.resetFields();
+                        setCurrentItem({});
                         queryTraceList({
                             pageIndex: 1,
                             pageSize: 20

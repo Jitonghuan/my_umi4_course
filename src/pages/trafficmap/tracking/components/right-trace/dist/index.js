@@ -48,6 +48,9 @@ function RrightTrace(props) {
             setTraceIdOptions([{ label: item === null || item === void 0 ? void 0 : item.traceIds[0], value: item === null || item === void 0 ? void 0 : item.traceIds[0] }]);
             setSelectTraceId(item === null || item === void 0 ? void 0 : item.traceIds[0]);
         }
+        if (!(item === null || item === void 0 ? void 0 : item.traceIds)) {
+            setSelectTraceId('');
+        }
     }, [item]);
     var containerRef = react_1.useCallback(function (node) {
         if (node) {
@@ -218,7 +221,7 @@ function RrightTrace(props) {
                         react_1["default"].createElement("div", { ref: containerRef, className: "scale", style: { float: 'right' } })),
                     data && data.length ? (react_1["default"].createElement(antd_2.Tree, { treeData: treeData, blockNode: true, defaultExpandAll: true, showIcon: false, showLine: { showLeafIcon: false }, switcherIcon: react_1["default"].createElement("span", { className: "span-icon" }), titleRender: function (node) {
                             return (react_1["default"].createElement(antd_1.Tooltip, { title: react_1["default"].createElement("ul", null,
-                                    react_1["default"].createElement("li", { style: { whiteSpace: "nowrap" } }, (node === null || node === void 0 ? void 0 : node.endpointName) || ''),
+                                    react_1["default"].createElement("li", { style: { whiteSpace: 'nowrap' } }, (node === null || node === void 0 ? void 0 : node.endpointName) || ''),
                                     react_1["default"].createElement("li", null,
                                         "TotalDurations:", ((node === null || node === void 0 ? void 0 : node.durations) || 0) + "ms"),
                                     react_1["default"].createElement("li", null,

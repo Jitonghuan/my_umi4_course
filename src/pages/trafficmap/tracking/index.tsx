@@ -53,7 +53,7 @@ export default function Tracking() {
   const [instanceList, setInstanceList] = useState([]);
   const [envOptions, setEnvOptions] = useState<any>([]);
   const [expand, setIsExpand] = useState<boolean>(false);
-  const [currentItem, setCurrentItem] = useState<leftItem>();
+  const [currentItem, setCurrentItem] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false); //左侧列表的loading
   const [rightLoading, setRightLoading] = useState<boolean>(false); //右侧的loading
   const [total, setTotal] = useState<number>(0);
@@ -115,7 +115,7 @@ export default function Tracking() {
 
   // 获取右侧图的数据
   useEffect(() => {
-    if (currentItem && currentItem?.traceIds?.length !== 0) {
+    if (currentItem && currentItem?.traceIds && currentItem?.traceIds?.length !== 0) {
       queryTreeData(noiseList);
     }
   }, [currentItem]);
@@ -164,6 +164,10 @@ export default function Tracking() {
         if (res) {
           setListData(res?.data?.dataSource);
           setTotal(res?.data?.pageInfo?.total);
+          if (res?.data?.dataSource?.length === 0 || !res?.success) {
+            setRightData([])
+            setRightLoading(false);
+          }
         }
       })
       .catch((e) => {
@@ -177,7 +181,7 @@ export default function Tracking() {
 
   // 获取右侧数据
   const queryTreeData = (value: any) => {
-    if (!currentItem?.traceIds[0]) return;
+    if (!currentItem?.traceIds || !currentItem?.traceIds[0]) return;
     setRightLoading(true);
     getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
       .then((res: any) => {
@@ -275,7 +279,7 @@ export default function Tracking() {
               }}
               value={[moment(selectTime.start), moment(selectTime.end)]}
               format="YYYY-MM-DD HH:mm:ss"
-              // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
+            // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
             />
             <Select value={timeOption} onChange={timeOptionChange} style={{ width: 140 }}>
               {START_TIME_ENUMS.map((time) => (
@@ -299,6 +303,7 @@ export default function Tracking() {
             }}
             onReset={() => {
               form.resetFields();
+              setCurrentItem({});
               queryTraceList({
                 pageIndex: 1,
                 pageSize: 20,
