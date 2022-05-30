@@ -93,15 +93,15 @@ export default defineConfig({
   publicPath: publicPathPrefix,
 
   // 配置 external 资源外部依赖, react, react-dom
-  externals: NODE_ENV === 'development' ? {} : {
-    react: 'window.React',
-    'react-dom': 'window.ReactDOM'
-  },
+  // externals: NODE_ENV === 'development' ? {} : {
+  //   react: 'window.React',
+  //   'react-dom': 'window.ReactDOM'
+  // },
 
   // HTML 中以 <script> 方式引用的资源
   scripts: NODE_ENV === 'development' ? [] : [
-    { src: `http://hbos-dev.cfuture.shop/common/react/17.0.1/react.development.js` },
-    { src: `http://hbos-dev.cfuture.shop/common/react-dom/17.0.1/react-dom.development.js` },
+    // { src: `http://hbos-dev.cfuture.shop/common/react/17.0.1/react.development.js` },
+    // { src: `http://hbos-dev.cfuture.shop/common/react-dom/17.0.1/react-dom.development.js` },
     // { src: `${publicPathPrefix}react.min.js` },
     // { src: `${publicPathPrefix}react-dom.min.js` },
     `window.BUILD_ENV = "${BUILD_ENV}"`

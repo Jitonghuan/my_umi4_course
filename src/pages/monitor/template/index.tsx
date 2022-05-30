@@ -241,6 +241,10 @@ const TemplateCom: React.FC = () => {
     api: queryGroupList,
     method: 'GET',
     onSuccess: (data) => {
+      if (!data) {
+        setGroupData([]);
+        return;
+      }
       setGroupData(
         data?.map((v: any) => {
           return {
