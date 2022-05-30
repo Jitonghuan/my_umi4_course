@@ -1,26 +1,26 @@
-.ant-tooltip {
+.tracking-container .ant-tooltip {
   max-width: inherit;
 }
-.trace-wrapper .ant-table-tbody > tr td {
+.tracking-container .trace-wrapper .ant-table-tbody > tr td {
   font-size: 13px;
 }
-.trace-wrapper .ant-table-tbody > .error-line td {
+.tracking-container .trace-wrapper .ant-table-tbody > .error-line td {
   color: red;
 }
-.trace-wrapper-title {
+.tracking-container .trace-wrapper-title {
   margin-right: 10px;
   display: flex;
 }
-.trace-wrapper-title span {
+.tracking-container .trace-wrapper-title span {
   margin-left: 15px;
   background-color: #c5c0c0;
   color: white;
   padding: 5px;
 }
-.trace-wrapper .ant-tree-switcher-leaf-line::before {
+.tracking-container .trace-wrapper .ant-tree-switcher-leaf-line::before {
   right: 16px;
 }
-.trace-wrapper .ant-tree-switcher-leaf-line::after {
+.tracking-container .trace-wrapper .ant-tree-switcher-leaf-line::after {
   content: '';
   width: 8px;
   height: 8px;
@@ -31,21 +31,21 @@
   display: inline-block;
   margin-right: 5px;
 }
-.trace-wrapper .scale-warpper {
+.tracking-container .trace-wrapper .scale-warpper {
   width: 100%;
   height: 30px;
   padding: 0 4px;
 }
-.trace-wrapper .span-item-wrapper .trace-time {
+.tracking-container .trace-wrapper .span-item-wrapper .trace-time {
   min-width: 300px;
   position: absolute;
   right: 0px;
 }
-.trace-wrapper .span-item {
+.tracking-container .trace-wrapper .span-item {
   display: flex;
   justify-content: space-between;
 }
-.trace-wrapper .span-item .span-title {
+.tracking-container .trace-wrapper .span-item .span-title {
   margin-right: 10px;
   white-space: nowrap;
   font-size: 12px;
@@ -53,14 +53,14 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.trace-wrapper .span-item .span-title.error {
+.tracking-container .trace-wrapper .span-item .span-title.error {
   color: red;
 }
-.trace-wrapper .span-item .span-detail {
+.tracking-container .trace-wrapper .span-item .span-detail {
   color: #999;
   white-space: nowrap;
 }
-.trace-wrapper .span-icon {
+.tracking-container .trace-wrapper .span-icon {
   content: '';
   width: 8px;
   height: 8px;
@@ -68,7 +68,7 @@
   background-color: #4e59d3;
   display: inline-block;
 }
-.trace-wrapper .parent-icon {
+.tracking-container .trace-wrapper .parent-icon {
   content: '';
   width: 8px;
   height: 8px;
@@ -77,46 +77,46 @@
   display: inline-block;
   margin-right: 5px;
 }
-.trace-wrapper .ant-tree.ant-tree-block-node .ant-tree-list-holder-inner {
+.tracking-container .trace-wrapper .ant-tree.ant-tree-block-node .ant-tree-list-holder-inner {
   width: 100%;
 }
-.trace-wrapper .ant-tree .ant-tree-treenode {
+.tracking-container .trace-wrapper .ant-tree .ant-tree-treenode {
   position: relative;
 }
-.trace-wrapper .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
-.trace-wrapper .ant-tree .ant-tree-node-content-wrapper:hover {
+.tracking-container .trace-wrapper .ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
+.tracking-container .trace-wrapper .ant-tree .ant-tree-node-content-wrapper:hover {
   background: initial;
 }
-.trace-wrapper .span-item {
+.tracking-container .trace-wrapper .span-item {
   width: 100%;
   display: flex;
 }
-.trace-wrapper .span-item-wrapper {
+.tracking-container .trace-wrapper .span-item-wrapper {
   width: 100%;
   justify-content: space-between;
   display: flex;
 }
-.trace-wrapper .ant-progress-outer {
+.tracking-container .trace-wrapper .ant-progress-outer {
   width: 100%;
 }
-.trace-wrapper .ant-tree-list-holder-inner {
+.tracking-container .trace-wrapper .ant-tree-list-holder-inner {
   line-height: 33px;
 }
-.trace-wrapper-top {
+.tracking-container .trace-wrapper-top {
   line-height: 28px;
   background-color: #ededed;
   padding: 5px;
 }
-.trace-wrapper-top .top-select-btn {
+.tracking-container .trace-wrapper-top .top-select-btn {
   display: flex;
   justify-content: space-between;
 }
-.trace-wrapper-top .top-final {
+.tracking-container .trace-wrapper-top .top-final {
   font-size: 13px;
   display: flex;
   justify-content: space-between;
 }
-.trace-wrapper-top .top-trace-btn {
+.tracking-container .trace-wrapper-top .top-trace-btn {
   background-color: #137eec;
   color: white;
   padding: 0px 4px;
