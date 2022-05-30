@@ -95,6 +95,7 @@ export default function rightTree(props: any) {
         nodeSize: 10,
       },
     });
+    // g.refreshLayout(true)
     g.node(function (node: any) {
       return {
         labelCfg: {
@@ -108,6 +109,8 @@ export default function rightTree(props: any) {
       g.render();
       g.fitView();
     }
+    // 关闭局部渲染，防止有残影
+    g.get('canvas').set('localRefresh', false);
     bindListener(g);
     setGraph(g);
 
@@ -125,7 +128,7 @@ export default function rightTree(props: any) {
     resizeObserver.observe(container || document.body);
 
     return () => {
-      g && g.destory && g.destory();
+      g && g.destroy();
       resizeObserver.disconnect();
     };
   }, [containerRef, data]);

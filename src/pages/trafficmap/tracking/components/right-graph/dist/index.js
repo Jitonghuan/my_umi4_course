@@ -67,7 +67,8 @@ function rightTree(props) {
             height: container.clientHeight,
             plugins: [tooltip],
             modes: {
-                "default": [{
+                "default": [
+                    {
                         type: 'collapse-expand',
                         onChange: function onChange(item, collapsed) {
                             var data = item.get('model');
@@ -83,7 +84,10 @@ function rightTree(props) {
                                 return true;
                             }
                         }
-                    }, 'drag-canvas', 'zoom-canvas']
+                    },
+                    'drag-canvas',
+                    'zoom-canvas',
+                ]
             },
             defaultNode: {
                 size: 26,
@@ -105,6 +109,7 @@ function rightTree(props) {
                 nodeSize: 10
             }
         });
+        // g.refreshLayout(true)
         g.node(function (node) {
             return {
                 labelCfg: {
@@ -118,6 +123,8 @@ function rightTree(props) {
             g.render();
             g.fitView();
         }
+        // 关闭局部渲染，防止有残影
+        g.get('canvas').set('localRefresh', false);
         bindListener(g);
         setGraph(g);
         /**
@@ -136,7 +143,7 @@ function rightTree(props) {
         });
         resizeObserver.observe(container || document.body);
         return function () {
-            g && g.destory && g.destory();
+            g && g.destroy();
             resizeObserver.disconnect();
         };
     }, [containerRef, data]);
