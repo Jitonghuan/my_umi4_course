@@ -23,7 +23,7 @@ const APP_TYPE_MAP: { [index: string]: any } = {
 
 const APP_TYPE_TAG: Record<string, [string, React.ReactNode]> = {
   frontend: ['geekblue', <Html5Outlined />],
-  backend: ['default', <CodeOutlined />],
+  backend: ['cyan', <CodeOutlined />],
 };
 export function isValidKey(key: string | number | symbol, object: object): key is keyof typeof object {
   return key in object;

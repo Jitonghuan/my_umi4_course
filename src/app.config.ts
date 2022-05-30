@@ -2,8 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/23 14:58
 
-import logo from '@/assets/imgs/logoNew.svg';
-import favicon from '@/assets/imgs/logoNew.svg';
+import logo from '@/assets/imgs/logo7.png';
+import favicon from '@/assets/imgs/logo6.png';
 import { baseRoutePath } from './routes.config';
 import { domainName, wsPrefixName, LogoName, waterMarkName } from './envType.config';
 

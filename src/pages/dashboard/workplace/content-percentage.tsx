@@ -4,6 +4,7 @@ import { DonutChart } from 'bizcharts';
 
 import whiteBg from '@/assets/imgs/BGthree.png';
 // import '../workplace/style/content.module.less';
+import './style/contentpercentag.less';
 import {
   ActiveRingChart,
   BorderBox13,
@@ -81,6 +82,7 @@ function PopularContent() {
           style={{ height: 'calc(100vh - 390px)' }}
           color={['rgb(29, 193, 245)', 'blue']}
           reverse="{true}"
+          className="percentage"
         >
           {/* <Typography.Title heading={3} style={{ marginTop: '0px', lineHeight: 1, padding: 14,}}>
           Matrix云原生平台
@@ -100,18 +102,28 @@ function PopularContent() {
           {/* <div style={{ position: 'absolute' }} >
             <img src={whiteBg} style={{ top: 4, filter: 'opacity(0.3)', height: '50vh', width: '54vw' }}></img>
           </div> */}
-          <div style={{ paddingTop: 10, position: 'relative', zIndex: 4 }}>
+          <div
+            style={{
+              paddingTop: '6vh',
+              position: 'relative',
+              zIndex: 4,
+              display: 'flex',
+              flexWrap: 'wrap',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
             <Row style={{ display: 'flex', justifyContent: 'center' }}>
-              <Decoration9 style={{ width: '200px', height: '200px' }} dur={7}>
-                研发协同
+              <Decoration9 style={{ width: '12vw', height: '20vh' }} dur={7}>
+                <span className="textShadow"> 研发协同</span>
               </Decoration9>
             </Row>
             <Row style={{ display: 'flex', justifyContent: 'space-around' }}>
-              <Decoration9 style={{ width: '200px', height: '200px' }} dur={7}>
-                云原生
+              <Decoration9 style={{ width: '12vw', height: '20vh' }} dur={7}>
+                <span className="textShadow"> 云原生</span>
               </Decoration9>
-              <Decoration9 style={{ width: '200px', height: '200px' }} dur={7}>
-                交付运维
+              <Decoration9 style={{ width: '12vw', height: '20vh' }} dur={7}>
+                <span className="textShadow"> 交付运维</span>
               </Decoration9>
             </Row>
           </div>

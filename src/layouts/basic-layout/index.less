@@ -6,18 +6,43 @@
 @body-background: #474747;
 @component-background: #474749;
 @descriptions-bg: #353536;
+@page-color: #557392;
 //:rgba(23, 23, 26, 0.2);
 @allconfig-background: rgba(23, 23, 26, 0.2);
 .header-app .header-logo {
   border-radius: 0;
+  background-color: #519b9b;
+}
+.ant-pagination .ant-pagination-item-active {
+  background-color: @page-color;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background-color: @page-color;
+  border-color: @page-color;
+}
+.ant-pagination .ant-pagination-item-active:hover {
+  background-color: @page-color;
+  border-color: @page-color;
+}
+.ant-pagination .ant-pagination-item-active:hover > a {
+  color: #ffffff;
+}
+.ant-pagination .ant-pagination-item-active > a {
+  color: #ffffff;
+}
+
+.ant-table-cell > a {
+  color: #1973cc;
 }
 
 .header-app .header-deivider:last-child {
   display: none;
 }
 .h2o_header-wrapper {
-  // background: rgb(203, 221, 230) !important;
-  background: rgba(206, 233, 243, 0.8) !important;
+  background: rgba(0, 5, 10, 0.8) !important;
+  height: 46px;
+  // background: #0a0a0a;
 }
 // .matrix-title{
 //   color: #000;
@@ -30,17 +55,28 @@
   display: flex;
   justify-content: space-around;
 }
-.username,
-.userinfo,
-.department,
-.matrix-title,
-.anticon-alert,
-.anticon-comment {
-  // color: #FFFFFF;
-  color: #0a0a0a !important;
-}
+
 .separator {
   background-color: black !important;
+}
+
+.ant-layout-sider-children,
+.ant-layout-sider-trigger {
+  background-color: rgb(226, 226, 226) !important;
+}
+
+element.style {
+  width: 200px;
+}
+.v_basic-layout-wrapper .ant-layout-sider-trigger {
+  color: #444;
+  background: darkgrey;
+}
+
+.ant-layout-sider-children {
+  .ant-menu {
+    background: rgb(226, 225, 225) !important;
+  }
 }
 
 body[fone-theme='foneDark'] {
@@ -69,6 +105,12 @@ body[fone-theme='foneDark'] {
       background: @descriptions-bg !important;
     }
   }
+  .extension-entry {
+    background: none !important;
+  }
+  .matrix-title img {
+    background: none !important;
+  }
   .ant-table-cell .ant-table-cell-fix-right .ant-table-cell-fix-right-first {
     background: @descriptions-bg !important;
     * {
@@ -81,6 +123,12 @@ body[fone-theme='foneDark'] {
   .v_basic-layout-wrapper .ant-layout-sider-children {
     background: #232324 !important;
   }
+  .h2o_header-wrapper {
+    background: rgba(0, 5, 10, 0.8) !important;
+    height: 46px;
+    // background: #0a0a0a;
+  }
+
   .logo {
     background: none !important;
     .matrix-title {
@@ -90,6 +138,7 @@ body[fone-theme='foneDark'] {
       }
     }
   }
+
   .right-area {
     background: none !important;
     * {
@@ -111,6 +160,11 @@ body[fone-theme='foneDark'] {
 
   .arco-layout-sider-trigger-light {
     background: #232324 !important;
+  }
+  .ant-layout-sider-children {
+    .ant-menu {
+      background: #232324 !important;
+    }
   }
   .ant-table {
     background: @body-background !important;
