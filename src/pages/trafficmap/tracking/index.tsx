@@ -250,7 +250,7 @@ export default function Tracking() {
   }
 
   return (
-    <PageContainer>
+    <PageContainer className="tracking-container">
       <ContentCard className="trace-detail-page" style={{ height: '100%' }}>
         <div className="detail-top">
           <div>

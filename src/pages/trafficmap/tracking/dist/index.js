@@ -247,7 +247,7 @@ function Tracking() {
         }
         return roots;
     }
-    return (React.createElement(page_container_1["default"], null,
+    return (React.createElement(page_container_1["default"], { className: 'tracking-container' },
         React.createElement(vc_page_content_1.ContentCard, { className: "trace-detail-page", style: { height: '100%' } },
             React.createElement("div", { className: "detail-top" },
                 React.createElement("div", null,
