@@ -155,6 +155,7 @@ function Tracking() {
     var queryTraceList = function (params) {
         setFirst(false);
         setLoading(true);
+        setCurrentItem({});
         // setListData([]);
         setRightLoading(true);
         var values = form.getFieldsValue();

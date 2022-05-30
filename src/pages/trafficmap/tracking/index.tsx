@@ -154,6 +154,7 @@ export default function Tracking() {
   const queryTraceList = (params: any) => {
     setFirst(false);
     setLoading(true);
+    setCurrentItem({});
     // setListData([]);
     setRightLoading(true);
     const values = form.getFieldsValue();

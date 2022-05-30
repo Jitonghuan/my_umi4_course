@@ -28,7 +28,7 @@ export default function LeftList(props: IProps) {
     changeItem(activeItem);
   }, [activeItem]);
 
-  return listData.length !== 0 ? (
+  return (listData.length !== 0 || loading) ? (
     <div className="left-list">
       <Spin spinning={loading}>
         <div className="left-list-wrapper">

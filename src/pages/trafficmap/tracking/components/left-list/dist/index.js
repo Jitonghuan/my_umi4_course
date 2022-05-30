@@ -16,7 +16,7 @@ function LeftList(props) {
     react_1.useEffect(function () {
         changeItem(activeItem);
     }, [activeItem]);
-    return listData.length !== 0 ? (React.createElement("div", { className: "left-list" },
+    return (listData.length !== 0 || loading) ? (React.createElement("div", { className: "left-list" },
         React.createElement(antd_1.Spin, { spinning: loading },
             React.createElement("div", { className: "left-list-wrapper" }, listData === null || listData === void 0 ? void 0 : listData.map(function (item) { return (React.createElement("div", { className: "list-item " + ((item === null || item === void 0 ? void 0 : item.key) === (activeItem === null || activeItem === void 0 ? void 0 : activeItem.key) ? 'list-item-active' : ''), onClick: function () {
                     setActiveItem(item);
