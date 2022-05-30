@@ -7,7 +7,7 @@ import { addAPIPrefix } from '@/utils';
 
 // 集群维度流量调度通用接口
 export const switchCluster = addAPIPrefix('/opsManage/multiple/common/switchCluster');
-// A、B集群患者和操作员查询
+// A、B集群用户和操作员查询
 export const listClusterUser = addAPIPrefix('/opsManage/multiple/common/getMultipleClusterUser');
 // A、B集群患或操作员新增
 export const addMultipleClusterUser = addAPIPrefix('/opsManage/multiple/common/MultipleClusterByUser');

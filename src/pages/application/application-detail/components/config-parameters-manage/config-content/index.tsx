@@ -274,14 +274,14 @@ export default function ConfigContent({ env, configType }: IProps) {
           onFinish={getQueryConfig}
         >
           <Form.Item label="环境" name="envCode">
-            <Select placeholder="请选择" style={{ width: 140 }} options={envDatas} onChange={changeEnvCode} />
+            <Select placeholder="请选择" style={{ width: 200 }} options={envDatas} onChange={changeEnvCode} />
           </Form.Item>
           <Form.Item label="版本" name="versionID">
             <Select
               options={versionData || []}
               placeholder="请选择版本"
               onChange={changeVersion}
-              style={{ width: 200 }}
+              style={{ width: 220 }}
             />
           </Form.Item>
           <Form.Item>
