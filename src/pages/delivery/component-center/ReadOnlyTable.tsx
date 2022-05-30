@@ -7,18 +7,18 @@ export interface DetailProps {
   currentTab: string;
   curProductLine: string;
   dataSource: any;
-  queryComponentList: (tabActiveKey: any, curProductLine?: string) => any;
+  identification: string;
+  onDelClick: any;
+  // queryComponentList: (tabActiveKey: any, curProductLine?: string) => any;
   tableLoading: boolean;
 }
 export default function VersionDetail(props: DetailProps) {
-  const { currentTab, curProductLine, dataSource, queryComponentList, tableLoading } = props;
+  const { currentTab, curProductLine, dataSource, identification, onDelClick, tableLoading } = props;
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
     if (!currentTab) {
       return;
     }
-
-    queryComponentList({ componentType: currentTab });
   }, [currentTab]);
 
   const getColumns = (isShow: boolean) => {
@@ -81,7 +81,7 @@ export default function VersionDetail(props: DetailProps) {
               title="确定要删除吗？"
               onConfirm={() => {
                 deleteComponent(record.id).then(() => {
-                  queryComponentList({ componentType: currentTab, productLine: curProductLine });
+                  onDelClick();
                 });
               }}
             >

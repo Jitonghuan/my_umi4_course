@@ -20,7 +20,7 @@ const { Paragraph } = Typography;
 export default function ComponentCenter() {
   const identification: any = history.location.state;
   const [productLineForm] = Form.useForm();
-  const [tabActiveKey, setTabActiveKey] = useState<string>('');
+  const [tabActiveKey, setTabActiveKey] = useState<string>('app');
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
@@ -41,10 +41,15 @@ export default function ComponentCenter() {
   useEffect(() => {
     if (tabActiveKey === 'app') {
       getProductlineList();
+      queryComponentList({ componentType: tabActiveKey });
     }
+    return () => {
+      setTabActiveKey('app');
+    };
   }, []);
   useEffect(() => {
     if (identification?.identification) {
+      queryComponentList({ componentType: identification?.identification });
       setTabActiveKey(identification?.identification);
     }
   }, [identification?.identification]);
@@ -97,6 +102,8 @@ export default function ComponentCenter() {
               activeKey={tabActiveKey}
               onChange={(key) => {
                 setTabActiveKey(key);
+                const param = productLineForm.getFieldsValue();
+                queryComponentList({ componentType: key, ...param });
               }}
               tabBarExtraContent={
                 <div className="tab-right-extra" style={{ display: 'flex', alignItems: 'center' }}>
@@ -159,9 +166,14 @@ export default function ComponentCenter() {
               currentTab={tabActiveKey}
               curProductLine={curProductLine}
               dataSource={dataSource}
-              queryComponentList={({ componentType: tabActiveKey }) =>
-                queryComponentList({ componentType: tabActiveKey, productLine: curProductLine })
-              }
+              identification={identification?.identification}
+              onDelClick={() => {
+                const param = productLineForm.getFieldsValue();
+                queryComponentList({ componentType: tabActiveKey, ...param });
+              }}
+              // queryComponentList={({ componentType: tabActiveKey }) =>
+              //   queryComponentList({ componentType: tabActiveKey, productLine: curProductLine })
+              // }
               tableLoading={loading}
             />
           </div>
