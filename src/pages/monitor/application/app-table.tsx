@@ -238,12 +238,12 @@ const Coms = (props: IProps) => {
         };
       })
       .then((resp) => {
-        if (!resp?.dataSource[0].hostName) {
+        if (!resp?.dataSource[0]?.hostName) {
           return;
         }
 
         queryPodCpu(
-          resp?.dataSource[0].hostName,
+          resp?.dataSource[0]?.hostName,
           filter.envCode,
           Number((now - startTime) / 1000),
           Number(now / 1000),
@@ -251,7 +251,7 @@ const Coms = (props: IProps) => {
           resp?.dataSource[0].hostIP,
         );
         queryPodMem(
-          resp?.dataSource[0].hostName,
+          resp?.dataSource[0]?.hostName,
           filter.envCode,
           Number((now - startTime) / 1000),
           Number(now / 1000),
@@ -259,7 +259,7 @@ const Coms = (props: IProps) => {
           resp?.dataSource[0].hostIP,
         );
         queryPodDisk(
-          resp?.dataSource[0].hostName,
+          resp?.dataSource[0]?.hostName,
           filter.envCode,
           Number((now - startTime) / 1000),
           Number(now / 1000),
@@ -267,7 +267,7 @@ const Coms = (props: IProps) => {
           resp?.dataSource[0].hostIP,
         );
         queryPodNetwork(
-          resp?.dataSource[0].hostName,
+          resp?.dataSource[0]?.hostName,
           filter.envCode,
           Number((now - startTime) / 1000),
           Number(now / 1000),
