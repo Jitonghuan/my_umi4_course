@@ -11,7 +11,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import CreateTaskModal from './create-task';
 import { taskTableSchema } from './schema';
 import ExecutionDetailsModal from './execution-details-Modal';
-import { useTaskList, useTaskImplementList, useDeleteTask } from './hooks';
+import { useTaskList, useTaskImplementList, useDeleteTask, useUpdateTask } from './hooks';
 import { recordEditData } from './type';
 
 import './index.less';
@@ -31,8 +31,9 @@ export default function DNSManageList(props: any) {
     useTaskList();
   const [loading, pageInfo, source, setSource, setPageInfo, getTaskImplementList] = useTaskImplementList();
   const [delLoading, deleteTask] = useDeleteTask();
-  const [addRecordMode, setAddRecordMode] = useState<EditorMode>('HIDE');
+  const [executionDetailsMode, setExecutionDetailsMode] = useState<EditorMode>('HIDE');
   const [addTaskMode, setAddTaskMode] = useState<EditorMode>('HIDE');
+  const [updateLoading, updateTaskManage] = useUpdateTask();
   const [taskForm] = Form.useForm();
   const [curRecord, setCurRecord] = useState<any>();
   const [createAppVisible, setCreateAppVisible] = useState(false);
@@ -44,7 +45,6 @@ export default function DNSManageList(props: any) {
   const handleEditEnv = useCallback(
     (record: recordEditData, index: number, type: any) => {
       setCurRecord(record);
-      setAddRecordMode(type);
       setTaskTableSource(taskTableSource);
     },
     [taskTableSource],
@@ -120,14 +120,41 @@ export default function DNSManageList(props: any) {
           getTaskList();
         });
       },
-      // selectedRows,
-      curRecord,
+      onGetExecutionDetailClick: (record, index) => {
+        setCurRecord(record);
+        setExecutionDetailsMode('VIEW');
+      },
+      onSwitchEnableClick: (record, index) => {
+        if (record?.enable === 1) {
+          let paramsObj = {
+            enable: record?.enable === 1 ? 0 : 1,
+            jobName: record?.jobName,
+            jobCode: record?.jobCode,
+            noticeType: record?.noticeType,
+            timeExpression: record?.timeExpression,
+            jobType: record?.jobType,
+            Desc: record?.Desc,
+            jobContent: record?.jobContent,
+          };
+          updateTaskManage(paramsObj).then(() => {
+            getTaskList();
+          });
+        }
+      },
+      // curRecord,
     }) as any;
   }, []);
 
   return (
     <PageContainer>
-      <ExecutionDetailsModal />
+      <ExecutionDetailsModal
+        mode={executionDetailsMode}
+        curRecord={curRecord}
+        // onSave={() => {
+        //     setExecutionDetailsMode('HIDE');
+        //   }}
+        onClose={() => setExecutionDetailsMode('HIDE')}
+      />
       <CreateTaskModal
         mode={addTaskMode}
         initData={curRecord}

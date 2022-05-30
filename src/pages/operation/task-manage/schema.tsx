@@ -21,13 +21,15 @@ const APP_TYPE_ICON = {
 export const taskTableSchema = ({
   onEditClick,
   onDelClick,
-  // categoryData,
-  businessDataList,
+  onGetExecutionDetailClick,
+  onSwitchEnableClick,
 }: {
   onEditClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
+  onGetExecutionDetailClick: (record: any, index: number) => void;
+  onSwitchEnableClick: (record: any, index: number) => void;
   // categoryData: any[];
-  businessDataList: any[];
+  // businessDataList: any[];
 }) =>
   [
     {
@@ -72,9 +74,14 @@ export const taskTableSchema = ({
       title: '启用',
       dataIndex: 'enable',
       width: 100,
-      render: (enable: number, record: any) => (
+      render: (enable: number, record: any, index: number) => (
         <>
-          <Switch checked={enable === 1 ? true : false} />
+          <Switch
+            checked={enable === 1 ? true : false}
+            onClick={() => {
+              onSwitchEnableClick(record, index);
+            }}
+          />
         </>
       ),
     },
@@ -85,20 +92,9 @@ export const taskTableSchema = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          <a onClick={() => onEditClick(record, index)}>执行详情</a>
-          <a
-            onClick={() => {
-              history.push({
-                pathname: 'detail',
-                query: {
-                  id: record.id,
-                  appCode: record.appCode,
-                },
-              });
-            }}
-          >
-            详情
-          </a>
+          <a onClick={() => onGetExecutionDetailClick(record, index)}>执行详情</a>
+          <a onClick={() => onEditClick(record, index)}>详情</a>
+
           <a
             onClick={() => {
               onEditClick(record, index);
