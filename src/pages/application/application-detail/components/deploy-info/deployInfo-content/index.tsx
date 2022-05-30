@@ -518,6 +518,8 @@ export default function DeployContent(props: DeployContentProps) {
                                 envCode: currentEnvData,
                                 instName: record?.instName,
                                 viewLogEnvType: envTypeCode,
+                                optType: 'deployInfo',
+                                deploymentName: appData?.deploymentName,
                               },
                               state: {
                                 infoRecord: record,
@@ -534,7 +536,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
                           );
                         }}
                       >

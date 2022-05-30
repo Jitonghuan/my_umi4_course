@@ -350,6 +350,14 @@ export default [
             component: '@/pages/application/project-environment/environment-deploy/components/deploy-info',
           },
           {
+            path: 'container-info',
+            name: '容器信息',
+            key: 'project-environment',
+            hideInMenu: true,
+            component:
+              '@/pages/application/project-environment/environment-deploy/components/deploy-info/container-info',
+          },
+          {
             path: 'loginShell',
             name: '登陆shell',
             key: 'project-environment',

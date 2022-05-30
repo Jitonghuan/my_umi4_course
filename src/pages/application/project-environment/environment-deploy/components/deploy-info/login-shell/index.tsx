@@ -3,7 +3,7 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Select, Form, Button, message, Space } from 'antd';
+import { Select, Form, Button, message, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../../context';
 import appConfig from '@/app.config';
@@ -16,12 +16,14 @@ import { AttachAddon } from 'xterm-addon-attach';
 import './index.less';
 
 export default function loginShell(props: any) {
+  const { appCode, projectEnvCode, envCode, optType, containerName, deploymentName } = props.location.query;
+  const [queryListContainer, setQueryListContainer] = useState<any>();
+  const instName = props.location.query.instName;
+  const [previous, setPrevious] = useState<boolean>(false);
+  let currentContainerName = '';
   const { appData } = useContext(DetailContext);
   const [viewLogform] = Form.useForm();
-  const { appCode, projectEnvCode } = props.location.query;
-  const instName = props.location.query.instName;
-  const [queryListContainer, setQueryListContainer] = useState<any>();
-  let currentContainerName = '';
+  const term = useRef<any>();
   const ws = useRef<WebSocket>();
   useEffect(() => {
     if (appCode) {
@@ -33,22 +35,33 @@ export default function loginShell(props: any) {
               value: item?.containerName,
               label: item?.containerName,
             }));
-            currentContainerName = listContainer[0].value;
-            viewLogform.setFieldsValue({ containerName: currentContainerName });
-            setQueryListContainer(listContainer);
+            if (optType && optType === 'containerInfo') {
+              currentContainerName = containerName || '';
+              viewLogform.setFieldsValue({ containerName: containerName });
+              setQueryListContainer([
+                {
+                  label: containerName,
+                  value: containerName,
+                },
+              ]);
+            } else {
+              currentContainerName = deploymentName || '';
+              viewLogform.setFieldsValue({ containerName: currentContainerName });
+              setQueryListContainer(listContainer);
+            }
           }
         })
         .then(() => {
-          initWS();
+          initWS(false);
         });
     }
   }, [projectEnvCode]);
 
-  const initWS = () => {
+  const initWS = (previous?: boolean) => {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=shell`,
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -128,31 +141,70 @@ export default function loginShell(props: any) {
   };
   //选择容器
   const selectListContainer = (getContainer: string) => {
+    //选择容器
+
     if (ws.current) {
       ws.current.close();
     }
     currentContainerName = getContainer;
-    initWS();
+    ws.current = new WebSocket(
+      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+    ); //建立通道
+
+    ws.current.onopen = () => {
+      message.success('已切换容器!');
+      term.current.reset();
+      if (ws.current) {
+        const attachAddon = new AttachAddon(ws.current);
+        term.current.loadAddon(attachAddon);
+        term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+        term.current.writeln('WebSocket链接成功');
+
+        let sendJson = {
+          operation: 'resize',
+          cols: term.current.cols,
+          rows: term.current.rows,
+        };
+        ws.current.send(JSON.stringify(sendJson));
+        term.current.focus();
+        ws.current.onerror = () => {
+          term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
+        };
+
+        //  term.current.writeln('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+        //  term.current.write('WebSocket链接成功');
+      }
+    };
   };
 
   return (
     <ContentCard noPadding className="viewLog">
       <div className="loginShell">
         <div style={{ paddingBottom: '6px', paddingTop: '6px', display: 'flex' }}>
-          <Form form={viewLogform} layout="inline">
-            <span style={{ paddingLeft: '10px' }}>选择容器： </span>
-            <Form.Item name="containerName">
-              <Select
-                style={{ width: 120 }}
-                options={queryListContainer}
-                onChange={selectListContainer}
-                defaultValue={currentContainerName}
-              ></Select>
-            </Form.Item>
-          </Form>
+          <div className="shell-caption">
+            <div className="caption-left">
+              <Form form={viewLogform} layout="inline">
+                <span style={{ paddingLeft: 12 }}>选择容器： </span>
+                <Form.Item name="containerName">
+                  <Select
+                    style={{ width: 220 }}
+                    options={queryListContainer}
+                    onChange={selectListContainer}
+                    defaultValue={currentContainerName}
+                  ></Select>
+                </Form.Item>
+              </Form>
+            </div>
+            <div className="caption-right">
+              <span>
+                {' '}
+                当前环境：<Tag color="geekblue">{projectEnvCode}</Tag>
+              </span>
+            </div>
+          </div>
         </div>
         <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
-        <div style={{ height: 28, width: '100%', textAlign: 'center', position: 'absolute', marginTop: 4 }}>
+        <div style={{ height: 28, width: '100%', textAlign: 'center', marginTop: 4 }}>
           <span className="eventButton">
             <Button type="primary" onClick={closeSocket}>
               关闭

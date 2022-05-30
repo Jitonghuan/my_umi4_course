@@ -21,7 +21,7 @@ export default function ViewLog(props: any) {
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
   const [previous, setPrevious] = useState<boolean>(false);
-  const { appCode, envCode, instName, viewLogEnvType, optType, containerName } = props.location.query;
+  const { appCode, envCode, instName, viewLogEnvType, optType, containerName, deploymentName } = props.location.query;
   const { infoRecord } = props.location.state;
   const logData = useRef<string>('');
   let currentContainerName = '';
@@ -42,13 +42,19 @@ export default function ViewLog(props: any) {
           currentContainerName = containerName;
           viewLogform.setFieldsValue({ containerName: containerName });
           setCurrentContainer(containerName);
+          setQueryListContainer([
+            {
+              label: containerName,
+              value: containerName,
+            },
+          ]);
         } else {
-          currentContainerName = listContainer[0].value;
+          currentContainerName = deploymentName;
           viewLogform.setFieldsValue({ containerName: currentContainerName });
           setCurrentContainer(currentContainerName);
+          setQueryListContainer(listContainer);
         }
 
-        setQueryListContainer(listContainer);
         ws.current = new WebSocket(
           `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
@@ -91,7 +97,7 @@ export default function ViewLog(props: any) {
         `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&action=watchContainerLog&tailLine=200`,
       ); //建立通道
       ws.current.onopen = () => {
-        message.success('更换容器，WebSocket链接成功!');
+        message.success('更换容器成功!');
       };
       let dom: any = document?.getElementById('result-log');
       ws.current.onmessage = (evt: any) => {
@@ -130,11 +136,11 @@ export default function ViewLog(props: any) {
       ); //建立通道
       if (e.target.checked) {
         ws.current.onopen = () => {
-          message.success('已切换至以前的容器，WebSocket链接成功!');
+          message.success('已切换至以前的容器!');
         };
       } else {
         ws.current.onopen = () => {
-          message.success('切换至当前容器，WebSocket链接成功!');
+          message.success('切换至当前容器!');
         };
       }
 
@@ -242,7 +248,7 @@ export default function ViewLog(props: any) {
             <Form form={viewLogform} layout="inline">
               <pre>选择容器： </pre>
               <Form.Item name="containerName">
-                <Select style={{ width: 120 }} options={queryListContainer} onChange={selectListContainer}></Select>
+                <Select style={{ width: 220 }} options={queryListContainer} onChange={selectListContainer}></Select>
               </Form.Item>
 
               {/* <span style={{paddingRight:3}}><h3>{appData?.appCode},{appData?.appName}</h3> </span> */}

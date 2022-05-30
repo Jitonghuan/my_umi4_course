@@ -3,7 +3,7 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Select, Form, Button, Tag, Checkbox, message } from '@cffe/h2o-design';
+import { Select, Form, Button, Tag, message } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';
@@ -19,13 +19,14 @@ import './index.less';
 export default function AppDeployInfo(props: any) {
   const { appData } = useContext(DetailContext);
   const [viewLogform] = Form.useForm();
-  const { appCode, envCode, optType, containerName } = props.location.query;
+  const { appCode, envCode, optType, containerName, deploymentName } = props.location.query;
   const instName = props.location.query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [previous, setPrevious] = useState<boolean>(false);
   let currentContainerName = '';
   const ws = useRef<WebSocket>();
   const term = useRef<any>();
+
   useEffect(() => {
     if (appCode && envCode) {
       getRequest(APIS.listContainer, { data: { appCode, envCode, instName } })
@@ -37,14 +38,19 @@ export default function AppDeployInfo(props: any) {
               label: item?.containerName,
             }));
             if (optType && optType === 'containerInfo') {
-              currentContainerName = containerName;
+              currentContainerName = containerName || '';
               viewLogform.setFieldsValue({ containerName: containerName });
+              setQueryListContainer([
+                {
+                  label: containerName,
+                  value: containerName,
+                },
+              ]);
             } else {
-              currentContainerName = listContainer[0].value;
+              currentContainerName = deploymentName || '';
               viewLogform.setFieldsValue({ containerName: currentContainerName });
+              setQueryListContainer(listContainer);
             }
-
-            setQueryListContainer(listContainer);
           }
         })
         .then(() => {
@@ -145,7 +151,7 @@ export default function AppDeployInfo(props: any) {
     ); //建立通道
 
     ws.current.onopen = () => {
-      message.success('已切换容器，WebSocket链接成功!');
+      message.success('已切换容器!');
       term.current.reset();
       if (ws.current) {
         const attachAddon = new AttachAddon(ws.current);
@@ -180,7 +186,7 @@ export default function AppDeployInfo(props: any) {
                 <span style={{ paddingLeft: 12 }}>选择容器： </span>
                 <Form.Item name="containerName">
                   <Select
-                    style={{ width: 120 }}
+                    style={{ width: 220 }}
                     options={queryListContainer}
                     onChange={selectListContainer}
                     defaultValue={currentContainerName}

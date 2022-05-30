@@ -9,10 +9,11 @@ import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import moment from 'moment';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Button, Table, message, Popconfirm, Spin, Empty, Select, Tag, Modal, Form, Input } from 'antd';
+import { Button, Table, message, Popconfirm, Spin, Divider, Select, Tag, Modal, Form, Input } from 'antd';
 import DetailContext from '../../../context';
 import { useAppDeployInfo, useAppChangeOrder } from '../hooks';
 import { postRequest } from '@/utils/request';
+import { useListDeploymentList } from '../container-info/hook';
 import { restartApp, rollbackApplication, restartApplication, queryAppOperate } from '@/pages/application/service';
 import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
@@ -20,6 +21,8 @@ import { useDeployInfoData, useInstanceList, useDownloadLog, useDeleteInstance }
 import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
+import { LIST_STATUS_TYPE } from './schema';
+import DeploymentList from '../components/deployment-list';
 import './index.less';
 const rootCls = 'deploy-content-Info';
 export interface DeployContentProps {
@@ -68,6 +71,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
   // const [isSucess, setIsSucess] = useState<boolean>(false);
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
+  const [deploymentLoading, deploymentSource, setDeploymentSource, getDeploymentEventList] = useListDeploymentList();
   const { intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currentEnvData, appData?.deploymentName);
@@ -381,7 +385,37 @@ export default function DeployContent(props: DeployContentProps) {
               pagination={false}
               scroll={{ y: window.innerHeight - 300 }}
             >
-              <Table.Column title="名称" dataIndex="instName" width={140} render={(v, record) => <span>{v}</span>} />
+              <Table.Column
+                title="名称"
+                dataIndex="instName"
+                width={140}
+                render={(v, record) => (
+                  <a
+                    onClick={() => {
+                      history.replace({
+                        pathname: 'container-info',
+                        query: {
+                          appCode: appCode,
+                          // envCode: currentEnvData,
+                          projectEnvCode: currentEnvData,
+                          // viewLogEnvType: envTypeCode,
+                          // initRecord:JSON.stringify(record)
+                        },
+                        state: {
+                          appCode: appCode,
+                          // envCode: currentEnvData,
+                          projectEnvCode: currentEnvData,
+                          // viewLogEnvType: envTypeCode,
+                          infoRecord: record,
+                          id: appData?.id,
+                        },
+                      });
+                    }}
+                  >
+                    {v}
+                  </a>
+                )}
+              />
               <Table.Column
                 title="IP"
                 dataIndex="instIP"
@@ -394,30 +428,10 @@ export default function DeployContent(props: DeployContentProps) {
                 dataIndex="instStatus"
                 width={100}
                 render={(status, record) => {
-                  return status === 'Running' ? (
-                    <Tag color="green">Running</Tag>
-                  ) : status === 'Succeeded' ? (
-                    <Tag color="cyan">Succeeded</Tag>
-                  ) : status === 'Pending' ? (
-                    <Tag color="gold">Pending</Tag>
-                  ) : status === 'Failed' ? (
-                    <Tag color="red">Failed</Tag>
-                  ) : status === 'Initializing' ? (
-                    <Tag color="default">Initializing</Tag>
-                  ) : status === 'NotReady' ? (
-                    <Tag color="lime">NotReady</Tag>
-                  ) : status === 'Unavailable' ? (
-                    <Tag color="red">Unavailable</Tag>
-                  ) : status === 'Scheduling' ? (
-                    <Tag color="geekblue">Scheduling</Tag>
-                  ) : status === 'Removing' ? (
-                    <Tag color="purple">Removing</Tag>
-                  ) : status === '运行正常' ? (
-                    <Tag color="green">运行正常</Tag>
-                  ) : status === '已运行但健康检查异常' ? (
-                    <Tag color="yellow">已运行但健康检查异常</Tag>
-                  ) : (
-                    <Tag>{status}</Tag>
+                  return (
+                    <Tag color={LIST_STATUS_TYPE[status].color || 'default'}>
+                      {LIST_STATUS_TYPE[status].text || status}
+                    </Tag>
                   );
                 }}
               />
@@ -463,7 +477,21 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() =>
                           history.push(
-                            `/matrix/application/environment-deploy/viewLog?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}`,
+                            {
+                              pathname: '/matrix/application/environment-deploy/viewLog',
+                              query: {
+                                appCode: appData?.appCode,
+                                projectEnvCode: currentEnvData,
+                                instName: record?.instName,
+                                // viewLogEnvType: envTypeCode,
+                                optType: 'deployInfo',
+                                deploymentName: appData?.deploymentName,
+                              },
+                              state: {
+                                infoRecord: record,
+                              },
+                            },
+                            // `/matrix/application/environment-deploy/viewLog?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}`,
                           )
                         }
                       >
@@ -474,7 +502,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/environment-deploy/loginShell?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}`,
+                            `/matrix/application/environment-deploy/loginShell?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
                           );
                         }}
                       >
@@ -510,6 +538,9 @@ export default function DeployContent(props: DeployContentProps) {
                 />
               ) : null}
             </Table>
+
+            <Divider />
+            <DeploymentList dataSource={deploymentSource} loading={deploymentLoading} />
           </section>
           <section className="section-right1">
             <h3>操作记录</h3>
