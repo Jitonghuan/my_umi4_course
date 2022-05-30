@@ -41,7 +41,7 @@
 }
 .h2o_header-wrapper {
   background: rgba(0, 5, 10, 0.8) !important;
-  height: 54px;
+  height: 46px;
   // background: #0a0a0a;
 }
 // .matrix-title{
@@ -55,15 +55,7 @@
   display: flex;
   justify-content: space-around;
 }
-// .username,
-// .userinfo,
-// .department,
-// .matrix-title,
-// .anticon-alert,
-// .anticon-comment {
-//   // color: #FFFFFF;
-//   color: #0a0a0a !important;
-// }
+
 .separator {
   background-color: black !important;
 }
@@ -79,6 +71,12 @@ element.style {
 .v_basic-layout-wrapper .ant-layout-sider-trigger {
   color: #444;
   background: darkgrey;
+}
+
+.ant-layout-sider-children {
+  .ant-menu {
+    background: rgb(226, 225, 225) !important;
+  }
 }
 
 body[fone-theme='foneDark'] {
@@ -123,8 +121,14 @@ body[fone-theme='foneDark'] {
     background: none !important;
   }
   .v_basic-layout-wrapper .ant-layout-sider-children {
-    // background: #232324 !important;
+    background: #232324 !important;
   }
+  .h2o_header-wrapper {
+    background: rgba(0, 5, 10, 0.8) !important;
+    height: 46px;
+    // background: #0a0a0a;
+  }
+
   .logo {
     background: none !important;
     .matrix-title {
@@ -155,6 +159,11 @@ body[fone-theme='foneDark'] {
 
   .arco-layout-sider-trigger-light {
     background: #232324 !important;
+  }
+  .ant-layout-sider-children {
+    .ant-menu {
+      background: #232324 !important;
+    }
   }
   .ant-table {
     background: @body-background !important;

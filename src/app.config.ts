@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:58
 
 import logo from '@/assets/imgs/logo5.png';
-import favicon from '@/assets/imgs/logo5.png';
+import favicon from '@/assets/imgs/logo6.png';
 import { baseRoutePath } from './routes.config';
 import { domainName, wsPrefixName, LogoName, waterMarkName } from './envType.config';
 

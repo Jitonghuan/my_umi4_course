@@ -104,7 +104,7 @@ function PopularContent() {
           </div> */}
           <div
             style={{
-              paddingTop: 10,
+              paddingTop: '6vh',
               position: 'relative',
               zIndex: 4,
               display: 'flex',
@@ -114,15 +114,15 @@ function PopularContent() {
             }}
           >
             <Row style={{ display: 'flex', justifyContent: 'center' }}>
-              <Decoration9 style={{ width: '200px', height: '200px' }} dur={7}>
+              <Decoration9 style={{ width: '12vw', height: '20vh' }} dur={7}>
                 <span className="textShadow"> 研发协同</span>
               </Decoration9>
             </Row>
             <Row style={{ display: 'flex', justifyContent: 'space-around' }}>
-              <Decoration9 style={{ width: '200px', height: '200px' }} dur={7}>
+              <Decoration9 style={{ width: '12vw', height: '20vh' }} dur={7}>
                 <span className="textShadow"> 云原生</span>
               </Decoration9>
-              <Decoration9 style={{ width: '200px', height: '200px' }} dur={7}>
+              <Decoration9 style={{ width: '12vw', height: '20vh' }} dur={7}>
                 <span className="textShadow"> 交付运维</span>
               </Decoration9>
             </Row>
