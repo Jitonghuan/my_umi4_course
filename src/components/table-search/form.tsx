@@ -43,6 +43,8 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
       ...rest
     } = v;
 
+    console.log(type);
+
     switch (type) {
       case 'select':
         return (
