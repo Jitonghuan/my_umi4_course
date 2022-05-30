@@ -10,6 +10,7 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 const sourceRoot = '/';
 
 const { VERSION, NODE_ENV, BUILD_ENV } = process.env;
+// console.log(' BUILD_ENV ', BUILD_ENV )
 const publicPathPrefix = NODE_ENV === 'development' ? '/' : !VERSION ? `${sourceRoot}` : `${sourceRoot}${VERSION}/`;
 
 // 更多配置查看: https://umijs.org/zh-CN/config

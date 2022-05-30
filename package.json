@@ -81,6 +81,7 @@
     "react-draggable": "^4.4.4",
     "react-infinite-scroll-component": "^6.1.0",
     "react-json-view": "^1.21.3",
+    "react-markdown": "^8.0.3",
     "react-resizable": "^3.0.4",
     "umi": "~3.5.18",
     "xterm": "^4.15.0",
