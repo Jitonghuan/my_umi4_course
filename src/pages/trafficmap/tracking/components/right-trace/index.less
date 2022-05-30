@@ -6,16 +6,15 @@
   // 左边的list样式
   //右边的追踪图样式
   .trace-wrapper {
-    .ant-table-tbody > tr td {
+    .ant-table-tbody>tr td {
       font-size: 13px;
     }
 
-    .ant-table-tbody > .error-line td {
+    .ant-table-tbody>.error-line td {
       color: red;
     }
 
-    .process-wrapper {
-    }
+    .process-wrapper {}
 
     &-title {
       margin-right: 10px;
@@ -30,8 +29,26 @@
       }
     }
 
+    .ant-tree-switcher {
+      width: 32px;
+    }
+
     .ant-tree-switcher-leaf-line::before {
       right: 16px;
+    }
+
+    .ant-tree-indent-unit {
+      width: 32px;
+    }
+
+
+    .ant-tree-show-line .ant-tree-indet-unit::before {
+      position: absolute;
+      top: 0;
+      right: 16px;
+      bottom: -4px;
+      border-right: 1px solid #d9d9d9;
+      content: "";
     }
 
     .ant-tree-switcher-leaf-line::after {

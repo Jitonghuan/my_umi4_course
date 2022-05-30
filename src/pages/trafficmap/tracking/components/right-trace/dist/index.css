@@ -17,8 +17,22 @@
   color: white;
   padding: 5px;
 }
+.tracking-container .trace-wrapper .ant-tree-switcher {
+  width: 32px;
+}
 .tracking-container .trace-wrapper .ant-tree-switcher-leaf-line::before {
   right: 16px;
+}
+.tracking-container .trace-wrapper .ant-tree-indent-unit {
+  width: 32px;
+}
+.tracking-container .trace-wrapper .ant-tree-show-line .ant-tree-indet-unit::before {
+  position: absolute;
+  top: 0;
+  right: 16px;
+  bottom: -4px;
+  border-right: 1px solid #d9d9d9;
+  content: "";
 }
 .tracking-container .trace-wrapper .ant-tree-switcher-leaf-line::after {
   content: '';
