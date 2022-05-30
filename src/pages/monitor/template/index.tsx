@@ -236,45 +236,6 @@ const TemplateCom: React.FC = () => {
     },
   ];
 
-  const formOptions: FormProps[] = [
-    {
-      key: '1',
-      type: 'input',
-      label: '名称',
-      dataIndex: 'name',
-      width: '144px',
-      placeholder: '请输入',
-    },
-    {
-      key: '2',
-      type: 'select',
-      label: '分类',
-      dataIndex: 'group',
-      width: '144px',
-      placeholder: '请选择报警分类',
-      option: groupData,
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '状态',
-      dataIndex: 'status',
-      width: '144px',
-      placeholder: '请选择',
-      option: [
-        {
-          key: '0',
-          value: '已启用',
-          label: '已启用',
-        },
-        {
-          key: '1',
-          value: '未启用',
-          label: '未启用',
-        },
-      ],
-    },
-  ];
   //分类
   const { run: groupList } = useRequest({
     api: queryGroupList,
@@ -306,7 +267,45 @@ const TemplateCom: React.FC = () => {
     <PageContainer>
       <TableSearch
         form={form}
-        formOptions={formOptions}
+        formOptions={[
+          {
+            key: '1',
+            type: 'input',
+            label: '名称',
+            dataIndex: 'name',
+            width: '144px',
+            placeholder: '请输入',
+          },
+          {
+            key: '2',
+            type: 'select',
+            label: '分类',
+            dataIndex: 'group',
+            width: '144px',
+            placeholder: '请选择报警分类',
+            option: groupData,
+          },
+          {
+            key: '3',
+            type: 'select',
+            label: '状态',
+            dataIndex: 'status',
+            width: '144px',
+            placeholder: '请选择',
+            option: [
+              {
+                key: '0',
+                value: '已启用',
+                label: '已启用',
+              },
+              {
+                key: '1',
+                value: '未启用',
+                label: '未启用',
+              },
+            ],
+          },
+        ]}
         formLayout="inline"
         columns={columns}
         {...tableProps}

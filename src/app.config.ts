@@ -64,7 +64,7 @@ export default {
   apiPrefix: '/v1',
 
   /** 是否开启菜单权限权限，本地开发时关闭校验 */
-  isOpenPermission: !IS_LOCAL,
+  isOpenPermission: false,
 
   /**
    * 导航栏图标库，取自 http://iconfont.cn，可根据实际情况自行替换链接

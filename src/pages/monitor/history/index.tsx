@@ -140,97 +140,6 @@ const HistoryCom: React.FC = () => {
     },
   ];
 
-  const formOptions: FormProps[] = [
-    {
-      key: '1',
-      type: 'input',
-      label: '报警名称',
-      dataIndex: 'alertName',
-      width: '154px',
-      placeholder: '请输入',
-      onChange: (e: React.FormEvent<HTMLInputElement>) => {
-        console.log(e);
-      },
-    },
-    {
-      key: '2',
-      type: 'select',
-      label: '报警状态',
-      dataIndex: 'status',
-      width: '154px',
-      placeholder: '请选择',
-      option: [
-        {
-          key: 'refuse',
-          value: '拒绝处理',
-        },
-        {
-          key: 'firing',
-          value: '告警中',
-        },
-        {
-          key: 'terminate',
-          value: '中断处理',
-        },
-        {
-          key: 'resolved',
-          value: '已修复',
-        },
-      ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '报警级别',
-      dataIndex: 'level',
-      width: '154px',
-      placeholder: '请选择',
-      option: [
-        {
-          key: '2',
-          value: '警告',
-        },
-        {
-          key: '3',
-          value: '严重',
-        },
-        {
-          key: '4',
-          value: '灾难',
-        },
-      ],
-      onChange: (e: string) => {
-        console.log(e);
-      },
-    },
-    {
-      key: '4',
-      type: 'input',
-      label: '应用名称',
-      dataIndex: 'appCode',
-      width: '154px',
-      placeholder: '请输入',
-
-      onChange: (e: string) => {
-        console.log(e);
-      },
-    },
-    {
-      key: '5',
-      type: 'input',
-      label: '环境名称',
-      dataIndex: 'envCode',
-      width: '154px',
-      placeholder: '请输入',
-      onChange: (e: string) => {
-        console.log(e);
-      },
-    },
-  ];
-
   useEffect(() => {
     setDataSource([]);
   }, []);
@@ -239,11 +148,91 @@ const HistoryCom: React.FC = () => {
     <PageContainer>
       <TableSearch
         form={form}
-        formOptions={formOptions}
+        formOptions={[
+          {
+            key: '1',
+            type: 'input',
+            label: '报警名称',
+            dataIndex: 'alertName',
+            width: '154px',
+            placeholder: '请输入',
+          },
+          {
+            key: '2',
+            type: 'select',
+            label: '报警状态',
+            dataIndex: 'status',
+            width: '154px',
+            placeholder: '请选择',
+            option: [
+              {
+                key: 'refuse',
+                value: '拒绝处理',
+                label: '拒绝处理',
+              },
+              {
+                key: 'firing',
+                value: '告警中',
+                label: '告警中',
+              },
+              {
+                key: 'terminate',
+                value: '中断处理',
+                label: '中断处理',
+              },
+              {
+                key: 'resolved',
+                value: '已修复',
+                label: '已修复',
+              },
+            ],
+          },
+          {
+            key: '3',
+            type: 'select',
+            label: '报警级别',
+            dataIndex: 'level',
+            width: '154px',
+            placeholder: '请选择',
+            option: [
+              {
+                key: '2',
+                value: '警告',
+                label: '警告',
+              },
+              {
+                key: '3',
+                value: '严重',
+                label: '严重',
+              },
+              {
+                key: '4',
+                value: '灾难',
+                label: '灾难',
+              },
+            ],
+          },
+          {
+            key: '4',
+            type: 'input',
+            label: '应用名称',
+            dataIndex: 'appCode',
+            width: '154px',
+            placeholder: '请输入',
+          },
+          {
+            key: '5',
+            type: 'input',
+            label: '环境名称',
+            dataIndex: 'envCode',
+            width: '154px',
+            placeholder: '请输入',
+          },
+        ]}
         formLayout="inline"
         columns={columns}
         {...tableProps}
-        dataSource={tableProps.dataSource?.map((v, i) => ({
+        dataSource={tableProps?.dataSource?.map((v, i) => ({
           ...v,
           key: i + 1,
         }))}
