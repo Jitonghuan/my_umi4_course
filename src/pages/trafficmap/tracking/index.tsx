@@ -1,135 +1,422 @@
-/*
- * @Author: shixia.ds
- * @Date: 2021-11-17 16:07:16
- * @Description:
- */
-import React, { useEffect, useState } from 'react';
-import { Form, Select, Tag, Input, Table, Button, message } from 'antd';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { useState, useEffect, useMemo } from 'react';
+import moment from 'moment';
+import ResizablePro from '@/components/resiable-pro';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
+import LeftList from './components/left-list';
+import RrightTrace from './components/right-trace';
+import { Form, Select, Button, DatePicker, message, Switch, Divider, Input, Spin, Empty } from 'antd';
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
+import { getApplicationList, getInstance, getTrace, getEnvs, getTraceInfo } from '../service';
+import { leftItem } from './type';
+const { RangePicker } = DatePicker;
 import './index.less';
 
-const tracking = () => {
-  const [trackList, setTrackList] = useState<any[]>([]);
-  const [paramOptions, setParamOptions] = useState([{ label: 'key1', value: 'key1' }]);
-  const [selectParams, setSelectParams] = useState<any>({
-    'key1-value1': { key1: 'value1' },
-    'key2-value2': { key2: 'value2' },
-  });
+const START_TIME_ENUMS = [
+  {
+    label: '最近15分钟',
+    value: 15 * 60 * 1000,
+  },
+  {
+    label: '最近30分钟',
+    value: 30 * 60 * 1000,
+  },
+  {
+    label: '最近1小时',
+    value: 60 * 60 * 1000,
+  },
+  {
+    label: '最近1天',
+    value: 24 * 60 * 60 * 1000,
+  },
+  {
+    label: '最近一周',
+    value: 24 * 60 * 60 * 1000 * 7,
+  },
+  {
+    label: '最近一月',
+    value: 24 * 60 * 60 * 1000 * 30,
+  },
+];
+
+export default function Tracking() {
+  const [listData, setListData] = useState<leftItem[]>(); //左侧list数据
+  const [rightData, setRightData] = useState<any>([]); //右侧渲染图的数据
   const [form] = Form.useForm();
+  const [selectEnv, setSelectEnv] = useState<string>('');
+  const [appID, setAppID] = useState('');
+  const [selectTime, setSelectTime] = useState<any>({
+    start: moment().subtract(15, 'minute'),
+    end: moment(),
+  });
+  const [applicationList, setApplicationList] = useState([]);
+  const [instanceList, setInstanceList] = useState([]);
+  const [envOptions, setEnvOptions] = useState<any>([]);
+  const [expand, setIsExpand] = useState<boolean>(false);
+  const [currentItem, setCurrentItem] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false); //左侧列表的loading
+  const [rightLoading, setRightLoading] = useState<boolean>(false); //右侧的loading
+  const [total, setTotal] = useState<number>(0);
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [timeOption, setTimeOption] = useState<number>(Number(15 * 60 * 1000));
+  const [noiseList, setNoiseList] = useState<any>([]);
+  const [first, setFirst] = useState<boolean>(true);
 
-  useEffect(() => {}, []);
-
-  const columns = [
-    {
-      title: 'trace ID',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '生产日期',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: '接口名称',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: '所属应用',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: '耗时',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: '服务端',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: '客户端',
-      dataIndex: 'description',
-      key: 'description',
-    },
+  const btnMessageList = [
+    { expand: true, label: '收起更多', icon: <CaretUpOutlined /> },
+    { expand: false, label: '更多查询', icon: <CaretDownOutlined /> },
   ];
 
-  const deleteParams = (e: React.MouseEvent<HTMLElement, MouseEvent>, key: string) => {
-    e.preventDefault();
-    const index = getSelectParams(key);
-    const newSelectParams = JSON.parse(JSON.stringify(selectParams));
-    if (index !== -1) {
-      delete newSelectParams[key];
+  const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
+
+  //获取环境列表
+  useEffect(() => {
+    getEnvs().then((res: any) => {
+      if (res && res.success) {
+        const data = res?.data?.envs.map((item: any) => ({ label: item.envName, value: item.envCode }));
+        setEnvOptions(data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ traceState: 'ALL' });
+  }, []);
+
+  useEffect(() => {
+    if (envOptions.length !== 0) {
+      setSelectEnv(envOptions[0]?.value);
     }
-    setSelectParams(newSelectParams);
-  };
+  }, [envOptions]);
 
-  const addParams = (values: any) => {
-    const { param, value } = values;
-    const key = `${param}-${value}`;
-    const index = getSelectParams(key);
-    const newSelectParams = JSON.parse(JSON.stringify(selectParams));
-    if (index !== -1) {
-      message.info('此参数和参数值已存在');
-    } else {
-      newSelectParams[key] = {};
-      newSelectParams[key][param] = value;
-      setSelectParams(newSelectParams);
+  useEffect(() => {
+    if (selectEnv) {
+      form.resetFields();
+      setFirst(true);
+      setApplicationList([]);
+      // queryTraceList({ pageIndex: 1, pageSize: 20 });
+      setInstanceList([]);
+      getAppList();
     }
+  }, [selectEnv]);
+
+  useEffect(() => {
+    if (!first) {
+      queryTraceList({ pageIndex: 1, pageSize: 20 });
+    }
+  }, [selectTime]);
+
+  useEffect(() => {
+    if (selectEnv && appID) {
+      form.setFieldsValue({ instanceCode: '' });
+      getIns();
+    }
+  }, [selectEnv, appID]);
+
+  // 获取右侧图的数据
+  useEffect(() => {
+    if (currentItem && currentItem?.traceIds && currentItem?.traceIds?.length !== 0) {
+      queryTreeData(noiseList);
+    }
+  }, [currentItem]);
+
+  //获取应用
+  const getAppList = () => {
+    const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
+    const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
+    getApplicationList({ envCode: selectEnv, start, end })
+      .then((res: any) => {
+        if (res && res.success) {
+          const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
+          setApplicationList(data);
+        }
+      })
+      .catch(() => setApplicationList([]));
   };
 
-  const searchTracking = () => {};
-
-  const getSelectParams = (key: string) => {
-    return Object.keys(selectParams).findIndex((item) => item == key);
+  // 获取实例
+  const getIns = () => {
+    const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
+    const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
+    getInstance({ envCode: selectEnv, appID, start, end })
+      .then((res: any) => {
+        if (res && res.success) {
+          const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
+          setInstanceList(data);
+        }
+      })
+      .catch(() => {
+        setInstanceList([]);
+      });
   };
+
+  // 获取左侧list数据
+  const queryTraceList = (params: any) => {
+    setFirst(false);
+    setLoading(true);
+    setCurrentItem({});
+    // setListData([]);
+    setRightLoading(true);
+    const values = form.getFieldsValue();
+    const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
+    const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
+    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: noiseList })
+      .then((res: any) => {
+        if (res) {
+          setListData(res?.data?.dataSource);
+          setTotal(res?.data?.pageInfo?.total);
+          if (res?.data?.dataSource?.length === 0 || !res?.success) {
+            setRightData([])
+            setRightLoading(false);
+          }
+        }
+      })
+      .catch((e) => {
+        setRightLoading(false);
+      })
+      .finally(() => {
+        setLoading(false);
+        // setRightLoading(false)
+      });
+  };
+
+  // 获取右侧数据
+  const queryTreeData = (value: any) => {
+    if (!currentItem?.traceIds || !currentItem?.traceIds[0]) return;
+    setRightLoading(true);
+    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
+      .then((res: any) => {
+        if (res?.success) {
+          const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
+          const handleData = (data: any) => {
+            if (!data) {
+              return;
+            }
+            if (data?.children && data?.children?.length !== 0) {
+              data.children.map((e: any) => handleData(e));
+            } else {
+              data.children = [];
+            }
+            data.key = data.id;
+            data.allDurations = max; //该条链路总执行时间
+            data.durations = parseInt(data.endTime) - parseInt(data.startTime); //执行时间
+            const self = data.durations - data.children.reduce((p: number, c: any) => p + c.durations, 0);
+            data.selfDurations = self < 0 ? 0 : self; //自身执行时间
+
+            return data;
+          };
+          const rightData = handleData(res?.data);
+
+          setRightData([rightData]);
+        }
+      })
+      .finally(() => {
+        setRightLoading(false);
+      });
+  };
+
+  const leftItemChange = (value: leftItem) => {
+    setCurrentItem(value);
+  };
+
+  // 降噪下拉框发生改变时
+  const noiseChange = (value: number[]) => {
+    queryTreeData(value);
+    setNoiseList(value);
+  };
+
+  const timeOptionChange = (value: number) => {
+    setTimeOption(value);
+    const now = new Date().getTime();
+    const start = moment(Number(now - value));
+    const end = moment(now);
+    setSelectTime({ start, end });
+  };
+  // 处理数据 将list转化成tree格式
+  function listToTree(list: any) {
+    var map: any = {};
+    var node = null;
+    var roots = [];
+    for (let i = 0; i < list.length; i++) {
+      map[list[i].spanId] = i; // 初始化map
+      list[i].key = list[i].spanId;
+      list[i].children = undefined;
+    }
+    for (let j = 0; j < list.length; j++) {
+      node = list[j];
+      if (node.parentSpanId !== 0) {
+        list[map[node.parentSpanId]].children = list[map[node.parentSpanId]].children || []; // 初始化children
+        list[map[node.parentSpanId]]?.children.push(node);
+      } else {
+        roots.push(node);
+      }
+    }
+    return roots;
+  }
 
   return (
-    <PageContainer className="tracking-page">
-      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
-        <Form form={form} layout="inline" onFinish={addParams}>
-          <Form.Item label="参数" name="param" rules={[{ required: true, message: '请选择参数' }]}>
-            <Select options={paramOptions} style={{ width: '300px' }} placeholder="选取参数" />
-          </Form.Item>
-          <Form.Item name="value" rules={[{ required: true, message: '请输入参数的值' }]}>
-            <Input style={{ width: '400px' }} allowClear placeholder="参数值" />
-          </Form.Item>
-          <Form.Item>
-            <Button htmlType="submit" type="primary" ghost>
-              添加查询参数
-            </Button>
-          </Form.Item>
-        </Form>
-      </FilterCard>
-      <div className="tag-card" style={{ backgroundColor: '#F7F8FA' }}>
-        {Object.keys(selectParams).length > 0
-          ? Object.keys(selectParams).map((key: any) => {
-              return (
-                <Tag
-                  closable
-                  onClose={(e) => {
-                    deleteParams(e, key);
-                  }}
-                  key={key}
-                >
-                  {JSON.stringify(selectParams[key])}
-                </Tag>
-              );
-            })
-          : null}
-      </div>
-      <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
-        <div className="tracking-table-header">
-          <h3>追踪列表</h3>
+    <PageContainer className="tracking-container">
+      <ContentCard className="trace-detail-page" style={{ height: '100%' }}>
+        <div className="detail-top">
+          <div>
+            选择环境：
+            <Select
+              options={envOptions}
+              value={selectEnv}
+              onChange={(env) => {
+                setSelectEnv(env);
+              }}
+              showSearch
+              style={{ width: 140 }}
+            />
+          </div>
+          <div>
+            时间范围：
+            <RangePicker
+              showTime
+              allowClear={false}
+              onChange={(v: any, time: any) => {
+                setSelectTime({ start: time[0], end: time[1] });
+              }}
+              value={[moment(selectTime.start), moment(selectTime.end)]}
+              format="YYYY-MM-DD HH:mm:ss"
+            // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
+            />
+            <Select value={timeOption} onChange={timeOptionChange} style={{ width: 140 }}>
+              {START_TIME_ENUMS.map((time) => (
+                <Select.Option key={time.value} value={time.value}>
+                  {time.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
         </div>
-        <Table dataSource={trackList} columns={columns} />
+        <Divider />
+        <div className="search-form" style={{ marginBottom: '20px' }}>
+          <Form
+            layout="inline"
+            form={form}
+            onFinish={() => {
+              queryTraceList({
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
+            onReset={() => {
+              form.resetFields();
+              setCurrentItem({});
+              queryTraceList({
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
+          >
+            {expand && (
+              <Form.Item label="应用" name="appID">
+                <Select
+                  value={appID}
+                  options={applicationList}
+                  onChange={(value) => {
+                    setAppID(value);
+                  }}
+                  allowClear
+                  showSearch
+                  optionFilterProp="label"
+                  filterOption={(input, option) => {
+                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                  }}
+                  style={{ width: 160 }}
+                />
+              </Form.Item>
+            )}
+            {expand && (
+              <Form.Item label="实例" name="instanceCode">
+                <Select
+                  options={instanceList}
+                  showSearch
+                  allowClear
+                  style={{ width: 150 }}
+                  optionFilterProp="label"
+                  filterOption={(input, option) => {
+                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                  }}
+                />
+              </Form.Item>
+            )}
+            {expand && (
+              <Form.Item label="状态：" name="traceState">
+                <Select style={{ width: 100 }}>
+                  <Select.Option value={'ALL'}>全部</Select.Option>
+                  <Select.Option value={'SUCCESS'}>成功</Select.Option>
+                  <Select.Option value={'ERROR'}>失败</Select.Option>
+                </Select>
+              </Form.Item>
+            )}
+            {expand && (
+              <Form.Item label="端点：" name="endpoint">
+                <Input placeholder="请输入端点信息" style={{ width: 140 }}></Input>
+              </Form.Item>
+            )}
+            <Form.Item label="traceID：" name="traceID">
+              <Input placeholder="请输入traceID" style={{ width: 300 }}></Input>
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button type="ghost" htmlType="reset">
+                重置
+              </Button>
+            </Form.Item>
+            <Button
+              type="link"
+              onClick={() => {
+                setIsExpand(!expand);
+              }}
+            >
+              {btnMessage?.label}
+              <span style={{ marginLeft: '3px' }}>{btnMessage?.icon}</span>
+            </Button>
+          </Form>
+        </div>
+
+        <div className="detail-main">
+          {first ? (
+            <div className="empty-holder">请点击查询进行搜索</div>
+          ) : (
+            <ResizablePro
+              leftComp={
+                <LeftList
+                  listData={listData || []}
+                  total={total}
+                  loading={loading}
+                  changeItem={leftItemChange}
+                  pageChange={queryTraceList}
+                />
+              }
+              rightComp={
+                rightData?.length !== 0 || rightLoading ? (
+                  <RrightTrace
+                    item={currentItem || {}}
+                    data={rightData}
+                    envCode={selectEnv}
+                    selectTime={selectTime}
+                    noiseChange={noiseChange}
+                    loading={rightLoading}
+                  />
+                ) : (
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ width: '100%', overflow: 'hidden' }} />
+                )
+              }
+              isShowExpandIcon
+              defaultClose
+              leftWidth={240}
+            ></ResizablePro>
+          )}
+        </div>
       </ContentCard>
     </PageContainer>
   );
-};
-
-export default tracking;
+}

@@ -103,14 +103,14 @@ const Topo = memo(
         envCode: props.selectEnv,
       });
       console.log('gettopodata', moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'), props.selectEnv);
-      const edges = res.data.Calls.map((item: any) => {
+      const edges = res?.data?.Calls?.map((item: any) => {
         return {
           id: item.callId,
           style: arrowStyleType[item.status] || arrowStyleType['normal'],
           ...item,
         };
       });
-      const nodes = res.data.Nodes.map((item: any) => {
+      const nodes = res?.data?.Nodes?.map((item: any) => {
         return {
           id: item.nodeId,
           label: '',
