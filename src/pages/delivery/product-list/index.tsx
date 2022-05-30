@@ -2,13 +2,11 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/21 17:10
 
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, Tag, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
-import { addAPIPrefix } from '@/utils';
-import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useCreateProduct, useDeleteProduct, useQueryProductList } from './hooks';
 import './index.less';

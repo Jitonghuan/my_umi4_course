@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/21 17:10
 
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Form,
   Input,
@@ -60,7 +60,6 @@ export default function deliveryDescription() {
   const [publishLoading, publishProductVersion] = usePublishProductVersion();
   const [tableLoading, dataSource, pageInfo, setPageInfo, queryProductVersionList] = useQueryProductList();
   const [creatVersionVisiable, setCreatVersionVisiable] = useState<boolean>(false);
-  const [editable, setEditable] = useState<boolean>(false);
 
   useEffect(() => {
     if (!descriptionInfoData.id) {
@@ -131,6 +130,7 @@ export default function deliveryDescription() {
                   productName: descriptionInfoData.productName,
                   productDescription: descriptionInfoData.productDescription,
                   productGmtCreate: descriptionInfoData.gmtCreate,
+                  releaseStatus: record.releaseStatus,
                 },
               });
             }}
@@ -142,7 +142,6 @@ export default function deliveryDescription() {
             title="发布后编排不可修改，是否确认发布？"
             onConfirm={() => {
               publishProductVersion(record.id).then(() => {
-                setEditable(true);
                 queryProductVersionList(descriptionInfoData.id);
               });
             }}
@@ -193,9 +192,17 @@ export default function deliveryDescription() {
             title="基本信息"
             column={2}
             className="basic-info-description"
-            //  labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
-            //  contentStyle={{ color: '#000' }}
             bordered={true}
+            extra={
+              <Button
+                type="primary"
+                onClick={() => {
+                  history.push('/matrix/delivery/product-list');
+                }}
+              >
+                返回
+              </Button>
+            }
           >
             <Descriptions.Item label="产品名称">{descriptionInfoData.productName}</Descriptions.Item>
             <Descriptions.Item label="产品描述">
@@ -282,7 +289,7 @@ export default function deliveryDescription() {
           }
         >
           <Form layout="vertical" form={createVersionForm} style={{ paddingLeft: 30 }}>
-            <Form.Item label="版本名称:" name="version_name">
+            <Form.Item label="版本名称:" name="version_name" rules={[{ required: true, message: '请输入版本号' }]}>
               <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
             </Form.Item>
             <Form.Item label="版本描述:" name="version_description">
