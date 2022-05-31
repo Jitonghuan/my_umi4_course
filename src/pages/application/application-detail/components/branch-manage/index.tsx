@@ -12,7 +12,7 @@ import { createReview } from '@/pages/application/service';
 import { postRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
-import { getListMonitor } from '@/pages/monitor/business/service';
+import appConfig from '@/app.config';
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
@@ -199,9 +199,12 @@ export default function BranchManage() {
           align="center"
           render={(_, record: any, index) => (
             <div className="action-cell">
-              <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
-                创建Review
-              </Button>
+              {appConfig.envType !== 'base-poc' && (
+                <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
+                  创建Review
+                </Button>
+              )}
+
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
                 <Button type="primary" danger size="small">
                   作废

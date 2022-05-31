@@ -6,10 +6,11 @@ import React from 'react';
 import { Spin } from 'antd';
 import './index.less';
 
-export default function SourceLoading() {
+export default function SourceLoading(props: any) {
   return (
     <div className="source-loading">
-      <Spin tip="资源加载中……" />
+      {props.error && <div>{props.error.stack}</div>}
+      {!props.error && <Spin tip="资源加载中……" />}
     </div>
   );
 }

@@ -253,16 +253,16 @@ export default function LogMonitor(props: any) {
       getIndexModeFields(recordData?.envCode, recordData?.index);
     }
 
-    if (recordData?.envCode.indexOf('dev') != -1) {
+    if (recordData?.envCode?.indexOf('dev') != -1) {
       setCurrentEnvType('dev');
       getEnvCodeList('dev');
-    } else if (recordData?.envCode.indexOf('test') != -1) {
+    } else if (recordData?.envCode?.indexOf('test') != -1) {
       setCurrentEnvType('test');
       getEnvCodeList('test');
-    } else if (recordData?.envCode.indexOf('pre') != -1) {
+    } else if (recordData?.envCode?.indexOf('pre') != -1) {
       setCurrentEnvType('pre');
       getEnvCodeList('pre');
-    } else if (recordData?.envCode.indexOf('prod') != -1) {
+    } else if (recordData?.envCode?.indexOf('prod') != -1) {
       setCurrentEnvType('prod');
       getEnvCodeList('prod');
     }
