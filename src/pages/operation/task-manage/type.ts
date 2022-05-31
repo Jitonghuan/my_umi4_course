@@ -7,6 +7,7 @@ export interface jobContentProps {
   method?: string;
   params?: any;
   url?: string;
+  password?:string;
 }
 
 export interface jobStatus {

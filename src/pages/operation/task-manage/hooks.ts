@@ -242,14 +242,15 @@ export function useQueryAppEnvData(): [boolean,any, (paramsObj: { appCode: strin
     })
       .then((result) => {
         if (result?.success) {
-         let dataSource= result.data.dataSource;
+         let dataSource= result.data;
          const envOption=  dataSource?.map((item:any)=>(
            {
-             label:item?.envName||'',
+             label:item?.envCode||'',
              value:item?.envCode||'',
            }
 
          ));
+         console.log('envOption',envOption)
          
          setAppEnvDataSource(envOption)
         }else{
@@ -264,4 +265,41 @@ export function useQueryAppEnvData(): [boolean,any, (paramsObj: { appCode: strin
   return [loading, appEnvDataSource,queryAppEnvData];
 }
 
+//getListContainer
+
+export function useQueryListContainer(): [boolean,any, (paramsObj: {  appCode: string,envCode:string }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [containerNameOption, setContainerNameOption] = useState<Record<string, any>[]>([]);
+  const getListContainer = async(paramsObj: { appCode: string,envCode:string }) => {
+    setLoading(true);
+    await  getRequest(APIS.getListContainer, {
+      data: {
+        appCode:paramsObj?.appCode,
+        envCode:paramsObj?.envCode
+       
+      },
+    })
+      .then((result) => {
+        if (result?.success) {
+         let dataSource= result.data;
+         const option=  dataSource?.map((item:any)=>(
+           {
+             label:item?.containerName||'',
+             value:item?.containerName||'',
+           }
+
+         ));
+         
+         setContainerNameOption(option)
+        }else{
+          setContainerNameOption([]);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, containerNameOption,getListContainer];
+}
 

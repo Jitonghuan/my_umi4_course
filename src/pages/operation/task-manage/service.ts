@@ -23,6 +23,12 @@ export const getJobList = addAPIPrefix('/opsManage/job/list');
 
 export const getTaskList = addAPIPrefix('/opsManage/task/list');
 
+/* GET 6、 获取容器列表接口 */
+
+export const getListContainer = addAPIPrefix('/appManage/deployInfo/defaultInstance/listContainer');
+
+
+
 export const queryAppListApi =addAPIPrefix('/appManage/list');
 
 
