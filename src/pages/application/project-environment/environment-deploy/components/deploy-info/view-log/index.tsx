@@ -133,11 +133,13 @@ export default function ViewLog(props: any) {
           query: {
             appCode: appCode,
             projectEnvCode: projectEnvCode,
+            projectEnvName:projectEnvName,
             // viewLogEnvType: viewLogEnvType,
           },
           state: {
             appCode: appCode,
             projectEnvCode: projectEnvCode,
+            projectEnvName:projectEnvName,
             // viewLogEnvType: viewLogEnvType,
             infoRecord: infoRecord,
             id: appData?.id,

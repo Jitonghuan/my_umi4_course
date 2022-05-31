@@ -8,10 +8,9 @@ import { history } from 'umi';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
-  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id } = props.location.state;
+  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id,projectEnvName } = props.location.state;
   const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
   const [queryContainer, queryContainerData, loading] = useListContainer();
-  // let infoRecord:any=JSON.parse(initRecord)||{}
   useEffect(() => {
     if (!infoRecord?.instName || !projectEnvCode || !appCode) {
       return;
@@ -47,6 +46,7 @@ export default function ContainerInfo(props: any) {
             projectEnvCode: projectEnvCode,
             instName: infoRecord?.instName,
             // viewLogEnvType: viewLogEnvType,
+            projectEnvName:projectEnvName,
             optType: 'containerInfo',
             containerName: record?.containerName,
           },
@@ -57,7 +57,7 @@ export default function ContainerInfo(props: any) {
       },
       onLoginShellClick: (record, index) => {
         history.push(
-          `/matrix/application/environment-deploy/loginShell?appCode=${appCode}&projectEnvCode=${projectEnvCode}&instName=${infoRecord?.instName}&containerName=${record?.containerName}&optType=containerInfo`,
+          `/matrix/application/environment-deploy/loginShell?appCode=${appCode}&projectEnvCode=${projectEnvCode}&instName=${infoRecord?.instName}&containerName=${record?.containerName}&projectEnvName=${projectEnvName}&optType=containerInfo`,
         );
       },
     }) as any;
@@ -78,6 +78,8 @@ export default function ContainerInfo(props: any) {
                 pathname: `deployInfo`,
                 query: {
                   viewLogEnv: projectEnvCode || '',
+                  projectEnvCode:projectEnvCode,
+                  projectEnvName:projectEnvName,
                   // viewLogEnvType: viewLogEnvType,
                   type: 'viewLog_goBack',
                   id: id,
@@ -111,6 +113,7 @@ export default function ContainerInfo(props: any) {
         scroll={{ y: window.innerHeight - 564 }}
         pagination={false}
         columns={containerColumns}
+        bordered
         // loading={loading}
         dataSource={queryContainerData}
         locale={{ emptyText: <Empty description="没有容器信息" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
@@ -124,6 +127,7 @@ export default function ContainerInfo(props: any) {
         pagination={false}
         scroll={{ y: window.innerHeight - 564 }}
         dataSource={podListSource}
+        bordered
         // loading={podLoading}
         locale={{ emptyText: <Empty description="没有事件" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
       />

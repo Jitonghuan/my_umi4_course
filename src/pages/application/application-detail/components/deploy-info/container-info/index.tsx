@@ -110,6 +110,7 @@ export default function ContainerInfo(props: any) {
       <Table
         scroll={{ y: window.innerHeight - 564 }}
         pagination={false}
+        bordered
         columns={containerColumns}
         // loading={loading}
         dataSource={queryContainerData}
@@ -122,6 +123,7 @@ export default function ContainerInfo(props: any) {
       <Table
         columns={columns}
         pagination={false}
+        bordered
         scroll={{ y: window.innerHeight - 564 }}
         dataSource={podListSource}
         // loading={podLoading}

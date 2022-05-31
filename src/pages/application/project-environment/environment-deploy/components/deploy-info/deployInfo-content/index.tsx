@@ -114,6 +114,7 @@ export default function DeployContent(props: DeployContentProps) {
     loadInfoData(initEnvCode.current)
       .then(() => {
         queryInstanceList(appData?.appCode, initEnvCode.current);
+        getDeploymentEventList({appCode, envCode: initEnvCode.current})
       })
       .catch((e: any) => {
         console.log('error happend in intervalFunc:', e);
@@ -158,6 +159,7 @@ export default function DeployContent(props: DeployContentProps) {
                     setInstanceLoading(true);
                     let data = result.data;
                     setInstanceTableData(data);
+                    getDeploymentEventList({appCode, envCode: initEnvCode.current})
 
                     if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
                       timerHandler('do', true);
@@ -236,6 +238,7 @@ export default function DeployContent(props: DeployContentProps) {
       })
       .then(() => {
         setInstanceTableData([]); //重置实例列表数据
+        setDeploymentSource([]);
         if (clusterInfoData) {
           getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: envCode } })
             .then((result) => {
@@ -243,6 +246,7 @@ export default function DeployContent(props: DeployContentProps) {
                 setInstanceLoading(true);
                 let data = result.data;
                 setInstanceTableData(data);
+                getDeploymentEventList({appCode, envCode: initEnvCode.current})
                 if (result.data !== undefined && result.data.length !== 0) {
                   timerHandler('do', true);
                 } else {
@@ -258,12 +262,14 @@ export default function DeployContent(props: DeployContentProps) {
             })
             .catch(() => {
               setInstanceTableData([]);
+              setDeploymentSource([]);
             });
         }
       })
       .catch(() => {
         setListEnvClusterData([]);
         setInstanceTableData([]);
+        setDeploymentSource([]);
       });
   };
   //加载容器信息
@@ -398,12 +404,14 @@ export default function DeployContent(props: DeployContentProps) {
                           appCode: appCode,
                           // envCode: currentEnvData,
                           projectEnvCode: currentEnvData,
+                          projectEnvName:projectEnvName,
                           // viewLogEnvType: envTypeCode,
                           // initRecord:JSON.stringify(record)
                         },
                         state: {
                           appCode: appCode,
                           // envCode: currentEnvData,
+                          projectEnvName:projectEnvName,
                           projectEnvCode: currentEnvData,
                           // viewLogEnvType: envTypeCode,
                           infoRecord: record,
@@ -483,6 +491,7 @@ export default function DeployContent(props: DeployContentProps) {
                                 appCode: appData?.appCode,
                                 projectEnvCode: currentEnvData,
                                 instName: record?.instName,
+                                projectEnvName:projectEnvName,
                                 // viewLogEnvType: envTypeCode,
                                 optType: 'deployInfo',
                                 deploymentName: appData?.deploymentName,

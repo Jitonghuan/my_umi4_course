@@ -65,7 +65,7 @@ export default function loginShell(props: any) {
     ); //建立通道
 
     //初始化terminal
-    const term = new Terminal({
+    term.current = new Terminal({
       altClickMovesCursor: true,
       rendererType: 'canvas', //渲染类型
       convertEol: true, //启用时，光标将设置为下一行的开头
@@ -81,25 +81,25 @@ export default function loginShell(props: any) {
         cursor: 'white', //设置光标
       },
     });
-    term.open(dom);
+    term.current.open(dom);
     const fitAddon = new FitAddon();
-    term.loadAddon(fitAddon);
+    term.current.loadAddon(fitAddon);
     fitAddon.fit();
     ws.current.onopen = () => {
       if (ws.current) {
         const attachAddon = new AttachAddon(ws.current);
-        term.loadAddon(attachAddon);
-        term.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
-        term.writeln('WebSocket链接成功');
+        term.current.loadAddon(attachAddon);
+        term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+        term.current.writeln('WebSocket链接成功');
         let sendJson = {
           operation: 'resize',
-          cols: term.cols,
-          rows: term.rows,
+          cols: term.current.cols,
+          rows: term.current.rows,
         };
         ws.current.send(JSON.stringify(sendJson));
-        term.focus();
+        term.current.focus();
         ws.current.onerror = () => {
-          term.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
+          term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
         };
       }
     };
@@ -119,8 +119,8 @@ export default function loginShell(props: any) {
         }
         let sendJson = {
           operation: 'resize',
-          cols: term.cols,
-          rows: term.rows,
+          cols: term.current.cols,
+          rows: term.current.rows,
         };
         ws.current.send(JSON.stringify(sendJson));
       }
@@ -170,9 +170,6 @@ export default function loginShell(props: any) {
         ws.current.onerror = () => {
           term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
         };
-
-        //  term.current.writeln('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
-        //  term.current.write('WebSocket链接成功');
       }
     };
   };

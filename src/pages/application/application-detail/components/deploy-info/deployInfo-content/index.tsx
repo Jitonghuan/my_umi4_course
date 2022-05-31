@@ -124,7 +124,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: viewLogEnv });
             initEnvCode.current = viewLogEnv;
             setCurrentEnvData(viewLogEnv);
-            getDeploymentEventList({ appCode, envCode: initEnvCode.current });
+           
             if (viewLogEnv !== '') {
               loadInfoData(viewLogEnv).then(() => {
                 queryAppOperateLog(viewLogEnv);
@@ -134,6 +134,7 @@ export default function DeployContent(props: DeployContentProps) {
                       setInstanceLoading(true);
                       let data = result.data;
                       setInstanceTableData(data);
+                      getDeploymentEventList({ appCode, envCode: initEnvCode.current });
                       if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
                         timerHandler('do', true);
                       } else {
@@ -191,6 +192,7 @@ export default function DeployContent(props: DeployContentProps) {
                           setInstanceLoading(true);
                           let data = result.data;
                           setInstanceTableData(data);
+                          getDeploymentEventList({ appCode, envCode: initEnvCode.current });
 
                           if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
                             timerHandler('do', true);
@@ -262,6 +264,7 @@ export default function DeployContent(props: DeployContentProps) {
       })
       .then(() => {
         setInstanceTableData([]); //重置实例列表数据
+        setDeploymentSource([]);
         if (clusterInfoData) {
           getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: envCode } })
             .then((result) => {
@@ -269,6 +272,7 @@ export default function DeployContent(props: DeployContentProps) {
                 setInstanceLoading(true);
                 let data = result.data;
                 setInstanceTableData(data);
+                getDeploymentEventList({ appCode, envCode: initEnvCode.current });
                 if (result.data !== undefined && result.data.length !== 0) {
                   timerHandler('do', true);
                 } else {
@@ -288,12 +292,14 @@ export default function DeployContent(props: DeployContentProps) {
             })
             .catch(() => {
               setInstanceTableData([]);
+              setDeploymentSource([]);
             });
         }
       })
       .catch(() => {
         setListEnvClusterData([]);
         setInstanceTableData([]);
+        setDeploymentSource([]);
       });
   };
   //加载容器信息

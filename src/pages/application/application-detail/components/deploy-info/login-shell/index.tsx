@@ -196,7 +196,6 @@ export default function AppDeployInfo(props: any) {
             </div>
             <div className="caption-right">
               <span>
-                {' '}
                 当前环境：<Tag color="geekblue">{envCode}</Tag>
               </span>
             </div>

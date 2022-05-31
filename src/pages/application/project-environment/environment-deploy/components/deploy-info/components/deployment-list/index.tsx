@@ -16,6 +16,7 @@ export default function DeploymentList(props: DeployContentProps) {
         scroll={{ y: window.innerHeight - 564 }}
         pagination={false}
         columns={columns}
+        bordered
         dataSource={dataSource}
         // loading={loading}
         locale={{ emptyText: <Empty description="没有事件" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
