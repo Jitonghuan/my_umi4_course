@@ -24,14 +24,14 @@ export const taskTableSchema = ({
   onDelClick,
   onGetExecutionDetailClick,
   onSwitchEnableClick,
+ 
 }: {
   onEditClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
   onGetExecutionDetailClick: (record: any, index: number) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
-  // categoryData: any[];
-  // businessDataList: any[];
+  
 }) =>
   [
     {
@@ -83,6 +83,7 @@ export const taskTableSchema = ({
               enable === 1 ? true : false 
             }
             onClick={() => {
+              console.log('enable',enable)
               onSwitchEnableClick(record, index);
             }}
           />

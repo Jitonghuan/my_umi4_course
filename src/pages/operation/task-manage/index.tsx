@@ -4,8 +4,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
-import { Input, Table, Form, Button, Space } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Input, Table, Form, Button, Space, } from 'antd';
+import { PlusOutlined,RedoOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import CreateTaskModal from './create-task';
@@ -43,31 +43,10 @@ export default function DNSManageList(props: any) {
   }, []);
 
   const onFresh=()=>{
-    
+    loadListData(
+      {pageIndex: 1,
+      pageSize: 20})
   }
-
-  const handleEditEnv = useCallback(
-    (record: recordEditData, index: number, type: any) => {
-      setCurRecord(record);
-      setTaskTableSource(taskTableSource);
-    },
-    [taskTableSource],
-  );
-  // const handleUpdateStatus = useCallback(
-  //   (record: any) => {
-  //     let newStatus: string = record.status === '0' ? '1' : '0';
-  //     let paramObj = {
-  //       envCode: currentEnvCode.envCode,
-  //       id: record.id,
-  //       status: newStatus,
-  //     };
-  //     updateDnsManage(paramObj).then(() => {
-  //       loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
-  //     });
-  //     setRecordDataSource(dataSource);
-  //   },
-  //   [dataSource],
-  // );
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
@@ -81,35 +60,12 @@ export default function DNSManageList(props: any) {
       pageSize: pagination.pageSize,
     };
 
-    getTaskList(obj);
+    loadListData(obj);
   };
 
   const loadListData = (params: any) => {
     let value = taskForm.getFieldsValue();
-    // let paramObj = {
-    //   [selectCascaderValue]: value.keyword,
-    // };
-    // getDnsManageList({ currentEnvCode, ...params,...value });
-    // if (value) {
-    //   getDnsManageList({ currentEnvCode, ...value, ...params });
-    // } else {
-    //   getDnsManageList({ currentEnvCode, ...params });
-    // }
-  };
-
-  //删除数据
-  const handleDelRecord = (record: any) => {
-    let id = record.id;
-    // deleteDnsManage({ envCode: currentEnvCode.envCode, id }).then(() => {
-    //   loadListData({ pageIndex: pageInfo.pageIndex, pageSize: pageInfo.pageSize });
-    //   // getDnsManageList({ currentEnvCode });
-    // });
-  };
-
-  const handleSearch = () => {
-    let value = taskForm.getFieldsValue();
-
-    // getDnsManageList({ currentEnvCode, ...value });
+    getTaskList({...params,...value});
   };
 
   // 表格列配置
@@ -132,19 +88,19 @@ export default function DNSManageList(props: any) {
         setCurRecord(record);
         setExecutionDetailsMode('VIEW');
       },
-      onSwitchEnableClick: (record, index) => {
-        // if (record?.enable === 1) {
+      onSwitchEnableClick: (record, index) => {   
+        let enable=record?.enable === 1 ? 2 : 1
+        let paramsObj = {
+           ...record,
+           enable: enable, }
+
           
-          let paramsObj = {
-            enable: record?.enable === 1 ? 1 : 2,
-           ...record }
-          // };
-          updateTaskManage(paramsObj).then(() => {
+           console.log('paramsObjenable',paramsObj,'-----',record?.enable,'00000',enable)
+        updateTaskManage(paramsObj).then(() => {
             getTaskList();
           });
-        // }
       },
-      // curRecord,
+     
     }) as any;
   }, []);
 
@@ -153,17 +109,13 @@ export default function DNSManageList(props: any) {
       <ExecutionDetailsModal
         mode={executionDetailsMode}
         curRecord={curRecord}
-        // onSave={() => {
-        //     setExecutionDetailsMode('HIDE');
-        //   }}
         onClose={() => setExecutionDetailsMode('HIDE')}
       />
       <CreateTaskModal
         mode={addTaskMode}
         initData={curRecord}
-        envCode={''}
         onSave={() => {
-          // setAddTaskMode('HIDE');
+          setAddTaskMode('HIDE');
           setTimeout(() => {
             getTaskList();
           }, 200);
@@ -191,7 +143,7 @@ export default function DNSManageList(props: any) {
               });
             }}
           >
-            <Form.Item label="任务Code：" name="taskCode">
+            <Form.Item label="任务Code：" name="jobCode">
               <Input placeholder="请输入任务Code" style={{ width: 290 }} />
             </Form.Item>
             <Form.Item>
@@ -214,8 +166,9 @@ export default function DNSManageList(props: any) {
           </div>
           <div className="caption-right">
             <Space>
-              <Button type='primary' onClick={onFresh}>
-                刷新任务
+            {/* <RedoOutlined   onClick={onFresh} /> */}
+            <Button icon={<RedoOutlined/> }  onClick={onFresh}>
+                刷新
               </Button>
             <Button
               type="primary"
@@ -233,8 +186,20 @@ export default function DNSManageList(props: any) {
           </div>
         </div>
         <div>
-          <Table columns={tableColumns} dataSource={taskTableSource} loading={tableLoading}></Table>
-          {/* taskTableSchema  */}
+          <Table 
+            columns={tableColumns} 
+            dataSource={taskTableSource} 
+            loading={tableLoading}
+            pagination={{
+              current: taskTablePageInfo.pageIndex,
+              total: taskTablePageInfo.total,
+              pageSize: taskTablePageInfo.pageSize,
+              showSizeChanger: true,
+              showTotal: () => `总共 ${taskTablePageInfo.total} 条数据`,
+            }}
+            onChange={pageSizeClick}
+          ></Table>
+        
         </div>
       </ContentCard>
     </PageContainer>

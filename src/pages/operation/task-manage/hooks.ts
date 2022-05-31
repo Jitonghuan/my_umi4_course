@@ -201,3 +201,67 @@ export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => P
 
   return [loading, deleteTask];
 }
+
+
+
+/** 查询应用列表 */
+export const queryAppList = () => {
+  return getRequest(APIS.queryAppListApi, {
+    data: {
+      pageIndex: 1,
+      pageSize: 1000,
+    },
+  }).then((res: any) => {
+    if (res.success) {
+      const { dataSource = [] } = res.data || {};
+      return dataSource.map((app: any) => {
+        return {
+          ...app,
+          value: app.appCode,
+          label: app.appCode,
+        };
+      });
+    }
+    return [];
+  });
+};
+
+
+// 查询应用环境数据
+
+export function useQueryAppEnvData(): [boolean,any, (paramsObj: { appCode: string }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
+  const queryAppEnvData = async(paramsObj: { appCode: string }) => {
+    setLoading(true);
+    await  getRequest(APIS.listAppEnv, {
+      data: {
+        appCode:paramsObj?.appCode,
+       
+      },
+    })
+      .then((result) => {
+        if (result?.success) {
+         let dataSource= result.data.dataSource;
+         const envOption=  dataSource?.map((item:any)=>(
+           {
+             label:item?.envName||'',
+             value:item?.envCode||'',
+           }
+
+         ));
+         
+         setAppEnvDataSource(envOption)
+        }else{
+          setAppEnvDataSource([]);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, appEnvDataSource,queryAppEnvData];
+}
+
+

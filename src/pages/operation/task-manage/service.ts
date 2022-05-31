@@ -22,3 +22,10 @@ export const getJobList = addAPIPrefix('/opsManage/job/list');
 /* GET 5、 查询任务执行情况接口 */
 
 export const getTaskList = addAPIPrefix('/opsManage/task/list');
+
+export const queryAppListApi =addAPIPrefix('/appManage/list');
+
+
+/** 获取应用环境 */
+export const listAppEnv =addAPIPrefix('/appManage/env/listAppEnv');
+
