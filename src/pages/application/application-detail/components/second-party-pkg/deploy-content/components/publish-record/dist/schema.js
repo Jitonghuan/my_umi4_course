@@ -1,53 +1,52 @@
-import React from 'react';
-import { history } from 'umi';
-
+"use strict";
+exports.__esModule = true;
+exports.recordDisplayMap = exports.recordFieldMapOut = exports.recordFieldMap = exports.createTableSchema = void 0;
+var react_1 = require("react");
 // 表格 schema
-export const createTableSchema = () => [
-  {
-    title: '发布Id',
-    dataIndex: 'id',
-  },
-  {
-    title: '发布人',
-    dataIndex: 'modifyUser',
-  },
-  {
-    title: '发布时间',
-    dataIndex: 'deployedTime',
-  },
-  {
-    title: '操作',
-    dataIndex: 'operate',
-    render: () => <a>详情</a>,
-  },
-];
-
+exports.createTableSchema = function () { return [
+    {
+        title: '发布Id',
+        dataIndex: 'id'
+    },
+    {
+        title: '发布人',
+        dataIndex: 'modifyUser'
+    },
+    {
+        title: '发布时间',
+        dataIndex: 'deployedTime'
+    },
+    {
+        title: '操作',
+        dataIndex: 'operate',
+        render: function () { return react_1["default"].createElement("a", null, "\u8BE6\u60C5"); }
+    },
+]; };
 // 发布记录字段 map
-export const recordFieldMap: { [key: string]: string } = {
-  id: '发布Id',
-  modifyUser: '发布人',
-  deployedTime: '发布时间',
-  envs: '发布环境',
-  deployStatus: '发布状态',
-  jenkinsUrl: 'jenkins',
-  features: '功能分支',
-  releaseBranch: '发布分支',
-  merge: 'git merge', // TODO
+exports.recordFieldMap = {
+    id: '发布Id',
+    modifyUser: '发布人',
+    deployedTime: '发布时间',
+    envs: '发布环境',
+    deployStatus: '发布状态',
+    jenkinsUrl: 'jenkins',
+    features: '功能分支',
+    releaseBranch: '发布分支',
+    merge: 'git merge'
 };
 // 发布记录字段 map
-export const recordFieldMapOut: { [key: string]: any } = {
-  // id: '发布Id',
-  modifyUser: '发布人',
-  deployedTime: '发布时间',
-  deployStatus: '发布状态',
-  envs: '发布环境',
-
-  // conflictFeature: '冲突分支',
-  jenkinsUrl: 'jenkins',
-  branchInfo: '功能分支',
-  // releaseBranch: '发布分支',
-  // version: '版本号',
-  tagName: 'tag',
+exports.recordFieldMapOut = {
+    // id: '发布Id',
+    modifyUser: '发布人',
+    deployedTime: '发布时间',
+    deployStatus: '发布状态',
+    envs: '发布环境',
+    // conflictFeature: '冲突分支',
+    jenkinsUrl: 'jenkins',
+    branchInfo: '功能分支',
+    // releaseBranch: '发布分支',
+    // version: '版本号',
+    tagName: 'tag'
 };
 // export const recordDisplayMap: any = {
 //   merging: { text: '正在合并', color: 'blue' },
@@ -77,10 +76,9 @@ export const recordFieldMapOut: { [key: string]: any } = {
 //   verifyWait: { text: '等待灰度验证', color: 'geekblue' },
 //   verifyFailed: { text: '灰度验证失败', color: 'red' },
 // };
-
-export const recordDisplayMap: any = {
-  wait: { text: '发布开始', color: 'blue' },
-  process: { text: '正在发布', color: 'geekblue' },
-  error: { text: '发布失败', color: 'red' },
-  finish: { text: '发布完成', color: 'green' },
-}
+exports.recordDisplayMap = {
+    wait: { text: '发布开始', color: 'blue' },
+    process: { text: '正在发布', color: 'geekblue' },
+    error: { text: '发布失败', color: 'red' },
+    finish: { text: '发布完成', color: 'green' }
+};
