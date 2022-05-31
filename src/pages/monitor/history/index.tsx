@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Tag, Form, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
-import { FormProps } from '@/components/table-search/typing';
 import PageContainer from '@/components/page-container';
 import useTable from '@/utils/useTable';
 import { queryAlertManageList } from '../service';
@@ -33,7 +32,7 @@ const HistoryCom: React.FC = () => {
   const [form] = Form.useForm();
 
   const {
-    tableProps,
+    tableProps = {},
     search: { submit, reset },
   } = useTable({
     url: queryAlertManageList,
@@ -237,7 +236,7 @@ const HistoryCom: React.FC = () => {
           key: i + 1,
         }))}
         pagination={{
-          ...tableProps.pagination,
+          ...tableProps?.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',

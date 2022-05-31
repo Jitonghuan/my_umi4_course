@@ -100,10 +100,8 @@ export default defineConfig({
 
   // HTML 中以 <script> 方式引用的资源
   scripts: NODE_ENV === 'development' ? [] : [
-    { src: `http://hbos-dev.cfuture.shop/common/react/17.0.1/react.development.js` },
-    { src: `http://hbos-dev.cfuture.shop/common/react-dom/17.0.1/react-dom.development.js` },
-    // { src: `${publicPathPrefix}react.min.js` },
-    // { src: `${publicPathPrefix}react-dom.min.js` },
+    { src: `${publicPathPrefix}react.min.js` },
+    { src: `${publicPathPrefix}react-dom.min.js` },
     `window.BUILD_ENV = "${BUILD_ENV}"`
   ],
 

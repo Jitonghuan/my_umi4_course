@@ -25,8 +25,8 @@ const useTable = (props: UseTableProps) => {
           return formatResult(data);
         }
         return {
-          total: data.data?.pageInfo?.total,
-          list: data.data.dataSource,
+          total: data?.data?.pageInfo?.total,
+          list: data?.data?.dataSource || [],
         };
       });
     }
@@ -39,8 +39,8 @@ const useTable = (props: UseTableProps) => {
         return formatResult(data);
       }
       return {
-        total: data.data?.pageInfo?.total,
-        list: data.data.dataSource,
+        total: data?.data?.pageInfo?.total,
+        list: data?.data?.dataSource || [],
       };
     });
   };

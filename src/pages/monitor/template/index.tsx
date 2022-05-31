@@ -3,7 +3,6 @@ import { Button, Space, Tag, Popconfirm, Form, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';
-import { FormProps } from '@/components/table-search/typing';
 import PageContainer from '@/components/page-container';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
@@ -43,8 +42,9 @@ const TemplateCom: React.FC = () => {
   useEffect(() => {
     groupList();
   }, []);
+
   const {
-    tableProps,
+    tableProps = {},
     search: { submit: queryList, reset },
   } = useTable({
     url: queryRuleTemplatesList,
@@ -314,7 +314,7 @@ const TemplateCom: React.FC = () => {
         columns={columns}
         {...tableProps}
         pagination={{
-          ...tableProps.pagination,
+          ...tableProps?.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
@@ -338,7 +338,7 @@ const TemplateCom: React.FC = () => {
         className="table-form"
         onSearch={queryList}
         reset={reset}
-        scroll={tableProps.dataSource.length > 0 ? { x: 'max-content' } : undefined}
+        scroll={{ x: '100%' }}
       />
       <TemplateDrawer
         visible={drawerVisible}
