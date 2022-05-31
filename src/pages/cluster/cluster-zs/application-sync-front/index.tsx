@@ -32,7 +32,7 @@ export default function FrontApplication() {
         const result = await getRequest(APIS.diffFeSingleApp, {
           data: { appCode, envCode, feType },
         });
-        const source = result.data;
+        const source = result?.data;
         if (Array.isArray(source) && source.length > 0) {
           const differenceData = source.map((item: any) => '+' + item);
           const next = [
