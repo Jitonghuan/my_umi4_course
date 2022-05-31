@@ -40,7 +40,7 @@
     "@cffe/h2o-theme": "css-var",
     "@cffe/hulk-wave-chart": "^0.0.4",
     "@cffe/internal-icon": "^1.0.1",
-    "@cffe/layout": "0.1.23",
+    "@cffe/layout": "^0.1.23",
     "@cffe/pc-editor-table": "~1.0.10",
     "@cffe/sona": "^0.6.10",
     "@cffe/sona-editor": "^1.15.0",
@@ -93,7 +93,8 @@
     "@hbos/umi-plugin-theme-hbos": "^1.0.1",
     "@types/react-copy-to-clipboard": "^5.0.2",
     "@umijs/preset-react": "~1.8.23",
-    "prettier": "2.6.0"
+    "prettier": "2.6.0",
+    "babel-plugin-import": "~1.13.3"
   },
   "resolutions": {
     "@cffe/h2o-design": "css-var"
