@@ -84,6 +84,7 @@ export default defineConfig({
   themeHbos: {
     // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
     bundleName: 'matrix',
+    globalStyle: true,
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome

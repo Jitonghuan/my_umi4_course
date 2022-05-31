@@ -7,6 +7,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void) => {
+  console.log(formOptions);
   if (!formOptions.length) return [];
   return formOptions.map((v) => {
     const {
@@ -42,6 +43,8 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
       ...rest
     } = v;
 
+    console.log(type);
+
     switch (type) {
       case 'select':
         return (
@@ -67,7 +70,7 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 allowClear={allowClear || true}
                 showSearch={showSelectSearch}
                 optionFilterProp="children"
-                filterOption={(input, option) => option?.children?.toLowerCase().indexOf(input?.toLowerCase()) >= 0}
+                filterOption={(input, option) => (option!.children as unknown as string).includes(input)}
                 style={{ width: width, ...styles }}
                 onChange={onChange}
                 disabled={disable}
