@@ -19,8 +19,8 @@ import {
   BorderBox4,
   BorderBox9,
 } from '@jiaminghi/data-view-react';
-import axios from 'axios';
-import styles from './style/docs.module.less';
+import Particles from "react-particles-js";
+;
 
 const { Row, Col } = Grid;
 //
