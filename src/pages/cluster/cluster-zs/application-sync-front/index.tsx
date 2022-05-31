@@ -24,19 +24,25 @@ export default function FrontApplication() {
     if (appIndex == -1) {
       return;
     }
-    const { envCode, feType } = appOptions[appIndex].info;
+    const { feType } = appOptions[appIndex].info;
     try {
-      const result = await getRequest(APIS.diffFeSingleApp, {
-        data: { appCode, envCode, feType },
-      });
-      const source = result.data || [];
-      const differenceData = source.map((item: any) => '+' + item);
-      const next = [
-        { cluster: 'A', difference: '+' + differenceData.join(',') },
-        { cluster: 'B', difference: '-' },
-      ];
-      setClusterData(next);
-      setCompleted(true);
+      const res = await getRequest(APIS.getCommonEnvCode);
+      const envCode = res?.data || undefined;
+      if (envCode) {
+        const result = await getRequest(APIS.diffFeSingleApp, {
+          data: { appCode, envCode, feType },
+        });
+        const source = result.data;
+        if (Array.isArray(source) && source.length > 0) {
+          const differenceData = source.map((item: any) => '+' + item);
+          const next = [
+            { cluster: 'A', difference: differenceData.join(',') },
+            { cluster: 'B', difference: '-' },
+          ];
+          setClusterData(next);
+          setCompleted(true);
+        }
+      }
     } finally {
       setLoading(false);
     }
@@ -56,22 +62,26 @@ export default function FrontApplication() {
     setCompleted(false);
   }, []);
 
-  const handleSyncClick = useCallback(() => {
+  const handleSyncClick = useCallback(async () => {
     const appIndex = appOptions.findIndex((item) => item.value == appCode);
     if (appIndex == -1) {
       return;
     }
-    const { envCode, feType } = appOptions[appIndex].info;
+    const { feType } = appOptions[appIndex].info;
     Modal.confirm({
       title: '确认同步？',
       content: '请确认同步应用配置已是最新',
       onOk: async () => {
         try {
           setPending(true);
-          await postRequest(APIS.syncSingleFeApp, {
+          const res = await getRequest(APIS.getCommonEnvCode);
+          const envCode = res.data || '';
+          const syncResult = await postRequest(APIS.syncSingleFeApp, {
             data: { appCode, envCode, feType },
           });
-          message.success('应用同步成功！');
+          if (syncResult?.data === '同步成功') {
+            message.success('应用同步成功！');
+          }
         } finally {
           setPending(false);
         }

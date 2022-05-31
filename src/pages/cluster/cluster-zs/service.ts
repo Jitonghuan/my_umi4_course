@@ -66,4 +66,7 @@ export const getAppList = addAPIPrefix('/appManage/list');
 export const diffFeSingleApp = addAPIPrefix('/opsManage/k8s/multiple/diffFeApp');
 
 /** POST 前端集群同步 - 前端单应用同步 */
-export const syncSingleFeApp = addAPIPrefix('/opsManage/k8s/multiple/syncSingleFeApp');
+export const syncSingleFeApp = addAPIPrefix('/opsManage/k8s/multiple/syncFeSingleApp');
+
+/** GET 项目环境 */
+export const getCommonEnvCode = addAPIPrefix('/opsManage/multiple/common/getEnvCode1');
