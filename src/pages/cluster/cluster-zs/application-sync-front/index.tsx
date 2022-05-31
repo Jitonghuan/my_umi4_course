@@ -17,19 +17,24 @@ export default function FrontApplication() {
   const [pending, setPending] = useState(false);
   const [completed, setCompleted] = useState(false);
 
-  const loadAppList = useCallback(async () => {
+  const startDiffApp = useCallback(async () => {
     setLoading(true);
     setClusterData([]);
-
+    const appIndex = appOptions.findIndex((item) => item.value == appCode);
+    if (appIndex == -1) {
+      return;
+    }
+    const { envCode, feType } = appOptions[appIndex].info;
     try {
-      const result = await getRequest(APIS.singleAppDiff, {
-        data: { appCode },
+      const result = await getRequest(APIS.diffFeSingleApp, {
+        data: { appCode, envCode, feType },
       });
-
-      const source = result.data || {};
-      const next = Object.keys(source).map((cluster) => {
-        return { cluster, ...source[cluster] };
-      });
+      const source = result.data || [];
+      const differenceData = source.map((item: any) => '+' + item);
+      const next = [
+        { cluster: 'A', difference: '+' + differenceData.join(',') },
+        { cluster: 'B', difference: '-' },
+      ];
       setClusterData(next);
       setCompleted(true);
     } finally {
@@ -52,14 +57,19 @@ export default function FrontApplication() {
   }, []);
 
   const handleSyncClick = useCallback(() => {
+    const appIndex = appOptions.findIndex((item) => item.value == appCode);
+    if (appIndex == -1) {
+      return;
+    }
+    const { envCode, feType } = appOptions[appIndex].info;
     Modal.confirm({
       title: '确认同步？',
       content: '请确认同步应用配置已是最新',
       onOk: async () => {
         try {
           setPending(true);
-          await postRequest(APIS.singleAppDeploy, {
-            data: { appCode },
+          await postRequest(APIS.syncSingleFeApp, {
+            data: { appCode, envCode, feType },
           });
           message.success('应用同步成功！');
         } finally {
@@ -84,7 +94,7 @@ export default function FrontApplication() {
           />
         </div>
         <div className="caption-right">
-          <Button type="primary" ghost disabled={!appCode || loading || pending} onClick={loadAppList}>
+          <Button type="primary" ghost disabled={!appCode || loading || pending} onClick={startDiffApp}>
             开始应用比对
           </Button>
           <Button
@@ -103,14 +113,13 @@ export default function FrontApplication() {
         locale={{
           emptyText: (
             <div className="custom-table-holder">
-              {loading ? '加载中...' : completed ? '暂无数据' : <a onClick={loadAppList}>点击开始进行应用比对</a>}
+              {loading ? '加载中...' : completed ? '暂无数据' : <a onClick={startDiffApp}>点击开始进行应用比对</a>}
             </div>
           ),
         }}
       >
         <Table.Column dataIndex="cluster" title="集群" />
-        <Table.Column dataIndex="PackageVersion" title="版本号" />
-        <Table.Column dataIndex="PackageMd5" title="版本MD5值" />
+        <Table.Column dataIndex="difference" title="差异文件" />
       </Table>
     </ContentCard>
   );

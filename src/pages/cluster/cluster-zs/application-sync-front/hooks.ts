@@ -8,9 +8,9 @@ export function useAppOptions() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    getRequest(APIS.queryAppList).then((result) => {
-      const next = (result.data || []).map((item: any) => {
-        return { label: item.appCode, value: item.appCode };
+    getRequest(APIS.getAppList, { data: { appType: 'frontend', pageSize: 1000 } }).then((result) => {
+      const next = (result.data.dataSource || []).map((item: any) => {
+        return { label: item.appCode, value: item.appCode, info: item };
       });
       setData(next);
     });

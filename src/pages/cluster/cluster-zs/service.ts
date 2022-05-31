@@ -59,8 +59,11 @@ export const getDashboardUrl = addAPIPrefix('/opsManage/multiple/getDashboardUrl
 /** GET 获取 获取院区列表 */
 export const getHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/common/getHospitalDistrictInfo');
 
-/** POST 集群同步-单应用发布 */
-export const singleAppDeploy = addAPIPrefix('/opsManage/multiple/appDeploy');
+/** GET 前端集群同步 - 获取前端应用 */
+export const getAppList = addAPIPrefix('/appManage/list');
 
-/** GET 集群同步-单应用对比 */
-export const singleAppDiff = addAPIPrefix('/opsManage/multiple/appDiff');
+/** GET 前端集群同步 - 前端单应用比对 */
+export const diffFeSingleApp = addAPIPrefix('/opsManage/k8s/multiple/diffFeApp');
+
+/** POST 前端集群同步 - 前端单应用同步 */
+export const syncSingleFeApp = addAPIPrefix('/opsManage/k8s/multiple/syncSingleFeApp');
