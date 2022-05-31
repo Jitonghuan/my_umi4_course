@@ -44,8 +44,8 @@ export default function NGModalDetail(props: NGInfo) {
         <CheckCircleOutlined style={{ color: 'green' }} />
         <span style={{ marginLeft: 10, fontSize: 14 }}>
           <b>
-            执行详情：
-            <span style={{ marginLeft: 6 }}>{}</span>
+            当前JobCode：
+            <span style={{ marginLeft: 6 }}>{curRecord?.jobCode}</span>
           </b>
         </span>
       </div>

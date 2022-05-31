@@ -46,4 +46,9 @@ export interface recordEditData extends Record<string, any> {
   port: string;
   databaseName: string;
   sql: string;
+  gmtCreate: string
+  gmtModify: string
+  id: number
+  lastExecStatus: number
+  modifyUser: string
 }

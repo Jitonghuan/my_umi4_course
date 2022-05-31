@@ -20,11 +20,13 @@ const APP_TYPE_ICON = {
 // 表格 schema
 export const taskTableSchema = ({
   onEditClick,
+  onViewClick,
   onDelClick,
   onGetExecutionDetailClick,
   onSwitchEnableClick,
 }: {
   onEditClick: (record: any, index: number) => void;
+  onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
   onGetExecutionDetailClick: (record: any, index: number) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
@@ -77,7 +79,9 @@ export const taskTableSchema = ({
       render: (enable: number, record: any, index: number) => (
         <>
           <Switch
-            checked={enable === 1 ? true : false}
+            checked={
+              enable === 1 ? true : false 
+            }
             onClick={() => {
               onSwitchEnableClick(record, index);
             }}
@@ -93,7 +97,7 @@ export const taskTableSchema = ({
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
           <a onClick={() => onGetExecutionDetailClick(record, index)}>执行详情</a>
-          <a onClick={() => onEditClick(record, index)}>详情</a>
+          <a onClick={() => onViewClick(record, index)}>详情</a>
 
           <a
             onClick={() => {

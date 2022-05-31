@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
-import { Input, Table, Form, Button, message } from 'antd';
+import { Input, Table, Form, Button, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -41,6 +41,10 @@ export default function DNSManageList(props: any) {
   useEffect(() => {
     getTaskList();
   }, []);
+
+  const onFresh=()=>{
+    
+  }
 
   const handleEditEnv = useCallback(
     (record: recordEditData, index: number, type: any) => {
@@ -115,6 +119,10 @@ export default function DNSManageList(props: any) {
         setCurRecord(record);
         setAddTaskMode('EDIT');
       },
+      onViewClick: (record, index) => {
+        setCurRecord(record);
+        setAddTaskMode('VIEW');
+      },
       onDelClick: async (record, index) => {
         await deleteTask({ jobCode: record?.jobCode }).then(() => {
           getTaskList();
@@ -125,21 +133,16 @@ export default function DNSManageList(props: any) {
         setExecutionDetailsMode('VIEW');
       },
       onSwitchEnableClick: (record, index) => {
-        if (record?.enable === 1) {
+        // if (record?.enable === 1) {
+          
           let paramsObj = {
-            enable: record?.enable === 1 ? 0 : 1,
-            jobName: record?.jobName,
-            jobCode: record?.jobCode,
-            noticeType: record?.noticeType,
-            timeExpression: record?.timeExpression,
-            jobType: record?.jobType,
-            Desc: record?.Desc,
-            jobContent: record?.jobContent,
-          };
+            enable: record?.enable === 1 ? 1 : 2,
+           ...record }
+          // };
           updateTaskManage(paramsObj).then(() => {
             getTaskList();
           });
-        }
+        // }
       },
       // curRecord,
     }) as any;
@@ -160,7 +163,7 @@ export default function DNSManageList(props: any) {
         initData={curRecord}
         envCode={''}
         onSave={() => {
-          setAddTaskMode('HIDE');
+          // setAddTaskMode('HIDE');
           setTimeout(() => {
             getTaskList();
           }, 200);
@@ -210,6 +213,10 @@ export default function DNSManageList(props: any) {
             <h3>任务列表</h3>
           </div>
           <div className="caption-right">
+            <Space>
+              <Button type='primary' onClick={onFresh}>
+                刷新任务
+              </Button>
             <Button
               type="primary"
               onClick={() => {
@@ -220,6 +227,9 @@ export default function DNSManageList(props: any) {
               <PlusOutlined />
               创建任务
             </Button>
+
+            </Space>
+
           </div>
         </div>
         <div>

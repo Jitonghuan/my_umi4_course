@@ -91,7 +91,7 @@ export function useAddTask(): [
     noticeType: number;
     timeExpression: string;
     jobType: number;
-    Desc?: string;
+    desc?: string;
     jobContent: string;
   }) => Promise<void>,
 ] {
@@ -103,7 +103,7 @@ export function useAddTask(): [
     noticeType: number;
     timeExpression: string;
     jobType: number;
-    Desc?: string;
+    desc?: string;
     jobContent: string;
   }) => {
     setLoading(true);
@@ -127,30 +127,48 @@ export function useAddTask(): [
 export function useUpdateTask(): [
   boolean,
   (paramsObj: {
+    createUser:any
+   
+    
+    gmtCreate: any
+    gmtModify: any
+    id: any
+    jobCode: any
+    lastExecStatus: any
+    modifyUser: any
     jobName: string;
     enable: number;
     noticeType: number;
     timeExpression: string;
     jobType: number;
-    Desc?: string;
+    desc?: string;
     jobContent: string;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateTask = async (paramsObj: {
+    createUser?:any
+
+    gmtCreate?: any
+    gmtModify?: any
+    id: number
+    jobCode: any
+    lastExecStatus?:any
+    modifyUser?: any
+
     jobName: string;
     enable: number;
     noticeType: number;
     timeExpression: string;
     jobType: number;
-    Desc?: string;
+    desc?: string;
     jobContent: string;
   }) => {
     setLoading(true);
     await putRequest(APIS.updateJob, { data: paramsObj })
       .then((result) => {
         if (result?.success) {
-          message.success(result.data);
+          message.success('修改成功！');
         } else {
           return;
         }
