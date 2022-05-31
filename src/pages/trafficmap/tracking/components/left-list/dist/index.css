@@ -1,0 +1,56 @@
+.list-item {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  font-weight: 800;
+  line-height: 18px;
+  padding: 5px;
+}
+.list-item-active {
+  background-color: #ededed;
+}
+.list-item .list-item-error.item-traceId {
+  color: red;
+}
+.list-item .item-traceId {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #448dfe;
+  font-size: 13px;
+}
+.list-item .item-message {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  color: #a7aebb;
+  font-size: 12px;
+}
+.list-item .item-message .item-time {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-item .item-message .ant-tag {
+  padding: 0 2px;
+}
+.left-list-wrapper {
+  height: 95%;
+  overflow: auto;
+}
+.left-list {
+  height: 100%;
+  overflow: hidden;
+}
+.left-list .ant-spin-nested-loading {
+  height: 100%;
+}
+.left-list .ant-spin-nested-loading .ant-spin-container {
+  height: 100%;
+}
+.list-page {
+  width: 100%;
+  overflow: auto;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  /* display: flex; */
+  justify-content: end;
+}

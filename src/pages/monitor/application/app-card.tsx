@@ -85,7 +85,7 @@ const Coms = (props: IProps) => {
         ip: requestParams.ip,
         start: Number((now - requestParams.startTime) / 1000),
         end: Number(now / 1000),
-        hostName: requestParams.hostName,
+        hostName: requestParams?.hostName,
       },
     })
       .then((resp) => {

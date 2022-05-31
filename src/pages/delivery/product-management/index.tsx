@@ -1,8 +1,8 @@
 //制品管理
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { history } from 'umi';
 import PageContainer from '@/components/page-container';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Spin } from 'antd';
+import { Button, Table, Space, Popconfirm, Spin } from 'antd';
 import CreateProductModal from './create-product';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryIndentList, useDeleteIndent } from './hook';

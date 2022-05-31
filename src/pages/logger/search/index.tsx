@@ -108,8 +108,13 @@ export default function LoggerSearch(props: any) {
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const now = new Date().getTime();
   //默认传最近30分钟，处理为秒级的时间戳
-  let start = Number((now - startTime) / 1000).toString();
-  let end = Number(now / 1000).toString();
+  let start = ((receiveInfo.startTime ? new Date(receiveInfo.startTime).getTime() : now - startTime) / 1000).toString();
+  let end = ((receiveInfo.endTime ? new Date(receiveInfo.endTime).getTime() : now) / 1000).toString();
+  console.log(receiveInfo, 'receveInfo');
+  if (receiveInfo.startTime || receiveInfo.endTime) {
+    console.log(start, end, 11);
+    rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
+  }
   const [stowCondition, setStowCondition] = useState<boolean>(false);
   // const [showMore, setShowMore] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
@@ -120,8 +125,8 @@ export default function LoggerSearch(props: any) {
   const [logStore, setLogStore] = useState<string>(); //日志库选择
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-  const [startRangePicker, setStartRangePicker] = useState<any>();
-  const [endRangePicker, setEndRangePicker] = useState<any>();
+  const [startRangePicker, setStartRangePicker] = useState<any>(start);
+  const [endRangePicker, setEndRangePicker] = useState<any>(end);
   const [querySql, setQuerySql] = useState<string>(''); //querySql选择
   const [podName, setPodName] = useState<string>(''); //podName
   const [appCodeValue, setAppCodeValue] = useState<any[]>([]); //appCode
@@ -137,35 +142,34 @@ export default function LoggerSearch(props: any) {
   useLayoutEffect(() => {
     // receiveInfo
     if (Object.keys(receiveInfo).length !== 0) {
-      setStartTime(30 * 60 * 1000);
-      const now = new Date().getTime();
-      let defaultInterval = 30 * 60 * 1000;
-      let start = Number((now - defaultInterval) / 1000).toString();
-      let end = Number(now / 1000).toString();
-      setEnvCode(receiveInfo.envCode);
-      setLogStore(receiveInfo.indexMode);
-      console.log('message', receiveInfo.message, receiveInfo, messageInfo['message']);
-      let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
-      // window.atob(receiveInfo.message);
       let appCodeArry = [];
+      if (receiveInfo.envCode) {
+        setEnvCode(receiveInfo.envCode);
+        appCodeArry.push('envCode:' + receiveInfo.envCode);
+      }
+      setLogStore(receiveInfo.indexMode || 'app-log');
+      if (messageInfo['message']) {
+        let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
+        setQuerySql(messageDecodedData);
+        sqlForm.setFieldsValue({
+          querySql: messageDecodedData,
+        });
+      }
+      if (receiveInfo.traceId) {
+        subInfoForm.setFieldsValue({ traceId: receiveInfo.traceId });
+        appCodeArry.push('traceId:' + receiveInfo.traceId);
+      }
+      // window.atob(receiveInfo.message);
       if (receiveInfo.appCode) {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
+        setAppCodeValue(appCodeArry);
+        subInfoForm.setFieldsValue({
+          appCode: receiveInfo.appCode,
+        });
       }
-      appCodeArry.push('envCode:' + receiveInfo.envCode);
-      setAppCodeValue(appCodeArry);
-      setQuerySql(messageDecodedData);
-      subInfoForm.setFieldsValue({
-        appCode: receiveInfo.appCode,
-      });
-      sqlForm.setFieldsValue({
-        querySql: messageDecodedData,
-      });
       setEditScreenVisible(true);
-      loadMoreData(receiveInfo.indexMode, start, end, messageDecodedData, messageValue, appCodeArry);
+      loadMoreData(receiveInfo.indexMode, start, end, sqlForm.getFieldValue('querySql'), messageValue, appCodeArry);
     }
-    // if(receiveInfo.type==='logSearchInfo'){
-
-    // }
   }, []);
   useLayoutEffect(() => {
     if (!envCode || !logStore) {
@@ -365,6 +369,9 @@ export default function LoggerSearch(props: any) {
       })
       .catch(() => {
         // setLoading(false);
+        // setInfoLoading(false);
+      })
+      .finally(() => {
         setInfoLoading(false);
       });
   };
@@ -451,7 +458,7 @@ export default function LoggerSearch(props: any) {
                       // onChange={()=>selectTime}
                       showTime={{
                         hideDisabledOptions: true,
-                        defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                        defaultValue: [moment(start, 'YYYY-MM-DD HH:mm:ss'), moment(end, 'YYYY-MM-DD HH:mm:ss')],
                       }}
                       format="YYYY-MM-DD HH:mm:ss"
                     />

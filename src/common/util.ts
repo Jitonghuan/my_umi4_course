@@ -85,3 +85,12 @@ export const base64Encode = (str: string) => {
 export const base64Decode = (str: string) => {
   return window.decodeURIComponent(window.escape(window.atob(str)));
 };
+
+// 截断文本
+export const formatText = (text: string, length = 5, elipsis = '...') => {
+  if (!text) return '';
+  if (text.length > length) {
+    return `${text.substr(0, length)}${elipsis}`;
+  }
+  return text;
+};

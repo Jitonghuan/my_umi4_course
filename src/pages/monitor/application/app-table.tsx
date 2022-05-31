@@ -221,7 +221,7 @@ const Coms = (props: IProps) => {
       .then((resp) => {
         if (resp.data && resp.data[0]) {
           setCurtIp(resp.data[0].hostIP);
-          setHostName(resp.data[0].hostName);
+          setHostName(resp.data[0]?.hostName);
         }
 
         setNodeDataSource(resp.data);
@@ -548,7 +548,7 @@ const Coms = (props: IProps) => {
               return {
                 onClick: () => {
                   setCurtIp(record.hostIP);
-                  setHostName(record.hostName);
+                  setHostName(record?.hostName);
                   queryPodCpu(
                     record.hostName,
                     filter.envCode,

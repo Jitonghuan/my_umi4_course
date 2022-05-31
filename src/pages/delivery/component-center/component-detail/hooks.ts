@@ -4,18 +4,14 @@ import { message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
 //组件版本查询
-export function useQueryComponentList(): [
-  boolean,
-  any,
-  (componentName: string, componentType: string) => Promise<void>,
-] {
+export function useQueryComponentVersionList(): [boolean, any, (componentId: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const queryComponentVersionList = async (componentName: string, componentType: string) => {
+  const queryComponentVersionList = async (componentId: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentVersionList, {
-        data: { componentName, componentType, pageIndex: -1, pageSize: -1 },
+        data: { componentId, pageIndex: -1, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
@@ -130,35 +126,35 @@ export function useUpdateDescription(): [
   boolean,
   (componentInfo: {
     id: number;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
+    // componentName: string;
+    // componentVersion: string;
+    // componentType: string;
     componentDescription: string;
-    componentUrl: string;
-    componentSourceEnv: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    createUser: string;
-    modifyUser: string;
-    gmtCreate: string;
-    gmtModify: string;
+    // componentUrl: string;
+    // componentSourceEnv: string;
+    // componentExplanation: string;
+    // componentConfiguration: string;
+    // createUser: string;
+    // modifyUser: string;
+    // gmtCreate: string;
+    // gmtModify: string;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateDescription = async (componentInfo: {
     id: number;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
+    // componentName: string;
+    // componentVersion: string;
+    // componentType: string;
     componentDescription: string;
-    componentUrl: string;
-    componentSourceEnv: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    createUser: string;
-    modifyUser: string;
-    gmtCreate: string;
-    gmtModify: string;
+    // componentUrl: string;
+    // componentSourceEnv: string;
+    // componentExplanation: string;
+    // componentConfiguration: string;
+    // createUser: string;
+    // modifyUser: string;
+    // gmtCreate: string;
+    // gmtModify: string;
   }) => {
     setLoading(true);
     try {
@@ -182,12 +178,12 @@ export function useUpdateDescription(): [
 
 //组件配置更新
 
-export function useUpdateConfiguration(): [boolean, (componentConfiguration: string) => Promise<void>] {
+export function useUpdateConfiguration(): [boolean, (id: number, componentConfiguration: string) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const updateConfiguration = async (componentConfiguration: string) => {
+  const updateConfiguration = async (id: number, componentConfiguration: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.updateConfiguration, { data: { componentConfiguration } })
+      await postRequest(APIS.updateConfiguration, { data: { id, componentConfiguration } })
         .then((res) => {
           if (res.success) {
             message.success(res.data);

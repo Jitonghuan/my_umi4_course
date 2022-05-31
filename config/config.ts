@@ -10,6 +10,7 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 const sourceRoot = '/';
 
 const { VERSION, NODE_ENV, BUILD_ENV } = process.env;
+// console.log(' BUILD_ENV ', BUILD_ENV )
 const publicPathPrefix = NODE_ENV === 'development' ? '/' : !VERSION ? `${sourceRoot}` : `${sourceRoot}${VERSION}/`;
 
 // 更多配置查看: https://umijs.org/zh-CN/config
@@ -19,7 +20,6 @@ export default defineConfig({
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
   alias: {},
-  esbuild: {},
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
@@ -108,5 +108,15 @@ export default defineConfig({
   // 开启动态资源加载
   dynamicImport: {
     loading: '@/components/source-loading',
-  }
+  },
+  extraBabelPlugins: [
+    [
+      require.resolve('babel-plugin-import'),
+      {
+        "libraryName": "@cffe/h2o-design",
+        "libraryDirectory": "lib/components",
+      },
+      '@cffe/h2o-design',
+    ]
+  ],
 });

@@ -31,7 +31,7 @@ export function useQueryEnvList() {
 }
 
 // 应用查询
-export function useGetApplicationOption(): [boolean, any, (componentSourceEnv: string) => Promise<void>] {
+export function useGetApplicationOption(): [boolean, any, any, (componentSourceEnv: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any>([]);
   const getApplicationOption = async (componentSourceEnv: string) => {
@@ -41,9 +41,11 @@ export function useGetApplicationOption(): [boolean, any, (componentSourceEnv: s
         .then((res) => {
           if (res.success) {
             let data = res.data.dataSource;
-            const option = data?.map((item: any) => ({
+            const option = data?.map((item: any, index: number) => ({
               label: item,
               value: item,
+              title: item,
+              key: index,
             }));
             setDataSource(option);
           } else {
@@ -57,7 +59,7 @@ export function useGetApplicationOption(): [boolean, any, (componentSourceEnv: s
       console.log(error);
     }
   };
-  return [loading, dataSource, getApplicationOption];
+  return [loading, dataSource, setDataSource, getApplicationOption];
 }
 
 //组件查询
@@ -67,7 +69,13 @@ export function useQueryComponentList(): [
   any,
   any,
   any,
-  (componentType: string, componentName?: string, pageIndex?: number, pageSize?: number) => Promise<void>,
+  (paramsObj: {
+    componentType: string;
+    productLine?: string;
+    componentName?: string;
+    pageIndex?: number;
+    pageSize?: number;
+  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
@@ -76,16 +84,23 @@ export function useQueryComponentList(): [
     pageSize: 20,
     total: 0,
   });
-  const queryComponentList = async (
-    componentType: string,
-    componentName?: string,
-    pageIndex?: number,
-    pageSize?: number,
-  ) => {
+  const queryComponentList = async (paramsObj: {
+    componentType: string;
+    productLine?: string;
+    componentName?: string;
+    pageIndex?: number;
+    pageSize?: number;
+  }) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentList, {
-        data: { componentType, componentName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: {
+          componentType: paramsObj.componentType,
+          productLine: paramsObj.productLine,
+          componentName: paramsObj.componentName,
+          pageIndex: paramsObj.pageIndex || 1,
+          pageSize: paramsObj.pageSize || 20,
+        },
       })
         .then((res) => {
           if (res.success) {
@@ -118,7 +133,7 @@ export function useAddApplication(): [
     componentName: string;
     componentVersion: string;
     componentType: string;
-    componentDescription: string;
+    // componentDescription: string;
     componentSourceEnv: string;
     productLine: string;
     componentUrl?: string;
@@ -131,7 +146,7 @@ export function useAddApplication(): [
     componentName: string;
     componentVersion: string;
     componentType: string;
-    componentDescription: string;
+    // componentDescription: string;
     componentSourceEnv: string;
     productLine: string;
     componentUrl?: string;
@@ -140,13 +155,14 @@ export function useAddApplication(): [
   }) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.addApplication}?productLine=${paramsObj.productLine}`, {
+      await postRequest(`${APIS.addApplication}`, {
         data: {
           componentName: paramsObj.componentName,
           componentVersion: paramsObj.componentVersion,
           componentType: paramsObj.componentType,
-          componentDescription: paramsObj.componentDescription,
+          // componentDescription: paramsObj.componentDescription,
           componentSourceEnv: paramsObj.componentSourceEnv,
+          productLine: paramsObj.productLine,
         },
       })
         .then((res) => {
@@ -285,4 +301,82 @@ export function useDeleteComponent(): [boolean, (id: number) => Promise<void>] {
     }
   };
   return [loading, deleteComponent];
+}
+
+//产品线分类
+
+export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+
+  const getProductlineList = async () => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryProductlineList)
+        .then((res) => {
+          if (res?.success) {
+            let data = res.data;
+            let option: any = [];
+            data?.map((item: any) => {
+              option.push({
+                label: item.categoryCode || '',
+                value: item.categoryCode || '',
+              });
+            });
+            //  data?.map((item: any) => ({
+            //     label: item.categoryCode || '',
+            //     value: item.categoryCode || '',
+            //   }));
+            setDataSource(option);
+          } else {
+            setDataSource([]);
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, getProductlineList];
+}
+
+// 检查组件版本号
+export function useGetVersionCheck(): [
+  boolean,
+  boolean,
+  (componentName: string, componentType: string, componentVersion: string, productLine: string) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [rightInfo, setRightInfo] = useState<boolean>(false);
+  const getVersionCheck = async (
+    componentName: string,
+    componentType: string,
+    componentVersion: string,
+    productLine: string,
+  ) => {
+    setLoading(true);
+    try {
+      await getRequest(
+        `${APIS.getVersionCheck}?componentName=${componentName}&componentType=${componentType}&componentVersion=${componentVersion}&productLine=${productLine}`,
+      )
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+            setRightInfo(true);
+          } else {
+            setRightInfo(false);
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, rightInfo, getVersionCheck];
 }

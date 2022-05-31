@@ -4,9 +4,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import './index.less';
-import { deleteRegion, getRegionList } from '../service';
-import CreateRegionDrawer from './component/create-region-drawer';
-import { useEnvOptions } from '../hooks';
+import { deleteRegion, getRegionList } from '../../../service';
+import CreateRegionDrawer from '../create-region-drawer';
+import { useEnvOptions } from '../../../hooks';
 
 const DomainConfig: React.FC = () => {
   // 工单创建表单对象
@@ -16,8 +16,9 @@ const DomainConfig: React.FC = () => {
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [isTableLoading, setIsTableLoading] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<any>({});
+  // const [searchValue, setSearchValue] = useState<any>({});
   const [envOptions] = useEnvOptions();
+  const [form] = Form.useForm();
 
   const createRegionRef = useRef<any>();
 
@@ -27,9 +28,10 @@ const DomainConfig: React.FC = () => {
 
   useEffect(() => {
     requestRegionList();
-  }, [pageIndex, pageSize, searchValue]);
+  }, [pageIndex, pageSize]);
 
   const requestRegionList = async () => {
+    const searchValue = form.getFieldsValue();
     let data = {
       pageSize,
       pageIndex,
@@ -39,14 +41,14 @@ const DomainConfig: React.FC = () => {
 
     let res = await getRegionList(data);
 
-    setDomianList(res.data.dataSource);
-    setTotal(res.data.pageInfo.total);
+    setDomianList(res?.data?.dataSource);
+    setTotal(res?.data?.pageInfo?.total);
     setIsTableLoading(false);
   };
 
-  const onSearch = (values: any) => {
-    setSearchValue(values);
-  };
+  // const onSearch = (values: any) => {
+  //   setSearchValue(values);
+  // };
 
   const handleEdit = (record: any) => {
     createRegionRef.current.editDrawer(record);
@@ -123,70 +125,72 @@ const DomainConfig: React.FC = () => {
   ];
 
   return (
-    <PageContainer className="domain-config">
-      <FilterCard style={{ backgroundColor: '#F7F8FA' }}>
-        <Form
-          layout="inline"
-          onFinish={onSearch}
-          // onReset={() => {
-          //   requestRegionList();
-          // }}
-        >
-          <Form.Item label="域名" name="regionName">
-            <Input />
-          </Form.Item>
-          <Form.Item label="域code" name="regionCode">
-            <Input />
-          </Form.Item>
-          <Form.Item label="环境code" name="envCode">
-            <Select options={envOptions} style={{ width: '200px' }} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              搜索
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button type="ghost" htmlType="reset">
-              重置
-            </Button>
-          </Form.Item>
-        </Form>
-      </FilterCard>
-      <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
-        <div className="domian-table-header">
-          <h3>配置域列表</h3>
-          <Button
-            type="primary"
-            ghost
-            onClick={() => {
-              createRegionRef.current.showDrawer();
-            }}
-          >
-            <PlusOutlined />
-            新增域
+    <div className="domain-config">
+      {/* <FilterCard style={{ backgroundColor: '#F7F8FA' }}> */}
+      <Form
+        layout="inline"
+        onFinish={requestRegionList}
+        form={form}
+        onReset={() => {
+          form.resetFields();
+          requestRegionList();
+        }}
+      >
+        <Form.Item label="域名" name="regionName">
+          <Input />
+        </Form.Item>
+        <Form.Item label="域code" name="regionCode">
+          <Input />
+        </Form.Item>
+        <Form.Item label="环境code" name="envCode">
+          <Select options={envOptions} style={{ width: '200px' }} />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            搜索
           </Button>
-        </div>
-
-        <Table
-          columns={columns}
-          dataSource={domianList}
-          loading={isTableLoading}
-          pagination={{
-            current: pageIndex,
-            total,
-            pageSize,
-            showSizeChanger: true,
-            onShowSizeChange: (_, size) => {
-              setPageSize(size);
-              setPageIndex(1); //
-            },
-            showTotal: () => `总共 ${total} 条数据`,
+        </Form.Item>
+        <Form.Item>
+          <Button type="ghost" htmlType="reset">
+            重置
+          </Button>
+        </Form.Item>
+      </Form>
+      {/* </FilterCard> */}
+      {/* <ContentCard style={{ backgroundColor: '#F7F8FA' }}> */}
+      <div className="domian-table-header">
+        {/* <h3>配置域列表</h3> */}
+        <Button
+          type="primary"
+          ghost
+          onClick={() => {
+            createRegionRef.current.showDrawer();
           }}
-        />
-      </ContentCard>
+        >
+          <PlusOutlined />
+          新增域
+        </Button>
+      </div>
+
+      <Table
+        columns={columns}
+        dataSource={domianList}
+        loading={isTableLoading}
+        pagination={{
+          current: pageIndex,
+          total,
+          pageSize,
+          showSizeChanger: true,
+          onShowSizeChange: (_, size) => {
+            setPageSize(size);
+            setPageIndex(1); //
+          },
+          showTotal: () => `总共 ${total} 条数据`,
+        }}
+      />
+      {/* </ContentCard> */}
       <CreateRegionDrawer ref={createRegionRef} requestRegionList={requestRegionList} envOptions={envOptions} />
-    </PageContainer>
+    </div>
   );
 };
 
