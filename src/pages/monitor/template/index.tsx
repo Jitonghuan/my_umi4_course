@@ -3,7 +3,6 @@ import { Button, Space, Tag, Popconfirm, Form, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { PlusOutlined } from '@ant-design/icons';
 import TableSearch from '@/components/table-search';
-import { FormProps } from '@/components/table-search/typing';
 import PageContainer from '@/components/page-container';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
@@ -43,8 +42,9 @@ const TemplateCom: React.FC = () => {
   useEffect(() => {
     groupList();
   }, []);
+
   const {
-    tableProps,
+    tableProps = {},
     search: { submit: queryList, reset },
   } = useTable({
     url: queryRuleTemplatesList,
@@ -236,50 +236,15 @@ const TemplateCom: React.FC = () => {
     },
   ];
 
-  const formOptions: FormProps[] = [
-    {
-      key: '1',
-      type: 'input',
-      label: '名称',
-      dataIndex: 'name',
-      width: '144px',
-      placeholder: '请输入',
-    },
-    {
-      key: '2',
-      type: 'select',
-      label: '分类',
-      dataIndex: 'group',
-      width: '144px',
-      placeholder: '请选择报警分类',
-      option: groupData,
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '状态',
-      dataIndex: 'status',
-      width: '144px',
-      placeholder: '请选择',
-      option: [
-        {
-          key: '0',
-          value: '已启用',
-          label: '已启用',
-        },
-        {
-          key: '1',
-          value: '未启用',
-          label: '未启用',
-        },
-      ],
-    },
-  ];
   //分类
   const { run: groupList } = useRequest({
     api: queryGroupList,
     method: 'GET',
     onSuccess: (data) => {
+      if (!data) {
+        setGroupData([]);
+        return;
+      }
       setGroupData(
         data?.map((v: any) => {
           return {
@@ -306,12 +271,50 @@ const TemplateCom: React.FC = () => {
     <PageContainer>
       <TableSearch
         form={form}
-        formOptions={formOptions}
+        formOptions={[
+          {
+            key: '1',
+            type: 'input',
+            label: '名称',
+            dataIndex: 'name',
+            width: '144px',
+            placeholder: '请输入',
+          },
+          {
+            key: '2',
+            type: 'select',
+            label: '分类',
+            dataIndex: 'group',
+            width: '144px',
+            placeholder: '请选择报警分类',
+            option: groupData,
+          },
+          {
+            key: '3',
+            type: 'select',
+            label: '状态',
+            dataIndex: 'status',
+            width: '144px',
+            placeholder: '请选择',
+            option: [
+              {
+                key: '0',
+                value: '已启用',
+                label: '已启用',
+              },
+              {
+                key: '1',
+                value: '未启用',
+                label: '未启用',
+              },
+            ],
+          },
+        ]}
         formLayout="inline"
         columns={columns}
         {...tableProps}
         pagination={{
-          ...tableProps.pagination,
+          ...tableProps?.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
@@ -335,7 +338,7 @@ const TemplateCom: React.FC = () => {
         className="table-form"
         onSearch={queryList}
         reset={reset}
-        scroll={tableProps.dataSource.length > 0 ? { x: 'max-content' } : undefined}
+        scroll={{ x: '100%' }}
       />
       <TemplateDrawer
         visible={drawerVisible}
