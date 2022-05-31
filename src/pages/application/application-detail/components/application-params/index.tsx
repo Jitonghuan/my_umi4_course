@@ -3,7 +3,7 @@
 // @create 2021/07/23 17:20
 
 import React, { useContext, useRef } from 'react';
-import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, DatePicker } from 'antd';
+import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
@@ -13,8 +13,6 @@ import DetailContext from '@/pages/application/application-detail/context';
 import EditorTable from '@cffe/pc-editor-table';
 import * as APIS from '@/pages/application/service';
 import './index.less';
-import moment from 'moment';
-const { RangePicker } = DatePicker;
 
 export default function ApplicationParams(props: any) {
   const { appData } = useContext(DetailContext);
@@ -290,37 +288,6 @@ export default function ApplicationParams(props: any) {
         setInfoloading(false);
       });
   };
-  // 禁止选用今日之前的日期
-  const disabledDate = (current: any) => {
-    return current && current < moment().subtract(1, 'day');
-  };
-
-  function range(start: any, end: any) {
-    const result = [];
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
-    return result;
-  }
-
-  // 只能选择当前时间之后的时间点
-  const disabledDateTime = (date: any) => {
-    let hours = moment().hours();
-    let minutes = moment().minutes();
-    let seconds = moment().seconds();
-    if (date && moment(date).date() === moment().date()) {
-      return {
-        disabledHours: () => range(0, 24).splice(0, hours),
-        disabledMinutes: () => range(0, 60).splice(0, minutes + 1),
-        disabledSeconds: () => range(0, 60).splice(0, seconds + 1),
-      };
-    }
-    return {
-      disabledHours: () => [],
-      disabledMinutes: () => [],
-      disabledSeconds: () => [],
-    };
-  };
   //编辑应用模版
   const setApplication = async () => {
     const params = await restarForm.validateFields();
@@ -330,23 +297,41 @@ export default function ApplicationParams(props: any) {
       return prev;
     }, {} as any);
     const value = values.value;
-    putRequest(APIS.editParams, {
-      data: { id, value, jvm: values?.jvm, tmplConfigurableItem, restartPolicy: params?.restartPolicy },
-    }).then((result) => {
-      if (result.success) {
-        message.success('提交成功！');
-        setModalVisible(false);
-        // window.location.reload();
-        applicationForm.setFieldsValue({
-          tmplConfigurableItem: [],
-          jvm: '',
-          value: '',
-        });
-        setTimeout(() => {
-          showAppList(selectEnvData, selectTmpl);
-        }, 200);
-      }
-    });
+    if (isDeployment !== 'secret') {
+      putRequest(APIS.editParams, {
+        data: { id, value, jvm: values?.jvm, tmplConfigurableItem, restartPolicy: params?.restartPolicy },
+      }).then((result) => {
+        if (result.success) {
+          message.success('提交成功！');
+          setModalVisible(false);
+          applicationForm.setFieldsValue({
+            tmplConfigurableItem: [],
+            jvm: '',
+            value: '',
+          });
+          setTimeout(() => {
+            showAppList(selectEnvData, selectTmpl);
+          }, 200);
+        }
+      });
+    } else {
+      putRequest(APIS.editParams, {
+        data: { id, value, jvm: values?.jvm, restartPolicy: params?.restartPolicy },
+      }).then((result) => {
+        if (result.success) {
+          message.success('提交成功！');
+          setModalVisible(false);
+          applicationForm.setFieldsValue({
+            tmplConfigurableItem: [],
+            jvm: '',
+            value: '',
+          });
+          setTimeout(() => {
+            showAppList(selectEnvData, selectTmpl);
+          }, 200);
+        }
+      });
+    }
   };
 
   return (
@@ -395,37 +380,42 @@ export default function ApplicationParams(props: any) {
             </Spin>
           </Col>
           <Col span={10} offset={2}>
-            <div
-              style={{
-                fontSize: 15,
-                color: '#696969',
-              }}
-            >
-              可配置项：
-            </div>
+            {isDeployment !== 'secret' && (
+              <div
+                style={{
+                  fontSize: 15,
+                  color: '#696969',
+                }}
+              >
+                可配置项：
+              </div>
+            )}
+
             <Spin spinning={infoLoading}>
-              <Form.Item name="tmplConfigurableItem">
-                <EditorTable
-                  readOnly
-                  limit={limit}
-                  columns={[
-                    {
-                      title: 'Key',
-                      dataIndex: 'key',
-                      fieldType: 'readonly',
-                      colProps: { width: 240 },
-                    },
-                    {
-                      title: 'Value',
-                      dataIndex: 'value',
-                      colProps: { width: 280 },
-                      fieldProps: {
-                        readOnly: false,
+              {isDeployment !== 'secret' && (
+                <Form.Item name="tmplConfigurableItem">
+                  <EditorTable
+                    readOnly
+                    limit={limit}
+                    columns={[
+                      {
+                        title: 'Key',
+                        dataIndex: 'key',
+                        fieldType: 'readonly',
+                        colProps: { width: 240 },
                       },
-                    },
-                  ]}
-                />
-              </Form.Item>
+                      {
+                        title: 'Value',
+                        dataIndex: 'value',
+                        colProps: { width: 280 },
+                        fieldProps: {
+                          readOnly: false,
+                        },
+                      },
+                    ]}
+                  />
+                </Form.Item>
+              )}
             </Spin>
             {isDeployment == 'deployment' && appData?.appDevelopLanguage === 'java' && <span>JVM参数:</span>}
             {isDeployment == 'deployment' && appData?.appDevelopLanguage === 'java' && (

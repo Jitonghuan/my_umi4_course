@@ -50,7 +50,7 @@ const useRequest = <K>(props: UseRequestProps) => {
 
     if (!resp?.success) return;
     if (onSuccess) {
-      onSuccess(resp.data);
+      onSuccess(resp?.data);
     }
     if (isSuccessModal) {
       message.success(successText);
@@ -58,12 +58,12 @@ const useRequest = <K>(props: UseRequestProps) => {
     setLoading(false);
 
     if (formatData) {
-      setData(formatData(resp.data));
-      return formatData(resp.data);
+      setData(formatData(resp?.data));
+      return formatData(resp?.data);
     }
-    setData(resp.data);
+    setData(resp?.data);
 
-    return resp.data;
+    return resp?.data;
   };
 
   const resetData = (value: any) => {

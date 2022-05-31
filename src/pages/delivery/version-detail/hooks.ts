@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
@@ -77,7 +77,9 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
               // };
               options.push({
                 label: item.componentName,
-                value: item.componentName,
+                value: item.id,
+                componentId: item.id,
+                componentDescription: item.componentDescription,
               });
             });
             setDataSource(options);
@@ -106,16 +108,16 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
 export function useQueryComponentVersionOptions(): [
   boolean,
   any,
-  (componentType: string, componentName?: string) => Promise<void>,
+  (componentId: number, componentType: string, componentName?: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
 
-  const queryProductVersionOptions = async (componentType: string, componentName?: string) => {
+  const queryProductVersionOptions = async (componentId: number, componentType: string, componentName?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryComponentVersionList, {
-        data: { componentType, componentName, pageSize: -1 },
+        data: { componentId, componentType, componentName, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
@@ -135,7 +137,6 @@ export function useQueryComponentVersionOptions(): [
               });
             });
             setDataSource(options);
-            console.log('options000', options);
           } else {
             return [];
           }
@@ -358,7 +359,7 @@ export function useQueryParamList() {
             options.push({
               label: key,
               value: key,
-              configParamValue: JSON.stringify(dataSource[key]),
+              paramValue: JSON.stringify(dataSource[key]),
             });
           }
 
@@ -433,8 +434,8 @@ export function useQueryDeliveryGloableParamList(): [
   any,
   (
     versionId: number,
-    configParamComponent?: string,
-    configParamName?: string,
+    paramComponent?: string,
+    paramName?: string,
     pageIndex?: number,
     pageInfo?: number,
   ) => Promise<void>,
@@ -448,15 +449,15 @@ export function useQueryDeliveryGloableParamList(): [
   });
   const queryDeliveryParamList = async (
     versionId: number,
-    configParamComponent?: string,
-    configParamName?: string,
+    paramComponent?: string,
+    paramName?: string,
     pageIndex?: number,
     pageSize?: number,
   ) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, configParamComponent, configParamName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { versionId, paramComponent, paramName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
       })
         .then((res) => {
           if (res.success) {
@@ -487,19 +488,19 @@ export function useSaveParam(): [
   boolean,
   (paramsObj: {
     versionId: number;
-    configParamComponent: string;
-    configParamName: string;
-    configParamValue: string;
-    configParamDescription?: string;
+    paramComponent: string;
+    paramName: string;
+    paramValue: string;
+    paramDescription?: string;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const saveParam = async (paramsObj: {
     versionId: number;
-    configParamComponent: string;
-    configParamName: string;
-    configParamValue: string;
-    configParamDescription?: string;
+    paramComponent: string;
+    paramName: string;
+    paramValue: string;
+    paramDescription?: string;
   }) => {
     setLoading(true);
     try {
@@ -526,14 +527,10 @@ export function useSaveParam(): [
 //编辑交付配置参数
 export function useEditVersionParam(): [
   boolean,
-  (paramsObj: { id: number; configParamValue: string; configParamDescription: string }) => Promise<void>,
+  (paramsObj: { id: number; paramValue: string; paramDescription: string }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const editVersionParam = async (paramsObj: {
-    id: number;
-    configParamValue: string;
-    configParamDescription: string;
-  }) => {
+  const editVersionParam = async (paramsObj: { id: number; paramValue: string; paramDescription: string }) => {
     setLoading(true);
     try {
       await postRequest(APIS.editVersionParam, {
@@ -579,4 +576,106 @@ export function useDeleteDeliveryParam(): [boolean, (id: number) => Promise<void
     }
   };
   return [loading, deleteDeliveryParam];
+}
+
+// 获取应用版本
+export function useGetProductlineVersion() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const getProductlineVersion = async (productLine: string) => {
+    setLoading(true);
+    await getRequest(APIS.getProductlineVersion, { data: { productLine } })
+      .then((res) => {
+        if (res?.success) {
+          let dataSource = res.data || [];
+          let options: any = [];
+          dataSource?.map((item: any) => {
+            options.push({
+              label: item,
+              value: item,
+            });
+          });
+
+          setDataSource(options);
+        } else {
+          setDataSource([]);
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, dataSource, getProductlineVersion];
+}
+
+// 获取应用
+export function useGetAppList() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const queryAppList = async (param: { productLine: string; componentVersion: string }) => {
+    setLoading(true);
+    await getRequest(APIS.applist, { data: param })
+      .then((res) => {
+        if (res?.success) {
+          let dataSource = res.data || [];
+          let options: any = [];
+          dataSource?.map((item: any, index: number) => {
+            options.push({
+              title: item,
+              key: index,
+            });
+          });
+          setDataSource(options);
+        } else {
+          setDataSource([]);
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, dataSource, setDataSource, queryAppList];
+}
+
+//批量添加应用
+export function useBulkadd(): [
+  boolean,
+  (paramsObj: {
+    versionId: number;
+    componentName: string;
+    componentVersion: string;
+    productLine: string;
+  }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const saveBulkadd = async (paramsObj: {
+    versionId: number;
+    componentName: string;
+    componentVersion: string;
+    productLine: string;
+  }) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.bulkadd, {
+        data: paramsObj,
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success('保存成功！');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, saveBulkadd];
 }

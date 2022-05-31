@@ -58,7 +58,7 @@ export function useUserOptions() {
 
   useEffect(() => {
     getRequest(APIS.getUserList).then((result) => {
-      const { usernames } = result.data || {};
+      const { usernames } = result?.data || {};
       const next = (usernames || []).map((item: string) => ({
         label: item,
         value: item,

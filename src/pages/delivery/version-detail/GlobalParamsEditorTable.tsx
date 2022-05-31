@@ -1,81 +1,16 @@
 import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
-import { history } from 'umi';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form } from 'antd';
+import { Button, Input, Form, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { ProFormField } from '@ant-design/pro-form';
 import {
-  useQueryOriginList,
   useQueryDeliveryParamList,
   useSaveParam,
   useQueryDeliveryGloableParamList,
   useDeleteDeliveryParam,
   useEditVersionParam,
 } from './hooks';
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-const TagList: React.FC<{
-  value?: {
-    key: string;
-    label: string;
-  }[];
-  onChange?: (
-    value: {
-      key: string;
-      label: string;
-    }[],
-  ) => void;
-}> = ({ value, onChange }) => {
-  const ref = useRef<any>(null);
-  const [newTags, setNewTags] = useState<
-    {
-      key: string;
-      label: string;
-    }[]
-  >([]);
-  const [inputValue, setInputValue] = useState<string>('');
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleInputConfirm = () => {
-    let tempsTags = [...(value || [])];
-    if (inputValue && tempsTags.filter((tag) => tag.label === inputValue).length === 0) {
-      tempsTags = [...tempsTags, { key: `new-${tempsTags.length}`, label: inputValue }];
-    }
-    onChange?.(tempsTags);
-    setNewTags([]);
-    setInputValue('');
-  };
-
-  return (
-    <Space>
-      {(value || []).concat(newTags).map((item) => (
-        <Tag key={item.key}>{item.label}</Tag>
-      ))}
-      <Input
-        ref={ref}
-        type="text"
-        size="small"
-        style={{ width: 78 }}
-        value={inputValue}
-        onChange={handleInputChange}
-        onBlur={handleInputConfirm}
-        onPressEnter={handleInputConfirm}
-      />
-    </Space>
-  );
-};
 
 type DataSourceType = {
   id: any;
@@ -92,11 +27,12 @@ type DataSourceType = {
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
+  isEditable: boolean;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, initDataSource } = props;
+  const { currentTab, versionId, isEditable, initDataSource } = props;
   const [saveLoading, saveParam] = useSaveParam();
   const [editLoading, editVersionParam] = useEditVersionParam();
   const actionRef = useRef<ActionType>();
@@ -124,8 +60,8 @@ export default (props: VersionDetailProps) => {
   const columns: ProColumns<DataSourceType>[] = [
     {
       title: '参数名称',
-      key: 'configParamName',
-      dataIndex: 'configParamName',
+      key: 'paramName',
+      dataIndex: 'paramName',
       editable: (text, record, index) => {
         if (type === 'edit' && text) {
           return false;
@@ -152,8 +88,8 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '参数值',
-      key: 'configParamValue',
-      dataIndex: 'configParamValue',
+      key: 'paramValue',
+      dataIndex: 'paramValue',
       // valueType: 'select',
       formItemProps: () => {
         return {
@@ -169,7 +105,7 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '参数说明',
-      dataIndex: 'configParamDescription',
+      dataIndex: 'paramDescription',
     },
 
     {
@@ -180,36 +116,39 @@ export default (props: VersionDetailProps) => {
         <a
           key="editable"
           onClick={() => {
+            // if (isEditable) {
+            //   message.info('已发布不可以编辑!');
+            // } else {
             action?.startEditable?.(record.id);
             setType('edit');
+            // }
           }}
         >
           编辑
         </a>,
-        <a
-          key="delete"
-          onClick={() => {
-            console.log('record', record);
+        <Popconfirm
+          title="确定要删除吗？"
+          onConfirm={() => {
             deleteDeliveryParam(record.id).then(() => {
               setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
             });
           }}
         >
-          删除
-        </a>,
+          <a key="delete">删除</a>,
+        </Popconfirm>,
       ],
     },
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryGloableParamList(versionId, 'global', param.configParamName);
+    queryDeliveryGloableParamList(versionId, 'global', param.paramName);
   };
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamName">
+            <Form.Item name="paramName">
               <Input style={{ width: 220 }} placeholder="请输入参数名称"></Input>
             </Form.Item>
             <Form.Item>
@@ -222,6 +161,7 @@ export default (props: VersionDetailProps) => {
         <div className="caption-right">
           <Button
             type="primary"
+            // disabled={isEditable}
             onClick={() => {
               setType('add');
               actionRef.current?.addEditRecord?.({
@@ -234,17 +174,6 @@ export default (props: VersionDetailProps) => {
           </Button>
         </div>
       </div>
-      {/* <Space>
-         
-            <Button
-             key="rest"
-             onClick={() => {
-             form.resetFields();
-          }}
-          >
-          重置表单
-          </Button>
-        </Space> */}
 
       <EditableProTable<DataSourceType>
         rowKey="id"
@@ -280,10 +209,9 @@ export default (props: VersionDetailProps) => {
           onSave: async () => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
-            console.log('value', value, objKey);
             let params = value[objKey[0]];
             if (type === 'add') {
-              await saveParam({ ...params, versionId: versionId, configParamComponent: 'global' }).then(() => {
+              await saveParam({ ...params, versionId: versionId, paramComponent: 'global' }).then(() => {
                 queryDeliveryGloableParamList(versionId, 'global');
               });
             } else if (type === 'edit') {
@@ -291,8 +219,6 @@ export default (props: VersionDetailProps) => {
                 queryDeliveryGloableParamList(versionId, 'global');
               });
             }
-
-            // await waitTime(800);
           },
           onChange: setEditableRowKeys,
           actionRender: (row, config, dom) => [dom.save, dom.cancel],

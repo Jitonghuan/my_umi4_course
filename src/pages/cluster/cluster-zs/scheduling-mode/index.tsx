@@ -13,7 +13,7 @@ export default function SchedulingMode() {
       value: 'cluster',
     },
     {
-      label: '患者-操作员维度',
+      label: '用户-操作员维度',
       value: 'operator',
     },
   ];

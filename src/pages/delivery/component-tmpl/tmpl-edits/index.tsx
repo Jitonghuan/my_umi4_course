@@ -1,18 +1,17 @@
-// 应用模版编辑页
 // @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/08/09 10:30
+// @create 2022/04/20 10:30
 
 import { ContentCard } from '@/components/vc-page-content';
 import { useState, useEffect } from 'react';
 import { TmplEdit } from '../index';
 import AceEditor from '@/components/ace-editor';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
+import { Drawer, Input, Button, Form, Select } from 'antd';
 import { useCreateComponentTmpl, useUpdateComponentTmpl } from './hooks';
 import { useGetTypeListOption } from '../hooks';
-import { productLineOptions } from '../config';
 export interface TmplListProps {
   mode?: EditorMode;
   initData: TmplEdit;
+  productLineOptions: any;
   onClose?: () => any;
   onSave: () => any;
 }
@@ -22,7 +21,7 @@ export default function TmplEditor(props: TmplListProps) {
   const [createLoading, createComponentTmpl] = useCreateComponentTmpl();
   const [updateLoading, updateComponentTmpl] = useUpdateComponentTmpl();
   const [optionLoading, typeOption] = useGetTypeListOption();
-  const { mode, initData, onClose, onSave } = props;
+  const { mode, initData, productLineOptions, onClose, onSave } = props;
   const [isDisabled, setIsdisabled] = useState<boolean>(false);
   const [editDisabled, setEditDisabled] = useState<boolean>(false);
 
@@ -62,7 +61,6 @@ export default function TmplEditor(props: TmplListProps) {
     <Drawer
       visible={mode !== 'HIDE'}
       title={mode === 'EDIT' ? '编辑组件模版' : mode === 'ADD' ? '新增组件模版' : mode === 'VIEW' ? '查看组件模版' : ''}
-      // maskClosable={false}
       onClose={onClose}
       width={'60%'}
       footer={
@@ -78,15 +76,15 @@ export default function TmplEditor(props: TmplListProps) {
     >
       <ContentCard className="tmpl-edits">
         <Form layout="inline" form={createTmplForm}>
-          <p style={{ width: '100%', display: 'flex', marginLeft: 16 }}>
+          <p style={{ display: 'flex', marginLeft: 16 }}>
             <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
               <Select style={{ width: 180 }} options={productLineOptions} disabled={editDisabled} />
             </Form.Item>
             <Form.Item label="模板类型" name="tempType" rules={[{ required: true, message: '请选择模版类型' }]}>
-              <Select style={{ width: 180 }} options={typeOption} disabled={editDisabled} />
+              <Select style={{ width: 180 }} options={typeOption} disabled={editDisabled} loading={optionLoading} />
             </Form.Item>
             <Form.Item label="模板名称" name="tempName" rules={[{ required: true, message: '请输入模板名称' }]}>
-              <Input style={{ width: 180 }} />
+              <Input style={{ width: 156 }} />
             </Form.Item>
           </p>
 
@@ -96,7 +94,7 @@ export default function TmplEditor(props: TmplListProps) {
             rules={[{ required: true, message: '请输入模版配置' }]}
             style={{ width: 800 }}
           >
-            <AceEditor mode="yaml" height={650} />
+            <AceEditor mode="yaml" height={650} readOnly={isDisabled} />
           </Form.Item>
         </Form>
       </ContentCard>

@@ -10,6 +10,7 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 const sourceRoot = '/';
 
 const { VERSION, NODE_ENV, BUILD_ENV } = process.env;
+// console.log(' BUILD_ENV ', BUILD_ENV )
 const publicPathPrefix = NODE_ENV === 'development' ? '/' : !VERSION ? `${sourceRoot}` : `${sourceRoot}${VERSION}/`;
 
 // 更多配置查看: https://umijs.org/zh-CN/config
@@ -29,7 +30,7 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      // target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix-base-poc.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.129.47:8080/',//青枫本地
@@ -83,10 +84,11 @@ export default defineConfig({
   themeHbos: {
     // 项目 bundleName，插件会使用这个 bundleName 来进行样式隔离
     bundleName: 'matrix',
+    globalStyle: true,
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
-  targets: { chrome: 65, firefox: 64, safari: 11, edge: 13 },
+  targets: { chrome: 65, firefox: false, safari: false, edge: false, ios: false },
 
   publicPath: publicPathPrefix,
 
@@ -107,4 +109,14 @@ export default defineConfig({
   dynamicImport: {
     loading: '@/components/source-loading',
   },
+  extraBabelPlugins: [
+    [
+      require.resolve('babel-plugin-import'),
+      {
+        "libraryName": "@cffe/h2o-design",
+        "libraryDirectory": "lib/components",
+      },
+      '@cffe/h2o-design',
+    ]
+  ],
 });

@@ -2,8 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Space, Tag, Form, Select } from 'antd';
-import { history } from 'umi';
+import { Button, Input, Form, Select, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   useQueryParamList,
@@ -13,69 +12,6 @@ import {
   useQueryOriginList,
   useEditVersionParam,
 } from './hooks';
-import { ProFormField } from '@ant-design/pro-form';
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-const TagList: React.FC<{
-  value?: {
-    key: string;
-    label: string;
-  }[];
-  onChange?: (
-    value: {
-      key: string;
-      label: string;
-    }[],
-  ) => void;
-}> = ({ value, onChange }) => {
-  const ref = useRef<any>(null);
-  const [newTags, setNewTags] = useState<
-    {
-      key: string;
-      label: string;
-    }[]
-  >([]);
-  const [inputValue, setInputValue] = useState<string>('');
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleInputConfirm = () => {
-    let tempsTags = [...(value || [])];
-    if (inputValue && tempsTags.filter((tag) => tag.label === inputValue).length === 0) {
-      tempsTags = [...tempsTags, { key: `new-${tempsTags.length}`, label: inputValue }];
-    }
-    onChange?.(tempsTags);
-    setNewTags([]);
-    setInputValue('');
-  };
-
-  return (
-    <Space>
-      {(value || []).concat(newTags).map((item) => (
-        <Tag key={item.key}>{item.label}</Tag>
-      ))}
-      <Input
-        ref={ref}
-        type="text"
-        size="small"
-        style={{ width: 78 }}
-        value={inputValue}
-        onChange={handleInputChange}
-        onBlur={handleInputConfirm}
-        onPressEnter={handleInputConfirm}
-      />
-    </Space>
-  );
-};
 
 type DataSourceType = {
   id: any;
@@ -92,11 +28,12 @@ type DataSourceType = {
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
+  isEditable: boolean;
   initDataSource?: any;
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, initDataSource } = props;
+  const { currentTab, versionId, isEditable, initDataSource } = props;
   const actionRef = useRef<ActionType>();
   const [saveLoading, saveParam] = useSaveParam();
   const [editLoading, editVersionParam] = useEditVersionParam();
@@ -124,8 +61,8 @@ export default (props: VersionDetailProps) => {
   const columns: ProColumns<any>[] = [
     {
       title: '参数来源组件',
-      key: 'configParamComponent',
-      dataIndex: 'configParamComponent',
+      key: 'paramComponent',
+      dataIndex: 'paramComponent',
       valueType: 'select',
       formItemProps: () => {
         return {
@@ -165,8 +102,8 @@ export default (props: VersionDetailProps) => {
 
     {
       title: '选择参数',
-      key: 'configParamName',
-      dataIndex: 'configParamName',
+      key: 'paramName',
+      dataIndex: 'paramName',
       valueType: 'select',
       formItemProps: () => {
         return {
@@ -195,7 +132,7 @@ export default (props: VersionDetailProps) => {
                 if (item.value === value) {
                   updateRow(config.recordKey, {
                     ...form.getFieldsValue(config.recordKey),
-                    configParamValue: item.configParamValue,
+                    paramValue: item.paramValue,
                   });
                 }
               });
@@ -206,15 +143,15 @@ export default (props: VersionDetailProps) => {
     },
     {
       title: '参数值',
-      key: 'configParamValue',
-      dataIndex: 'configParamValue',
+      key: 'paramValue',
+      dataIndex: 'paramValue',
       renderFormItem: (_, config: any, data) => {
         return <Input disabled={true}></Input>;
       },
     },
     {
       title: '参数说明',
-      dataIndex: 'configParamDescription',
+      dataIndex: 'paramDescription',
     },
 
     {
@@ -225,29 +162,33 @@ export default (props: VersionDetailProps) => {
         <a
           key="editable"
           onClick={() => {
+            // if (isEditable) {
+            //   message.info('已发布不可以编辑!');
+            // } else {
             action?.startEditable?.(record.id);
             setType('edit');
-            queryParamList(versionId, record.configParamComponent);
+            queryParamList(versionId, record.paramComponent);
+            // }
           }}
         >
           编辑
         </a>,
-        <a
-          key="delete"
-          onClick={() => {
+        <Popconfirm
+          title="确定要删除吗？"
+          onConfirm={() => {
             deleteDeliveryParam(record.id).then(() => {
               setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
             });
           }}
         >
-          删除
-        </a>,
+          <a key="delete">删除</a>
+        </Popconfirm>,
       ],
     },
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryParamList(versionId, param.configParamName);
+    queryDeliveryParamList(versionId, param.paramName);
   };
   const tableChange = (values: any) => {
     setDataSource;
@@ -258,7 +199,7 @@ export default (props: VersionDetailProps) => {
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="configParamComponent">
+            <Form.Item name="paramComponent">
               <Input style={{ width: 220 }} placeholder="请输入参数来源组件"></Input>
             </Form.Item>
             <Form.Item>
@@ -283,18 +224,6 @@ export default (props: VersionDetailProps) => {
           </Button>
         </div>
       </div>
-      {/* <Space>
-         
-            <Button
-             key="rest"
-             onClick={() => {
-             form.resetFields();
-          }}
-          >
-          重置表单
-          </Button>
-        </Space> */}
-
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
@@ -339,8 +268,6 @@ export default (props: VersionDetailProps) => {
             }
           },
           onChange: setEditableRowKeys,
-          //  console.log('value',value)
-
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
       />
