@@ -187,7 +187,7 @@ const Coms = (props: IProps) => {
       setEnvData(newResp);
       let reg = /prd$/gi;
       // let reg =/.*(?=prd)prd/
-      console.log('newResp', newResp);
+      // console.log('newResp', newResp);
       resp.some((item: any) => {
         if (reg.test(item.envCode)) {
           prevFilter.current = {
