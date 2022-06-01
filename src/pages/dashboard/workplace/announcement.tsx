@@ -20,14 +20,15 @@ function Announcement() {
 
             <Link style={{ paddingRight: 9 }}>查看更多</Link>
           </Typography.Title>
-          <div style={{ paddingLeft: 9 }}>1、Matrix多流水线已发布更新；</div>
-          <div style={{ paddingLeft: 9 }}>2、Matrix测试环境更新Layout；</div>
-          <div style={{ paddingLeft: 9 }}>3、Matrix部署信息页面优化；</div>
-          <div style={{ paddingLeft: 9 }}>4、Matrix流量地图链路追踪功能已发布测试环境；</div>
+          <div style={{ paddingLeft: 9 }}>05-15 应用部署多主干多流水线功能，已正式上线;</div>
+          <div style={{ paddingLeft: 9 }}>05-31 流量地图链路追踪功能，已经正式上线;</div>
+          <div style={{ paddingLeft: 9 }}>06-01 部署信息展示优化功能，已经正式上线;</div>
+          <div style={{ paddingLeft: 9 }}>06-01 主页展示和Layout优化功能，已经正式上线；</div>
+          <div style={{ paddingLeft: 9 }}>06-01 任务管理功能即将发布，敬请期待；</div>
 
           {/* <Link>查看更多</Link> */}
         </BorderBox13>
-
+     
         {/* <Typography.Title heading={6}>
           <Decoration11 style={{width: '300px', height: '60px'}}>  Matrix公告</Decoration11>
 

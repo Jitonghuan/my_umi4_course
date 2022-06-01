@@ -21,7 +21,22 @@ function QuickOperation() {
 
           <Link style={{ paddingRight: 9 }}>查看更多</Link>
         </Typography.Title>
+       
         <div className={styles.docs}>
+        <div style={{ display: 'flex', paddingLeft: 16 }}>
+            <a href="https://come-future.yuque.com/docs/share/77c2b619-a535-4293-ad40-4df39097b095?# 《Matrix操作手册》" target="_blank">
+              {' '}
+              <CarryOutOutlined />
+              Matrix操作手册
+            </a>
+          </div>
+          <div style={{ display: 'flex', paddingLeft: 16 }}>
+            <a href=" https://come-future.yuque.com/docs/share/50d14c30-ee00-49f6-b962-b74521ad7152?# 《Matrix建议收集文档-2021-12》" target="_blank">
+              {' '}
+              <CarryOutOutlined />
+              Matrix建议收集文档
+            </a>
+          </div>
           <div style={{ display: 'flex', paddingLeft: 16 }}>
             <a href="https://come-future.yuque.com/docs/share/5555591c-3004-4042-a1ca-288acb9bbc5c?# 《Matrix常见问题解决手册》" target="_blank">
               {' '}
