@@ -250,7 +250,7 @@ export function useQueryAppEnvData(): [boolean,any, (paramsObj: { appCode: strin
            }
 
          ));
-         console.log('envOption',envOption)
+       
          
          setAppEnvDataSource(envOption)
         }else{

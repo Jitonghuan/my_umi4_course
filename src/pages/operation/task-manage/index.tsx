@@ -95,7 +95,7 @@ export default function DNSManageList(props: any) {
            enable: enable, }
 
           
-           console.log('paramsObjenable',paramsObj,'-----',record?.enable,'00000',enable)
+          
         updateTaskManage(paramsObj).then(() => {
             getTaskList();
           });

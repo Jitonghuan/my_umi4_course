@@ -83,7 +83,7 @@ export const taskTableSchema = ({
               enable === 1 ? true : false 
             }
             onClick={() => {
-              console.log('enable',enable)
+          
               onSwitchEnableClick(record, index);
             }}
           />

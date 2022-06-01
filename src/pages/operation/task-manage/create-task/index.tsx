@@ -63,14 +63,19 @@ export default function addEnvData(props: RecordEditDataProps) {
       setIsEditable(true);
 
     }
+    if (mode === 'ADD') {
+      createTaskForm.resetFields();
+    }
     if (initData && mode !== 'ADD') {
       let jobContent: jobContentProps = {};
       let labelList: KVProps[] = [];
       setIsEditable(true);
       if (initData.enable === 1) {
         setIsJobChecked(true);
+        setIsJobChangeOption(1)
       } else {
         setIsJobChecked(false);
+        setIsJobChangeOption(2)
       }
       // initData?.params
       if (initData?.jobContent) {
@@ -83,7 +88,6 @@ export default function addEnvData(props: RecordEditDataProps) {
       setCurTaskType(initData?.jobType);
       setCurRequestMethod(jobContent?.method);
       setInitPassWord(jobContent?.password);
-      console.log('')
       createTaskForm.setFieldsValue({
         ...initData,
         enable: isJobChecked,
@@ -91,9 +95,7 @@ export default function addEnvData(props: RecordEditDataProps) {
         params: labelList,
       });
     }
-    if (mode === 'ADD') {
-      createTaskForm.resetFields();
-    }
+
 
     return () => {
       setIsEditable(false);
@@ -213,12 +215,13 @@ export default function addEnvData(props: RecordEditDataProps) {
      
     if(!e.target.checked){
       createTaskForm.setFieldsValue({password:initPassWord})
-
+      setOptType('');
     }else{
       createTaskForm.setFieldsValue({password:''})
+      setOptType('check');
     }
 
-    setOptType('check');
+   
   }
 
   return (
@@ -307,9 +310,6 @@ export default function addEnvData(props: RecordEditDataProps) {
                 <Form.Item label="容器" name="containers" rules={[{ required: true, message: '这是必填项' }]}>
                   <Select style={{ width: '24vw' }} disabled={viewEditable} options={containerNameOption} allowClear showSearch   mode="multiple" ></Select>
                 </Form.Item>
-                {/* <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input placeholder="请输入执行路径" style={{ width: '24vw' }}></Input>
-                </Form.Item> */}
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input.TextArea placeholder="请输入command" style={{ width: '24vw' }} disabled={viewEditable}></Input.TextArea>
                 </Form.Item>
@@ -339,9 +339,12 @@ export default function addEnvData(props: RecordEditDataProps) {
                     <Input.Password style={{ width: '24vw' }} placeholder='' disabled={optType==='check' ? !isEditPassword:viewEditable}></Input.Password>
                   </Form.Item>
                   ):(
+                    <>
+                    
                     <Form.Item label="密码" name="password"  tooltip={{ title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败', icon: <QuestionCircleOutlined /> }} >
                     <Input.Password style={{ width: '24vw' }} placeholder='' disabled={ !isEditPassword||viewEditable} visibilityToggle={false}></Input.Password>
                   </Form.Item>
+                  </>
                   )
 
                 }
