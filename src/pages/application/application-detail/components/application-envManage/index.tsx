@@ -8,7 +8,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import './index.less';
-import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList } from '@/pages/application/service';
+import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList, envAppCR } from '@/pages/application/service';
 
 export default function appEnvPageList() {
   const { appData } = useContext(DetailContext);
@@ -177,6 +177,16 @@ export default function appEnvPageList() {
       ...params,
     });
   };
+
+  const switchChange = async (record: any) => {
+    const res = await postRequest(envAppCR, { data: { appCode, envCode: record?.envCode, isAppNeedCR: !record?.isAppNeedCR } });
+    if (res?.success) {
+      message.success('操作成功！');
+      queryAppEnvData({
+        appCode,
+      });
+    }
+  }
   return (
     <ContentCard className="app-env-management">
       <Modal
@@ -364,6 +374,17 @@ export default function appEnvPageList() {
             )}
           />
           <Table.Column title="默认分类" dataIndex="categoryCode" width={140} />
+          <Table.Column
+            title="开启CodeReview"
+            width={130}
+            render={(_, record: Record<string, any>, index) => (
+              <div className="action-cell">
+                {/* <Popconfirm title={`确定要${record.isAppNeedCR ? '关闭' : '开启'}CodeReview吗？`} onConfirm={() => handleDelEnv(record)}> */}
+                <Switch disabled={record?.proEnvType !== 'benchmark'} checked={record?.isAppNeedCR} onChange={() => { switchChange(record) }} />
+                {/* </Popconfirm> */}
+              </div>
+            )}
+          />
           <Table.Column title="备注" dataIndex="mark" width={180} />
           <Table.Column
             title="操作"
