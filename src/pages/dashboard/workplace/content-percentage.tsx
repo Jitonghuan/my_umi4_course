@@ -264,7 +264,7 @@ const particlesLoaded = async(container:any) => {
             </Row>
             <Row style={{ display: 'flex', justifyContent: 'space-around',paddingTop:40 }}>
               <Decoration11 style={{width: '9vw', height: '7vh' }} >
-                <span className="textShadow"> 可交付性</span>
+                <span className="textShadow"> 可观测</span>
               </Decoration11>
               <Decoration11 style={{width: '9vw', height: '7vh' }} >
                 <span className="textShadow"> 集群管理</span>
