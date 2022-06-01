@@ -5,7 +5,7 @@
  * @create 2021-04-25 16:05
  */
 
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import { Modal, Button, List, Tag } from 'antd';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -108,6 +108,9 @@ const PublishRecord = (props: IProps) => {
       envs: (envDataList as any).find((v: any) => v.envCode === envs)?.envName,
     };
   }, [envDataList, curRecord]);
+
+  let dom: any = document?.getElementById('load-more-list');
+  let scrollTop = useRef<any>(dom?.scrollTop);
 
   const renderLoadMore = () => {
     const { pageSize = 0, total = 0, current = 0 } = tableProps?.pagination || {};
