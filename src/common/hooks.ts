@@ -9,7 +9,15 @@ import DetailContext from '../pages/application/application-detail/context';
 import { getRequest, postRequest } from '@/utils/request';
 import { BasicData } from '@hbos/component-position-switcher';
 import * as APIS from './apis';
-
+/** 全局上下文 */
+// export const GlobalContext = createContext({
+//   // 换肤颜色
+//   style: 'foneLight',
+//   // /** 是否开启权限控制 */
+//   // isOpenPermission: false,
+//   // /** 权限数据 */
+//   // permissionData: [] as IPermission[],
+// });
 interface IPermission {
   /** 权限 ID */
   permissionId: string | number;

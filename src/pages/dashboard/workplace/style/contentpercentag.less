@@ -1,0 +1,52 @@
+.percentage {
+  position: fixed;
+  .border-box-content {
+    // background: url(../../../../assets/imgs/BGthree.png);
+    // background: url("@/assets/imgs/BGthree.png") no-repeat;
+    background-size: 100% 100%;
+  }
+  .textShadow {
+    font-size: 1.2vw;
+    // color:#e6f6f8;
+    color: rgb(253, 255, 253);
+    font-weight: 800;
+    // text-shadow: 0.2rem 0rem 0.5rem rgba(48, 112, 93, 0.3), -0.2rem 0rem 0.5rem rgba(3, 166, 224, 0.3),
+    //   0rem 0.2rem 0.5rem rgba(3, 166, 224, 0.3), 0rem -0.2rem 0.5rem rgba(3, 166, 224, 0.3);
+  }
+}
+
+.canvasNest{
+  background-color: rgb(6, 9, 10);
+  // background: linear-gradient(45deg, rgb(179, 239, 243), rgb(140, 160, 248));
+}
+
+#tsparticles{
+  // z-index: 22;
+  // position: fixed;
+  // width: 100%;
+  // height: 100%;
+  // overflow: hidden;
+  .tsparticlesCan{
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+body[fone-theme='foneDark'] {
+  .percentage {
+    z-index: 8;
+    .border-box-content {
+      background: url(../../../../assets/imgs/BGthree.png);
+      // background: url("@/assets/imgs/BGthree.png") no-repeat;
+      background-size: 100% 100%;
+    }
+    .textShadow {
+      font-size: 20px;
+      // color:#e6f6f8;
+      color: rgb(172, 252, 198);
+      font-weight: 800;
+      text-shadow: 0.2rem 0rem 0.5rem rgba(48, 112, 93, 0.3), -0.2rem 0rem 0.5rem rgba(3, 166, 224, 0.3),
+        0rem 0.2rem 0.5rem rgba(3, 166, 224, 0.3), 0rem -0.2rem 0.5rem rgba(3, 166, 224, 0.3);
+    }
+  }
+}
