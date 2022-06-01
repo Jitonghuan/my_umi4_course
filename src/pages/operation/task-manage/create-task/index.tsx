@@ -104,6 +104,7 @@ export default function addEnvData(props: RecordEditDataProps) {
       setCurRequestMethod('');
       setOptType('');
       setChecked(false)
+      setIsEditPassword(false);
     };
   }, [mode]);
 
@@ -271,8 +272,8 @@ export default function addEnvData(props: RecordEditDataProps) {
             <Form.Item name="timeExpression" label="时间表达式" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入时间表达式" style={{ width: '24vw' }} disabled={viewEditable}></Input>
             </Form.Item>
-            <Form.Item name="enable" label="是否启用" rules={[{ required: true, message: '这是必填项' }]}>
-              <Switch onChange={isJobChange} checked={isJobChecked} disabled={viewEditable} />
+            <Form.Item name="enable" label="是否启用" rules={[{ required: true, message: '这是必填项' }]} initialValue={isJobChecked}>
+              <Switch onChange={isJobChange} checked={isJobChecked} disabled={viewEditable}  />
             </Form.Item>
             <Form.Item name="noticeType" label="执行结果通知" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: 200 }} options={RequestModeOptions} disabled={viewEditable}></Select>
@@ -342,7 +343,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                     <>
                     
                     <Form.Item label="密码" name="password"  tooltip={{ title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败', icon: <QuestionCircleOutlined /> }} >
-                    <Input.Password style={{ width: '24vw' }} placeholder='' disabled={ !isEditPassword||viewEditable} visibilityToggle={false}></Input.Password>
+                    <Input.Password style={{ width: '24vw' }} placeholder='' disabled={ optType==='check' ? !isEditPassword:viewEditable} visibilityToggle={false}></Input.Password>
                   </Form.Item>
                   </>
                   )
