@@ -249,26 +249,26 @@ const particlesLoaded = async(container:any) => {
           >
 
         
-            <Row style={{ display: 'flex', justifyContent: 'center', }}>
-              <Decoration11 style={{ width: '9vw', height: '7vh' }}>
+            <Row style={{ display: 'flex', justifyContent: 'center',width:'100%',height:'26%' }}>
+              <Decoration9 style={{width: '16%', height: '100%'}} dur={9}>
                 <span className="textShadow"> 云原生</span>
-              </Decoration11>
+              </Decoration9>
             </Row>
-            <Row style={{ display: 'flex', justifyContent: 'space-between',padding:'4vw' }}>
-              <Decoration11 style={{ width: '9vw', height: '7vh' }} >
+            <Row style={{ display: 'flex', justifyContent: 'space-between',width:'100%',height:'28%',paddingLeft:'8%',paddingRight:'8%'  }}>
+              <Decoration9 style={{width: '20%', height: '100%'}} dur={9} >
                 <span className="textShadow"> 研发协同</span>
-              </Decoration11>
-              <Decoration11 style={{width: '9vw', height: '7vh' }} >
+              </Decoration9>
+              <Decoration9 style={{width: '20%', height: '100%'}} dur={9}>
                 <span className="textShadow"> 交付运维</span>
-              </Decoration11>
+              </Decoration9>
             </Row>
-            <Row style={{ display: 'flex', justifyContent: 'space-around',paddingTop:40 }}>
-              <Decoration11 style={{width: '9vw', height: '7vh' }} >
+            <Row style={{ display: 'flex', justifyContent: 'space-around',width:'100%',height:'29%',paddingTop:'2%' ,paddingLeft:'4%',paddingRight:'4%' }}>
+              <Decoration9 style={{width: '18%', height: '100%'}} dur={9} >
                 <span className="textShadow"> 可观测</span>
-              </Decoration11>
-              <Decoration11 style={{width: '9vw', height: '7vh' }} >
+              </Decoration9>
+              <Decoration9 style={{width: '18%', height: '100%'}} dur={9} >
                 <span className="textShadow"> 集群管理</span>
-              </Decoration11>
+              </Decoration9>
             </Row>
           </div>
         </BorderBox8>
