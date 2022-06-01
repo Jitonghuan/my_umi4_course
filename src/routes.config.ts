@@ -17,7 +17,8 @@ export default [
     path: 'index',
     // name: '首页',
     icon: 'icon-poc_index',
-    component: '@/pages/index',
+    // component: '@/pages/index',
+    component: '@/pages/dashboard/workplace',
   },
   {
     path: `${baseRoutePath}/application`,
