@@ -32,6 +32,10 @@ export default function FrontApplication() {
         const result = await getRequest(APIS.diffFeSingleApp, {
           data: { appCode, envCode, feType },
         });
+        if (result.success && !result?.data) {
+          message.info('该应用前端版本一致，无需同步');
+          return;
+        }
         const source = result?.data;
         if (Array.isArray(source) && source.length > 0) {
           const differenceData = source.map((item: any) => '+' + item);
@@ -75,12 +79,15 @@ export default function FrontApplication() {
         try {
           setPending(true);
           const res = await getRequest(APIS.getCommonEnvCode);
-          const envCode = res.data || '';
-          const syncResult = await postRequest(APIS.syncSingleFeApp, {
-            data: { appCode, envCode, feType },
-          });
-          if (syncResult?.data === '同步成功') {
-            message.success('应用同步成功！');
+          const envCode = res.data || undefined;
+          if (envCode) {
+            const syncResult = await postRequest(APIS.syncSingleFeApp, {
+              data: { appCode, envCode, feType },
+            });
+            if (syncResult?.success) {
+              message.success('应用同步成功！');
+              setClusterData([]);
+            }
           }
         } finally {
           setPending(false);
