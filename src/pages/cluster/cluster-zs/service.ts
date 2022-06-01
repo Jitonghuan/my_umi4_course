@@ -69,4 +69,4 @@ export const diffFeSingleApp = addAPIPrefix('/opsManage/k8s/multiple/diffFeApp')
 export const syncSingleFeApp = addAPIPrefix('/opsManage/k8s/multiple/syncFeSingleApp');
 
 /** GET 项目环境 */
-export const getCommonEnvCode = addAPIPrefix('/opsManage/multiple/common/getEnvCode1');
+export const getCommonEnvCode = addAPIPrefix('/opsManage/multiple/common/getEnvCode');
