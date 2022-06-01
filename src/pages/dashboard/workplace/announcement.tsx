@@ -2,44 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Decoration11, BorderBox13 } from '@jiaminghi/data-view-react';
 import { Link, Card, Skeleton, Tag, Typography } from '@arco-design/web-react';
-// import useLocale from '@/utils/useLocale';
-// import locale from './locale';
-import styles from './style/announcement.module.less';
+
 
 function Announcement() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  // const t = useLocale(locale);
 
-  const fetchData = () => {
-    setLoading(true);
-    axios
-      .get('/api/workplace/announcement')
-      .then((res) => {
-        setData(res.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
 
-  function getTagColor(type) {
-    switch (type) {
-      case 'activity':
-        return 'orangered';
-      case 'info':
-        return 'cyan';
-      case 'notice':
-        return 'arcoblue';
-      default:
-        return 'arcoblue';
-    }
-  }
+
 
   return (
     <Card style={{ width: 374 }}>

@@ -54,25 +54,7 @@ function Overview() {
   const [data, setData] = useState<DataType>({});
   const [loading, setLoading] = useState(true);
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
-  // const t = useLocale(locale);
-
-  // const userInfo = useSelector((state: any) => state.userInfo || {});
-
-  const fetchData = () => {
-    setLoading(true);
-    axios
-      .get('/api/workplace/overview-content')
-      .then((res) => {
-        setData(res.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  
 
   return (
     <Card>
@@ -84,7 +66,7 @@ function Overview() {
         {/* {t['workplace.welcomeBack']} */}
         {/* {userInfo.name} */}
       </Typography.Title>
-      <Divider />
+     
       {/* <Decoration10 style={{ width: '100%', height: '2px' }}></Decoration10> */}
       {/* <Row style={{ marginTop: 8 }}>
         <Col flex={1}>

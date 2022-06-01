@@ -23,24 +23,31 @@ function QuickOperation() {
         </Typography.Title>
         <div className={styles.docs}>
           <div style={{ display: 'flex', paddingLeft: 16 }}>
-            <a href="https://come-future.yuque.com/sekh46/bbgc7f/kfcnkf" target="_blank">
+            <a href="https://come-future.yuque.com/docs/share/5555591c-3004-4042-a1ca-288acb9bbc5c?# 《Matrix常见问题解决手册》" target="_blank">
               {' '}
               <CarryOutOutlined />
               Matrix常见问题解决手册
             </a>
           </div>
           <div style={{ display: 'flex', paddingLeft: 16 }}>
-            <a href="https://come-future.yuque.com/sekh46/bbgc7f/bw55re" target="_blank">
+            <a href="https://come-future.yuque.com/docs/share/33f741d9-04c8-409a-b80b-a87817ca0146?# 《Matrix项目环境使用说明》" target="_blank">
               <CarryOutOutlined />
               Matrix项目环境使用说明
             </a>
           </div>
           <div style={{ display: 'flex', paddingLeft: 16 }}>
-            <a href="https://come-future.yuque.com/sekh46/bbgc7f/zmnt91" target="_blank">
+            <a href="https://come-future.yuque.com/docs/share/45cda8e0-186f-4d74-a3b6-7235fd1d3846?# 《matrix配置管理使用说明》" target="_blank">
               <CarryOutOutlined />
               Matrix配置管理使用说明
             </a>
           </div>
+          <div style={{ display: 'flex', paddingLeft: 16 }}>
+            <a href=" https://come-future.yuque.com/docs/share/4940d04e-088c-4184-bff7-82afbffde451?# 《Matrix链路追踪使用说明》" target="_blank">
+              <CarryOutOutlined />
+              Matrix链路追踪使用说明
+            </a>
+          </div>
+
         </div>
       </BorderBox13>
     </Card>

@@ -62,15 +62,15 @@ function Shortcuts() {
   }
 
   return (
-    <Card style={{ height: '120px', overflow: 'auto' }}>
+    <Card style={{ height: '120px', overflow: 'hidden' }}>
       {/* <BorderBox8 style={{ width: '99.8%', height: '120px', display: 'flex' }} reverse="{false}" dur={50}> */}
       <Typography.Title
         heading={6}
-        style={{ marginTop: 0, paddingLeft: 9, display: 'flex', justifyContent: 'space-between' }}
+        style={{ marginTop: 0, paddingLeft: 6, display: 'flex', justifyContent: 'space-between' }}
       >
         <span>快捷入口</span>
 
-        <Link style={{ paddingRight: 9 }}>新增快捷入口</Link>
+        <Link style={{ paddingRight: 6 }}>新增快捷入口</Link>
       </Typography.Title>
       <Space>
         {shortcuts.map((shortcut) => (
