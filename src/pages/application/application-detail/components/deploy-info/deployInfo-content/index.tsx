@@ -14,14 +14,13 @@ import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Inp
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
-import { useListDeploymentList } from '../container-info/hook';
-import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi } from './service';
+import { useListDeploymentList,getDeploymentEventListMethods } from '../container-info/hook';
+import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi,getListDeploymentEvent } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
-import { listAppEnvType } from '@/common/apis';
 import { LIST_STATUS_TYPE } from './schema';
 import DeploymentList from '../components/deployment-list';
 import { DeployContentProps } from './type';
@@ -36,8 +35,9 @@ export default function DeployContent(props: DeployContentProps) {
   const [formInstance] = Form.useForm();
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
-  const [deploymentLoading, deploymentSource, setDeploymentSource, getDeploymentEventList] = useListDeploymentList();
+  // const [deploymentLoading, deploymentSource, setDeploymentSource, getDeploymentEventList] = useListDeploymentList();
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
+  const [deploymentSource,setDeploymentSource]=useState<any[]>([]);
   const [currentEnvData, setCurrentEnvData] = useState<string>(''); //当前选中的环境；
   const [currentContainerName, setCurrentContainerName] = useState<string>('');
   const [currentInstName, setCurrentInstName] = useState<string>('');
@@ -55,6 +55,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
+  const [deploymentLoading,setDeploymentLoading] = useState(false);
   const queryAppOperateLog = (envCodeParam: any) => {
     getRequest(queryAppOperate, { data: { appCode, envCode: envCodeParam } })
       .then((resp) => {
@@ -70,6 +71,11 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
+
+  const getDeploymentEventListInfo=()=>{
+    
+  }
+
 
   const queryInstanceList = async (appCode: any, envCode: any) => {
     getRequest(queryInstanceListApi, { data: { appCode, envCode } })
@@ -93,7 +99,7 @@ export default function DeployContent(props: DeployContentProps) {
       loadInfoData(initEnvCode.current)
         .then(() => {
           queryInstanceList(appData?.appCode, initEnvCode.current);
-          getDeploymentEventList({ appCode, envCode: initEnvCode.current });
+          getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
         })
         .catch((e: any) => {
           console.log('error happend in intervalFunc:', e);
@@ -134,7 +140,7 @@ export default function DeployContent(props: DeployContentProps) {
                       setInstanceLoading(true);
                       let data = result.data;
                       setInstanceTableData(data);
-                      getDeploymentEventList({ appCode, envCode: initEnvCode.current });
+                      getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                       if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
                         timerHandler('do', true);
                       } else {
@@ -172,8 +178,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: initEnvCode.current });
             if (initEnvCode.current !== '') {
               let initLoadInfoData: any = [];
-              getDeploymentEventList({ appCode, envCode: initEnvCode.current });
-
+              getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
               getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
                 .then((result) => {
                   if (result.success) {
@@ -192,8 +197,7 @@ export default function DeployContent(props: DeployContentProps) {
                           setInstanceLoading(true);
                           let data = result.data;
                           setInstanceTableData(data);
-                          getDeploymentEventList({ appCode, envCode: initEnvCode.current });
-
+                          getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                           if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
                             timerHandler('do', true);
                           } else {
@@ -272,7 +276,7 @@ export default function DeployContent(props: DeployContentProps) {
                 setInstanceLoading(true);
                 let data = result.data;
                 setInstanceTableData(data);
-                getDeploymentEventList({ appCode, envCode: initEnvCode.current });
+                getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                 if (result.data !== undefined && result.data.length !== 0) {
                   timerHandler('do', true);
                 } else {
@@ -280,7 +284,7 @@ export default function DeployContent(props: DeployContentProps) {
                 }
                 if (initEnvCode.current !== '') {
                   queryAppOperateLog(initEnvCode.current);
-                  getDeploymentEventList({ appCode, envCode: initEnvCode.current });
+                  getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                 }
               } else {
                 timerHandler('stop');

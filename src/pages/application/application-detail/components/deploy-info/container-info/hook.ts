@@ -28,6 +28,22 @@ export function useListDeploymentList() {
   return [loading, source, setSource, getDeploymentEventList];
 }
 
+
+/** 查看deployment的事件 */
+export const getDeploymentEventListMethods = (paramObj: { appCode: any; envCode: string }) =>
+  getRequest(APIS.getListDeploymentEvent, { data: paramObj }).then((res: any) => {
+    if (res?.success) {
+      
+      let dataSource: any = [];
+      return (
+         dataSource = res.data || []
+       
+        ) || []
+      
+    }
+    return [];
+  });
+
 export function useListContainer(): [
   (paramsObj: { appCode: string; envCode: string; instName: string }) => Promise<void>,
   any,
