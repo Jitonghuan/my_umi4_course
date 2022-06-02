@@ -425,7 +425,7 @@ export default [
       {
         path: 'function',
         key: 'function',
-        name: '发布功能管理',
+        name: '发布功能',
         component: '@/pages/publish/function',
         exact: true,
       },
@@ -452,7 +452,7 @@ export default [
       },
       {
         path: 'plan',
-        name: '发布计划管理',
+        name: '发布计划',
         key: 'plan',
         exact: true,
         component: '@/pages/publish/plan',
