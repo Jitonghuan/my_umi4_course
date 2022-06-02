@@ -17,7 +17,7 @@ function Shortcuts() {
       icon: <IconFile />,
     },
     {
-      title: '项目管理',
+      title: '项目环境',
       key: 'application/project-environment',
       icon: <IconStorage />,
     },
