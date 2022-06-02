@@ -212,7 +212,7 @@ export function useVolumeLineInfo() {
     })
       .then((res) => {
         let volumeNumLineDataArry: any = [];
-        let volumeNumLineDataSource = res?.data.volumeNumLine;
+        let volumeNumLineDataSource = res?.data?.volumeNumLine;
         volumeNumLineDataSource?.map((item: any) => {
           volumeNumLineDataArry.push({
             time: moment(parseInt(item[0]) * 1000).format('YYYY-MM-DD '),
