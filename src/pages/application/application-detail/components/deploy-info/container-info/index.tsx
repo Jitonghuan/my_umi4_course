@@ -1,17 +1,62 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo ,useState} from 'react';
 import { Tag, Table, Empty, Descriptions, Divider, Button } from 'antd';
 import { columns, creatContainerColumns } from '../components/deployment-list/columns';
 import { ContentCard } from '@/components/vc-page-content';
+import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { LIST_STATUS_TYPE } from '../deployInfo-content/schema';
-import { useGetPodEventList, useListContainer } from './hook';
+import { useGetPodEventList, useListContainer,queryContainerMethods,getListPodEventMethods } from './hook';
 import { history } from 'umi';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
   const { infoRecord, appCode, envCode, viewLogEnvType, id } = props.location.state;
-  const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
-  const [queryContainer, queryContainerData, loading] = useListContainer();
+  // const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
+  // const [queryContainer, queryContainerData, loading] = useListContainer();
+  const [queryContainerData,setQueryContainerData]=useState<any>([]);
+  const [podListSource,setPodListSource]=useState<any>([]);
   // let infoRecord:any=JSON.parse(initRecord)||{}
+  const containerIntervalFunc=()=>{
+  
+   
+    queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
+  }
+  const podIntervalFunc=()=>{
+  
+    getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
+    
+  }
+
+
+  const getPodEventList=(paramObj: { instName: string; envCode: string })=>{
+    getListPodEventMethods(paramObj).then((res)=>{
+      setPodListSource(res);
+      if(res.length==0){
+        getPodTimerHandler('stop')
+      }
+
+
+    })
+  
+  }
+
+  const queryContainer=(paramsObj: { appCode: string; envCode: string; instName: string })=>{
+    queryContainerMethods(paramsObj).then((res)=>{
+      setQueryContainerData(res);
+      if(res.length==0){
+        getContainerTimerHandler('stop')
+      }
+
+    })
+
+  }
+  //引用定时器
+  const { getStatus: getContainerStatus, handle: getContainerTimerHandler } = useInterval(containerIntervalFunc, 30000, {
+    immediate: false,
+  });
+  //引用定时器
+  const { getStatus: getPodStatus, handle: getPodTimerHandler } = useInterval(podIntervalFunc, 30000, {
+    immediate: false,
+  });
   useEffect(() => {
     if (!infoRecord?.instName || !envCode || !appCode) {
       return;
@@ -20,18 +65,18 @@ export default function ContainerInfo(props: any) {
     getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
     queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
   }, [infoRecord?.instName]);
-  useEffect(() => {
-    let intervalId = setInterval(() => {
-      if (infoRecord?.instName && envCode && appCode) {
-        getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
-        queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
-      }
-    }, 30000);
+  // useEffect(() => {
+  //   let intervalId = setInterval(() => {
+  //     if (infoRecord?.instName && envCode && appCode) {
+  //       getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
+  //       queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
+  //     }
+  //   }, 30000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [infoRecord?.instName]);
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [infoRecord?.instName]);
 
   // 表格列配置
   const containerColumns = useMemo(() => {

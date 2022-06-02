@@ -72,7 +72,19 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
   }, [appCode]);
 
-  const getDeploymentEventListInfo=()=>{
+  const getDeploymentEventListInfo=(params:{appCode:any, envCode: string})=>{
+    setDeploymentLoading(true)
+    getDeploymentEventListMethods(params).then((res)=>{
+      setDeploymentSource(res)
+      if(res.length==0){
+        getDeploymentTimerHandler('stop');
+        
+      }
+      
+
+    }).finally(()=>{
+      setDeploymentLoading(false);
+    })
     
   }
 
@@ -99,7 +111,7 @@ export default function DeployContent(props: DeployContentProps) {
       loadInfoData(initEnvCode.current)
         .then(() => {
           queryInstanceList(appData?.appCode, initEnvCode.current);
-          getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+
         })
         .catch((e: any) => {
           console.log('error happend in intervalFunc:', e);
@@ -107,8 +119,16 @@ export default function DeployContent(props: DeployContentProps) {
     }
   };
 
+  const deploymentIntervalFunc=()=>{
+    getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+  }
+
   //引用定时器
   const { getStatus: getTimerStatus, handle: timerHandler } = useInterval(intervalFunc, 3000, {
+    immediate: false,
+  });
+  //引用定时器
+  const { getStatus: getDeploymentStatus, handle: getDeploymentTimerHandler } = useInterval(deploymentIntervalFunc, 10000, {
     immediate: false,
   });
 
@@ -140,14 +160,17 @@ export default function DeployContent(props: DeployContentProps) {
                       setInstanceLoading(true);
                       let data = result.data;
                       setInstanceTableData(data);
-                      getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+                     
                       if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                        getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                         timerHandler('do', true);
                       } else {
                         timerHandler('stop');
+                        getDeploymentTimerHandler('stop')
                       }
                     } else {
                       timerHandler('stop');
+                      getDeploymentTimerHandler('stop')
                       return;
                     }
                   })
@@ -178,7 +201,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: initEnvCode.current });
             if (initEnvCode.current !== '') {
               let initLoadInfoData: any = [];
-              getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+              // getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
               getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
                 .then((result) => {
                   if (result.success) {
@@ -197,14 +220,17 @@ export default function DeployContent(props: DeployContentProps) {
                           setInstanceLoading(true);
                           let data = result.data;
                           setInstanceTableData(data);
-                          getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+                         
                           if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                            getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                             timerHandler('do', true);
                           } else {
                             timerHandler('stop');
+                            getDeploymentTimerHandler('stop')
                           }
                         } else {
                           timerHandler('stop');
+                          getDeploymentTimerHandler('stop')
                           return;
                         }
                       })
@@ -213,6 +239,7 @@ export default function DeployContent(props: DeployContentProps) {
                       });
                   } else {
                     timerHandler('stop');
+                    getDeploymentTimerHandler('stop')
                   }
                 });
             }
@@ -276,15 +303,16 @@ export default function DeployContent(props: DeployContentProps) {
                 setInstanceLoading(true);
                 let data = result.data;
                 setInstanceTableData(data);
-                getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+               
                 if (result.data !== undefined && result.data.length !== 0) {
+                  getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                   timerHandler('do', true);
                 } else {
                   timerHandler('stop');
                 }
                 if (initEnvCode.current !== '') {
                   queryAppOperateLog(initEnvCode.current);
-                  getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+                  // getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                 }
               } else {
                 timerHandler('stop');

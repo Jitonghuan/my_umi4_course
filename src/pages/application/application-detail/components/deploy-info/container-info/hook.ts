@@ -44,6 +44,38 @@ export const getDeploymentEventListMethods = (paramObj: { appCode: any; envCode:
     return [];
   });
 
+
+  /** 查看容器的事件 */
+export const queryContainerMethods = (paramsObj: { appCode: string; envCode: string; instName: string }) =>
+getRequest(APIS.listContainer, { data: paramsObj }).then((res: any) => {
+  if (res?.success) {
+    
+    let dataSource: any = [];
+    return (
+       dataSource = res.data || []
+     
+      ) || []
+    
+  }
+  return [];
+});
+
+ /** 查看Pod的事件 */
+ export const getListPodEventMethods = (paramObj: { instName: string; envCode: string }) =>
+ getRequest(APIS.getListPodEvent, { data: paramObj }).then((res: any) => {
+   if (res?.success) {
+     
+     let dataSource: any = [];
+     return (
+        dataSource = res.data || []
+      
+       ) || []
+     
+   }
+   return [];
+ });
+
+
 export function useListContainer(): [
   (paramsObj: { appCode: string; envCode: string; instName: string }) => Promise<void>,
   any,
