@@ -60,7 +60,7 @@ export default function VersionDetail(props: DetailProps) {
             <a
               onClick={() => {
                 history.push({
-                  pathname: '/matrix/delivery/component-detail',
+                  pathname: '/matrix/station/component-detail',
                   state: {
                     initRecord: record,
                     type: 'componentCenter',

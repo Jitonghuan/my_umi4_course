@@ -7,8 +7,8 @@ import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } fro
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
 import ReactMarkdown from 'react-markdown';
-import UserModal from '../../component-center/components/UserModal';
-import BasicDataModal from '../../component-center/components/basicDataModal';
+import UserModal from '../components/UserModal';
+import BasicDataModal from '../components/basicDataModal';
 import {
   Form,
   Tabs,
@@ -24,7 +24,7 @@ import {
   message,
 } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { useQueryComponentList, useQueryProductlineList } from '../../component-center/hook';
+import { useQueryComponentList, useQueryProductlineList } from '../hook';
 import { useUpdateDescription, useUpdateConfiguration } from './hooks';
 
 import './index.less';
@@ -306,7 +306,7 @@ export default function ComponentDetail() {
               onClick={() => {
                 if (optType === 'versionDetail') {
                   history.push({
-                    pathname: '/matrix/delivery/version-detail',
+                    pathname: '/matrix/station/version-detail',
                     state: {
                       optType: 'componentDetail',
                       versionId: productVersionId,
@@ -320,7 +320,7 @@ export default function ComponentDetail() {
                   });
                 } else {
                   history.push({
-                    pathname: '/matrix/delivery/component-center',
+                    pathname: '/matrix/station/component-center',
                     state: {
                       identification: componentType,
                     },

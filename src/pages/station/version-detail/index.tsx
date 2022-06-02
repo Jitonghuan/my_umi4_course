@@ -15,12 +15,10 @@ const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 export default function VersionDetail() {
   const descriptionInfoData: any = history.location.state;
-  const [tableLoading, tableDataSource, pageInfo, setPageInfo, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [tableLoading, tableDataSource,  queryDeliveryParamList] = useQueryDeliveryParamList();
   const [
     gloableTableLoading,
     gloableTableDataSource,
-    gloablePageInfo,
-    setgloablePageInfo,
     queryDeliveryGloableParamList,
   ] = useQueryDeliveryGloableParamList();
   const [editableStr, setEditableStr] = useState(descriptionInfoData?.versionDescription);
@@ -28,7 +26,7 @@ export default function VersionDetail() {
   const [editLoading, editProductVersionDescription] = useEditProductVersionDescription();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [tabActiveKey, setTabActiveKey] = useState<string>('basicInfo');
-  console.log('descriptionInfoData', descriptionInfoData);
+  
 
   useEffect(() => {
     if (!descriptionInfoData.versionId) {
@@ -37,7 +35,7 @@ export default function VersionDetail() {
     }
     if (descriptionInfoData?.optType === 'componentDetail') {
       setTabActiveKey('production');
-      console.log('tabActiveKey', tabActiveKey);
+      
     }
   }, [descriptionInfoData?.optType]);
   useEffect(() => {
@@ -45,7 +43,7 @@ export default function VersionDetail() {
   }, []);
 
   useEffect(() => {
-    //全局参数查询交付配置参数
+    //全局参数查询建站配置参数
     queryDeliveryGloableParamList(descriptionInfoData.versionId, 'global');
     //组件参数
     queryDeliveryParamList(descriptionInfoData.versionId);
@@ -67,7 +65,7 @@ export default function VersionDetail() {
             type="primary"
             onClick={() => {
               history.push({
-                pathname: '/matrix/delivery/product-description',
+                pathname: '/matrix/station/product-description',
                 state: {
                   id: descriptionInfoData.productId,
                   productName: descriptionInfoData.productName,
@@ -146,7 +144,7 @@ export default function VersionDetail() {
                 ))}
               </Tabs>
             </TabPane>
-            <TabPane tab="交付参数" key="delivery">
+            <TabPane tab="建站参数" key="station">
               <Tabs type="card">
                 {deliveryTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>

@@ -1,5 +1,5 @@
 /* 
-交付管理/产品列表接口
+建站管理/产品列表接口
 文档地址：https://come-future.yuque.com/sekh46/bbgc7f/wzzc7e
 设计原型地址：https://modao.cc/app/cac9fa9343b15960f41e0ebe2692c08a577fee33#screen=skzp9ybcdy6ujcg
  */
@@ -51,13 +51,13 @@ export const editComponent = addAPIPrefix('/deliveryManage/product/version/compo
 export const queryOriginList = addAPIPrefix('/deliveryManage/product/version/component/origin/list');
 /*19、 GET 获取组件参数及参数值 */
 export const queryParamList = addAPIPrefix('/deliveryManage/product/version/component/param/list');
-/*20、 POST 保存交付配置参数 */
+/*20、 POST 保存建站配置参数 */
 export const saveParam = addAPIPrefix('/deliveryManage/product/version/param/save');
-/*21、 GET  查询交付配置参数 */
+/*21、 GET  查询建站配置参数 */
 export const queryDeliveryParamList = addAPIPrefix('/deliveryManage/product/version/param/list');
-/*22、 POST 删除交付配置参数 */
+/*22、 POST 删除建站配置参数 */
 export const deleteDeliveryParam = addAPIPrefix('/deliveryManage/product/version/param/delete');
-/*23、 POST  修改交付配置参数 */
+/*23、 POST  修改建站配置参数 */
 export const editVersionParam = addAPIPrefix('/deliveryManage/product/version/param/edit');
 /*24、 GET 根据产品线和版本号查询应用列表 */
 export const getApplistVersion = addAPIPrefix('/deliveryManage/component/applist/version ');
@@ -125,7 +125,7 @@ export const deleteComponentTmpl = addAPIPrefix('/deliveryManage/component/templ
 /*44、 GET 应用Chart模板分类 */
 export const queryTypeList = addAPIPrefix('/deliveryManage/component/template/typelist');
 
-/* 三、制品交付 */
+/* 三、制品建站 */
 
 /*45、POST  创建制品 */
 export const createIndent = addAPIPrefix('/deliveryManage/indent/create');
@@ -142,10 +142,10 @@ export const deleteIndent = addAPIPrefix('/deliveryManage/indent/delete');
 /*49、 POST 制品描述编辑 */
 export const editDescription = addAPIPrefix('/deliveryManage/indent/description/edit');
 
-/*50、 GET  获取制品交付配置 */
+/*50、 GET  获取制品建站配置 */
 export const queryIndentParamList = addAPIPrefix('/deliveryManage/indent/param/list');
 
-/*51、 POST 编辑交付配置参数值 */
+/*51、 POST 编辑建站配置参数值 */
 export const saveIndentParam = addAPIPrefix('/deliveryManage/indent/param/edit');
 
 /*52、 POST 出部署包 */
@@ -166,5 +166,5 @@ export const generateIndentConfig = addAPIPrefix('/deliveryManage/indent/config/
 export const editIndentConfig = addAPIPrefix('/deliveryManage/indent/config/edit');
 /*58、 GET 出部署包 */
 export const getPackageStatus = addAPIPrefix('/deliveryManage/indent/package/status');
-/*59、 POST 更新交付参数 */
+/*59、 POST 更新建站参数 */
 export const updateParamIndent = addAPIPrefix('/deliveryManage/indent/param/update');

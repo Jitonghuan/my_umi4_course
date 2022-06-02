@@ -1,7 +1,7 @@
 /* 组件中心
  * @Author: muxi.jth
  * @Date: 2022-03-07 01:01:37
- * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
+ * @FilePath: /fe-matrix/src/pages/station/version-detail/index.tsx
  */
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
