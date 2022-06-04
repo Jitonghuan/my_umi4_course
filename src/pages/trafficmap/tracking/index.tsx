@@ -153,6 +153,7 @@ export default function Tracking() {
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
     setFirst(false);
+
     setLoading(true);
     setCurrentItem({});
     // setListData([]);

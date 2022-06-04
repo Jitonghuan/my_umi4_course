@@ -1072,6 +1072,20 @@ export default [
     ],
   },
   {
+    path: 'display',
+    name: '演示页面',
+    icon: 'icon-dataset',
+    routes: [
+      {
+        path: 'main',
+        name: '演示页面',
+        key: 'display',
+        component: '@/pages/display',
+        // hideInMenu: true,
+      },
+    ],
+  },
+  {
     path: '*',
     name: 'NOT FOUND',
     hideInMenu: true,
