@@ -1,14 +1,23 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useImperativeHandle, useMemo, useRef, forwardRef } from 'react';
 import Konva from 'konva'
 import { ContainerConfig } from 'konva/lib/Container';
-import { Graph, radius } from "./shape";
+import { Graph, radius, RelatedData, defaultCircleFill } from "./shape";
 
-export default function konva(props: any) {
+export default forwardRef(function konva(props: any, ref: any) {
     const { onJoin, onRelative } = props;
     const konvaRef: any = useRef(null);
     const [g, setG] = useState<Graph>();
     //   const containerRef: any = useRef(null);
-
+    useImperativeHandle(
+        ref,
+        () => ({
+            treeView: (related: RelatedData) => {
+                // function name
+                g?.showRelativeTree(related);
+            },
+        }),
+        [g],
+    );
     useEffect(() => {
         if (!konvaRef) return;
 
@@ -18,13 +27,12 @@ export default function konva(props: any) {
             x: graph.stage.width() / 2,
             y: graph.stage.height() / 2 - radius * 2,
 
-            tableName: "违法数据",
-            recordCount: 10000,
-            fill: '#1890ff',
-            stroke: "#1068bb",
+            tableName: "医保上传检验单",
+            recordCount: 535,
+            shadowColor: defaultCircleFill,
+            shadowBlur: 20,
             onJoin,
             onRelative,
-
         });
 
         graph.addTable({
@@ -33,8 +41,8 @@ export default function konva(props: any) {
             fill: 'orange',
             stroke: '#d18702',
             strokeWidth: 1,
-            tableName: "骑手名单",
-            recordCount: 4000,
+            tableName: "校验明细",
+            recordCount: 534,
             onJoin,
             onRelative,
         });
@@ -44,4 +52,4 @@ export default function konva(props: any) {
 
     }, [konvaRef])
     return <div ref={konvaRef} id='konva' style={{ height: '100%' }}></div>
-}
+})

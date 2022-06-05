@@ -6,33 +6,32 @@ import ETable from './editTable'
 import {
     EditableProTable,
 } from '@ant-design/pro-table';
-
+const r = {
+    left: {
+        tableName: "违法数据",
+        recordCount: 11274,
+        remark: '骑手信息',
+    },
+    right: {
+        tableName: "骑手名单",
+        recordCount: 4000,
+        remark: '骑手信息',
+    },
+    leftRestCount: 7600,
+    rightRestCount: 0,
+    corssCount: 5068
+};
 export default function DetailDraw(props: any) {
-    const { visible, setVisible } = props;
+    const { visible, setVisible, onSubmit } = props;
+    const [data, setData] = useState(r);
     const [showTable, setShowTable] = useState(true)
-    const handleSubmit = () => {
-
-    }
+    const handleSubmit = () => onSubmit(data);
     const drawContainer = useCallback((node: any) => {
         if (node && visible) {
             var g = new Graph(node);
-            g.showRelative({
-                left: {
-                    tableName: "违法数据",
-                    recordCount: 10000,
-                    remark: '骑手信息',
-                },
-                right: {
-                    tableName: "骑手名单",
-                    recordCount: 4000,
-                    remark: '骑手信息',
-                },
-                leftRestCount: 7600,
-                rightRestCount: 0,
-                corssCount: 5123
-            })
+            g.showRelative(r);
         }
-    }, [visible]);
+    }, [visible, data]);
     return (
         <Drawer placement="right"
             title='表关联设置'

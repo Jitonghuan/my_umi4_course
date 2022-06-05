@@ -1,4 +1,5 @@
 
+import C from '@/pages/dashboard/workplace/carousel';
 import Konva from 'konva'
 import { ContainerConfig } from 'konva/lib/Container';
 
@@ -13,7 +14,26 @@ export const operateFontSize = 12;
 export const fontStyle = 'bold';
 export const backgroundColor = 'rgb(230 235 245 / 17%)';
 export const defaultCircleFill = '#1890ff';
+export const defaultCircleStroke = '#1068bb';
+export const defaultCircleStrokeWidth = 2;
 export const hoverCircleFill = '#127cdf';
+
+export interface Table extends ContainerConfig {
+    tableName: string;
+    recordCount: number;
+    remark?: string;
+    onRelative?: (left: Table, right: Table) => any,
+    onJoin?: (left: Table, right: Table) => any,
+    [x: string]: any;
+}
+export interface RelatedData {
+
+    left: Table,
+    right: Table,
+    leftRestCount: number,
+    rightRestCount: number,
+    corssCount: number,
+}
 
 // text上方的文字背景
 function drawRect(props: Konva.RectConfig) {
@@ -22,7 +42,7 @@ function drawRect(props: Konva.RectConfig) {
         ...props
     });
 }
-// text上方的文字背景
+// 画圆
 function drawCircle(props: Konva.RectConfig) {
     var c = new Konva.Circle({
         radius,
@@ -32,6 +52,8 @@ function drawCircle(props: Konva.RectConfig) {
 
     return c;
 }
+
+// 用于画隐藏的圆
 function makeOpreateCircle({ selfTable, text, x, y, onCollision, ...other }: Konva.CircleConfig) {
 
     var group = new MyOperateGroup({
@@ -51,12 +73,14 @@ function makeOpreateCircle({ selfTable, text, x, y, onCollision, ...other }: Kon
         ...other
     }))
     if (text) {
+        // 中间的字
         group.add(drawCenterAlignText({
             text,
             fontSize: operateFontSize,
             fill: 'black',
             name: 'opreate-text',
         }));
+        // 上方的字
         group.add(drawRect({
             width: radius * 2,
             height: tableFontSize + textPadding,
@@ -71,9 +95,9 @@ function makeOpreateCircle({ selfTable, text, x, y, onCollision, ...other }: Kon
             shadowColor: "#ccc",
             name: 'opreate-text-coll',
             cornerRadius: 5,
-
+            visible: false,
         }));
-
+        // 被碰撞了之后显示在上方的字
         group.add(drawCenterAlignText({
             text,
             y: - radius - textMargin - textPadding / 2,
@@ -124,12 +148,21 @@ export class MyBasicCircirGroup extends Konva.Group {
     }
 }
 
-// 三个圆为一组 分别是两个隐藏的圆和一个静止的圆
+// 存放一个group中用到的方法 三个圆为一组 分别是两个隐藏的圆和一个静止的圆
 export class MyTableGroup extends MyBasicCircirGroup {
     tableData: Table
     constructor({ tableData, ...other }: any) {
         super(other);
         this.tableData = tableData;
+    }
+    lock() {
+        this.draggable(false);
+        this.getKeyCircle().fill(defaultCircleFill);
+        this.getKeyCircle().stroke(defaultCircleStroke);
+        this.getKeyCircle().strokeWidth(defaultCircleStrokeWidth);
+    }
+    unlock() {
+        this.draggable(true);
     }
     getOperates(): MyOperateGroup[] {
         return this.find('.opreate');
@@ -155,8 +188,12 @@ export class MyTableGroup extends MyBasicCircirGroup {
             this.endOperate();
         }
     }
+    clickCircle() {
+
+    }
 };
 
+// 存放隐藏圆的一些方法
 export class MyOperateGroup extends MyBasicCircirGroup {
     selfTable: Table
     opsTable?: Table;
@@ -195,22 +232,7 @@ export class MyOperateGroup extends MyBasicCircirGroup {
     }
 };
 
-export interface Table extends ContainerConfig {
-    tableName: string;
-    recordCount: number;
-    remark?: string;
-    onRelative?: (left: Table, right: Table) => any,
-    onJoin?: (left: Table, right: Table) => any,
-    [x: string]: any;
-}
-export interface RelatedData {
 
-    left: Table,
-    right: Table,
-    leftRestCount: number,
-    rightRestCount: number,
-    corssCount: number,
-}
 export class Graph {
     stage: Konva.Stage
     layer: Konva.Layer
@@ -228,34 +250,48 @@ export class Graph {
 
         this.layer.on('dragstart', function (e: any) {
         })
-        this.layer.on('dragend', function (e: any) {
-            this.children?.forEach((group: any) => group?.endOperate(group));
-            this.children?.forEach((group: any) => group?.checkOperate());
-
-        })
 
         this.layer.on('dragmove', function (e: any) {
             var targetGroup = e.target;
             targetGroup.moveToTop();
             this.children?.forEach((group: any) => group?.collisionCheck(e.target));
         });
+
+        this.layer.on('dragend', function (e: any) {
+            this.children?.forEach((group: any) => group?.endOperate(group));
+            this.children?.forEach((group: any) => group?.checkOperate());
+
+        })
+
+
     }
-
+    // 画一组圆 分别是两个隐藏的圆和一个静止的圆
     addTable(t: Table) {
-
-        const { x, y, ...other } = t;
+        const layer = this.layer;
+        const { x, y, draggable = true, ...other } = t;
         var group = new MyTableGroup({
-            draggable: true,
+            draggable,
             x: x || Math.random() * this.stage.width(),
             y: y || Math.random() * this.stage.height(),
             strokeWidth: 1,
             tableData: t,
         });
 
+
+        group.on('click', function (e: any) {
+            layer.children?.forEach((g: any) => {
+                const clickCircle: any = g.findOne('.key-circle')
+                clickCircle.shadowBlur(0)
+            })
+            const clickCircle: any = this.findOne('.key-circle')
+            clickCircle.shadowColor(t.fill || defaultCircleFill);
+            clickCircle.shadowBlur(20)
+        })
+
         group.add(drawRect({
-            width: radius * 2,
+            width: getTextWidth(t.tableName, 16),
             height: tableFontSize + textPadding,
-            x: - radius,
+            x: -getTextWidth(t.tableName, 16) / 2,
             y: - radius - textMargin - textPadding / 2 - tableFontSize,
             stroke: '#ccc',
             strokeWidth: 1,
@@ -274,17 +310,19 @@ export class Graph {
             name: 'table-text',
         }));
 
-
+        // 左边隐藏的圆
         group.add(makeOpreateCircle({
             x: -radius * 1.5,
             text: '表关联设置',
             selfTable: t,
             onCollision: t.onRelative,
         }));
+        // 中间的圆
         group.add(drawCircle({
             name: 'key-circle',
             ...other,
         }));
+        // 右边隐藏的圆
         group.add(makeOpreateCircle({
             x: radius * 1.5,
             text: '行拼接',
@@ -292,6 +330,7 @@ export class Graph {
             onCollision: t.onJoin,
         }));
 
+        // 中间圆的文字
         group.add(drawCenterAlignText({
             text: t.recordCount + '',
             fontSize,
@@ -301,13 +340,15 @@ export class Graph {
         this.layer.add(group);
     }
 
+    // 两个圆交集
     showRelative(related: RelatedData) {
         const stage = this.stage;
         const textFontSize = 12;
         const numberFontSize = 16;
 
         // 计算中间数字所占宽度
-        const crossX = (getTextWidth(related.corssCount + "", numberFontSize) + textPadding * 3) / 2;
+        const crossX = (getTextWidth(related.corssCount + "", numberFontSize) + textPadding * 3)
+            / 2;
 
         var group = new MyBasicCircirGroup({
             draggable: true,
@@ -319,7 +360,6 @@ export class Graph {
         var leftGroup = new MyBasicCircirGroup({
         });
         leftGroup.on('click', function (e: any) {
-            console.log(related.left);
         })
         leftGroup.on("mouseover", function (e: any) {
             stage.container().style.cursor = 'pointer';
@@ -342,6 +382,7 @@ export class Graph {
             name: 'relate-left',
             ...related.left
         }));
+        // 左边上方表名
         leftGroup.add(drawCenterAlignText({
             x: - (getTextWidth(leftText, textFontSize) / 2 + textPadding),
             y: - relatedRadius - textFontSize,
@@ -349,6 +390,7 @@ export class Graph {
             fontSize: textFontSize,
             fill: '#c3c30b',
         }));
+        // 左边中间数量
         leftGroup.add(drawCenterAlignText({
             x: - 2 * relatedRadius + crossX + getTextWidth(related.leftRestCount + "", numberFontSize) / 2 + textPadding,
             text: related.leftRestCount + "",
@@ -361,7 +403,6 @@ export class Graph {
         var rightGroup = new MyBasicCircirGroup({
         });
         rightGroup.on('click', function (e: any) {
-            console.log(related.right);
         })
         rightGroup.on("mouseover", function (e: any) {
             stage.container().style.cursor = 'pointer';
@@ -413,13 +454,10 @@ export class Graph {
         var centerGroup = new MyBasicCircirGroup({
         });
         centerGroup.on('click', function (e: any) {
-            console.log(related.right);
         })
         centerGroup.on("mouseover", function (e: any) {
             stage.container().style.cursor = 'pointer';
             const csArc = this.findOne('.cross-arc') as any;
-            console.log(csArc);
-
             csArc.fill(hoverCircleFill);
         })
         centerGroup.on('mouseleave', function (e: any) {
@@ -436,6 +474,8 @@ export class Graph {
                 context.arc(leftX, 0, relatedRadius, leftRadianslStart, leftRadianslEnd, false);
                 context.closePath();
                 context.fillStrokeShape(shape);
+
+
                 context.beginPath();
                 context.arc(rightX, 0, relatedRadius, rightRadiansStart, rightRadianslEnd, false);
                 context.closePath();
@@ -446,13 +486,14 @@ export class Graph {
         centerGroup.add(crossShape);
         // 画出两条白色弧线 假装边框
         centerGroup.add(new Konva.Shape({
-            fill: 'red',
             stroke: 'white',
             strokeWidth: 6,
             sceneFunc(context, shape) {
                 context.beginPath();
                 context.arc(leftX, 0, relatedRadius - 3, leftRadianslStart, leftRadianslEnd, false);
                 context.strokeShape(shape);
+
+
                 context.beginPath();
                 context.arc(rightX, 0, relatedRadius - 3, rightRadiansStart, rightRadianslEnd, false);
                 context.strokeShape(shape);
@@ -467,6 +508,66 @@ export class Graph {
 
 
         this.layer.add(group)
+    }
+
+    // 树形结构图
+    showRelativeTree(related: RelatedData) {
+        const levelLength = radius * 6;
+        const step = radius * 4, yStart = radius * 3;
+        const yOrder = (groups: any, offset: number, step: number) => {
+            groups.forEach((g: any) => {
+                g.setY(offset);
+                offset += step;
+            })
+        }
+        this.layer.children?.map((g: any) => g?.lock())
+        yOrder(this.layer.children, yStart, step)
+        this.layer.children?.map((g: any) => g.setX(this.stage.width() / 2 - levelLength / 2))
+        this.stage.draw();
+
+        this.addTable({
+            y: radius * 3 + radius * 4 / 2,
+            x: this.stage.width() / 2 + levelLength / 2,
+            fill: 'orange',
+            stroke: '#d18702',
+            strokeWidth: 1,
+            tableName: "违法详情",
+            recordCount: 5068,
+            draggable: false,
+        })
+
+        var arrowTop = new Konva.Arrow({
+            x: this.stage.width() / 2 - radius * 2 + textPadding,
+            y: yStart,
+            points: [
+                0, 0,
+                (levelLength - radius * 2) / 2, 0,
+                (levelLength - radius * 2) / 2, (radius * 4 / 2),
+                levelLength - radius * 2 - textPadding * 2, radius * 4 / 2
+            ],
+            pointerLength: 4,
+            pointerWidth: 4,
+            fill: '#ccc',
+            stroke: '#ccc',
+            strokeWidth: 2,
+        });
+        this.layer.add(arrowTop);
+        var arrowBottom = new Konva.Arrow({
+            x: this.stage.width() / 2 - radius * 2 + textPadding,
+            y: radius * 3 + step,
+            points: [
+                0, 0,
+                (levelLength - radius * 2) / 2, 0,
+                (levelLength - radius * 2) / 2, - (radius * 4 / 2),
+                levelLength - radius * 2 - textPadding * 2, -radius * 4 / 2
+            ],
+            pointerLength: 4,
+            pointerWidth: 4,
+            fill: '#ccc',
+            stroke: '#ccc',
+            strokeWidth: 2,
+        });
+        this.layer.add(arrowBottom);
     }
 }
 
