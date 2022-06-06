@@ -55,7 +55,7 @@ export default (props: VersionDetailProps) => {
   const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
-  const [loading, tableDataSource, setDataSource, pageInfo, setPageInfo, queryVersionComponentList] =
+  const [loading, tableDataSource, setDataSource, queryVersionComponentList] =
     useQueryVersionComponentList();
   const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
@@ -100,7 +100,10 @@ export default (props: VersionDetailProps) => {
         return (
           <Select
             options={componentOptions}
+            showSearch
+            allowClear
             labelInValue
+            optionFilterProp="label"
             onChange={(param: any) => {
               queryProductVersionOptions(param.value, currentTabType);
               componentOptions.filter((item: any) => {
@@ -137,6 +140,8 @@ export default (props: VersionDetailProps) => {
         return (
           <Select
             options={componentVersionOptions}
+            showSearch
+            allowClear
             // onChange={(value: any) => {
 
             // }}
@@ -160,7 +165,7 @@ export default (props: VersionDetailProps) => {
         <a
           onClick={() => {
             history.push({
-              pathname: '/matrix/delivery/component-detail',
+              pathname: '/matrix/station/component-detail',
               state: {
                 initRecord: record,
                 productVersionId: versionId,
@@ -279,6 +284,7 @@ export default (props: VersionDetailProps) => {
         // 关闭默认的新建按钮
         recordCreatorProps={false}
         columns={columns}
+        scroll={{ y: window.innerHeight - 340}}
         // request={async () => ({
         //   data: defaultData,
         //   total: 3,
@@ -286,19 +292,7 @@ export default (props: VersionDetailProps) => {
         // })}
         value={tableDataSource}
         onChange={setDataSource}
-        pagination={{
-          total: pageInfo.total,
-          pageSize: pageInfo.pageSize,
-          current: pageInfo.pageIndex,
-          showSizeChanger: true,
-          onShowSizeChange: (_, size) => {
-            setPageInfo({
-              pageIndex: 1,
-              pageSize: size,
-            });
-          },
-          showTotal: () => `总共 ${pageInfo.total} 条数据`,
-        }}
+        pagination={false}
         editable={{
           form,
           editableKeys,

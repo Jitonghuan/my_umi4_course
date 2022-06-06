@@ -1,4 +1,4 @@
-//制品管理-配置交付参数
+//制品管理-配置建站参数
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
@@ -206,8 +206,8 @@ export default function ProductConfig() {
         setVisible(false);
       });
   };
-  const afreshText = '由最新的交付参数等配置生成新的制品配置，会覆盖原有的自定义配置';
-  const updateText = '获取产品版本里最新的交付参数并更新到此处，不会改动参数值';
+  const afreshText = '由最新的建站参数等配置生成新的制品配置，会覆盖原有的自定义配置';
+  const updateText = '获取产品版本里最新的建站参数并更新到此处，不会改动参数值';
 
   return (
     <PageContainer>
@@ -232,7 +232,7 @@ export default function ProductConfig() {
                 <Button
                   type="primary"
                   onClick={() => {
-                    history.push('/matrix/delivery/product-management');
+                    history.push('/matrix/station/product-management');
                   }}
                 >
                   返回
@@ -253,9 +253,9 @@ export default function ProductConfig() {
                   {editableStr}
                 </Paragraph>
               </Descriptions.Item>
-              <Descriptions.Item label="交付产品">{configInfoData.productName || '--'}</Descriptions.Item>
-              <Descriptions.Item label="交付版本">{configInfoData.productVersion || '--'}</Descriptions.Item>
-              <Descriptions.Item label="交付项目">{configInfoData.deliveryProject || '--'}</Descriptions.Item>
+              <Descriptions.Item label="建站产品">{configInfoData.productName || '--'}</Descriptions.Item>
+              <Descriptions.Item label="建站版本">{configInfoData.productVersion || '--'}</Descriptions.Item>
+              <Descriptions.Item label="建站项目">{configInfoData.deliveryProject || '--'}</Descriptions.Item>
               <Descriptions.Item label="创建时间">
                 {moment(configInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}
               </Descriptions.Item>
@@ -288,7 +288,7 @@ export default function ProductConfig() {
 
         <div style={{ paddingTop: 10 }}>
           <Tabs type="card">
-            <TabPane tab="配置交付参数" key="1">
+            <TabPane tab="配置建站参数" key="1">
               <Tabs
                 defaultActiveKey="1"
                 activeKey={tabActiveKey}
@@ -304,7 +304,7 @@ export default function ProductConfig() {
                       });
                     }}
                   >
-                    更新交付参数{' '}
+                    更新建站参数
                     <Tooltip placement="topRight" title={updateText}>
                       <QuestionCircleOutlined />
                     </Tooltip>

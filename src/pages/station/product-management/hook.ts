@@ -139,7 +139,7 @@ export function useEditDescription(): [boolean, (id: number, indentDescription: 
   return [loading, editDescription];
 }
 
-// 获取制品交付配置列表
+// 获取制品建站配置列表
 export function useQueryIndentConfigParamList(): [
   boolean,
   any[],
@@ -171,7 +171,7 @@ export function useQueryIndentConfigParamList(): [
   return [loading, dataSource, queryIndentConfigParamList];
 }
 
-// 获取制品交付配置列表
+// 获取制品建站配置列表
 export function useQueryIndentParamList(): [
   boolean,
   any[],
@@ -203,7 +203,7 @@ export function useQueryIndentParamList(): [
   return [loading, dataSource, queryIndentParamList];
 }
 
-// 编辑交付配置参数值
+// 编辑建站配置参数值
 export function useSaveIndentParam(): [boolean, (id: number, paramValue: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const saveIndentParam = async (id: number, paramValue: string) => {
