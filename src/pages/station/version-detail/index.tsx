@@ -125,7 +125,7 @@ export default function VersionDetail() {
                 </Descriptions>
               </div>
             </TabPane>
-            <TabPane tab="产品编排" key="production">
+            <TabPane tab="组件编排" key="production">
               <Tabs type="card" className="basicInfocard">
                 {productionTabsConfig?.map((item: any, index: number) => (
                   <TabPane tab={item.label} key={index}>
