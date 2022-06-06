@@ -25,6 +25,7 @@ export default function Dashboard(props: any) {
           {/* <Tabs.TabPane tab="集群调度" key="scheduling" /> */}
           <Tabs.TabPane tab="集群同步" key="cluster-sync" />
           <Tabs.TabPane tab="应用同步" key="application-sync" />
+          <Tabs.TabPane tab="前端应用同步" key="application-sync-front" />
           <Tabs.TabPane tab="操作记录" key="operation-log" />
         </Tabs>
       </FilterCard>
