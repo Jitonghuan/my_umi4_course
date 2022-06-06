@@ -39,7 +39,7 @@ export default function EditorModal(props: IProps) {
     <Modal
       destroyOnClose
       width={800}
-      title={type === 'config' ? '编辑全局交付可变参数值' : '编辑组件交付态可变参数值'}
+      title={type === 'config' ? '编辑全局建站可变参数值' : '编辑组件建站态可变参数值'}
       visible={visible}
       onOk={handleSubmit}
       onCancel={onClose}

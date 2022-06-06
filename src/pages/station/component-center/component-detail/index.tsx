@@ -7,8 +7,8 @@ import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } fro
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
 import ReactMarkdown from 'react-markdown';
-import UserModal from '../../component-center/components/UserModal';
-import BasicDataModal from '../../component-center/components/basicDataModal';
+import UserModal from '../components/UserModal';
+import BasicDataModal from '../components/basicDataModal';
 import {
   Form,
   Tabs,
@@ -24,7 +24,7 @@ import {
   message,
 } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { useQueryComponentList, useQueryProductlineList } from '../../component-center/hook';
+import { useQueryComponentList, useQueryProductlineList } from '../hook';
 import { useUpdateDescription, useUpdateConfiguration } from './hooks';
 
 import './index.less';
@@ -93,16 +93,22 @@ export default function ComponentDetail() {
               componentId: item.componentId,
             }));
             setVersionOptions(option);
-            if (optType && optType !== 'versionDetail') {
-              queryComponentInfo(componentName, option[0]?.value, componentType, option[0]?.componentId);
-            }
             setCurVersion({
               version: option[0]?.value || componentVersion,
               componentId: option[0]?.componentId || initRecord.componentId,
             });
+            if(option.length>0){
+              if (optType && optType !== 'versionDetail') {
+                queryComponentInfo(componentName, option[0]?.value, componentType, option[0]?.componentId);
+              }
+            }else{
+              return 
+            }
           } else {
             return [];
           }
+
+         
         })
         .finally(() => {
           setLoading(false);
@@ -222,7 +228,7 @@ export default function ComponentDetail() {
               <Popconfirm
                 title="确定要删除该版本吗？"
                 onConfirm={() => {
-                  deletVersion(record.id);
+                  deletVersion(record.id)
                 }}
               >
                 <a color="red">删除</a>
@@ -306,7 +312,7 @@ export default function ComponentDetail() {
               onClick={() => {
                 if (optType === 'versionDetail') {
                   history.push({
-                    pathname: '/matrix/delivery/version-detail',
+                    pathname: '/matrix/station/version-detail',
                     state: {
                       optType: 'componentDetail',
                       versionId: productVersionId,
@@ -320,7 +326,7 @@ export default function ComponentDetail() {
                   });
                 } else {
                   history.push({
-                    pathname: '/matrix/delivery/component-center',
+                    pathname: '/matrix/station/component-center',
                     state: {
                       identification: componentType,
                     },

@@ -51,14 +51,14 @@ export default function CreateProductModal(props: ProductListProps) {
         <Form.Item label="制品名称" name="indentName" rules={[{ required: true, message: '请填写制品名称' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
-        <Form.Item label="交付项目" name="deliveryProject" rules={[{ required: true, message: '请填写交付项目' }]}>
+        <Form.Item label="建站项目" name="deliveryProject" rules={[{ required: true, message: '请填写建站项目' }]}>
           <Input style={{ width: 320 }}></Input>
         </Form.Item>
 
         <Form.Item label="制品描述" name="indentDescription" rules={[{ required: true, message: '请填写制品描述' }]}>
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>
         </Form.Item>
-        <Form.Item label="交付产品" name="productName" rules={[{ required: true, message: '请选择交付产品' }]}>
+        <Form.Item label="建站产品" name="productName" rules={[{ required: true, message: '请选择建站产品' }]}>
           <Select
             style={{ width: 320 }}
             loading={productOptionsLoading}

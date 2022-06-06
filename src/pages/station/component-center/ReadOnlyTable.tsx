@@ -9,11 +9,13 @@ export interface DetailProps {
   dataSource: any;
   identification: string;
   onDelClick: any;
-  // queryComponentList: (tabActiveKey: any, curProductLine?: string) => any;
+  queryComponentList: (tabActiveKey: any, curProductLine?: string,pageIndex?:number,pageSize?:number) => any;
   tableLoading: boolean;
+  pageInfo:any;
+  setPageInfo:(pageIndex: number, pageSize?: number) => any;
 }
 export default function VersionDetail(props: DetailProps) {
-  const { currentTab, curProductLine, dataSource, identification, onDelClick, tableLoading } = props;
+  const { currentTab, curProductLine, dataSource, identification, onDelClick, tableLoading,pageInfo,setPageInfo,queryComponentList } = props;
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
     if (!currentTab) {
@@ -60,7 +62,7 @@ export default function VersionDetail(props: DetailProps) {
             <a
               onClick={() => {
                 history.push({
-                  pathname: '/matrix/delivery/component-detail',
+                  pathname: '/matrix/station/component-detail',
                   state: {
                     initRecord: record,
                     type: 'componentCenter',
@@ -93,6 +95,18 @@ export default function VersionDetail(props: DetailProps) {
     ];
   };
 
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    setPageInfo( pagination.current );
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    console.log('pagination',pagination)
+    queryComponentList({ componentType: currentTab, productLine: curProductLine,pageIndex:obj.pageIndex,pageSize:obj.pageSize });
+  };
+
+
   return (
     <>
       <Table
@@ -109,6 +123,18 @@ export default function VersionDetail(props: DetailProps) {
         showHeader={true}
         dataSource={dataSource}
         loading={tableLoading}
+        pagination={{
+          total: pageInfo.total,
+          pageSize: pageInfo.pageSize,
+          current: pageInfo.pageIndex,
+          showSizeChanger: true,
+          onShowSizeChange: (_, size) => {
+            setPageInfo(1,size);
+          },
+          showTotal: () => `总共 ${pageInfo.total} 条数据`,
+        }}
+        // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
+        onChange={pageSizeClick}
       />
     </>
   );
