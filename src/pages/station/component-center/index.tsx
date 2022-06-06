@@ -67,6 +67,8 @@ export default function ComponentCenter() {
     setQueryParams(param);
   };
 
+  
+
   return (
     <PageContainer>
       <ContentCard>
@@ -137,14 +139,12 @@ export default function ComponentCenter() {
                           />
                         </Form.Item>
                       )}
-                        {tabActiveKey === 'middleware' && (
-                        <Button type='primary' onClick={()=>{
-                          queryComponentList({ componentType: 'middleware' })
-                        }}>刷新数据</Button>
-                      )}
+                        
+                     
+                      
 
 
-                      <span>
+                      <span style={{marginRight:8}}>
                         {tabActiveKey !== 'middleware' && (
                           <Button
                             type="primary"
@@ -165,6 +165,10 @@ export default function ComponentCenter() {
                           </Button>
                         )}
                       </span>
+                      <Button type='primary' onClick={()=>{
+                         
+                         queryComponentList({ componentType: tabActiveKey})
+                       }}>刷新数据</Button>
                     </Form>
                   </span>
                 </div>
