@@ -14,7 +14,7 @@ export function useQueryEnvList() {
         if (result?.success) {
           let dataSource = result?.data?.dataSource;
           const options = dataSource?.map((item: any) => ({
-            label: item.envName,
+            label: item.envCode,
             value: item.envCode,
           }));
           setEnvDataSource(options);
@@ -278,7 +278,7 @@ export function useAddBasicdata(): [
   return [loading, addBasicdata];
 }
 
-//删除交付配置参数
+//删除建站配置参数
 
 export function useDeleteComponent(): [boolean, (id: number) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);

@@ -23,6 +23,7 @@ type DataSourceType = {
   state?: string;
   created_at?: string;
   children?: DataSourceType[];
+  recordCreatorProps?:any
 };
 
 export interface VersionDetailProps {
@@ -39,7 +40,7 @@ export default (props: VersionDetailProps) => {
   const [editLoading, editVersionParam] = useEditVersionParam();
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
-  const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
+  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] =
     useQueryDeliveryParamList();
   const [loading, paramOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
@@ -55,7 +56,7 @@ export default (props: VersionDetailProps) => {
     queryOriginList(versionId);
   }, []);
   useEffect(() => {
-    //查询交付配置参数
+    //查询建站配置参数
     queryDeliveryParamList(versionId);
   }, []);
   const columns: ProColumns<any>[] = [
@@ -91,8 +92,10 @@ export default (props: VersionDetailProps) => {
         return (
           <Select
             options={originOptions}
+            showSearch
+            allowClear
             onChange={(value: any) => {
-              console.log('value', value);
+             
               queryParamList(versionId, value);
             }}
           ></Select>
@@ -126,6 +129,8 @@ export default (props: VersionDetailProps) => {
         return (
           <Select
             options={paramOptions}
+            showSearch
+            allowClear
             onChange={(value: any) => {
               // console.log('value', value);
               paramOptions.filter((item: any) => {
@@ -228,23 +233,12 @@ export default (props: VersionDetailProps) => {
         rowKey="id"
         actionRef={actionRef}
         loading={tableLoading}
-        pagination={{
-          total: pageInfo.total,
-          pageSize: pageInfo.pageSize,
-          current: pageInfo.pageIndex,
-          showSizeChanger: true,
-          // onShowSizeChange: (_, size) => {
-          //   setPageInfo({
-          //     pageIndex: 1,
-          //     pageSize: size,
-          //   });
-          // },
-          showTotal: () => `总共 ${pageInfo.total} 条数据`,
-        }}
+        recordCreatorProps={false}
+        pagination={false}
+        scroll={{ y: window.innerHeight - 340 }}
         headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮
-        recordCreatorProps={false}
         columns={columns}
         value={tableDataSource}
         onChange={(values) => {

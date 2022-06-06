@@ -39,12 +39,10 @@ export default (props: VersionDetailProps) => {
   const [
     gloableTableLoading,
     gloableTableDataSource,
-    gloablePageInfo,
-    setGloablePageInfo,
     setGloableDataSource,
     queryDeliveryGloableParamList,
   ] = useQueryDeliveryGloableParamList();
-  const [tableLoading, tableDataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList] =
+  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] =
     useQueryDeliveryParamList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
@@ -52,7 +50,7 @@ export default (props: VersionDetailProps) => {
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
   useEffect(() => {
-    //查询交付配置参数
+    //查询建站配置参数
     queryDeliveryGloableParamList(versionId, 'global');
     queryDeliveryParamList(versionId);
   }, [currentTab, versionId]);
@@ -188,19 +186,8 @@ export default (props: VersionDetailProps) => {
         //   total: 3,
         //   success: true,
         // })}
-        pagination={{
-          total: pageInfo.total,
-          pageSize: pageInfo.pageSize,
-          current: pageInfo.pageIndex,
-          showSizeChanger: true,
-          // onShowSizeChange: (_, size) => {
-          //   setPageInfo({
-          //     pageIndex: 1,
-          //     pageSize: size,
-          //   });
-          // },
-          showTotal: () => `总共 ${pageInfo.total} 条数据`,
-        }}
+        scroll={{ y: window.innerHeight - 340 }}
+        pagination={false}
         value={gloableTableDataSource}
         onChange={setGloableDataSource}
         editable={{

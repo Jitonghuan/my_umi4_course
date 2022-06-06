@@ -61,7 +61,7 @@ export default function deliveryList() {
           <a
             onClick={() => {
               history.push({
-                pathname: '/matrix/delivery/product-description',
+                pathname: '/matrix/station/product-description',
                 state: record,
               });
             }}
@@ -86,8 +86,9 @@ export default function deliveryList() {
       ),
     },
   ];
-  const handleSubmit = () => {
-    let params = creatForm.getFieldsValue();
+  const handleSubmit = async() => {
+    // let params = creatForm.getFieldsValue();
+    let params= await creatForm.validateFields();
     createProduct(params.product_name, params.product_description).then(() => {
       setCreateProductVisible(false);
       queryProductList();
@@ -186,7 +187,7 @@ export default function deliveryList() {
           }
         >
           <Form layout="vertical" form={creatForm}>
-            <Form.Item label="产品名称:" name="product_name">
+            <Form.Item label="产品名称:" name="product_name"  rules={[{ required: true, message: '此为必填项' }]}>
               <Input style={{ width: 470 }}></Input>
             </Form.Item>
             <Form.Item label="产品描述:" name="product_description">

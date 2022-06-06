@@ -153,7 +153,7 @@ export default function TmplEditor(props: AppComponentProps) {
     >
       <Form layout="horizontal" form={addForm} labelCol={{ flex: '100px' }}>
         <Form.Item label="环境" name="componentSourceEnv" rules={[{ required: true, message: '请选择环境' }]}>
-          <Select style={{ width: 320 }} options={envDataSource} onChange={getEnvCode} disabled={isDisabled}></Select>
+          <Select style={{ width: 320 }} options={envDataSource} onChange={getEnvCode} disabled={isDisabled} showSearch allowClear></Select>
         </Form.Item>
         <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
           <Select style={{ width: 320 }} options={productLineOptions || []} disabled={isDisabled}></Select>
