@@ -159,6 +159,8 @@ export class MyTableGroup extends MyBasicCircirGroup {
         this.draggable(false);
         this.getKeyCircle().fill(defaultCircleFill);
         this.getKeyCircle().stroke(defaultCircleStroke);
+        this.getKeyCircle().shadowBlur(0);
+        this.getKeyCircle().shadowColor(defaultCircleFill);
         this.getKeyCircle().strokeWidth(defaultCircleStrokeWidth);
     }
     unlock() {
@@ -280,11 +282,14 @@ export class Graph {
 
         group.on('click', function (e: any) {
             layer.children?.forEach((g: any) => {
-                const clickCircle: any = g.findOne('.key-circle')
-                clickCircle.shadowBlur(0)
+                const clickCircle: any = g.findOne && g.findOne('.key-circle')
+                if (clickCircle) {
+                    clickCircle.shadowBlur(0)
+                }
             })
             const clickCircle: any = this.findOne('.key-circle')
-            clickCircle.shadowColor(t.fill || defaultCircleFill);
+            t.changeData(t.tableName)
+            clickCircle.shadowColor(clickCircle.fill() || defaultCircleFill);
             clickCircle.shadowBlur(20)
         })
 
@@ -341,7 +346,7 @@ export class Graph {
     }
 
     // 两个圆交集
-    showRelative(related: RelatedData) {
+    showRelative(related: RelatedData, changeData: any) {
         const stage = this.stage;
         const textFontSize = 12;
         const numberFontSize = 16;
@@ -351,7 +356,7 @@ export class Graph {
             / 2;
 
         var group = new MyBasicCircirGroup({
-            draggable: true,
+            // draggable: true,
             x: this.stage.width() / 2,
             y: this.stage.height() / 2,
         });
@@ -360,19 +365,26 @@ export class Graph {
         var leftGroup = new MyBasicCircirGroup({
         });
         leftGroup.on('click', function (e: any) {
+            stage.findOne('.relate-right').opacity(0.15);
+            const crossArc = stage.findOne('.cross-arc') as any;
+            crossArc.fill(defaultCircleFill);
+            stage.container().style.cursor = 'pointer';
+            this.findOne('.relate-left').opacity(0.4);
+            changeData('left')
         })
         leftGroup.on("mouseover", function (e: any) {
-            stage.container().style.cursor = 'pointer';
-            this.findOne('.relate-left').opacity(0.5);
+            // stage.container().style.cursor = 'pointer';
+            // this.findOne('.relate-left').opacity(0.5);
         })
         leftGroup.on('mouseleave', function (e: any) {
-            stage.container().style.cursor = 'default';
-            this.findOne('.relate-left').opacity(0.15);
+            // stage.container().style.cursor = 'default';
+            // this.findOne('.relate-left').opacity(0.15);
         })
         group.add(leftGroup);
 
         var leftX = - relatedRadius + crossX;
-        var leftText = related.left.tableName + "-" + (related.left.remark || '');
+        // var leftText = related.left.tableName + "-" + (related.left.remark || '');
+        var leftText = related.left.tableName;
 
         leftGroup.add(drawCircle({
             radius: relatedRadius,
@@ -403,18 +415,24 @@ export class Graph {
         var rightGroup = new MyBasicCircirGroup({
         });
         rightGroup.on('click', function (e: any) {
+            stage.findOne('.relate-left').opacity(0.15);
+            const crossArc = stage.findOne('.cross-arc') as any;
+            crossArc.fill(defaultCircleFill);
+            stage.container().style.cursor = 'pointer';
+            this.findOne('.relate-right').opacity(0.4);
+            changeData('right')
         })
         rightGroup.on("mouseover", function (e: any) {
-            stage.container().style.cursor = 'pointer';
-            this.findOne('.relate-right').opacity(0.5);
+            // stage.container().style.cursor = 'pointer';
+            // this.findOne('.relate-right').opacity(0.5);
         })
         rightGroup.on('mouseleave', function (e: any) {
-            stage.container().style.cursor = 'default';
-            this.findOne('.relate-right').opacity(0.15);
+            // stage.container().style.cursor = 'default';
+            // this.findOne('.relate-right').opacity(0.15);
         })
         group.add(rightGroup);
         var rightX = relatedRadius - crossX;
-        var rightText = related.right.tableName + "-" + (related.right.remark || '');
+        var rightText = related.right.tableName;
         rightGroup.add(drawCircle({
             fill: '#000',
             opacity: 0.15,
@@ -454,16 +472,22 @@ export class Graph {
         var centerGroup = new MyBasicCircirGroup({
         });
         centerGroup.on('click', function (e: any) {
-        })
-        centerGroup.on("mouseover", function (e: any) {
             stage.container().style.cursor = 'pointer';
+            stage.findOne('.relate-left').opacity(0.15);
+            stage.findOne('.relate-right').opacity(0.15);
             const csArc = this.findOne('.cross-arc') as any;
             csArc.fill(hoverCircleFill);
+            changeData('center')
+        })
+        centerGroup.on("mouseover", function (e: any) {
+            // stage.container().style.cursor = 'pointer';
+            // const csArc = this.findOne('.cross-arc') as any;
+            // csArc.fill(hoverCircleFill);
         })
         centerGroup.on('mouseleave', function (e: any) {
-            stage.container().style.cursor = 'default';
-            const csArc = this.findOne('.cross-arc') as any;
-            csArc.fill(defaultCircleFill);
+            // stage.container().style.cursor = 'default';
+            // const csArc = this.findOne('.cross-arc') as any;
+            // csArc.fill(defaultCircleFill);
         })
         group.add(centerGroup);
         var crossShape = new Konva.Shape({
@@ -512,7 +536,7 @@ export class Graph {
 
     // 树形结构图
     showRelativeTree(related: RelatedData) {
-        const levelLength = radius * 6;
+        const levelLength = radius * 8;
         const step = radius * 4, yStart = radius * 3;
         const yOrder = (groups: any, offset: number, step: number) => {
             groups.forEach((g: any) => {
@@ -526,24 +550,25 @@ export class Graph {
         this.stage.draw();
 
         this.addTable({
-            y: radius * 3 + radius * 4 / 2,
-            x: this.stage.width() / 2 + levelLength / 2,
+            y: yStart + step / 2,
+            x: this.stage.width() / 2 + levelLength / 2 + radius,
             fill: 'orange',
             stroke: '#d18702',
             strokeWidth: 1,
-            tableName: "违法详情",
-            recordCount: 5068,
+            tableName: "医保上传-校验明细关联数据",
+            recordCount: 534,
+            shadowColor: 'orange',
+            shadowBlur: 20,
             draggable: false,
         })
-
         var arrowTop = new Konva.Arrow({
-            x: this.stage.width() / 2 - radius * 2 + textPadding,
+            x: this.stage.width() / 2 - radius * 3 + textPadding,
             y: yStart,
             points: [
                 0, 0,
                 (levelLength - radius * 2) / 2, 0,
                 (levelLength - radius * 2) / 2, (radius * 4 / 2),
-                levelLength - radius * 2 - textPadding * 2, radius * 4 / 2
+                levelLength - radius - textPadding * 2, radius * 4 / 2
             ],
             pointerLength: 4,
             pointerWidth: 4,
@@ -553,13 +578,13 @@ export class Graph {
         });
         this.layer.add(arrowTop);
         var arrowBottom = new Konva.Arrow({
-            x: this.stage.width() / 2 - radius * 2 + textPadding,
+            x: this.stage.width() / 2 - radius * 3 + textPadding,
             y: radius * 3 + step,
             points: [
                 0, 0,
                 (levelLength - radius * 2) / 2, 0,
                 (levelLength - radius * 2) / 2, - (radius * 4 / 2),
-                levelLength - radius * 2 - textPadding * 2, -radius * 4 / 2
+                levelLength - radius - textPadding * 2, -radius * 4 / 2
             ],
             pointerLength: 4,
             pointerWidth: 4,
@@ -568,6 +593,28 @@ export class Graph {
             strokeWidth: 2,
         });
         this.layer.add(arrowBottom);
+        const miniCircle = 7;
+        this.layer.add(drawRect({
+            x: this.stage.width() / 2 + 2 * radius + miniCircle / 2 - miniCircle * 2,
+            y: yStart + step / 2 - miniCircle,
+            width: miniCircle * 4,
+            height: miniCircle * 2,
+            fill: '#fbfcfd',
+            opacity: 1,
+        }));
+
+        var leftCircle = drawCircle({
+            radius: miniCircle, fill: '#000', opacity: 0.1,
+            x: this.stage.width() / 2 + 2 * radius,
+            y: yStart + step / 2
+        })
+        var rightCircle = drawCircle({
+            radius: miniCircle, fill: '#000', opacity: 0.1,
+            x: this.stage.width() / 2 + 2 * radius + miniCircle,
+            y: yStart + step / 2
+        })
+        this.layer.add(leftCircle);
+        this.layer.add(rightCircle)
     }
 }
 

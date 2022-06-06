@@ -1,43 +1,74 @@
 import { Drawer, Select, Input, Button, Table, Popconfirm } from 'antd';
 import { useState, useCallback } from 'react';
 import { Graph } from '../konva/shape';
-import ETable from './editTable'
+import ETable from './editTable';
+import './index.less';
+import { columns, tableData, detailColumns, detailTableData, commonColumns, commonTableData } from '../../columns'
 // import type { EditableFormInstance, ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import {
     EditableProTable,
 } from '@ant-design/pro-table';
+import { colunms } from '@/pages/monitor/business/schema';
 const r = {
     left: {
-        tableName: "违法数据",
-        recordCount: 11274,
-        remark: '骑手信息',
+        tableName: "医保上传检验单",
+        recordCount: 535,
+        remark: '医保上传检验单',
+        type: 'left'
     },
     right: {
-        tableName: "骑手名单",
-        recordCount: 4000,
-        remark: '骑手信息',
+        tableName: "校验明细",
+        recordCount: 534,
+        remark: '校验明细',
+        type: 'right'
     },
-    leftRestCount: 7600,
+    leftRestCount: 535,
     rightRestCount: 0,
-    corssCount: 5068
+    corssCount: 534
 };
 export default function DetailDraw(props: any) {
     const { visible, setVisible, onSubmit } = props;
+    const [dataSource, setDataSource] = useState<any>(commonTableData);
+    const [column, setColumn] = useState(commonColumns);
     const [data, setData] = useState(r);
     const [showTable, setShowTable] = useState(true)
-    const handleSubmit = () => onSubmit(data);
-    const drawContainer = useCallback((node: any) => {
-        if (node && visible) {
-            var g = new Graph(node);
-            g.showRelative(r);
+    const [isShowGraph, setIsShowGraph] = useState(false)
+    const handleSubmit = () => {
+        if (isShowGraph) {
+            onSubmit(data)
         }
-    }, [visible, data]);
+        setShowTable(false);
+        setIsShowGraph(true)
+        // onSubmit(data)
+    };
+
+    const changeData = (type: string) => {
+        if (type === 'left') {
+            setColumn(columns);
+            setDataSource(tableData)
+        } else if (type === 'right') {
+            setColumn(detailColumns)
+            setDataSource(detailTableData)
+        } else {
+            setColumn(commonColumns)
+            setDataSource(commonTableData)
+        }
+    }
+
+    const drawContainer = useCallback((node: any) => {
+        if (node && visible && isShowGraph) {
+            var g = new Graph(node);
+            g.showRelative(r, changeData);
+        }
+    }, [visible, data, isShowGraph]);
+
+
     return (
         <Drawer placement="right"
             title='表关联设置'
             visible={visible}
             onClose={() => setVisible(false)}
-            width='600px'
+            width='1000px'
 
             footer={
                 <div className="drawer-footer">
@@ -49,9 +80,23 @@ export default function DetailDraw(props: any) {
           </Button> */}
                 </div>
             }>
-            <div id="drawContainer" ref={drawContainer} style={{ border: '1px solid #eee', height: "200px" }}></div>
+            {isShowGraph && <div id="drawContainer" ref={drawContainer} style={{ border: '1px solid #eee', height: "200px" }}></div>}
             {showTable && <div>
-            </div>}
+                <div className='edit-table'>
+                    <p className='table-title'>表关联条件</p>
+                    <ETable></ETable>
+                </div>
+
+            </div>
+            }
+            <div className='table-wrapper'>
+                <p className='table-title'>预览（基于抽样数据计算，不代表最终结果）</p>
+                <Table
+                    columns={column}
+                    dataSource={dataSource.slice(0, 11)}
+                    pagination={false}
+                />
+            </div>
         </Drawer>
     )
 

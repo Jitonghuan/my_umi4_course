@@ -4,7 +4,7 @@ import { ContainerConfig } from 'konva/lib/Container';
 import { Graph, radius, RelatedData, defaultCircleFill } from "./shape";
 
 export default forwardRef(function konva(props: any, ref: any) {
-    const { onJoin, onRelative } = props;
+    const { onJoin, onRelative, changeData } = props;
     const konvaRef: any = useRef(null);
     const [g, setG] = useState<Graph>();
     //   const containerRef: any = useRef(null);
@@ -33,6 +33,7 @@ export default forwardRef(function konva(props: any, ref: any) {
             shadowBlur: 20,
             onJoin,
             onRelative,
+            changeData,
         });
 
         graph.addTable({
@@ -45,6 +46,7 @@ export default forwardRef(function konva(props: any, ref: any) {
             recordCount: 534,
             onJoin,
             onRelative,
+            changeData
         });
 
 

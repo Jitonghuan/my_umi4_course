@@ -5,18 +5,21 @@ import PageContainer from '@/components/page-container';
 import Graph from './components/konva'
 import { RelatedData } from './components/konva/shape'
 import DetailDraw from './components/draw'
-import { columns, tableData } from './columns'
+import { columns, tableData, detailColumns, detailTableData, commonColumns, commonTableData } from './columns'
 import './index.less';
 
 export default function DomainConfigs() {
-    const [dataSource, setDataSource] = useState(tableData);
+    const [dataSource, setDataSource] = useState<any>(tableData);
     const [visible, setVisible] = useState(false);
+    const [column, setColumn] = useState(columns);
     const graphRef = useRef<any>();
     const onSubmit = (related: RelatedData) => {
         setVisible(false);
         if (graphRef?.current) {
             graphRef.current.treeView(related);
         }
+        setColumn(commonColumns);
+        setDataSource(commonTableData)
     }
     const onJoin = (l: any, right: any) => {
 
@@ -25,6 +28,16 @@ export default function DomainConfigs() {
     const onRelative = (l: any, right: any) => {
 
         setVisible(true);
+    }
+
+    const changeData = (type: string) => {
+        if (type === '校验明细') {
+            setColumn(detailColumns);
+            setDataSource(detailTableData)
+        } else {
+            setColumn(column);
+            setDataSource(tableData)
+        }
     }
 
     return (
@@ -36,24 +49,13 @@ export default function DomainConfigs() {
                     <Graph
                         ref={graphRef}
                         onJoin={onJoin}
-                        onRelative={onRelative} />
+                        onRelative={onRelative}
+                        changeData={changeData} />
                 </div>
                 <div className='table-wrapper'>
                     <Table
-                        columns={columns}
+                        columns={column}
                         dataSource={dataSource}
-                    // pagination={{
-                    //     current: pageIndex,
-                    //     total,
-                    //     pageSize,
-                    //     showSizeChanger: true,
-                    //     onShowSizeChange: (_, size) => {
-                    //         setPageSize(size);
-                    //         setPageIndex(1); //
-                    //     },
-                    //     showTotal: () => `总共 ${total} 条数据`,
-                    // }}
-                    // onChange={pageSizeClick}
                     />
                 </div>
                 {/* </div> */}

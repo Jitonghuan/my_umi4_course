@@ -101,75 +101,84 @@ export const columns = [
 // 医保上传检验单表数据
 export const tableData = data.医保上传检验单表数据;
 
+// 校验明细表结构
 export const detailColumns = [
     {
         title: '参考值上限',
-        dataIndex: 'referenceValueUp',
-        key: 'referenceValueUp',
+        dataIndex: '参考值上限',
+        key: '参考值上限',
     },
     {
         title: '参考值下限',
-        dataIndex: 'referenceValueDown',
-        key: 'referenceValueDown',
+        dataIndex: '参考值下限',
+        key: '参考值下限',
     },
     {
         title: '创建时间',
-        dataIndex: 'creatTime',
-        key: 'creatTime',
+        dataIndex: '创建时间',
+        key: '创建时间',
     },
     {
         title: '个人编号',
-        dataIndex: 'onePersonId',
-        key: 'onePersonId',
+        dataIndex: '个人编号',
+        key: '个人编号',
     },
     {
         title: '计量单位',
-        dataIndex: 'measureUnitName',
-        key: 'measureUnitName',
+        dataIndex: '计量单位',
+        key: '计量单位',
     },
     {
         title: '检验单据号',
-        dataIndex: 'labReportNo',
-        key: 'labReportNo',
+        dataIndex: '检验单据号',
+        key: '检验单据号',
     },
     {
         title: '检验结果',
-        dataIndex: 'labResultValue',
-        key: 'labResultValue',
+        dataIndex: '检验结果',
+        key: '检验结果',
     },
     {
         title: '检验明细编码',
-        dataIndex: 'labDetailCode',
-        key: 'labDetailCode',
+        dataIndex: '检验明细编码',
+        key: '检验明细编码',
     },
     {
         title: '检验明细流水号',
-        dataIndex: 'labDetailNo',
-        key: 'labDetailNo',
+        dataIndex: '检验明细流水号',
+        key: '检验明细流水号',
     },
     {
         title: '检验明细名称',
-        dataIndex: 'labDetailName',
-        key: 'labDetailName',
+        dataIndex: '检验明细名称',
+        key: '检验明细名称',
     },
     {
         title: '经办日期',
-        dataIndex: 'agentDateTime',
-        key: 'agentDateTime',
+        dataIndex: '经办日期',
+        key: '经办日期',
     },
     {
         title: '就诊流水号',
-        dataIndex: 'visitSeriNo',
-        key: 'visitSeriNo',
+        dataIndex: '就诊流水号',
+        key: '就诊流水号',
     },
     {
         title: '异常提示',
-        dataIndex: 'abnInfor',
-        key: 'abnInfor',
+        dataIndex: '异常提示',
+        key: '异常提示',
     },
     {
         title: '组织机构代码',
-        dataIndex: 'orgCode',
-        key: 'orgCode',
+        dataIndex: '组织机构代码',
+        key: '组织机构代码',
     },
 ]
+
+// 校验明细表数据
+export const detailTableData = data.校验明细表数据;
+
+// 两个表的交集
+export const commonColumns = [...columns, ...detailColumns]
+// 两个表交集的数据
+export const commonTableData = data.交集的数据;

@@ -5,20 +5,21 @@ import {
 } from '@ant-design/pro-table';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm from '@ant-design/pro-form';
+import { PlusOutlined } from '@ant-design/icons';
+import { columns, commonColumns } from '../../columns';
+
+const data = [
+    { id: 1, result: '个人编号', medicalIns: '个人编号', detail: '个人编号' },
+    { id: 2, result: '创建时间', medicalIns: '创建时间', detail: '创建时间' },
+
+]
+
+const options = commonColumns.map((item) => ({ label: item.title, value: item.title }))
 
 const ETable = React.forwardRef((props: any, ref) => {
-    const {
-        dataSource,
-        setDataSource,
-        onChange,
-        addBottonText,
-        deleteText,
-        handleDelete,
-        handleSave,
-        loading,
-        ...others
-    } = props;
+
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+    const [dataSource, setDataSource] = useState<any>(data)
     const formRef = useRef<ProFormInstance<any>>();
     const actionRef = useRef(null) as any;
     useImperativeHandle(
@@ -31,41 +32,71 @@ const ETable = React.forwardRef((props: any, ref) => {
         }),
         [editableKeys],
     );
-    const columns: any = [
+    const column: any = [
         {
+            title: '结果列名',
+            dataIndex: 'result'
+        },
+        {
+            title: '医保上传',
+            dataIndex: 'medicalIns',
+            valueType: 'select',
+            renderFormItem: () => {
+                return <Select options={options}></Select>
+            }
+        },
+        {
+            title: '校验详情',
+            dataIndex: 'detail',
+            valueType: 'select',
+            renderFormItem: () => {
+                return <Select options={options}></Select>
+            }
 
         },
         {
-            fixed: 'right',
             title: '操作',
             valueType: 'option',
-            width: 100,
-            render: (text: any, record: any, _: any, action: any) => (
-                <div>
-                    <a
-                        onClick={() => {
-                            action?.startEditable?.(record.id);
-                        }}
-                    >
-                        编辑
-              </a>
-                    <Popconfirm
-                        title={deleteText}
-                        onConfirm={() => {
-                            handleDelete(record);
-                        }}
-                        okText="确定"
-                        cancelText="取消"
-                    >
-                        <a style={{ marginLeft: '10px' }}>删除</a>
-                    </Popconfirm>
-                </div>
-            ),
-        }
-    ];
+            width: 200,
+            render: (text: string, record: any, _: any, action: any) => [
+                <a
+                    key="editable"
+                    onClick={() => {
+                        action?.startEditable?.(record.id);
+                    }}
+                >
+                    编辑
+              </a>,
+                <a
+                    key="delete"
+                    onClick={() => {
+                        setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+                    }}
+                >
+                    删除
+              </a>,
+            ],
+        },
+    ]
+
 
     return (
         <>
+            <div className='buttom-wrapper'>
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        actionRef.current?.addEditRecord?.({
+                            id: (Math.random() * 1000000).toFixed(0),
+                            title: '新的一行',
+                        });
+                    }}
+                    size='small'
+                    icon={<PlusOutlined />}
+                >
+                    新建一行
+        </Button>
+            </div>
             <ProForm
                 formRef={formRef}
                 initialValues={{
@@ -77,19 +108,14 @@ const ETable = React.forwardRef((props: any, ref) => {
                 <EditableProTable
                     rowKey="id"
                     actionRef={actionRef}
-                    columns={columns}
+                    columns={column}
+                    // 关闭默认的新建按钮
+                    recordCreatorProps={false}
                     value={dataSource}
-                    loading={loading}
-                    onChange={onChange}
-                    {...others}
-                    recordCreatorProps={{
-                        record: () => ({ add: true, id: (Math.random() * 1000000).toFixed(0) }),
-                        creatorButtonText: addBottonText ? addBottonText : '新增一行',
-                    }}
+                    onChange={setDataSource}
                     editable={{
                         // editableKeys,
                         onSave: async (rowKey, data, row) => {
-                            handleSave(rowKey, data);
                         },
                         onChange: (key) => {
                             setEditableRowKeys(key);
