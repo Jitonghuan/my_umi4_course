@@ -14,10 +14,11 @@ const data = [
 
 ]
 
+
 const options = commonColumns.map((item) => ({ label: item.title, value: item.title }))
 
 const ETable = React.forwardRef((props: any, ref) => {
-
+    const { deleteSuccess, addSuccess } = props;
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [dataSource, setDataSource] = useState<any>(data)
     const formRef = useRef<ProFormInstance<any>>();
@@ -32,6 +33,14 @@ const ETable = React.forwardRef((props: any, ref) => {
         }),
         [editableKeys],
     );
+    const waitTime = (time: number) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(true);
+                addSuccess();
+            }, time);
+        });
+    };
     const column: any = [
         {
             title: '结果列名',
@@ -67,14 +76,25 @@ const ETable = React.forwardRef((props: any, ref) => {
                 >
                     编辑
               </a>,
-                <a
-                    key="delete"
-                    onClick={() => {
+                <Popconfirm
+                    title='确定删除吗？'
+                    onConfirm={() => {
                         setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+                        deleteSuccess()
                     }}
+                    okText="确定"
+                    cancelText="取消"
                 >
-                    删除
-              </a>,
+                    <a style={{ marginLeft: '10px' }}>删除</a>
+                </Popconfirm>,
+                //     <a
+                //         key="delete"
+                //         onClick={() => {
+                //             setDataSource(dataSource.filter((item: any) => item.id !== record.id));
+                //         }}
+                //     >
+                //         删除
+                //   </a>,
             ],
         },
     ]
@@ -116,6 +136,7 @@ const ETable = React.forwardRef((props: any, ref) => {
                     editable={{
                         // editableKeys,
                         onSave: async (rowKey, data, row) => {
+                            await waitTime(1000);
                         },
                         onChange: (key) => {
                             setEditableRowKeys(key);

@@ -530,6 +530,14 @@ export class Graph {
             fill: '#fff',
         }));
 
+        group.add(drawCenterAlignText({
+            fontSize: 12,
+            fill: 'black',
+            text: '两表字段均保留，取两者均有的数据',
+            x: 0,
+            y: 2 * radius + 10,
+        }));
+
 
         this.layer.add(group)
     }

@@ -1073,12 +1073,12 @@ export default [
   },
   {
     path: 'display',
-    name: '演示页面',
+    name: '数据分析',
     icon: 'icon-dataset',
     routes: [
       {
         path: 'main',
-        name: '演示页面',
+        name: '实战分析',
         key: 'display',
         component: '@/pages/display',
         // hideInMenu: true,

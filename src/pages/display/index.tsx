@@ -19,6 +19,7 @@ export default function DomainConfigs() {
         if (graphRef?.current) {
             graphRef.current.treeView(related);
         }
+        setTableTitle('医保上传检验单表-校验明细表交集数据')
         setColumn(commonColumns);
         setDataSource(commonTableData)
     }

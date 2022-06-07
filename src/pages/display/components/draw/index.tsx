@@ -23,7 +23,7 @@ const r = {
         type: 'right'
     },
     leftRestCount: 535,
-    rightRestCount: 0,
+    rightRestCount: 534,
     corssCount: 534
 };
 export default function DetailDraw(props: any) {
@@ -84,7 +84,9 @@ export default function DetailDraw(props: any) {
             {showTable && <div>
                 <div className='edit-table'>
                     <p className='table-title'>表关联条件</p>
-                    <ETable></ETable>
+                    <ETable
+                        deleteSuccess={() => { setDataSource(dataSource.slice(11)) }}
+                        addSuccess={() => { setDataSource(dataSource.slice(21)) }} ></ETable>
                 </div>
 
             </div>
