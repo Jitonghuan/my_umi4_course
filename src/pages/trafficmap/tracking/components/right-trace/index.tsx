@@ -192,7 +192,7 @@ export default function RrightTrace(props: any) {
               端点：{item.endpointNames && item?.endpointNames?.length !== 0 ? item?.endpointNames[0] : '--'}
             </div>
           </span>
-          <span style={{ overflowX: 'scroll', whiteSpace: 'nowrap', marginLeft: '17vw' }}>
+          <span style={{ overflowX: 'scroll', whiteSpace: 'nowrap', paddingLeft: 10 }}>
             <div>
               <span>开始时间：{moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss') || '--'}</span>
               <span style={{ margin: '0px 12px' }}>
