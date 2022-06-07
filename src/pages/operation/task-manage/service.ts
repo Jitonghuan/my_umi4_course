@@ -27,11 +27,10 @@ export const getTaskList = addAPIPrefix('/opsManage/task/list');
 
 export const getListContainer = addAPIPrefix('/appManage/deployInfo/defaultInstance/listContainer');
 
-
-
-export const queryAppListApi =addAPIPrefix('/appManage/list');
-
+export const queryAppListApi = addAPIPrefix('/appManage/list');
 
 /** 获取应用环境 */
-export const listAppEnv =addAPIPrefix('/appManage/env/listAppEnv');
+export const listAppEnv = addAPIPrefix('/appManage/env/listAppEnv');
 
+/** 获取应用环境 */
+export const getNodeList = addAPIPrefix('/appManage/node/list');

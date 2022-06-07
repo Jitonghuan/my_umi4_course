@@ -276,13 +276,7 @@ export default function addEnvData(props: RecordEditDataProps) {
             <Form.Item name="noticeType" label="执行结果通知" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: 200 }} options={RequestModeOptions} disabled={viewEditable}></Select>
             </Form.Item>
-            <Form.Item name="desc" label="备注：">
-              <Input.TextArea
-                placeholder="请输入备注"
-                style={{ width: '24vw', height: 80 }}
-                disabled={viewEditable}
-              ></Input.TextArea>
-            </Form.Item>
+
             <Form.Item name="jobType" label="任务类型" rules={[{ required: true, message: '这是必填项' }]}>
               <Select
                 style={{ width: 200 }}
@@ -492,7 +486,10 @@ export default function addEnvData(props: RecordEditDataProps) {
             )}
             {curTaskType === 5 && (
               <>
-                <Form.Item label="镜像" name="command" rules={[{ required: true, message: '这是必填项' }]}>
+                <Form.Item label="PodName" name="podName" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Input placeholder="请输入PodName" style={{ width: '24vw' }} disabled={viewEditable}></Input>
+                </Form.Item>
+                <Form.Item label="镜像" name="image" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input.TextArea
                     placeholder="请输入镜像"
                     style={{ width: '24vw' }}
@@ -511,11 +508,11 @@ export default function addEnvData(props: RecordEditDataProps) {
             )}
             {curTaskType === 6 && (
               <>
-                <Form.Item label="集群名称" name="nodeIp" rules={[{ required: true, message: '这是必填项' }]}>
+                <Form.Item label="集群名称" name="clusterName" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
                 </Form.Item>
-                <Form.Item label="节点名称" name="account" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
+                <Form.Item label="节点名称" name="nodeName" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Select style={{ width: '24vw' }} disabled={viewEditable}></Select>
                 </Form.Item>
 
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
@@ -527,6 +524,14 @@ export default function addEnvData(props: RecordEditDataProps) {
                 </Form.Item>
               </>
             )}
+
+            <Form.Item name="desc" label="备注：">
+              <Input.TextArea
+                placeholder="请输入备注"
+                style={{ width: '24vw', height: 80 }}
+                disabled={viewEditable}
+              ></Input.TextArea>
+            </Form.Item>
           </Form>
         </div>
       </Spin>
