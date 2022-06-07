@@ -64,7 +64,7 @@ export default function Launch() {
 
   // 加载应用分类下拉选择
   const selectCategory = () => {
-    getRequest(APIS.appTypeList).then((result) => {
+    getRequest(APIS.appTypeList, { data: { pageSize: -1 } }).then((result) => {
       const list = (result.data.dataSource || [])?.map((n: any) => ({
         label: n.categoryName,
         value: n.categoryCode,
@@ -92,7 +92,7 @@ export default function Launch() {
     //setEnvDatas
     setEnvDatas([]);
     setAppCategoryCode(categoryCode);
-    getRequest(APIS.envList, { data: { categoryCode } }).then((resp: any) => {
+    getRequest(APIS.envList, { data: { categoryCode, pageSize: -1 } }).then((resp: any) => {
       if (resp.success) {
         let dataArry: any = [];
         resp.data?.dataSource?.map((n: any) => {
