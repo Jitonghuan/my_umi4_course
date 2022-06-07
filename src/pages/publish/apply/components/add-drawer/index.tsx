@@ -132,9 +132,10 @@ const AddDrawer = (props: IProps) => {
       }).then((resp) => {
         if (resp?.success) {
           handleClose(true);
-          setSubmitLoading(false);
           setSubmitDisable(false);
         }
+      }).finally(()=>{
+        setSubmitLoading(false);
       });
     });
   };
