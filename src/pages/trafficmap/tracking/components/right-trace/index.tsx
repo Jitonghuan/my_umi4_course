@@ -187,20 +187,21 @@ export default function RrightTrace(props: any) {
       <DetailModal visible={visible} detailData={detailData} handleCancel={handleCancel}></DetailModal>
       <div className="trace-wrapper-top">
         <div className="trace-wrapper-top-info">
-          <span>
-            <div style={{ fontWeight: '800' }}>
+          <span style={{ width: '100%' }}>
+            <div style={{ fontWeight: '800', width: '100%', overflowX: 'scroll' }}>
               端点：{item.endpointNames && item?.endpointNames?.length !== 0 ? item?.endpointNames[0] : '--'}
             </div>
           </span>
-          <span>
-            <div>
+          <span style={{ width: '100%' }}>
+            <div style={{ width: '100%', overflowX: 'scroll', justifyContent: 'flex-end', display: 'flex' }}>
               <span>开始时间：{moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss') || '--'}</span>
-              <span style={{ margin: '0px 20px' }}>
+              <span style={{ margin: '0px 12px' }}>
                 持续时间：<Tag color="default">{item?.duration || '--'}ms</Tag>
               </span>
-              <Button
-                type="primary"
-                size="small"
+              <Tag
+                // type="primary"
+                // size="small"
+                color="blue"
                 onClick={() => {
                   history.push({
                     pathname: '/matrix/logger/search',
@@ -214,13 +215,13 @@ export default function RrightTrace(props: any) {
                 }}
               >
                 查看日志
-              </Button>
+              </Tag>
             </div>
           </span>
         </div>
 
         <div className="top-select-btn">
-          <div>
+          <div style={{ width: '100%', overflowX: 'scroll' }}>
             traceID:
             <Select
               options={traceIdOptions}
@@ -229,16 +230,14 @@ export default function RrightTrace(props: any) {
               onChange={(id) => {
                 setSelectTraceId(id);
               }}
-              style={{ width: 480, marginLeft: '10px' }}
+              style={{ width: 440, marginLeft: '10px' }}
             />
             <CopyToClipboard text={selectTraceId} onCopy={() => message.success('复制成功！')}>
               <span style={{ marginLeft: 8, color: 'royalblue' }}>
                 <CopyOutlined />
               </span>
             </CopyToClipboard>
-          </div>
-          <div>
-            <span>
+            <span style={{ paddingLeft: 8 }}>
               降噪:
               <Select
                 mode="multiple"
@@ -250,11 +249,13 @@ export default function RrightTrace(props: any) {
                   setSelectNoise(value);
                 }}
                 // showSearch
-                style={{ width: 180, marginLeft: '10px' }}
+                style={{ width: 180, marginRight: '10px' }}
                 autoClearSearchValue
               />
             </span>
-            <span>
+          </div>
+          <div style={{ width: '100%' }}>
+            <span style={{ width: '100%', overflowX: 'scroll', display: 'inline-flex', justifyContent: 'flex-end' }}>
               {titleList.map((item) => {
                 return (
                   <span
