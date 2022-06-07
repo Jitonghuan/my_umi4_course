@@ -31,7 +31,7 @@ export default function ViewLog(props: any) {
   let scrollBegin = useRef<boolean>(true);
 
   useLayoutEffect(() => {
-    if (!infoRecord) {
+    if (Object.getOwnPropertyNames(infoRecord).length == 0) {
       return;
     }
     getRequest(APIS.listContainer, { data: { appCode, envCode: projectEnvCode, instName: instName } }).then(
@@ -133,13 +133,13 @@ export default function ViewLog(props: any) {
           query: {
             appCode: appCode,
             projectEnvCode: projectEnvCode,
-            projectEnvName:projectEnvName,
+            projectEnvName: projectEnvName,
             // viewLogEnvType: viewLogEnvType,
           },
           state: {
             appCode: appCode,
             projectEnvCode: projectEnvCode,
-            projectEnvName:projectEnvName,
+            projectEnvName: projectEnvName,
             // viewLogEnvType: viewLogEnvType,
             infoRecord: infoRecord,
             id: appData?.id,
