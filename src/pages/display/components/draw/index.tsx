@@ -24,7 +24,7 @@ const r = {
     },
     leftRestCount: 535,
     rightRestCount: 534,
-    corssCount: 534
+    corssCount: 205
 };
 export default function DetailDraw(props: any) {
     const { visible, setVisible, onSubmit } = props;
