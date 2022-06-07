@@ -22,7 +22,7 @@ export default function AppDeployInfo(props: any) {
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
-  let env = appConfig.IS_Matrix === 'public' ? 'dev' : 'prod';
+  let env = appConfig.IS_Matrix === 'public' ? '' : 'prod';
   try {
     localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
   } catch (error) {
@@ -72,15 +72,21 @@ export default function AppDeployInfo(props: any) {
         return a.sortType - b.sortType;
       }); //升序
       setEnvTypeData(next);
+      let currentTabActive =
+        localStorage.__init_env_tab__ &&
+          envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
+          ? localStorage.getItem('__init_env_tab__')
+          : next[0]?.typeCode || env;
+      setTabActive(currentTabActive);
+
     });
 
-    let currentTabActive =
-      localStorage.__init_env_tab__ &&
-      envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
-        ? localStorage.getItem('__init_env_tab__')
-        : env;
-
-    setTabActive(currentTabActive);
+    // let currentTabActive =
+    //   localStorage.__init_env_tab__ &&
+    //   envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
+    //     ? localStorage.getItem('__init_env_tab__')
+    //     : env;
+    // setTabActive(currentTabActive);
   };
 
   useEffect(() => {
