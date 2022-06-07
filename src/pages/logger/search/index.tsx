@@ -14,6 +14,9 @@ import {
   Skeleton,
   Divider,
   Tabs,
+  Dropdown,
+  Space,
+  Menu,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
@@ -24,62 +27,11 @@ import { QuestionCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/ic
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { useEnvOptions, useLogStoreOptions, useFrameUrl, useIndexModeList } from './hooks';
+import { START_TIME_ENUMS, selectOption } from './type';
 import moment from 'moment';
 import './index.less';
-// 时间枚举
-export const START_TIME_ENUMS = [
-  {
-    label: 'Last 1 minutes',
-    value: 1 * 60 * 1000,
-  },
-  {
-    label: 'Last 5 minutes',
-    value: 5 * 60 * 1000,
-  },
-  {
-    label: 'Last 10 minutes',
-    value: 10 * 60 * 1000,
-  },
-  {
-    label: 'Last 15 minutes',
-    value: 15 * 60 * 1000,
-  },
-  {
-    label: 'Last 30 minutes',
-    value: 30 * 60 * 1000,
-  },
-  {
-    label: 'Last 1 hours',
-    value: 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 6 hours',
-    value: 6 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 12 hours',
-    value: 12 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 24 hours',
-    value: 24 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 3 days',
-    value: 24 * 60 * 60 * 1000 * 3,
-  },
-  {
-    label: 'Last 7 days',
-    value: 24 * 60 * 60 * 1000 * 7,
-  },
-  {
-    label: 'Last 30 days',
-    value: 24 * 60 * 60 * 1000 * 30,
-  },
-];
 
 export default function LoggerSearch(props: any) {
-  console.log('props', props);
   const receiveInfo = props.location.query;
   const showWindowHref = () => {
     var sHref = window.location.href;
@@ -136,12 +88,22 @@ export default function LoggerSearch(props: any) {
   const [editScreenVisible, setEditScreenVisible] = useState<boolean>(false); //是否展示lucene语法输入框
   const [editConditionType, setEditConditionType] = useState<boolean>(false); //使用高级搜索时禁用筛选条件输入
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
+  const [selectOptionType, setSelectOptionType] = useState<string>('lastTime');
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   var iframe = document.createElement('iframe');
   useLayoutEffect(() => {
     // receiveInfo
     if (Object.keys(receiveInfo).length !== 0) {
+      setStartTime(30 * 60 * 1000);
+      const now = new Date().getTime();
+      let defaultInterval = 30 * 60 * 1000;
+      let start = Number((now - defaultInterval) / 1000).toString();
+      let end = Number(now / 1000).toString();
+      setEnvCode(receiveInfo.envCode);
+      setLogStore(receiveInfo.indexMode);
+      let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
+      // window.atob(receiveInfo.message);
       let appCodeArry = [];
       if (receiveInfo.envCode) {
         setEnvCode(receiveInfo.envCode);
@@ -193,11 +155,10 @@ export default function LoggerSearch(props: any) {
   }, [logStore]);
 
   //使用lucene语法搜索时的事件
-  const onSearch = (values: any) => {
-    // subInfoForm.resetFields();
+  const onSearch = () => {
+    let values = sqlForm.getFieldsValue();
     let params = subInfoForm.getFieldsValue();
     let podNameInfo = params?.podName;
-    // let querySqlInfo = params?.message;
     let messageInfo = params?.message;
     let appCodeValue = params?.appCode;
     let appCodeArry = [];
@@ -215,18 +176,21 @@ export default function LoggerSearch(props: any) {
     }
     appCodeArry.push('envCode:' + envCode);
 
-    setQuerySql(values);
+    setQuerySql(values.querySql);
     const now = new Date().getTime();
     //默认传最近30分钟，处理为秒级的时间戳
     let start = Number((now - startTime) / 1000).toString();
     let end = Number(now / 1000).toString();
-    if (startTimestamp !== start) {
-      setStartTimestamp(start);
-      setEndTimestamp(end);
-
-      loadMoreData(logStore, start, end, values, messageInfo, appCodeArry);
+    if (selectOptionType === 'lastTime') {
+      if (startTimestamp !== start) {
+        setStartTimestamp(start);
+        setEndTimestamp(end);
+        loadMoreData(logStore, start, end, values.querySql, messageInfo, appCodeArry);
+      } else {
+        loadMoreData(logStore, startTimestamp, endTimestamp, values.querySql, messageInfo, appCodeArry);
+      }
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, values, messageInfo, appCodeArry);
+      loadMoreData(logStore, startRangePicker, endRangePicker, values.querySql, messageInfo, appCodeArry);
     }
   };
 
@@ -286,42 +250,46 @@ export default function LoggerSearch(props: any) {
   fiterArry.push('envCode:' + envCode);
   //查询
   const submitEditScreen = () => {
-    let params = subInfoForm.getFieldsValue();
-    let podNameInfo = params?.podName;
-    // let querySqlInfo = params?.message;
-    let messageInfo = params?.message;
-    let appCodeValue = params?.appCode;
-    setMessageValue(messageInfo);
-    // setQuerySql(querySqlInfo);
-    setPodName(podNameInfo);
-    let appCodeArry = [];
-    if (appCodeValue) {
-      appCodeArry.push('appCode:' + appCodeValue);
-    }
-    if (podNameInfo) {
-      appCodeArry.push('podName:' + podNameInfo);
-    }
-    if (params?.traceId) {
-      appCodeArry.push('traceId:' + params?.traceId);
-    }
-    if (params?.level) {
-      appCodeArry.push('level:' + params?.level);
-    }
-    appCodeArry.push('envCode:' + envCode);
-    setAppCodeValue(appCodeArry);
-    const now = new Date().getTime();
-    //默认传最近30分钟，处理为秒级的时间戳
-    let start = Number((now - startTime) / 1000).toString();
-    let end = Number(now / 1000).toString();
-
-    if (startTimestamp !== start && !startRangePicker && !endRangePicker) {
-      setStartTimestamp(start);
-      setEndTimestamp(end);
-      loadMoreData(logStore, start, end, querySql, messageInfo, appCodeArry);
-    } else if (startRangePicker || endRangePicker) {
-      loadMoreData(logStore, startRangePicker, endRangePicker, querySql, messageInfo, appCodeArry);
+    if (editScreenVisible) {
+      onSearch();
     } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageInfo, appCodeArry);
+      let params = subInfoForm.getFieldsValue();
+      let podNameInfo = params?.podName;
+      // let querySqlInfo = params?.message;
+      let messageInfo = params?.message;
+      let appCodeValue = params?.appCode;
+      setMessageValue(messageInfo);
+      // setQuerySql(querySqlInfo);
+      setPodName(podNameInfo);
+      let appCodeArry = [];
+      if (appCodeValue) {
+        appCodeArry.push('appCode:' + appCodeValue);
+      }
+      if (podNameInfo) {
+        appCodeArry.push('podName:' + podNameInfo);
+      }
+      if (params?.traceId) {
+        appCodeArry.push('traceId:' + params?.traceId);
+      }
+      if (params?.level) {
+        appCodeArry.push('level:' + params?.level);
+      }
+      appCodeArry.push('envCode:' + envCode);
+      setAppCodeValue(appCodeArry);
+      const now = new Date().getTime();
+      //默认传最近30分钟，处理为秒级的时间戳
+      let start = Number((now - startTime) / 1000).toString();
+      let end = Number(now / 1000).toString();
+
+      if (startTimestamp !== start && !startRangePicker && !endRangePicker) {
+        setStartTimestamp(start);
+        setEndTimestamp(end);
+        loadMoreData(logStore, start, end, querySql, messageInfo, appCodeArry);
+      } else if (startRangePicker || endRangePicker) {
+        loadMoreData(logStore, startRangePicker, endRangePicker, querySql, messageInfo, appCodeArry);
+      } else {
+        loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageInfo, appCodeArry);
+      }
     }
   };
 
@@ -419,6 +387,21 @@ export default function LoggerSearch(props: any) {
     }, 1500);
   };
 
+  const getSelectOption = (type: string) => {
+    setSelectOptionType(type);
+    if (type === 'timestamp') {
+      const now = new Date().getTime();
+      let startTimepl = Number((now - startTime) / 1000).toString();
+      let endTimepl = Number(now / 1000).toString();
+      setStartTimestamp(startTimepl);
+      setEndTimestamp(endTimepl);
+      loadMoreData(logStore, startTimepl, endTimepl, querySql, messageValue, appCodeValue);
+    } else {
+      setStartRangePicker('');
+      setEndRangePicker('');
+    }
+  };
+
   //实现无限加载滚动
   return (
     <PageContainer className="content">
@@ -448,21 +431,25 @@ export default function LoggerSearch(props: any) {
           </div>
           <div className="caption-right">
             {envCode && logStore ? (
-              <div>
-                <Form form={rangePickerForm}>
-                  <Form.Item name="rangeDate" noStyle>
-                    <RangePicker
-                      allowClear
-                      style={{ width: 360 }}
-                      onChange={(v: any, b: any) => selectTime(v, b)}
-                      // onChange={()=>selectTime}
-                      showTime={{
-                        hideDisabledOptions: true,
-                        defaultValue: [moment(start, 'YYYY-MM-DD HH:mm:ss'), moment(end, 'YYYY-MM-DD HH:mm:ss')],
-                      }}
-                      format="YYYY-MM-DD HH:mm:ss"
-                    />
-                  </Form.Item>
+              <>
+                <Select options={selectOption} onChange={getSelectOption} value={selectOptionType} />
+                {selectOptionType === 'rangePicker' ? (
+                  <Form form={rangePickerForm}>
+                    <Form.Item name="rangeDate" noStyle>
+                      <RangePicker
+                        allowClear
+                        style={{ width: 360 }}
+                        onChange={(v: any, b: any) => selectTime(v, b)}
+                        // onChange={()=>selectTime}
+                        showTime={{
+                          hideDisabledOptions: true,
+                          defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                        }}
+                        format="YYYY-MM-DD HH:mm:ss"
+                      />
+                    </Form.Item>
+                  </Form>
+                ) : (
                   <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
                     <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
                     {START_TIME_ENUMS.map((time) => (
@@ -471,8 +458,8 @@ export default function LoggerSearch(props: any) {
                       </Select.Option>
                     ))}
                   </Select>
-                </Form>
-              </div>
+                )}
+              </>
             ) : null}
           </div>
         </div>
@@ -502,9 +489,41 @@ export default function LoggerSearch(props: any) {
 
                   <p>
                     <Form.Item label="message" name="message">
-                      <Input style={{ width: '26vw' }} placeholder="仅支持精准匹配"></Input>
+                      <Input style={{ width: '28vw' }} placeholder="仅支持精准匹配"></Input>
                     </Form.Item>
                   </p>
+
+                  {editScreenVisible === true ? (
+                    <p>
+                      <Form form={sqlForm} layout="inline">
+                        <Popover
+                          title="查看lucene语法"
+                          placement="topLeft"
+                          content={
+                            <a
+                              target="_blank"
+                              href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
+                            >
+                              lucene语法网址
+                            </a>
+                          }
+                        >
+                          <Button>
+                            lucene
+                            <QuestionCircleOutlined />
+                          </Button>
+                        </Popover>
+                        <Form.Item name="querySql">
+                          <Input
+                            placeholder="搜索"
+                            allowClear
+                            // onSearch={onSearch}
+                            style={{ width: 758 }}
+                          />
+                        </Form.Item>
+                      </Form>
+                    </p>
+                  ) : null}
 
                   <Form.Item>
                     <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
@@ -546,36 +565,9 @@ export default function LoggerSearch(props: any) {
                 </Form>
               </div>
 
-              <div style={{ marginTop: 4, width: '100%' }}>
-                {editScreenVisible === true ? (
-                  <div style={{ marginTop: 4 }}>
-                    <Divider />
-
-                    <Form form={sqlForm} layout="inline">
-                      <Popover
-                        title="查看lucene语法"
-                        placement="topLeft"
-                        content={
-                          <a
-                            target="_blank"
-                            href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
-                          >
-                            lucene语法网址
-                          </a>
-                        }
-                      >
-                        <Button>
-                          lucene
-                          <QuestionCircleOutlined />
-                        </Button>
-                      </Popover>
-                      <Form.Item name="querySql">
-                        <Search placeholder="搜索" allowClear onSearch={onSearch} style={{ width: 758 }} />
-                      </Form.Item>
-                    </Form>
-                  </div>
-                ) : null}
-              </div>
+              {/* <div style={{ marginTop: 4, width: '100%' }}>
+              
+              </div> */}
             </div>
             <div className="close-button">
               <a

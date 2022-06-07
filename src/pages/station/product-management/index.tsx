@@ -71,9 +71,9 @@ export default function ProductList() {
             onChange={pageSizeClick}
           >
             <Table.Column title="制品名称" dataIndex="indentName" width="20%" />
-            <Table.Column title="交付产品" dataIndex="productName" width="12%" />
-            <Table.Column title="交付版本" dataIndex="productVersion" width="12%" />
-            <Table.Column title="交付项目" dataIndex="deliveryProject" width="12%" />
+            <Table.Column title="建站产品" dataIndex="productName" width="12%" />
+            <Table.Column title="建站版本" dataIndex="productVersion" width="12%" />
+            <Table.Column title="建站项目" dataIndex="deliveryProject" width="12%" />
             <Table.Column title="制品描述" dataIndex="indentDescription" width="12%" />
             <Table.Column
               title="创建时间"
@@ -90,7 +90,7 @@ export default function ProductList() {
                   <a
                     onClick={() => {
                       history.push({
-                        pathname: '/matrix/delivery/product-config',
+                        pathname: '/matrix/station/product-config',
                         state: {
                           id: record.id,
                           indentDescription: record.indentDescription,

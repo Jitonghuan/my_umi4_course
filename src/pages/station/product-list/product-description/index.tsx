@@ -120,7 +120,7 @@ export default function deliveryDescription() {
             size="small"
             onClick={() => {
               history.push({
-                pathname: '/matrix/delivery/version-detail',
+                pathname: '/matrix/station/version-detail',
                 state: {
                   productId: descriptionInfoData.id,
                   versionId: record.id,
@@ -197,7 +197,7 @@ export default function deliveryDescription() {
               <Button
                 type="primary"
                 onClick={() => {
-                  history.push('/matrix/delivery/product-list');
+                  history.push('/matrix/station/product-list');
                 }}
               >
                 返回

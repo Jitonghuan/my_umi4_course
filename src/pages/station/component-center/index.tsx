@@ -1,7 +1,7 @@
 /* 组件中心
  * @Author: muxi.jth
  * @Date: 2022-03-07 01:01:37
- * @FilePath: /fe-matrix/src/pages/delivery/version-detail/index.tsx
+ * @FilePath: /fe-matrix/src/pages/station/version-detail/index.tsx
  */
 import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
@@ -39,18 +39,26 @@ export default function ComponentCenter() {
     setQueryParams(param);
   };
   useEffect(() => {
-    if (tabActiveKey === 'app') {
-      getProductlineList();
-      queryComponentList({ componentType: tabActiveKey });
-    }
-    return () => {
-      setTabActiveKey('app');
-    };
+    // if (tabActiveKey === 'app') {
+    //   getProductlineList();
+    //   debugger
+    //   queryComponentList({ componentType: tabActiveKey });
+    // }
+    // return () => {
+    //   debugger
+    //   setTabActiveKey('app');
+    // };
   }, []);
   useEffect(() => {
     if (identification?.identification) {
       queryComponentList({ componentType: identification?.identification });
       setTabActiveKey(identification?.identification);
+    }else{
+      if (tabActiveKey === 'app') {
+      getProductlineList();
+      queryComponentList({ componentType: tabActiveKey });
+    }
+
     }
   }, [identification?.identification]);
   const onSearch = () => {
@@ -58,6 +66,8 @@ export default function ComponentCenter() {
     queryComponentList({ componentType: tabActiveKey, ...param });
     setQueryParams(param);
   };
+
+  
 
   return (
     <PageContainer>
@@ -129,8 +139,12 @@ export default function ComponentCenter() {
                           />
                         </Form.Item>
                       )}
+                        
+                     
+                      
 
-                      <span>
+
+                      <span style={{marginRight:8}}>
                         {tabActiveKey !== 'middleware' && (
                           <Button
                             type="primary"
@@ -151,6 +165,10 @@ export default function ComponentCenter() {
                           </Button>
                         )}
                       </span>
+                      <Button type='primary' onClick={()=>{
+                         
+                         queryComponentList({ componentType: tabActiveKey})
+                       }}>刷新数据</Button>
                     </Form>
                   </span>
                 </div>
@@ -171,10 +189,13 @@ export default function ComponentCenter() {
                 const param = productLineForm.getFieldsValue();
                 queryComponentList({ componentType: tabActiveKey, ...param });
               }}
-              // queryComponentList={({ componentType: tabActiveKey }) =>
-              //   queryComponentList({ componentType: tabActiveKey, productLine: curProductLine })
-              // }
+              queryComponentList={({ componentType: tabActiveKey,pageIndex,pageSize}) =>
+                queryComponentList({ componentType: tabActiveKey, productLine: curProductLine,pageIndex,pageSize })
+              }
               tableLoading={loading}
+              pageInfo={pageInfo}
+              setPageInfo={(pageIndex:number,pageSize?:number)=>{setPageInfo({pageIndex,pageSize})}}
+             
             />
           </div>
         </>

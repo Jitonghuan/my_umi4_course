@@ -199,8 +199,6 @@ export function useQueryVersionComponentList(): [
   boolean,
   any,
   any,
-  any,
-  any,
   (
     versionId: number,
     componentType: string,
@@ -211,33 +209,21 @@ export function useQueryVersionComponentList(): [
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [pageInfo, setPageInfo] = useState({
-    pageIndex: 1,
-    pageSize: 20,
-    total: 0,
-  });
   const queryVersionComponentList = async (
     versionId: number,
     componentType: string,
     componentName?: string,
-    pageIndex?: number,
-    pageSize?: number,
   ) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryVersionComponentList, {
-        data: { versionId, componentType, componentName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { versionId, componentType, componentName, pageIndex: -1, pageSize:-1 },
       })
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-            let pageInfo = res.data.pageInfo;
             setDataSource(dataSource);
-            setPageInfo({
-              pageIndex: pageInfo.pageIndex,
-              pageSize: pageInfo.pageSize,
-              total: pageInfo.total,
-            });
+            
           } else {
             return {};
           }
@@ -249,7 +235,7 @@ export function useQueryVersionComponentList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, setDataSource, pageInfo, setPageInfo, queryVersionComponentList];
+  return [loading, dataSource, setDataSource, queryVersionComponentList];
 }
 
 //产品版本删除组件
@@ -380,38 +366,27 @@ export function useQueryDeliveryParamList(): [
   boolean,
   any,
   any,
-  any,
-  any,
   (versionId: number, configParamComponent?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [pageInfo, setPageInfo] = useState({
-    pageIndex: 1,
-    pageSize: 20,
-    total: 0,
-  });
+  
   const queryDeliveryParamList = async (
     versionId: number,
     configParamComponent?: string,
-    pageIndex?: number,
-    pageSize?: number,
+   
   ) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, configParamComponent, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { versionId, configParamComponent, pageIndex:-1, pageSize:-1 },
       })
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-            let pageInfo = res.data.pageInfo;
+           
             setDataSource(dataSource);
-            setPageInfo({
-              pageIndex: pageInfo.pageIndex,
-              pageSize: pageInfo.pageSize,
-              total: pageInfo.total,
-            });
+            
           } else {
             return {};
           }
@@ -423,52 +398,39 @@ export function useQueryDeliveryParamList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList];
+  return [loading, dataSource,setDataSource, queryDeliveryParamList];
 }
 //查询交付配置参数
 export function useQueryDeliveryGloableParamList(): [
   boolean,
   any,
   any,
-  any,
-  any,
+  
   (
     versionId: number,
     paramComponent?: string,
     paramName?: string,
-    pageIndex?: number,
-    pageInfo?: number,
+   
   ) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const [pageInfo, setPageInfo] = useState({
-    pageIndex: 1,
-    pageSize: 20,
-    total: 0,
-  });
+  
   const queryDeliveryParamList = async (
     versionId: number,
     paramComponent?: string,
     paramName?: string,
-    pageIndex?: number,
-    pageSize?: number,
+   
   ) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, paramComponent, paramName, pageIndex: pageIndex || 1, pageSize: pageSize || 20 },
+        data: { versionId, paramComponent, paramName, pageIndex: -1, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-            let pageInfo = res.data.pageInfo;
             setDataSource(dataSource);
-            setPageInfo({
-              pageIndex: pageInfo.pageIndex,
-              pageSize: pageInfo.pageSize,
-              total: pageInfo.total,
-            });
           } else {
             return {};
           }
@@ -480,7 +442,7 @@ export function useQueryDeliveryGloableParamList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryDeliveryParamList];
+  return [loading, dataSource,setDataSource, queryDeliveryParamList];
 }
 
 //保存交付配置参数
