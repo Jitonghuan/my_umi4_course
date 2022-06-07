@@ -187,13 +187,13 @@ export default function RrightTrace(props: any) {
       <DetailModal visible={visible} detailData={detailData} handleCancel={handleCancel}></DetailModal>
       <div className="trace-wrapper-top">
         <div className="trace-wrapper-top-info">
-          <span style={{ width: '100%' }}>
-            <div style={{ fontWeight: '800', width: '100%', overflowX: 'scroll' }}>
+          <span style={{ maxWidth: '50vw', overflowX: 'scroll', whiteSpace: 'nowrap' }}>
+            <div style={{ fontWeight: '800', maxWidth: '100%' }}>
               端点：{item.endpointNames && item?.endpointNames?.length !== 0 ? item?.endpointNames[0] : '--'}
             </div>
           </span>
-          <span style={{ width: '100%' }}>
-            <div style={{ width: '100%', overflowX: 'scroll', justifyContent: 'flex-end', display: 'flex' }}>
+          <span style={{ overflowX: 'scroll', whiteSpace: 'nowrap', marginLeft: '17vw' }}>
+            <div>
               <span>开始时间：{moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss') || '--'}</span>
               <span style={{ margin: '0px 12px' }}>
                 持续时间：<Tag color="default">{item?.duration || '--'}ms</Tag>
@@ -220,8 +220,8 @@ export default function RrightTrace(props: any) {
           </span>
         </div>
 
-        <div className="top-select-btn">
-          <div style={{ width: '100%', overflowX: 'scroll' }}>
+        <div className="top-select-info-second">
+          <div style={{ maxWidth: '50vw', overflowX: 'scroll', whiteSpace: 'nowrap' }}>
             traceID:
             <Select
               options={traceIdOptions}
@@ -254,8 +254,8 @@ export default function RrightTrace(props: any) {
               />
             </span>
           </div>
-          <div style={{ width: '100%' }}>
-            <span style={{ width: '100%', overflowX: 'scroll', display: 'inline-flex', justifyContent: 'flex-end' }}>
+          <div>
+            <span>
               {titleList.map((item) => {
                 return (
                   <span
