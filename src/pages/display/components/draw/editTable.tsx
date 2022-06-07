@@ -1,4 +1,4 @@
-import { Drawer, Select, Input, Button, Table, Popconfirm } from 'antd';
+import { Drawer, Select, Input, Button, Table, Popconfirm, Form } from 'antd';
 import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import {
     EditableProTable,
@@ -19,6 +19,7 @@ const options = commonColumns.map((item) => ({ label: item.title, value: item.ti
 
 const ETable = React.forwardRef((props: any, ref) => {
     const { deleteSuccess, addSuccess } = props;
+    const [form] = Form.useForm();
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [dataSource, setDataSource] = useState<any>(data)
     const formRef = useRef<ProFormInstance<any>>();
@@ -44,22 +45,30 @@ const ETable = React.forwardRef((props: any, ref) => {
     const column: any = [
         {
             title: '结果列名',
-            dataIndex: 'result'
+            dataIndex: 'result',
         },
         {
             title: '医保上传',
             dataIndex: 'medicalIns',
             valueType: 'select',
-            renderFormItem: () => {
-                return <Select options={options}></Select>
+            renderFormItem: (_: any, record: any) => {
+                return <Select options={options} onChange={() => {
+                    const formValue = form.getFieldsValue(record.recordKey)
+                    form.setFieldsValue({ [record.recordKey]: { ...formValue, result: formValue[record?.recordKey]?.medicalIns || '', } })
+                }}></Select>
             }
         },
         {
             title: '校验详情',
             dataIndex: 'detail',
             valueType: 'select',
-            renderFormItem: () => {
-                return <Select options={options}></Select>
+            renderFormItem: (_: any, record: any) => {
+                return <Select options={options} onChange={() => {
+                    const formValue = form.getFieldsValue(record.recordKey)
+                    form.setFieldsValue({ [record.recordKey]: { ...formValue, result: formValue[record?.recordKey]?.detail || '', } })
+                }}>
+
+                </Select >
             }
 
         },
@@ -134,6 +143,7 @@ const ETable = React.forwardRef((props: any, ref) => {
                     value={dataSource}
                     onChange={setDataSource}
                     editable={{
+                        form,
                         // editableKeys,
                         onSave: async (rowKey, data, row) => {
                             await waitTime(1000);

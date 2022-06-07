@@ -13,7 +13,7 @@ export const tableFontSize = 12;
 export const operateFontSize = 12;
 export const fontStyle = 'bold';
 export const backgroundColor = 'rgb(230 235 245 / 17%)';
-export const defaultCircleFill = '#1890ff';
+export const defaultCircleFill = '#4a99fa';
 export const defaultCircleStroke = '#1068bb';
 export const defaultCircleStrokeWidth = 2;
 export const hoverCircleFill = '#127cdf';
@@ -365,20 +365,14 @@ export class Graph {
         var leftGroup = new MyBasicCircirGroup({
         });
         leftGroup.on('click', function (e: any) {
-            stage.findOne('.relate-right').opacity(0.15);
+            const rightCircle: any = stage.findOne('.relate-right');
+            rightCircle.fill('#ededed')
             const crossArc = stage.findOne('.cross-arc') as any;
-            crossArc.fill(defaultCircleFill);
+            crossArc.fill('#ededed');
             stage.container().style.cursor = 'pointer';
-            this.findOne('.relate-left').opacity(0.4);
+            const currentClick: any = this.findOne('.relate-left');
+            currentClick.fill(defaultCircleFill)
             changeData('left')
-        })
-        leftGroup.on("mouseover", function (e: any) {
-            // stage.container().style.cursor = 'pointer';
-            // this.findOne('.relate-left').opacity(0.5);
-        })
-        leftGroup.on('mouseleave', function (e: any) {
-            // stage.container().style.cursor = 'default';
-            // this.findOne('.relate-left').opacity(0.15);
         })
         group.add(leftGroup);
 
@@ -388,8 +382,8 @@ export class Graph {
 
         leftGroup.add(drawCircle({
             radius: relatedRadius,
-            fill: '#000',
-            opacity: 0.15,
+            fill: '#ededed',
+            // opacity: 0.15,
             x: leftX,
             name: 'relate-left',
             ...related.left
@@ -415,11 +409,13 @@ export class Graph {
         var rightGroup = new MyBasicCircirGroup({
         });
         rightGroup.on('click', function (e: any) {
-            stage.findOne('.relate-left').opacity(0.15);
+            const rightCircle: any = stage.findOne('.relate-left');
+            rightCircle.fill('#ededed')
             const crossArc = stage.findOne('.cross-arc') as any;
-            crossArc.fill(defaultCircleFill);
+            crossArc.fill('#ededed');
             stage.container().style.cursor = 'pointer';
-            this.findOne('.relate-right').opacity(0.4);
+            const currentClick: any = this.findOne('.relate-right');
+            currentClick.fill(defaultCircleFill)
             changeData('right')
         })
         rightGroup.on("mouseover", function (e: any) {
@@ -434,8 +430,8 @@ export class Graph {
         var rightX = relatedRadius - crossX;
         var rightText = related.right.tableName;
         rightGroup.add(drawCircle({
-            fill: '#000',
-            opacity: 0.15,
+            fill: '#ededed',
+            // opacity: 0.15,
             radius: relatedRadius,
             name: 'relate-right',
             x: rightX,
@@ -472,11 +468,13 @@ export class Graph {
         var centerGroup = new MyBasicCircirGroup({
         });
         centerGroup.on('click', function (e: any) {
+            const rightCircle: any = stage.findOne('.relate-right');
+            rightCircle.fill('#ededed')
+            const crossArc = stage.findOne('.relate-left') as any;
+            crossArc.fill('#ededed');
             stage.container().style.cursor = 'pointer';
-            stage.findOne('.relate-left').opacity(0.15);
-            stage.findOne('.relate-right').opacity(0.15);
-            const csArc = this.findOne('.cross-arc') as any;
-            csArc.fill(hoverCircleFill);
+            const currentClick: any = this.findOne('.cross-arc');
+            currentClick.fill(defaultCircleFill)
             changeData('center')
         })
         centerGroup.on("mouseover", function (e: any) {
@@ -492,6 +490,7 @@ export class Graph {
         group.add(centerGroup);
         var crossShape = new Konva.Shape({
             fill: defaultCircleFill,
+            // opacity: 0.15,
             name: 'cross-arc',
             sceneFunc(context, shape) {
                 context.beginPath();
@@ -527,7 +526,7 @@ export class Graph {
         centerGroup.add(drawCenterAlignText({
             text: related.corssCount + "",
             fontSize: numberFontSize,
-            fill: '#fff',
+            fill: 'black',
         }));
 
         group.add(drawCenterAlignText({
