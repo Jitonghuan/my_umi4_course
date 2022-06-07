@@ -1079,6 +1079,20 @@ export default [
     ],
   },
   {
+    path: 'display',
+    name: '数据分析',
+    icon: 'icon-dataset',
+    routes: [
+      {
+        path: 'main',
+        name: '实战分析',
+        key: 'display',
+        component: '@/pages/display',
+        // hideInMenu: true,
+      },
+    ],
+  },
+  {
     path: '*',
     name: 'NOT FOUND',
     hideInMenu: true,

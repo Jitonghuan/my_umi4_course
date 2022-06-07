@@ -153,6 +153,7 @@ export default function Tracking() {
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
     setFirst(false);
+
     setLoading(true);
     setCurrentItem({});
     // setListData([]);
@@ -186,7 +187,7 @@ export default function Tracking() {
     setRightLoading(true);
     getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
       .then((res: any) => {
-        if (res?.success) {
+        if (res?.success && res?.data) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
           const handleData = (data: any) => {
             if (!data) {
