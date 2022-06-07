@@ -5,10 +5,10 @@
 import React from 'react';
 import { history } from 'umi';
 import { useEffect, useState } from 'react';
-import { useAddTask, useUpdateTask,queryAppList,useQueryAppEnvData,useQueryListContainer } from '../hooks';
-import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col,Checkbox } from 'antd';
+import { useAddTask, useUpdateTask, queryAppList, useQueryAppEnvData, useQueryListContainer } from '../hooks';
+import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox } from 'antd';
 import { recordEditData, KVProps, jobContentProps } from '../type';
-import { QuestionCircleOutlined} from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { TaskTypeOptions, RequestModeOptions, RequestMethodOptions } from './schema';
@@ -28,19 +28,19 @@ export default function addEnvData(props: RecordEditDataProps) {
   const { mode, onClose, onSave, initData } = props;
   const [addLoading, addTaskManage] = useAddTask();
   const [updateLoading, updateTaskManage] = useUpdateTask();
-  const [loading, appEnvDataSource,queryAppEnvData]=useQueryAppEnvData();
-  const [containerLoading, containerNameOption,getListContainer]=useQueryListContainer()
+  const [loading, appEnvDataSource, queryAppEnvData] = useQueryAppEnvData();
+  const [containerLoading, containerNameOption, getListContainer] = useQueryListContainer();
   const [curTaskType, setCurTaskType] = useState<number>();
-  const [curRequestMethod, setCurRequestMethod] = useState<string|undefined>('');
-  const [isJobChangeOption, setIsJobChangeOption] = useState<number>(2); 
+  const [curRequestMethod, setCurRequestMethod] = useState<string | undefined>('');
+  const [isJobChangeOption, setIsJobChangeOption] = useState<number>(2);
   const [isJobChecked, setIsJobChecked] = useState<boolean>(false);
   const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [viewEditable,setViewEditable]= useState<boolean>(false);
+  const [viewEditable, setViewEditable] = useState<boolean>(false);
   const [appList, setAppList] = useState<any[]>([]);
-  const [checked,setChecked]=useState<boolean>(false);
-  const [isEditPassword,setIsEditPassword]=useState<boolean>(false);
-  const [optType,setOptType]=useState<string>('');
-  const [initPassWord,setInitPassWord]=useState<string|undefined>('');
+  const [checked, setChecked] = useState<boolean>(false);
+  const [isEditPassword, setIsEditPassword] = useState<boolean>(false);
+  const [optType, setOptType] = useState<string>('');
+  const [initPassWord, setInitPassWord] = useState<string | undefined>('');
 
   useEffect(() => {
     queryAppList().then((resp) => {
@@ -58,10 +58,9 @@ export default function addEnvData(props: RecordEditDataProps) {
 
   useEffect(() => {
     if (mode === 'HIDE') return;
-    if(mode==='VIEW'){
+    if (mode === 'VIEW') {
       setViewEditable(true);
       setIsEditable(true);
-
     }
     if (mode === 'ADD') {
       createTaskForm.resetFields();
@@ -72,10 +71,10 @@ export default function addEnvData(props: RecordEditDataProps) {
       setIsEditable(true);
       if (initData.enable === 1) {
         setIsJobChecked(true);
-        setIsJobChangeOption(1)
+        setIsJobChangeOption(1);
       } else {
         setIsJobChecked(false);
-        setIsJobChangeOption(2)
+        setIsJobChangeOption(2);
       }
       // initData?.params
       if (initData?.jobContent) {
@@ -96,14 +95,13 @@ export default function addEnvData(props: RecordEditDataProps) {
       });
     }
 
-
     return () => {
       setIsEditable(false);
       setCurTaskType(undefined);
       setViewEditable(false);
       setCurRequestMethod('');
       setOptType('');
-      setChecked(false)
+      setChecked(false);
       setIsEditPassword(false);
     };
   }, [mode]);
@@ -168,14 +166,14 @@ export default function addEnvData(props: RecordEditDataProps) {
       });
     } else if (mode === 'EDIT') {
       updateTaskManage({
-        createUser:initData?.createUser,
+        createUser: initData?.createUser,
         gmtCreate: initData?.gmtCreate,
         gmtModify: initData?.gmtModify,
         id: initData?.id,
         lastExecStatus: initData?.lastExecStatus,
         modifyUser: initData?.modifyUser,
         ...paramObj,
-         }).then(() => {
+      }).then(() => {
         onSave();
       });
     }
@@ -192,43 +190,38 @@ export default function addEnvData(props: RecordEditDataProps) {
     }
   };
 
-  const checkAppCode=(appCode:string)=>{
-    queryAppEnvData({appCode});
+  const checkAppCode = (appCode: string) => {
+    queryAppEnvData({ appCode });
     createTaskForm.setFieldsValue({
-      envCode:'',
-      containers:[],
-    })
+      envCode: '',
+      containers: [],
+    });
+  };
 
-  }
-
-  const checkEnvCode=(envCode:string)=>{
-    const appCode=createTaskForm.getFieldsValue()?.appCode
-    getListContainer({appCode,envCode});
+  const checkEnvCode = (envCode: string) => {
+    const appCode = createTaskForm.getFieldsValue()?.appCode;
+    getListContainer({ appCode, envCode });
     createTaskForm.setFieldsValue({
-      containers:[],
-    })
-
-  }
-  const checkPassWord=(e: CheckboxChangeEvent)=>{
-    
+      containers: [],
+    });
+  };
+  const checkPassWord = (e: CheckboxChangeEvent) => {
     setChecked(e.target.checked);
     setIsEditPassword(true);
-     
-    if(!e.target.checked){
-      createTaskForm.setFieldsValue({password:initPassWord})
+
+    if (!e.target.checked) {
+      createTaskForm.setFieldsValue({ password: initPassWord });
       setOptType('');
-    }else{
-      createTaskForm.setFieldsValue({password:''})
+    } else {
+      createTaskForm.setFieldsValue({ password: '' });
       setOptType('check');
     }
-
-   
-  }
+  };
 
   return (
     <Drawer
       visible={mode !== 'HIDE'}
-      title={mode === 'EDIT' ? '修改任务' :mode === 'VIEW'? '查看任务':'新增任务'}
+      title={mode === 'EDIT' ? '修改任务' : mode === 'VIEW' ? '查看任务' : '新增任务'}
       onClose={() => onClose()}
       width={'50%'}
       footer={
@@ -272,14 +265,23 @@ export default function addEnvData(props: RecordEditDataProps) {
             <Form.Item name="timeExpression" label="时间表达式" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入时间表达式" style={{ width: '24vw' }} disabled={viewEditable}></Input>
             </Form.Item>
-            <Form.Item name="enable" label="是否启用" rules={[{ required: true, message: '这是必填项' }]} initialValue={isJobChecked}>
-              <Switch onChange={isJobChange} checked={isJobChecked} disabled={viewEditable}  />
+            <Form.Item
+              name="enable"
+              label="是否启用"
+              rules={[{ required: true, message: '这是必填项' }]}
+              initialValue={isJobChecked}
+            >
+              <Switch onChange={isJobChange} checked={isJobChecked} disabled={viewEditable} />
             </Form.Item>
             <Form.Item name="noticeType" label="执行结果通知" rules={[{ required: true, message: '这是必填项' }]}>
               <Select style={{ width: 200 }} options={RequestModeOptions} disabled={viewEditable}></Select>
             </Form.Item>
             <Form.Item name="desc" label="备注：">
-              <Input.TextArea placeholder="请输入备注" style={{ width: '24vw', height: 80 }} disabled={viewEditable}></Input.TextArea>
+              <Input.TextArea
+                placeholder="请输入备注"
+                style={{ width: '24vw', height: 80 }}
+                disabled={viewEditable}
+              ></Input.TextArea>
             </Form.Item>
             <Form.Item name="jobType" label="任务类型" rules={[{ required: true, message: '这是必填项' }]}>
               <Select
@@ -288,7 +290,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                 onChange={(value) => {
                   setCurTaskType(value);
                 }}
-                disabled={mode==='EDIT'?isEditable:viewEditable}
+                disabled={mode === 'EDIT' ? isEditable : viewEditable}
               ></Select>
             </Form.Item>
             <Divider />
@@ -298,21 +300,47 @@ export default function addEnvData(props: RecordEditDataProps) {
                 <Row>
                   <Col span={11}>
                     <Form.Item label="appCode" name="appCode" rules={[{ required: true, message: '这是必填项' }]}>
-                      <Select style={{ width: 190 }} disabled={viewEditable} options={appList} onChange={checkAppCode} allowClear showSearch></Select>
+                      <Select
+                        style={{ width: 190 }}
+                        disabled={viewEditable}
+                        options={appList}
+                        onChange={checkAppCode}
+                        allowClear
+                        showSearch
+                      ></Select>
                     </Form.Item>
                   </Col>
                   <Col span={11}>
                     <Form.Item label="envCode" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
-                      <Select style={{ width: 190 }} disabled={viewEditable} options={appEnvDataSource} onChange={checkEnvCode} allowClear showSearch loading={loading}></Select>
+                      <Select
+                        style={{ width: 190 }}
+                        disabled={viewEditable}
+                        options={appEnvDataSource}
+                        onChange={checkEnvCode}
+                        allowClear
+                        showSearch
+                        loading={loading}
+                      ></Select>
                     </Form.Item>
                   </Col>
                 </Row>
 
                 <Form.Item label="容器" name="containers" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Select style={{ width: '24vw' }} disabled={viewEditable} options={containerNameOption} allowClear showSearch   mode="multiple" ></Select>
+                  <Select
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                    options={containerNameOption}
+                    allowClear
+                    showSearch
+                    mode="multiple"
+                  ></Select>
                 </Form.Item>
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input.TextArea placeholder="请输入command" style={{ width: '24vw' }} disabled={viewEditable}></Input.TextArea>
+                  <Input.TextArea
+                    placeholder="请输入command"
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                  ></Input.TextArea>
                 </Form.Item>
               </>
             )}
@@ -326,40 +354,59 @@ export default function addEnvData(props: RecordEditDataProps) {
                 <Form.Item label="账号" name="account" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
                 </Form.Item>
-                {
-                  mode==='EDIT'&&(
-                    <Form.Item  valuePropName="checked" label='是否修改密码' >
+                {mode === 'EDIT' && (
+                  <Form.Item valuePropName="checked" label="是否修改密码">
                     <Checkbox onChange={checkPassWord} checked={checked}></Checkbox>
                   </Form.Item>
-                 )
-                } 
+                )}
 
-                {
-                  optType==='check'?(
-                    <Form.Item label="密码" name="password"  tooltip={{ title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败', icon: <QuestionCircleOutlined /> }} >
-                    <Input.Password style={{ width: '24vw' }} placeholder='' disabled={optType==='check' ? !isEditPassword:viewEditable}></Input.Password>
+                {optType === 'check' ? (
+                  <Form.Item
+                    label="密码"
+                    name="password"
+                    tooltip={{
+                      title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败',
+                      icon: <QuestionCircleOutlined />,
+                    }}
+                  >
+                    <Input.Password
+                      style={{ width: '24vw' }}
+                      placeholder=""
+                      disabled={optType === 'check' ? !isEditPassword : viewEditable}
+                    ></Input.Password>
                   </Form.Item>
-                  ):(
-                    <>
-                    
-                    <Form.Item label="密码" name="password"  tooltip={{ title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败', icon: <QuestionCircleOutlined /> }} >
-                    <Input.Password style={{ width: '24vw' }} placeholder='' disabled={ optType==='check' ? !isEditPassword:viewEditable} visibilityToggle={false}></Input.Password>
-                  </Form.Item>
+                ) : (
+                  <>
+                    <Form.Item
+                      label="密码"
+                      name="password"
+                      tooltip={{
+                        title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败',
+                        icon: <QuestionCircleOutlined />,
+                      }}
+                    >
+                      <Input.Password
+                        style={{ width: '24vw' }}
+                        placeholder=""
+                        disabled={optType === 'check' ? !isEditPassword : viewEditable}
+                        visibilityToggle={false}
+                      ></Input.Password>
+                    </Form.Item>
                   </>
-                  )
-
-                }
-              {/* <Form.Item label="密码" name="password"  tooltip={{ title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败', icon: <QuestionCircleOutlined /> }} >
+                )}
+                {/* <Form.Item label="密码" name="password"  tooltip={{ title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败', icon: <QuestionCircleOutlined /> }} >
                <Input.Password style={{ width: '24vw' }} placeholder='' disabled={optType==='check' ? !isEditPassword:viewEditable}></Input.Password>
              </Form.Item> */}
 
-              
-               
                 {/* <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input placeholder="请输入执行路径" style={{ width: '24vw' }}></Input>
                 </Form.Item> */}
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input.TextArea placeholder="请输入command" style={{ width: '24vw' }} disabled={viewEditable}></Input.TextArea>
+                  <Input.TextArea
+                    placeholder="请输入command"
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                  ></Input.TextArea>
                 </Form.Item>
               </>
             )}
@@ -380,12 +427,12 @@ export default function addEnvData(props: RecordEditDataProps) {
                   ></Select>
                 </Form.Item>
                 {curRequestMethod === 'POST' && (
-                  <Form.Item label="body" name="body" >
+                  <Form.Item label="body" name="body">
                     <AceEditor mode="json" height={280} />
                   </Form.Item>
                 )}
                 {curRequestMethod === 'GET' && (
-                  <Form.Item label="params" name="params" >
+                  <Form.Item label="params" name="params">
                     <EditorTable
                       columns={[
                         { title: 'KEY', dataIndex: 'key', colProps: { width: 90 } },
@@ -413,30 +460,70 @@ export default function addEnvData(props: RecordEditDataProps) {
                 <Form.Item label="用户名" name="account" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
                 </Form.Item>
-                {
-                  mode==='EDIT'&&(
-                    <Form.Item  valuePropName="checked" label='是否修改密码' >
+                {mode === 'EDIT' && (
+                  <Form.Item valuePropName="checked" label="是否修改密码">
                     <Checkbox onChange={checkPassWord} checked={checked}></Checkbox>
                   </Form.Item>
-                  )
-                }
-                  {
-                    optType==='check'?(
-                      <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
-                      <Input.Password style={{ width: '24vw' }} disabled={optType==='check' ? !isEditPassword:viewEditable}  ></Input.Password>
-                    </Form.Item>
-                    ):(
-                      <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
-                      <Input.Password style={{ width: '24vw' }} disabled={optType==='check' ? !isEditPassword:viewEditable} visibilityToggle={false}  ></Input.Password>
-                    </Form.Item>
-                    )
-                  }
+                )}
+                {optType === 'check' ? (
+                  <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
+                    <Input.Password
+                      style={{ width: '24vw' }}
+                      disabled={optType === 'check' ? !isEditPassword : viewEditable}
+                    ></Input.Password>
+                  </Form.Item>
+                ) : (
+                  <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
+                    <Input.Password
+                      style={{ width: '24vw' }}
+                      disabled={optType === 'check' ? !isEditPassword : viewEditable}
+                      visibilityToggle={false}
+                    ></Input.Password>
+                  </Form.Item>
+                )}
 
                 <Form.Item label="数据库名" name="databaseName" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
                 </Form.Item>
                 <Form.Item label="SQL" name="sql" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input.TextArea style={{ width: '24vw' }} disabled={viewEditable}></Input.TextArea>
+                </Form.Item>
+              </>
+            )}
+            {curTaskType === 5 && (
+              <>
+                <Form.Item label="镜像" name="command" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Input.TextArea
+                    placeholder="请输入镜像"
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                  ></Input.TextArea>
+                </Form.Item>
+
+                <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Input.TextArea
+                    placeholder="请输入command"
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                  ></Input.TextArea>
+                </Form.Item>
+              </>
+            )}
+            {curTaskType === 6 && (
+              <>
+                <Form.Item label="集群名称" name="nodeIp" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
+                </Form.Item>
+                <Form.Item label="节点名称" name="account" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
+                </Form.Item>
+
+                <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Input.TextArea
+                    placeholder="请输入command"
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                  ></Input.TextArea>
                 </Form.Item>
               </>
             )}

@@ -1,10 +1,10 @@
 export const TaskTypeOptions = [
   {
-    label: '容器命令任务',
+    label: '应用容器命令任务',
     value: 1,
   },
   {
-    label: '节点命令任务',
+    label: '通用节点命令任务',
     value: 2,
   },
   {
@@ -14,6 +14,14 @@ export const TaskTypeOptions = [
   {
     label: '数据库SQL任务',
     value: 4,
+  },
+  {
+    label: '新容器命令任务',
+    value: 5,
+  },
+  {
+    label: 'K8S节点命令任务',
+    value: 6,
   },
 ];
 

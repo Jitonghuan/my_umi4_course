@@ -93,6 +93,7 @@ export function useAddTask(): [
     jobType: number;
     desc?: string;
     jobContent: string;
+    editPwd?: boolean;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
@@ -105,6 +106,7 @@ export function useAddTask(): [
     jobType: number;
     desc?: string;
     jobContent: string;
+    editPwd?: boolean;
   }) => {
     setLoading(true);
     await postRequest(APIS.createJob, { data: paramsObj })
@@ -127,15 +129,14 @@ export function useAddTask(): [
 export function useUpdateTask(): [
   boolean,
   (paramsObj: {
-    createUser:any
-   
-    
-    gmtCreate: any
-    gmtModify: any
-    id: any
-    jobCode: any
-    lastExecStatus: any
-    modifyUser: any
+    createUser: any;
+
+    gmtCreate: any;
+    gmtModify: any;
+    id: any;
+    jobCode: any;
+    lastExecStatus: any;
+    modifyUser: any;
     jobName: string;
     enable: number;
     noticeType: number;
@@ -147,14 +148,14 @@ export function useUpdateTask(): [
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateTask = async (paramsObj: {
-    createUser?:any
+    createUser?: any;
 
-    gmtCreate?: any
-    gmtModify?: any
-    id: number
-    jobCode: any
-    lastExecStatus?:any
-    modifyUser?: any
+    gmtCreate?: any;
+    gmtModify?: any;
+    id: number;
+    jobCode: any;
+    lastExecStatus?: any;
+    modifyUser?: any;
 
     jobName: string;
     enable: number;
@@ -202,8 +203,6 @@ export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => P
   return [loading, deleteTask];
 }
 
-
-
 /** 查询应用列表 */
 export const queryAppList = () => {
   return getRequest(APIS.queryAppListApi, {
@@ -226,34 +225,28 @@ export const queryAppList = () => {
   });
 };
 
-
 // 查询应用环境数据
 
-export function useQueryAppEnvData(): [boolean,any, (paramsObj: { appCode: string }) => Promise<void>] {
+export function useQueryAppEnvData(): [boolean, any, (paramsObj: { appCode: string }) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
-  const queryAppEnvData = async(paramsObj: { appCode: string }) => {
+  const queryAppEnvData = async (paramsObj: { appCode: string }) => {
     setLoading(true);
-    await  getRequest(APIS.listAppEnv, {
+    await getRequest(APIS.listAppEnv, {
       data: {
-        appCode:paramsObj?.appCode,
-       
+        appCode: paramsObj?.appCode,
       },
     })
       .then((result) => {
         if (result?.success) {
-         let dataSource= result.data;
-         const envOption=  dataSource?.map((item:any)=>(
-           {
-             label:item?.envCode||'',
-             value:item?.envCode||'',
-           }
+          let dataSource = result.data;
+          const envOption = dataSource?.map((item: any) => ({
+            label: item?.envCode || '',
+            value: item?.envCode || '',
+          }));
 
-         ));
-       
-         
-         setAppEnvDataSource(envOption)
-        }else{
+          setAppEnvDataSource(envOption);
+        } else {
           setAppEnvDataSource([]);
         }
       })
@@ -262,36 +255,36 @@ export function useQueryAppEnvData(): [boolean,any, (paramsObj: { appCode: strin
       });
   };
 
-  return [loading, appEnvDataSource,queryAppEnvData];
+  return [loading, appEnvDataSource, queryAppEnvData];
 }
 
 //getListContainer
 
-export function useQueryListContainer(): [boolean,any, (paramsObj: {  appCode: string,envCode:string }) => Promise<void>] {
+export function useQueryListContainer(): [
+  boolean,
+  any,
+  (paramsObj: { appCode: string; envCode: string }) => Promise<void>,
+] {
   const [loading, setLoading] = useState<boolean>(false);
   const [containerNameOption, setContainerNameOption] = useState<Record<string, any>[]>([]);
-  const getListContainer = async(paramsObj: { appCode: string,envCode:string }) => {
+  const getListContainer = async (paramsObj: { appCode: string; envCode: string }) => {
     setLoading(true);
-    await  getRequest(APIS.getListContainer, {
+    await getRequest(APIS.getListContainer, {
       data: {
-        appCode:paramsObj?.appCode,
-        envCode:paramsObj?.envCode
-       
+        appCode: paramsObj?.appCode,
+        envCode: paramsObj?.envCode,
       },
     })
       .then((result) => {
         if (result?.success) {
-         let dataSource= result.data;
-         const option=  dataSource?.map((item:any)=>(
-           {
-             label:item?.containerName||'',
-             value:item?.containerName||'',
-           }
+          let dataSource = result.data;
+          const option = dataSource?.map((item: any) => ({
+            label: item?.containerName || '',
+            value: item?.containerName || '',
+          }));
 
-         ));
-         
-         setContainerNameOption(option)
-        }else{
+          setContainerNameOption(option);
+        } else {
           setContainerNameOption([]);
         }
       })
@@ -300,6 +293,5 @@ export function useQueryListContainer(): [boolean,any, (paramsObj: {  appCode: s
       });
   };
 
-  return [loading, containerNameOption,getListContainer];
+  return [loading, containerNameOption, getListContainer];
 }
-
