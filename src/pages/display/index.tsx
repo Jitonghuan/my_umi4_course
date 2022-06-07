@@ -12,6 +12,7 @@ export default function DomainConfigs() {
     const [dataSource, setDataSource] = useState<any>(tableData);
     const [visible, setVisible] = useState(false);
     const [column, setColumn] = useState(columns);
+    const [tableTitle, setTableTitle] = useState('医保上传检验单表数据')
     const graphRef = useRef<any>();
     const onSubmit = (related: RelatedData) => {
         setVisible(false);
@@ -32,11 +33,13 @@ export default function DomainConfigs() {
 
     const changeData = (type: string) => {
         if (type === '校验明细') {
+            setTableTitle('校验明细表数据')
             setColumn(detailColumns);
             setDataSource(detailTableData)
         } else {
             setColumn(column);
-            setDataSource(tableData)
+            setDataSource(tableData);
+            setTableTitle('医保上传检验单表数据')
         }
     }
 
@@ -52,6 +55,7 @@ export default function DomainConfigs() {
                         onRelative={onRelative}
                         changeData={changeData} />
                 </div>
+                <div className='table-title'>{tableTitle}</div>
                 <div className='table-wrapper'>
                     <Table
                         columns={column}

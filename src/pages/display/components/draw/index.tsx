@@ -69,7 +69,7 @@ export default function DetailDraw(props: any) {
             visible={visible}
             onClose={() => setVisible(false)}
             width='1000px'
-
+            className='table-draw'
             footer={
                 <div className="drawer-footer">
                     <Button type="primary" onClick={handleSubmit}>
