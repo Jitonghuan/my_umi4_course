@@ -26,6 +26,9 @@ export default function AppDeployInfo(props: any) {
   let currentContainerName = '';
   const ws = useRef<WebSocket>();
   const term = useRef<any>();
+  useEffect(() => {
+    if (!instName) return;
+  }, []);
 
   useEffect(() => {
     if (appCode && envCode) {
