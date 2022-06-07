@@ -22,7 +22,8 @@ export default function ViewLog(props: any) {
   const [currentContainer, setCurrentContainer] = useState<string>('');
   const [previous, setPrevious] = useState<boolean>(false);
   const { appCode, envCode, instName, viewLogEnvType, optType, containerName, deploymentName } = props.location.query;
-  const { infoRecord } = props.location.state;
+  // const { infoRecord } = props?.location?.state;
+  const infoRecord = props?.location?.state?.infoRecord || {};
   const logData = useRef<string>('');
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
