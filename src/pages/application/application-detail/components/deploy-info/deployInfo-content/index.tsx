@@ -14,8 +14,8 @@ import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Inp
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
-import { useListDeploymentList,getDeploymentEventListMethods } from '../container-info/hook';
-import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi,getListDeploymentEvent } from './service';
+import { useListDeploymentList, getDeploymentEventListMethods } from '../container-info/hook';
+import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi, getListDeploymentEvent } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
@@ -37,7 +37,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   // const [deploymentLoading, deploymentSource, setDeploymentSource, getDeploymentEventList] = useListDeploymentList();
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [deploymentSource,setDeploymentSource]=useState<any[]>([]);
+  const [deploymentSource, setDeploymentSource] = useState<any[]>([]);
   const [currentEnvData, setCurrentEnvData] = useState<string>(''); //当前选中的环境；
   const [currentContainerName, setCurrentContainerName] = useState<string>('');
   const [currentInstName, setCurrentInstName] = useState<string>('');
@@ -55,7 +55,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
-  const [deploymentLoading,setDeploymentLoading] = useState(false);
+  const [deploymentLoading, setDeploymentLoading] = useState(false);
   const queryAppOperateLog = (envCodeParam: any) => {
     getRequest(queryAppOperate, { data: { appCode, envCode: envCodeParam } })
       .then((resp) => {
@@ -72,22 +72,19 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode) return;
   }, [appCode]);
 
-  const getDeploymentEventListInfo=(params:{appCode:any, envCode: string})=>{
-    setDeploymentLoading(true)
-    getDeploymentEventListMethods(params).then((res)=>{
-      setDeploymentSource(res)
-      if(res.length==0){
-        getDeploymentTimerHandler('stop');
-        
-      }
-      
-
-    }).finally(()=>{
-      setDeploymentLoading(false);
-    })
-    
-  }
-
+  const getDeploymentEventListInfo = (params: { appCode: any; envCode: string }) => {
+    setDeploymentLoading(true);
+    getDeploymentEventListMethods(params)
+      .then((res) => {
+        setDeploymentSource(res);
+        if (res.length == 0) {
+          getDeploymentTimerHandler('stop');
+        }
+      })
+      .finally(() => {
+        setDeploymentLoading(false);
+      });
+  };
 
   const queryInstanceList = async (appCode: any, envCode: any) => {
     getRequest(queryInstanceListApi, { data: { appCode, envCode } })
@@ -111,7 +108,6 @@ export default function DeployContent(props: DeployContentProps) {
       loadInfoData(initEnvCode.current)
         .then(() => {
           queryInstanceList(appData?.appCode, initEnvCode.current);
-
         })
         .catch((e: any) => {
           console.log('error happend in intervalFunc:', e);
@@ -119,18 +115,22 @@ export default function DeployContent(props: DeployContentProps) {
     }
   };
 
-  const deploymentIntervalFunc=()=>{
+  const deploymentIntervalFunc = () => {
     getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
-  }
+  };
 
   //引用定时器
   const { getStatus: getTimerStatus, handle: timerHandler } = useInterval(intervalFunc, 3000, {
     immediate: false,
   });
   //引用定时器
-  const { getStatus: getDeploymentStatus, handle: getDeploymentTimerHandler } = useInterval(deploymentIntervalFunc, 10000, {
-    immediate: false,
-  });
+  const { getStatus: getDeploymentStatus, handle: getDeploymentTimerHandler } = useInterval(
+    deploymentIntervalFunc,
+    10000,
+    {
+      immediate: false,
+    },
+  );
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
@@ -150,7 +150,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: viewLogEnv });
             initEnvCode.current = viewLogEnv;
             setCurrentEnvData(viewLogEnv);
-           
+
             if (viewLogEnv !== '') {
               loadInfoData(viewLogEnv).then(() => {
                 queryAppOperateLog(viewLogEnv);
@@ -160,17 +160,17 @@ export default function DeployContent(props: DeployContentProps) {
                       setInstanceLoading(true);
                       let data = result.data;
                       setInstanceTableData(data);
-                     
+
                       if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
                         getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                         timerHandler('do', true);
                       } else {
                         timerHandler('stop');
-                        getDeploymentTimerHandler('stop')
+                        getDeploymentTimerHandler('stop');
                       }
                     } else {
                       timerHandler('stop');
-                      getDeploymentTimerHandler('stop')
+                      getDeploymentTimerHandler('stop');
                       return;
                     }
                   })
@@ -220,17 +220,17 @@ export default function DeployContent(props: DeployContentProps) {
                           setInstanceLoading(true);
                           let data = result.data;
                           setInstanceTableData(data);
-                         
+
                           if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
                             getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                             timerHandler('do', true);
                           } else {
                             timerHandler('stop');
-                            getDeploymentTimerHandler('stop')
+                            getDeploymentTimerHandler('stop');
                           }
                         } else {
                           timerHandler('stop');
-                          getDeploymentTimerHandler('stop')
+                          getDeploymentTimerHandler('stop');
                           return;
                         }
                       })
@@ -239,7 +239,7 @@ export default function DeployContent(props: DeployContentProps) {
                       });
                   } else {
                     timerHandler('stop');
-                    getDeploymentTimerHandler('stop')
+                    getDeploymentTimerHandler('stop');
                   }
                 });
             }
@@ -303,7 +303,7 @@ export default function DeployContent(props: DeployContentProps) {
                 setInstanceLoading(true);
                 let data = result.data;
                 setInstanceTableData(data);
-               
+
                 if (result.data !== undefined && result.data.length !== 0) {
                   getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                   timerHandler('do', true);
@@ -501,8 +501,8 @@ export default function DeployContent(props: DeployContentProps) {
                 width={100}
                 render={(status, record) => {
                   return (
-                    <Tag color={LIST_STATUS_TYPE[status].color || 'default'}>
-                      {LIST_STATUS_TYPE[status].text || status}
+                    <Tag color={LIST_STATUS_TYPE[status]?.color || 'default'}>
+                      {LIST_STATUS_TYPE[status]?.text || status}
                     </Tag>
                   );
                 }}
@@ -631,7 +631,7 @@ export default function DeployContent(props: DeployContentProps) {
                   </p>
                   <p>
                     <span>操作人：</span>
-                    <b>{item.operator}</b>
+                    <b>{item?.operator}</b>
                   </p>
                   {/* <p>
                      <span>操作类型：</span>
