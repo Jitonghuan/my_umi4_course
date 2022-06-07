@@ -28,6 +28,11 @@ export default function ViewLog(props: any) {
   let ansi_up = new AnsiUp();
   let ws = useRef<WebSocket>();
   let scrollBegin = useRef<boolean>(true);
+  useEffect(() => {
+    if (Object.getOwnPropertyNames(infoRecord).length == 0) {
+      return;
+    }
+  }, []);
 
   useLayoutEffect(() => {
     getRequest(APIS.listContainer, { data: { appCode, envCode, instName: instName } }).then((result) => {
