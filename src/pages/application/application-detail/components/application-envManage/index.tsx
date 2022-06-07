@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2021/10/25 11:14
 
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Input, Table, Popconfirm, Form, Button, Select, Switch, Modal, message, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
@@ -22,7 +22,6 @@ export default function appEnvPageList() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any>();
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
-  const [checkedOption, setCheckedOption] = useState<boolean>();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [EnvForm] = Form.useForm();
   const [appEnvForm] = Form.useForm();
@@ -287,14 +286,14 @@ export default function appEnvPageList() {
             <Table.Column title="环境CODE" dataIndex="envCode" ellipsis />
             <Table.Column title="环境名" dataIndex="envName" ellipsis />
             <Table.Column title="默认分类" dataIndex="categoryCode" width={120} />
-            <Table.Column
+            {/* <Table.Column
               title="是否启用配置管理"
               dataIndex="useNacos"
               width={180}
               render={(value, record, index) => (
                 <Switch className="useNacos" checked={value === 1 ? true : false} disabled={true} />
               )}
-            />
+            /> */}
           </Table>
         </div>
       </Modal>
