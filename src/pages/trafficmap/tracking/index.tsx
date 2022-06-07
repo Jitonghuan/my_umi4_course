@@ -116,7 +116,7 @@ export default function Tracking() {
   // 获取右侧图的数据
   useEffect(() => {
     if (currentItem && currentItem?.traceIds && currentItem?.traceIds?.length !== 0) {
-      queryTreeData(noiseList);
+      queryTreeData();
     }
   }, [currentItem]);
 
@@ -157,10 +157,11 @@ export default function Tracking() {
     setCurrentItem({});
     // setListData([]);
     setRightLoading(true);
+    const noiseIdList = localStorage.getItem('trace_noise_list') || ''
     const values = form.getFieldsValue();
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
-    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: noiseList })
+    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: noiseIdList.split(',') })
       .then((res: any) => {
         if (res) {
           setListData(res?.data?.dataSource);
@@ -181,10 +182,11 @@ export default function Tracking() {
   };
 
   // 获取右侧数据
-  const queryTreeData = (value: any) => {
+  const queryTreeData = () => {
     if (!currentItem?.traceIds || !currentItem?.traceIds[0]) return;
+    const noiseIdList = localStorage.getItem('trace_noise_list') || ''
     setRightLoading(true);
-    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
+    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: noiseIdList.split(',') })
       .then((res: any) => {
         if (res?.success) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
@@ -221,7 +223,7 @@ export default function Tracking() {
 
   // 降噪下拉框发生改变时
   const noiseChange = (value: number[]) => {
-    queryTreeData(value);
+    queryTreeData();
     setNoiseList(value);
   };
 
@@ -253,6 +255,11 @@ export default function Tracking() {
     }
     return roots;
   }
+
+
+  // const handleNoise=(fil)=>{
+
+  // }
 
   return (
     <PageContainer className="tracking-container">

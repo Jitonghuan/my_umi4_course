@@ -31,12 +31,14 @@ export default function RrightTrace(props: any) {
   const [visible, setVisible] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<any>({});
   const [noiseOption, setNoiseOption] = useState<any>([]);
-  const [selectNoise, setSelectNoise] = useState<any>([]);
+  const [selectNoise, setSelectNoise] = useState<any>(localStorage.getItem('trace_noise_list')?.split(',') || []);
   const scaleRange = useMemo(() => (data && data.length ? data[0]?.allDurations : 100), [data]);
+
   useEffect(() => {
     const idList = selectNoise.map((item: any) => item.value);
     noiseChange(idList);
   }, [selectNoise]);
+
   useEffect(() => {
     if (item && item.traceIds && item?.traceIds?.length !== 0) {
       setTraceIdOptions([{ label: item?.traceIds[0], value: item?.traceIds[0] }]);
@@ -46,6 +48,7 @@ export default function RrightTrace(props: any) {
       setSelectTraceId('');
     }
   }, [item]);
+
   const containerRef = useCallback(
     (node: any) => {
       if (node) {
@@ -169,6 +172,14 @@ export default function RrightTrace(props: any) {
         const data = res?.data?.dataSource;
         const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName }));
         setNoiseOption(dataList);
+        // 将localStorge中存储的降噪进行回显
+        const storeIdList = localStorage.getItem('trace_noise_list') || '';
+        const nowIdList = data?.map((item: any) => item?.id)
+        storeIdList.split(',').forEach((item) => {
+          if (nowIdList.includes(item)) {
+            setSelectNoise((value: any) => value.concat(item))
+          }
+        })
       }
     });
   }, []);
@@ -240,6 +251,8 @@ export default function RrightTrace(props: any) {
                 size="small"
                 labelInValue
                 onChange={(value) => {
+                  const idList = value.map((item: any) => item.value)
+                  localStorage.setItem('trace_noise_list', idList)
                   setSelectNoise(value);
                 }}
                 // showSearch
