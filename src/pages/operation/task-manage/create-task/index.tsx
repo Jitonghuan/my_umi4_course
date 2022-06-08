@@ -12,6 +12,7 @@ import {
   useQueryAppEnvData,
   useQueryListContainer,
   useQueryNodeList,
+  useQueryClusterList,
 } from '../hooks';
 import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox } from 'antd';
 import { recordEditData, KVProps, jobContentProps } from '../type';
@@ -37,6 +38,7 @@ export default function addEnvData(props: RecordEditDataProps) {
   const [updateLoading, updateTaskManage] = useUpdateTask();
   const [loading, appEnvDataSource, queryAppEnvData] = useQueryAppEnvData();
   const [containerLoading, containerNameOption, getListContainer] = useQueryListContainer();
+  const [clusterListloading, clusterOption, getClusterList] = useQueryClusterList();
   const [nodeNameLoading, nodeNameOption, getNodeNameList] = useQueryNodeList();
   const [curTaskType, setCurTaskType] = useState<number>();
   const [curRequestMethod, setCurRequestMethod] = useState<string | undefined>('');
@@ -47,6 +49,7 @@ export default function addEnvData(props: RecordEditDataProps) {
   const [appList, setAppList] = useState<any[]>([]);
   const [checked, setChecked] = useState<boolean>(false);
   const [isEditPassword, setIsEditPassword] = useState<boolean>(false);
+  const [firstModify, setFirstModify] = useState<boolean>(false);
   const [optType, setOptType] = useState<string>('');
   const [initPassWord, setInitPassWord] = useState<string | undefined>('');
 
@@ -63,6 +66,13 @@ export default function addEnvData(props: RecordEditDataProps) {
       );
     });
   }, []);
+  useEffect(() => {
+    getClusterList();
+    if (initData && mode !== 'ADD') {
+      const clusterName = createTaskForm.getFieldValue('clusterName');
+      getNodeNameList(clusterName);
+    }
+  }, []);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -77,6 +87,8 @@ export default function addEnvData(props: RecordEditDataProps) {
       let jobContent: jobContentProps = {};
       let labelList: KVProps[] = [];
       setIsEditable(true);
+      setFirstModify(true);
+
       if (initData.enable === 1) {
         setIsJobChecked(true);
         setIsJobChangeOption(1);
@@ -109,6 +121,7 @@ export default function addEnvData(props: RecordEditDataProps) {
       setViewEditable(false);
       setCurRequestMethod('');
       setOptType('');
+      setFirstModify(false);
       setChecked(false);
       setIsEditPassword(false);
     };
@@ -158,7 +171,6 @@ export default function addEnvData(props: RecordEditDataProps) {
     }
     if (param.jobType === 5) {
       Object.assign(jobTypeContent, {
-        podName: param?.podName,
         image: param?.image,
         command: param?.command,
       });
@@ -241,10 +253,11 @@ export default function addEnvData(props: RecordEditDataProps) {
       setOptType('check');
     }
   };
-  const submitCluster = () => {
-    const clusterName = createTaskForm.getFieldValue('clusterName');
-    const params = createTaskForm.getFieldsValue();
+  const submitCluster = (clusterName: string) => {
     getNodeNameList(clusterName);
+    createTaskForm.setFieldsValue({
+      node: '',
+    });
   };
 
   return (
@@ -412,7 +425,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                       <Input.Password
                         style={{ width: '24vw' }}
                         placeholder=""
-                        disabled={optType === 'check' ? !isEditPassword : viewEditable}
+                        disabled={optType === 'check' ? !isEditPassword : firstModify}
                         visibilityToggle={false}
                       ></Input.Password>
                     </Form.Item>
@@ -500,7 +513,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                   <Form.Item label="密码" name="password" rules={[{ required: true, message: '这是必填项' }]}>
                     <Input.Password
                       style={{ width: '24vw' }}
-                      disabled={optType === 'check' ? !isEditPassword : viewEditable}
+                      disabled={optType === 'check' ? !isEditPassword : firstModify}
                       visibilityToggle={false}
                     ></Input.Password>
                   </Form.Item>
@@ -517,9 +530,6 @@ export default function addEnvData(props: RecordEditDataProps) {
             {/* ------------任务类型五新容器命令任务---------- */}
             {curTaskType === 5 && (
               <>
-                <Form.Item label="PodName" name="podName" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input placeholder="请输入PodName" style={{ width: '24vw' }} disabled={viewEditable}></Input>
-                </Form.Item>
                 <Form.Item label="镜像" name="image" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input.TextArea
                     placeholder="请输入镜像"
@@ -540,24 +550,26 @@ export default function addEnvData(props: RecordEditDataProps) {
             {/* ------------任务类型六K8S节点命令任务---------- */}
             {curTaskType === 6 && (
               <>
-                <Form.Item
-                  label="集群名称"
-                  name="clusterName"
-                  rules={[{ required: true, message: '这是必填项' }]}
-                  extra="输入完成集群名称后请点击尾部图标即可查询节点名称."
-                >
-                  <Input
+                <Form.Item label="集群名称" name="clusterName" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Select
                     style={{ width: '24vw' }}
-                    disabled={viewEditable}
-                    suffix={<CheckSquareOutlined onClick={submitCluster} />}
+                    allowClear
+                    showSearch
+                    options={clusterOption}
+                    loading={clusterListloading}
+                    onChange={submitCluster}
                   />
                 </Form.Item>
+                {/* <span style={{paddingLeft:10}}>  <CheckSquareOutlined onClick={submitCluster} /></span> */}
+
                 <Form.Item label="节点名称" name="node" rules={[{ required: true, message: '这是必填项' }]}>
                   <Select
                     style={{ width: '24vw' }}
                     disabled={viewEditable}
                     options={nodeNameOption}
                     loading={nodeNameLoading}
+                    showSearch
+                    allowClear
                   ></Select>
                 </Form.Item>
 

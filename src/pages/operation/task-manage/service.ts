@@ -34,3 +34,7 @@ export const listAppEnv = addAPIPrefix('/appManage/env/listAppEnv');
 
 /** 获取应用环境 */
 export const getNodeList = addAPIPrefix('/appManage/node/list');
+
+// /appManage/cluster/list
+/** 获取集群名称 */
+export const getClusterList = addAPIPrefix('appManage/cluster/list');

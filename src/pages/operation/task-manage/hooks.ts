@@ -213,7 +213,7 @@ export const queryAppList = () => {
       pageSize: 1000,
     },
   }).then((res: any) => {
-    if (res.success) {
+    if (res?.success) {
       const { dataSource = [] } = res.data || {};
       return dataSource.map((app: any) => {
         return {
@@ -328,4 +328,32 @@ export function useQueryNodeList(): [boolean, any, (clusterName: string) => Prom
   };
 
   return [loading, nodeNameOption, getNodeNameList];
+}
+
+//getClusterList
+export function useQueryClusterList(): [boolean, any, () => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [clusterOption, setClusterOption] = useState<Record<string, any>[]>([]);
+  const getClusterList = async () => {
+    setLoading(true);
+    await getRequest(APIS.getClusterList)
+      .then((result) => {
+        if (result?.success) {
+          let dataSource = result.data;
+          const option = dataSource?.map((item: any) => ({
+            label: item || '',
+            value: item || '',
+          }));
+
+          setClusterOption(option);
+        } else {
+          setClusterOption([]);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, clusterOption, getClusterList];
 }
