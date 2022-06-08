@@ -10,68 +10,52 @@ import { history } from 'umi';
 import moment from 'moment';
 import appConfig from '@/app.config';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Input } from 'antd';
+import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Input, Divider } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
-import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi } from './service';
+import { useListDeploymentList, getDeploymentEventListMethods } from '../container-info/hook';
+import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi, getListDeploymentEvent } from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import RollbackModal from '../components/rollback-modal';
-import { listAppEnvType } from '@/common/apis';
+import { LIST_STATUS_TYPE } from './schema';
+import DeploymentList from '../components/deployment-list';
+import { DeployContentProps } from './type';
 import './index.less';
 const rootCls = 'deploy-content-compo';
-export interface DeployContentProps {
-  /** 当前页面是否激活 */
-  isActive?: boolean;
-  /** 环境参数 */
-  envTypeCode: string;
-  // deployData:any
-  /** 部署下个环境成功回调 */
-  onDeployNextEnvSuccess: () => void;
-  intervalStop: () => void;
-  intervalStart: () => void;
-  viewLogEnv: string;
-  type: string;
-  viewLogEnvType: string;
-  // viewLogEnvType:string
-}
-export interface insStatusInfo {
-  insName?: string;
-  insIP?: string;
-  insNode: string;
-  image: string;
-  insStatus: string;
-}
-type statusTypeItem = {
-  color: string;
-  text: string;
-};
-const STATUS_TYPE: Record<number, statusTypeItem> = {
-  0: { text: '健康', color: 'error' },
-  1: { text: '不健康', color: 'success' },
-};
 
 export default function DeployContent(props: DeployContentProps) {
   const { viewLogEnv, type, viewLogEnvType } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
   const [formInstance] = Form.useForm();
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
-  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  // const [deploymentLoading, deploymentSource, setDeploymentSource, getDeploymentEventList] = useListDeploymentList();
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [currentEnvData, setCurrentEnvData] = useState<string>(); //当前选中的环境；
+  const [deploymentSource, setDeploymentSource] = useState<any[]>([]);
+  const [currentEnvData, setCurrentEnvData] = useState<string>(''); //当前选中的环境；
+  const [currentContainerName, setCurrentContainerName] = useState<string>('');
+  const [currentInstName, setCurrentInstName] = useState<string>('');
+  const [currentFilePath, setCurrentFilePath] = useState<string>('');
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
+  const initEnvCode = useRef<string>('');
+  const [deleteInstance] = useDeleteInstance();
+  const [instanceTableData, setInstanceTableData] = useState<any>();
+  const [instanceloading, setInstanceLoading] = useState<boolean>(false);
+  const envClusterData = useRef();
+  envClusterData.current = listEnvClusterData;
   const { appCode } = appData || {};
   const [appOperateLog, setAppOperateLog] = useState<any>([]);
   const [appOperateLoading, setAppOperateLoading] = useState<boolean>(false);
   const [rollbackVisible, setRollbackVisible] = useState(false);
+  const [deploymentLoading, setDeploymentLoading] = useState(false);
   const queryAppOperateLog = (envCodeParam: any) => {
     getRequest(queryAppOperate, { data: { appCode, envCode: envCodeParam } })
       .then((resp) => {
@@ -87,13 +71,20 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     if (!appCode) return;
   }, [appCode]);
-  const initEnvCode = useRef<string>('');
-  const [deleteInstance] = useDeleteInstance();
-  const [instanceTableData, setInstanceTableData] = useState<any>();
-  const [instanceloading, setInstanceLoading] = useState<boolean>(false);
 
-  const envClusterData = useRef();
-  envClusterData.current = listEnvClusterData;
+  const getDeploymentEventListInfo = (params: { appCode: any; envCode: string }) => {
+    setDeploymentLoading(true);
+    getDeploymentEventListMethods(params)
+      .then((res) => {
+        setDeploymentSource(res);
+        if (res.length == 0) {
+          getDeploymentTimerHandler('stop');
+        }
+      })
+      .finally(() => {
+        setDeploymentLoading(false);
+      });
+  };
 
   const queryInstanceList = async (appCode: any, envCode: any) => {
     getRequest(queryInstanceListApi, { data: { appCode, envCode } })
@@ -124,10 +115,22 @@ export default function DeployContent(props: DeployContentProps) {
     }
   };
 
+  const deploymentIntervalFunc = () => {
+    getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+  };
+
   //引用定时器
   const { getStatus: getTimerStatus, handle: timerHandler } = useInterval(intervalFunc, 3000, {
     immediate: false,
   });
+  //引用定时器
+  const { getStatus: getDeploymentStatus, handle: getDeploymentTimerHandler } = useInterval(
+    deploymentIntervalFunc,
+    10000,
+    {
+      immediate: false,
+    },
+  );
 
   // 进入页面加载环境和版本信息
   useEffect(() => {
@@ -147,6 +150,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: viewLogEnv });
             initEnvCode.current = viewLogEnv;
             setCurrentEnvData(viewLogEnv);
+
             if (viewLogEnv !== '') {
               loadInfoData(viewLogEnv).then(() => {
                 queryAppOperateLog(viewLogEnv);
@@ -156,13 +160,17 @@ export default function DeployContent(props: DeployContentProps) {
                       setInstanceLoading(true);
                       let data = result.data;
                       setInstanceTableData(data);
+
                       if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                        getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                         timerHandler('do', true);
                       } else {
                         timerHandler('stop');
+                        getDeploymentTimerHandler('stop');
                       }
                     } else {
                       timerHandler('stop');
+                      getDeploymentTimerHandler('stop');
                       return;
                     }
                   })
@@ -193,7 +201,7 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: initEnvCode.current });
             if (initEnvCode.current !== '') {
               let initLoadInfoData: any = [];
-
+              // getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
               getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
                 .then((result) => {
                   if (result.success) {
@@ -214,12 +222,15 @@ export default function DeployContent(props: DeployContentProps) {
                           setInstanceTableData(data);
 
                           if (result.data !== undefined && result.data.length !== 0 && result.data !== '') {
+                            getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                             timerHandler('do', true);
                           } else {
                             timerHandler('stop');
+                            getDeploymentTimerHandler('stop');
                           }
                         } else {
                           timerHandler('stop');
+                          getDeploymentTimerHandler('stop');
                           return;
                         }
                       })
@@ -228,6 +239,7 @@ export default function DeployContent(props: DeployContentProps) {
                       });
                   } else {
                     timerHandler('stop');
+                    getDeploymentTimerHandler('stop');
                   }
                 });
             }
@@ -254,38 +266,6 @@ export default function DeployContent(props: DeployContentProps) {
       });
     }
   };
-
-  useEffect(() => {
-    queryData();
-  }, []);
-
-  const queryData = () => {
-    getRequest(listAppEnvType, {
-      data: { appCode: appData?.appCode, isClient: false },
-    }).then((result) => {
-      const { data } = result || [];
-      let next: any = [];
-      (data || []).map((el: any) => {
-        if (el?.typeCode === 'dev') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
-        }
-        if (el?.typeCode === 'test') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
-        }
-        if (el?.typeCode === 'pre') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
-        }
-        if (el?.typeCode === 'prod') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
-        }
-      });
-      next.sort((a: any, b: any) => {
-        return a.sortType - b.sortType;
-      }); //升序
-      setEnvTypeData(next);
-    });
-  };
-
   const loadInfoData = async (envCode: any, operateType?: boolean) => {
     await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
       if (result.success) {
@@ -315,6 +295,7 @@ export default function DeployContent(props: DeployContentProps) {
       })
       .then(() => {
         setInstanceTableData([]); //重置实例列表数据
+        setDeploymentSource([]);
         if (clusterInfoData) {
           getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: envCode } })
             .then((result) => {
@@ -322,13 +303,16 @@ export default function DeployContent(props: DeployContentProps) {
                 setInstanceLoading(true);
                 let data = result.data;
                 setInstanceTableData(data);
+
                 if (result.data !== undefined && result.data.length !== 0) {
+                  getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                   timerHandler('do', true);
                 } else {
                   timerHandler('stop');
                 }
                 if (initEnvCode.current !== '') {
                   queryAppOperateLog(initEnvCode.current);
+                  // getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
                 }
               } else {
                 timerHandler('stop');
@@ -340,18 +324,18 @@ export default function DeployContent(props: DeployContentProps) {
             })
             .catch(() => {
               setInstanceTableData([]);
+              setDeploymentSource([]);
             });
         }
       })
       .catch(() => {
         setListEnvClusterData([]);
         setInstanceTableData([]);
+        setDeploymentSource([]);
       });
   };
   //加载容器信息
-  const [currentContainerName, setCurrentContainerName] = useState<string>('');
-  const [currentInstName, setCurrentInstName] = useState<string>('');
-  const [currentFilePath, setCurrentFilePath] = useState<string>('');
+
   const getContainerData = async (appCode: any, envCode: any, instName: string) => {
     getRequest(listContainer, { data: { appCode, envCode, instName } }).then((result) => {
       let data = result.data;
@@ -475,7 +459,35 @@ export default function DeployContent(props: DeployContentProps) {
               pagination={false}
               scroll={{ y: window.innerHeight - 340 }}
             >
-              <Table.Column title="名称" dataIndex="instName" width={140} render={(v, record) => <span>{v}</span>} />
+              <Table.Column
+                title="名称"
+                dataIndex="instName"
+                width={140}
+                render={(v, record) => (
+                  <a
+                    onClick={() => {
+                      history.replace({
+                        pathname: 'container-info',
+                        query: {
+                          appCode: appCode,
+                          envCode: currentEnvData,
+                          viewLogEnvType: envTypeCode,
+                          // initRecord:JSON.stringify(record)
+                        },
+                        state: {
+                          appCode: appCode,
+                          envCode: currentEnvData,
+                          viewLogEnvType: envTypeCode,
+                          infoRecord: record,
+                          id: appData?.id,
+                        },
+                      });
+                    }}
+                  >
+                    {v}
+                  </a>
+                )}
+              />
               <Table.Column
                 title="IP"
                 dataIndex="instIP"
@@ -488,30 +500,10 @@ export default function DeployContent(props: DeployContentProps) {
                 dataIndex="instStatus"
                 width={100}
                 render={(status, record) => {
-                  return status === 'Running' ? (
-                    <Tag color="green">Running</Tag>
-                  ) : status === 'Succeeded' ? (
-                    <Tag color="cyan">Succeeded</Tag>
-                  ) : status === 'Pending' ? (
-                    <Tag color="gold">Pending</Tag>
-                  ) : status === 'Failed' ? (
-                    <Tag color="red">Failed</Tag>
-                  ) : status === 'Initializing' ? (
-                    <Tag color="default">Initializing</Tag>
-                  ) : status === 'NotReady' ? (
-                    <Tag color="lime">NotReady</Tag>
-                  ) : status === 'Unavailable' ? (
-                    <Tag color="red">Unavailable</Tag>
-                  ) : status === 'Scheduling' ? (
-                    <Tag color="geekblue">Scheduling</Tag>
-                  ) : status === 'Removing' ? (
-                    <Tag color="purple">Removing</Tag>
-                  ) : status === '运行正常' ? (
-                    <Tag color="green">运行正常</Tag>
-                  ) : status === '已运行但健康检查异常' ? (
-                    <Tag color="yellow">已运行但健康检查异常</Tag>
-                  ) : (
-                    <Tag>{status}</Tag>
+                  return (
+                    <Tag color={LIST_STATUS_TYPE[status]?.color || 'default'}>
+                      {LIST_STATUS_TYPE[status]?.text || status}
+                    </Tag>
                   );
                 }}
               />
@@ -557,7 +549,21 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() =>
                           history.push(
-                            `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}`,
+                            {
+                              pathname: '/matrix/application/detail/viewLog',
+                              query: {
+                                appCode: appData?.appCode,
+                                envCode: currentEnvData,
+                                instName: record?.instName,
+                                viewLogEnvType: envTypeCode,
+                                optType: 'deployInfo',
+                                deploymentName: appData?.deploymentName,
+                              },
+                              state: {
+                                infoRecord: record,
+                              },
+                            },
+                            // `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}`,
                           )
                         }
                       >
@@ -568,7 +574,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}`,
+                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
                           );
                         }}
                       >
@@ -604,6 +610,9 @@ export default function DeployContent(props: DeployContentProps) {
                 />
               ) : null}
             </Table>
+
+            <Divider />
+            <DeploymentList dataSource={deploymentSource} loading={deploymentLoading} />
           </section>
           <section className="section-right1">
             <h3>操作记录</h3>
@@ -622,7 +631,7 @@ export default function DeployContent(props: DeployContentProps) {
                   </p>
                   <p>
                     <span>操作人：</span>
-                    <b>{item.operator}</b>
+                    <b>{item?.operator}</b>
                   </p>
                   {/* <p>
                      <span>操作类型：</span>
@@ -667,7 +676,6 @@ export default function DeployContent(props: DeployContentProps) {
               onClick={() => {
                 setCurrentFilePath(downloadLogform.getFieldValue('filePath'));
                 message.info('文件开始下载');
-                // window.open(`${fileDownload}?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${currentInstName}&containerName=${currentContainerName}&filePath=${currentFilePath}`)
                 setTimeout(() => {
                   setIsLogModalVisible(false);
                 }, 100);

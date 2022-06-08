@@ -12,6 +12,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { cancelDeploy, deployReuse, queryEnvsReq } from '@/pages/application/service';
 import { IProps } from './types';
+import { history } from 'umi';
 import { getPipelineUrl } from '@/pages/application/service';
 import './index.less';
 
@@ -69,6 +70,25 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
       }
     });
   }, []);
+
+  let errorInfo: any[] = [];
+  if (status && status.deployErrInfo) {
+    Object.keys(status.deployErrInfo).forEach((item) => {
+      if (status.deployErrInfo[item]) {
+        errorInfo.push({ key: item, errorMessage: status.deployErrInfo[item] });
+      }
+    });
+  }
+
+  function goToJenkins(item: any) {
+    let jenkinsUrl: any[] = [];
+    if (buildUrl && item?.key) {
+      const data = buildUrl[item?.key] || '';
+      if (data) {
+        window.open(data, '_blank');
+      }
+    }
+  }
 
   return (
     <div className={rootCls}>
@@ -149,6 +169,36 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
         <Descriptions.Item label="合并分支" span={2}>
           {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
+        {status?.deployErrInfo && errorInfo.length && (
+          <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
+            <div>
+              {errorInfo.map((err) => (
+                <div>
+                  <span style={{ color: 'black' }}> {err?.errorMessage ? `${err?.key}：` : ''}</span>
+                  <a
+                    style={{ color: 'red', textDecoration: 'underline' }}
+                    onClick={() => {
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
+                        goToJenkins(err);
+                      }
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
+                        localStorage.setItem('__init_env_tab__', metadata?.envTypeCode);
+                        history.push(
+                          `/matrix/application/detail/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}`,
+                        );
+                      }
+                    }}
+                  >
+                    {err?.errorMessage}
+                  </a>
+                  {appData?.appType !== 'frontend' && envInfo?.depoloyEnvs?.includes(err.key) && (
+                    <span style={{ color: 'gray' }}> {err?.errorMessage ? '（点击跳转）' : ''}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Descriptions.Item>
+        )}
       </Descriptions>
 
       <Modal
@@ -183,6 +233,6 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
   );
 };
 
-PublishDetail.defaultProps = {};
+// PublishDetail.defaultProps = {};
 
 export default PublishDetail;

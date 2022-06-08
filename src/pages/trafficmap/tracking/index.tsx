@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import moment from 'moment';
 import ResizablePro from '@/components/resiable-pro';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import LeftList from './components/left-list';
 import RrightTrace from './components/right-trace';
-import { Form, Select, Button, DatePicker, message, Switch, Divider, Input, Spin, Empty } from 'antd';
+import { Form, Select, Button, DatePicker, Divider, Input, Empty } from 'antd';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { getApplicationList, getInstance, getTrace, getEnvs, getTraceInfo } from '../service';
 import { leftItem } from './type';
@@ -69,6 +69,53 @@ export default function Tracking() {
 
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
 
+  // 降噪数据前端过滤处理
+  const filterData = useMemo(() => {
+    const copyData = JSON.parse(JSON.stringify(rightData));
+    // 忽略处理
+    const ignoreList = noiseList
+      .filter((item: any) => item.noiseReductionMeasure === 'ignore')
+      .map((item: any) => item.noiseReductionComponent);
+    const filterIgnore = (arr: any, ignoreOptions: any) => {
+      if (!ignoreOptions.length) return arr;
+      return arr.filter((e: any) => {
+        if (e?.children?.length) {
+          e.children = filterIgnore(e.children, ignoreOptions);
+        }
+        return !ignoreOptions.includes(e.component);
+      });
+    };
+    // 合并处理
+    const mergeList = noiseList
+      .filter((item: any) => item.noiseReductionMeasure === 'merge')
+      .map((item: any) => item.noiseReductionComponent);
+    const handleMerge = (arr: any, mergeOptions: any) => {
+      if (!mergeOptions) return arr;
+      return arr.reduce((res: any, current: any) => {
+        if (current?.children?.length) {
+          current.children = handleMerge(current.children, mergeList);
+        }
+        if (mergeList.includes(current?.component) && res?.length !== 0) {
+          const preData = res[res.length - 1];
+          if (current?.component === preData?.component) {
+            if (!preData.isMerged) {
+              preData.isMerged = true;
+              preData.endpointName = preData.component + ' [merge span]';
+              preData.children = [];
+            }
+            preData.durations = preData.durations + current.durations;
+            preData.selfDurations = preData.selfDurations + current.selfDurations;
+            preData.endTime = current.endTime;
+            return res;
+          }
+        }
+        return res.concat(current);
+      }, []);
+    };
+    // 先处理完忽略 再处理合并
+    return handleMerge(filterIgnore(copyData, ignoreList), mergeList);
+  }, [rightData, noiseList]);
+
   //获取环境列表
   useEffect(() => {
     getEnvs().then((res: any) => {
@@ -116,9 +163,21 @@ export default function Tracking() {
   // 获取右侧图的数据
   useEffect(() => {
     if (currentItem && currentItem?.traceIds && currentItem?.traceIds?.length !== 0) {
-      queryTreeData(noiseList);
+      queryTreeData();
     }
   }, [currentItem]);
+
+  // 降噪下拉框发生改变时
+  const noiseChange = (value: number[], options: any) => {
+    const selectOptions = options.filter((item: any) => value.includes(item.id));
+    setNoiseList(selectOptions);
+  };
+
+  // 获取localStore中存储的降噪id
+  const getNoiseIds = () => {
+    const storeIdList = JSON.parse(localStorage.getItem('trace_noise_list') || '[]');
+    return storeIdList.map((item: any) => item.value);
+  };
 
   //获取应用
   const getAppList = () => {
@@ -153,6 +212,7 @@ export default function Tracking() {
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
     setFirst(false);
+
     setLoading(true);
     setCurrentItem({});
     // setListData([]);
@@ -160,7 +220,7 @@ export default function Tracking() {
     const values = form.getFieldsValue();
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
-    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: noiseList })
+    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: getNoiseIds() })
       .then((res: any) => {
         if (res) {
           setListData(res?.data?.dataSource);
@@ -181,12 +241,12 @@ export default function Tracking() {
   };
 
   // 获取右侧数据
-  const queryTreeData = (value: any) => {
+  const queryTreeData = () => {
     if (!currentItem?.traceIds || !currentItem?.traceIds[0]) return;
     setRightLoading(true);
-    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: value })
+    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv })
       .then((res: any) => {
-        if (res?.success) {
+        if (res?.success && res?.data) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
           const handleData = (data: any) => {
             if (!data) {
@@ -202,11 +262,9 @@ export default function Tracking() {
             data.durations = parseInt(data.endTime) - parseInt(data.startTime); //执行时间
             const self = data.durations - data.children.reduce((p: number, c: any) => p + c.durations, 0);
             data.selfDurations = self < 0 ? 0 : self; //自身执行时间
-
             return data;
           };
           const rightData = handleData(res?.data);
-
           setRightData([rightData]);
         }
       })
@@ -217,12 +275,6 @@ export default function Tracking() {
 
   const leftItemChange = (value: leftItem) => {
     setCurrentItem(value);
-  };
-
-  // 降噪下拉框发生改变时
-  const noiseChange = (value: number[]) => {
-    queryTreeData(value);
-    setNoiseList(value);
   };
 
   const timeOptionChange = (value: number) => {
@@ -291,8 +343,8 @@ export default function Tracking() {
             </Select>
           </div>
         </div>
-        <Divider />
-        <div className="search-form" style={{ marginBottom: '20px' }}>
+        <Divider style={{ marginTop: 2, marginBottom: 0 }} />
+        <div className="search-form" style={{ marginBottom: '6px' }}>
           <Form
             layout="inline"
             form={form}
@@ -397,10 +449,10 @@ export default function Tracking() {
                 />
               }
               rightComp={
-                rightData?.length !== 0 || rightLoading ? (
+                filterData?.length !== 0 || rightLoading ? (
                   <RrightTrace
                     item={currentItem || {}}
-                    data={rightData}
+                    data={filterData}
                     envCode={selectEnv}
                     selectTime={selectTime}
                     noiseChange={noiseChange}

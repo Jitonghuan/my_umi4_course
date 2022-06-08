@@ -262,7 +262,9 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
           width={120}
           align="center"
           title="分支review状态"
-          render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
+          render={(text: number) => (
+            <Tag color={STATUS_TYPE[text]?.color || 'default'}>{STATUS_TYPE[text]?.text || ''}</Tag>
+          )}
         />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={100} />

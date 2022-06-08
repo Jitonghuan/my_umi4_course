@@ -19,6 +19,9 @@ export const delAppEnv = `${appConfig.apiPrefix}/appManage/env/delAppEnv`;
 /** 查看环境 */
 export const queryEnvList = `${appConfig.apiPrefix}/appManage/env/list`;
 
+/** 开启codeReview */
+export const envAppCR = `${appConfig.apiPrefix}/appManage/env/appCR`;
+
 /** 查询应用列表 */
 export const queryAppsUrl = `${appConfig.apiPrefix}/appManage/list`;
 

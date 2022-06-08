@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Breadcrumb, Card } from 'antd';
 import type { CardProps } from 'antd/lib/card';
-import { history } from 'umi';
 import classnames from 'classnames';
 import './index.less';
 
@@ -76,17 +75,6 @@ export default function VCPageContent(props: React.PropsWithChildren<IProps>) {
 
   return (
     <div className={clazz} style={{ ...curStyle }}>
-      {isShowBreadcrumb && (
-        <div className="vc-page-content-breadcrumb">
-          <Breadcrumb>
-            {breadcrumbLists.map((el, index) => (
-              <Breadcrumb.Item key={index}>
-                <a onClick={() => history.push(el.path)}>{el.name}</a>
-              </Breadcrumb.Item>
-            ))}
-          </Breadcrumb>
-        </div>
-      )}
       {props.children}
     </div>
   );
