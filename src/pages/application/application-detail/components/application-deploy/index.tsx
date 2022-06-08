@@ -18,6 +18,7 @@ import { values } from 'lodash';
 import StepItem from './deploy-content/components/publish-content/steps/step-item';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl, retry } from '@/pages/application/service';
+import { active } from '_@types_d3-transition@3.0.1@@types/d3-transition';
 
 const { TabPane } = Tabs;
 
@@ -43,7 +44,8 @@ export default function ApplicationDeploy(props: any) {
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
-    history.push({ query: { ...props.location.query, activeTab: tabActive } });
+    history.push({ query: { ...props.location.query, activeTab: tabActive } })
+    getPipeline(tabActive)
   }, [tabActive]);
 
   // 二方包直接渲染另一个页面
@@ -52,7 +54,6 @@ export default function ApplicationDeploy(props: any) {
   }
   useEffect(() => {
     queryData();
-    getPipeline(tabActive);
   }, []);
 
   const nextTab = useMemo(() => {
@@ -123,7 +124,7 @@ export default function ApplicationDeploy(props: any) {
   const handleTabChange = (v: string) => {
     setCurrentValue('');
     setTabActive(v);
-    getPipeline(v);
+    // getPipeline(v);
   };
 
   // 获取流水线
