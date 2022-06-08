@@ -174,12 +174,15 @@ export default function RrightTrace(props: any) {
         // 将localStorge中存储的降噪进行回显
         const storeIdList = localStorage.getItem('trace_noise_list') || '';
         const nowIdList = data?.map((item: any) => item?.id)
+        const resArray: any = []
         storeIdList.split(',').forEach((item: any) => {
           item = parseInt(item);
           if (nowIdList.includes(item)) {
-            setSelectNoise((value: any) => value.concat(item))
+            resArray.push(item)
           }
         })
+        localStorage.setItem('trace_noise_list', resArray)
+        setSelectNoise(resArray)
       }
     });
   }, []);
@@ -252,8 +255,6 @@ export default function RrightTrace(props: any) {
                 labelInValue
                 onChange={(value) => {
                   const idList = value.map((item: any) => item.value)
-                  console.log(value);
-
                   localStorage.setItem('trace_noise_list', idList)
                   setSelectNoise(idList);
                 }}

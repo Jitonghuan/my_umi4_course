@@ -70,51 +70,46 @@ export default function Tracking() {
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
 
   // 降噪数据前端过滤处理
-  const filteredSpans = useMemo(() => {
+  const filterData = useMemo(() => {
     const copyData = JSON.parse(JSON.stringify(rightData));
-
-    const filterOptioins = noiseList
-      .filter((item: any) => item.noiseReductionMeasure === "ignore")
-      .map((e: any) => e.noiseReductionComponent);
     // 忽略处理
-    const ignoreFilter = (arr: any, options: any[]) => {
-      if (!filterOptioins?.length) {
-        return arr;
-      }
-      return arr.filter((span: any) => {
-        if (span.children?.length) {
-          span.children = ignoreFilter(span.children, options);
+    const ignoreList = noiseList.filter((item: any) => item.noiseReductionMeasure === 'ignore').map((item: any) => item.noiseReductionComponent);
+    const filterIgnore = (arr: any, ignoreOptions: any) => {
+      if (!ignoreOptions.length) return arr;
+      return arr.filter((e: any) => {
+        if (e?.children?.length) {
+          e.children = filterIgnore(e.children, ignoreOptions)
         }
-        return !options.includes(span.component)
+        return !ignoreOptions.includes(e.component)
       })
     }
     // 合并处理
-    const mergeOptioins = noiseList
-      .filter((item: any) => item.noiseReductionMeasure === 'merge')
-      .map((e: any) => e.noiseReductionComponent);
-    const merge = (arr: any[], options: any) => arr.reduce((res: any, span: any) => {
-      if (options.includes(span.component) && res.length !== 0) {
-        const prew = res[res.length - 1];
-        if (prew.component === span.component) {
-          if (!prew.isMerged) {
-            prew.isMerged = true;
-            prew.endpointName = span.component + '[merge span]';
-            prew.children = [];
-          }
-          prew.durations = prew.durations + span.durations;
-          prew.selfDurations = prew.selfDurations + span.selfDurations;
-          prew.endTime = span.endTime;
-
-          return res;
+    const mergeList = noiseList.filter((item: any) => item.noiseReductionMeasure === 'merge').map((item: any) => item.noiseReductionComponent);
+    const handleMerge = (arr: any, mergeOptions: any) => {
+      if (!mergeOptions) return arr;
+      return arr.reduce((res: any, current: any) => {
+        if (current?.children?.length) {
+          current.children = handleMerge(current.children, mergeList);
         }
-      }
-      if (span.children?.length) {
-        span.children = merge(span.children, options);
-      }
-      return res.concat(span);
-    }, [])
-    return merge(ignoreFilter(copyData, filterOptioins), mergeOptioins);
-
+        if (mergeList.includes(current?.component) && res?.length !== 0) {
+          const preData = res[res.length - 1];
+          if (current?.component === preData?.component) {
+            if (!preData.isMerged) {
+              preData.isMerged = true;
+              preData.endpointName = preData.component + ' [merge span]';
+              preData.children = [];
+            }
+            preData.durations = preData.durations + current.durations;
+            preData.selfDurations = preData.selfDurations + current.selfDurations;
+            preData.endTime = current.endTime;
+            return res;
+          }
+        }
+        return res.concat(current)
+      }, [])
+    }
+    // 先处理完忽略 再处理合并
+    return handleMerge(filterIgnore(copyData, ignoreList), mergeList)
   }, [rightData, noiseList])
 
   //获取环境列表
@@ -242,7 +237,7 @@ export default function Tracking() {
     setRightLoading(true);
     getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv })
       .then((res: any) => {
-        if (res?.success) {
+        if (res?.success && res?.data) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
           const handleData = (data: any) => {
             if (!data) {
@@ -258,11 +253,9 @@ export default function Tracking() {
             data.durations = parseInt(data.endTime) - parseInt(data.startTime); //执行时间
             const self = data.durations - data.children.reduce((p: number, c: any) => p + c.durations, 0);
             data.selfDurations = self < 0 ? 0 : self; //自身执行时间
-
             return data;
           };
           const rightData = handleData(res?.data);
-
           setRightData([rightData]);
         }
       })
@@ -304,11 +297,6 @@ export default function Tracking() {
     }
     return roots;
   }
-
-
-  // const handleNoise=(fil)=>{
-
-  // }
 
   return (
     <PageContainer className="tracking-container">
@@ -453,10 +441,10 @@ export default function Tracking() {
                 />
               }
               rightComp={
-                filteredSpans?.length !== 0 || rightLoading ? (
+                filterData?.length !== 0 || rightLoading ? (
                   <RrightTrace
                     item={currentItem || {}}
-                    data={filteredSpans}
+                    data={filterData}
                     envCode={selectEnv}
                     selectTime={selectTime}
                     noiseChange={noiseChange}
