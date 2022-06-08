@@ -12,13 +12,13 @@ import { colunms } from '@/pages/monitor/business/schema';
 const r = {
     left: {
         tableName: "医保上传检验单",
-        recordCount: 535,
+        recordCount: 330,
         remark: '医保上传检验单',
         type: 'left'
     },
     right: {
         tableName: "校验明细",
-        recordCount: 534,
+        recordCount: 329,
         remark: '校验明细',
         type: 'right'
     },
