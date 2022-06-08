@@ -22,8 +22,8 @@ const r = {
         remark: '校验明细',
         type: 'right'
     },
-    leftRestCount: 535,
-    rightRestCount: 534,
+    leftRestCount: 330,
+    rightRestCount: 329,
     corssCount: 205
 };
 export default function DetailDraw(props: any) {
