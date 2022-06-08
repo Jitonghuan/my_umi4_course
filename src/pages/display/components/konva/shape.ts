@@ -562,7 +562,7 @@ export class Graph {
             fill: 'orange',
             stroke: '#d18702',
             strokeWidth: 1,
-            tableName: "医保上传-校验明细交集数据",
+            tableName: "医保上传检验单-校验明细交集数据",
             recordCount: 205,
             shadowColor: 'orange',
             shadowBlur: 20,

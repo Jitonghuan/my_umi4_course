@@ -21,7 +21,7 @@ export default function DomainConfigs() {
         }
         setTableTitle('医保上传检验单表-校验明细表交集数据')
         setColumn(commonColumns);
-        setDataSource(commonTableData)
+        setDataSource(commonTableData.slice(0, 205))
     }
     const onJoin = (l: any, right: any) => {
 
