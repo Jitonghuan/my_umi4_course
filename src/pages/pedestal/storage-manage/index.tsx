@@ -91,8 +91,12 @@ export default function ApplicationDetail(props: any) {
           }}
         >
           <TabPane tab="存储大盘" key="storage-dashboard"></TabPane>
-          {!href && <TabPane tab="节点管理" key="node-manage"></TabPane>}
-          {!href && <TabPane tab="卷管理" key="volume-manage"></TabPane>}
+          {/* {!href &&  */}
+          <TabPane tab="节点管理" key="node-manage"></TabPane>
+          {/* } */}
+          {/* {!href &&  */}
+          <TabPane tab="卷管理" key="volume-manage"></TabPane>
+          {/* } */}
         </Tabs>
       </FilterCard>
 

@@ -5,7 +5,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import LeftList from './components/left-list';
 import RrightTrace from './components/right-trace';
-import { Form, Select, Button, DatePicker, message, Switch, Divider, Input, Spin, Empty } from 'antd';
+import { Form, Select, Button, DatePicker, Divider, Input, Empty } from 'antd';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { getApplicationList, getInstance, getTrace, getEnvs, getTraceInfo } from '../service';
 import { leftItem } from './type';
@@ -209,6 +209,7 @@ export default function Tracking() {
   // 获取左侧list数据
   const queryTraceList = (params: any) => {
     setFirst(false);
+
     setLoading(true);
     setCurrentItem({});
     // setListData([]);
@@ -222,7 +223,7 @@ export default function Tracking() {
           setListData(res?.data?.dataSource);
           setTotal(res?.data?.pageInfo?.total);
           if (res?.data?.dataSource?.length === 0 || !res?.success) {
-            setRightData([])
+            setRightData([]);
             setRightLoading(false);
           }
         }
@@ -329,7 +330,7 @@ export default function Tracking() {
               }}
               value={[moment(selectTime.start), moment(selectTime.end)]}
               format="YYYY-MM-DD HH:mm:ss"
-            // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
+              // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
             />
             <Select value={timeOption} onChange={timeOptionChange} style={{ width: 140 }}>
               {START_TIME_ENUMS.map((time) => (
@@ -340,8 +341,8 @@ export default function Tracking() {
             </Select>
           </div>
         </div>
-        <Divider />
-        <div className="search-form" style={{ marginBottom: '20px' }}>
+        <Divider style={{ marginTop: 2, marginBottom: 0 }} />
+        <div className="search-form" style={{ marginBottom: '6px' }}>
           <Form
             layout="inline"
             form={form}

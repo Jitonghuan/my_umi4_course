@@ -17,7 +17,8 @@ export default [
     path: 'index',
     // name: '首页',
     icon: 'icon-poc_index',
-    component: '@/pages/index',
+    // component: '@/pages/index',
+    component: '@/pages/dashboard/workplace',
   },
   {
     path: `${baseRoutePath}/application`,
@@ -216,6 +217,14 @@ export default [
             component: '@/pages/application/application-detail/components/deploy-info',
           },
           {
+            path: 'container-info',
+            name: '容器信息',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/deploy-info/container-info',
+          },
+
+          {
             path: 'loginShell',
             name: '登陆shell',
             key: 'appList',
@@ -341,6 +350,14 @@ export default [
             component: '@/pages/application/project-environment/environment-deploy/components/deploy-info',
           },
           {
+            path: 'container-info',
+            name: '容器信息',
+            key: 'project-environment',
+            hideInMenu: true,
+            component:
+              '@/pages/application/project-environment/environment-deploy/components/deploy-info/container-info',
+          },
+          {
             path: 'loginShell',
             name: '登陆shell',
             key: 'project-environment',
@@ -408,7 +425,7 @@ export default [
       {
         path: 'function',
         key: 'function',
-        name: '发布功能管理',
+        name: '发布功能',
         component: '@/pages/publish/function',
         exact: true,
       },
@@ -435,7 +452,7 @@ export default [
       },
       {
         path: 'plan',
-        name: '发布计划管理',
+        name: '发布计划',
         key: 'plan',
         exact: true,
         component: '@/pages/publish/plan',
@@ -792,62 +809,62 @@ export default [
     ],
   },
   {
-    path: 'delivery',
-    name: '交付管理',
+    path: 'station',
+    name: '建站管理',
     icon: 'icon-activity',
     routes: [
       {
         path: 'product-list',
         name: '产品列表',
         key: 'product-list',
-        component: '@/pages/delivery/product-list',
+        component: '@/pages/station/product-list',
       },
       {
         path: 'product-description',
         name: '产品描述',
         key: 'product-list',
-        component: '@/pages/delivery/product-list/product-description',
+        component: '@/pages/station/product-list/product-description',
         hideInMenu: true,
       },
       {
         path: 'version-detail',
         name: '版本详情',
         key: 'product-list',
-        component: '@/pages/delivery/version-detail',
+        component: '@/pages/station/version-detail',
         hideInMenu: true,
       },
       {
         path: 'component-center',
         name: '组件中心',
         key: 'component-center',
-        component: '@/pages/delivery/component-center',
+        component: '@/pages/station/component-center',
         routes: [],
       },
       {
         path: 'component-detail',
         name: '组件详情',
         key: 'component-center',
-        component: '@/pages/delivery/component-center/component-detail',
+        component: '@/pages/station/component-center/component-detail',
         hideInMenu: true,
       },
       {
         path: 'product-management',
         name: '制品管理',
         key: 'product-management',
-        component: '@/pages/delivery/product-management',
+        component: '@/pages/station/product-management',
       },
       {
         path: 'product-config',
-        name: '配置交付参数',
+        name: '配置建站参数',
         key: 'product-management',
-        component: '@/pages/delivery/product-management/product-config',
+        component: '@/pages/station/product-management/product-config',
         hideInMenu: true,
       },
       {
         path: 'component-tmpl',
         name: '组件模版',
         key: 'component-tmpl',
-        component: '@/pages/delivery/component-tmpl',
+        component: '@/pages/station/component-tmpl',
       },
     ],
     //测试环境和正式环境暂不展示
@@ -1000,6 +1017,13 @@ export default [
             hideInMenu: true,
           },
           {
+            path: 'application-sync-front',
+            name: '前端应用同步',
+            key: 'cluster-clusterZs',
+            component: '@/pages/cluster/cluster-zs/application-sync-front',
+            hideInMenu: true,
+          },
+          {
             path: 'operation-log',
             name: '操作记录',
             key: 'cluster-clusterZs',
@@ -1051,6 +1075,20 @@ export default [
         key: 'storage-manage',
         component: '@/pages/pedestal/storage-manage/volume-detail',
         hideInMenu: true,
+      },
+    ],
+  },
+  {
+    path: 'display',
+    name: '数据分析',
+    icon: 'icon-dataset',
+    routes: [
+      {
+        path: 'main',
+        name: '实战分析',
+        key: 'display',
+        component: '@/pages/display',
+        // hideInMenu: true,
       },
     ],
   },

@@ -2,6 +2,16 @@
 // @import '/src/assets/styles/mixins.less';
 .page-logger-search-content {
   position: relative;
+  // .ant-dropdown-trigger .ant-dropdown-open{
+  .ant-menu-root .ant-menu-vertical,
+  .ant-menu-root.ant-menu-vertical-left,
+  .ant-menu-root.ant-menu-vertical-right,
+  .ant-menu-root.ant-menu-inline {
+    box-shadow: none;
+    background: rgb(197, 197, 206);
+  }
+
+  // }
 
   .ant-card-body {
     height: 100%;
@@ -97,4 +107,10 @@
 
     // justify-content: flex-end;
   }
+}
+.ant-dropdown .ant-menu-root.ant-menu-vertical,
+.ant-dropdown .ant-menu-root.ant-menu-vertical-left,
+.ant-dropdown .ant-menu-root.ant-menu-vertical-right,
+.ant-dropdown .ant-menu-root.ant-menu-inline {
+  background-color: rgb(196, 194, 194);
 }

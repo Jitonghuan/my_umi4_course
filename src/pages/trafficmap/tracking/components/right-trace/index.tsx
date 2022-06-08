@@ -201,11 +201,42 @@ export default function RrightTrace(props: any) {
     <div className="trace-wrapper">
       <DetailModal visible={visible} detailData={detailData} handleCancel={handleCancel}></DetailModal>
       <div className="trace-wrapper-top">
-        <div style={{ fontWeight: '800' }}>
-          端点：{item.endpointNames && item?.endpointNames?.length !== 0 ? item?.endpointNames[0] : '--'}
+        <div className="trace-wrapper-top-info">
+          <span style={{ maxWidth: '50vw', overflowX: 'scroll', whiteSpace: 'nowrap' }}>
+            <div style={{ fontWeight: '800', maxWidth: '100%' }}>
+              端点：{item.endpointNames && item?.endpointNames?.length !== 0 ? item?.endpointNames[0] : '--'}
+            </div>
+          </span>
+          <span style={{ overflowX: 'scroll', whiteSpace: 'nowrap', paddingLeft: 10 }}>
+            <div>
+              <span>开始时间：{moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss') || '--'}</span>
+              <span style={{ margin: '0px 12px' }}>
+                持续时间：<Tag color="default">{item?.duration || '--'}ms</Tag>
+              </span>
+              <Tag
+                // type="primary"
+                // size="small"
+                color="blue"
+                onClick={() => {
+                  history.push({
+                    pathname: '/matrix/logger/search',
+                    query: {
+                      envCode,
+                      startTime: moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss'),
+                      endTime: moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss'),
+                      traceId: selectTraceId,
+                    },
+                  });
+                }}
+              >
+                查看日志
+              </Tag>
+            </div>
+          </span>
         </div>
-        <div className="top-select-btn">
-          <div>
+
+        <div className="top-select-info-second">
+          <div style={{ maxWidth: '50vw', overflowX: 'scroll', whiteSpace: 'nowrap' }}>
             traceID:
             <Select
               options={traceIdOptions}
@@ -214,39 +245,14 @@ export default function RrightTrace(props: any) {
               onChange={(id) => {
                 setSelectTraceId(id);
               }}
-              style={{ width: 350, marginLeft: '10px' }}
+              style={{ width: 440, marginLeft: '10px' }}
             />
             <CopyToClipboard text={selectTraceId} onCopy={() => message.success('复制成功！')}>
               <span style={{ marginLeft: 8, color: 'royalblue' }}>
                 <CopyOutlined />
               </span>
             </CopyToClipboard>
-          </div>
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => {
-              history.push({
-                pathname: '/matrix/logger/search',
-                query: {
-                  envCode,
-                  startTime: moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss'),
-                  endTime: moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss'),
-                  traceId: selectTraceId,
-                },
-              });
-            }}
-          >
-            查看日志
-          </Button>
-        </div>
-        <div className="top-final">
-          <div>
-            <span>开始时间：{moment(Number(item?.start)).format('YYYY-MM-DD HH:mm:ss') || '--'}</span>
-            <span style={{ margin: '0px 20px' }}>
-              持续时间：<Tag color="default">{item?.duration || '--'}ms</Tag>
-            </span>
-            <span>
+            <span style={{ paddingLeft: 8 }}>
               降噪:
               <Select
                 mode="multiple"
@@ -260,25 +266,27 @@ export default function RrightTrace(props: any) {
                   setSelectNoise(idList);
                 }}
                 // showSearch
-                style={{ width: 180, marginLeft: '10px' }}
+                style={{ width: 180, marginRight: '10px' }}
                 autoClearSearchValue
               />
             </span>
           </div>
           <div>
-            {titleList.map((item) => {
-              return (
-                <span
-                  className="top-trace-btn"
-                  style={{ backgroundColor: item.key === activeBtn ? '#137eec' : '#b0a8a8' }}
-                  onClick={() => {
-                    setActiveBtn(item.key);
-                  }}
-                >
-                  {item.icon} {item.label}
-                </span>
-              );
-            })}
+            <span>
+              {titleList.map((item) => {
+                return (
+                  <span
+                    className="top-trace-btn"
+                    style={{ backgroundColor: item.key === activeBtn ? '#137eec' : '#b0a8a8' }}
+                    onClick={() => {
+                      setActiveBtn(item.key);
+                    }}
+                  >
+                    {item.icon} {item.label}
+                  </span>
+                );
+              })}
+            </span>
           </div>
         </div>
       </div>
@@ -313,8 +321,9 @@ export default function RrightTrace(props: any) {
                             }
                           >
                             <div
-                              className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${node.isError ? 'error-node' : ''
-                                } span-item`}
+                              className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${
+                                node.isError ? 'error-node' : ''
+                              } span-item`}
                               onClick={() => {
                                 setDetailData(node);
                                 setVisible(true);
@@ -341,6 +350,7 @@ export default function RrightTrace(props: any) {
                   defaultExpandAllRows={true}
                   dataSource={data}
                   pagination={false}
+                  bordered
                   rowClassName={(record: any) => (record?.isError ? 'error-line' : '')}
                   onRow={(record: any, index: any) => {
                     return {

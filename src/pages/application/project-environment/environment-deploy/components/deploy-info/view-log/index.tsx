@@ -3,7 +3,7 @@
 // @create 2021/11/12 17:35
 
 import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffect } from 'react';
-import { Select, Card, message, Form, Divider, Button } from 'antd';
+import { Select, Card, message, Form, Tag, Button, Checkbox } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
 import appConfig from '@/app.config';
@@ -11,15 +11,19 @@ import { history } from 'umi';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import DetailContext from '../../../context';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
 export default function ViewLog(props: any) {
+  const [previous, setPrevious] = useState<boolean>(false);
+  const { infoRecord } = props.location.state;
   const [viewLogform] = Form.useForm();
   const { appData } = useContext(DetailContext);
   const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
-  const { appCode, envCode, instName, viewLogEnvType, projectEnvCode, projectEnvName } = props.location.query;
+  const { appCode, envCode, instName, projectEnvCode, projectEnvName, optType, containerName, deploymentName } =
+    props.location.query;
   const logData = useRef<string>('');
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
@@ -27,6 +31,9 @@ export default function ViewLog(props: any) {
   let scrollBegin = useRef<boolean>(true);
 
   useLayoutEffect(() => {
+    if (Object.getOwnPropertyNames(infoRecord).length == 0) {
+      return;
+    }
     getRequest(APIS.listContainer, { data: { appCode, envCode: projectEnvCode, instName: instName } }).then(
       (result) => {
         let data = result.data;
@@ -35,13 +42,25 @@ export default function ViewLog(props: any) {
             value: item?.containerName,
             label: item?.containerName,
           }));
-          currentContainerName = listContainer[0].value;
-          viewLogform.setFieldsValue({ containerName: currentContainerName });
-          setCurrentContainer(currentContainerName);
-          setQueryListContainer(listContainer);
-          let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'test' ? 'test' : 'dev';
+
+          if (optType && optType === 'containerInfo') {
+            currentContainerName = containerName;
+            viewLogform.setFieldsValue({ containerName: containerName });
+            setCurrentContainer(containerName);
+            setQueryListContainer([
+              {
+                label: containerName,
+                value: containerName,
+              },
+            ]);
+          } else {
+            currentContainerName = deploymentName;
+            viewLogform.setFieldsValue({ containerName: currentContainerName });
+            setCurrentContainer(currentContainerName);
+            setQueryListContainer(listContainer);
+          }
           ws.current = new WebSocket(
-            `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&action=watchContainerLog&tailLine=200`,
+            `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,
           ); //建立通道
           let dom: any = document?.getElementById('result-log');
           ws.current.onmessage = (evt: any) => {
@@ -69,44 +88,7 @@ export default function ViewLog(props: any) {
         }
       },
     );
-  }, []);
-
-  const selectListContainer = (getContainer: string) => {
-    currentContainerName = getContainer;
-    setCurrentContainer(getContainer);
-    if (ws.current) {
-      ws.current.onclose = () => {
-        message.info('websocket已关闭，请刷新页面!');
-      };
-
-      ws.current.onopen = () => {
-        message.success('更换容器，WebSocket链接成功!');
-      };
-      let dom: any = document?.getElementById('result-log');
-      ws.current.onmessage = (evt: any) => {
-        if (dom) {
-          // 获取滚动条到滚动区域底部的高度
-          const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
-          let bottom = 0;
-          if (scrollB) {
-            // 计算滚动条到日志div底部的距离
-            bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
-          }
-          //如果返回结果是字符串，就拼接字符串，或者push到数组，
-          logData.current += evt.data;
-          setLog(logData.current);
-          let html = ansi_up.ansi_to_html(logData.current);
-          dom.innerHTML = html;
-          if (bottom <= 20) {
-            dom.scrollTo(0, dom.scrollHeight);
-          }
-        }
-      };
-      ws.current.onerror = () => {
-        message.warning('webSocket 链接失败');
-      };
-    }
-  };
+  }, [projectEnvCode]);
 
   // 下载日志
   const downloadLog = () => {
@@ -141,35 +123,151 @@ export default function ViewLog(props: any) {
     scrollBegin.current = true;
   };
   //关闭页面
+  const id = appData?.id;
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.push({
-        pathname: `/matrix/application/environment-deploy/deployInfo`,
-        query: {
-          appCode: appCode,
-          projectEnvCode: projectEnvCode,
-          // type: 'viewLog_goBack',
-          projectEnvName: projectEnvName,
-          // viewLogEnv:projectEnvCode
-        },
-      });
+      if (optType && optType === 'containerInfo') {
+        history.push({
+          pathname: `/matrix/application/environment-deploy/container-info`,
+          query: {
+            appCode: appCode,
+            projectEnvCode: projectEnvCode,
+            projectEnvName: projectEnvName,
+            // viewLogEnvType: viewLogEnvType,
+          },
+          state: {
+            appCode: appCode,
+            projectEnvCode: projectEnvCode,
+            projectEnvName: projectEnvName,
+            // viewLogEnvType: viewLogEnvType,
+            infoRecord: infoRecord,
+            id: appData?.id,
+          },
+        });
+      } else {
+        history.push({
+          pathname: `/matrix/application/environment-deploy/deployInfo`,
+          query: {
+            appCode: appCode,
+            projectEnvCode: projectEnvCode,
+            type: 'viewLog_goBack',
+            id: id + '',
+            projectEnvName: projectEnvName,
+            viewLogEnv: projectEnvCode,
+          },
+        });
+      }
     }
+
     // history.goBack({envCode});
+  };
+  const selectListContainer = (getContainer: string) => {
+    // currentContainerName = getContainer;
+    setCurrentContainer(getContainer);
+    if (ws.current) {
+      ws.current.close();
+      logData.current = '';
+      setLog(logData.current);
+      scrollBegin.current = true;
+      ws.current = new WebSocket(
+        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&previous=${previous}&action=watchContainerLog&tailLine=200`,
+      ); //建立通道
+      ws.current.onopen = () => {
+        message.success('更换容器成功!');
+      };
+      let dom: any = document?.getElementById('result-log');
+      ws.current.onmessage = (evt: any) => {
+        if (dom) {
+          // 获取滚动条到滚动区域底部的高度
+          const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+          let bottom = 0;
+          if (scrollB) {
+            // 计算滚动条到日志div底部的距离
+            bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+          }
+          //如果返回结果是字符串，就拼接字符串，或者push到数组，
+          logData.current += evt.data;
+          setLog(logData.current);
+          let html = ansi_up.ansi_to_html(logData.current);
+          dom.innerHTML = html;
+          if (bottom <= 20) {
+            dom.scrollTo(0, dom.scrollHeight);
+          }
+        }
+      };
+      ws.current.onerror = () => {
+        message.warning('webSocket 链接失败');
+      };
+    }
+  };
+  const onChange = (e: CheckboxChangeEvent) => {
+    setPrevious(e.target.checked);
+    if (ws.current) {
+      ws.current.close();
+      logData.current = '';
+      setLog(logData.current);
+      scrollBegin.current = true;
+      ws.current = new WebSocket(
+        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
+      ); //建立通道
+      if (e.target.checked) {
+        ws.current.onopen = () => {
+          message.success('已切换至以前的容器!');
+        };
+      } else {
+        ws.current.onopen = () => {
+          message.success('切换至当前容器!');
+        };
+      }
+
+      let dom: any = document?.getElementById('result-log');
+      ws.current.onmessage = (evt: any) => {
+        if (dom) {
+          // 获取滚动条到滚动区域底部的高度
+          const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+          let bottom = 0;
+          if (scrollB) {
+            // 计算滚动条到日志div底部的距离
+            bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+          }
+          //如果返回结果是字符串，就拼接字符串，或者push到数组，
+          logData.current += evt.data;
+          setLog(logData.current);
+          let html = ansi_up.ansi_to_html(logData.current);
+          dom.innerHTML = html;
+          if (bottom <= 20) {
+            dom.scrollTo(0, dom.scrollHeight);
+          }
+        }
+      };
+      ws.current.onerror = () => {
+        message.warning('webSocket 链接失败');
+      };
+    }
   };
 
   return (
     <ContentCard noPadding className="viewLog">
       <div className="loginShellContent" style={{ height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 6 }}>
         {/* <pre>查看日志{'>>>>'}</pre> */}
+        <div className="log-caption">
+          <div className="caption-left">
+            <Form form={viewLogform} layout="inline">
+              <pre>选择容器： </pre>
+              <Form.Item name="containerName">
+                <Select style={{ width: 220 }} options={queryListContainer} onChange={selectListContainer}></Select>
+              </Form.Item>
+              {/* <span style={{paddingRight:3}}><h3>{appData?.appCode},{appData?.appName}</h3> </span> */}
+            </Form>
+          </div>
+          <div className="caption-right">
+            <span>
+              当前环境：<Tag color="geekblue">{projectEnvCode}</Tag>
+            </span>
+          </div>
+        </div>
 
-        <Form form={viewLogform} layout="inline">
-          <pre>选择容器： </pre>
-          <Form.Item name="containerName">
-            <Select style={{ width: 120 }} options={queryListContainer} onChange={selectListContainer}></Select>
-          </Form.Item>
-          {/* <span style={{paddingRight:3}}><h3>{appData?.appCode},{appData?.appName}</h3> </span> */}
-        </Form>
         <div
           id="result-log"
           className="result-log"
@@ -185,6 +283,11 @@ export default function ViewLog(props: any) {
           {log}
         </div>
         <div style={{ height: 30, textAlign: 'center' }}>
+          <span style={{ position: 'absolute', left: 0 }}>
+            <Checkbox onChange={onChange} />
+            <b style={{ paddingLeft: 4 }}>以前的容器</b>
+          </span>
+
           <span className="event-button">
             <Button type="primary" onClick={downloadLog}>
               下载日志

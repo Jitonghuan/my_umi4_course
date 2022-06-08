@@ -2,13 +2,13 @@
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2021/10/25 11:14
 
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Input, Table, Popconfirm, Form, Button, Select, Switch, Modal, message, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import './index.less';
-import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList } from '@/pages/application/service';
+import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList, envAppCR } from '@/pages/application/service';
 
 export default function appEnvPageList() {
   const { appData } = useContext(DetailContext);
@@ -22,7 +22,6 @@ export default function appEnvPageList() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any>();
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
-  const [checkedOption, setCheckedOption] = useState<boolean>();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [EnvForm] = Form.useForm();
   const [appEnvForm] = Form.useForm();
@@ -177,6 +176,16 @@ export default function appEnvPageList() {
       ...params,
     });
   };
+
+  const switchChange = async (record: any) => {
+    const res = await postRequest(envAppCR, { data: { appCode, envCode: record?.envCode, isAppNeedCR: !record?.isAppNeedCR } });
+    if (res?.success) {
+      message.success('操作成功！');
+      queryAppEnvData({
+        appCode,
+      });
+    }
+  }
   return (
     <ContentCard className="app-env-management">
       <Modal
@@ -277,14 +286,14 @@ export default function appEnvPageList() {
             <Table.Column title="环境CODE" dataIndex="envCode" ellipsis />
             <Table.Column title="环境名" dataIndex="envName" ellipsis />
             <Table.Column title="默认分类" dataIndex="categoryCode" width={120} />
-            <Table.Column
+            {/* <Table.Column
               title="是否启用配置管理"
               dataIndex="useNacos"
               width={180}
               render={(value, record, index) => (
                 <Switch className="useNacos" checked={value === 1 ? true : false} disabled={true} />
               )}
-            />
+            /> */}
           </Table>
         </div>
       </Modal>
@@ -364,6 +373,17 @@ export default function appEnvPageList() {
             )}
           />
           <Table.Column title="默认分类" dataIndex="categoryCode" width={140} />
+          <Table.Column
+            title="开启CodeReview"
+            width={130}
+            render={(_, record: Record<string, any>, index) => (
+              <div className="action-cell">
+                {/* <Popconfirm title={`确定要${record.isAppNeedCR ? '关闭' : '开启'}CodeReview吗？`} onConfirm={() => handleDelEnv(record)}> */}
+                <Switch disabled={record?.proEnvType !== 'benchmark'} checked={record?.isAppNeedCR} onChange={() => { switchChange(record) }} />
+                {/* </Popconfirm> */}
+              </div>
+            )}
+          />
           <Table.Column title="备注" dataIndex="mark" width={180} />
           <Table.Column
             title="操作"

@@ -32,10 +32,10 @@ export default function ApplicationDeploy(props: any) {
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
     : window.location.href.includes('matrix-fygs')
-    ? 'prod'
-    : window.location.href.includes('matrix-base-poc')
-    ? 'prod'
-    : 'dev';
+      ? 'prod'
+      : window.location.href.includes('matrix-base-poc')
+        ? 'prod'
+        : '';
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || env);
   // const [nextTab, setNextTab] = useState<string>('')
 
@@ -95,6 +95,8 @@ export default function ApplicationDeploy(props: any) {
       next.sort((a: any, b: any) => {
         return a.sortType - b.sortType;
       }); //升序
+      const currentTab = sessionStorage.getItem('__init_env_tab__') || next[0]?.typeCode || env
+      setTabActive(currentTab)
       let pipelineObj: any = {};
       const saveData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '{}');
       next.forEach((e: any) => {

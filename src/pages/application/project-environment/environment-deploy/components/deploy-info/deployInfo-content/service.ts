@@ -20,3 +20,9 @@ export const fileDownload = `${appConfig.apiPrefix}/appManage/deployInfo/instanc
 
 // 7，POST 删除应用实例
 export const deleteInstance = `${appConfig.apiPrefix}/appManage/deployInfo/instance/delete`;
+
+// GET 查看deployment的事件
+export const getListDeploymentEvent = `${appConfig.apiPrefix}/appManage/deployInfo/instance/listDeploymentEvent`;
+
+// 9，GET 查看pod的事件
+export const getListPodEvent = `${appConfig.apiPrefix}/appManage/deployInfo/instance/listPodEvent`;

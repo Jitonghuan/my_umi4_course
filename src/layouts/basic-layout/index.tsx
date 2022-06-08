@@ -1,11 +1,15 @@
 import { useMemo, useState } from 'react';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
+import { Modal } from 'antd';
+import 'antd/dist/antd.variable.min.css';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
+import '@arco-design/web-react/dist/css/arco.css';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { WaterMark } from '@ant-design/pro-layout';
+import { AlertOutlined } from '@ant-design/icons';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { IconMap } from '@/components/vc-icons';
@@ -20,6 +24,7 @@ import {
   useStaffDepData,
 } from '@/common/hooks';
 import './index.less';
+import 'antd/dist/antd.variable.min.css';
 
 // 屏蔽掉 React Development 模式下红色的警告
 if (appConfig.isLocal) {
@@ -53,6 +58,7 @@ export default function Layout(props: any) {
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
   const [chooseDept] = useChooseDept();
   const [staffDepData, loadStaffDepData] = useStaffDepData();
+  const [style, setStyle] = useState<any>('foneLight');
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -85,6 +91,25 @@ export default function Layout(props: any) {
     }, 200);
   };
   let deptitle = { modal_title: '切换部门' };
+  ConfigProvider.config({
+    theme: {
+      primaryColor: '#1973CC',
+
+      //#92a6bb
+    },
+  });
+
+  const changeTheme = () => {
+    if (style == 'foneDark') {
+      setStyle('globalLight');
+      document.body.removeAttribute('fone-theme');
+      document.body.setAttribute('arco-theme', 'light');
+    } else {
+      setStyle('foneDark');
+      document.body.setAttribute('fone-theme', 'foneDark');
+      document.body.setAttribute('arco-theme', 'dark');
+    }
+  };
   return (
     <ConfigProvider locale={zhCN}>
       <PositionSwitcher
@@ -137,11 +162,41 @@ export default function Layout(props: any) {
                     deptId: userInfo.deptInfo.deptId,
                   });
                 },
+                extensions: [
+                  {
+                    iconName: 'AlertOutlined',
+                    iconType: 'antd',
+                    type: 'customize',
+                    content: () => {
+                      changeTheme();
+                    },
+                  },
+                  {
+                    iconName: 'CommentOutlined',
+                    iconType: 'antd',
+                    type: 'customize',
+                    content: (visible, setVisible) => {
+                      return (
+                        <Modal visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
+                          您当前暂无通知消息!
+                        </Modal>
+                      );
+                    },
+                  },
+                ],
                 title: (
-                  <div>
-                    <img src={appConfig.logo} style={{ marginRight: '5px' }} />
-                    {appConfig.title + appConfig.logoName}
-                  </div>
+                  <>
+                    <div className="matrix-title">
+                      <span>
+                        <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
+                        {appConfig.title + appConfig.logoName}
+                      </span>
+                      {/* 
+                      <span  >
+                        <AlertOutlined />
+                      </span> */}
+                    </div>
+                  </>
                 ),
                 positionText: '部门',
                 isShowGlobalMenu: false,
