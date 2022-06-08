@@ -12,6 +12,7 @@ import SecondPartyPkg from '../second-party-pkg';
 import DeployContent from './deploy-content';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
+import { history } from 'umi';
 import './index.less';
 import { values } from 'lodash';
 import StepItem from './deploy-content/components/publish-content/steps/step-item';
@@ -36,11 +37,11 @@ export default function ApplicationDeploy(props: any) {
       : window.location.href.includes('matrix-base-poc')
         ? 'prod'
         : '';
-  const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || env);
-  // const [nextTab, setNextTab] = useState<string>('')
+  const [tabActive, setTabActive] = useState(props.location.query.activeTab || sessionStorage.getItem('__init_env_tab__') || env);
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
+    history.push({ query: { ...props.location.query, activeTab: tabActive } })
   }, [tabActive]);
 
   // 二方包直接渲染另一个页面
