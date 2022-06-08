@@ -31,13 +31,12 @@ export default function RrightTrace(props: any) {
   const [visible, setVisible] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<any>({});
   const [noiseOption, setNoiseOption] = useState<any>([]);
-  const [selectNoise, setSelectNoise] = useState<any>(localStorage.getItem('trace_noise_list')?.split(',') || []);
+  const [selectNoise, setSelectNoise] = useState<any>([]);
   const scaleRange = useMemo(() => (data && data.length ? data[0]?.allDurations : 100), [data]);
 
   useEffect(() => {
-    const idList = selectNoise.map((item: any) => item.value);
-    noiseChange(idList);
-  }, [selectNoise]);
+    noiseChange(selectNoise, noiseOption);
+  }, [selectNoise, noiseOption]);
 
   useEffect(() => {
     if (item && item.traceIds && item?.traceIds?.length !== 0) {
@@ -112,7 +111,7 @@ export default function RrightTrace(props: any) {
       title: 'Exec(ms)',
       dataIndex: 'durations',
       key: 'durations',
-      render: (value: string, record: any) => `${record?.endTime - record?.startTime}ms`,
+      render: (value: string, record: any) => `${record?.durations}ms`,
     },
     {
       title: 'Exec(%)',
@@ -170,12 +169,13 @@ export default function RrightTrace(props: any) {
     getNoiseList({ pageIndex: -1, pageSize: -1, isEnable: true }).then((res: any) => {
       if (res?.success) {
         const data = res?.data?.dataSource;
-        const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName }));
+        const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName, ...item }));
         setNoiseOption(dataList);
         // 将localStorge中存储的降噪进行回显
         const storeIdList = localStorage.getItem('trace_noise_list') || '';
         const nowIdList = data?.map((item: any) => item?.id)
-        storeIdList.split(',').forEach((item) => {
+        storeIdList.split(',').forEach((item: any) => {
+          item = parseInt(item);
           if (nowIdList.includes(item)) {
             setSelectNoise((value: any) => value.concat(item))
           }
@@ -252,8 +252,10 @@ export default function RrightTrace(props: any) {
                 labelInValue
                 onChange={(value) => {
                   const idList = value.map((item: any) => item.value)
+                  console.log(value);
+
                   localStorage.setItem('trace_noise_list', idList)
-                  setSelectNoise(value);
+                  setSelectNoise(idList);
                 }}
                 // showSearch
                 style={{ width: 180, marginLeft: '10px' }}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import moment from 'moment';
 import ResizablePro from '@/components/resiable-pro';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -69,6 +69,54 @@ export default function Tracking() {
 
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
 
+  // 降噪数据前端过滤处理
+  const filteredSpans = useMemo(() => {
+    const copyData = JSON.parse(JSON.stringify(rightData));
+
+    const filterOptioins = noiseList
+      .filter((item: any) => item.noiseReductionMeasure === "ignore")
+      .map((e: any) => e.noiseReductionComponent);
+    // 忽略处理
+    const ignoreFilter = (arr: any, options: any[]) => {
+      if (!filterOptioins?.length) {
+        return arr;
+      }
+      return arr.filter((span: any) => {
+        if (span.children?.length) {
+          span.children = ignoreFilter(span.children, options);
+        }
+        return !options.includes(span.component)
+      })
+    }
+    // 合并处理
+    const mergeOptioins = noiseList
+      .filter((item: any) => item.noiseReductionMeasure === 'merge')
+      .map((e: any) => e.noiseReductionComponent);
+    const merge = (arr: any[], options: any) => arr.reduce((res: any, span: any) => {
+      if (options.includes(span.component) && res.length !== 0) {
+        const prew = res[res.length - 1];
+        if (prew.component === span.component) {
+          if (!prew.isMerged) {
+            prew.isMerged = true;
+            prew.endpointName = span.component + '[merge span]';
+            prew.children = [];
+          }
+          prew.durations = prew.durations + span.durations;
+          prew.selfDurations = prew.selfDurations + span.selfDurations;
+          prew.endTime = span.endTime;
+
+          return res;
+        }
+      }
+      if (span.children?.length) {
+        span.children = merge(span.children, options);
+      }
+      return res.concat(span);
+    }, [])
+    return merge(ignoreFilter(copyData, filterOptioins), mergeOptioins);
+
+  }, [rightData, noiseList])
+
   //获取环境列表
   useEffect(() => {
     getEnvs().then((res: any) => {
@@ -119,6 +167,13 @@ export default function Tracking() {
       queryTreeData();
     }
   }, [currentItem]);
+
+  // 降噪下拉框发生改变时
+  const noiseChange = (value: number[], options: any) => {
+    const selectOptions = options.filter((item: any) => value.includes(item.id));
+    setNoiseList(selectOptions);
+  };
+
 
   //获取应用
   const getAppList = () => {
@@ -184,9 +239,8 @@ export default function Tracking() {
   // 获取右侧数据
   const queryTreeData = () => {
     if (!currentItem?.traceIds || !currentItem?.traceIds[0]) return;
-    const noiseIdList = localStorage.getItem('trace_noise_list') || ''
     setRightLoading(true);
-    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv, noiseReductionIDs: noiseIdList.split(',') })
+    getTraceInfo({ traceID: currentItem?.traceIds[0], envCode: selectEnv })
       .then((res: any) => {
         if (res?.success) {
           const max = parseInt(res?.data?.endTime) - parseInt(res?.data?.startTime);
@@ -221,11 +275,6 @@ export default function Tracking() {
     setCurrentItem(value);
   };
 
-  // 降噪下拉框发生改变时
-  const noiseChange = (value: number[]) => {
-    queryTreeData();
-    setNoiseList(value);
-  };
 
   const timeOptionChange = (value: number) => {
     setTimeOption(value);
@@ -404,10 +453,10 @@ export default function Tracking() {
                 />
               }
               rightComp={
-                rightData?.length !== 0 || rightLoading ? (
+                filteredSpans?.length !== 0 || rightLoading ? (
                   <RrightTrace
                     item={currentItem || {}}
-                    data={rightData}
+                    data={filteredSpans}
                     envCode={selectEnv}
                     selectTime={selectTime}
                     noiseChange={noiseChange}
