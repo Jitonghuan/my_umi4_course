@@ -74,11 +74,10 @@ export default function AppDeployInfo(props: any) {
       setEnvTypeData(next);
       let currentTabActive =
         localStorage.__init_env_tab__ &&
-          envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
+        envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
           ? localStorage.getItem('__init_env_tab__')
           : next[0]?.typeCode || env;
       setTabActive(currentTabActive);
-
     });
 
     // let currentTabActive =

@@ -73,18 +73,22 @@ export default function Tracking() {
   const filterData = useMemo(() => {
     const copyData = JSON.parse(JSON.stringify(rightData));
     // 忽略处理
-    const ignoreList = noiseList.filter((item: any) => item.noiseReductionMeasure === 'ignore').map((item: any) => item.noiseReductionComponent);
+    const ignoreList = noiseList
+      .filter((item: any) => item.noiseReductionMeasure === 'ignore')
+      .map((item: any) => item.noiseReductionComponent);
     const filterIgnore = (arr: any, ignoreOptions: any) => {
       if (!ignoreOptions.length) return arr;
       return arr.filter((e: any) => {
         if (e?.children?.length) {
-          e.children = filterIgnore(e.children, ignoreOptions)
+          e.children = filterIgnore(e.children, ignoreOptions);
         }
-        return !ignoreOptions.includes(e.component)
-      })
-    }
+        return !ignoreOptions.includes(e.component);
+      });
+    };
     // 合并处理
-    const mergeList = noiseList.filter((item: any) => item.noiseReductionMeasure === 'merge').map((item: any) => item.noiseReductionComponent);
+    const mergeList = noiseList
+      .filter((item: any) => item.noiseReductionMeasure === 'merge')
+      .map((item: any) => item.noiseReductionComponent);
     const handleMerge = (arr: any, mergeOptions: any) => {
       if (!mergeOptions) return arr;
       return arr.reduce((res: any, current: any) => {
@@ -105,12 +109,12 @@ export default function Tracking() {
             return res;
           }
         }
-        return res.concat(current)
-      }, [])
-    }
+        return res.concat(current);
+      }, []);
+    };
     // 先处理完忽略 再处理合并
-    return handleMerge(filterIgnore(copyData, ignoreList), mergeList)
-  }, [rightData, noiseList])
+    return handleMerge(filterIgnore(copyData, ignoreList), mergeList);
+  }, [rightData, noiseList]);
 
   //获取环境列表
   useEffect(() => {
@@ -171,10 +175,9 @@ export default function Tracking() {
 
   // 获取localStore中存储的降噪id
   const getNoiseIds = () => {
-    const storeIdList = JSON.parse(localStorage.getItem('trace_noise_list') || '[]')
-    return storeIdList.map((item: any) => item.value)
-  }
-
+    const storeIdList = JSON.parse(localStorage.getItem('trace_noise_list') || '[]');
+    return storeIdList.map((item: any) => item.value);
+  };
 
   //获取应用
   const getAppList = () => {
@@ -273,7 +276,6 @@ export default function Tracking() {
   const leftItemChange = (value: leftItem) => {
     setCurrentItem(value);
   };
-
 
   const timeOptionChange = (value: number) => {
     setTimeOption(value);

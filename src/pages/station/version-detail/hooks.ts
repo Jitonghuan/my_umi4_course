@@ -209,21 +209,16 @@ export function useQueryVersionComponentList(): [
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  const queryVersionComponentList = async (
-    versionId: number,
-    componentType: string,
-    componentName?: string,
-  ) => {
+  const queryVersionComponentList = async (versionId: number, componentType: string, componentName?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryVersionComponentList, {
-        data: { versionId, componentType, componentName, pageIndex: -1, pageSize:-1 },
+        data: { versionId, componentType, componentName, pageIndex: -1, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
             setDataSource(dataSource);
-            
           } else {
             return {};
           }
@@ -370,23 +365,18 @@ export function useQueryDeliveryParamList(): [
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  
-  const queryDeliveryParamList = async (
-    versionId: number,
-    configParamComponent?: string,
-   
-  ) => {
+
+  const queryDeliveryParamList = async (versionId: number, configParamComponent?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, configParamComponent, pageIndex:-1, pageSize:-1 },
+        data: { versionId, configParamComponent, pageIndex: -1, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
             let dataSource = res.data.dataSource;
-           
+
             setDataSource(dataSource);
-            
           } else {
             return {};
           }
@@ -398,30 +388,20 @@ export function useQueryDeliveryParamList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource,setDataSource, queryDeliveryParamList];
+  return [loading, dataSource, setDataSource, queryDeliveryParamList];
 }
 //查询交付配置参数
 export function useQueryDeliveryGloableParamList(): [
   boolean,
   any,
   any,
-  
-  (
-    versionId: number,
-    paramComponent?: string,
-    paramName?: string,
-   
-  ) => Promise<void>,
+
+  (versionId: number, paramComponent?: string, paramName?: string) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
-  
-  const queryDeliveryParamList = async (
-    versionId: number,
-    paramComponent?: string,
-    paramName?: string,
-   
-  ) => {
+
+  const queryDeliveryParamList = async (versionId: number, paramComponent?: string, paramName?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
@@ -442,7 +422,7 @@ export function useQueryDeliveryGloableParamList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource,setDataSource, queryDeliveryParamList];
+  return [loading, dataSource, setDataSource, queryDeliveryParamList];
 }
 
 //保存交付配置参数

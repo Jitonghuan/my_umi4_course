@@ -3,14 +3,7 @@ import axios from 'axios';
 import { Decoration11, BorderBox13 } from '@jiaminghi/data-view-react';
 import { Link, Card, Skeleton, Tag, Typography } from '@arco-design/web-react';
 
-
 function Announcement() {
-
-
-
-
-
-
   return (
     <Card style={{ width: 374 }}>
       <div>
@@ -28,7 +21,7 @@ function Announcement() {
 
           {/* <Link>查看更多</Link> */}
         </BorderBox13>
-     
+
         {/* <Typography.Title heading={6}>
           <Decoration11 style={{width: '300px', height: '60px'}}>  Matrix公告</Decoration11>
 

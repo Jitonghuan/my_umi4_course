@@ -55,8 +55,7 @@ export default (props: VersionDetailProps) => {
   const [addLoading, addComponent] = useAddCompontent();
   const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
-  const [loading, tableDataSource, setDataSource, queryVersionComponentList] =
-    useQueryVersionComponentList();
+  const [loading, tableDataSource, setDataSource, queryVersionComponentList] = useQueryVersionComponentList();
   const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
   const ref = useRef<ProFormInstance>();
@@ -284,7 +283,7 @@ export default (props: VersionDetailProps) => {
         // 关闭默认的新建按钮
         recordCreatorProps={false}
         columns={columns}
-        scroll={{ y: window.innerHeight - 340}}
+        scroll={{ y: window.innerHeight - 340 }}
         // request={async () => ({
         //   data: defaultData,
         //   total: 3,

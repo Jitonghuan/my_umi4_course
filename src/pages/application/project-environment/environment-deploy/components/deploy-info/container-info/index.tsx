@@ -8,7 +8,7 @@ import { history } from 'umi';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
-  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id,projectEnvName } = props.location.state;
+  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id, projectEnvName } = props.location.state;
   const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
   const [queryContainer, queryContainerData, loading] = useListContainer();
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function ContainerInfo(props: any) {
             projectEnvCode: projectEnvCode,
             instName: infoRecord?.instName,
             // viewLogEnvType: viewLogEnvType,
-            projectEnvName:projectEnvName,
+            projectEnvName: projectEnvName,
             optType: 'containerInfo',
             containerName: record?.containerName,
           },
@@ -78,8 +78,8 @@ export default function ContainerInfo(props: any) {
                 pathname: `deployInfo`,
                 query: {
                   viewLogEnv: projectEnvCode || '',
-                  projectEnvCode:projectEnvCode,
-                  projectEnvName:projectEnvName,
+                  projectEnvCode: projectEnvCode,
+                  projectEnvName: projectEnvName,
                   // viewLogEnvType: viewLogEnvType,
                   type: 'viewLog_goBack',
                   id: id,

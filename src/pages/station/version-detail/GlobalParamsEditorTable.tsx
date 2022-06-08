@@ -36,14 +36,9 @@ export default (props: VersionDetailProps) => {
   const [saveLoading, saveParam] = useSaveParam();
   const [editLoading, editVersionParam] = useEditVersionParam();
   const actionRef = useRef<ActionType>();
-  const [
-    gloableTableLoading,
-    gloableTableDataSource,
-    setGloableDataSource,
-    queryDeliveryGloableParamList,
-  ] = useQueryDeliveryGloableParamList();
-  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] =
-    useQueryDeliveryParamList();
+  const [gloableTableLoading, gloableTableDataSource, setGloableDataSource, queryDeliveryGloableParamList] =
+    useQueryDeliveryGloableParamList();
+  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] = useQueryDeliveryParamList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');

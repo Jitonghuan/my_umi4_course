@@ -9,13 +9,23 @@ export interface DetailProps {
   dataSource: any;
   identification: string;
   onDelClick: any;
-  queryComponentList: (tabActiveKey: any, curProductLine?: string,pageIndex?:number,pageSize?:number) => any;
+  queryComponentList: (tabActiveKey: any, curProductLine?: string, pageIndex?: number, pageSize?: number) => any;
   tableLoading: boolean;
-  pageInfo:any;
-  setPageInfo:(pageIndex: number, pageSize?: number) => any;
+  pageInfo: any;
+  setPageInfo: (pageIndex: number, pageSize?: number) => any;
 }
 export default function VersionDetail(props: DetailProps) {
-  const { currentTab, curProductLine, dataSource, identification, onDelClick, tableLoading,pageInfo,setPageInfo,queryComponentList } = props;
+  const {
+    currentTab,
+    curProductLine,
+    dataSource,
+    identification,
+    onDelClick,
+    tableLoading,
+    pageInfo,
+    setPageInfo,
+    queryComponentList,
+  } = props;
   const [delLoading, deleteComponent] = useDeleteComponent();
   useEffect(() => {
     if (!currentTab) {
@@ -97,15 +107,19 @@ export default function VersionDetail(props: DetailProps) {
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    setPageInfo( pagination.current );
+    setPageInfo(pagination.current);
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    console.log('pagination',pagination)
-    queryComponentList({ componentType: currentTab, productLine: curProductLine,pageIndex:obj.pageIndex,pageSize:obj.pageSize });
+    console.log('pagination', pagination);
+    queryComponentList({
+      componentType: currentTab,
+      productLine: curProductLine,
+      pageIndex: obj.pageIndex,
+      pageSize: obj.pageSize,
+    });
   };
-
 
   return (
     <>
@@ -129,7 +143,7 @@ export default function VersionDetail(props: DetailProps) {
           current: pageInfo.pageIndex,
           showSizeChanger: true,
           onShowSizeChange: (_, size) => {
-            setPageInfo(1,size);
+            setPageInfo(1, size);
           },
           showTotal: () => `总共 ${pageInfo.total} 条数据`,
         }}

@@ -33,15 +33,17 @@ export default function ApplicationDeploy(props: any) {
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
     : window.location.href.includes('matrix-fygs')
-      ? 'prod'
-      : window.location.href.includes('matrix-base-poc')
-        ? 'prod'
-        : '';
-  const [tabActive, setTabActive] = useState(props.location.query.activeTab || sessionStorage.getItem('__init_env_tab__') || env);
+    ? 'prod'
+    : window.location.href.includes('matrix-base-poc')
+    ? 'prod'
+    : '';
+  const [tabActive, setTabActive] = useState(
+    props.location.query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
+  );
 
   useLayoutEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
-    history.push({ query: { ...props.location.query, activeTab: tabActive } })
+    history.push({ query: { ...props.location.query, activeTab: tabActive } });
   }, [tabActive]);
 
   // 二方包直接渲染另一个页面
@@ -96,8 +98,8 @@ export default function ApplicationDeploy(props: any) {
       next.sort((a: any, b: any) => {
         return a.sortType - b.sortType;
       }); //升序
-      const currentTab = sessionStorage.getItem('__init_env_tab__') || next[0]?.typeCode || env
-      setTabActive(currentTab)
+      const currentTab = sessionStorage.getItem('__init_env_tab__') || next[0]?.typeCode || env;
+      setTabActive(currentTab);
       let pipelineObj: any = {};
       const saveData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '{}');
       next.forEach((e: any) => {
