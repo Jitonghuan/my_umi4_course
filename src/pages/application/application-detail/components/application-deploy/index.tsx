@@ -42,11 +42,15 @@ export default function ApplicationDeploy(props: any) {
     props.location.query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
   );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
-    history.push({ query: { ...props.location.query, activeTab: tabActive } })
-    getPipeline(tabActive)
+    history.push({ query: { ...props.location.query, activeTab: tabActive } });
   }, [tabActive]);
+  useEffect(() => {
+    if (tabActive) {
+      getPipeline(tabActive);
+    }
+  }, []);
 
   // 二方包直接渲染另一个页面
   if (+appData?.isClient! === 1) {
