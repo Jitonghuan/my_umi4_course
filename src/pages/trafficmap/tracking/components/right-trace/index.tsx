@@ -30,8 +30,10 @@ export default function RrightTrace(props: any) {
   const [selectTraceId, setSelectTraceId] = useState<any>('');
   const [visible, setVisible] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<any>({});
-  const [noiseOption, setNoiseOption] = useState<any>([]);
-  const [selectNoise, setSelectNoise] = useState<any>([]);
+  const storeData = JSON.parse(localStorage.getItem('trace_noise_list') || '[]');
+  const [noiseOption, setNoiseOption] = useState<any>(storeData || []);
+  const idList = storeData?.map((item: any) => item.value)
+  const [selectNoise, setSelectNoise] = useState<any>(idList || []);
   const scaleRange = useMemo(() => (data && data.length ? data[0]?.allDurations : 100), [data]);
 
   useEffect(() => {
@@ -171,18 +173,17 @@ export default function RrightTrace(props: any) {
         const data = res?.data?.dataSource;
         const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName, ...item }));
         setNoiseOption(dataList);
-        // 将localStorge中存储的降噪进行回显
-        const storeIdList = localStorage.getItem('trace_noise_list') || '';
+        // 判断localStorge中存储的降噪是否还存在
+        const storeList = JSON.parse(localStorage.getItem('trace_noise_list') || '[]')
         const nowIdList = data?.map((item: any) => item?.id)
         const resArray: any = []
-        storeIdList.split(',').forEach((item: any) => {
-          item = parseInt(item);
-          if (nowIdList.includes(item)) {
+        storeList.forEach((item: any) => {
+          if (nowIdList.includes(item.value)) {
             resArray.push(item)
           }
         })
-        localStorage.setItem('trace_noise_list', resArray)
-        setSelectNoise(resArray)
+        localStorage.setItem('trace_noise_list', JSON.stringify(resArray))
+        setSelectNoise(resArray.map((item: any) => item.value))
       }
     });
   }, []);
@@ -255,7 +256,7 @@ export default function RrightTrace(props: any) {
                 labelInValue
                 onChange={(value) => {
                   const idList = value.map((item: any) => item.value)
-                  localStorage.setItem('trace_noise_list', idList)
+                  localStorage.setItem('trace_noise_list', JSON.stringify(value))
                   setSelectNoise(idList);
                 }}
                 // showSearch

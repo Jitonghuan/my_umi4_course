@@ -169,6 +169,12 @@ export default function Tracking() {
     setNoiseList(selectOptions);
   };
 
+  // 获取localStore中存储的降噪id
+  const getNoiseIds = () => {
+    const storeIdList = JSON.parse(localStorage.getItem('trace_noise_list') || '[]')
+    return storeIdList.map((item: any) => item.value)
+  }
+
 
   //获取应用
   const getAppList = () => {
@@ -207,11 +213,10 @@ export default function Tracking() {
     setCurrentItem({});
     // setListData([]);
     setRightLoading(true);
-    const noiseIdList = localStorage.getItem('trace_noise_list') || ''
     const values = form.getFieldsValue();
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
-    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: noiseIdList.split(',') })
+    getTrace({ ...params, ...values, end, start, envCode: selectEnv, noiseReductionIDs: getNoiseIds() })
       .then((res: any) => {
         if (res) {
           setListData(res?.data?.dataSource);
