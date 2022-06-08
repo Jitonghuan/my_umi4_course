@@ -144,6 +144,7 @@ export function useUpdateTask(): [
     jobType: number;
     desc?: string;
     jobContent: string;
+    editPwd: boolean;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
@@ -164,6 +165,7 @@ export function useUpdateTask(): [
     jobType: number;
     desc?: string;
     jobContent: string;
+    editPwd: boolean;
   }) => {
     setLoading(true);
     await putRequest(APIS.updateJob, { data: paramsObj })
@@ -297,3 +299,33 @@ export function useQueryListContainer(): [
 }
 
 //getNodeList
+export function useQueryNodeList(): [boolean, any, (clusterName: string) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [nodeNameOption, setNodeNameOption] = useState<Record<string, any>[]>([]);
+  const getNodeNameList = async (clusterName: string) => {
+    setLoading(true);
+    await getRequest(APIS.getNodeList, {
+      data: {
+        clusterName,
+      },
+    })
+      .then((result) => {
+        if (result?.success) {
+          let dataSource = result.data;
+          const option = dataSource?.map((item: any) => ({
+            label: item || '',
+            value: item || '',
+          }));
+
+          setNodeNameOption(option);
+        } else {
+          setNodeNameOption([]);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, nodeNameOption, getNodeNameList];
+}

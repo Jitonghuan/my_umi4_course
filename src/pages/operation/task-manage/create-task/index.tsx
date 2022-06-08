@@ -5,10 +5,17 @@
 import React from 'react';
 import { history } from 'umi';
 import { useEffect, useState } from 'react';
-import { useAddTask, useUpdateTask, queryAppList, useQueryAppEnvData, useQueryListContainer } from '../hooks';
+import {
+  useAddTask,
+  useUpdateTask,
+  queryAppList,
+  useQueryAppEnvData,
+  useQueryListContainer,
+  useQueryNodeList,
+} from '../hooks';
 import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox } from 'antd';
 import { recordEditData, KVProps, jobContentProps } from '../type';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { TaskTypeOptions, RequestModeOptions, RequestMethodOptions } from './schema';
@@ -30,6 +37,7 @@ export default function addEnvData(props: RecordEditDataProps) {
   const [updateLoading, updateTaskManage] = useUpdateTask();
   const [loading, appEnvDataSource, queryAppEnvData] = useQueryAppEnvData();
   const [containerLoading, containerNameOption, getListContainer] = useQueryListContainer();
+  const [nodeNameLoading, nodeNameOption, getNodeNameList] = useQueryNodeList();
   const [curTaskType, setCurTaskType] = useState<number>();
   const [curRequestMethod, setCurRequestMethod] = useState<string | undefined>('');
   const [isJobChangeOption, setIsJobChangeOption] = useState<number>(2);
@@ -148,6 +156,20 @@ export default function addEnvData(props: RecordEditDataProps) {
         sql: param?.sql,
       });
     }
+    if (param.jobType === 5) {
+      Object.assign(jobTypeContent, {
+        podName: param?.podName,
+        image: param?.image,
+        command: param?.command,
+      });
+    }
+    if (param.jobType === 6) {
+      Object.assign(jobTypeContent, {
+        clusterName: param?.clusterName,
+        node: param?.node,
+        command: param?.command,
+      });
+    }
 
     let newJobTypeContent = JSON.stringify(jobTypeContent || {});
     let paramObj = {
@@ -172,6 +194,8 @@ export default function addEnvData(props: RecordEditDataProps) {
         id: initData?.id,
         lastExecStatus: initData?.lastExecStatus,
         modifyUser: initData?.modifyUser,
+        editPwd: checked,
+
         ...paramObj,
       }).then(() => {
         onSave();
@@ -216,6 +240,11 @@ export default function addEnvData(props: RecordEditDataProps) {
       createTaskForm.setFieldsValue({ password: '' });
       setOptType('check');
     }
+  };
+  const submitCluster = () => {
+    const clusterName = createTaskForm.getFieldValue('clusterName');
+    const params = createTaskForm.getFieldsValue();
+    getNodeNameList(clusterName);
   };
 
   return (
@@ -324,6 +353,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                     style={{ width: '24vw' }}
                     disabled={viewEditable}
                     options={containerNameOption}
+                    loading={containerLoading}
                     allowClear
                     showSearch
                     mode="multiple"
@@ -484,6 +514,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                 </Form.Item>
               </>
             )}
+            {/* ------------任务类型五新容器命令任务---------- */}
             {curTaskType === 5 && (
               <>
                 <Form.Item label="PodName" name="podName" rules={[{ required: true, message: '这是必填项' }]}>
@@ -506,13 +537,28 @@ export default function addEnvData(props: RecordEditDataProps) {
                 </Form.Item>
               </>
             )}
+            {/* ------------任务类型六K8S节点命令任务---------- */}
             {curTaskType === 6 && (
               <>
-                <Form.Item label="集群名称" name="clusterName" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input style={{ width: '24vw' }} disabled={viewEditable}></Input>
+                <Form.Item
+                  label="集群名称"
+                  name="clusterName"
+                  rules={[{ required: true, message: '这是必填项' }]}
+                  extra="输入完成集群名称后请点击尾部图标即可查询节点名称."
+                >
+                  <Input
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                    suffix={<CheckSquareOutlined onClick={submitCluster} />}
+                  />
                 </Form.Item>
-                <Form.Item label="节点名称" name="nodeName" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Select style={{ width: '24vw' }} disabled={viewEditable}></Select>
+                <Form.Item label="节点名称" name="node" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Select
+                    style={{ width: '24vw' }}
+                    disabled={viewEditable}
+                    options={nodeNameOption}
+                    loading={nodeNameLoading}
+                  ></Select>
                 </Form.Item>
 
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
@@ -524,6 +570,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                 </Form.Item>
               </>
             )}
+            {/* ------------------------备注------------------------ */}
 
             <Form.Item name="desc" label="备注：">
               <Input.TextArea
