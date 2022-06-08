@@ -196,7 +196,11 @@
       justify-content: space-between;
       width: 100%;
       white-space: nowrap;
-      overflow-x: scroll;
+      .ant-select-selection-overflow{
+        flex-wrap: nowrap;
+        overflow: auto;
+      }
+      // overflow-x: scroll;
     }
 
     .top-final {
