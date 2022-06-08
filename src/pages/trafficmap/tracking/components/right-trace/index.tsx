@@ -30,13 +30,16 @@ export default function RrightTrace(props: any) {
   const [selectTraceId, setSelectTraceId] = useState<any>('');
   const [visible, setVisible] = useState<boolean>(false);
   const [detailData, setDetailData] = useState<any>({});
-  const [noiseOption, setNoiseOption] = useState<any>([]);
-  const [selectNoise, setSelectNoise] = useState<any>([]);
+  const storeData = JSON.parse(localStorage.getItem('trace_noise_list') || '[]');
+  const [noiseOption, setNoiseOption] = useState<any>(storeData || []);
+  const idList = storeData?.map((item: any) => item.value)
+  const [selectNoise, setSelectNoise] = useState<any>(idList || []);
   const scaleRange = useMemo(() => (data && data.length ? data[0]?.allDurations : 100), [data]);
+
   useEffect(() => {
-    const idList = selectNoise.map((item: any) => item.value);
-    noiseChange(idList);
-  }, [selectNoise]);
+    noiseChange(selectNoise, noiseOption);
+  }, [selectNoise, noiseOption]);
+
   useEffect(() => {
     if (item && item.traceIds && item?.traceIds?.length !== 0) {
       setTraceIdOptions([{ label: item?.traceIds[0], value: item?.traceIds[0] }]);
@@ -46,6 +49,7 @@ export default function RrightTrace(props: any) {
       setSelectTraceId('');
     }
   }, [item]);
+
   const containerRef = useCallback(
     (node: any) => {
       if (node) {
@@ -109,7 +113,7 @@ export default function RrightTrace(props: any) {
       title: 'Exec(ms)',
       dataIndex: 'durations',
       key: 'durations',
-      render: (value: string, record: any) => `${record?.endTime - record?.startTime}ms`,
+      render: (value: string, record: any) => `${record?.durations}ms`,
     },
     {
       title: 'Exec(%)',
@@ -167,8 +171,19 @@ export default function RrightTrace(props: any) {
     getNoiseList({ pageIndex: -1, pageSize: -1, isEnable: true }).then((res: any) => {
       if (res?.success) {
         const data = res?.data?.dataSource;
-        const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName }));
+        const dataList = data.map((item: any) => ({ value: item?.id, label: item?.noiseReductionName, ...item }));
         setNoiseOption(dataList);
+        // 判断localStorge中存储的降噪是否还存在
+        const storeList = JSON.parse(localStorage.getItem('trace_noise_list') || '[]')
+        const nowIdList = data?.map((item: any) => item?.id)
+        const resArray: any = []
+        storeList.forEach((item: any) => {
+          if (nowIdList.includes(item.value)) {
+            resArray.push(item)
+          }
+        })
+        localStorage.setItem('trace_noise_list', JSON.stringify(resArray))
+        setSelectNoise(resArray.map((item: any) => item.value))
       }
     });
   }, []);
@@ -246,7 +261,9 @@ export default function RrightTrace(props: any) {
                 size="small"
                 labelInValue
                 onChange={(value) => {
-                  setSelectNoise(value);
+                  const idList = value.map((item: any) => item.value)
+                  localStorage.setItem('trace_noise_list', JSON.stringify(value))
+                  setSelectNoise(idList);
                 }}
                 // showSearch
                 style={{ width: 180, marginRight: '10px' }}
