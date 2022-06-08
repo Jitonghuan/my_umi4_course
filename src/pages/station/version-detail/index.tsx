@@ -15,18 +15,14 @@ const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 export default function VersionDetail() {
   const descriptionInfoData: any = history.location.state;
-  const [tableLoading, tableDataSource,  queryDeliveryParamList] = useQueryDeliveryParamList();
-  const [
-    gloableTableLoading,
-    gloableTableDataSource,
-    queryDeliveryGloableParamList,
-  ] = useQueryDeliveryGloableParamList();
+  const [tableLoading, tableDataSource, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [gloableTableLoading, gloableTableDataSource, queryDeliveryGloableParamList] =
+    useQueryDeliveryGloableParamList();
   const [editableStr, setEditableStr] = useState(descriptionInfoData?.versionDescription);
   const [infoLoading, versionDescriptionInfo, getVersionDescriptionInfo] = useVersionDescriptionInfo();
   const [editLoading, editProductVersionDescription] = useEditProductVersionDescription();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [tabActiveKey, setTabActiveKey] = useState<string>('basicInfo');
-  
 
   useEffect(() => {
     if (!descriptionInfoData.versionId) {
@@ -35,7 +31,6 @@ export default function VersionDetail() {
     }
     if (descriptionInfoData?.optType === 'componentDetail') {
       setTabActiveKey('production');
-      
     }
   }, [descriptionInfoData?.optType]);
   useEffect(() => {

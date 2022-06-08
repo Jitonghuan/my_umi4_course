@@ -54,7 +54,6 @@ function Overview() {
   const [data, setData] = useState<DataType>({});
   const [loading, setLoading] = useState(true);
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
-  
 
   return (
     <Card>
@@ -66,7 +65,7 @@ function Overview() {
         {/* {t['workplace.welcomeBack']} */}
         {/* {userInfo.name} */}
       </Typography.Title>
-     
+
       {/* <Decoration10 style={{ width: '100%', height: '2px' }}></Decoration10> */}
       {/* <Row style={{ marginTop: 8 }}>
         <Col flex={1}>

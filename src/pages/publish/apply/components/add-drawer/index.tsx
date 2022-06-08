@@ -129,14 +129,16 @@ const AddDrawer = (props: IProps) => {
           deployDate: vals.deployDate.format('YYYY-MM-DD HH:mm'),
         },
         planIds: selectPlan,
-      }).then((resp) => {
-        if (resp?.success) {
-          handleClose(true);
-          setSubmitDisable(false);
-        }
-      }).finally(()=>{
-        setSubmitLoading(false);
-      });
+      })
+        .then((resp) => {
+          if (resp?.success) {
+            handleClose(true);
+            setSubmitDisable(false);
+          }
+        })
+        .finally(() => {
+          setSubmitLoading(false);
+        });
     });
   };
 

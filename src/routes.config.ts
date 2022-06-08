@@ -801,6 +801,12 @@ export default [
         component: '@/pages/operation/DNS-manage',
       },
       {
+        path: 'task-manage',
+        name: '任务管理',
+        key: 'task-manage',
+        component: '@/pages/operation/task-manage',
+      },
+      {
         path: 'tmpl-log',
         name: '操作日志',
         key: 'tmpl-log',

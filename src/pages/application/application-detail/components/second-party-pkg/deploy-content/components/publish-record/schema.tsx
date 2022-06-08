@@ -83,4 +83,4 @@ export const recordDisplayMap: any = {
   process: { text: '正在发布', color: 'geekblue' },
   error: { text: '发布失败', color: 'red' },
   finish: { text: '发布完成', color: 'green' },
-}
+};

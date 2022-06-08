@@ -23,7 +23,7 @@ type DataSourceType = {
   state?: string;
   created_at?: string;
   children?: DataSourceType[];
-  recordCreatorProps?:any
+  recordCreatorProps?: any;
 };
 
 export interface VersionDetailProps {
@@ -40,8 +40,7 @@ export default (props: VersionDetailProps) => {
   const [editLoading, editVersionParam] = useEditVersionParam();
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
-  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] =
-    useQueryDeliveryParamList();
+  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] = useQueryDeliveryParamList();
   const [loading, paramOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
@@ -95,7 +94,6 @@ export default (props: VersionDetailProps) => {
             showSearch
             allowClear
             onChange={(value: any) => {
-             
               queryParamList(versionId, value);
             }}
           ></Select>

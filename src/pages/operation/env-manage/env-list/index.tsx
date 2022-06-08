@@ -4,8 +4,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { history } from 'umi';
-import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Badge, Tooltip } from 'antd';
-import { PlusOutlined, BookOutlined, SnippetsFilled, ContainerOutlined } from '@ant-design/icons';
+import { Input, Table, Popconfirm, Form, Button, Select, Switch, message, Badge } from 'antd';
+import { PlusOutlined, ContainerOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';

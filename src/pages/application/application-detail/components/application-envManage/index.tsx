@@ -178,14 +178,16 @@ export default function appEnvPageList() {
   };
 
   const switchChange = async (record: any) => {
-    const res = await postRequest(envAppCR, { data: { appCode, envCode: record?.envCode, isAppNeedCR: !record?.isAppNeedCR } });
+    const res = await postRequest(envAppCR, {
+      data: { appCode, envCode: record?.envCode, isAppNeedCR: !record?.isAppNeedCR },
+    });
     if (res?.success) {
       message.success('操作成功！');
       queryAppEnvData({
         appCode,
       });
     }
-  }
+  };
   return (
     <ContentCard className="app-env-management">
       <Modal
@@ -379,7 +381,13 @@ export default function appEnvPageList() {
             render={(_, record: Record<string, any>, index) => (
               <div className="action-cell">
                 {/* <Popconfirm title={`确定要${record.isAppNeedCR ? '关闭' : '开启'}CodeReview吗？`} onConfirm={() => handleDelEnv(record)}> */}
-                <Switch disabled={record?.proEnvType !== 'benchmark'} checked={record?.isAppNeedCR} onChange={() => { switchChange(record) }} />
+                <Switch
+                  disabled={record?.proEnvType !== 'benchmark'}
+                  checked={record?.isAppNeedCR}
+                  onChange={() => {
+                    switchChange(record);
+                  }}
+                />
                 {/* </Popconfirm> */}
               </div>
             )}

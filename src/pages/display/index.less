@@ -1,31 +1,31 @@
-.display{
+.display {
+  height: 100%;
+  &-wrapper {
+    .ant-card-body {
+      height: 100%;
+    }
     height: 100%;
-    &-wrapper{
-        .ant-card-body{
-            height: 100%;
-        }
-        height: 100%;
+  }
+  .table-title {
+    padding: 7px 5px;
+    background-color: #f0f2f7;
+    margin-bottom: 4px;
+    font-weight: 800;
+  }
+  .table-wrapper {
+    max-height: 900px;
+    // overflow: auto;
+    .ant-table-thead > tr > th {
+      white-space: nowrap;
     }
-    .table-title{
-        padding: 7px 5px;
-       background-color: #f0f2f7;
-       margin-bottom: 4px;
-       font-weight: 800;
-       }
-    .table-wrapper{   
-        max-height: 900px;
-        // overflow: auto;
-        .ant-table-thead > tr > th{
-            white-space: nowrap;
-        }
-        .ant-table-tbody > tr > td{
-            white-space: nowrap;
-        }
-         .ant-table{
-            overflow: auto;
-        }
+    .ant-table-tbody > tr > td {
+      white-space: nowrap;
     }
-    .konva-wrapper{
-        height: 50%;
+    .ant-table {
+      overflow: auto;
     }
+  }
+  .konva-wrapper {
+    height: 50%;
+  }
 }

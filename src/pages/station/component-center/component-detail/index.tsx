@@ -97,18 +97,16 @@ export default function ComponentDetail() {
               version: option[0]?.value || componentVersion,
               componentId: option[0]?.componentId || initRecord.componentId,
             });
-            if(option.length>0){
+            if (option.length > 0) {
               if (optType && optType !== 'versionDetail') {
                 queryComponentInfo(componentName, option[0]?.value, componentType, option[0]?.componentId);
               }
-            }else{
-              return 
+            } else {
+              return;
             }
           } else {
             return [];
           }
-
-         
         })
         .finally(() => {
           setLoading(false);
@@ -228,7 +226,7 @@ export default function ComponentDetail() {
               <Popconfirm
                 title="确定要删除该版本吗？"
                 onConfirm={() => {
-                  deletVersion(record.id)
+                  deletVersion(record.id);
                 }}
               >
                 <a color="red">删除</a>

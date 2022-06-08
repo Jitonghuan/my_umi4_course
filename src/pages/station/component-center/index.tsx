@@ -53,12 +53,11 @@ export default function ComponentCenter() {
     if (identification?.identification) {
       queryComponentList({ componentType: identification?.identification });
       setTabActiveKey(identification?.identification);
-    }else{
+    } else {
       if (tabActiveKey === 'app') {
-      getProductlineList();
-      queryComponentList({ componentType: tabActiveKey });
-    }
-
+        getProductlineList();
+        queryComponentList({ componentType: tabActiveKey });
+      }
     }
   }, [identification?.identification]);
   const onSearch = () => {
@@ -66,8 +65,6 @@ export default function ComponentCenter() {
     queryComponentList({ componentType: tabActiveKey, ...param });
     setQueryParams(param);
   };
-
-  
 
   return (
     <PageContainer>
@@ -139,12 +136,8 @@ export default function ComponentCenter() {
                           />
                         </Form.Item>
                       )}
-                        
-                     
-                      
 
-
-                      <span style={{marginRight:8}}>
+                      <span style={{ marginRight: 8 }}>
                         {tabActiveKey !== 'middleware' && (
                           <Button
                             type="primary"
@@ -165,10 +158,14 @@ export default function ComponentCenter() {
                           </Button>
                         )}
                       </span>
-                      <Button type='primary' onClick={()=>{
-                         
-                         queryComponentList({ componentType: tabActiveKey})
-                       }}>刷新数据</Button>
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          queryComponentList({ componentType: tabActiveKey });
+                        }}
+                      >
+                        刷新数据
+                      </Button>
                     </Form>
                   </span>
                 </div>
@@ -189,13 +186,14 @@ export default function ComponentCenter() {
                 const param = productLineForm.getFieldsValue();
                 queryComponentList({ componentType: tabActiveKey, ...param });
               }}
-              queryComponentList={({ componentType: tabActiveKey,pageIndex,pageSize}) =>
-                queryComponentList({ componentType: tabActiveKey, productLine: curProductLine,pageIndex,pageSize })
+              queryComponentList={({ componentType: tabActiveKey, pageIndex, pageSize }) =>
+                queryComponentList({ componentType: tabActiveKey, productLine: curProductLine, pageIndex, pageSize })
               }
               tableLoading={loading}
               pageInfo={pageInfo}
-              setPageInfo={(pageIndex:number,pageSize?:number)=>{setPageInfo({pageIndex,pageSize})}}
-             
+              setPageInfo={(pageIndex: number, pageSize?: number) => {
+                setPageInfo({ pageIndex, pageSize });
+              }}
             />
           </div>
         </>
