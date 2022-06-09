@@ -140,6 +140,7 @@ export default function ApplicationDeploy(props: any) {
         const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
         setPipelineOption(pipelineOptionData);
         if (pipelineOptionData.length !== 0) {
+          debugger;
           handleData(pipelineOptionData, tab);
         }
       }
@@ -149,17 +150,23 @@ export default function ApplicationDeploy(props: any) {
   // 处理数据
   const handleData = (data: any, tab: string) => {
     let storageData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-    let currentTabValue = storageData[tab];
-    const pipelineCodeList = data.map((item: any) => item.value);
-    // 选择的流水线被删除了或者第一次进入页面
-    if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
+    if (storageData) {
+      let currentTabValue = storageData[tab];
+      const pipelineCodeList = data.map((item: any) => item.value);
+      // 选择的流水线被删除了或者第一次进入页面
+      if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
+        setCurrentValue(data[0].value);
+        let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+        sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
+      }
+      // 设置过流水线且没被删除
+      if (pipelineCodeList.includes(currentTabValue)) {
+        setCurrentValue(storageData[tab]);
+      }
+    } else {
+      debugger;
+
       setCurrentValue(data[0].value);
-      let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-      sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
-    }
-    // 设置过流水线且没被删除
-    if (pipelineCodeList.includes(currentTabValue)) {
-      setCurrentValue(storageData[tab]);
     }
   };
 

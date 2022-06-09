@@ -9,7 +9,6 @@ import { ChartsContext } from '@cffe/fe-datav-components';
 import '@arco-design/web-react/dist/css/arco.css';
 import { useSize, useDebounce } from '@umijs/hooks';
 import { WaterMark } from '@ant-design/pro-layout';
-import { AlertOutlined } from '@ant-design/icons';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { IconMap } from '@/components/vc-icons';
