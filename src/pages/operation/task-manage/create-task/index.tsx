@@ -2,10 +2,8 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/10/25 18:30
 
-import React from 'react';
-import { history } from 'umi';
 import { useEffect, useState } from 'react';
-
+import ReactCron from '@/components/qnn-react-cron';
 import {
   useAddTask,
   useUpdateTask,
@@ -15,7 +13,7 @@ import {
   useQueryNodeList,
   useQueryClusterList,
 } from '../hooks';
-import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox } from 'antd';
+import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox, Popover } from 'antd';
 import { recordEditData, KVProps, jobContentProps } from '../type';
 import { QuestionCircleOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import EditorTable from '@cffe/pc-editor-table';
@@ -23,7 +21,6 @@ import AceEditor from '@/components/ace-editor';
 import { TaskTypeOptions, RequestModeOptions, RequestMethodOptions } from './schema';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
-// import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 
 export interface RecordEditDataProps {
   mode: EditorMode;
@@ -260,6 +257,11 @@ export default function addEnvData(props: RecordEditDataProps) {
       node: '',
     });
   };
+  const content = (
+    <div>
+      <ReactCron />
+    </div>
+  );
 
   return (
     <Drawer
@@ -304,6 +306,11 @@ export default function addEnvData(props: RecordEditDataProps) {
                 //   }
                 // ]}
               ></Input>
+            </Form.Item>
+            <Form.Item style={{ marginLeft: 120 }}>
+              <Popover content={content} title="生成时间表达式工具" trigger="click" placement="bottom">
+                <Button size="small">生成时间表达式</Button>
+              </Popover>
             </Form.Item>
             <Form.Item name="timeExpression" label="时间表达式" rules={[{ required: true, message: '这是必填项' }]}>
               <Input placeholder="请输入时间表达式" style={{ width: '24vw' }} disabled={viewEditable}></Input>
