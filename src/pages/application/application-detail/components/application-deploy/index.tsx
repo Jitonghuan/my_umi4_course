@@ -30,7 +30,7 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
-  const initTabActive = props.location.query.activeTab || 'dev';
+  const initTabActive = props.location.query.activeTab;
 
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
@@ -45,14 +45,13 @@ export default function ApplicationDeploy(props: any) {
 
   useEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
-
     history.push({ query: { ...props.location.query, activeTab: tabActive } });
   }, [tabActive]);
   useEffect(() => {
-    if (initTabActive) {
+    if (initTabActive && +appData?.isClient! === 0) {
       getPipeline(initTabActive);
     }
-  }, []);
+  }, [initTabActive]);
 
   // 二方包直接渲染另一个页面
   if (+appData?.isClient! === 1) {
@@ -129,6 +128,7 @@ export default function ApplicationDeploy(props: any) {
   // tab页切换
   const handleTabChange = (v: string) => {
     setCurrentValue('');
+    debugger;
     setTabActive(v);
     getPipeline(v);
   };
