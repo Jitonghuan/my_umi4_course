@@ -5,6 +5,7 @@
 import React from 'react';
 import { history } from 'umi';
 import { useEffect, useState } from 'react';
+
 import {
   useAddTask,
   useUpdateTask,
@@ -431,13 +432,6 @@ export default function addEnvData(props: RecordEditDataProps) {
                     </Form.Item>
                   </>
                 )}
-                {/* <Form.Item label="密码" name="password"  tooltip={{ title: '密码为空需确保机器节点存在ops主机公钥文件，否则会导致任务失败', icon: <QuestionCircleOutlined /> }} >
-               <Input.Password style={{ width: '24vw' }} placeholder='' disabled={optType==='check' ? !isEditPassword:viewEditable}></Input.Password>
-             </Form.Item> */}
-
-                {/* <Form.Item label="执行路径" name="execPath" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input placeholder="请输入执行路径" style={{ width: '24vw' }}></Input>
-                </Form.Item> */}
                 <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input.TextArea
                     placeholder="请输入command"
@@ -558,10 +552,9 @@ export default function addEnvData(props: RecordEditDataProps) {
                     options={clusterOption}
                     loading={clusterListloading}
                     onChange={submitCluster}
+                    disabled={viewEditable}
                   />
                 </Form.Item>
-                {/* <span style={{paddingLeft:10}}>  <CheckSquareOutlined onClick={submitCluster} /></span> */}
-
                 <Form.Item label="节点名称" name="node" rules={[{ required: true, message: '这是必填项' }]}>
                   <Select
                     style={{ width: '24vw' }}
