@@ -140,7 +140,6 @@ export default function ApplicationDeploy(props: any) {
         const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
         setPipelineOption(pipelineOptionData);
         if (pipelineOptionData.length !== 0) {
-          debugger;
           handleData(pipelineOptionData, tab);
         }
       }
@@ -149,7 +148,9 @@ export default function ApplicationDeploy(props: any) {
 
   // 处理数据
   const handleData = (data: any, tab: string) => {
-    let storageData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+    let storageData = sessionStorage.getItem('env_pipeline_obj')
+      ? JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '')
+      : '';
     if (storageData) {
       let currentTabValue = storageData[tab];
       const pipelineCodeList = data.map((item: any) => item.value);
@@ -164,8 +165,6 @@ export default function ApplicationDeploy(props: any) {
         setCurrentValue(storageData[tab]);
       }
     } else {
-      debugger;
-
       setCurrentValue(data[0].value);
     }
   };
