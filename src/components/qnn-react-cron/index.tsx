@@ -57,9 +57,10 @@ export default function ReactCron(props: ReactCronProps) {
             year: false,
           }}
           defaultTab={'minute'}
-          onOk={(value: any) => {
-            console.log('cron:', value);
-          }}
+          // onOk={(value: any) => {
+          //   console.log('cron:', value);
+          // }}
+
           getCronFns={(_cronFns: any) => {
             cronFns = _cronFns;
           }}
