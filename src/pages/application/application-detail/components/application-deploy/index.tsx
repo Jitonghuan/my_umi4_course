@@ -30,7 +30,6 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
-  const initTabActive = props.location.query.activeTab || 'dev';
 
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
@@ -45,15 +44,11 @@ export default function ApplicationDeploy(props: any) {
 
   useEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive);
-
     history.push({ query: { ...props.location.query, activeTab: tabActive } });
-  }, [tabActive]);
-  useEffect(() => {
-    if (initTabActive) {
-      getPipeline(initTabActive);
+    if (tabActive && +appData?.isClient! === 0) {
+      getPipeline(tabActive);
     }
-  }, []);
-
+  }, [tabActive]);
   // 二方包直接渲染另一个页面
   if (+appData?.isClient! === 1) {
     return <SecondPartyPkg {...props} />;
@@ -130,7 +125,7 @@ export default function ApplicationDeploy(props: any) {
   const handleTabChange = (v: string) => {
     setCurrentValue('');
     setTabActive(v);
-    getPipeline(v);
+    // getPipeline(v);
   };
 
   // 获取流水线
@@ -153,18 +148,24 @@ export default function ApplicationDeploy(props: any) {
 
   // 处理数据
   const handleData = (data: any, tab: string) => {
-    let storageData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-    let currentTabValue = storageData[tab];
-    const pipelineCodeList = data.map((item: any) => item.value);
-    // 选择的流水线被删除了或者第一次进入页面
-    if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
+    let storageData = sessionStorage.getItem('env_pipeline_obj')
+      ? JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '')
+      : '';
+    if (storageData) {
+      let currentTabValue = storageData[tab];
+      const pipelineCodeList = data.map((item: any) => item.value);
+      // 选择的流水线被删除了或者第一次进入页面
+      if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
+        setCurrentValue(data[0].value);
+        let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+        sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
+      }
+      // 设置过流水线且没被删除
+      if (pipelineCodeList.includes(currentTabValue)) {
+        setCurrentValue(storageData[tab]);
+      }
+    } else {
       setCurrentValue(data[0].value);
-      let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
-      sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
-    }
-    // 设置过流水线且没被删除
-    if (pipelineCodeList.includes(currentTabValue)) {
-      setCurrentValue(storageData[tab]);
     }
   };
 
