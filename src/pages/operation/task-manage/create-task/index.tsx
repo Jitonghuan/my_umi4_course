@@ -558,6 +558,7 @@ export default function addEnvData(props: RecordEditDataProps) {
                     options={clusterOption}
                     loading={clusterListloading}
                     onChange={submitCluster}
+                    disabled={viewEditable}
                   />
                 </Form.Item>
                 {/* <span style={{paddingLeft:10}}>  <CheckSquareOutlined onClick={submitCluster} /></span> */}
