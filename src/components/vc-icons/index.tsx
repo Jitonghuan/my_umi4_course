@@ -15,6 +15,7 @@ import {
   IcFlow,
   Exit,
   Activity,
+  UserRecent,
 } from '@cffe/internal-icon';
 
 /** Icon映射 */
@@ -34,4 +35,5 @@ export const IconMap = {
   'icon-ic_flow': <IcFlow />,
   'icon-exit': <Exit />,
   'icon-activity': <Activity />,
+  'icon-userRecent': <UserRecent />,
 };

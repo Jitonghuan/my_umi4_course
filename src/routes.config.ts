@@ -1099,6 +1099,19 @@ export default [
     ],
   },
   {
+    path: 'admin',
+    name: '管理员菜单',
+    icon: 'icon-userRecent',
+    routes: [
+      {
+        path: 'main',
+        name: '主页管理',
+        key: 'main',
+        component: '@/pages/admin',
+      },
+    ],
+  },
+  {
     path: '*',
     name: 'NOT FOUND',
     hideInMenu: true,
