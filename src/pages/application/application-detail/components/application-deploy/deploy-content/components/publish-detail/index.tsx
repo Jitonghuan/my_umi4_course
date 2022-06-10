@@ -325,7 +325,7 @@ export default function PublishDetail(props: IProps) {
   };
   const queryProjectEnv = async (benchmarkEnvCode: any) => {
     setListLoading(true);
-    await getRequest(queryProjectEnvList, { data: { benchmarkEnvCode, pageIndex: -1 } })
+    await getRequest(queryProjectEnvList, { data: { benchmarkEnvCode, pageSize: 9999, pageIndex: 1 } })
       .then((res) => {
         if (res?.success) {
           let data = res.data.dataSource;
