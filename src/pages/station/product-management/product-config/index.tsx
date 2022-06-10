@@ -69,6 +69,7 @@ export default function ProductConfig() {
             setCurIndentPackageStatus(res.data);
             if (cacheRef.current && (res.data === '已出包' || res.data === '出包异常')) {
               clearInterval(cacheRef.current);
+              queryIndentInfo(configInfo.id);
             }
           }
         })
