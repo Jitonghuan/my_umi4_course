@@ -13,7 +13,7 @@ import {
   useQueryNodeList,
   useQueryClusterList,
 } from '../hooks';
-import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox, Space } from 'antd';
+import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox, Tag } from 'antd';
 import { recordEditData, KVProps, jobContentProps } from '../type';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import EditorTable from '@cffe/pc-editor-table';
@@ -269,9 +269,9 @@ export default function addEnvData(props: RecordEditDataProps) {
         }}
         curTimeExpress={(express: string) => {
           setCurTimeExpress(express);
-          //  createTaskForm.setFieldsValue({
-          //   timeExpression:express
-          //  })
+          createTaskForm.setFieldsValue({
+            timeExpression: express,
+          });
         }}
       />
       <Drawer
@@ -336,14 +336,14 @@ export default function addEnvData(props: RecordEditDataProps) {
                 </Form.Item>
                 {mode !== 'VIEW' && (
                   <span style={{ marginTop: 4 }}>
-                    <Button
-                      size="small"
+                    <Tag
+                      color="geekblue"
                       onClick={() => {
                         setVisible(true);
                       }}
                     >
                       生成时间表达式
-                    </Button>
+                    </Tag>
                   </span>
                 )}
               </Row>
