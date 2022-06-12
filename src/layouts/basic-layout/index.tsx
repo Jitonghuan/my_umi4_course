@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
-import { Modal } from 'antd';
+import { Modal, Badge } from 'antd';
+import { BellFilled } from '@ant-design/icons';
 import 'antd/dist/antd.variable.min.css';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
@@ -147,6 +148,12 @@ export default function Layout(props: any) {
               }}
               showHeader={!fromThird}
               showSiderMenu={!fromThird}
+              notification={{
+                count: 9,
+                render: (active: true) => {
+                  <BellFilled />;
+                },
+              }}
               headerProps={{
                 // env: getEnv(),
                 userApi: `${appConfig.apexDomainName}/kapi/apex-sso/getLoginUserInfo`,
@@ -170,18 +177,18 @@ export default function Layout(props: any) {
                       changeTheme();
                     },
                   },
-                  {
-                    iconName: 'CommentOutlined',
-                    iconType: 'antd',
-                    type: 'customize',
-                    content: (visible, setVisible) => {
-                      return (
-                        <Modal visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
-                          您当前暂无通知消息!
-                        </Modal>
-                      );
-                    },
-                  },
+                  // {
+                  //   iconName: 'BellFilled',
+                  //   iconType: 'antd',
+                  //   type: 'customize',
+                  //   content: (visible, setVisible) => {
+                  //     return (
+                  //       <Modal visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
+                  //         您当前暂无通知消息!
+                  //       </Modal>
+                  //     );
+                  //   },
+                  // },
                 ],
                 title: (
                   <>

@@ -1,4 +1,71 @@
+import React, { useMemo } from 'react';
 import PageContainer from '@/components/page-container';
+import TableSearch from '@/components/table-search';
+import { Button, Space, Form } from 'antd';
+import { createFormColumns, createTableColumns } from './schema';
+import useTable from '@/utils/useTable';
 export default function AdminList() {
-  return <PageContainer></PageContainer>;
+  const [form] = Form.useForm();
+  const formOptions = [{}];
+  // const columns = useMemo(() => {
+  //   return createTableColumns({ onDelete, categoryData, businessData });
+  // }, []);
+
+  // const onDelete=()=>{
+
+  // }
+
+  const categoryData: any = [];
+  const businessData: any = [];
+  const {
+    tableProps,
+    search: { submit, reset },
+  } = useTable({
+    url: '',
+    method: 'GET',
+    form,
+    formatter: (params) => {
+      return {
+        ...params,
+        preDeployTime: params.preDeployTime ? params.preDeployTime.format('YYYY-MM-DD') : undefined,
+      };
+    },
+    formatResult: (result) => {
+      return {
+        total: result.data?.pageInfo?.total,
+        list: result.data?.dataSource?.map((el: any) => ({ ...el.plan })) || [],
+      };
+    },
+  });
+
+  return (
+    <PageContainer>
+      <TableSearch
+        form={form}
+        formOptions={formOptions}
+        formLayout="inline"
+        columns={[]}
+        {...tableProps}
+        pagination={{
+          ...tableProps.pagination,
+          showTotal: (total) => `共 ${total} 条`,
+          showSizeChanger: true,
+          size: 'small',
+          // defaultPageSize: 20,
+        }}
+        extraNode={
+          <Space>
+            <Button type="primary" ghost>
+              新增
+            </Button>
+          </Space>
+        }
+        className="table-form"
+        onSearch={submit}
+        reset={reset}
+        scroll={tableProps.dataSource.length > 0 ? { x: 2000 } : {}}
+        searchText="查询"
+      />
+    </PageContainer>
+  );
 }
