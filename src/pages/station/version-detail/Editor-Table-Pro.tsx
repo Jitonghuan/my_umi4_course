@@ -62,6 +62,7 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
+  const [position, setPosition] = useState<'top' | 'bottom' | undefined>('top');
   const updateRow = (rowKey: string, row: any) => {
     form.setFieldsValue({ [rowKey]: row });
   };
@@ -262,9 +263,10 @@ export default (props: VersionDetailProps) => {
               type="primary"
               disabled={isEditable}
               onClick={() => {
-                actionRef.current?.addEditRecord?.({
-                  id: (Math.random() * 1000000).toFixed(0),
-                });
+                // actionRef.current?.addEditRecord?.({
+                //   id: (Math.random() * 1000000).toFixed(0)
+                // },);
+                setPosition('top');
               }}
               icon={<PlusOutlined />}
             >
@@ -281,14 +283,15 @@ export default (props: VersionDetailProps) => {
         loading={loading}
         // maxLength={5}
         // 关闭默认的新建按钮
-        recordCreatorProps={false}
+        // recordCreatorProps={false}
+        recordCreatorProps={{
+          position: position,
+          // newRecordType: 'dataSource',
+          creatorButtonText: '新增一行',
+          record: { id: (Math.random() * 1000000).toFixed(0) },
+        }}
         columns={columns}
         scroll={{ y: window.innerHeight - 340 }}
-        // request={async () => ({
-        //   data: defaultData,
-        //   total: 3,
-        //   success: true,
-        // })}
         value={tableDataSource}
         onChange={setDataSource}
         pagination={false}
