@@ -62,9 +62,7 @@ export default function LoggerSearch(props: any) {
   //默认传最近30分钟，处理为秒级的时间戳
   let start = ((receiveInfo.startTime ? new Date(receiveInfo.startTime).getTime() : now - startTime) / 1000).toString();
   let end = ((receiveInfo.endTime ? new Date(receiveInfo.endTime).getTime() : now) / 1000).toString();
-  console.log(receiveInfo, 'receveInfo');
   if (receiveInfo.startTime || receiveInfo.endTime) {
-    console.log(start, end, 11);
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
   const [stowCondition, setStowCondition] = useState<boolean>(false);
@@ -88,7 +86,8 @@ export default function LoggerSearch(props: any) {
   const [editScreenVisible, setEditScreenVisible] = useState<boolean>(false); //是否展示lucene语法输入框
   const [editConditionType, setEditConditionType] = useState<boolean>(false); //使用高级搜索时禁用筛选条件输入
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
-  const [selectOptionType, setSelectOptionType] = useState<string>('lastTime');
+  const defaultSelectValue = receiveInfo.startTime ? 'rangePicker' : 'lastTime'
+  const [selectOptionType, setSelectOptionType] = useState<string>(defaultSelectValue);
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   var iframe = document.createElement('iframe');
@@ -102,7 +101,7 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
-      let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
+      // let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
       // window.atob(receiveInfo.message);
       let appCodeArry = [];
       if (receiveInfo.envCode) {
@@ -232,7 +231,7 @@ export default function LoggerSearch(props: any) {
     setViewlogSeaechTabInfo([]);
   };
 
-  const callback = (key: any) => {};
+  const callback = (key: any) => { };
 
   function range(start: any, end: any) {
     const result = [];
