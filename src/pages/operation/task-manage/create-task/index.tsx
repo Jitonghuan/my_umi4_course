@@ -16,7 +16,7 @@ import {
 } from '../hooks';
 import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox } from 'antd';
 import { recordEditData, KVProps, jobContentProps } from '../type';
-import { QuestionCircleOutlined, CheckSquareOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { TaskTypeOptions, RequestModeOptions, RequestMethodOptions } from './schema';

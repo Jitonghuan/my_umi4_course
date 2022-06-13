@@ -169,10 +169,17 @@ export const queryClusterAlertInfo = (params: { clusterId: string }) =>
       dataSource?.map((ele: any, index: number) => {
         result.push({
           alarmName: Object.keys(ele)[index],
-          activeAt: dataSource[Object.keys(ele)[index]]?.activeAt,
-          description: dataSource[Object.keys(ele)[index]]?.description,
-          lables: dataSource[Object.keys(ele)[index]]?.lables,
+          activeAt: Object.values(dataSource[index])[0]?.activeAt,
+          description: Object.values(dataSource[index])[0]?.description,
+          labels: Object.values(dataSource[index])[0]?.labels,
         });
+
+        console.log(
+          'dataSource[Object.keys(ele)[index]]',
+          Object.keys(ele)[index],
+          '---',
+          Object.values(dataSource[index])[0]?.labels,
+        );
       }, []);
 
       return result;
