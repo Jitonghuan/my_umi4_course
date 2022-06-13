@@ -77,7 +77,7 @@ export default function PipeLineManage(props: any) {
         };
       },
       ellipsis: true,
-      width: '30%',
+      width: '35%',
     },
     {
       title: '流水线code',
@@ -97,7 +97,7 @@ export default function PipeLineManage(props: any) {
         return <Input addonBefore={`${appCode}_${envTypeCode}_`} autoFocus />
       },
       ellipsis: true,
-      width: '60%',
+      width: '55%',
     },
   ];
   return (
