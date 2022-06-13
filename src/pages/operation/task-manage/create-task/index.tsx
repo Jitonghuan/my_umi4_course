@@ -602,52 +602,17 @@ export default function addEnvData(props: RecordEditDataProps) {
                     ></Select>
                   </Form.Item>
 
-                <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input.TextArea
-                    placeholder="请输入command"
-                    style={{ width: '24vw' }}
-                    disabled={viewEditable}
-                  ></Input.TextArea>
-                </Form.Item>
-              </>
-            )}
-            {/* ------------任务类型六K8S节点命令任务---------- */}
-            {curTaskType === 6 && (
-              <>
-                <Form.Item label="集群名称" name="clusterName" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Select
-                    style={{ width: '24vw' }}
-                    allowClear
-                    showSearch
-                    options={clusterOption}
-                    loading={clusterListloading}
-                    onChange={submitCluster}
-                    disabled={viewEditable}
-                  />
-                </Form.Item>
-                {/* <span style={{paddingLeft:10}}>  <CheckSquareOutlined onClick={submitCluster} /></span> */}
+                  <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
+                    <Input.TextArea
+                      placeholder="请输入command"
+                      style={{ width: '24vw' }}
+                      disabled={viewEditable}
+                    ></Input.TextArea>
+                  </Form.Item>
+                </>
+              )}
 
-                <Form.Item label="节点名称" name="node" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Select
-                    style={{ width: '24vw' }}
-                    disabled={viewEditable}
-                    options={nodeNameOption}
-                    loading={nodeNameLoading}
-                    showSearch
-                    allowClear
-                  ></Select>
-                </Form.Item>
-
-                <Form.Item label="command" name="command" rules={[{ required: true, message: '这是必填项' }]}>
-                  <Input.TextArea
-                    placeholder="请输入command"
-                    style={{ width: '24vw' }}
-                    disabled={viewEditable}
-                  ></Input.TextArea>
-                </Form.Item>
-              </>
-            )}
-            {/* ------------------------备注------------------------ */}
+              {/* ------------------------备注------------------------ */}
 
               <Form.Item name="desc" label="备注：">
                 <Input.TextArea
