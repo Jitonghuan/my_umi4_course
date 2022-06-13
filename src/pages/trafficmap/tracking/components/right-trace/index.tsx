@@ -202,7 +202,7 @@ export default function RrightTrace(props: any) {
       <DetailModal visible={visible} detailData={detailData} handleCancel={handleCancel}></DetailModal>
       <div className="trace-wrapper-top">
         <div className="trace-wrapper-top-info">
-          <span style={{ maxWidth: '50vw', overflowX: 'scroll', whiteSpace: 'nowrap' }}>
+          <span style={{ maxWidth: '48vw', overflowX: 'scroll', whiteSpace: 'nowrap' }}>
             <div style={{ fontWeight: '800', maxWidth: '100%' }}>
               端点：{item.endpointNames && item?.endpointNames?.length !== 0 ? item?.endpointNames[0] : '--'}
             </div>
