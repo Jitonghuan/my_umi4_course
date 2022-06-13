@@ -285,7 +285,7 @@ export default (props: VersionDetailProps) => {
         // 关闭默认的新建按钮
         // recordCreatorProps={false}
         recordCreatorProps={{
-          position: position,
+          position: 'top',
           // newRecordType: 'dataSource',
           creatorButtonText: '新增组件',
           record: { id: (Math.random() * 1000000).toFixed(0) },
