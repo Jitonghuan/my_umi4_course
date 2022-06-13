@@ -65,7 +65,7 @@ const SingelEnvSteps = (props: any) => {
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
-  const { initial, item, onCancelDeploy, index, data, notShowCancel, showCancel, ...other } = props;
+  const { initial, item, onCancelDeploy, index, data, notShowCancel, showCancel, projectEnvName, ...other } = props;
 
   let envList = item.nodes ? Object.keys(item.nodes) : [];
   return (
@@ -76,7 +76,7 @@ const MultiEnvSteps = (props: any) => {
             key={envKey}
             className={`sub_process sub_process-${i} ${changeColor(item.nodes, envKey) ? 'sub_process-active' : ''}`}
           >
-            <span className="sub_process-title">{envKey}</span>
+            <span className="sub_process-title">{projectEnvName}</span>
             {judgeColor(data, index, 'cancel', notShowCancel, showCancel) && (
               <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envKey)}>
                 取消发布
@@ -97,8 +97,8 @@ export default function DeploySteps(props: any) {
     stopSpin,
     onCancelDeploy,
     envTypeCode,
-    notShowCancel = () => {},
-    showCancel = () => {},
+    notShowCancel = () => { },
+    showCancel = () => { },
     isFrontend,
     ...other
   } = props;

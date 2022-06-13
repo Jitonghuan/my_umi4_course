@@ -249,14 +249,13 @@ export default function PublishDetail(props: IProps) {
   // 发布环境
   let I = 0;
   const envNames = useMemo(() => {
-    // const { envs } = deployInfo;
     const { deployEnvs } = envInfo || {};
-    // const envList = deployEnvs?.split(',') || [];
     return envDataList
       .filter((envItem) => {
         return (deployEnvs || []).includes(envItem.value);
       })
-      .map((envItem) => `${envItem.label}(${envItem.value})`)
+      .map((envItem) => envItem.label)
+      // .map((envItem) => `${envItem.label}(${envItem.value})`)
       .join(',');
   }, [envDataList, deployInfo]);
 
@@ -384,7 +383,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
   let envDataOption: any = []; //重启时选择环境option

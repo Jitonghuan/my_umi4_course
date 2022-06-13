@@ -15,7 +15,7 @@ import './index.less';
 const { TabPane } = Tabs;
 
 export default function ApplicationDeploy(props: any) {
-  const { appData, projectEnvCode } = useContext(DetailContext);
+  const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [tabActive, setTabActive] = useState(sessionStorage.getItem('__init_env_tab__') || 'dev');
@@ -78,6 +78,7 @@ export default function ApplicationDeploy(props: any) {
       <DeployContent
         // isActive={item.value === tabActive}
         envTypeCode={projectEnvCode || ''}
+        projectEnvName={projectEnvName || ''}
         pipelineCode={pipelineCode}
       />
     </ContentCard>

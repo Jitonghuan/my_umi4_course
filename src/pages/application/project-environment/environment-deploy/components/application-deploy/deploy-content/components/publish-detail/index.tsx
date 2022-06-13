@@ -118,7 +118,7 @@ export default function PublishDetail(props: IProps) {
       .filter((envItem) => {
         return (deployEnvs || []).includes(envItem.value);
       })
-      .map((envItem) => `${envItem.label}(${envItem.value})`)
+      .map((envItem) => `${envItem.label}`)
       .join(',');
   }, [envDataList, deployInfo]);
 
@@ -184,7 +184,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
   let envDataOption: any = []; //重启时选择环境option
@@ -269,7 +269,7 @@ export default function PublishDetail(props: IProps) {
             {/* <Paragraph copyable>{deployInfo?.version || '--'}</Paragraph> */}
           </Descriptions.Item>
         )}
-        <Descriptions.Item label="发布环境">{envTypeCode || '--'}</Descriptions.Item>
+        <Descriptions.Item label="发布环境">{projectEnvName || '--'}</Descriptions.Item>
         <Descriptions.Item label="冲突分支" span={4}>
           {branchInfo?.conflictFeature || '--'}
         </Descriptions.Item>

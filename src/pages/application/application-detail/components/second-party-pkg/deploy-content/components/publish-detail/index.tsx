@@ -53,7 +53,7 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
       .filter((envItem: any) => {
         return (deployEnvs || []).includes(envItem.value);
       })
-      .map((envItem: any) => `${envItem.label}(${envItem.value})`)
+      .map((envItem: any) => `${envItem.label}`)
       .join(',');
     // return (envDataList as any).find((v: any) => v.envCode === deployEnvs[0])?.envName;
   }, [envDataList, deployInfo]);

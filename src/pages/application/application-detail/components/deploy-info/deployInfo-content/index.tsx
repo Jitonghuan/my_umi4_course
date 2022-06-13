@@ -392,7 +392,7 @@ export default function DeployContent(props: DeployContentProps) {
           <Form form={formInstance} layout="inline">
             <h3>选择环境：</h3>
             <Form.Item name="envCode">
-              <Select placeholder="请选择" style={{ width: 140 }} options={envDatas} onChange={changeEnvCode} />
+              <Select placeholder="请选择" style={{ width: 240 }} options={envDatas} onChange={changeEnvCode} />
             </Form.Item>
           </Form>
         </div>
@@ -645,12 +645,12 @@ export default function DeployContent(props: DeployContentProps) {
                         {item.operateEvent === 'PodFileDownload'
                           ? '文件下载'
                           : item.operateEvent === 'restartApp'
-                          ? '重启应用'
-                          : item.operateEvent === 'rollback'
-                          ? '回滚应用'
-                          : item.operateEvent === 'DeletePod'
-                          ? '删除Pod'
-                          : null}
+                            ? '重启应用'
+                            : item.operateEvent === 'rollback'
+                              ? '回滚应用'
+                              : item.operateEvent === 'DeletePod'
+                                ? '删除Pod'
+                                : null}
                       </Tag>
                     </b>
                   </p>

@@ -16,6 +16,7 @@ import {
 } from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
+import { listAppEnv } from '@/pages/application/service';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
@@ -31,6 +32,7 @@ export interface DeployContentProps {
   /** 环境参数 */
   envTypeCode: string;
   pipelineCode: string;
+  projectEnvName: string;
   /** 部署下个环境成功回调 */
   // onDeployNextEnvSuccess: () => void;
 }
@@ -39,6 +41,7 @@ export default function DeployContent(props: DeployContentProps) {
   const {
     envTypeCode,
     pipelineCode,
+    projectEnvName
     // isActive
   } = props;
   const { appData, projectEnvCode } = useContext(DetailContext);
@@ -144,7 +147,7 @@ export default function DeployContent(props: DeployContentProps) {
             envTypeCode={projectEnvCode}
             deployInfo={deployInfo}
             pipelineCode={pipelineCode}
-            envCode={projectEnvCode}
+            envCode={projectEnvCode || ''}
             // appStatusInfo={appStatusInfo}
             onOperate={(type: any) => {
               // if (type === 'deployNextEnvSuccess') {
@@ -158,6 +161,7 @@ export default function DeployContent(props: DeployContentProps) {
           <PublishContent
             appCode={appCode!}
             envTypeCode={projectEnvCode}
+            projectEnvName={projectEnvName}
             deployInfo={deployInfo}
             deployedList={branchInfo.deployed}
             // appStatusInfo={appStatusInfo}
