@@ -287,10 +287,22 @@ export default function OperatorScheduling(props: any) {
   const addMultipleCluster = () => {
     postRequest(`${APIS.addMultipleClusterUser}?envCode=${commonEnvCode}`, { data: [...arryParams] }).then((res) => {
       if (res.success) {
-        message.success('调度成功！');
+        message.success({
+          content: '调度成功！',
+          className: 'custom-class',
+          style: {
+            marginTop: '20vh',
+          },
+        });
         // setLogger(res.data || '');
       } else {
-        message.warning('调度失败！');
+        message.error({
+          content: '调度失败！',
+          className: 'custom-class',
+          style: {
+            marginTop: '20vh',
+          },
+        });
       }
     });
   };
