@@ -371,10 +371,7 @@ export default function ProductConfig() {
                     <QuestionCircleOutlined />
                   </Tooltip>
                 </Button>
-                <CopyToClipboard
-                  text={JSON.stringify(indentConfigInfo || {})}
-                  onCopy={() => message.success('复制成功！')}
-                >
+                <CopyToClipboard text={indentConfigInfo} onCopy={() => message.success('复制成功！')}>
                   <Button size="small"> 一键复制</Button>
                 </CopyToClipboard>
                 <div style={{ float: 'right' }}>
