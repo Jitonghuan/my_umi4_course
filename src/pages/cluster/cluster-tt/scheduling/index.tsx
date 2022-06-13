@@ -58,9 +58,21 @@ export default function TrafficScheduling() {
           });
           setLogger(result.data || '');
           if (result.success) {
-            message.success('调度成功！');
+            message.success({
+              content: '调度成功！',
+              className: 'custom-class',
+              style: {
+                marginTop: '20vh',
+              },
+            });
           } else {
-            message.warning('调度失败！');
+            message.error({
+              content: '调度失败！',
+              className: 'custom-class',
+              style: {
+                marginTop: '20vh',
+              },
+            });
           }
         } finally {
           setPending(false);
