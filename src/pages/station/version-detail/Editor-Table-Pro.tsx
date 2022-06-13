@@ -246,7 +246,7 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          {currentTabType === 'app' && (
+          {/* {currentTabType === 'app' && (
             <Button
               type="primary"
               disabled={isEditable}
@@ -256,9 +256,9 @@ export default (props: VersionDetailProps) => {
             >
               添加应用
             </Button>
-          )}
+          )} */}
 
-          {currentTabType !== 'app' && (
+          {/* {currentTabType !== 'app' && (
             <Button
               type="primary"
               disabled={isEditable}
@@ -272,7 +272,7 @@ export default (props: VersionDetailProps) => {
             >
               {productionPageTypes[currentTab].text}
             </Button>
-          )}
+          )} */}
         </div>
       </div>
       <EditableProTable<DataSourceType>
@@ -287,7 +287,7 @@ export default (props: VersionDetailProps) => {
         recordCreatorProps={{
           position: position,
           // newRecordType: 'dataSource',
-          creatorButtonText: '新增一行',
+          creatorButtonText: '新增组件',
           record: { id: (Math.random() * 1000000).toFixed(0) },
         }}
         columns={columns}
