@@ -230,9 +230,9 @@ export const getRegulusProjects = `${appConfig.apiPrefix}/publishManage/third/re
 
 let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 /** POST 新建分支关联需求 */
-export const queryPortalList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/list`;
+export const queryPortalList = `http://kapi-base-${env}.cfuture.shop/eip-fone/portal/list`;
 
-export const getDemandByProjectList = `http://kapi-base-${env}.cfuture.shop/eip-demand/portal/getDemandByProject`;
+export const getDemandByProjectList = `http://kapi-base-${env}.cfuture.shop/eip-fone/portal/getDemandByProject`;
 // post 新建分支-获取主干分支下拉框数据
 export const getMasterBranch = '';
 
