@@ -38,7 +38,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList } = props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -133,7 +133,7 @@ export default function PublishContent(props: IProps) {
         return cancelDeploy({
           id: metadata?.id,
           envCode,
-        }).then(() => {});
+        }).then(() => { });
       },
     });
   }
@@ -207,6 +207,7 @@ export default function PublishContent(props: IProps) {
         deployedList={deployedList}
         getItemByKey={getItemByKey}
         pipelineCode={pipelineCode}
+        envList={envList}
       />
       {/* <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />

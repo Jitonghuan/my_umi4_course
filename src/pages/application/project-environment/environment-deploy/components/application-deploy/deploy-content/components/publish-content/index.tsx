@@ -26,7 +26,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 const PublishContent = React.forwardRef((props: IProps, ref) => {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, projectEnvName } = props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -125,7 +125,7 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
         return cancelDeploy({
           id: metadata?.id,
           envCode: envTypeCode,
-        }).then(() => {});
+        }).then(() => { });
       },
     });
   }
@@ -194,6 +194,7 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
         getItemByKey={getItemByKey}
         projectEnvCode={projectEnvCode}
         pipelineCode={pipelineCode}
+        projectEnvName={projectEnvName}
       />
       {/* <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />

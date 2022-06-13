@@ -65,18 +65,26 @@ const SingelEnvSteps = (props: any) => {
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
-  const { initial, item, onCancelDeploy, index, data, notShowCancel, showCancel, ...other } = props;
+  const { initial, item, onCancelDeploy, index, data, notShowCancel, showCancel, envList, ...other } = props;
 
-  let envList = item.nodes ? Object.keys(item.nodes) : [];
+  let envCodeList = item.nodes ? Object.keys(item.nodes) : [];
+  const findEnvName = (envCode: string) => {
+    const envObj = envList.find((item: any) => item?.value === envCode)
+    if (envObj && envObj?.label) {
+      return envObj.label
+    } else {
+      return ''
+    }
+  }
   return (
     <div style={{ margin: '0 15px' }} className={`${judgeColor(data, index, 'finish') ? 'suject-finish' : ''}`}>
-      <div className={`sub_process-wrapper ${changeColor(item, envList) ? 'sub_process-wrapper-active' : ''}`}>
-        {envList.map((envKey: any, i: number) => (
+      <div className={`sub_process-wrapper ${changeColor(item, envCodeList) ? 'sub_process-wrapper-active' : ''}`}>
+        {envCodeList.map((envKey: any, i: number) => (
           <div
             key={envKey}
             className={`sub_process sub_process-${i} ${changeColor(item.nodes, envKey) ? 'sub_process-active' : ''}`}
           >
-            <span className="sub_process-title">{envKey}</span>
+            <span className="sub_process-title">{findEnvName(envKey)}</span>
             {judgeColor(data, index, 'cancel', notShowCancel, showCancel) && (
               <Button type="link" className="cancel-btn" onClick={() => onCancelDeploy && onCancelDeploy(envKey)}>
                 取消发布
@@ -97,9 +105,10 @@ export default function DeploySteps(props: any) {
     stopSpin,
     onCancelDeploy,
     envTypeCode,
-    notShowCancel = () => {},
-    showCancel = () => {},
+    notShowCancel = () => { },
+    showCancel = () => { },
     isFrontend,
+    envList = [],
     ...other
   } = props;
   let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
