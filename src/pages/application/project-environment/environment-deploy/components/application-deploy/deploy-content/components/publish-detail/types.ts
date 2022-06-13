@@ -5,6 +5,7 @@ export interface IProps {
   envTypeCode: any;
   pipelineCode: string;
   envCode: string;
+
   // nextEnvTypeCode?: string;
   // appStatusInfo: IStatusInfoProps[];
   onOperate: (

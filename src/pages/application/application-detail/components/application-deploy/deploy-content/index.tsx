@@ -21,6 +21,7 @@ import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import { Spin } from 'antd';
+import { listAppEnv } from '@/pages/application/service';
 import './index.less';
 import { Iprops } from '_@cffe_fe-datav-components@0.1.8@@cffe/fe-datav-components/es/components/charts/chart-bar';
 
@@ -56,6 +57,7 @@ export default function DeployContent(props: DeployContentProps) {
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
+  const [envList, setEnvList] = useState([])
   const publishContentRef = useRef<any>();
 
   const requestData = async () => {
@@ -155,6 +157,28 @@ export default function DeployContent(props: DeployContentProps) {
     }
   }, [visible]);
 
+  useEffect(() => {
+    if (!appCode || !envTypeCode) return;
+    getEnvList({ envTypeCode, appCode: appData?.appCode, proEnvType: 'benchmark' });
+  }, [envTypeCode, appCode])
+
+  // 获取该应用所有环境列表
+  const getEnvList = (params: any) => {
+    getRequest(listAppEnv, {
+      data: {
+        ...params,
+      },
+    }).then((result) => {
+      let envs: any = [];
+      if (result?.success) {
+        result?.data?.map((item: any) => {
+          envs.push({ label: item.envName, value: item.envCode });
+        });
+        setEnvList(envs)
+      }
+    });
+  };
+
   const onSpin = () => {
     setLoading(true);
   };
@@ -192,6 +216,7 @@ export default function DeployContent(props: DeployContentProps) {
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
+            envList={envList}
           />
           <PublishBranch
             deployInfo={deployInfo}
