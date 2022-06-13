@@ -289,6 +289,8 @@ export default function OperatorScheduling(props: any) {
       if (res.success) {
         message.success('调度成功！');
         // setLogger(res.data || '');
+      } else {
+        message.warning('调度失败！');
       }
     });
   };
