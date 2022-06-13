@@ -421,7 +421,7 @@ const Coms = (props: any) => {
           <div className="mode-table-item">
             <h4 className="title">{el.title}</h4>
             <div className="value" style={{ color: el.color }}>
-              {el.value || '-'}
+              <a href="">{el.value || '-'}</a>
               {el.unit || ''}
             </div>
           </div>
@@ -501,6 +501,7 @@ const Coms = (props: any) => {
             </h3>
             <div className="monitor-tabs-content-sec">
               <VCCardLayout grid={gridData}>{cardDataLists.map((el) => renderCard(el))}</VCCardLayout>
+              {console.log('cardDataLists', cardDataLists)}
             </div>
           </Spin>
 
@@ -600,6 +601,7 @@ const Coms = (props: any) => {
               </Form.Item>
             </Form>
           </div>
+          {/* pod表格 */}
           <div className="monitor-tabs-content-sec">
             <HulkTable
               rowKey="id"
