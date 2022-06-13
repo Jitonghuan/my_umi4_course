@@ -287,8 +287,8 @@ export default function OperatorScheduling(props: any) {
   const addMultipleCluster = () => {
     postRequest(`${APIS.addMultipleClusterUser}?envCode=${commonEnvCode}`, { data: [...arryParams] }).then((res) => {
       if (res.success) {
-        message.success('提交成功！');
-        setLogger(res.data || '');
+        message.success('调度成功！');
+        // setLogger(res.data || '');
       }
     });
   };
@@ -405,7 +405,7 @@ export default function OperatorScheduling(props: any) {
           </div>
         </div>
       </div>
-      <Modal
+      {/* <Modal
         visible={!!logger}
         title="同步日志"
         maskClosable={false}
@@ -414,7 +414,7 @@ export default function OperatorScheduling(props: any) {
         width={800}
       >
         <pre className="pre-block">{logger}</pre>
-      </Modal>
+      </Modal> */}
     </div>
     // </ContentCard>
   );
