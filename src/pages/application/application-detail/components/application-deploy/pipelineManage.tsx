@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Modal, message, Form } from 'antd';
+import { Modal, message, Form, Input } from 'antd';
 import { ConsoleSqlOutlined, PlusOutlined } from '@ant-design/icons';
 import { addPipelineUrl, updatePipelineUrl, deletePipeline } from '@/pages/application/service';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
@@ -41,7 +41,7 @@ export default function PipeLineManage(props: any) {
     const successMessage = data.add ? '新增成功' : '编辑成功';
     let params;
     if (data.add) {
-      params = { appCode, pipelineName, pipelineCode, envTypeCode };
+      params = { appCode, pipelineCode: `${appCode}_${envTypeCode}_${pipelineCode}`, pipelineName, envTypeCode };
     } else {
       params = { pipelineName, pipelineCode };
     }
@@ -77,7 +77,7 @@ export default function PipeLineManage(props: any) {
         };
       },
       ellipsis: true,
-      width: 150,
+      width: '30%',
     },
     {
       title: '流水线code',
@@ -93,12 +93,15 @@ export default function PipeLineManage(props: any) {
           rules: [{ required: true, message: '不能包含中文', pattern: /^[^\u4e00-\u9fa5]*$/ }],
         };
       },
+      renderFormItem: (_: any, row: any) => {
+        return <Input addonBefore={`${appCode}_${envTypeCode}_`} autoFocus />
+      },
       ellipsis: true,
-      width: 150,
+      width: '60%',
     },
   ];
   return (
-    <Modal width={800} title="流水线管理" visible={visible} footer={false} onCancel={handleCancel}>
+    <Modal width={900} title="流水线管理" visible={visible} footer={false} onCancel={handleCancel}>
       <div style={{ marginTop: '20px' }}>
         <ETable
           ref={tableRef}
