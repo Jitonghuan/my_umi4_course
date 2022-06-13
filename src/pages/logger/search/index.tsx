@@ -487,7 +487,7 @@ export default function LoggerSearch(props: any) {
                     </Form.Item>
                   </p>
 
-                  <p>
+                  <p className={editScreenVisible ? 'message-input-lucene' : 'message-input'}>
                     <Form.Item label="message" name="message">
                       <Input style={{ width: '28vw' }} placeholder="仅支持精准匹配"></Input>
                     </Form.Item>
