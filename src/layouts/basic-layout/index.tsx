@@ -148,12 +148,6 @@ export default function Layout(props: any) {
               }}
               showHeader={!fromThird}
               showSiderMenu={!fromThird}
-              notification={{
-                count: 9,
-                render: (active: true) => {
-                  <BellFilled />;
-                },
-              }}
               headerProps={{
                 // env: getEnv(),
                 userApi: `${appConfig.apexDomainName}/kapi/apex-sso/getLoginUserInfo`,
@@ -167,6 +161,17 @@ export default function Layout(props: any) {
                     // campusId: 2000001,
                     deptId: userInfo.deptInfo.deptId,
                   });
+                },
+                notification: {
+                  count: 9,
+                  data: [
+                    {
+                      id: 1,
+                      level: '',
+                      title: '标题',
+                    },
+                  ],
+                  render: (active: true) => {},
                 },
                 extensions: [
                   {
