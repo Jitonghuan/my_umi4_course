@@ -3,7 +3,7 @@
 // @create 2021/07/27 14:36
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Form, Radio, Button, Modal } from 'antd';
+import { Form, Radio, Button, Modal, message } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { useInitClusterData, useClusterSource } from './hooks';
@@ -109,6 +109,9 @@ export default function TrafficScheduling(props: any) {
             data: paramArry,
           });
           setLogger(result.data || '');
+          if (result.success) {
+            message.success('调度成功！');
+          }
         } finally {
           setPending(false);
         }
@@ -147,7 +150,7 @@ export default function TrafficScheduling(props: any) {
           </Button>
         </div>
       </Form>
-      <Modal
+      {/* <Modal
         visible={!!logger}
         title="同步日志"
         maskClosable={false}
@@ -156,7 +159,7 @@ export default function TrafficScheduling(props: any) {
         width={800}
       >
         <pre className="pre-block">{logger}</pre>
-      </Modal>
+      </Modal> */}
     </ContentCard>
   );
 }
