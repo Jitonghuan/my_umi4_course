@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
-import { Tabs, Card, Form, Table, Spin, Select, Divider, Button, Modal } from 'antd';
+import { Form, Table, Modal } from 'antd';
+import { alarmTableSchema } from './schema';
 import './index.less';
 export interface boardInfo extends Record<string, any> {
   mode: string;
@@ -27,7 +28,14 @@ export function AlarmModal(props: boardInfo) {
       }}
       footer={null}
     >
-      <Table columns={[]}></Table>
+      <Table
+        columns={alarmTableSchema}
+        expandable={{
+          expandedRowRender: (record: any) => <p style={{ margin: 0 }}>{record?.lables || '--'}</p>,
+          rowExpandable: (record) => record.name !== 'Not Expandable',
+        }}
+        dataSource={[]}
+      ></Table>
     </Modal>
   );
 }
