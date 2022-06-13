@@ -111,6 +111,8 @@ export default function TrafficScheduling(props: any) {
           setLogger(result.data || '');
           if (result.success) {
             message.success('调度成功！');
+          } else {
+            message.warning('调度失败！');
           }
         } finally {
           setPending(false);
