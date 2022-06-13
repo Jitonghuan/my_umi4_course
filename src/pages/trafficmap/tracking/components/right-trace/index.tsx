@@ -213,9 +213,9 @@ export default function RrightTrace(props: any) {
               <span style={{ margin: '0px 12px' }}>
                 持续时间：<Tag color="default">{item?.duration || '--'}ms</Tag>
               </span>
-              <Tag
-                // type="primary"
-                // size="small"
+              <Button
+                type="primary"
+                size="small"
                 color="blue"
                 onClick={() => {
                   history.push({
@@ -230,7 +230,7 @@ export default function RrightTrace(props: any) {
                 }}
               >
                 查看日志
-              </Tag>
+              </Button>
             </div>
           </span>
         </div>
@@ -321,9 +321,8 @@ export default function RrightTrace(props: any) {
                             }
                           >
                             <div
-                              className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${
-                                node.isError ? 'error-node' : ''
-                              } span-item`}
+                              className={`${!node.children || node.children.length == 0 ? 'leaf' : ''} ${node.isError ? 'error-node' : ''
+                                } span-item`}
                               onClick={() => {
                                 setDetailData(node);
                                 setVisible(true);
