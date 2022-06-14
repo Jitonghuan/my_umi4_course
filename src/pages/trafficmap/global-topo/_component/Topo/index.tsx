@@ -3,6 +3,7 @@ import moment, { Moment } from 'moment';
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
 import { getTopoList } from '../../../service';
 import { mockRomote, random } from './common';
+// import insertCss from 'insert-css';
 import { formatText, nodeStyled, edgeStyled, comboStyled, findNode } from './util';
 import './index.less';
 const layout: any = {
@@ -136,11 +137,15 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             },
         });
 
+        const minimap = new G6.Minimap({
+            size: [150, 100],
+        });
+
         g = new G6.Graph({
             container: 'topo',
             width: container?.clientWidth,
             height: container?.clientHeight,
-            plugins: [tooltip, edgeMenu, menu, toolbar], // 插件
+            plugins: [tooltip, edgeMenu, menu, toolbar, minimap], // 插件
             modes: {
                 default: [
                     {
@@ -155,19 +160,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     'drag-combo',
                 ],
             },
-            // nodeStateStyles: {
-            //   highlight: {
-            //     opacity: 1,
-            //   },
-            //   dark: {
-            //     opacity: 0.2,
-            //   },
-            // },
-            // edgeStateStyles: {
-            //   highlight: {
-            //     stroke: '#999',
-            //   },
-            // },
         });
         // 关闭局部渲染，防止有残影
         g.get('canvas').set('localRefresh', false);
@@ -209,11 +201,16 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         const linkDistance = 100;
         const edgeStrength = 50;
         const nodeStrength = 200;
-        const nodeSpacing = 10;
+        const nodeSpacing = 20;
         if (expandList && expandList.nodes && expandList.nodes.length > 0) {
             const container = containerRef.current;
             const config = {
                 type: 'gForce',
+                // type: 'circular',
+                // divisions: 5,
+                // radius: 200,
+                // startAngle: Math.PI / 4,
+                // endAngle: Math.PI,
                 minMovement: 0.1,
                 maxIteration: 1000,
                 preventOverlap: true,
