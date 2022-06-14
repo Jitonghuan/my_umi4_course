@@ -339,6 +339,7 @@ export default function EnvironmentList() {
               <Table.Column title="基准环境" dataIndex="relEnvs" width="10%" ellipsis />
               <Table.Column title="默认分类" dataIndex="categoryCode" width="10%" ellipsis />
               <Table.Column title="环境大类" dataIndex="envTypeCode" width="8%" />
+              <Table.Column title="创建人" dataIndex="createUser" width="10%" />
               <Table.Column title="备注" dataIndex="mark" width="18%" ellipsis />
               <Table.Column
                 title="操作"
