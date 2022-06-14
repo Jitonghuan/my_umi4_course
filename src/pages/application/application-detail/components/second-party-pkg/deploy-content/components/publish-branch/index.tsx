@@ -153,7 +153,7 @@ export default function PublishBranch(props: IProps) {
               onClick={submitClick}
               style={{ marginLeft: '20px' }}
             >
-              提交分支
+              {hasPublishContent ? '追加分支' : '提交分支'}
             </Button>
           </div>
         </div>
