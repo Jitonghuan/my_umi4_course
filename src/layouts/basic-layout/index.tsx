@@ -58,7 +58,7 @@ export default function Layout(props: any) {
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
   const [chooseDept] = useChooseDept();
   const [staffDepData, loadStaffDepData] = useStaffDepData();
-  const [style, setStyle] = useState<any>('foneLight');
+  const [style, setStyle] = useState<any>('matrixLight');
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -100,13 +100,13 @@ export default function Layout(props: any) {
   });
 
   const changeTheme = () => {
-    if (style == 'foneDark') {
+    if (style == 'matrixDark') {
       setStyle('globalLight');
-      document.body.removeAttribute('fone-theme');
+      document.body.removeAttribute('matrix-theme');
       document.body.setAttribute('arco-theme', 'light');
     } else {
-      setStyle('foneDark');
-      document.body.setAttribute('fone-theme', 'foneDark');
+      setStyle('matrixDark');
+      document.body.setAttribute('matrix-theme', 'matrixDark');
       document.body.setAttribute('arco-theme', 'dark');
     }
   };
@@ -182,18 +182,6 @@ export default function Layout(props: any) {
                       changeTheme();
                     },
                   },
-                  // {
-                  //   iconName: 'BellFilled',
-                  //   iconType: 'antd',
-                  //   type: 'customize',
-                  //   content: (visible, setVisible) => {
-                  //     return (
-                  //       <Modal visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
-                  //         您当前暂无通知消息!
-                  //       </Modal>
-                  //     );
-                  //   },
-                  // },
                 ],
                 title: (
                   <>
@@ -202,10 +190,6 @@ export default function Layout(props: any) {
                         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
                         {appConfig.title + appConfig.logoName}
                       </span>
-                      {/* 
-                      <span  >
-                        <AlertOutlined />
-                      </span> */}
                     </div>
                   </>
                 ),

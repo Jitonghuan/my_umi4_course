@@ -1,7 +1,7 @@
 import React from 'react';
 import { datetimeCellRender } from '@/utils';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
-import { Space, Tag, Popconfirm } from 'antd';
+import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
 // 列表页-查询表单
@@ -47,9 +47,10 @@ export const createFormColumns = (params: {
 
 // 列表页-表格
 export const createTableColumns = (params: {
-  onDelete: (planId: string) => void;
-  categoryData: any[];
-  businessData: any[];
+  onDelete: () => void;
+  onView: () => void;
+  onEdit: () => void;
+  curRecord: any;
 }) => {
   return [
     {
@@ -57,33 +58,33 @@ export const createTableColumns = (params: {
       dataIndex: 'id',
       key: 'id',
       width: '3%',
-      // render: (text, record) => <Link to={`./plan/checkConfigModify?id=${text}`}>{text}</Link>,
     },
     {
       title: '类型',
-      dataIndex: 'deployStatus',
-      key: 'status',
+      dataIndex: 'type',
+      key: 'type',
       width: 100,
-      render: (text) => <></>,
     },
     {
       title: '标题',
-      dataIndex: 'appCategoryCode',
-      key: 'appCategoryCode',
-      render: (text) => <></>,
+      dataIndex: 'title',
+      key: 'title',
+      ellipsis: true,
+      render: (text) => <Tooltip title={text}></Tooltip>,
     },
     {
       title: '发布时间',
-      dataIndex: 'appGroupCode',
-      key: 'appGroupCode',
-      render: (text) => <></>,
+      dataIndex: 'gmtCreate',
+      key: 'gmtCreate',
+      width: 200,
+      render: (value) => <>{datetimeCellRender(value)} </>,
     },
     {
       title: '是否置顶',
-      dataIndex: 'appCode',
-      key: 'appCode',
-      width: 200,
-      render: (text) => <></>,
+      dataIndex: 'priority',
+      key: 'priority',
+      width: 140,
+      render: (value) => <Switch></Switch>,
     },
     {
       title: '操作',
@@ -94,9 +95,9 @@ export const createTableColumns = (params: {
       render: (_: string, record) => (
         //根据不同类型跳转
         <Space>
-          <Link to={`./plan/editConfigModify?id=${record.id}`}>详情</Link>
-          <Link to={`./plan/editConfigModify?id=${record.id}`}>编辑</Link>
-          <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete(record?.planId!)}>
+          <a>详情</a>
+          <a>编辑</a>
+          <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete()}>
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </Space>

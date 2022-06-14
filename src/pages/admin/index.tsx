@@ -7,16 +7,22 @@ import useTable from '@/utils/useTable';
 export default function AdminList() {
   const [form] = Form.useForm();
   const formOptions = [{}];
+  const onDelete = () => {};
+  const onView = () => {};
+  const onEdit = () => {};
   // const columns = useMemo(() => {
-  //   return createTableColumns({ onDelete, categoryData, businessData });
+  //   return createTableColumns({categoryData, businessData });
   // }, []);
 
-  // const onDelete=()=>{
-
-  // }
-
-  const categoryData: any = [];
+  const curRecord: any = [];
   const businessData: any = [];
+  const columns = createTableColumns({
+    onDelete,
+    onView,
+    onEdit,
+    curRecord,
+  });
+
   const {
     tableProps,
     search: { submit, reset },
@@ -44,7 +50,7 @@ export default function AdminList() {
         form={form}
         formOptions={formOptions}
         formLayout="inline"
-        columns={[]}
+        columns={columns}
         {...tableProps}
         pagination={{
           ...tableProps.pagination,
