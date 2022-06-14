@@ -11,6 +11,7 @@ import moment from 'moment';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import Topo from './Topo';
+import Graph from '../global-topo/_component/Topo';
 import DragWrapper from './_component/DragWrapper';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
@@ -210,7 +211,7 @@ const globalTopo: React.FC = () => {
     console.log('redline', id);
   }, []);
 
-  const onRedLineSelect = useCallback((record) => {
+  const onRedLineSelect = useCallback((record: any) => {
     setSelectTime(moment(record.time));
   }, []);
 
@@ -292,14 +293,14 @@ const globalTopo: React.FC = () => {
           </div>
         </div>
 
-        <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
+        <ContentCard style={{ backgroundColor: '#F7F8FA', height: 'calc(100% - 60px)' }}>
           <div style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
             <div className="graph-box" style={{ position: 'relative' }}>
               {/**
                * DragWrapper:可拖拽弹窗组件
                * Topo:拓扑图
                */}
-              <Topo
+              {/* <Topo
                 // isFullScreen={isFullScreen}
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
@@ -311,7 +312,17 @@ const globalTopo: React.FC = () => {
                 setIsMock={setIsMock}
                 setIsExpand={setIsExpand}
                 setSelectTime={setSelectTime}
-              />
+              /> */}
+              <Graph
+                ref={TopoRef}
+                selectTime={selectTime}
+                selectEnv={selectEnv}
+                onNodeClick={onNodeClick}
+                onRedLineClick={onRedLineClick}
+                refreshFrequency={refreshFrequency}
+                setIsExpand={setIsExpand}
+                setSelectTime={setSelectTime}
+              ></Graph>
               <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
             </div>
           </div>
