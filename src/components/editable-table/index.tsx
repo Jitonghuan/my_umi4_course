@@ -34,7 +34,7 @@ const ETable = React.forwardRef((props: any, ref) => {
     fixed: 'right',
     title: '操作',
     valueType: 'option',
-    width: 100,
+    width: 150,
     render: (text: any, record: any, _: any, action: any) => (
       <div>
         <a
