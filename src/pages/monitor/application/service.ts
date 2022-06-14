@@ -69,18 +69,53 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       const { fullGCCount = [], youngGCCount = [], fullGCSum = [], youngGCSum = [] } = res.data;
       const xAxis: string[] = [];
       const fullCount: string[] = [];
-      fullGCCount?.map((el: string[]) => {
-        xAxis.push(moment(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
-        fullCount.push(Number(el[1]).toFixed(2));
+      let gcCountArry: any = [];
+      fullGCCount?.map((ele: any, index_one: number) => {
+        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          // fullCount.push(Number(item[1]).toFixed(2));
+          gcCountArry.push({
+            name: 'fullGCCount_' + Object.keys(ele)[index_one],
+            data: Number(item[1]).toFixed(2),
+          });
+        });
       });
-      const youngCount = youngGCCount?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const fullSum = fullGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
-      const youngSum = youngGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      youngGCCount?.map((ele: any, index_one: number) => {
+        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          gcCountArry.push({
+            name: 'youngGCCount_' + Object.keys(ele)[index_one],
+            data: Number(item[1]).toFixed(2),
+          });
+        });
+      });
+      fullGCSum?.map((ele: any, index_one: number) => {
+        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          gcCountArry.push({
+            name: 'fullGCSum_' + Object.keys(ele)[index_one],
+            data: Number(item[1]).toFixed(2),
+          });
+        });
+      });
+      youngGCSum?.map((ele: any, index_one: number) => {
+        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          gcCountArry.push({
+            name: 'youngGCSum_' + Object.keys(ele)[index_one],
+            data: Number(item[1]).toFixed(2),
+          });
+        });
+      });
 
+      // const youngCount = youngGCCount?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      // const fullSum = fullGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      // const youngSum = youngGCSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
+      xAxis.filter;
       return {
         count: {
           xAxis,
-          dataSource: [fullCount, youngCount],
+          dataSource: [fullCount],
         },
         sum: {
           xAxis,

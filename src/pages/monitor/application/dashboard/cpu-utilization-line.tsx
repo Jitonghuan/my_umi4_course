@@ -12,13 +12,12 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function CpuUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
-
   const config = {
     data,
     xField: 'time',
     yField: 'precentage',
     seriesField: 'category',
-    color: ['#8bc0d6', '#60d7a7', 'yellow'],
+    // color: ['#8bc0d6', '#60d7a7', 'yellow'],
     xAxis: {
       // tickInterval:6,
       // tickCount:20

@@ -60,8 +60,8 @@ export const tableSchema = [
   },
   {
     dataIndex: 'uptime',
-    title: '运行时长(天)',
-    width: 110,
+    title: '运行时长',
+    width: 120,
   },
   {
     dataIndex: 'health',
@@ -129,12 +129,14 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
         name: 'FullGC次数',
         data: dataSource?.[0] || [],
         type: 'line',
+        smooth: 'true', //是否平滑显示折现
       },
       {
         // yAxisIndex: 1,
         name: 'YoungGC次数',
         data: dataSource?.[1] || [],
         type: 'line',
+        smooth: 'true', //是否平滑显示折现
       },
     ],
   };

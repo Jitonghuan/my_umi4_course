@@ -166,20 +166,14 @@ export const queryClusterAlertInfo = (params: { clusterId: string }) =>
     if (res?.success) {
       const result: any = [];
       let dataSource = res.data;
-      dataSource?.map((ele: any, index: number) => {
+      dataSource?.map((ele: any, index_one: number) => {
         result.push({
-          alarmName: Object.keys(ele)[index],
-          activeAt: Object.values(dataSource[index])[0]?.activeAt,
-          description: Object.values(dataSource[index])[0]?.description,
-          labels: Object.values(dataSource[index])[0]?.labels,
+          key: index_one,
+          alarmName: Object.keys(ele)[0],
+          activeAt: Object.values(dataSource[index_one])[0]?.activeAt,
+          description: Object.values(dataSource[index_one])[0]?.description,
+          labels: Object.values(dataSource[index_one])[0]?.labels,
         });
-
-        console.log(
-          'dataSource[Object.keys(ele)[index]]',
-          Object.keys(ele)[index],
-          '---',
-          Object.values(dataSource[index])[0]?.labels,
-        );
       }, []);
 
       return result;

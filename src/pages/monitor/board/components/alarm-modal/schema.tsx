@@ -2,6 +2,11 @@ import { Tooltip } from 'antd';
 import { datetimeCellRender } from '@/utils';
 export const alarmTableSchema = [
   {
+    title: 'ID',
+    dataIndex: 'key',
+    width: 60,
+  },
+  {
     title: '告警名称',
     dataIndex: 'alarmName',
     width: 180,

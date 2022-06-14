@@ -32,8 +32,8 @@ export function AlarmModal(props: boardInfo) {
           res?.map((item: any) => {
             for (const key in item.labels) {
               const element = item.labels[key];
-
               arry.push({
+                key: item.key,
                 label: key,
                 value: element,
               });
@@ -61,10 +61,13 @@ export function AlarmModal(props: boardInfo) {
       <Table
         columns={alarmTableSchema}
         expandable={{
-          expandedRowRender: (record: any) => (
+          expandedRowRender: (record: any, index_one: number) => (
             <p style={{ margin: 0 }}>
+              {console.log('record', record)}
               {labelsInfo.length !== 0 &&
-                labelsInfo?.map((item: any) => {
+                labelsInfo?.filter((item: any, index_two: number) => {
+                  const onlyIndex = item.key.indexOf(index_one) === index_one;
+
                   return (
                     <li>
                       {' '}
