@@ -146,6 +146,8 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             width: container?.clientWidth,
             height: container?.clientHeight,
             plugins: [tooltip, edgeMenu, menu, toolbar, minimap], // 插件
+            // 设置为true，启用 redo & undo 栈功能
+            enabledStack: true,
             modes: {
                 default: [
                     {
