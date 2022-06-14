@@ -81,6 +81,11 @@ export default function OperatorScheduling(props: any) {
       key: 'userId',
     },
     {
+      title: '备注',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
       title: '操作',
       key: 'action',
       width: 50,
@@ -101,7 +106,11 @@ export default function OperatorScheduling(props: any) {
       dataIndex: 'userId',
       key: 'userId',
     },
-
+    {
+      title: '备注',
+      dataIndex: 'description',
+      key: 'description',
+    },
     {
       title: '操作',
       key: 'action',
@@ -144,6 +153,11 @@ export default function OperatorScheduling(props: any) {
       title: '操作员',
       dataIndex: 'userId',
       key: 'userId',
+    },
+    {
+      title: '备注',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
       title: '操作',
@@ -208,7 +222,8 @@ export default function OperatorScheduling(props: any) {
                   let userType = ele?.userType;
                   let userCluster = ele?.userCluster;
                   let userId = ele?.userId;
-                  arryAp.push({ userType, userCluster, userId });
+                  let description = ele?.description;
+                  arryAp.push({ userType, userCluster, userId, description });
 
                   localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(arryAp);
                 }
@@ -216,7 +231,8 @@ export default function OperatorScheduling(props: any) {
                   let userType = ele?.userType;
                   let userCluster = ele?.userCluster;
                   let userId = ele?.userId;
-                  arryBp.push({ userType, userCluster, userId });
+                  let description = ele?.description;
+                  arryBp.push({ userType, userCluster, userId, description });
                   // clusterB_patientData.push({type,cluster,id})
                   localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(arryBp);
                 }
@@ -224,7 +240,8 @@ export default function OperatorScheduling(props: any) {
                   let userType = ele?.userType;
                   let userCluster = ele?.userCluster;
                   let userId = ele?.userId;
-                  arryAO.push({ userType, userCluster, userId });
+                  let description = ele?.description;
+                  arryAO.push({ userType, userCluster, userId, description });
                   // clusterA_operatorData.push({type,cluster,id})
                   localStorage.CLUSTERA_OPERATOR_DATA = JSON.stringify(arryAO);
                 }
@@ -232,7 +249,8 @@ export default function OperatorScheduling(props: any) {
                   let userType = ele?.userType;
                   let userCluster = ele?.userCluster;
                   let userId = ele?.userId;
-                  arryBO.push({ userType, userCluster, userId });
+                  let description = ele?.description;
+                  arryBO.push({ userType, userCluster, userId, description });
                   // clusterB_operatorData.push({type,cluster,id})
 
                   localStorage.CLUSTERB_OPERATOR_DATA = JSON.stringify(arryBO);
@@ -312,39 +330,39 @@ export default function OperatorScheduling(props: any) {
     <div className="site-card-border-less-wrapper">
       <div className="content-Card">
         <div className="leftCard">
-          <Card title="操作" bordered={false} style={{ width: '24vw', height: 300, marginTop: 80 }}>
-            <Form form={form} labelCol={{ flex: '100px' }} onFinish={addUser}>
+          <Card title="操作" bordered={false} style={{ width: '24vw', height: 310, marginTop: 80 }}>
+            <Form form={form} labelCol={{ flex: '80px' }} onFinish={addUser}>
               <Form.Item label="集群选择" name="userCluster">
-                <Select style={{ width: 180 }}>
+                <Select>
                   <Select.Option key="cluster_a" value="cluster_a">
-                    {' '}
                     A集群
                   </Select.Option>
                   <Select.Option key="cluster_b" value="cluster_b">
-                    {' '}
                     B集群
                   </Select.Option>
                 </Select>
               </Form.Item>
 
-              <Form.Item label="人员选择" name="userType" style={{ marginTop: 30 }}>
-                <Select style={{ width: 180 }}>
+              <Form.Item label="人员选择" name="userType">
+                <Select>
                   <Select.Option key="patient" value="patient">
-                    {' '}
                     用户
                   </Select.Option>
                   <Select.Option key="operator" value="operator">
-                    {' '}
                     操作员
                   </Select.Option>
                 </Select>
               </Form.Item>
 
-              <Form.Item label="ID" name="userId" style={{ marginTop: 30 }}>
-                <Input style={{ width: 180 }}></Input>
+              <Form.Item label="ID" name="userId">
+                <Input />
               </Form.Item>
 
-              <Form.Item style={{ marginTop: 30 }}>
+              <Form.Item label="备注" name="description">
+                <Input />
+              </Form.Item>
+
+              <Form.Item style={{ marginTop: 40 }}>
                 <Button type="primary" htmlType="submit" style={{ float: 'right' }}>
                   添加
                 </Button>

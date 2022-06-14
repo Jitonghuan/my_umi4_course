@@ -23,16 +23,6 @@ export default defineConfig({
   chainWebpack(config, { webpack }) {
     config.plugin('monaco-editor').use(MonacoWebpackPlugin);
   },
-  extraBabelPlugins: [
-    [
-      "import",
-      {
-        "libraryName": "antd",
-        "libraryDirectory": "lib",
-        "style": true
-      }
-    ]
-  ],
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
@@ -40,7 +30,7 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix-test.cfuture.shop/', 
+      target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.129.47:8080/',//青枫本地

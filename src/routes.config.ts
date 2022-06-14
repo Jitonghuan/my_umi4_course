@@ -1036,6 +1036,13 @@ export default [
             component: '@/pages/cluster/cluster-zs/operation-log',
             hideInMenu: true,
           },
+          {
+            path: 'district-manage',
+            name: '机构管理',
+            key: 'district-manage',
+            component: '@/pages/cluster/cluster-zs/district-manage',
+            hideInMenu: true,
+          },
         ],
       },
     ],
