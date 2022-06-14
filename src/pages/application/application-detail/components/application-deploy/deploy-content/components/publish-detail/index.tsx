@@ -138,7 +138,7 @@ export default function PublishDetail(props: IProps) {
         if (params.clusterName) {
           setOffLineEnvData(envs);
         }
-        if (params.proEnvType === 'benchmark') {
+        if (params.proEnvType === 'benchmark' && !params?.clusterName) {
           setEnvDataList(envs);
         }
         if (params.proEnvType === 'project') {
