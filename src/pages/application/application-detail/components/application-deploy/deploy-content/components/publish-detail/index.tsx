@@ -66,6 +66,8 @@ export default function PublishDetail(props: IProps) {
     if (!appCategoryCode || !appData) return;
     // 所有环境
     getEnvList({ envTypeCode: envTypeCode, appCode: appData?.appCode, proEnvType: 'benchmark' });
+    // 项目环境
+    getEnvList({ envTypeCode: envTypeCode, appCode: appData?.appCode, proEnvType: 'project' });
     // 支持离线部署的环境
     getEnvList({
       envTypeCode: envTypeCode,
@@ -135,8 +137,12 @@ export default function PublishDetail(props: IProps) {
         });
         if (params.clusterName) {
           setOffLineEnvData(envs);
-        } else {
+        }
+        if (params.proEnvType === 'benchmark') {
           setEnvDataList(envs);
+        }
+        if (params.proEnvType === 'project') {
+          setProjectEnvCodeOptions(envs)
         }
       }
     });
@@ -734,8 +740,8 @@ export default function PublishDetail(props: IProps) {
         maskClosable={false}
       >
         <div>
-          <Form form={envProjectForm} layout="inline">
-            <Form.Item
+          <Form form={envProjectForm}>
+            {/* <Form.Item
               label="基准环境:"
               name="benchmarkEnvCode"
               rules={[{ required: true, message: '请选择基准环境' }]}
@@ -745,13 +751,13 @@ export default function PublishDetail(props: IProps) {
                 allowClear
                 showSearch
                 loading={loading}
-                style={{ width: 140 }}
+                style={{ width: 180 }}
                 onChange={selectEnvProject}
               ></Select>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="项目环境:" name="envCode" rules={[{ required: true, message: '请选择项目环境' }]}>
               <Select
-                style={{ width: 140 }}
+                style={{ width: 180 }}
                 allowClear
                 showSearch
                 loading={listLoading}
