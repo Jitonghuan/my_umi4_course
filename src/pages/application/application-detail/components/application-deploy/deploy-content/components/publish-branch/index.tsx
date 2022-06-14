@@ -218,7 +218,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         </div>
         <div className="caption-right">
           <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-            提交分支
+            {hasPublishContent ? '追加分支' : '提交分支'}
           </Button>
         </div>
       </div>
