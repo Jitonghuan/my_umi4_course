@@ -259,6 +259,17 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
 
 // 元空间
 export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+      smooth: 'true', //是否平滑显示折现
+    });
+    nameArry.push(item?.name);
+  });
   return {
     tooltip: {
       trigger: 'axis',
@@ -272,7 +283,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['元空间'],
+      data: nameArry,
       icon: 'rect',
     },
     color: ['#4BA2FF', '#54DA81'],
@@ -301,12 +312,6 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: '元空间',
-        data: dataSource?.[0] || [],
-        type: 'line',
-      },
-    ],
+    series: arry,
   };
 };

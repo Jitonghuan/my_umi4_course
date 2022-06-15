@@ -341,12 +341,13 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       let xAxis: string[] = [];
       let metaspaceArry: any = [];
       const fullCount: string[] = [];
-      metaspace?.map((ele: string[], index_one: number) => {
+      metaspace?.map((ele: any, index_one: number) => {
+        let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'fullGCCount_' + Object.keys(ele)[index_one];
+          dataName = '元空间_' + Object.keys(ele)[index_one];
         });
         metaspaceArry.push({
           name: dataName,
@@ -357,10 +358,14 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
         // fullCount.push(Number(el[1]).toFixed(2));
       });
 
+      xAxis = xAxis.filter((currentValue, index, arr) => {
+        return arr.indexOf(currentValue) === index;
+      });
+
       return {
         count: {
           xAxis,
-          dataSource: [fullCount],
+          dataSource: metaspaceArry,
         },
         sum: {},
       };
