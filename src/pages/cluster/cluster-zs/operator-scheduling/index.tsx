@@ -134,6 +134,11 @@ export default function OperatorScheduling(props: any) {
       key: 'userId',
     },
     {
+      title: '备注',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
       title: '操作',
       key: 'action',
       width: 50,
@@ -177,30 +182,32 @@ export default function OperatorScheduling(props: any) {
 
   //缓存数据
   const addUser = (params: any) => {
-    if (params?.userCluster === 'cluster_a' && params?.userType === 'patient') {
-      clusterA_patientData.push(params);
-      localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(clusterA_patientData);
-      setClusterA_patientData(localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []);
-    }
-    if (params?.userCluster === 'cluster_b' && params?.userType === 'patient') {
-      clusterB_patientData.push(params);
-      localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(clusterB_patientData);
-      setClusterB_patientData(localStorage.CLUSTERB_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERB_PATIENT_DATA) : []);
-    }
-    if (params?.userCluster === 'cluster_a' && params?.userType === 'operator') {
-      clusterA_operatorData.push(params);
-      localStorage.CLUSTERA_OPERATOR_DATA = JSON.stringify(clusterA_operatorData);
-      setClusterA_operatorData(
-        localStorage.CLUSTERA_OPERATOR_DATA ? JSON.parse(localStorage.CLUSTERA_OPERATOR_DATA) : [],
-      );
-    }
-    if (params?.userCluster === 'cluster_b' && params?.userType === 'operator') {
-      clusterB_operatorData.push(params);
-      localStorage.CLUSTERB_OPERATOR_DATA = JSON.stringify(clusterB_operatorData);
-      setClusterB_operatorData(
-        localStorage.CLUSTERB_OPERATOR_DATA ? JSON.parse(localStorage.CLUSTERB_OPERATOR_DATA) : [],
-      );
-    }
+    form.validateFields().then(() => {
+      if (params?.userCluster === 'cluster_a' && params?.userType === 'patient') {
+        clusterA_patientData.push(params);
+        localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(clusterA_patientData);
+        setClusterA_patientData(localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []);
+      }
+      if (params?.userCluster === 'cluster_b' && params?.userType === 'patient') {
+        clusterB_patientData.push(params);
+        localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(clusterB_patientData);
+        setClusterB_patientData(localStorage.CLUSTERB_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERB_PATIENT_DATA) : []);
+      }
+      if (params?.userCluster === 'cluster_a' && params?.userType === 'operator') {
+        clusterA_operatorData.push(params);
+        localStorage.CLUSTERA_OPERATOR_DATA = JSON.stringify(clusterA_operatorData);
+        setClusterA_operatorData(
+          localStorage.CLUSTERA_OPERATOR_DATA ? JSON.parse(localStorage.CLUSTERA_OPERATOR_DATA) : [],
+        );
+      }
+      if (params?.userCluster === 'cluster_b' && params?.userType === 'operator') {
+        clusterB_operatorData.push(params);
+        localStorage.CLUSTERB_OPERATOR_DATA = JSON.stringify(clusterB_operatorData);
+        setClusterB_operatorData(
+          localStorage.CLUSTERB_OPERATOR_DATA ? JSON.parse(localStorage.CLUSTERB_OPERATOR_DATA) : [],
+        );
+      }
+    })
   };
   //患者和操作员查询
   let arryAp: any = [];
@@ -358,7 +365,7 @@ export default function OperatorScheduling(props: any) {
                 <Input />
               </Form.Item>
 
-              <Form.Item label="备注" name="description">
+              <Form.Item label="备注" name="description" rules={[{ required: true, message: '请备注用户信息' }]}>
                 <Input />
               </Form.Item>
 
