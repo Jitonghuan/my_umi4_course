@@ -298,7 +298,7 @@ const Coms = (props: IProps) => {
               </span>
             </div>
             <ColorContainer roleKeys={['color']}>
-              <EchartsReact option={fullOptions} style={{ height: 400 }} />
+              <EchartsReact option={fullOptions} style={{ height: 500 }} />
             </ColorContainer>
           </div>
         </Spin>

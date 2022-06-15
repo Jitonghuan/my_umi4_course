@@ -100,7 +100,7 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 34,
+      bottom: 45,
       top: 30,
       left: 30,
       right: 40,
@@ -158,7 +158,7 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 34,
+      bottom: 45,
       top: 30,
       left: 30,
       right: 40,
@@ -216,7 +216,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 34,
+      bottom: 70,
       top: 34,
       left: 30,
       right: 40,
@@ -227,7 +227,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       data: nameArry,
       icon: 'rect',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {
@@ -275,7 +275,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
       trigger: 'axis',
     },
     grid: {
-      bottom: 34,
+      bottom: 45,
       top: 30,
       left: 30,
       right: 40,
@@ -286,7 +286,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
       data: nameArry,
       icon: 'rect',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {

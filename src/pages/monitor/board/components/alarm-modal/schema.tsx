@@ -5,6 +5,7 @@ export const alarmTableSchema = [
     title: 'ID',
     dataIndex: 'key',
     width: 60,
+    render: (id: number) => <span>{id + 1}</span>,
   },
   {
     title: '告警名称',

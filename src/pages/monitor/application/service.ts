@@ -76,10 +76,11 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       fullGCCount?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'fullGC次数_' + Object.keys(ele)[index_one];
+          dataName = 'fullGC次数_' + Object.keys(ele)[0];
         });
         gcFullCountArry.push({
           name: dataName,
@@ -90,10 +91,10 @@ export const queryGcCount = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
 
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'youngGC次数_' + Object.keys(ele)[index_one];
+          dataName = 'youngGC次数_' + Object.keys(ele)[0];
         });
         gcYoungCountArry.push({
           name: dataName,
@@ -103,10 +104,10 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       fullGCSum?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'fullGCSum_' + Object.keys(ele)[index_one];
+          dataName = 'fullGCSum_' + Object.keys(ele)[0];
         });
         gcFullSumArry.push({
           name: dataName,
@@ -116,10 +117,10 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       youngGCSum?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'youngGCSum_' + Object.keys(ele)[index_one];
+          dataName = 'youngGCSum_' + Object.keys(ele)[0];
         });
         gcYoungSumArry.push({
           name: dataName,
@@ -165,10 +166,10 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       fullGCTime?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'fullGC耗时_' + Object.keys(ele)[index_one];
+          dataName = 'fullGC耗时_' + Object.keys(ele)[0];
         });
         fullGCTimeArry.push({
           name: dataName,
@@ -178,10 +179,10 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       youngGCTime?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'youngGC耗时_' + Object.keys(ele)[index_one];
+          dataName = 'youngGC耗时_' + Object.keys(ele)[0];
         });
         youngGCTimeArry.push({
           name: dataName,
@@ -191,10 +192,10 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       fullGCTimeSum?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'fullGCTimeSum_' + Object.keys(ele)[index_one];
+          dataName = 'fullGCTimeSum_' + Object.keys(ele)[0];
         });
         fullGCTimeSumArry.push({
           name: dataName,
@@ -204,10 +205,10 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       youngGCTimeSum?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = 'youngGCTimeSum_' + Object.keys(ele)[index_one];
+          dataName = 'youngGCTimeSum_' + Object.keys(ele)[0];
         });
         youngGCTimeSumArry.push({
           name: dataName,
@@ -254,10 +255,10 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
       heapEdenSpace?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = '使用总和_' + Object.keys(ele)[index_one];
+          dataName = '使用总和_' + Object.keys(ele)[0];
         });
         heapEdenSpaceArry.push({
           name: dataName,
@@ -268,10 +269,10 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
 
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = '年轻代Eden区_' + Object.keys(ele)[index_one];
+          dataName = '年轻代Eden区_' + Object.keys(ele)[0];
         });
         heapMemSumArry.push({
           name: dataName,
@@ -281,10 +282,10 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
       heapOldGen?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = '年轻代Survivor区_' + Object.keys(ele)[index_one];
+          dataName = '年轻代Survivor区_' + Object.keys(ele)[0];
         });
         heapOldGenArry.push({
           name: dataName,
@@ -294,10 +295,10 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
       heapSurvivorSpace?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = '老年代_' + Object.keys(ele)[index_one];
+          dataName = '老年代_' + Object.keys(ele)[0];
         });
         heapSurvivorSpaceArry.push({
           name: dataName,
@@ -344,10 +345,10 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       metaspace?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-        ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
           xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           dataSource.push(Number(item[1]).toFixed(2));
-          dataName = '元空间_' + Object.keys(ele)[index_one];
+          dataName = '元空间_' + Object.keys(ele)[0];
         });
         metaspaceArry.push({
           name: dataName,

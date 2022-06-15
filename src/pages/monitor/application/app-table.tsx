@@ -538,7 +538,7 @@ const Coms = (props: IProps) => {
               <TabPane tab={<span>进程监控</span>} key="1">
                 <h3 className="monitor-tabs-content-title">
                   监控图表&nbsp;&nbsp;
-                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                  {/* <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span> */}
                 </h3>
 
                 <VCCardLayout grid={layoutGrid} className="monitor-app-content">
@@ -554,7 +554,7 @@ const Coms = (props: IProps) => {
               <TabPane tab={<span>基础监控</span>} key="2">
                 <h3 className="monitor-tabs-content-title">
                   监控图表&nbsp;&nbsp;
-                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                  {/* <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span> */}
                 </h3>
                 <div style={{ width: '100%', height: '100%' }}>
                   <div className="base-monitor-charts">
