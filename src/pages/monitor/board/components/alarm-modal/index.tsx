@@ -27,9 +27,11 @@ export function AlarmModal(props: boardInfo) {
       .then((res) => {
         setDataSource(res);
         //处理数据
-        let arry: any = [];
+        let labelsInfo: any = [];
         if (res.length !== 0) {
           res?.map((item: any) => {
+            let arry: any = [];
+
             for (const key in item.labels) {
               const element = item.labels[key];
               arry.push({
@@ -38,10 +40,12 @@ export function AlarmModal(props: boardInfo) {
                 value: element,
               });
             }
+
+            labelsInfo.push(arry);
           });
         }
 
-        setLabelsInfo(arry);
+        setLabelsInfo(labelsInfo);
       })
       .finally(() => {
         setLoading(false);
@@ -63,17 +67,13 @@ export function AlarmModal(props: boardInfo) {
         expandable={{
           expandedRowRender: (record: any, index_one: number) => (
             <p style={{ margin: 0 }}>
-              {console.log('record', record)}
               {labelsInfo.length !== 0 &&
-                labelsInfo?.filter((item: any, index_two: number) => {
-                  const onlyIndex = item.key.indexOf(index_one) === index_one;
-
+                labelsInfo[index_one]?.map((item: any, index_two: number) => {
                   return (
                     <li>
-                      {' '}
                       <span>
                         <b>{item?.label}:</b>
-                      </span>{' '}
+                      </span>
                       <span className="labels-info-content">{item?.value}</span>
                     </li>
                   );

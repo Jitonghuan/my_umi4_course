@@ -83,6 +83,18 @@ export const tableSchema = [
 
 // GC 次数
 export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+      smooth: 'true', //是否平滑显示折现
+    });
+    nameArry.push(item?.name);
+  });
+
   return {
     tooltip: {
       trigger: 'axis',
@@ -96,10 +108,10 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['FullGC次数', 'YoungGC次数'],
+      data: nameArry,
       icon: 'rect',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {
@@ -124,26 +136,23 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: 'FullGC次数',
-        data: dataSource?.[0] || [],
-        type: 'line',
-        smooth: 'true', //是否平滑显示折现
-      },
-      {
-        // yAxisIndex: 1,
-        name: 'YoungGC次数',
-        data: dataSource?.[1] || [],
-        type: 'line',
-        smooth: 'true', //是否平滑显示折现
-      },
-    ],
+    series: arry,
   };
 };
 
 // GC 耗时
 export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+      smooth: 'true', //是否平滑显示折现
+    });
+    nameArry.push(item?.name);
+  });
   return {
     tooltip: {
       trigger: 'axis',
@@ -157,10 +166,10 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['FullGC耗时', 'YoungGC耗时'],
+      data: nameArry,
       icon: 'rect',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {
@@ -185,24 +194,23 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: 'FullGC耗时',
-        data: dataSource[0],
-        type: 'line',
-      },
-      {
-        // yAxisIndex: 1,
-        name: 'YoungGC耗时',
-        data: dataSource[1],
-        type: 'line',
-      },
-    ],
+    series: arry,
   };
 };
 
 // 内存
 export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+      smooth: 'true', //是否平滑显示折现
+    });
+    nameArry.push(item?.name);
+  });
   return {
     tooltip: {
       trigger: 'axis',
@@ -216,7 +224,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['使用总和', '年轻代Eden区', '年轻代Survivor区', '老年代'],
+      data: nameArry,
       icon: 'rect',
     },
     color: ['#4BA2FF', '#54DA81'],
@@ -245,28 +253,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: '使用总和',
-        data: dataSource?.[0] || [],
-        type: 'line',
-      },
-      {
-        name: '年轻代Eden区',
-        data: dataSource?.[1] || [],
-        type: 'line',
-      },
-      {
-        name: '年轻代Survivor区',
-        data: dataSource?.[2] || [],
-        type: 'line',
-      },
-      {
-        name: '老年代',
-        data: dataSource?.[3] || [],
-        type: 'line',
-      },
-    ],
+    series: arry,
   };
 };
 

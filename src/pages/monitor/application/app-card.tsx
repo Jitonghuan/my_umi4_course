@@ -91,6 +91,7 @@ const Coms = (props: IProps) => {
       .then((resp) => {
         const resource = curtRadio === '1' ? resp.count : resp.sum;
         const options = getOption(resource.xAxis, resource.dataSource);
+        console.log('');
         prevData.current = resp;
         setCurOptions(options);
       })
