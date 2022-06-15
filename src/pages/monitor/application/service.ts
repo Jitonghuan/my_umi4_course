@@ -67,7 +67,7 @@ export const queryGcCount = (params: { [key: string]: string }) =>
   getRequest(queryGcCountApi, { ...params }).then((res: any) => {
     if (res?.success) {
       const { fullGCCount = [], youngGCCount = [], fullGCSum = [], youngGCSum = [] } = res.data;
-      let xAxis: string[] = [];
+      let curxAxis: any[] = [];
       const fullCount: string[] = [];
       let gcFullCountArry: any = [];
       let gcYoungCountArry: any = [];
@@ -76,9 +76,9 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       fullGCCount?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
-
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          // xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'fullGC次数_' + Object.keys(ele)[0];
         });
@@ -92,7 +92,8 @@ export const queryGcCount = (params: { [key: string]: string }) =>
         let dataName: any = '';
 
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          // xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'youngGC次数_' + Object.keys(ele)[0];
         });
@@ -105,7 +106,8 @@ export const queryGcCount = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          // xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'fullGCSum_' + Object.keys(ele)[0];
         });
@@ -118,7 +120,8 @@ export const queryGcCount = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          // xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'youngGCSum_' + Object.keys(ele)[0];
         });
@@ -128,8 +131,15 @@ export const queryGcCount = (params: { [key: string]: string }) =>
         });
       });
 
-      xAxis = xAxis.filter((currentValue, index, arr) => {
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
         return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
 
       return {
@@ -161,13 +171,13 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       let youngGCTimeArry: any = [];
       let fullGCTimeSumArry: any = [];
       let youngGCTimeSumArry: any = [];
-      let xAxis: string[] = [];
+      let curxAxis: any[] = [];
       const fullTime: string[] = [];
       fullGCTime?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'fullGC耗时_' + Object.keys(ele)[0];
         });
@@ -180,7 +190,7 @@ export const queryGcTime = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'youngGC耗时_' + Object.keys(ele)[0];
         });
@@ -193,7 +203,7 @@ export const queryGcTime = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'fullGCTimeSum_' + Object.keys(ele)[0];
         });
@@ -206,7 +216,7 @@ export const queryGcTime = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'youngGCTimeSum_' + Object.keys(ele)[0];
         });
@@ -216,8 +226,15 @@ export const queryGcTime = (params: { [key: string]: string }) =>
         });
       });
 
-      xAxis = xAxis.filter((currentValue, index, arr) => {
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
         return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
 
       // const youngTime = youngGCTime?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
@@ -247,7 +264,7 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
   getRequest(queryJvmHeapApi, { ...params }).then((res: any) => {
     if (res?.success) {
       const { heapEdenSpace = [], heapMemSum = [], heapOldGen = [], heapSurvivorSpace = [] } = res.data;
-      let xAxis: string[] = [];
+      let curxAxis: any[] = [];
       let heapEdenSpaceArry: any = [];
       let heapMemSumArry: any = [];
       let heapOldGenArry: any = [];
@@ -256,7 +273,7 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = '使用总和_' + Object.keys(ele)[0];
         });
@@ -270,7 +287,7 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
         let dataName: any = '';
 
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = '年轻代Eden区_' + Object.keys(ele)[0];
         });
@@ -283,7 +300,7 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = '年轻代Survivor区_' + Object.keys(ele)[0];
         });
@@ -296,7 +313,7 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = '老年代_' + Object.keys(ele)[0];
         });
@@ -306,8 +323,15 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
         });
       });
 
-      xAxis = xAxis.filter((currentValue, index, arr) => {
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
         return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
 
       // const heapEden: string[] = [];
@@ -339,14 +363,14 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
   getRequest(queryJvmMetaspaceApi, { ...params }).then((res: any) => {
     if (res.success) {
       const { metaspace = [] } = res.data;
-      let xAxis: string[] = [];
+      let curxAxis: any[] = [];
       let metaspaceArry: any = [];
       const fullCount: string[] = [];
       metaspace?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-          xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+          curxAxis.push(Number(item[0]) * 1000);
           dataSource.push(Number(item[1]).toFixed(2));
           dataName = '元空间_' + Object.keys(ele)[0];
         });
@@ -359,8 +383,15 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
         // fullCount.push(Number(el[1]).toFixed(2));
       });
 
-      xAxis = xAxis.filter((currentValue, index, arr) => {
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
         return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
 
       return {
