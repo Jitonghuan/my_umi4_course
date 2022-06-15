@@ -23,11 +23,10 @@ export const getContentList = addAPIPrefix('/adminManage/systemNotice/content/li
 export const deleteContent = addAPIPrefix('/adminManage/systemNotice/content/delete');
 /* PUT 7、更新系统通知内容 */
 export const updateContent = addAPIPrefix('/adminManage/systemNotice/content/update');
-
 /* GET 8、查询我的快捷入口 */
 export const getMyEntryMenuList = addAPIPrefix('/adminManage/entryMenu/my/List');
 
-/* POST 9、查询我的快捷入口*/
+/* POST 9、新增我的快捷入口*/
 export const createMyEntryMenu = addAPIPrefix('/adminManage/entryMenu/my/create');
 
 /* POST 7、删除我的快捷入口 */

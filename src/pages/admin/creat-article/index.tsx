@@ -18,7 +18,7 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [addLoading, createArticle] = useAddArticle();
   const [updateLoading, updateArticle] = useUpdateArticle();
   const { mode, initData, onClose, onSave } = props;
-  const [editForm] = Form.useForm<Record<string, string[]>>();
+  const [editForm] = Form.useForm<Record<string, string>>();
   const [viewDisabled, seViewDisabled] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);

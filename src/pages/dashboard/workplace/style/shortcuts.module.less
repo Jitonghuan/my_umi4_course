@@ -14,7 +14,7 @@
   // padding: 4px;
   box-sizing: border-box;
   cursor: pointer;
-
+  position: relative;
   &:hover {
     .icon {
       background-color: var(--color-primary-light-1);
@@ -58,4 +58,17 @@
   color: var(--color-text-1);
   margin-bottom: 16px;
   margin-left: 9px;
+}
+.closeIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 16px;
+  position: absolute;
+  top: 0;
+  right: 8px;
+  background-color: #ccc;
+  color: #000;
+  z-index: 9;
+  line-height: 18px;
+  text-align: center;
 }
