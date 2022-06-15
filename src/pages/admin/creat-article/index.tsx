@@ -5,30 +5,89 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Drawer, message, Form, Button, Select, Input, Switch } from 'antd';
 import { typeOptions } from '../schema';
-import UserSelector, { stringToList } from '@/components/user-selector';
-import { updateAppMember } from '@/pages/application/service';
-import { AppMemberInfo } from '@/pages/application/interfaces';
-import RichText from '@/components/rich-text';
+import { useAddArticle, useUpdateArticle } from '../hook';
 
 export interface MemberEditorProps {
   mode?: EditorMode;
-  initData?: AppMemberInfo;
+  initData?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
 export default function MemberEditor(props: MemberEditorProps) {
+  const [addLoading, createArticle] = useAddArticle();
+  const [updateLoading, updateArticle] = useUpdateArticle();
   const { mode, initData, onClose, onSave } = props;
   const [editForm] = Form.useForm<Record<string, string[]>>();
-  const [loading, setLoading] = useState(false);
+  const [viewDisabled, seViewDisabled] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
+    if (mode !== 'ADD') {
+      if (initData.priority === 1) {
+        setIsChecked(true);
+        setIsPriorityChangeOption(1);
+      } else {
+        setIsChecked(false);
+        setIsPriorityChangeOption(0);
+      }
+      editForm.setFieldsValue({
+        title: initData?.title,
+        type: initData?.type,
+        content: initData?.content,
+      });
+    }
 
-    editForm.resetFields();
+    if (mode === 'VIEW') {
+      seViewDisabled(true);
+    }
     if (mode === 'ADD') return;
+
+    return () => {
+      seViewDisabled(false);
+      setIsChecked(false);
+      setIsPriorityChangeOption(0);
+      editForm.resetFields();
+    };
   }, [mode]);
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    const params = editForm.getFieldsValue();
+    console.log('params', params);
+    if (mode === 'EDIT') {
+      updateArticle({
+        id: initData?.id,
+        title: params?.title,
+        content: params?.content,
+        type: params?.type,
+        priority: isPriorityChangeOption,
+      }).then(() => {
+        onSave();
+      });
+    }
+    if (mode === 'ADD') {
+      createArticle({
+        title: params?.title,
+        content: params?.content,
+        type: params?.type,
+        priority: isPriorityChangeOption,
+      }).then(() => {
+        onSave();
+      });
+    }
+  };
+
+  //是否置顶
+  const isPriorityChange = (checked: boolean) => {
+    if (checked === true) {
+      setIsChecked(true);
+      setIsPriorityChangeOption(1);
+    } else {
+      setIsChecked(false);
+      setIsPriorityChangeOption(0);
+    }
+  };
 
   return (
     <Drawer
@@ -40,7 +99,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       maskClosable={false}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={loading} onClick={handleSubmit}>
+          <Button type="primary" loading={addLoading || updateLoading} onClick={handleSubmit}>
             保存
           </Button>
           <Button type="default" onClick={onClose}>
@@ -49,18 +108,19 @@ export default function MemberEditor(props: MemberEditorProps) {
         </div>
       }
     >
-      <Form form={editForm} labelCol={{ flex: '120px' }}>
-        <Form.Item label="标题" name="title" rules={[{ required: true, message: '请输入应用owner' }]}>
-          <Input />
+      <Form form={editForm} labelCol={{ flex: '80px' }}>
+        <Form.Item label="标题" name="title" rules={[{ required: true, message: '请输入' }]}>
+          <Input disabled={viewDisabled} style={{ width: 520 }} />
         </Form.Item>
-        <Form.Item label="类型" name="type">
-          <Select options={typeOptions} />
+        <Form.Item label="类型" name="type" rules={[{ required: true, message: '请选择' }]}>
+          <Select options={typeOptions} disabled={viewDisabled} style={{ width: 200 }} />
         </Form.Item>
-        <Form.Item label="内容" name="content">
-          <RichText style={{ width: '500px', height: '600px' }} />
+        <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
+          <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
         </Form.Item>
+        {/* 是否置顶 0表示默认，1表示置顶 */}
         <Form.Item label="是否置顶" name="priority">
-          <Switch />
+          <Switch disabled={viewDisabled} onChange={isPriorityChange} checked={isChecked} />
         </Form.Item>
       </Form>
     </Drawer>

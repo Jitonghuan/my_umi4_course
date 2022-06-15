@@ -32,57 +32,73 @@ export const createFormColumns = (params: { onTypeChange: (value: string) => voi
 
 // 列表页-表格
 export const createTableColumns = (params: {
-  onDelete: () => void;
-  onView: () => void;
-  onEdit: () => void;
-  curRecord: any;
+  onEdit: (record: any, index: number) => void;
+  onView: (record: any, index: number) => void;
+  onDelete: (record: any) => void;
+  onSwitchEnableClick: (record: any, index: number) => void;
+  // curRecord: any;
 }) => {
   return [
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: '3%',
+      width: '4%',
     },
     {
       title: '类型',
       dataIndex: 'type',
       key: 'type',
-      width: 100,
+      width: '14%',
     },
     {
       title: '标题',
       dataIndex: 'title',
       key: 'title',
+      width: '40%',
       ellipsis: true,
-      render: (text) => <Tooltip title={text}></Tooltip>,
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
       title: '发布时间',
       dataIndex: 'gmtCreate',
       key: 'gmtCreate',
-      width: 200,
+      width: '20%',
       render: (value) => <>{datetimeCellRender(value)} </>,
     },
     {
       title: '是否置顶',
       dataIndex: 'priority',
       key: 'priority',
-      width: 140,
-      render: (value) => <Switch></Switch>,
+      width: '10%',
+      render: (enable: number, record: any, index: number) => (
+        <>
+          <Switch
+            checked={enable === 1 ? true : false}
+            onClick={() => {
+              params.onSwitchEnableClick(record, index);
+            }}
+          />
+        </>
+      ),
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      fixed: 'right',
-      width: 80,
-      render: (_: string, record) => (
+      width: '12%',
+      render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
-          <a>详情</a>
-          <a>编辑</a>
-          <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete()}>
+          <a onClick={() => params.onView(record, index)}>详情</a>
+          <a onClick={() => params.onEdit(record, index)}>编辑</a>
+          <Popconfirm
+            title="确认删除?"
+            onConfirm={() => {
+              params?.onDelete(record.id);
+              console.log('record000', record);
+            }}
+          >
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </Space>

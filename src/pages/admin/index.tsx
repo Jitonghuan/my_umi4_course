@@ -3,21 +3,16 @@ import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
 import { createFormColumns, createTableColumns } from './schema';
+import { useDeleteArticle, useUpdateArticle } from './hook';
 import * as APIS from './service';
 import useTable from '@/utils/useTable';
 import CreatArticle from './creat-article';
 export default function AdminList() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
-  const [curRecord, seturRecord] = useState<any>({});
-  const onDelete = () => {};
-  const onView = () => {
-    setMode('VIEW');
-  };
-  const onEdit = () => {};
-  useEffect(() => {
-    form.setFieldsValue({ type: 'announcement' });
-  }, []);
+  const [curRecord, setcurRecord] = useState<any>({});
+  const [delLoading, deleteArticle] = useDeleteArticle();
+  const [updateLoading, updateArticle] = useUpdateArticle();
 
   const onTypeChange = (type: string) => {};
   const formOptions = useMemo(() => {
@@ -25,12 +20,35 @@ export default function AdminList() {
       onTypeChange,
     });
   }, []);
-  const columns = createTableColumns({
-    onDelete,
-    onView,
-    onEdit,
-    curRecord,
-  });
+
+  const columns = useMemo(() => {
+    return createTableColumns({
+      onEdit: (record, index) => {
+        setcurRecord(record);
+        setMode('EDIT');
+      },
+      onView: (record, index) => {
+        setcurRecord(record);
+        setMode('VIEW');
+      },
+      onDelete: async (id) => {
+        await deleteArticle({ id }).then(() => {
+          submit();
+        });
+      },
+      // 是否置顶 0表示默认，1表示置顶
+      onSwitchEnableClick: (record, index) => {
+        let enable = record?.priority === 0 ? 1 : 0;
+        let paramsObj = {
+          ...record,
+          priority: enable,
+        };
+        updateArticle({ ...paramsObj }).then(() => {
+          submit();
+        });
+      },
+    }) as any;
+  }, []);
 
   const {
     tableProps,
@@ -42,7 +60,6 @@ export default function AdminList() {
     formatter: (params) => {
       return {
         ...params,
-        // preDeployTime: params.preDeployTime ? params.preDeployTime.format('YYYY-MM-DD') : undefined,
       };
     },
     formatResult: (result) => {
@@ -53,8 +70,6 @@ export default function AdminList() {
     },
   });
 
-  const onSave = () => {};
-
   return (
     <PageContainer>
       <CreatArticle
@@ -63,11 +78,15 @@ export default function AdminList() {
         onClose={() => {
           setMode('HIDE');
         }}
-        onSave={onSave}
+        onSave={() => {
+          setMode('HIDE');
+          reset();
+        }}
       />
 
       <TableSearch
         form={form}
+        bordered
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
@@ -82,7 +101,13 @@ export default function AdminList() {
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <h3>列表</h3>
-            <Button type="primary" ghost>
+            <Button
+              type="primary"
+              ghost
+              onClick={() => {
+                setMode('ADD');
+              }}
+            >
               新增
             </Button>
           </Space>
@@ -90,7 +115,7 @@ export default function AdminList() {
         className="table-form"
         onSearch={submit}
         reset={reset}
-        scroll={tableProps.dataSource.length > 0 ? { x: 2000 } : {}}
+        // scroll={tableProps.dataSource.length > 0 ? { x: '100%' } : {}}
         searchText="查询"
       />
     </PageContainer>

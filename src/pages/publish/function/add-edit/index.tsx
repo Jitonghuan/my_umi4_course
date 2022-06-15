@@ -419,7 +419,6 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     },
   ];
   const onSearch = (value: string) => {
-    console.log(value);
     const params = projectForm.getFieldsValue();
     if (optType === 'reglus') {
       queryRegulusOnlineBugs(params.projectSelect, value);

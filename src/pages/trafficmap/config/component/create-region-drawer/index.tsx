@@ -66,7 +66,6 @@ const CreateRegionDrawer = React.forwardRef((props: any, ref) => {
     };
     const httpArray = [getAppByRegion({ ...data, isRelation: 1 }), getAppByRegion({ ...data, isRelation: 0 })];
     const res: any = await Promise.all(httpArray);
-    console.log(res);
     const appList = [...res[0].data, ...res[1].data];
     const newList = getTransferData(appList);
     let selectedKey = res[0].data.map((item: any) => {
