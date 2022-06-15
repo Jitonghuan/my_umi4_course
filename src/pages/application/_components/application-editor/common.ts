@@ -34,12 +34,14 @@ export const feTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: '定制包', value: 'customPack' },
   { label: '定制页面', value: 'customPage' },
+  { label: 'PDA', value: 'pda' },
 ];
 export const singleFeTypeOptions: IOption<any>[] = [{ label: 'web', value: 'web' }];
 export const microFeTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: '定制包', value: 'customPack' },
   { label: '定制页面', value: 'customPage' },
+  { label: 'PDA', value: 'pda' },
 ];
 // export const relationMainAppCodeOptions: IOption[] = [
 //   'g3a_future-his-portal-web',
