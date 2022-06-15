@@ -1,21 +1,30 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
 import { createFormColumns, createTableColumns } from './schema';
+import * as APIS from './service';
 import useTable from '@/utils/useTable';
+import CreatArticle from './creat-article';
 export default function AdminList() {
   const [form] = Form.useForm();
-  const formOptions = [{}];
+  const [mode, setMode] = useState<EditorMode>('HIDE');
+  const [curRecord, seturRecord] = useState<any>({});
   const onDelete = () => {};
-  const onView = () => {};
+  const onView = () => {
+    setMode('VIEW');
+  };
   const onEdit = () => {};
-  // const columns = useMemo(() => {
-  //   return createTableColumns({categoryData, businessData });
-  // }, []);
+  useEffect(() => {
+    form.setFieldsValue({ type: 'announcement' });
+  }, []);
 
-  const curRecord: any = [];
-  const businessData: any = [];
+  const onTypeChange = (type: string) => {};
+  const formOptions = useMemo(() => {
+    return createFormColumns({
+      onTypeChange,
+    });
+  }, []);
   const columns = createTableColumns({
     onDelete,
     onView,
@@ -27,25 +36,36 @@ export default function AdminList() {
     tableProps,
     search: { submit, reset },
   } = useTable({
-    url: '',
+    url: APIS.getInfoList,
     method: 'GET',
     form,
     formatter: (params) => {
       return {
         ...params,
-        preDeployTime: params.preDeployTime ? params.preDeployTime.format('YYYY-MM-DD') : undefined,
+        // preDeployTime: params.preDeployTime ? params.preDeployTime.format('YYYY-MM-DD') : undefined,
       };
     },
     formatResult: (result) => {
       return {
         total: result.data?.pageInfo?.total,
-        list: result.data?.dataSource?.map((el: any) => ({ ...el.plan })) || [],
+        list: result.data?.dataSource || [],
       };
     },
   });
 
+  const onSave = () => {};
+
   return (
     <PageContainer>
+      <CreatArticle
+        mode={mode}
+        initData={curRecord}
+        onClose={() => {
+          setMode('HIDE');
+        }}
+        onSave={onSave}
+      />
+
       <TableSearch
         form={form}
         formOptions={formOptions}
@@ -57,10 +77,11 @@ export default function AdminList() {
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
           size: 'small',
-          // defaultPageSize: 20,
+          defaultPageSize: 20,
         }}
         extraNode={
-          <Space>
+          <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            <h3>列表</h3>
             <Button type="primary" ghost>
               新增
             </Button>

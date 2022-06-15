@@ -4,43 +4,28 @@ import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
+export const typeOptions = [
+  {
+    label: '公告',
+    value: 'announcement',
+  },
+  {
+    label: '文件',
+    value: 'document',
+  },
+];
 // 列表页-查询表单
-export const createFormColumns = (params: {
-  categoryData?: any[];
-  onCategoryChange: (value: string) => void;
-  groupData: any[];
-}) => {
+export const createFormColumns = (params: { onTypeChange: (value: string) => void }) => {
   return [
     {
       key: '1',
-      type: 'input',
-      label: '标题',
-      dataIndex: 'title',
-      width: '200px',
-      placeholder: '请输入',
-    },
-    {
-      key: '2',
       type: 'select',
       label: '类型',
-      dataIndex: 'appCategoryCode',
+      dataIndex: 'type',
       width: '200px',
       placeholder: '请选择',
-      option: [
-        {
-          label: '公告',
-          value: '',
-        },
-      ],
-    },
-    {
-      key: '3',
-      type: 'area',
-      label: '内容',
-      dataIndex: 'appGroupCode',
-      width: '200px',
-      placeholder: '请填写',
-      rules: [],
+      option: typeOptions,
+      onChange: params.onTypeChange,
     },
   ] as FormProps[];
 };
