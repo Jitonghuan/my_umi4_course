@@ -76,16 +76,16 @@ const SuccessRate = (props: IProps) => {
               render: (text) => <Input bordered={false} disabled value={text}></Input>,
             },
             {
-              title: '错误率',
+              title: '错误率(百分比)',
               dataIndex: 'errorRate',
               width: '250px',
               ellipsis: {
                 showTitle: false,
               },
-              render: (text) => <Input bordered={false} disabled value={text}></Input>,
+              render: (text) => `${text} %`,
             },
             {
-              title: '总数',
+              title: '请求次数',
               dataIndex: 'allcount',
               width: '400px',
               ellipsis: {
@@ -94,13 +94,13 @@ const SuccessRate = (props: IProps) => {
               render: (text) => <Input bordered={false} disabled value={text}></Input>,
             },
             {
-              title: '平均响应时长',
+              title: '平均响应时长(ms)',
               dataIndex: 'avgtime',
               width: '250px',
               ellipsis: {
                 showTitle: false,
               },
-              render: (text, record) => record.avgtime.value || '-',
+              render: (text, record) => record?.avgtime?.value? record.avgtime.value.toFixed(2)+' ms' : '-',
             },
           ]}
           pagination={{
