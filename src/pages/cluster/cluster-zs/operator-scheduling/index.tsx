@@ -386,7 +386,7 @@ export default function OperatorScheduling(props: any) {
                   columns={clusterA_patientColumns}
                   dataSource={clusterA_patientData}
                   pagination={false}
-                  style={{ width: 300, height: 178 }}
+                  style={{ width: 330, height: 178 }}
                   bordered
                   scroll={{ y: window.innerHeight - 560 }}
                 />
@@ -397,7 +397,7 @@ export default function OperatorScheduling(props: any) {
                   columns={clusterA_operatorColumns}
                   dataSource={clusterA_operatorData}
                   pagination={false}
-                  style={{ width: 300, height: 178 }}
+                  style={{ width: 330, height: 178 }}
                   bordered
                   scroll={{ y: window.innerHeight - 560 }}
                 />
@@ -413,7 +413,7 @@ export default function OperatorScheduling(props: any) {
                   dataSource={clusterB_patientData}
                   pagination={false}
                   style={{
-                    width: 300,
+                    width: 330,
                     height: 178,
                     // height:window.innerHeight - 1050
                   }}
@@ -427,7 +427,7 @@ export default function OperatorScheduling(props: any) {
                   dataSource={clusterB_operatorData}
                   pagination={false}
                   style={{
-                    width: 300,
+                    width: 330,
                     height: 178,
                     // height:window.innerHeight - 1050
                   }}
