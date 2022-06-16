@@ -110,6 +110,8 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
       bottom: 0,
       data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
     // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
@@ -168,6 +170,8 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
       bottom: 0,
       data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
     // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
@@ -226,6 +230,8 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       bottom: 0,
       data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
     // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
@@ -258,9 +264,10 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
 };
 
 // 元空间
-export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
+export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
   let arry: any = [];
   let nameArry: any = [];
+
   dataSource?.map((item: any) => {
     arry.push({
       name: item?.name,
@@ -270,6 +277,8 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     });
     nameArry.push(item?.name);
   });
+  console.log('xAxisy', xAxisy);
+  console.log('data', arry);
   return {
     tooltip: {
       trigger: 'axis',
@@ -285,10 +294,13 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
       bottom: 0,
       data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
     // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
+
       axisLine: {
         lineStyle: {
           color: '#4BA2FF',
@@ -300,7 +312,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
           return value.substr(0, value.length - 3);
         },
       },
-      data: xAxis,
+      data: xAxisy,
     },
     yAxis: [
       {
