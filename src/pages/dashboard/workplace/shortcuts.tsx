@@ -20,7 +20,7 @@ function Shortcuts() {
       icon: <IconStorage />,
     },
     {
-      title: '发布功能管理',
+      title: '发布功能',
       key: 'publish/function',
       icon: <IconSettings />,
     },
@@ -92,8 +92,10 @@ function Shortcuts() {
         </Typography.Title>
         <Space>
           {shortcuts.map((shortcut) => (
-            <div className={styles.item} key={shortcut.key} onClick={() => onClickShortcut(shortcut.key)}>
-              <div className={styles.icon}>{shortcut.icon}</div>
+            <div className={styles.item} key={shortcut.key}>
+              <div className={styles.icon} onClick={() => onClickShortcut(shortcut.key)}>
+                {shortcut.icon}
+              </div>
               <div className={styles.title}>{shortcut.title}</div>
               <div className={styles.closeIcon}>
                 {' '}
