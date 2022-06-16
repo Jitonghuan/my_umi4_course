@@ -26,7 +26,7 @@ export default function PushResourceStep(props: StepItemProps) {
   const isFrontend = appData?.appType === 'frontend';
 
   // 用于前端离线部署
-  const canDownload = envTypeCode === 'prod' && isFrontend && status === 'finish';
+  const canDownload = isFrontend && status === 'finish';
 
   useEffect(() => {
     if (!appData?.appCode) return;
