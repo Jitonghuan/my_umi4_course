@@ -2,7 +2,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { Link, Card, Typography, Space } from '@arco-design/web-react';
 import { IconFile, IconStorage, IconSettings, IconMobile, IconFire } from '@arco-design/web-react/icon';
 import { history } from 'umi';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, Popconfirm } from 'antd';
 import styles from './style/shortcuts.module.less';
 
 function Shortcuts() {
@@ -48,6 +48,8 @@ function Shortcuts() {
     window.open(`/matrix/${key}`, '_blank');
   }
   const handleSubmit = () => {};
+  const handleDelete = (id: number) => {};
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -62,13 +64,13 @@ function Shortcuts() {
       >
         <Form form={editForm} labelCol={{ flex: '80px' }}>
           <Form.Item label="快捷入口名称" name="title" rules={[{ required: true, message: '请输入' }]}>
-            <Input style={{ width: 450 }} />
+            <Input style={{ width: 440 }} />
           </Form.Item>
           <Form.Item label="类型" name="type" rules={[{ required: true, message: '请输入' }]}>
-            <Input style={{ width: 450 }} />
+            <Input style={{ width: 440 }} />
           </Form.Item>
           <Form.Item label="URL" name="content" rules={[{ required: true, message: '请输入' }]}>
-            <Input.TextArea style={{ width: 450 }} placeholder="请输入完整的url链接，页面如带有参数请拼接路由参数" />
+            <Input.TextArea style={{ width: 440 }} placeholder="请输入完整的url链接，页面如带有参数请拼接路由参数" />
           </Form.Item>
         </Form>
       </Modal>
@@ -93,7 +95,10 @@ function Shortcuts() {
             <div className={styles.item} key={shortcut.key} onClick={() => onClickShortcut(shortcut.key)}>
               <div className={styles.icon}>{shortcut.icon}</div>
               <div className={styles.title}>{shortcut.title}</div>
-              <div className={styles.closeIcon}>x</div>
+              <div className={styles.closeIcon}>
+                {' '}
+                <Popconfirm title="确认删除此快捷入口吗？" onConfirm={() => handleDelete(1)}></Popconfirm>x
+              </div>
             </div>
           ))}
         </Space>

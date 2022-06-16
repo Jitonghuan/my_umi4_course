@@ -186,8 +186,7 @@ export function useStaffOrgData(): [any, () => Promise<void>] {
 // 请求所属机构数据
 export function useStaffDepData(): [any, (orgId: any) => Promise<void>] {
   const [deptData, setDeptData] = useState<BasicData[]>();
-
-  const loadData = useCallback(async (orgId) => {
+  const loadData = useCallback(async (orgId: any) => {
     await postRequest(APIS.getStaffDeptList, { data: { orgId } }).then((result) => {
       if (result?.success) {
         const next = (result?.data || []).map((el: any) => ({
@@ -208,4 +207,65 @@ export function useChooseDept(): [(deptId: any) => Promise<void>] {
   }, []);
 
   return [chooseDept];
+}
+
+// 请求查询未读消息数
+export function useQueryUnreadNum(): [any, () => Promise<void>] {
+  const [data, setData] = useState<number>(0);
+
+  const loadData = useCallback(async () => {
+    await getRequest(APIS.unreadNumApi).then((result) => {
+      if (result?.success) {
+        const next = result?.data?.total || 0;
+        setData(next);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    loadData();
+    let intervalId = setInterval(() => {
+      loadData();
+    }, 8000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  return [data, loadData];
+}
+
+// 请求查询所有系统消息
+export function useQueryStemNoticeList(): [any, (pageIndex?: number, pageSize?: number) => Promise<void>] {
+  const [dataSource, setDataSource] = useState<number>(0);
+
+  const loadData = useCallback(async (pageIndex?: number, pageSize?: number) => {
+    await getRequest(APIS.systemNoticeListApi, { data: { pageIndex: pageIndex || 0, pageSize: pageSize || 20 } }).then(
+      (result) => {
+        if (result?.success) {
+          const next = result?.data?.dataSource || [];
+          let dataArry: any = [];
+          next?.map((item: any) => {
+            dataArry.push({
+              id: item.id,
+              title: item.title,
+              content: item.content,
+              // datetime:item.datetime,
+              readed: item.state,
+              systemNoticeId: item.systemNoticeId,
+            });
+          });
+
+          setDataSource(dataArry);
+        }
+      },
+    );
+  }, []);
+
+  useEffect(() => {
+    loadData(1, 20);
+  }, []);
+
+  return [dataSource, loadData];
 }

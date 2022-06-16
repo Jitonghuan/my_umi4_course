@@ -13,6 +13,7 @@ import { WaterMark } from '@ant-design/pro-layout';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { IconMap } from '@/components/vc-icons';
+import AllMessage from '@/components/all-message';
 import {
   FeContext,
   useDocumentTitle,
@@ -22,6 +23,8 @@ import {
   useStaffOrgData,
   useChooseDept,
   useStaffDepData,
+  useQueryUnreadNum,
+  useQueryStemNoticeList,
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
@@ -58,6 +61,8 @@ export default function Layout(props: any) {
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
   const [chooseDept] = useChooseDept();
   const [staffDepData, loadStaffDepData] = useStaffDepData();
+  const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
+  const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
   const [style, setStyle] = useState<any>('matrixLight');
 
   // 处理 breadcrumb, 平铺所有的路由
@@ -71,6 +76,7 @@ export default function Layout(props: any) {
   const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
+  const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
 
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
@@ -112,6 +118,14 @@ export default function Layout(props: any) {
   };
   return (
     <ConfigProvider locale={zhCN}>
+      <AllMessage
+        mode={allMessageMode}
+        curData={stemNoticeListData}
+        onClose={() => {
+          setAllMessageMode('HIDE');
+        }}
+        unreadNum={unreadNum}
+      />
       <PositionSwitcher
         propsTitle={{
           modal_title: '切换部门',
@@ -163,15 +177,26 @@ export default function Layout(props: any) {
                   });
                 },
                 notification: {
-                  count: 9,
-                  data: [
-                    {
-                      id: 1,
-                      level: '',
-                      title: '标题',
-                    },
-                  ],
-                  render: (active: true) => {},
+                  count: unreadNum,
+                  data: stemNoticeListData,
+                  onClickMsgEntry: (id: number, msg: any) => {
+                    console.log('id---msg', id, msg);
+                    setAllMessageMode('VIEW');
+
+                    return (
+                      <a href={`'#'+${msg.systemNoticeId}`}>
+                        {msg.title}
+                        {console.log('渲染了')}
+                      </a>
+                    );
+                  },
+                  onClickAllMsg: () => {
+                    console.log('点击这里');
+                    setAllMessageMode('VIEW');
+                  },
+                  render: (active: boolean, setActive: (status: boolean) => void) => {
+                    <h3>一共{unreadNum}条数据</h3>;
+                  },
                 },
                 extensions: [
                   {

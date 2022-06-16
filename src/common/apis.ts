@@ -42,3 +42,17 @@ export const getStaffDeptList = `${appConfig.apexDomainName}/kapi/apex-osc/dept/
 
 /** POST 切换部门确认接口 */
 export const chooseDept = `${appConfig.apexDomainName}/kapi/apex-sso/chooseDept`;
+
+/* ---------------站内系统消息接口--------------- */
+
+/** GET 查询未读消息数接口 */
+export const unreadNumApi = `${appConfig.apiPrefix}/adminManage/systemNotice/unreadNum`;
+
+/** GET 查询所有系统消息 */
+export const systemNoticeListApi = `${appConfig.apiPrefix}/adminManage/systemNotice/list`;
+
+/** POST 批量更新为已读 */
+export const readListApi = `${appConfig.apiPrefix}/adminManage/systemNotice/list/read`;
+
+/** POST 发送系统消息 */
+export const sendSystemNoticeApi = `${appConfig.apiPrefix}/adminManage/systemNotice/send`;
