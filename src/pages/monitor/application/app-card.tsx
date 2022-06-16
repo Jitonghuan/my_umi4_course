@@ -14,7 +14,13 @@ export interface IProps {
   title?: string;
 
   /** charts option */
-  getOption?: (xAxis: string[], dataSource: any[]) => { [key: string]: any };
+  getOption?: (
+    xAxis: string[],
+    dataSource: any[],
+    ipallDataFull?: any,
+    ipallDataYoung?: any,
+    newArry?: any,
+  ) => { [key: string]: any };
 
   /** 接口调用 */
   queryFn: (params: { [key: string]: any }) => Promise<any>;

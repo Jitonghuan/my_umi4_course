@@ -1,4 +1,6 @@
 // 应用详情表格 schema
+import moment from 'moment';
+
 export interface ITableSchema {
   ip: string;
   cpu: string;
@@ -82,29 +84,48 @@ export const tableSchema = [
 ];
 
 // GC 次数
-export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
+export const getGCNumChartOption: any = (
+  xAxis = [],
+  dataSource = [],
+  ipallDataFull = [],
+  ipallDataYoung = [],
+  newArry = [],
+) => {
   let fullDataArry: any = [];
   let youngDataArry: any = [];
   let nameArry: any = [];
-  dataSource?.map((item: any) => {
-    if (item?.name?.includes('full')) {
-      item.data?.map((ele: any) => {
-        fullDataArry.push(ele);
-      });
-    }
-    if (item?.name?.includes('young')) {
-      item.data?.map((ele: any) => {
-        youngDataArry.push(ele);
-      });
-    }
-    console.log('fullDataArry,youngDataArry', fullDataArry, youngDataArry);
-    nameArry.push(item?.name);
+  console.log(ipallDataYoung, 'ipallDataYoung57678999', newArry, '000000', dataSource);
+  ipallDataFull.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
   });
+  ipallDataYoung.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
+  });
+  // dataSource?.map((item: any) => {
+  //   if (item?.name?.includes('full')) {
+  //     item.data?.map((ele: any) => {
+  //       fullDataArry.push(ele);
+  //     });
+  //   }
+  //   if (item?.name?.includes('young')) {
+  //     item.data?.map((ele: any) => {
+  //       youngDataArry.push(ele);
+  //     });
+  //   }
+  //   console.log('fullDataArry,youngDataArry', fullDataArry, youngDataArry);
+  //   nameArry.push(item?.name);
+  // });
 
   return {
     tooltip: {
       trigger: 'axis',
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
       bottom: 45,
       top: 30,
@@ -147,13 +168,13 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     series: [
       {
         name: 'FullGC次数',
-        data: fullDataArry || [],
+        data: ipallDataFull || [],
         type: 'line',
       },
       {
         // yAxisIndex: 1,
         name: 'YoungGC次数',
-        data: youngDataArry || [],
+        data: ipallDataYoung || [],
         type: 'line',
       },
     ],
@@ -339,7 +360,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
 };
 
 // 元空间
-export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
+export const getGCDataChartOption: any = (xAxisy = [], dataSource = [], newArry = []) => {
   // let arry: any = [];
   // let nameArry: any = [];
 
@@ -352,7 +373,7 @@ export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
   //   nameArry.push(item?.name);
   // });
   // console.log('xAxisy', xAxisy);
-  // console.log('data', arry);
+  console.log('data8888888888888888888', dataSource, '0000000000', newArry);
   let dataArry: any = [];
 
   let nameArry: any = [];

@@ -73,10 +73,23 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       let gcYoungCountArry: any = [];
       let gcFullSumArry: any = [];
       let gcYoungSumArry: any = [];
+      let ipallDataFull: any = [];
+      let ipallDataYoung: any = [];
       fullGCCount?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
+
+        debugger;
+        let datatime: any = [];
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+          let dataall: any = {
+            value: Number(item[1]).toFixed(2),
+            ip: Object.keys(ele)[0],
+            timeData: Number(item[0]) * 1000,
+          };
+          ipallDataFull.push(dataall);
+          datatime.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
+
           // xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           curxAxis.push(Number(item[0]) * 1000);
           // 数据结构变一下
@@ -84,16 +97,29 @@ export const queryGcCount = (params: { [key: string]: string }) =>
           // dataSource.push(Number(item[1]).toFixed(2));
           dataName = 'fullGC次数_' + Object.keys(ele)[0];
         });
+
         gcFullCountArry.push({
           name: dataName,
           data: dataSource,
         });
+        // dataall.ip = Object.keys(ele)
+        // dataall.datatime = datatime
+      });
+      console.log('ewqewqewqdsa', ipallDataFull);
+      ipallDataFull.sort((a: any, b: any) => {
+        return a.timeData - b.timeData;
       });
       youngGCCount?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
 
         ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+          let dataall = {
+            value: Number(item[1]).toFixed(2),
+            ip: Object.keys(ele)[0],
+            timeData: Number(item[0]) * 1000,
+          };
+          ipallDataYoung.push(dataall);
           // xAxis.push(moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'));
           curxAxis.push(Number(item[0]) * 1000);
           // 数据结构变一下
@@ -105,6 +131,9 @@ export const queryGcCount = (params: { [key: string]: string }) =>
           name: dataName,
           data: dataSource,
         });
+      });
+      ipallDataYoung.sort((a: any, b: any) => {
+        return a.timeData - b.timeData;
       });
       fullGCSum?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
@@ -149,17 +178,26 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
-
+      console.log(ipallDataFull, 'ipallDataYoung11111--------', ipallDataYoung);
+      let newArry = [9, 9, 8, 9, 5, 9, 9];
       return {
         //瞬时值
         count: {
           xAxis,
           dataSource: gcFullCountArry.concat(gcYoungCountArry),
+          ipallDataFull,
+          ipallDataYoung,
+
+          newArry,
         },
         //累计值
         sum: {
           xAxis,
           dataSource: gcFullSumArry.concat(gcYoungSumArry),
+          ipallDataFull,
+          ipallDataYoung,
+
+          newArry,
         },
       };
     }
@@ -421,11 +459,12 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
-
+      let arry = [0, 9, 0];
       return {
         count: {
           xAxis,
           dataSource: metaspaceArry,
+          newArry: arry,
         },
         sum: {},
       };
