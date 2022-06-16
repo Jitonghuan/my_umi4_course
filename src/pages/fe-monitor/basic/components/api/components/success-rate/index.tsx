@@ -4,9 +4,9 @@ import moment from 'moment';
 import './index.less'
 import { searchApiList } from '@/pages/fe-monitor/basic/server';
 interface IProps {
-  timeList:any
-  appGroup:string;
-  feEnv:string;
+  timeList: any
+  appGroup: string;
+  feEnv: string;
   getParam: () => any;
 }
 
@@ -16,24 +16,27 @@ const SuccessRate = (props: IProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [dataSource, setDataSource] = useState<any[]>([])
   const [total, setTotal] = useState<number | undefined>(0)
+  const [formValue, setFormValue] = useState<any>({})
 
   useEffect(() => {
-    onSearchSuccessRate()
-  }, [props.timeList,props.appGroup,props.feEnv])
+    onSearchSuccessRate(formValue)
+  }, [props.timeList, props.appGroup, props.feEnv])
 
 
   const handleSearch = async (value: any) => {
+    setFormValue(value)
     await onSearchSuccessRate(value)
   }
 
   const onSearchSuccessRate = async (value?: any) => {
+    const { api } = value
     if (loading) {
       return
     };
     let params = props.getParam()
-    params={ ...params, searchType: 'successRate' };
-    if (value) {
-      params = { ...params, ...value };
+    params = { ...params, searchType: 'successRate' };
+    if (api) {
+      params = { ...params, api };
     }
     setLoading(true);
 
@@ -48,7 +51,7 @@ const SuccessRate = (props: IProps) => {
       <div className='success-rate-search-bar'>
         <Form form={formInstance} layout="inline" className="monitor-filter-form" onFinish={handleSearch}>
           <Form.Item label="关键字" name="api">
-            <Input />
+            <Input allowClear />
           </Form.Item>
           <Form.Item>
             <Button type='primary' htmlType='submit'>查询</Button>
@@ -97,7 +100,7 @@ const SuccessRate = (props: IProps) => {
               ellipsis: {
                 showTitle: false,
               },
-              render: (text,record) => record.avgtime.value||'-',
+              render: (text, record) => record.avgtime.value || '-',
             },
           ]}
           pagination={{

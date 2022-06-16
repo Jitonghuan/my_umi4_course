@@ -6,10 +6,10 @@ import './index.less';
 
 type type = 'serverError' | 'bizError'
 interface IProps {
-  type:type
-  timeList:any
-  appGroup:string;
-  feEnv:string;
+  type: type
+  timeList: any
+  appGroup: string;
+  feEnv: string;
   getParam: () => any;
 }
 
@@ -19,25 +19,31 @@ const APIError = (props: IProps) => {
   const [dataSource, setDataSource] = useState<any>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
+  const [searchValue, setSearchValue] = useState<any>({})
 
   const { type, getParam } = props
 
   useEffect(() => {
-    onSearchSuccessRate()
-  }, [props.timeList,props.appGroup,props.feEnv])
+    onSearchSuccessRate(searchValue)
+  }, [props.timeList, props.appGroup, props.feEnv])
 
   const handleSearch = async (value: any) => {
+    setSearchValue(value)
     await onSearchSuccessRate(value)
   }
 
   const onSearchSuccessRate = async (value?: any) => {
+    const { api, traceId } = value
     if (loading) {
       return
     };
     let params = getParam()
     params = { ...params, searchType: type };
-    if (value) {
-      params = { ...params, ...value };
+    if (api) {
+      params = { ...params, api };
+    }
+    if (traceId) {
+      params = { ...params, traceId };
     }
     setLoading(true);
 
