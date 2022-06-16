@@ -83,15 +83,21 @@ export const tableSchema = [
 
 // GC 次数
 export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
-  let arry: any = [];
+  let fullDataArry: any = [];
+  let youngDataArry: any = [];
   let nameArry: any = [];
   dataSource?.map((item: any) => {
-    arry.push({
-      name: item?.name,
-      data: item.data,
-      type: 'line',
-      smooth: 'true', //是否平滑显示折现
-    });
+    if (item?.name?.includes('full')) {
+      item.data?.map((ele: any) => {
+        fullDataArry.push(ele);
+      });
+    }
+    if (item?.name?.includes('young')) {
+      item.data?.map((ele: any) => {
+        youngDataArry.push(ele);
+      });
+    }
+    console.log('fullDataArry,youngDataArry', fullDataArry, youngDataArry);
     nameArry.push(item?.name);
   });
 
@@ -108,12 +114,12 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: nameArry,
+      data: ['FullGC次数', 'YoungGC次数'],
       icon: 'rect',
       type: 'scroll', //分页类型
       orient: 'horizontal',
     },
-    // color: ['#4BA2FF', '#54DA81'],
+    color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {
@@ -138,21 +144,39 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: arry,
+    series: [
+      {
+        name: 'FullGC次数',
+        data: fullDataArry || [],
+        type: 'line',
+      },
+      {
+        // yAxisIndex: 1,
+        name: 'YoungGC次数',
+        data: youngDataArry || [],
+        type: 'line',
+      },
+    ],
   };
 };
 
 // GC 耗时
 export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
-  let arry: any = [];
+  let fullDataArry: any = [];
+  let youngDataArry: any = [];
   let nameArry: any = [];
   dataSource?.map((item: any) => {
-    arry.push({
-      name: item?.name,
-      data: item.data,
-      type: 'line',
-      smooth: 'true', //是否平滑显示折现
-    });
+    if (item?.name?.includes('full')) {
+      item.data?.map((ele: any) => {
+        fullDataArry.push(ele);
+      });
+    }
+    if (item?.name?.includes('young')) {
+      item.data?.map((ele: any) => {
+        youngDataArry.push(ele);
+      });
+    }
+
     nameArry.push(item?.name);
   });
   return {
@@ -168,7 +192,7 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: nameArry,
+      data: ['FullGC耗时', 'YoungGC耗时'],
       icon: 'rect',
       type: 'scroll', //分页类型
       orient: 'horizontal',
@@ -198,21 +222,51 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: arry,
+    series: [
+      {
+        name: 'FullGC耗时',
+        data: fullDataArry || [],
+        type: 'line',
+      },
+      {
+        // yAxisIndex: 1,
+        name: 'YoungGC耗时',
+        data: youngDataArry || [],
+        type: 'line',
+      },
+    ],
   };
 };
 
 // 内存
 export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
-  let arry: any = [];
+  let oneDataArry: any = [];
+  let twoDataArry: any = [];
+  let threeDataArry: any = [];
+  let fourDataArry: any = [];
   let nameArry: any = [];
   dataSource?.map((item: any) => {
-    arry.push({
-      name: item?.name,
-      data: item.data,
-      type: 'line',
-      smooth: 'true', //是否平滑显示折现
-    });
+    if (item?.name?.includes('使用总和')) {
+      item.data?.map((ele: any) => {
+        oneDataArry.push(ele);
+      });
+    }
+    if (item?.name?.includes('年轻代Eden区')) {
+      item.data?.map((ele: any) => {
+        twoDataArry.push(ele);
+      });
+    }
+    if (item?.name?.includes('年轻代Survivor区')) {
+      item.data?.map((ele: any) => {
+        threeDataArry.push(ele);
+      });
+    }
+    if (item?.name?.includes('老年代')) {
+      item.data?.map((ele: any) => {
+        fourDataArry.push(ele);
+      });
+    }
+
     nameArry.push(item?.name);
   });
   return {
@@ -228,7 +282,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: nameArry,
+      data: ['使用总和', '年轻代Eden区', '年轻代Survivor区', '老年代'],
       icon: 'rect',
       type: 'scroll', //分页类型
       orient: 'horizontal',
@@ -259,26 +313,58 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: arry,
+    series: [
+      {
+        name: '使用总和',
+        data: oneDataArry || [],
+        type: 'line',
+      },
+      {
+        name: '年轻代Eden区',
+        data: twoDataArry || [],
+        type: 'line',
+      },
+      {
+        name: '年轻代Survivor区',
+        data: threeDataArry || [],
+        type: 'line',
+      },
+      {
+        name: '老年代',
+        data: fourDataArry || [],
+        type: 'line',
+      },
+    ],
   };
 };
 
 // 元空间
 export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
-  let arry: any = [];
-  let nameArry: any = [];
+  // let arry: any = [];
+  // let nameArry: any = [];
 
+  // dataSource?.map((item: any) => {
+  //   arry.push({
+  //     name: item?.name,
+  //     data: item.data,
+  //     type: 'line',
+  //   });
+  //   nameArry.push(item?.name);
+  // });
+  // console.log('xAxisy', xAxisy);
+  // console.log('data', arry);
+  let dataArry: any = [];
+
+  let nameArry: any = [];
   dataSource?.map((item: any) => {
-    arry.push({
-      name: item?.name,
-      data: item.data,
-      type: 'line',
-      smooth: 'true', //是否平滑显示折现
-    });
+    if (item?.name?.includes('元空间')) {
+      item.data?.map((ele: any) => {
+        dataArry.push(ele);
+      });
+    }
+
     nameArry.push(item?.name);
   });
-  console.log('xAxisy', xAxisy);
-  console.log('data', arry);
   return {
     tooltip: {
       trigger: 'axis',
@@ -292,12 +378,12 @@ export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: nameArry,
+      data: ['元空间'],
       icon: 'rect',
       type: 'scroll', //分页类型
       orient: 'horizontal',
     },
-    // color: ['#4BA2FF', '#54DA81'],
+    color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
 
@@ -324,6 +410,12 @@ export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: arry,
+    series: [
+      {
+        name: '元空间',
+        data: dataArry || [],
+        type: 'line',
+      },
+    ],
   };
 };
