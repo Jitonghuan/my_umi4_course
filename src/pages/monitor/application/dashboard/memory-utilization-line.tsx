@@ -12,16 +12,36 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function MemoryUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
+  let newallData = [...data[0], ...data[1], ...data[2]];
   const config = {
-    data,
+    data: newallData,
     xField: 'time',
-    yField: 'precentage',
+    yField: 'value',
     seriesField: 'category',
     color: ['#6495ED', '#60d7a7', '#BDB76B'],
-    xAxis: {
-      range: [0, 1],
-      // tickCount: 5,
+    tooltip: {
+      customContent: (title: string, data: any) => {
+        return (
+          `<br><div><strong>${data[0]?.data?.category}:` +
+          `${Number.parseInt(data[0]?.data?.value)}, name:` +
+          data[0]?.data?.name +
+          `,time: ${data[0]?.data?.time}</strong> </div><br>  
+          <div><strong>${data[1]?.data?.category}:` +
+          `${Number.parseInt(data[1]?.data?.value)}, name:` +
+          data[1]?.data?.name +
+          `,time: ${data[1]?.data?.time}</strong></div><br> 
+          <div><strong>${data[2]?.data?.category}:` +
+          `${Number.parseInt(data[2]?.data?.value)}, name:` +
+          data[2]?.data?.name +
+          `,time: ${data[2]?.data?.time}</strong></div>
+          <br>`
+        );
+      },
     },
+    // xAxis: {
+    //   range: [0, 1],
+    //   // tickCount: 5,
+    // },
     yAxis: {
       label: {
         // 数值格式化为带百分号

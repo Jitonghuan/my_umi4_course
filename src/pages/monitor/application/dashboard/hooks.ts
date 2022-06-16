@@ -30,10 +30,6 @@ export function useQueryPodCpu() {
           let podCpuDataArry: any = [];
           let podCpuRequest: any = [];
           let podCpuUse: any = [];
-          let gcFullSumArry: any = [];
-          let gcYoungSumArry: any = [];
-          let ipallDataFull: any = [];
-          let ipallDataYoung: any = [];
           let cpuLimitAll: any = [];
           let montArray: any = [];
           let podMonet: any = [];
@@ -42,7 +38,7 @@ export function useQueryPodCpu() {
             if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
               if (key === 'cpuLimit') {
                 dataSource['cpuLimit']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
                     curxAxis.push(Number(item[0]) * 1000);
 
                     let cpudataObj = {
@@ -52,27 +48,6 @@ export function useQueryPodCpu() {
                       category: 'cpuLimit',
                     };
                     podCpuDataArry.push(cpudataObj);
-                    // podCpuDataArry.push({
-                    //   category: 'cpuLimit',
-                    //   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                    //   precentage: Number(Number(ele[1]).toFixed(1)),
-                    //   name:'',
-
-                    // });
-
-                    // let dataall: any = {
-                    //   value: Number(item[1]).toFixed(2),
-                    //   ip: Object.keys(ele)[0],
-                    //   timeData: Number(item[0]) * 1000,
-                    // };
-                    // ipallDataFull.push(dataall);
-                    // curxAxis.push(Number(item[0]) * 1000);
-
-                    // podCpuDataArry.push({
-                    //   category: 'cpuLimit_' + Object.keys(ele)[0],
-                    //   time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                    //   precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                    // });
                   });
                 });
 
@@ -82,21 +57,12 @@ export function useQueryPodCpu() {
 
                 podCpuDataArry.map((el: any) => {
                   montArray.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss'), test: '11111' });
-
-                  // return{ ...el,datatime : moment(el?.time).format("MM-DD HH:mm:ss"),test:"11111"}
                 });
-
-                // cpuLimitAll.push(montArray);
               }
               if (key === 'cpuRequest') {
                 dataSource['cpuRequest']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
                     curxAxis.push(Number(item[0]) * 1000);
-                    // podCpuDataArry.push({
-                    //   category: 'cpuRequest_' + Object.keys(ele)[0],
-                    //   time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                    //   precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                    // });
                     let cpudataObj = {
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
@@ -116,24 +82,11 @@ export function useQueryPodCpu() {
                     time: moment(el?.time).format('MM-DD HH:mm:ss'),
                   });
                 });
-
-                // cpuLimitAll.push(podMonet);
               }
               if (key === 'cpuUse') {
                 dataSource['cpuUse']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
+                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
                     curxAxis.push(Number(item[0]) * 1000);
-                    // podCpuDataArry.push({
-                    //   category: 'cpuUse_' + Object.keys(ele)[0],
-                    //   time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                    //   precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                    // });
-                    let cpudataObj = {
-                      time: parseInt(item[0]) * 1000,
-                      name: Object.keys(ele)[0],
-                      value: Number(item[1]).toFixed(2),
-                      category: 'cpuUse',
-                    };
                     podCpuUse.push({
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
@@ -150,7 +103,7 @@ export function useQueryPodCpu() {
                   useMonet.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
                   // return
                 });
-                cpuLimitAll.push(useMonet);
+                // cpuLimitAll.push(useMonet);
               }
             }
           }
@@ -165,8 +118,6 @@ export function useQueryPodCpu() {
           curxAxis?.map((item) => {
             xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
           });
-
-          // cpuLimitAll.push(xAxis);
           setQueryPodCpuData(cpuLimitAll);
         }
       })
@@ -182,49 +133,103 @@ export function usequeryPodMem() {
   const [queryPodMemData, setQueryPodMemData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
+  let curxAxis: any[] = [];
   const queryPodMem = (hostName: string, envCode: string, start: any, end: any, appCode?: string, ip?: string) => {
     setLoading(true);
     getRequest(APIS.queryPodMem, { data: { hostName, envCode, start, end, appCode, ip } })
       .then((res) => {
         if (res?.success) {
           let podMemDataArry: any = [];
+          let rssInfoDataArry: any = [];
+          let wssInfoDataArry: any = [];
+          let podMemAll: any = [];
+          let montArray: any = [];
+          let memLimitMoment: any = [];
+          let rssMoment: any = [];
+          let wssMoment: any = [];
           let dataSource = res?.data;
           for (const key in dataSource) {
             if (key === 'memLimitInfo') {
               dataSource['memLimitInfo']?.map((ele: any, index_one: number) => {
-                ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
-                  podMemDataArry.push({
-                    category: 'memLimitInfo_' + Object.keys(ele)[0],
-                    time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                    precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                  });
+                ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+                  curxAxis.push(Number(item[0]) * 1000);
+
+                  let cpudataObj = {
+                    time: parseInt(item[0]) * 1000,
+                    name: Object.keys(ele)[0],
+                    value: Number(item[1]).toFixed(1),
+                    category: 'memLimitInfo',
+                  };
+                  podMemDataArry.push(cpudataObj);
                 });
               });
+              podMemDataArry.sort((a: any, b: any) => {
+                return a.time - b.time;
+              });
+
+              podMemDataArry.map((el: any) => {
+                montArray.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
+              });
             }
+            //rssInfoDataArry
             if (key === 'rssInfo') {
               dataSource['rssInfo']?.map((ele: any, index_one: number) => {
-                ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
-                  podMemDataArry.push({
-                    category: 'rssInfo_' + Object.keys(ele)[0],
-                    time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                    precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                  });
+                ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+                  curxAxis.push(Number(item[0]) * 1000);
+
+                  let cpudataObj = {
+                    time: parseInt(item[0]) * 1000,
+                    name: Object.keys(ele)[0],
+                    value: Number(item[1]).toFixed(1),
+                    category: 'rssInfo',
+                  };
+                  rssInfoDataArry.push(cpudataObj);
                 });
               });
+              rssInfoDataArry.sort((a: any, b: any) => {
+                return a.time - b.time;
+              });
+
+              rssInfoDataArry.map((el: any) => {
+                rssMoment.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
+              });
             }
+            //wssInfoDataArry
             if (key === 'wssInfo') {
               dataSource['wssInfo']?.map((ele: any, index_one: number) => {
-                ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
-                  podMemDataArry.push({
-                    category: 'wssInfo_' + Object.keys(ele)[0],
-                    time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                    precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                  });
+                ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+                  curxAxis.push(Number(item[0]) * 1000);
+
+                  let cpudataObj = {
+                    time: parseInt(item[0]) * 1000,
+                    name: Object.keys(ele)[0],
+                    value: Number(item[1]).toFixed(1),
+                    category: 'wssInfo',
+                  };
+                  wssInfoDataArry.push(cpudataObj);
                 });
+              });
+              wssInfoDataArry.sort((a: any, b: any) => {
+                return a.time - b.time;
+              });
+
+              wssInfoDataArry.map((el: any) => {
+                wssMoment.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
               });
             }
           }
-          setQueryPodMemData(podMemDataArry);
+          podMemAll = [montArray, rssMoment, wssMoment];
+          curxAxis = curxAxis.filter((currentValue, index, arr) => {
+            return arr.indexOf(currentValue) === index;
+          });
+          curxAxis.sort((a: any, b: any) => {
+            return a - b;
+          });
+          let xAxis: any = [];
+          curxAxis?.map((item) => {
+            xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
+          });
+          setQueryPodMemData(podMemAll);
         }
       })
       .finally(() => {
@@ -238,7 +243,7 @@ export function usequeryPodMem() {
 export function useQueryPodDisk() {
   const [queryPodDiskData, setQueryPodDiskData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  let curxAxis: any[] = [];
   const queryPodDisk = async (
     hostName: string,
     envCode: string,
@@ -251,7 +256,13 @@ export function useQueryPodDisk() {
     await getRequest(APIS.queryPodDisk, { data: { hostName, envCode, start, end, appCode, ip } })
       .then((res) => {
         if (res?.success) {
+          let diskReadsDataArry: any = [];
+          let diskWritesDataArry: any = [];
+          let diskReadsMoment: any = [];
+          let diskWritesMoment: any = [];
+          let diskAll: any = [];
           let podDiskDataArry: any = [];
+          let montArray: any = [];
           let dataSource = res?.data;
           for (const key in dataSource) {
             if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
@@ -259,30 +270,62 @@ export function useQueryPodDisk() {
 
               if (key === 'diskReads') {
                 dataSource['diskReads']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
-                    podDiskDataArry.push({
-                      category: 'diskReads_' + Object.keys(ele)[0],
-                      time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                      precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                    });
+                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+                    curxAxis.push(Number(item[0]) * 1000);
+
+                    let cpudataObj = {
+                      time: parseInt(item[0]) * 1000,
+                      name: Object.keys(ele)[0],
+                      value: Number(item[1]).toFixed(1),
+                      category: 'diskReads',
+                    };
+                    podDiskDataArry.push(cpudataObj);
                   });
+                });
+                podDiskDataArry.sort((a: any, b: any) => {
+                  return a.time - b.time;
+                });
+
+                podDiskDataArry.map((el: any) => {
+                  montArray.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
                 });
               }
               if (key === 'diskWrites') {
                 dataSource['diskWrites']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
-                    podDiskDataArry.push({
-                      category: 'diskWrites_' + Object.keys(ele)[0],
-                      time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                      precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                    });
+                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+                    curxAxis.push(Number(item[0]) * 1000);
+
+                    let cpudataObj = {
+                      time: parseInt(item[0]) * 1000,
+                      name: Object.keys(ele)[0],
+                      value: Number(item[1]).toFixed(1),
+                      category: 'diskWrites',
+                    };
+                    diskWritesDataArry.push(cpudataObj);
                   });
+                });
+                diskWritesDataArry.sort((a: any, b: any) => {
+                  return a.time - b.time;
+                });
+
+                diskWritesDataArry.map((el: any) => {
+                  diskWritesMoment.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
                 });
               }
             }
           }
-
-          setQueryPodDiskData(podDiskDataArry);
+          diskAll = [montArray, diskWritesMoment];
+          curxAxis = curxAxis.filter((currentValue, index, arr) => {
+            return arr.indexOf(currentValue) === index;
+          });
+          curxAxis.sort((a: any, b: any) => {
+            return a - b;
+          });
+          let xAxis: any = [];
+          curxAxis?.map((item) => {
+            xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
+          });
+          setQueryPodDiskData(diskAll);
         }
       })
       .finally(() => {
@@ -296,12 +339,18 @@ export function useQueryPodDisk() {
 export function useQueryPodNetwork() {
   const [queryPodNetworkData, setQueryPodNetworkData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  let curxAxis: any[] = [];
   const queryPodNetwork = (hostName: string, envCode: string, start: any, end: any, appCode?: string, ip?: string) => {
     setLoading(true);
     getRequest(APIS.querynetWorkBps, { data: { hostName, envCode, start, end, appCode, ip } })
       .then((res) => {
         if (res?.success) {
+          let receiveDataArry: any = [];
+          let transmitDataArry: any = [];
+          let transmitsMoment: any = [];
+          let receiveMoment: any = [];
+          let networkAll: any = [];
+          let montArray: any = [];
           let dataSource = res?.data;
           let podNetworkDataArry: any = [];
           for (const key in dataSource) {
@@ -309,30 +358,62 @@ export function useQueryPodNetwork() {
               const element = dataSource[key];
               if (key === 'receive') {
                 dataSource['receive']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
-                    podNetworkDataArry.push({
-                      category: 'receive_' + Object.keys(ele)[0],
-                      time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                      precentage: Number(Number(item[1]).toFixed(1)),
-                    });
+                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+                    curxAxis.push(Number(item[0]) * 1000);
+
+                    let cpudataObj = {
+                      time: parseInt(item[0]) * 1000,
+                      name: Object.keys(ele)[0],
+                      value: Number(item[1]).toFixed(1),
+                      category: 'receive',
+                    };
+                    receiveDataArry.push(cpudataObj);
                   });
+                });
+                receiveDataArry.sort((a: any, b: any) => {
+                  return a.time - b.time;
+                });
+
+                receiveDataArry.map((el: any) => {
+                  receiveMoment.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
                 });
               }
               if (key === 'transmit') {
                 dataSource['transmit']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[index_one]]?.map((item: any, index_two: number) => {
-                    podNetworkDataArry.push({
-                      category: 'transmit_' + Object.keys(ele)[0],
-                      time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                      precentage: Number(Number(item[1]).toFixed(1)),
-                    });
+                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+                    curxAxis.push(Number(item[0]) * 1000);
+
+                    let cpudataObj = {
+                      time: parseInt(item[0]) * 1000,
+                      name: Object.keys(ele)[0],
+                      value: Number(item[1]).toFixed(1),
+                      category: 'transmit',
+                    };
+                    transmitDataArry.push(cpudataObj);
                   });
+                });
+                transmitDataArry.sort((a: any, b: any) => {
+                  return a.time - b.time;
+                });
+
+                transmitDataArry.map((el: any) => {
+                  transmitsMoment.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
                 });
               }
             }
           }
-
-          setQueryPodNetworkData(podNetworkDataArry);
+          networkAll = [receiveMoment, transmitsMoment];
+          curxAxis = curxAxis.filter((currentValue, index, arr) => {
+            return arr.indexOf(currentValue) === index;
+          });
+          curxAxis.sort((a: any, b: any) => {
+            return a - b;
+          });
+          let xAxis: any = [];
+          curxAxis?.map((item) => {
+            xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
+          });
+          setQueryPodNetworkData(networkAll);
         }
       })
       .finally(() => {

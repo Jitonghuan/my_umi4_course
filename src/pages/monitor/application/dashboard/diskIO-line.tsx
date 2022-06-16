@@ -13,12 +13,28 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function DiskIOLine(props: ChartCaseListProps) {
   const { data, loading } = props;
+  let newallData = [...data[0], ...data[1]];
   const config = {
-    data,
+    data: newallData,
     xField: 'time',
     yField: 'value',
     seriesField: 'category',
     color: ['green', '#8bc0d6'],
+    tooltip: {
+      customContent: (title: string, data: any) => {
+        return (
+          `<br><div><strong>${data[0]?.data?.category}:` +
+          `${Number.parseInt(data[0]?.data?.value)}, name:` +
+          data[0]?.data?.name +
+          `,time: ${data[0]?.data?.time}</strong> </div><br>  
+          <div><strong>${data[1]?.data?.category}:` +
+          `${Number.parseInt(data[1]?.data?.value)}, name:` +
+          data[1]?.data?.name +
+          `,time: ${data[1]?.data?.time}</strong></div><br> 
+          <br>`
+        );
+      },
+    },
     LegendCfg: {
       legend: {
         position: 'top-left',

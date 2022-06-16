@@ -21,13 +21,20 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
     tooltip: {
       customContent: (title: string, data: any) => {
         return (
-          `<br><div><strong>${data[0]?.data?.category}:` +
+          `<br>
+          <div><strong>${data[0]?.data?.category}:` +
           `${Number.parseInt(data[0]?.data?.value)}, name:` +
           data[0]?.data?.name +
-          `,time: ${data[0]?.data?.time}</strong> </div><br>  <div><strong>${data[1]?.data?.category}:` +
+          `,time: ${data[0]?.data?.time}</strong> </div><br>  
+          <div><strong>${data[1]?.data?.category}:` +
           `${Number.parseInt(data[1]?.data?.value)}, name:` +
           data[1]?.data?.name +
-          `,time: ${data[1]?.data?.time}</strong></div><br>`
+          `,time: ${data[1]?.data?.time}</strong></div><br> 
+          <div><strong>${data[2]?.data?.category}:` +
+          `${Number.parseInt(data[2]?.data?.value)}, name:` +
+          data[2]?.data?.name +
+          `,time: ${data[2]?.data?.time}</strong></div>
+          <br>`
         );
       },
     },
