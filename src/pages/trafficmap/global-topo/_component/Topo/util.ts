@@ -123,8 +123,8 @@ export const edgeStyled: any = (edge: Edge) => {
     return {
         style: {
             ...(arrowStyleType[status] || arrowStyleType['normal']),
-            strokeOpacity: opacity,
-            opacity: opacity,
+            // strokeOpacity: opacity,
+            // opacity: opacity,
         },
     };
 };
@@ -143,7 +143,7 @@ export const arrowStyleType: any = {
         endArrow: {
             path: G6.Arrow.triangle(8, 8),
             fill: DANGEROUS_COLOR,
-            strokeOpacity: 0,
+            // strokeOpacity: 0,
         },
     },
     warning: {
@@ -156,7 +156,7 @@ export const arrowStyleType: any = {
         endArrow: {
             path: G6.Arrow.triangle(8, 8),
             fill: WARNING_COLOR,
-            strokeOpacity: 0,
+            // strokeOpacity: 0,
         },
     },
     normal: {
@@ -169,7 +169,7 @@ export const arrowStyleType: any = {
         endArrow: {
             path: G6.Arrow.triangle(8, 8),
             fill: NORMAL_COLOR,
-            strokeOpacity: 0,
+            // strokeOpacity: 0,
         },
     },
 };

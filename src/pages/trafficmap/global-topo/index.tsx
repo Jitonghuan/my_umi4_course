@@ -5,7 +5,7 @@
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Select, Button, DatePicker, message, Switch } from 'antd';
-import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined, MinusCircleOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
 import * as echarts from 'echarts';
 import moment from 'moment';
 import PageContainer from '@/components/page-container';
@@ -238,8 +238,8 @@ const globalTopo: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>时间：</div>
               <DatePicker
-                showTime={{ format: 'HH:mm' }}
-                format="YYYY-MM-DD HH:mm"
+                showTime={{ format: 'HH:mm:ss' }}
+                format="YYYY-MM-DD HH:mm:ss"
                 value={selectTime}
                 onChange={(value, dateString) => {
                   setSelectTime(value || moment());

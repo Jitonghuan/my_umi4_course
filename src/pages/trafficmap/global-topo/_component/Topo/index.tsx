@@ -60,6 +60,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         const container = containerRef.current;
 
         const toolbar = new G6.ToolBar();
+
         //   右键菜单栏
         const menu = new G6.Menu({
             offsetX: 6,
@@ -137,15 +138,11 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             },
         });
 
-        const minimap = new G6.Minimap({
-            size: [150, 100],
-        });
-
         g = new G6.Graph({
             container: 'topo',
             width: container?.clientWidth,
             height: container?.clientHeight,
-            plugins: [tooltip, edgeMenu, menu, toolbar, minimap], // 插件
+            plugins: [tooltip, edgeMenu, menu, toolbar], // 插件
             // 设置为true，启用 redo & undo 栈功能
             enabledStack: true,
             modes: {
@@ -203,16 +200,11 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         const linkDistance = 100;
         const edgeStrength = 50;
         const nodeStrength = 200;
-        const nodeSpacing = 20;
+        const nodeSpacing = 10;
         if (expandList && expandList.nodes && expandList.nodes.length > 0) {
             const container = containerRef.current;
             const config = {
                 type: 'gForce',
-                // type: 'circular',
-                // divisions: 5,
-                // radius: 200,
-                // startAngle: Math.PI / 4,
-                // endAngle: Math.PI,
                 minMovement: 0.1,
                 maxIteration: 1000,
                 preventOverlap: true,
