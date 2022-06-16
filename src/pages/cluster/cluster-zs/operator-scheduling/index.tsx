@@ -361,12 +361,12 @@ export default function OperatorScheduling(props: any) {
                 </Select>
               </Form.Item>
 
-              <Form.Item label="ID" name="userId">
+              <Form.Item label="ID" name="userId" rules={[{ required: true, message: '请填写ID' }]}>
                 <Input />
               </Form.Item>
 
               <Form.Item label="备注" name="description" rules={[{ required: true, message: '请备注用户信息' }]}>
-                <Input />
+                <Input placeholder="请备注用户信息"/>
               </Form.Item>
 
               <Form.Item style={{ marginTop: 40 }}>
