@@ -60,4 +60,5 @@ export const deployJobUrlOptions: IOption[] = [
   { label: '打印模版', value: 'http://jenkins-fe.cfuture.shop/job/fe-printer-main' },
   { label: '定制包 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extensions' },
   { label: '定制页面 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extension-pages' },
+  { label: 'PDA 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-hbos-pda' },
 ];

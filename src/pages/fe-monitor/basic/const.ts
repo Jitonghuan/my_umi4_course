@@ -15,7 +15,7 @@ export const menuList = [
   },
   {
     name: '分诊端',
-    key: 'treatment',
+    key: 'triage',
   },
   {
     name: '药师端',
