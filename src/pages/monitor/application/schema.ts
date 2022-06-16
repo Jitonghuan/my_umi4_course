@@ -84,41 +84,30 @@ export const tableSchema = [
 ];
 
 // GC 次数
-export const getGCNumChartOption: any = (
-  xAxis = [],
-  dataSource = [],
-  ipallDataFull = [],
-  ipallDataYoung = [],
-  newArry = [],
-) => {
-  let fullDataArry: any = [];
-  let youngDataArry: any = [];
-  let nameArry: any = [];
-  console.log(ipallDataYoung, 'ipallDataYoung57678999', newArry, '000000', dataSource);
-  ipallDataFull.map((item: any) => {
+export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
+  console.log('dataSource', dataSource);
+
+  dataSource[0]?.map((item: any) => {
     return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
   });
-  ipallDataYoung.map((item: any) => {
+  dataSource[1]?.map((item: any) => {
     return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
   });
-  // dataSource?.map((item: any) => {
-  //   if (item?.name?.includes('full')) {
-  //     item.data?.map((ele: any) => {
-  //       fullDataArry.push(ele);
-  //     });
-  //   }
-  //   if (item?.name?.includes('young')) {
-  //     item.data?.map((ele: any) => {
-  //       youngDataArry.push(ele);
-  //     });
-  //   }
-  //   console.log('fullDataArry,youngDataArry', fullDataArry, youngDataArry);
-  //   nameArry.push(item?.name);
-  // });
 
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        console.log('params', params);
+        return (
+          `${params[0]?.seriesName}:` +
+          `${Number.parseInt(params[0]?.value)}次, ip:` +
+          params[0]?.data?.ip +
+          `<br> ${params[1]?.seriesName}:` +
+          `${Number.parseInt(params[1]?.value)}次, ip:` +
+          params[1]?.data?.ip
+        );
+      },
     },
     dataZoom: [
       {
@@ -168,13 +157,13 @@ export const getGCNumChartOption: any = (
     series: [
       {
         name: 'FullGC次数',
-        data: ipallDataFull || [],
+        data: dataSource[0] || [],
         type: 'line',
       },
       {
         // yAxisIndex: 1,
         name: 'YoungGC次数',
-        data: ipallDataYoung || [],
+        data: dataSource[1] || [],
         type: 'line',
       },
     ],
@@ -183,26 +172,26 @@ export const getGCNumChartOption: any = (
 
 // GC 耗时
 export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
-  let fullDataArry: any = [];
-  let youngDataArry: any = [];
-  let nameArry: any = [];
-  dataSource?.map((item: any) => {
-    if (item?.name?.includes('full')) {
-      item.data?.map((ele: any) => {
-        fullDataArry.push(ele);
-      });
-    }
-    if (item?.name?.includes('young')) {
-      item.data?.map((ele: any) => {
-        youngDataArry.push(ele);
-      });
-    }
-
-    nameArry.push(item?.name);
+  dataSource[0]?.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
   });
+  dataSource[1]?.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
+  });
+
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0].seriesName}:` +
+          `${Number.parseInt(params[0].value)}次, ip:` +
+          params[0].data.ip +
+          `<br> ${params[1].seriesName}:` +
+          `${Number.parseInt(params[1].value)}次, ip:` +
+          params[1].data.ip
+        );
+      },
     },
     grid: {
       bottom: 45,
@@ -246,13 +235,13 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     series: [
       {
         name: 'FullGC耗时',
-        data: fullDataArry || [],
+        data: dataSource[0] || [],
         type: 'line',
       },
       {
         // yAxisIndex: 1,
         name: 'YoungGC耗时',
-        data: youngDataArry || [],
+        data: dataSource[1] || [],
         type: 'line',
       },
     ],
@@ -261,38 +250,38 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
 
 // 内存
 export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
-  let oneDataArry: any = [];
-  let twoDataArry: any = [];
-  let threeDataArry: any = [];
-  let fourDataArry: any = [];
-  let nameArry: any = [];
-  dataSource?.map((item: any) => {
-    if (item?.name?.includes('使用总和')) {
-      item.data?.map((ele: any) => {
-        oneDataArry.push(ele);
-      });
-    }
-    if (item?.name?.includes('年轻代Eden区')) {
-      item.data?.map((ele: any) => {
-        twoDataArry.push(ele);
-      });
-    }
-    if (item?.name?.includes('年轻代Survivor区')) {
-      item.data?.map((ele: any) => {
-        threeDataArry.push(ele);
-      });
-    }
-    if (item?.name?.includes('老年代')) {
-      item.data?.map((ele: any) => {
-        fourDataArry.push(ele);
-      });
-    }
-
-    nameArry.push(item?.name);
+  dataSource[0]?.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
   });
+  dataSource[1]?.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
+  });
+  dataSource[2]?.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
+  });
+  dataSource[3]?.map((item: any) => {
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
+  });
+
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0].seriesName}:` +
+          `${Number.parseInt(params[0].value)}MB, ip:` +
+          params[0].data.ip +
+          `<br> ${params[1].seriesName}:` +
+          `${Number.parseInt(params[1].value)}MB, ip:` +
+          params[1].data.ip +
+          `<br> ${params[2].seriesName}:` +
+          `${Number.parseInt(params[2].value)}MB, ip:` +
+          params[3].data.ip +
+          `<br> ${params[3].seriesName}:` +
+          `${Number.parseInt(params[3].value)}MB, ip:` +
+          params[3].data.ip
+        );
+      },
     },
     grid: {
       bottom: 70,
@@ -337,22 +326,22 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     series: [
       {
         name: '使用总和',
-        data: oneDataArry || [],
+        data: dataSource[0] || [],
         type: 'line',
       },
       {
         name: '年轻代Eden区',
-        data: twoDataArry || [],
+        data: dataSource[1] || [],
         type: 'line',
       },
       {
         name: '年轻代Survivor区',
-        data: threeDataArry || [],
+        data: dataSource[2] || [],
         type: 'line',
       },
       {
         name: '老年代',
-        data: fourDataArry || [],
+        data: dataSource[3] || [],
         type: 'line',
       },
     ],
@@ -360,35 +349,16 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
 };
 
 // 元空间
-export const getGCDataChartOption: any = (xAxisy = [], dataSource = [], newArry = []) => {
-  // let arry: any = [];
-  // let nameArry: any = [];
-
-  // dataSource?.map((item: any) => {
-  //   arry.push({
-  //     name: item?.name,
-  //     data: item.data,
-  //     type: 'line',
-  //   });
-  //   nameArry.push(item?.name);
-  // });
-  // console.log('xAxisy', xAxisy);
-  console.log('data8888888888888888888', dataSource, '0000000000', newArry);
-  let dataArry: any = [];
-
-  let nameArry: any = [];
+export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
   dataSource?.map((item: any) => {
-    if (item?.name?.includes('元空间')) {
-      item.data?.map((ele: any) => {
-        dataArry.push(ele);
-      });
-    }
-
-    nameArry.push(item?.name);
+    return { ...item, time: moment(item?.timeData).format('MM-DD HH:mm:ss') };
   });
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return `${params[0].seriesName}:` + `${Number.parseInt(params[0].value)}MB, ip:` + params[0].data.ip;
+      },
     },
     grid: {
       bottom: 45,
@@ -434,7 +404,7 @@ export const getGCDataChartOption: any = (xAxisy = [], dataSource = [], newArry 
     series: [
       {
         name: '元空间',
-        data: dataArry || [],
+        data: dataSource || [],
         type: 'line',
       },
     ],
