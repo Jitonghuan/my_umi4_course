@@ -5,6 +5,9 @@ import { now } from '../../const';
 import moment from 'moment';
 import './index.less';
 import { getErrorApiList, getSlowApiList } from '../../server';
+import APIError from './components/api-error';
+import SlowApiRequest from './components/slow-api-request';
+import SuccessRate from './components/success-rate';
 
 const { TabPane } = Tabs;
 
@@ -68,12 +71,19 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
   }
 
   useEffect(() => {
-    if (active === '1') {
-      void onSearchError();
-    } else {
-      void onSearchTimeOut();
-    }
+    changeTabs()
   }, [timeList, appGroup, feEnv]);
+
+
+  const changeTabs = (tabKey?: string) => {
+    const key = tabKey || active
+    switch (key) {
+      case '2':
+        void onSearchTimeOut();
+      default:
+        return
+    }
+  }
 
   return (
     <div className="basic-api-wrapper">
@@ -82,140 +92,28 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
         activeKey={active}
         onChange={(val) => {
           setActive(val);
-          if (val === '1') {
-            void onSearchError();
-          } else {
-            void onSearchTimeOut();
-          }
+          changeTabs(val);
         }}
+        destroyInactiveTabPane
       >
         <TabPane tab="API失败接口" key="1">
-          <Table
-            dataSource={errorData}
-            bordered
-            rowKey="ts"
-            scroll={{ x: '100%' }}
-            loading={errorLoading}
-            columns={[
-              {
-                title: 'API',
-                dataIndex: 'd1',
-                width: '300px',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => <Input bordered={false} disabled value={text}></Input>,
-              },
-              {
-                title: 'TraceId',
-                width: '350px',
-                render: (value, record) => <span>{record.d3?.split('-')[1] || '-'}</span>,
-              },
-              {
-                title: '入参',
-                dataIndex: 'd5',
-                width: '400px',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => <Input bordered={false} disabled value={text}></Input>,
-              },
-              {
-                title: '出参',
-                dataIndex: 'd4',
-                width: '350px',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => <Input bordered={false} disabled value={text}></Input>,
-              },
-              {
-                title: '耗时(秒)',
-                width: '100px',
-                align: 'right',
-                render: (value, record) => <span>{(record.timing / 1000).toFixed(2) || 0}</span>,
-              },
-              {
-                title: '页面名称',
-                dataIndex: 'url',
-                width: '250px',
-                render: (text) => <Input bordered={false} disabled value={text}></Input>,
-              },
-              {
-                title: '上报时间',
-                width: '180px',
-                render: (value, record) => (
-                  <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
-                ),
-              },
-            ]}
-            pagination={{
-              total: errorTotal,
-            }}
-          />
+          <div>
+            <div className='api-type-title'>异常列表</div>
+            <APIError type='serverError' getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
+          </div>
+          <div>
+            <div className='api-type-title'>业务报错</div>
+            <APIError type='bizError' getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
+          </div>
         </TabPane>
         <TabPane tab="慢接口列表" key="2">
-          <Table
-            dataSource={timeOutData}
-            bordered
-            scroll={{ x: '100%' }}
-            rowKey="ts"
-            loading={timeOutLoading}
-            columns={[
-              {
-                title: 'API',
-                dataIndex: 'd1',
-                width: '300px',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => <Input bordered={false} disabled value={text}></Input>,
-              },
-              {
-                title: '页面',
-                dataIndex: 'url',
-                width: '250px',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => <Input bordered={false} disabled value={text}></Input>,
-              },
-              {
-                title: 'TraceId',
-                width: '250px',
-                render: (value, record) => <span>{record.d3?.split('-')[1] || '-'}</span>,
-              },
-              {
-                title: '耗时(秒)',
-                width: '100px',
-                align: 'right',
-                dataIndex: 'timing',
-                render: (value, record) => <span>{(record.timing / 1000).toFixed(2) || 0}</span>,
-              },
-              {
-                title: '上报时间',
-                width: '180px',
-                render: (value, record) => (
-                  <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
-                ),
-              },
-              {
-                title: '入参',
-                dataIndex: 'd5',
-                width: '400px',
-                ellipsis: {
-                  showTitle: false,
-                },
-                render: (text) => <Input bordered={false} disabled value={text}></Input>,
-              },
-            ]}
-            pagination={{
-              total: timeOutTotal,
-            }}
-          />
+          <SlowApiRequest dataSource={timeOutData} loading={timeOutLoading} pageTotal={timeOutTotal} />
+        </TabPane>
+        <TabPane tab="接口成功率" key="3">
+          <SuccessRate getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
         </TabPane>
       </Tabs>
-    </div>
+    </div >
   );
 };
 

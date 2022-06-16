@@ -55,3 +55,23 @@ export const getErrorApiList = async (data: any) => {
 export const getSlowApiList = async (data: any) => {
   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/performance/slowApiList`, { data });
 };
+
+// /** API异常列表（5xx情况） */
+// export const getApiErrorList = async (data: any) => {
+//   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/performance/serverErrorList`, { data });
+// };
+
+// /** 业务报错 */
+// export const getBizErrorList = async (data: any) => {
+//   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/performance/bizErrorList`, { data });
+// };
+
+// /** API成功率 */
+// export const getApiSuccessRateList = async (data: any) => {
+//   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/performance/apiSuccessRateList`, { data });
+// };
+
+/** API状态搜索 */
+export const searchApiList = async (data: any) => {
+  return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/performance/errorApiStatistics`, { data });
+};
