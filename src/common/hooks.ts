@@ -226,7 +226,7 @@ export function useQueryUnreadNum(): [any, () => Promise<void>] {
     loadData();
     let intervalId = setInterval(() => {
       loadData();
-    }, 8000);
+    }, 60000);
 
     return () => {
       clearInterval(intervalId);
