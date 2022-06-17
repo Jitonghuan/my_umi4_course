@@ -59,8 +59,11 @@ export default function RollbackVersion(props: RollbackVersionProps) {
   }, [appData, envItem, versionList, selectedRowKeys]);
 
   const currVersion = useMemo(() => {
+    if (appData?.feType === 'pda') {
+      return versionList?.find((n) => n.pdaDeployType === pdaDeployType && n.isActive === 0);
+    }
     return versionList?.find((n) => n.isActive === 0);
-  }, [versionList]);
+  }, [versionList, pdaDeployType]);
 
   function getStatusName(status: number) {
     switch (status) {
