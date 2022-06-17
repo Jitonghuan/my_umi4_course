@@ -25,6 +25,7 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);
   const [description, setDescription] = useState<any>(); // 富文本数据
   const [resetDescription, setResetDescription] = useState<any>(); // 重置富文本使用
+  const [curType, setCurType] = useState<string>('');
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
@@ -36,18 +37,20 @@ export default function MemberEditor(props: MemberEditorProps) {
         setIsChecked(false);
         setIsPriorityChangeOption(0);
       }
+      setCurType(initData?.type);
       editForm.setFieldsValue({
         title: initData?.title,
         type: initData?.type,
         content: initData?.content,
       });
       setResetDescription(initData?.content);
+      console.log('initData?.content', initData?.content, curType, initData?.type);
     }
 
     if (mode === 'VIEW') {
       seViewDisabled(true);
     }
-    if (mode === 'ADD') return;
+    // if (mode === 'ADD') return;
 
     return () => {
       seViewDisabled(false);
@@ -55,11 +58,12 @@ export default function MemberEditor(props: MemberEditorProps) {
       setIsPriorityChangeOption(0);
       editForm.resetFields();
       setResetDescription('');
+      setCurType('');
     };
   }, [mode]);
   const handleSubmit = () => {
     const params = editForm.getFieldsValue();
-    console.log('params', params);
+
     if (mode === 'EDIT') {
       updateArticle({
         id: initData?.id,
@@ -93,6 +97,10 @@ export default function MemberEditor(props: MemberEditorProps) {
       setIsPriorityChangeOption(0);
     }
   };
+  const changeType = (values: any) => {
+    console.log('values', values);
+    setCurType(values);
+  };
 
   return (
     <Drawer
@@ -104,7 +112,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       maskClosable={false}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={addLoading || updateLoading} onClick={handleSubmit}>
+          <Button type="primary" loading={addLoading || updateLoading} onClick={handleSubmit} disabled={viewDisabled}>
             保存
           </Button>
           <Button type="default" onClick={onClose}>
@@ -118,11 +126,13 @@ export default function MemberEditor(props: MemberEditorProps) {
           <Input disabled={viewDisabled} style={{ width: 520 }} />
         </Form.Item>
         <Form.Item label="类型" name="type" rules={[{ required: true, message: '请选择' }]}>
-          <Select options={typeOptions} disabled={viewDisabled} style={{ width: 200 }} />
+          <Select options={typeOptions} disabled={viewDisabled} onChange={changeType} style={{ width: 200 }} />
         </Form.Item>
+
         <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
-          {/* <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} /> */}
-          <div>
+          {curType === 'document' ? (
+            <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
+          ) : (
             <ReactWEditor
               config={{
                 uploadImgShowBase64: true,
@@ -133,7 +143,7 @@ export default function MemberEditor(props: MemberEditorProps) {
                 setDescription(html);
               }}
             />
-          </div>
+          )}
         </Form.Item>
         {/* 是否置顶 0表示默认，1表示置顶 */}
         <Form.Item label="是否置顶" name="priority">

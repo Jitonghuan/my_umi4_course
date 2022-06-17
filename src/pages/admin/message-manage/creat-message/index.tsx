@@ -90,7 +90,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       maskClosable={false}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={addLoading || updateLoading} onClick={handleSubmit}>
+          <Button type="primary" loading={addLoading || updateLoading} onClick={handleSubmit} disabled={viewDisabled}>
             保存
           </Button>
           <Button type="default" onClick={onClose}>

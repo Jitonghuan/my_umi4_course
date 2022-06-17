@@ -23,3 +23,7 @@ export const createMyEntryMenu = addAPIPrefix('/adminManage/entryMenu/my/create'
 
 /* POST 7、删除我的快捷入口 */
 export const deleteMyEntryMenu = addAPIPrefix('/adminManage/entryMenu/my/delete');
+
+/* GET 8、查询文章  */
+
+export const getInfoList = addAPIPrefix('/adminManage/post/list');

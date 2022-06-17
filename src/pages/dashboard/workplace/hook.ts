@@ -76,3 +76,33 @@ export function useDeleteArticle(): [boolean, (paramsObj: { id: number }) => Pro
 
   return [loading, deleteArticle];
 }
+
+//getInfoList
+export function useGetInfoList(): [
+  boolean,
+  number,
+  any,
+  (paramsObj: { type: string; pageIndex?: number; pageSize?: number }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<any>([]);
+  const [total, setTotal] = useState<number>(0);
+  const getInfoList = async (paramsObj: { type: string; pageIndex?: number; pageSize?: number }) => {
+    setLoading(true);
+    await getRequest(APIS.getInfoList, { data: { type: paramsObj.type, pageIndex: -1, pageSize: -1 } })
+      .then((result) => {
+        if (result.success) {
+          let dataSource = result?.data?.dataSource;
+          setData(dataSource);
+          setTotal(result?.data?.pageInfo?.total);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, total, data, getInfoList];
+}
