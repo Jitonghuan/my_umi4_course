@@ -29,7 +29,7 @@ export function useMyEntryMenuList() {
       });
   };
 
-  return [loading, source, setSource, getMyEntryMenuList];
+  return [loading, source, getMyEntryMenuList];
 }
 
 //新增
@@ -38,7 +38,7 @@ export function useAddMyEntryMenu(): [
   (paramsObj: { title: string; content: string; type: string; priority: number }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const createArticle = async (paramsObj: { title: string; content: string; type: string; priority: number }) => {
+  const createMyEntryMenu = async (paramsObj: { title: string; content: string; type: string; priority: number }) => {
     setLoading(true);
     await postRequest(APIS.createMyEntryMenu, { data: paramsObj })
       .then((result) => {
@@ -53,13 +53,13 @@ export function useAddMyEntryMenu(): [
       });
   };
 
-  return [loading, createArticle];
+  return [loading, createMyEntryMenu];
 }
 
 //删除
-export function useDeleteArticle(): [boolean, (paramsObj: { id: number }) => Promise<void>] {
+export function useDeleteMyEntryMenu(): [boolean, (paramsObj: { id: number }) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const deleteArticle = async (paramsObj: { id: number }) => {
+  const deleteMyEntryMenu = async (paramsObj: { id: number }) => {
     setLoading(true);
     await delRequest(`${APIS.deleteMyEntryMenu}/${paramsObj.id}`)
       .then((result) => {
@@ -74,7 +74,7 @@ export function useDeleteArticle(): [boolean, (paramsObj: { id: number }) => Pro
       });
   };
 
-  return [loading, deleteArticle];
+  return [loading, deleteMyEntryMenu];
 }
 
 //getInfoList

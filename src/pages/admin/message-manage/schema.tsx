@@ -57,8 +57,8 @@ export const createTableColumns = (params: {
     },
     {
       title: '发布时间',
-      dataIndex: 'gmtCreate',
-      key: 'gmtCreate',
+      dataIndex: 'sendTime',
+      key: 'sendTime',
       width: '20%',
       render: (value) => <>{datetimeCellRender(value)} </>,
     },
@@ -66,7 +66,7 @@ export const createTableColumns = (params: {
       title: '内容',
       dataIndex: 'content',
       key: 'content',
-      width: '30%',
+      width: '28%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
@@ -82,7 +82,7 @@ export const createTableColumns = (params: {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '12%',
+      width: '14%',
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
