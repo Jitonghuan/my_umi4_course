@@ -3,7 +3,7 @@
 // @create 2021/09/05 11:34
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, message, Table, Empty } from 'antd';
+import {Modal, message, Table, Empty, Radio} from 'antd';
 import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
 import { datetimeCellRender } from '@/utils';
 import { rollbackFeApp } from '@/pages/application/service';
@@ -20,6 +20,7 @@ export interface RollbackVersionProps {
 
 export default function RollbackVersion(props: RollbackVersionProps) {
   const { appData, envItem, versionList, onClose, onSubmit } = props;
+  const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
@@ -28,12 +29,30 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     setSelectedRowKeys([]);
   }, [envItem]);
 
+  function deployTypeChange(value: string) {
+    setPdaDeployType(value);
+  }
+
+  function getList () {
+    if (appData?.feType === 'pda') {
+      return versionList?.filter((val) => val.pdaDeployType === pdaDeployType);
+    }
+    return versionList;
+  }
+
   const handleOk = useCallback(async () => {
-    await rollbackFeApp({
+
+    let param = {
       appCode: appData?.appCode,
       envCode: envItem?.envCode,
       version: selectedRowKeys[0],
-    });
+    }
+    if (appData?.feType === 'pda') {
+      Object.assign(param, {
+        pdaDeployType
+      })
+    }
+    await rollbackFeApp(param);
 
     message.success('操作成功！');
     onSubmit();
@@ -66,8 +85,19 @@ export default function RollbackVersion(props: RollbackVersionProps) {
       onOk={handleOk}
       okButtonProps={{ disabled: !selectedRowKeys.length }}
     >
+      {
+        appData?.feType === 'pda' && (
+          <div style={{marginBottom: '10px'}}>
+            <span>打包类型：</span>
+            <Radio.Group onChange={(e) => deployTypeChange(e.target.value)} value={pdaDeployType}>
+              <Radio value='bundles'>bundles</Radio>
+              <Radio value='apk'>apk</Radio>
+            </Radio.Group>
+          </div>
+        )
+      }
       <Table
-        dataSource={versionList || []}
+        dataSource={getList() || []}
         rowClassName={(record) => {
           if (record.isActive === 0) {
             return 'table-color-rollback';
@@ -76,10 +106,6 @@ export default function RollbackVersion(props: RollbackVersionProps) {
           } else {
             return 'table-rollback';
           }
-
-          // else  {
-          //   return 'table-rollback';
-          // }
         }}
         rowSelection={{
           selectedRowKeys,

@@ -9,15 +9,14 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message } from 'antd';
+import {Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio} from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
+import { createDeploy, updateFeatures } from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
 import { listAppEnv } from '@/pages/application/service';
-import { getRequest, postRequest } from '@/utils/request';
-import { getMasterBranch } from '@/pages/application/service';
+import { getRequest } from '@/utils/request';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 
@@ -59,7 +58,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
-  const { appCategoryCode, appCode, id } = appData || {};
+  const { appCategoryCode, appCode, id, feType } = appData || {};
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
@@ -70,6 +69,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const [loading, setLoading] = useState<boolean>(false);
+  const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
 
   const getBuildType = () => {
@@ -110,6 +110,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envTypeCode: env,
       features: filter,
       pipelineCode,
+      pdaDeployType: feType === 'pda' ? pdaDeployType : '',
       envCodes: deployEnv,
       masterBranch: selectMaster, //主干分支
       buildType: getBuildType(),
@@ -204,7 +205,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             filterOption={(input, option) => {
               return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
             }}
-          ></Select>
+          />
           <h4>开发分支名称：</h4>
           <Input.Search
             placeholder="搜索分支"
@@ -304,6 +305,17 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         <div>
           <span>发布环境：</span>
           <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
+          {
+            feType === 'pda' && (
+              <div style={{ marginTop: "10px" }}>
+                <span>打包类型：</span>
+                <Radio.Group onChange={(e) => setPdaDeployType(e.target.value)} value={pdaDeployType}>
+                  <Radio value='bundles'>bundles</Radio>
+                  <Radio value='apk'>apk</Radio>
+                </Radio.Group>
+              </div>
+            )
+          }
         </div>
       </Modal>
     </div>

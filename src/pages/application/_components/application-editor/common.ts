@@ -36,7 +36,7 @@ export const feTypeOptions: IOption<any>[] = [
   { label: '定制页面', value: 'customPage' },
   { label: 'PDA', value: 'pda' },
 ];
-export const singleFeTypeOptions: IOption<any>[] = [{ label: 'web', value: 'web' }];
+export const singleFeTypeOptions: IOption<any>[] = [{ label: 'web', value: 'web' }, { label: 'PDA', value: 'pda' },];
 export const microFeTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: '定制包', value: 'customPack' },

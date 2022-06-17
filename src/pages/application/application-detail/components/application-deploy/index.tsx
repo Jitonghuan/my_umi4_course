@@ -2,10 +2,9 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/25 16:21
 
-import React, { useContext, useState, useLayoutEffect, useEffect, useMemo } from 'react';
-import { Tabs, Select, Tag, Radio } from 'antd';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
+import { Tabs, Select, Tag } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
-import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import SecondPartyPkg from '../second-party-pkg';
@@ -14,11 +13,8 @@ import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
 import { history } from 'umi';
 import './index.less';
-import { values } from 'lodash';
-import StepItem from './deploy-content/components/publish-content/steps/step-item';
 import PipeLineManage from './pipelineManage';
-import { getPipelineUrl, retry } from '@/pages/application/service';
-import { active } from '_@types_d3-transition@3.0.1@@types/d3-transition';
+import { getPipelineUrl } from '@/pages/application/service';
 
 const { TabPane } = Tabs;
 
@@ -30,7 +26,6 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
-  const [buildType, setBuildType] = useState('bundles');
 
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
@@ -192,13 +187,6 @@ export default function ApplicationDeploy(props: any) {
         tabBarExtraContent={
           <div className="tabs-extra">
             <span>
-              <span>打包类型：</span>
-              <Radio.Group onChange={(e) => setBuildType(e.target.value)} value={buildType}>
-                <Radio value='bundles'>bundles</Radio>
-                <Radio value='apk'>apk</Radio>
-              </Radio.Group>
-            </span>
-            <span>
               当前流水线：<Tag color="blue">{currentValue || '---'}</Tag>
             </span>
             <span className="tabs-extra-select">
@@ -209,7 +197,7 @@ export default function ApplicationDeploy(props: any) {
                 size="small"
                 onChange={handleChange}
                 options={pipelineOption}
-              ></Select>
+              />
               <SettingOutlined
                 style={{ marginLeft: '10px' }}
                 onClick={() => {
