@@ -2,11 +2,11 @@ import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
-import { createFormColumns, createTableColumns } from './schema';
+import { createFormColumns, createTableColumns, typeOptions } from './schema';
 import { useDeleteArticle, useUpdateArticle } from './hook';
 import * as APIS from './service';
 import useTable from '@/utils/useTable';
-import CreatArticle from './creat-article';
+import CreatArticle from './creat-message';
 export default function AdminList() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
@@ -36,17 +36,6 @@ export default function AdminList() {
           submit();
         });
       },
-      // 是否置顶 0表示默认，1表示置顶
-      onSwitchEnableClick: (record, index) => {
-        let enable = record?.priority === 0 ? 1 : 0;
-        let paramsObj = {
-          ...record,
-          priority: enable,
-        };
-        updateArticle({ ...paramsObj }).then(() => {
-          submit();
-        });
-      },
     }) as any;
   }, []);
 
@@ -54,12 +43,13 @@ export default function AdminList() {
     tableProps,
     search: { submit, reset },
   } = useTable({
-    url: APIS.getInfoList,
+    url: APIS.getContentList,
     method: 'GET',
     form,
     formatter: (params) => {
       return {
         ...params,
+        group: 'admin',
       };
     },
     formatResult: (result) => {
@@ -87,7 +77,17 @@ export default function AdminList() {
       <TableSearch
         form={form}
         bordered
-        formOptions={formOptions}
+        formOptions={[
+          {
+            key: '1',
+            type: 'select',
+            label: '类型',
+            dataIndex: 'type',
+            width: '200px',
+            placeholder: '请选择',
+            option: typeOptions,
+          },
+        ]}
         formLayout="inline"
         columns={columns}
         {...tableProps}

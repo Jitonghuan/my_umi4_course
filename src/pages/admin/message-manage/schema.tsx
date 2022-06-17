@@ -5,13 +5,11 @@ import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
 export const typeOptions = [
+  { key: 'single', label: '个人', value: 'single' },
   {
-    label: '个人',
-    value: 'announcement',
-  },
-  {
+    key: 'all',
     label: '全员',
-    value: 'document',
+    value: 'all',
   },
 ];
 // 列表页-查询表单
@@ -35,8 +33,6 @@ export const createTableColumns = (params: {
   onEdit: (record: any, index: number) => void;
   onView: (record: any, index: number) => void;
   onDelete: (record: any) => void;
-  onSwitchEnableClick: (record: any, index: number) => void;
-  // curRecord: any;
 }) => {
   return [
     {
@@ -67,20 +63,20 @@ export const createTableColumns = (params: {
       render: (value) => <>{datetimeCellRender(value)} </>,
     },
     {
-      title: '是否置顶',
-      dataIndex: 'priority',
-      key: 'priority',
+      title: '内容',
+      dataIndex: 'content',
+      key: 'content',
+      width: '30%',
+      ellipsis: true,
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+    },
+    {
+      title: '发送者',
+      dataIndex: 'senderName',
+      key: 'senderName',
       width: '10%',
-      render: (enable: number, record: any, index: number) => (
-        <>
-          <Switch
-            checked={enable === 1 ? true : false}
-            onClick={() => {
-              params.onSwitchEnableClick(record, index);
-            }}
-          />
-        </>
-      ),
+      ellipsis: true,
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
       title: '操作',
@@ -96,7 +92,6 @@ export const createTableColumns = (params: {
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record.id);
-              console.log('record000', record);
             }}
           >
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>

@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
-import { createFormColumns, createTableColumns } from './schema';
+import { createFormColumns, createTableColumns, typeOptions } from './schema';
 import { useDeleteArticle, useUpdateArticle } from './hook';
 import * as APIS from './service';
 import useTable from '@/utils/useTable';
@@ -13,14 +13,6 @@ export default function AdminList() {
   const [curRecord, setcurRecord] = useState<any>({});
   const [delLoading, deleteArticle] = useDeleteArticle();
   const [updateLoading, updateArticle] = useUpdateArticle();
-
-  const onTypeChange = (type: string) => {};
-  const formOptions = useMemo(() => {
-    return createFormColumns({
-      onTypeChange,
-    });
-  }, []);
-
   const columns = useMemo(() => {
     return createTableColumns({
       onEdit: (record, index) => {
@@ -58,6 +50,7 @@ export default function AdminList() {
     method: 'GET',
     form,
     formatter: (params) => {
+      console.log('params', params);
       return {
         ...params,
       };
@@ -87,7 +80,17 @@ export default function AdminList() {
       <TableSearch
         form={form}
         bordered
-        formOptions={formOptions}
+        formOptions={[
+          {
+            key: '1',
+            type: 'select',
+            label: '类型',
+            dataIndex: 'type',
+            width: '200px',
+            placeholder: '请选择',
+            option: typeOptions,
+          },
+        ]}
         formLayout="inline"
         columns={columns}
         {...tableProps}

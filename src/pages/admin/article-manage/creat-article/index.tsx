@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Drawer, message, Form, Button, Select, Input, Switch } from 'antd';
+import ReactWEditor from 'wangeditor-for-react/lib/core';
 import { typeOptions } from '../schema';
 import { useAddArticle, useUpdateArticle } from '../hook';
 
@@ -22,6 +23,8 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [viewDisabled, seViewDisabled] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);
+  const [description, setDescription] = useState<any>(); // 富文本数据
+  const [resetDescription, setResetDescription] = useState<any>(); // 重置富文本使用
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
@@ -38,6 +41,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         type: initData?.type,
         content: initData?.content,
       });
+      setResetDescription(initData?.content);
     }
 
     if (mode === 'VIEW') {
@@ -50,6 +54,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       setIsChecked(false);
       setIsPriorityChangeOption(0);
       editForm.resetFields();
+      setResetDescription('');
     };
   }, [mode]);
   const handleSubmit = () => {
@@ -59,7 +64,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       updateArticle({
         id: initData?.id,
         title: params?.title,
-        content: params?.content,
+        content: description,
         type: params?.type,
         priority: isPriorityChangeOption,
       }).then(() => {
@@ -69,7 +74,7 @@ export default function MemberEditor(props: MemberEditorProps) {
     if (mode === 'ADD') {
       createArticle({
         title: params?.title,
-        content: params?.content,
+        content: description,
         type: params?.type,
         priority: isPriorityChangeOption,
       }).then(() => {
@@ -116,7 +121,19 @@ export default function MemberEditor(props: MemberEditorProps) {
           <Select options={typeOptions} disabled={viewDisabled} style={{ width: 200 }} />
         </Form.Item>
         <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
-          <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
+          {/* <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} /> */}
+          <div>
+            <ReactWEditor
+              config={{
+                uploadImgShowBase64: true,
+                uploadImgMaxSize: 1024 * 1024,
+              }}
+              value={resetDescription}
+              onChange={(html) => {
+                setDescription(html);
+              }}
+            />
+          </div>
         </Form.Item>
         {/* 是否置顶 0表示默认，1表示置顶 */}
         <Form.Item label="是否置顶" name="priority">

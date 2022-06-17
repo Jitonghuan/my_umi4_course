@@ -5,14 +5,8 @@ import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
 export const typeOptions = [
-  {
-    label: '公告',
-    value: 'announcement',
-  },
-  {
-    label: '文件',
-    value: 'document',
-  },
+  { key: 'announcement', label: '公告', value: 'announcement' },
+  { key: 'document', label: '文件', value: 'document' },
 ];
 // 列表页-查询表单
 export const createFormColumns = (params: { onTypeChange: (value: string) => void }) => {

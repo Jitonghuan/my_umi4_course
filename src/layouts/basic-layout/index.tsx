@@ -77,6 +77,7 @@ export default function Layout(props: any) {
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
+  const [curMsg, setCurMsg] = useState<any>();
 
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
@@ -120,7 +121,7 @@ export default function Layout(props: any) {
     <ConfigProvider locale={zhCN}>
       <AllMessage
         mode={allMessageMode}
-        curData={stemNoticeListData}
+        allData={stemNoticeListData}
         onClose={() => {
           setAllMessageMode('HIDE');
         }}
@@ -182,6 +183,7 @@ export default function Layout(props: any) {
                   onClickMsgEntry: (id: number, msg: any) => {
                     console.log('id---msg', id, msg);
                     setAllMessageMode('VIEW');
+                    setCurMsg(msg);
 
                     return (
                       <a href={`'#'+${msg.systemNoticeId}`}>

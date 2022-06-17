@@ -14,7 +14,7 @@ export function useAddArticle(): [
     await postRequest(APIS.createInfo, { data: paramsObj })
       .then((result) => {
         if (result.success) {
-          message.success('新增任务成功！');
+          message.success('新增成功！');
         } else {
           return;
         }

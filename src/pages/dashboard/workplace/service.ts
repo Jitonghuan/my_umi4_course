@@ -14,15 +14,7 @@ export const getSystemNoticeList = addAPIPrefix('/adminManage/systemNotice/list'
 /* POST 3、 批量更新为已读 */
 
 export const batchUpdateRead = addAPIPrefix('/adminManage/systemNotice/list/read');
-/* POST 4、 发送系统消息 */
-export const sendSystemNotice = addAPIPrefix('/adminManage/systemNotice/send');
-/* POST 5、 获得系统通知内容列表 */
-export const getContentList = addAPIPrefix('/adminManage/systemNotice/content/list');
-/* POST 6、删除系统通知内容 */
 
-export const deleteContent = addAPIPrefix('/adminManage/systemNotice/content/delete');
-/* PUT 7、更新系统通知内容 */
-export const updateContent = addAPIPrefix('/adminManage/systemNotice/content/update');
 /* GET 8、查询我的快捷入口 */
 export const getMyEntryMenuList = addAPIPrefix('/adminManage/entryMenu/my/List');
 

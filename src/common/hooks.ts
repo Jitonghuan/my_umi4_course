@@ -8,6 +8,7 @@ import appConfig from '@/app.config';
 import DetailContext from '../pages/application/application-detail/context';
 import { getRequest, postRequest } from '@/utils/request';
 import { BasicData } from '@hbos/component-position-switcher';
+import { message } from 'antd';
 import * as APIS from './apis';
 /** 全局上下文 */
 // export const GlobalContext = createContext({
@@ -241,31 +242,53 @@ export function useQueryStemNoticeList(): [any, (pageIndex?: number, pageSize?: 
   const [dataSource, setDataSource] = useState<number>(0);
 
   const loadData = useCallback(async (pageIndex?: number, pageSize?: number) => {
-    await getRequest(APIS.systemNoticeListApi, { data: { pageIndex: pageIndex || 0, pageSize: pageSize || 20 } }).then(
-      (result) => {
-        if (result?.success) {
-          const next = result?.data?.dataSource || [];
-          let dataArry: any = [];
-          next?.map((item: any) => {
-            dataArry.push({
-              id: item.id,
-              title: item.title,
-              content: item.content,
-              // datetime:item.datetime,
-              readed: item.state,
-              systemNoticeId: item.systemNoticeId,
-            });
+    await getRequest(APIS.systemNoticeListApi, {
+      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 2000 },
+    }).then((result) => {
+      if (result?.success) {
+        const next = result?.data?.dataSource || [];
+        let dataArry: any = [];
+        next?.map((item: any) => {
+          dataArry.push({
+            id: item.id,
+            title: item.title,
+            content: item.content,
+            // datetime:item.datetime,
+            readed: item.state,
+            systemNoticeId: item.systemNoticeId,
           });
+        });
 
-          setDataSource(dataArry);
-        }
-      },
-    );
+        setDataSource(dataArry);
+      }
+    });
   }, []);
 
   useEffect(() => {
-    loadData(1, 20);
+    loadData(1, 2000);
   }, []);
 
   return [dataSource, loadData];
 }
+
+// 请求查询未读消息数
+// 切换部门确认
+export function useReadList(): [(ids: any) => Promise<void>] {
+  const getReadList = useCallback(async (ids: any) => {
+    await postRequest(APIS.readListApi, { data: { ids } });
+  }, []);
+
+  return [getReadList];
+}
+// export function useReadList(): [(ids:[]) => Promise<void>] {
+
+//   const loadData = useCallback(async (ids:[]) => {
+//     await postRequest(APIS.readListApi,{data:{ids}}).then((result) => {
+//       if (result?.success) {
+//         message.success('您已经一键已读了所有消息！')
+//       }
+//     });
+//   }, []);
+
+//   return [loadData];
+// }

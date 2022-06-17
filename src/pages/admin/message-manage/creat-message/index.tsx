@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Drawer, message, Form, Button, Select, Input, Switch } from 'antd';
 import { typeOptions } from '../schema';
-import { useAddArticle, useUpdateArticle } from '../hook';
+import { useAddArticle, useUpdateArticle, useSearchUser } from '../hook';
 import UserSelector, { stringToList } from '@/components/user-selector';
 
 export interface MemberEditorProps {
@@ -23,17 +23,12 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [viewDisabled, seViewDisabled] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);
+  const [loading, userData, searchUser] = useSearchUser();
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
+    searchUser();
     if (mode !== 'ADD') {
-      if (initData.priority === 1) {
-        setIsChecked(true);
-        setIsPriorityChangeOption(1);
-      } else {
-        setIsChecked(false);
-        setIsPriorityChangeOption(0);
-      }
       editForm.setFieldsValue({
         title: initData?.title,
         type: initData?.type,
@@ -61,8 +56,6 @@ export default function MemberEditor(props: MemberEditorProps) {
         id: initData?.id,
         title: params?.title,
         content: params?.content,
-        type: params?.type,
-        priority: isPriorityChangeOption,
       }).then(() => {
         onSave();
       });
@@ -71,22 +64,11 @@ export default function MemberEditor(props: MemberEditorProps) {
       createArticle({
         title: params?.title,
         content: params?.content,
+        targetId: params?.targetId,
         type: params?.type,
-        priority: isPriorityChangeOption,
       }).then(() => {
         onSave();
       });
-    }
-  };
-
-  //是否置顶
-  const isPriorityChange = (checked: boolean) => {
-    if (checked === true) {
-      setIsChecked(true);
-      setIsPriorityChangeOption(1);
-    } else {
-      setIsChecked(false);
-      setIsPriorityChangeOption(0);
     }
   };
 
@@ -117,7 +99,7 @@ export default function MemberEditor(props: MemberEditorProps) {
           <Select options={typeOptions} disabled={viewDisabled} style={{ width: 200 }} />
         </Form.Item>
         <Form.Item label="目标" name="targetId" rules={[{ required: true, message: '请选择' }]}>
-          <UserSelector />
+          <Select options={userData} allowClear showSearch></Select>
         </Form.Item>
         <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
           <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
