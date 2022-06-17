@@ -31,6 +31,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
 
   function deployTypeChange(value: string) {
     setPdaDeployType(value);
+    setSelectedRowKeys([]);
   }
 
   function getList () {
