@@ -12,7 +12,17 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function CpuUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
-  let newallData = [...data[0], ...data[1], ...data[2]];
+  console.log('data[0]', data[0]);
+  let newallData: any = [];
+  if (data) {
+    // newallData = [...data[0], ...data[1], ...data[2]]||[];
+    data?.map((item: any) => {
+      newallData.push(...item);
+    });
+  } else {
+    return;
+  }
+
   const config = {
     data: newallData,
     xField: 'time',

@@ -44,7 +44,7 @@ export function useQueryPodCpu() {
                     let cpudataObj = {
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
-                      value: Number(item[1]).toFixed(2),
+                      value: Number(Number(item[1]).toFixed(2)),
                       category: 'cpuLimit',
                     };
                     podCpuDataArry.push(cpudataObj);
@@ -66,7 +66,7 @@ export function useQueryPodCpu() {
                     let cpudataObj = {
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
-                      value: Number(item[1]).toFixed(2),
+                      value: Number(Number(item[1]).toFixed(2)),
                       category: 'cpuRequest',
                     };
                     podCpuRequest.push(cpudataObj);
@@ -157,7 +157,7 @@ export function usequeryPodMem() {
                   let cpudataObj = {
                     time: parseInt(item[0]) * 1000,
                     name: Object.keys(ele)[0],
-                    value: Number(item[1]).toFixed(1),
+                    value: Number(Number(item[1]).toFixed(1)),
                     category: 'memLimitInfo',
                   };
                   podMemDataArry.push(cpudataObj);
@@ -180,7 +180,7 @@ export function usequeryPodMem() {
                   let cpudataObj = {
                     time: parseInt(item[0]) * 1000,
                     name: Object.keys(ele)[0],
-                    value: Number(item[1]).toFixed(1),
+                    value: Number(Number(item[1]).toFixed(1)),
                     category: 'rssInfo',
                   };
                   rssInfoDataArry.push(cpudataObj);
@@ -203,7 +203,7 @@ export function usequeryPodMem() {
                   let cpudataObj = {
                     time: parseInt(item[0]) * 1000,
                     name: Object.keys(ele)[0],
-                    value: Number(item[1]).toFixed(1),
+                    value: Number(Number(item[1]).toFixed(1)),
                     category: 'wssInfo',
                   };
                   wssInfoDataArry.push(cpudataObj);
@@ -276,7 +276,7 @@ export function useQueryPodDisk() {
                     let cpudataObj = {
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
-                      value: Number(item[1]).toFixed(1),
+                      value: Number(Number(item[1]).toFixed(1)),
                       category: 'diskReads',
                     };
                     podDiskDataArry.push(cpudataObj);
@@ -298,7 +298,7 @@ export function useQueryPodDisk() {
                     let cpudataObj = {
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
-                      value: Number(item[1]).toFixed(1),
+                      value: Number(Number(item[1]).toFixed(1)),
                       category: 'diskWrites',
                     };
                     diskWritesDataArry.push(cpudataObj);
@@ -364,7 +364,7 @@ export function useQueryPodNetwork() {
                     let cpudataObj = {
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
-                      value: Number(item[1]).toFixed(1),
+                      value: Number(Number(item[1]).toFixed(1)),
                       category: 'receive',
                     };
                     receiveDataArry.push(cpudataObj);
@@ -386,7 +386,7 @@ export function useQueryPodNetwork() {
                     let cpudataObj = {
                       time: parseInt(item[0]) * 1000,
                       name: Object.keys(ele)[0],
-                      value: Number(item[1]).toFixed(1),
+                      value: Number(Number(item[1]).toFixed(1)),
                       category: 'transmit',
                     };
                     transmitDataArry.push(cpudataObj);

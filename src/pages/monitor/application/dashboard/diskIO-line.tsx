@@ -13,7 +13,15 @@ export interface ChartCaseListProps {
 const { ColorContainer } = colorUtil.context;
 export default function DiskIOLine(props: ChartCaseListProps) {
   const { data, loading } = props;
-  let newallData = [...data[0], ...data[1]];
+  let newallData: any = [];
+  if (data) {
+    // newallData = [...data[0], ...data[1]];
+    data?.map((item: any) => {
+      newallData.push(...item);
+    });
+  } else {
+    return;
+  }
   const config = {
     data: newallData,
     xField: 'time',

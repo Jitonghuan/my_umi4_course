@@ -98,7 +98,6 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     tooltip: {
       trigger: 'axis',
       formatter: function (params: any) {
-        console.log('params', params);
         return (
           `${params[0]?.seriesName}:` +
           `${Number.parseInt(params[0]?.value)}次, ip:` +
@@ -193,6 +192,12 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
         );
       },
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
       bottom: 45,
       top: 30,
@@ -283,6 +288,12 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
         );
       },
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
       bottom: 70,
       top: 34,
@@ -360,6 +371,12 @@ export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
         return `${params[0].seriesName}:` + `${Number.parseInt(params[0].value)}MB, ip:` + params[0].data.ip;
       },
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
       bottom: 45,
       top: 30,
