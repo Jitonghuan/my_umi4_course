@@ -13,10 +13,11 @@ export interface MemberEditorProps {
   allData?: any;
   onClose: () => any;
   unreadNum: number;
+  loadStemNoticeList: () => any;
 }
 
 export default function MemberEditor(props: MemberEditorProps) {
-  const { mode, allData, onClose, unreadNum } = props;
+  const { mode, allData, onClose, unreadNum, loadStemNoticeList } = props;
   const [getReadList] = useReadList();
   const [loading, setLoading] = useState(false);
   const [unreadNumData, loadUnreadNum] = useQueryUnreadNum();
@@ -35,6 +36,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       .then((res) => {
         message.success('您已经一键已读了所有消息!');
         loadUnreadNum();
+        loadStemNoticeList();
       })
       .finally(() => {
         setLoading(false);

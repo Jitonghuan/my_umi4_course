@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
-import { Modal, Badge } from 'antd';
+import { Modal, Badge, message } from 'antd';
 import { BellFilled } from '@ant-design/icons';
 import 'antd/dist/antd.variable.min.css';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
@@ -25,6 +25,7 @@ import {
   useStaffDepData,
   useQueryUnreadNum,
   useQueryStemNoticeList,
+  useReadList,
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
@@ -63,7 +64,14 @@ export default function Layout(props: any) {
   const [staffDepData, loadStaffDepData] = useStaffDepData();
   const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
   const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
+  const [getReadList] = useReadList();
   const [style, setStyle] = useState<any>('matrixLight');
+  const oneKeyRead = (idsArry: any) => {
+    getReadList(idsArry).then((res) => {
+      loadUnreadNum();
+      loadStemNoticeList();
+    });
+  };
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -79,6 +87,11 @@ export default function Layout(props: any) {
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
   const [curMsg, setCurMsg] = useState<any>();
 
+  useEffect(() => {
+    if (unreadNum !== 0) {
+      loadStemNoticeList();
+    }
+  }, [unreadNum]);
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
     //请求所属部门数据
@@ -126,6 +139,7 @@ export default function Layout(props: any) {
           setAllMessageMode('HIDE');
         }}
         unreadNum={unreadNum}
+        loadStemNoticeList={loadStemNoticeList}
       />
       <PositionSwitcher
         propsTitle={{
@@ -184,6 +198,7 @@ export default function Layout(props: any) {
                     console.log('id---msg', id, msg);
                     setAllMessageMode('VIEW');
                     setCurMsg(msg);
+                    oneKeyRead([id]);
 
                     return (
                       <a href={`'#'+${msg.systemNoticeId}`}>

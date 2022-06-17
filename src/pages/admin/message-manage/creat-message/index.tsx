@@ -20,32 +20,37 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [updateLoading, updateArticle] = useUpdateArticle();
   const { mode, initData, onClose, onSave } = props;
   const [editForm] = Form.useForm<Record<string, string>>();
-  const [viewDisabled, seViewDisabled] = useState<boolean>(false);
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);
+  const [viewDisabled, setViewDisabled] = useState<boolean>(false);
+  const [curType, setCurType] = useState<string>('');
   const [loading, userData, searchUser] = useSearchUser();
+  const [editDisabled, setEditDisabled] = useState<boolean>(false);
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
     searchUser();
     if (mode !== 'ADD') {
+      console.log('initData?.targetId', initData?.targetId);
+      setCurType(initData?.type);
       editForm.setFieldsValue({
         title: initData?.title,
         type: initData?.type,
         content: initData?.content,
+        targetId: initData?.targetId,
       });
     }
 
     if (mode === 'VIEW') {
-      seViewDisabled(true);
+      setViewDisabled(true);
     }
-    if (mode === 'ADD') return;
+    if (mode === 'EDIT') {
+      setEditDisabled(true);
+    }
 
     return () => {
-      seViewDisabled(false);
-      setIsChecked(false);
-      setIsPriorityChangeOption(0);
+      setViewDisabled(false);
       editForm.resetFields();
+      setEditDisabled(false);
+      setCurType('');
     };
   }, [mode]);
   const handleSubmit = () => {
@@ -70,6 +75,9 @@ export default function MemberEditor(props: MemberEditorProps) {
         onSave();
       });
     }
+  };
+  const onChange = (value: string) => {
+    setCurType(value);
   };
 
   return (
@@ -96,11 +104,26 @@ export default function MemberEditor(props: MemberEditorProps) {
           <Input disabled={viewDisabled} style={{ width: 520 }} />
         </Form.Item>
         <Form.Item label="类型" name="type" rules={[{ required: true, message: '请选择' }]}>
-          <Select options={typeOptions} disabled={viewDisabled} style={{ width: 200 }} />
+          <Select
+            options={typeOptions}
+            disabled={viewDisabled || editDisabled}
+            onChange={onChange}
+            style={{ width: 520 }}
+          />
         </Form.Item>
-        <Form.Item label="目标" name="targetId" rules={[{ required: true, message: '请选择' }]}>
-          <Select options={userData} allowClear showSearch></Select>
-        </Form.Item>
+        {curType === 'single' && (
+          <Form.Item label="目标" name="targetId" rules={[{ required: true, message: '请选择' }]}>
+            <Select
+              options={userData}
+              loading={loading}
+              allowClear
+              showSearch
+              disabled={viewDisabled || editDisabled}
+              style={{ width: 520 }}
+            ></Select>
+          </Form.Item>
+        )}
+
         <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
           <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
         </Form.Item>

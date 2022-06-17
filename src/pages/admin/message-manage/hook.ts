@@ -82,10 +82,14 @@ export function useSearchUser(): [boolean, any, () => Promise<void>] {
     await getRequest(APIS.searchUserUrl, { data: { pageIndex: -1, pageSize: -1 } })
       .then((result) => {
         if (result.success) {
-          console.log('result', result);
           let dataSource = result?.data?.dataSource;
-          const data = dataSource?.map((item: any) => ({ label: item.username, value: item.username, key: item.id }));
-          setData(data);
+          let data = dataSource?.map((item: any) => item.username);
+          // data = data.filter((currentValue:any, index:number, arr:any) => {
+          //   return arr.indexOf(currentValue.value) === index;
+          // });
+
+          const dataOptions = [...new Set(data)].map((item) => ({ label: item, value: item }));
+          setData(dataOptions);
         } else {
           return;
         }
