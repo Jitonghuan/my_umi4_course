@@ -44,7 +44,6 @@ export default function MemberEditor(props: MemberEditorProps) {
         content: initData?.content,
       });
       setResetDescription(initData?.content);
-      console.log('initData?.content', initData?.content, curType, initData?.type);
     }
 
     if (mode === 'VIEW') {
@@ -129,10 +128,12 @@ export default function MemberEditor(props: MemberEditorProps) {
           <Select options={typeOptions} disabled={viewDisabled} onChange={changeType} style={{ width: 200 }} />
         </Form.Item>
 
-        <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
-          {curType === 'document' ? (
+        {curType === 'document' ? (
+          <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
             <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
-          ) : (
+          </Form.Item>
+        ) : (
+          <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
             <ReactWEditor
               config={{
                 uploadImgShowBase64: true,
@@ -143,8 +144,9 @@ export default function MemberEditor(props: MemberEditorProps) {
                 setDescription(html);
               }}
             />
-          )}
-        </Form.Item>
+          </Form.Item>
+        )}
+
         {/* 是否置顶 0表示默认，1表示置顶 */}
         <Form.Item label="是否置顶" name="priority">
           <Switch disabled={viewDisabled} onChange={isPriorityChange} checked={isChecked} />

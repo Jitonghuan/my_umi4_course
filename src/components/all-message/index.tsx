@@ -3,10 +3,10 @@
 // @create 2022/06/16 12:16
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Card, List, Tag, Spin } from 'antd';
+import { Drawer, message, Form, Popconfirm, Card, List, Tag, Spin } from 'antd';
 import { ReadOutlined, SoundOutlined, ThunderboltOutlined, SmileOutlined, TagOutlined } from '@ant-design/icons';
 import './index.less';
-import { useReadList, useQueryUnreadNum } from '@/common/hooks';
+import { useReadList, useQueryUnreadNum, useDeleteSystemNotice } from '@/common/hooks';
 
 export interface MemberEditorProps {
   mode?: EditorMode;
@@ -21,6 +21,7 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [getReadList] = useReadList();
   const [loading, setLoading] = useState(false);
   const [unreadNumData, loadUnreadNum] = useQueryUnreadNum();
+  const [deleteSystemNotice] = useDeleteSystemNotice();
 
   useEffect(() => {
     if (mode === 'HIDE' || !allData) return;
@@ -83,13 +84,32 @@ export default function MemberEditor(props: MemberEditorProps) {
           <List.Item>
             <Card
               title={
-                <span>
-                  <TagOutlined />
-                  <span style={{ paddingLeft: 8 }}>{item.title}</span>
-                  <span style={{ fontSize: 10, paddingLeft: 8 }}>
-                    <Tag color={item?.readed === true ? 'green' : 'default'}>
-                      {item?.readed === true ? '已读' : '未读'}
-                    </Tag>{' '}
+                <span style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span className={item?.readed ? 'readed-title' : 'unReaded-title'}>
+                    <TagOutlined />
+                    <span style={{ paddingLeft: 8 }}>{item.title}</span>
+                    <span style={{ fontSize: 10, paddingLeft: 8 }}>
+                      {/* <Tag color={item?.readed === true ? 'green' : 'default'}> */}
+                      <span className={item?.readed ? 'readed-title-wrap' : 'unReaded-title-wrap'}>
+                        {item?.readed === true ? '已读' : '未读'}
+                      </span>
+
+                      {/* </Tag> */}
+                    </span>
+                  </span>
+                  <span>
+                    <span>
+                      <Popconfirm
+                        title="确认删除此条消息吗？"
+                        onConfirm={() => {
+                          deleteSystemNotice(item?.id).then(() => {
+                            loadStemNoticeList();
+                          });
+                        }}
+                      >
+                        <Tag color="red"> 删除</Tag>
+                      </Popconfirm>
+                    </span>
                   </span>
                 </span>
               }
@@ -97,7 +117,9 @@ export default function MemberEditor(props: MemberEditorProps) {
               headStyle={{ padding: 4, height: 50 }}
               bodyStyle={{ padding: 6 }}
             >
-              <p id={item.systemNoticeId}>{item.content}</p>
+              <p id={item.systemNoticeId} className={item?.readed ? 'readed-content' : 'unReaded-content'}>
+                {item.content}
+              </p>
             </Card>
           </List.Item>
         )}

@@ -17,8 +17,18 @@ export function useMyEntryMenuList() {
       .then((result) => {
         if (result?.success) {
           const dataSource = result.data || [];
+          let canAdd: any = [];
+          let alreadyAdd: any = [];
+          dataSource?.map((item: any) => {
+            if (item?.isCollection) {
+              alreadyAdd.push(item);
+            } else {
+              canAdd.push(item);
+            }
+          });
+          let sumDataSource = [canAdd, alreadyAdd];
 
-          setSource(dataSource);
+          setSource(sumDataSource);
         }
         if (!result?.success) {
           return;
@@ -33,14 +43,11 @@ export function useMyEntryMenuList() {
 }
 
 //新增
-export function useAddMyEntryMenu(): [
-  boolean,
-  (paramsObj: { title: string; content: string; type: string; priority: number }) => Promise<void>,
-] {
+export function useAddMyEntryMenu(): [boolean, (id: number) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const createMyEntryMenu = async (paramsObj: { title: string; content: string; type: string; priority: number }) => {
+  const createMyEntryMenu = async (id: number) => {
     setLoading(true);
-    await postRequest(APIS.createMyEntryMenu, { data: paramsObj })
+    await postRequest(APIS.createMyEntryMenu, { data: { id } })
       .then((result) => {
         if (result.success) {
           message.success('新增快捷入口成功！');
@@ -64,7 +71,7 @@ export function useDeleteMyEntryMenu(): [boolean, (paramsObj: { id: number }) =>
     await delRequest(`${APIS.deleteMyEntryMenu}/${paramsObj.id}`)
       .then((result) => {
         if (result.success) {
-          message.success('删除成功！');
+          message.success('移除快捷入口成功！');
         } else {
           return;
         }

@@ -6,7 +6,7 @@
 import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import appConfig from '@/app.config';
 import DetailContext from '../pages/application/application-detail/context';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest } from '@/utils/request';
 import { BasicData } from '@hbos/component-position-switcher';
 import { message } from 'antd';
 import * as APIS from './apis';
@@ -280,15 +280,14 @@ export function useReadList(): [(ids: any) => Promise<void>] {
 
   return [getReadList];
 }
-// export function useReadList(): [(ids:[]) => Promise<void>] {
+export function useDeleteSystemNotice(): [(id: number) => Promise<void>] {
+  const deleteSystemNotice = useCallback(async (id: number) => {
+    await delRequest(`${APIS.deleteSystemNoticeApi}/${id}`).then((result) => {
+      if (result?.success) {
+        message.success('删除成功！');
+      }
+    });
+  }, []);
 
-//   const loadData = useCallback(async (ids:[]) => {
-//     await postRequest(APIS.readListApi,{data:{ids}}).then((result) => {
-//       if (result?.success) {
-//         message.success('您已经一键已读了所有消息！')
-//       }
-//     });
-//   }, []);
-
-//   return [loadData];
-// }
+  return [deleteSystemNotice];
+}

@@ -1,7 +1,15 @@
 import { useMemo, useEffect, useState } from 'react';
-import { Link, Card, Typography, Space } from '@arco-design/web-react';
-import { IconFile, IconStorage, IconSettings, IconMobile, IconFire, IconSelectAll } from '@arco-design/web-react/icon';
-import { history } from 'umi';
+import { Link, Card, Typography, Space, Spin, Empty } from '@arco-design/web-react';
+import {
+  IconFile,
+  IconStorage,
+  IconSettings,
+  IconMobile,
+  IconFire,
+  IconSelectAll,
+  IconMinusCircle,
+  IconHeart,
+} from '@arco-design/web-react/icon';
 import { Modal, Form, Input, Select, Popconfirm } from 'antd';
 import styles from './style/shortcuts.module.less';
 import { useMyEntryMenuList, useAddMyEntryMenu, useDeleteMyEntryMenu } from './hook';
@@ -68,7 +76,7 @@ function Shortcuts() {
   const handleDelete = (item: any) => {
     Modal.confirm({
       title: '操作提示',
-      content: '确定删除吗？',
+      content: '您已收藏此快捷入口，确定移除吗？',
       onOk: () => {
         deleteMyEntryMenu({ id: item.id }).then(() => {
           getMyEntryMenuList();
@@ -78,40 +86,77 @@ function Shortcuts() {
   };
 
   const handleItemClick = (item: any) => {
-    Modal.confirm({
-      title: '操作提示',
-      content: '确定添加吗？',
-      onOk: () => {
-        // createMyEntryMenu({}).then(()=>{
-        //   getMyEntryMenuList()
-        // })
-      },
-    });
+    if (myEntrySource[1]?.length > 6) {
+      Modal.info({
+        title: '操作提示',
+        content: '很抱歉您最多可以添加6个快捷入口！',
+      });
+    } else {
+      Modal.confirm({
+        title: '操作提示',
+        content: '确定添加此快捷入口吗？',
+        onOk: () => {
+          createMyEntryMenu(item.id).then(() => {
+            getMyEntryMenuList();
+          });
+        },
+      });
+    }
   };
 
   return (
     <>
       <Modal
-        title="新增快捷入口"
+        title="管理快捷入口"
         visible={visible}
         width={1000}
         onOk={handleSubmit}
         onCancel={() => {
           setVisible(false);
         }}
+        footer={null}
       >
-        <h2>可添加的快捷入口</h2>
+        <h3>可添加的快捷入口：</h3>
         <div className="icon-list clearfix">
-          {myEntrySource.map((item: any, index: number) => (
-            <div className="icon-item" onClick={() => handleItemClick(item)}>
-              {IconMap[item.icon]}
-              <div className="icon-item-name">
-                {/* <Popconfirm title="确认添加此快捷入口吗？" onConfirm={() => handleItemClick(1)}>  */}
-                {item.label}
-                {/* </Popconfirm> */}
-              </div>
-            </div>
-          ))}
+          <Spin loading={loading}>
+            {myEntrySource[0]?.map((item: any, index: number) => (
+              <>
+                <div className="icon-item">
+                  {IconMap[item.icon]}
+                  <div className="icon-item-name">
+                    <b>{item.label} </b>
+                  </div>
+
+                  <div className="close-Icon-add">
+                    <IconHeart style={{ fontSize: 18 }} onClick={() => handleItemClick(item)} />
+                  </div>
+                </div>
+              </>
+            ))}
+          </Spin>
+        </div>
+        <h3>已添加的快捷入口：</h3>
+        <div className="icon-list clearfix">
+          <Spin loading={loading}>
+            {myEntrySource[1]?.map((item: any, index: number) => (
+              <>
+                <div className="icon-item">
+                  {IconMap[item.icon]}
+                  <div className="icon-item-name">
+                    <b>{item.label} </b>
+                  </div>
+                  <div className="close-Icon-cancle">
+                    <IconMinusCircle
+                      style={{ fontSize: 18 }}
+                      onClick={() => {
+                        handleDelete(item);
+                      }}
+                    />
+                  </div>
+                </div>
+              </>
+            ))}
+          </Spin>
         </div>
 
         {/* <Form form={editForm} labelCol={{ flex: '80px' }}>
@@ -127,7 +172,7 @@ function Shortcuts() {
         </Form> */}
       </Modal>
 
-      <Card style={{ height: '120px', overflow: 'hidden' }}>
+      <Card style={{ height: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
         <Typography.Title
           heading={6}
           style={{ marginTop: 0, paddingLeft: 6, display: 'flex', justifyContent: 'space-between' }}
@@ -139,22 +184,28 @@ function Shortcuts() {
               setVisible(true);
             }}
           >
-            新增快捷入口
+            管理快捷入口
           </Link>
         </Typography.Title>
-        <Space>
-          {shortcuts.map((shortcut) => (
-            <div className={styles.item} key={shortcut.key}>
-              <div className={styles.icon} onClick={() => onClickShortcut(shortcut.key)}>
-                {shortcut.icon}
+        {myEntrySource[1]?.length !== 0 ? (
+          <Space style={{ display: 'flex' }}>
+            {myEntrySource[1]?.map((shortcut: any, index: number) => (
+              <div className={styles.item} key={index}>
+                <div className={styles.icon} onClick={() => onClickShortcut(shortcut.url)}>
+                  {IconMap[shortcut.icon]}
+                </div>
+                <div className={styles.title}>{shortcut.label}</div>
               </div>
-              <div className={styles.title}>{shortcut.title}</div>
-              <a onClick={() => handleDelete(item)}>
-                <div className={styles.closeIcon}>x</div>
-              </a>
-            </div>
-          ))}
-        </Space>
+            ))}
+          </Space>
+        ) : (
+          <div className="empty-toolip">
+            <Empty
+              imgSrc="//p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a0082b7754fbdb2d98a5c18d0b0edd25.png~tplv-uwbnlip3yd-webp.webp"
+              description="您暂无收藏的快捷入口哦～快去收藏吧！"
+            />
+          </div>
+        )}
       </Card>
     </>
   );
