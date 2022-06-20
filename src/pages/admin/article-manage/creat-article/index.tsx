@@ -29,6 +29,7 @@ export default function MemberEditor(props: MemberEditorProps) {
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
+    setCurType(initData?.type);
     if (mode !== 'ADD') {
       if (initData.priority === 1) {
         setIsChecked(true);
@@ -37,7 +38,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         setIsChecked(false);
         setIsPriorityChangeOption(0);
       }
-      setCurType(initData?.type);
+
       editForm.setFieldsValue({
         title: initData?.title,
         type: initData?.type,
@@ -67,7 +68,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       updateArticle({
         id: initData?.id,
         title: params?.title,
-        content: description,
+        content: curType === 'document' ? params?.content : description,
         type: params?.type,
         priority: isPriorityChangeOption,
       }).then(() => {
@@ -77,7 +78,7 @@ export default function MemberEditor(props: MemberEditorProps) {
     if (mode === 'ADD') {
       createArticle({
         title: params?.title,
-        content: description,
+        content: curType === 'document' ? params?.content : description,
         type: params?.type,
         priority: isPriorityChangeOption,
       }).then(() => {
