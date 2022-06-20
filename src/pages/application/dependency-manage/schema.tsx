@@ -5,7 +5,7 @@ import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
 // 表格 schema
-export const taskTableSchema = ({
+export const dependecyTableSchema = ({
   onEditClick,
   onViewClick,
   onDelClick,

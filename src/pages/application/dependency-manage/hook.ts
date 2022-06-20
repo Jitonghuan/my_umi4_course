@@ -11,7 +11,13 @@ export const queryRuleList = (paramObj: {
   pageSize?: string;
 }) => {
   return getRequest(APIS.getRuleListApi, {
-    data: paramObj,
+    data: {
+      ruleName: paramObj?.ruleName,
+      envCode: paramObj?.envCode,
+      checkLevel: paramObj?.checkLevel,
+      pageIndex: paramObj?.pageIndex || 1,
+      pageSize: paramObj?.pageSize || 20,
+    },
   }).then((res: any) => {
     if (res?.success) {
       const { data = [] } = res.data || {};

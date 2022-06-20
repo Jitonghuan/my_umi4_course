@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Table, Form, Input, Button, Popconfirm, Switch, message, Tag } from 'antd';
 import { history } from 'umi';
 import { queryRuleList } from './hook';
+import { dependecyTableSchema } from './schema';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
@@ -22,8 +23,10 @@ export default function RelyMangement() {
   const [whiteListDrawer, setWhiteListDrawer] = useState<EditorMode>('HIDE');
   const [initData, setInitData] = useState<any>({});
   const [visible, setVisible] = useState<boolean>(false);
+  const [curRecord, setCurRecord] = useState<any[]>([]);
+  const [dependencyMode, setDependencyMode] = useState<EditorMode>('HIDE');
   // 获取列表数据
-  const getRuleList = (params: any) => {
+  const getRuleList = (params?: any) => {
     const value = form.getFieldsValue();
     setLoading(true);
     queryRuleList({ ...params, ...value })
@@ -39,6 +42,27 @@ export default function RelyMangement() {
         setLoading(false);
       });
   };
+  // 表格列配置
+  const tableColumns = useMemo(() => {
+    return dependecyTableSchema({
+      onEditClick: (record, index) => {
+        setCurRecord(record);
+        setDependencyMode('EDIT');
+      },
+      onViewClick: (record, index) => {
+        setCurRecord(record);
+        setDependencyMode('VIEW');
+      },
+      onDelClick: async (record, index) => {
+        await handleDeleteRule(record?.id).then(() => {
+          getRuleList();
+        });
+      },
+      onSwitchEnableClick: (record, index) => {
+        switchChange(record);
+      },
+    }) as any;
+  }, []);
 
   const pageSizeClick = (pagination: any) => {
     setPageIndex(pagination.current);
@@ -57,7 +81,7 @@ export default function RelyMangement() {
     }
   };
 
-  const handleDeleteNoise = async (id: number) => {
+  const handleDeleteRule = async (id: number) => {
     const res = await delRequest(`${appConfig.apiPrefix}/appManage/dependencyManage/deleteRule/${id}`);
     if (res?.success) {
       getRuleList({ pageIndex: 1, pageSize });
@@ -73,7 +97,7 @@ export default function RelyMangement() {
   };
 
   return (
-    <PageContainer className="tmpl-detail">
+    <PageContainer className="dependency-list">
       <FilterCard>
         <div>
           <Form
@@ -138,7 +162,7 @@ export default function RelyMangement() {
         </div>
         <div style={{ marginTop: '15px' }}>
           <Table
-            columns={columns}
+            columns={tableColumns}
             dataSource={ruleList}
             loading={loading}
             pagination={{
