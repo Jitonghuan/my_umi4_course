@@ -86,6 +86,7 @@ function Announcement() {
       </Skeleton> */}
       <Modal
         title="公告详情"
+        style={{ width: '50%' }}
         visible={visible}
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
