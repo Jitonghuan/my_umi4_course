@@ -36,7 +36,7 @@ export default function PublishDetail(props: IProps) {
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode } = appData || {};
+  const { appCategoryCode, feType } = appData || {};
   const [loading, envDataSource] = useEnvList();
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
@@ -562,6 +562,13 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="合并分支" span={4}>
           {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
+        {
+          feType === 'pda' && (
+            <Descriptions.Item label="打包方式" span={4}>
+              <span style={{color: "#1873cc"}}>{metadata?.pdaDeployType || '--'}</span>
+            </Descriptions.Item>
+          )
+        }
         {status?.deployErrInfo && errorInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>
@@ -658,7 +665,7 @@ export default function PublishDetail(props: IProps) {
               filterOption={(input, option) => {
                 return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
               }}
-            ></Select>
+            />
           </div>
           <span>发布环境：</span>
           <Checkbox.Group value={deployMasterEnv} onChange={(v: any) => setDeployMasterEnv(v)} options={envDataList} />
@@ -684,7 +691,7 @@ export default function PublishDetail(props: IProps) {
             }}
             value={deployEnv}
             options={offlineEnvData || []}
-          ></Radio.Group>
+          />
           {/* <Checkbox.Group
             value={deployEnv}
             onChange={(v: any) => {
@@ -763,7 +770,7 @@ export default function PublishDetail(props: IProps) {
                 loading={listLoading}
                 options={projectEnvCodeOptions}
                 onChange={selectProjectEnv}
-              ></Select>
+              />
             </Form.Item>
           </Form>
         </div>
