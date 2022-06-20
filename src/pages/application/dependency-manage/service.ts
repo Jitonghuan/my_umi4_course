@@ -1,5 +1,30 @@
 import { addAPIPrefix } from '@/utils';
 import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
+/* POST 1、 新增任务接口  */
+
+export const createJob = addAPIPrefix('/opsManage/job/create');
+
+/* PUT 2、 编辑任务接口 */
+
+export const updateJob = addAPIPrefix('/opsManage/job/update');
+
+/* DELETE 3、 删除任务接口 */
+
+export const deleteJob = addAPIPrefix('/opsManage/job/delete');
+
+/* GET 4、 查询任务接口 */
+
+export const getJobList = addAPIPrefix('/opsManage/job/list');
+
+/* GET 5、 查询任务执行情况接口 */
+
+export const getTaskList = addAPIPrefix('/opsManage/task/list');
+
+/* GET 6、 获取容器列表接口 */
+
+export const getRuleListApi = addAPIPrefix('/appManage/dependencyManage/getRuleList');
+
+export const queryAppListApi = addAPIPrefix('/appManage/list');
 
 // 新增依赖规则
 export const addRule = (data: any) => {
