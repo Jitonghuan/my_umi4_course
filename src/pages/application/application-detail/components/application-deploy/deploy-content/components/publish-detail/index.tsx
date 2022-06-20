@@ -142,7 +142,7 @@ export default function PublishDetail(props: IProps) {
           setEnvDataList(envs);
         }
         if (params.proEnvType === 'project') {
-          setProjectEnvCodeOptions(envs)
+          setProjectEnvCodeOptions(envs);
         }
       }
     });
@@ -256,22 +256,27 @@ export default function PublishDetail(props: IProps) {
   let I = 0;
   const envNames = useMemo(() => {
     const { deployEnvs } = envInfo || {};
-    return envDataList
-      .filter((envItem) => {
-        return (deployEnvs || []).includes(envItem.value);
-      })
-      .map((envItem) => envItem.label)
-      // .map((envItem) => `${envItem.label}(${envItem.value})`)
-      .join(',');
+    return (
+      envDataList
+        .filter((envItem) => {
+          return (deployEnvs || []).includes(envItem.value);
+        })
+        .map((envItem) => envItem.label)
+        // .map((envItem) => `${envItem.label}(${envItem.value})`)
+        .join(',')
+    );
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
     return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}`;
   };
   const beforeUploadAction = (envCode: string) => {
+    // setBeforeUploadInfo(true);
     getRequest(checkOfflineDeploy, { data: { appCode: appData?.appCode, envCode } }).then((res) => {
       if (res.success) {
         setBeforeUploadInfo(false);
+      } else {
+        setBeforeUploadInfo(true);
       }
     });
   };
@@ -389,7 +394,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() { },
+      onCancel() {},
     });
   };
   let envDataOption: any = []; //重启时选择环境option
