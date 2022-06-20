@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Decoration11, BorderBox13 } from '@jiaminghi/data-view-react';
-import { Link, Card, Skeleton, Tag, Typography } from '@arco-design/web-react';
+import { Link, Card, Skeleton, Tag, Typography, Spin, Drawer, Modal, List } from '@arco-design/web-react';
+import ReactMarkdown from 'react-markdown';
+import { useGetInfoList } from '../workplace/hook';
+import { QuestionCircleOutlined, DownOutlined, UpOutlined, SendOutlined } from '@ant-design/icons';
 
 function Announcement() {
+  const [loading, total, data, getInfoList] = useGetInfoList();
+  const [curContent, setCurContent] = useState<any>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  useEffect(() => {
+    getInfoList({ type: 'announcement' });
+    return () => {
+      setVisible(false);
+      setModalVisible(false);
+    };
+  }, []);
   return (
     <Card style={{ width: 374 }}>
       <div>
@@ -11,13 +25,42 @@ function Announcement() {
           <Typography.Title heading={6} style={{ paddingLeft: 9, display: 'flex', justifyContent: 'space-between' }}>
             <span>Matrix公告</span>
 
-            <Link style={{ paddingRight: 9 }}>查看更多</Link>
+            {total > 10 && (
+              <Link
+                style={{ paddingRight: 9 }}
+                onClick={() => {
+                  setModalVisible(true);
+                }}
+              >
+                查看更多
+              </Link>
+            )}
           </Typography.Title>
-          <div style={{ paddingLeft: 9 }}>05-15 应用部署多主干多流水线功能，已正式上线;</div>
-          <div style={{ paddingLeft: 9 }}>05-31 流量地图链路追踪功能，已经正式上线;</div>
-          <div style={{ paddingLeft: 9 }}>06-01 部署信息展示优化功能，已经正式上线;</div>
-          <div style={{ paddingLeft: 9 }}>06-01 主页展示和Layout优化功能，已经正式上线；</div>
-          <div style={{ paddingLeft: 9 }}>06-01 任务管理功能即将发布，敬请期待；</div>
+          <Spin loading={loading} style={{ maxHeight: '100%' }}>
+            <div style={{ maxHeight: '100%', overflow: 'auto' }}>
+              {data?.map((item: any) => {
+                return (
+                  <li>
+                    <p className="announcement-title" style={{ paddingLeft: 9, marginBottom: 5 }}>
+                      {' '}
+                      <a
+                        onClick={() => {
+                          setCurContent(item.content);
+                          setVisible(true);
+                        }}
+                      >
+                        <span>
+                          <SendOutlined />{' '}
+                        </span>
+                        {item?.title}
+                      </a>
+                    </p>
+                    {/* <p  dangerouslySetInnerHTML={{ __html: item?.content}}></p> */}
+                  </li>
+                );
+              })}
+            </div>
+          </Spin>
 
           {/* <Link>查看更多</Link> */}
         </BorderBox13>
@@ -41,6 +84,54 @@ function Announcement() {
         </div> */}
       {/* 00000000
       </Skeleton> */}
+      <Modal
+        title="公告详情"
+        style={{ width: '50%' }}
+        visible={visible}
+        onOk={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
+        autoFocus={false}
+        focusLock={true}
+        footer={null}
+      >
+        <p dangerouslySetInnerHTML={{ __html: curContent }}></p>
+        {/* <p>
+        <ReactMarkdown
+                        children={curContent}
+                        className="markdown-html"
+                        escapeHtml={false}  //不进行HTML标签的转化
+                      />
+          
+        </p> */}
+      </Modal>
+      <Drawer
+        width={400}
+        title={<span>更多公告信息</span>}
+        visible={modalVisible}
+        onOk={() => {
+          setVisible(false);
+        }}
+        onCancel={() => {
+          setVisible(false);
+        }}
+        footer={null}
+      >
+        <List
+          style={{ width: 400 }}
+          size="small"
+          header="公告详情"
+          dataSource={data}
+          render={(item, index) => (
+            <List.Item key={index}>
+              {' '}
+              <Card title={item.title} style={{ width: '100%' }} bodyStyle={{ padding: 6 }}>
+                <p id={item.id}>{item.content}</p>
+              </Card>{' '}
+            </List.Item>
+          )}
+        />
+        ,
+      </Drawer>
     </Card>
   );
 }

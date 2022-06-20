@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
-import { Modal } from 'antd';
+import { Modal, Badge, message } from 'antd';
+import { BellFilled } from '@ant-design/icons';
 import 'antd/dist/antd.variable.min.css';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
@@ -12,6 +13,7 @@ import { WaterMark } from '@ant-design/pro-layout';
 import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { IconMap } from '@/components/vc-icons';
+import AllMessage from '@/components/all-message';
 import {
   FeContext,
   useDocumentTitle,
@@ -21,6 +23,9 @@ import {
   useStaffOrgData,
   useChooseDept,
   useStaffDepData,
+  useQueryUnreadNum,
+  useQueryStemNoticeList,
+  useReadList,
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
@@ -57,7 +62,16 @@ export default function Layout(props: any) {
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
   const [chooseDept] = useChooseDept();
   const [staffDepData, loadStaffDepData] = useStaffDepData();
-  const [style, setStyle] = useState<any>('foneLight');
+  const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
+  const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
+  const [getReadList] = useReadList();
+  const [style, setStyle] = useState<any>('matrixLight');
+  const oneKeyRead = (idsArry: any) => {
+    getReadList(idsArry).then((res) => {
+      loadUnreadNum();
+      loadStemNoticeList();
+    });
+  };
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -70,7 +84,14 @@ export default function Layout(props: any) {
   const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
+  const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
+  const [curMsg, setCurMsg] = useState<any>();
 
+  useEffect(() => {
+    if (unreadNum !== 0) {
+      loadStemNoticeList();
+    }
+  }, [unreadNum]);
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
     //请求所属部门数据
@@ -99,18 +120,28 @@ export default function Layout(props: any) {
   });
 
   const changeTheme = () => {
-    if (style == 'foneDark') {
+    if (style == 'matrixDark') {
       setStyle('globalLight');
-      document.body.removeAttribute('fone-theme');
+      document.body.removeAttribute('matrix-theme');
       document.body.setAttribute('arco-theme', 'light');
     } else {
-      setStyle('foneDark');
-      document.body.setAttribute('fone-theme', 'foneDark');
+      setStyle('matrixDark');
+      document.body.setAttribute('matrix-theme', 'matrixDark');
       document.body.setAttribute('arco-theme', 'dark');
     }
   };
   return (
     <ConfigProvider locale={zhCN}>
+      <AllMessage
+        mode={allMessageMode}
+        allData={stemNoticeListData}
+        onClose={() => {
+          setAllMessageMode('HIDE');
+        }}
+        unreadNum={unreadNum}
+        loadStemNoticeList={loadStemNoticeList}
+        loadUnreadNum={loadUnreadNum}
+      />
       <PositionSwitcher
         propsTitle={{
           modal_title: '切换部门',
@@ -161,6 +192,29 @@ export default function Layout(props: any) {
                     deptId: userInfo.deptInfo.deptId,
                   });
                 },
+                notification: {
+                  count: unreadNum,
+                  data: stemNoticeListData,
+                  onClickMsgEntry: (id: number, msg: any) => {
+                    setAllMessageMode('VIEW');
+                    setCurMsg(msg);
+                    oneKeyRead([id]);
+
+                    return (
+                      <a href={`'#'+${msg.systemNoticeId}`}>
+                        {msg.title}
+                        {console.log('渲染了')}
+                      </a>
+                    );
+                  },
+                  onClickAllMsg: () => {
+                    console.log('点击这里');
+                    setAllMessageMode('VIEW');
+                  },
+                  render: (active: boolean, setActive: (status: boolean) => void) => {
+                    <h3>一共{unreadNum}条数据</h3>;
+                  },
+                },
                 extensions: [
                   {
                     iconName: 'AlertOutlined',
@@ -168,18 +222,6 @@ export default function Layout(props: any) {
                     type: 'customize',
                     content: () => {
                       changeTheme();
-                    },
-                  },
-                  {
-                    iconName: 'CommentOutlined',
-                    iconType: 'antd',
-                    type: 'customize',
-                    content: (visible, setVisible) => {
-                      return (
-                        <Modal visible={visible} onOk={() => setVisible(false)} onCancel={() => setVisible(false)}>
-                          您当前暂无通知消息!
-                        </Modal>
-                      );
                     },
                   },
                 ],
@@ -190,10 +232,6 @@ export default function Layout(props: any) {
                         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
                         {appConfig.title + appConfig.logoName}
                       </span>
-                      {/* 
-                      <span  >
-                        <AlertOutlined />
-                      </span> */}
                     </div>
                   </>
                 ),
