@@ -9,6 +9,11 @@ import {
   IconSelectAll,
   IconMinusCircle,
   IconHeart,
+  IconEmail,
+  IconCalendar,
+  IconSearch,
+  IconMindMapping,
+  IconTool,
 } from '@arco-design/web-react/icon';
 import { Modal, Form, Input, Select, Popconfirm } from 'antd';
 import styles from './style/shortcuts.module.less';
@@ -32,6 +37,11 @@ function Shortcuts() {
     IconMobile: <IconMobile style={{ fontSize: 28 }} />,
     IconFire: <IconFire style={{ fontSize: 28 }} />,
     IconSelectAll: <IconSelectAll style={{ fontSize: 28 }} />,
+    IconEmail: <IconEmail style={{ fontSize: 28 }} />,
+    IconCalendar: <IconCalendar style={{ fontSize: 28 }} />,
+    IconSearch: <IconSearch style={{ fontSize: 28 }} />,
+    IconMindMapping: <IconMindMapping style={{ fontSize: 28 }} />,
+    IconTool: <IconTool style={{ fontSize: 28 }} />,
   };
   const shortcuts = [
     {
