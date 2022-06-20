@@ -14,13 +14,14 @@ export interface MemberEditorProps {
   onClose: () => any;
   unreadNum: number;
   loadStemNoticeList: () => any;
+  loadUnreadNum: () => any;
 }
 
 export default function MemberEditor(props: MemberEditorProps) {
-  const { mode, allData, onClose, unreadNum, loadStemNoticeList } = props;
+  const { mode, allData, onClose, unreadNum, loadStemNoticeList, loadUnreadNum } = props;
   const [getReadList] = useReadList();
   const [loading, setLoading] = useState(false);
-  const [unreadNumData, loadUnreadNum] = useQueryUnreadNum();
+  // const [unreadNumData, loadUnreadNum] = useQueryUnreadNum();
   const [deleteSystemNotice] = useDeleteSystemNotice();
 
   useEffect(() => {

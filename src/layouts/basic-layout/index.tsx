@@ -140,6 +140,7 @@ export default function Layout(props: any) {
         }}
         unreadNum={unreadNum}
         loadStemNoticeList={loadStemNoticeList}
+        loadUnreadNum={loadUnreadNum}
       />
       <PositionSwitcher
         propsTitle={{
@@ -195,7 +196,6 @@ export default function Layout(props: any) {
                   count: unreadNum,
                   data: stemNoticeListData,
                   onClickMsgEntry: (id: number, msg: any) => {
-                    console.log('id---msg', id, msg);
                     setAllMessageMode('VIEW');
                     setCurMsg(msg);
                     oneKeyRead([id]);
