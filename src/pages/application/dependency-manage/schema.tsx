@@ -1,7 +1,4 @@
-import React from 'react';
-import { history } from 'umi';
 import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
 // 表格 schema
@@ -70,24 +67,98 @@ export const dependecyTableSchema = ({
       title: '校验开关',
       dataIndex: 'dependencyCheck',
       key: 'dependencyCheck',
-      render: (value: any, record: any) => {
-        return <Switch checked={value} onChange={() => {}} />;
+      render: (enable: any, record: any, index: number) => {
+        return (
+          <Switch
+            checked={enable === 1 ? true : false}
+            onClick={() => {
+              onSwitchEnableClick(record, index);
+            }}
+          />
+        );
       },
     },
     {
       title: '操作',
-      dataIndex: '',
+      dataIndex: 'opt',
       key: 'action',
-      render: (text: string, record: any) => {
+      render: (text: string, record: any, index: number) => {
         return (
           <>
-            <a onClick={() => {}}>详情</a>
-            <a onClick={() => {}}>编辑</a>
+            <a
+              onClick={() => {
+                onViewClick(record, index);
+              }}
+            >
+              详情
+            </a>
+            <a
+              onClick={() => {
+                onEditClick(record, index);
+              }}
+            >
+              编辑
+            </a>
             <Popconfirm title="确认删除" okText="是" cancelText="否" onConfirm={() => {}}>
-              <a type="link">删除</a>
+              <a
+                type="link"
+                onClick={() => {
+                  onDelClick(record, index);
+                }}
+              >
+                删除
+              </a>
             </Popconfirm>
           </>
         );
       },
     },
   ] as ColumnProps[];
+
+export const operatorOption = [
+  {
+    label: '>',
+    value: 'gt',
+  },
+  {
+    label: '>=',
+    value: 'ge',
+  },
+  {
+    label: '<',
+    value: 'lt',
+  },
+  {
+    label: '<=',
+    value: 'le',
+  },
+  {
+    label: '=',
+    value: 'eq',
+  },
+  {
+    label: '!=',
+    value: 'ne',
+  },
+];
+
+export const operatorGreaterOption = [
+  {
+    label: '>',
+    value: 'gt',
+  },
+  {
+    label: '>=',
+    value: 'ge',
+  },
+];
+export const operatorLessOption = [
+  {
+    label: '<',
+    value: 'lt',
+  },
+  {
+    label: '<=',
+    value: 'le',
+  },
+];

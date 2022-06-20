@@ -20,7 +20,8 @@ export const queryRuleList = (paramObj: {
     },
   }).then((res: any) => {
     if (res?.success) {
-      const { data = [] } = res.data || {};
+      console.log('data----', res.data);
+      const data = res.data || [];
       return data;
     }
     return [];

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Input, Button, Form, Select, Space, message, Switch, DatePicker, Transfer, Modal } from 'antd';
-import { addRule, updateRule } from '../service';
+import { addRule, updateRule } from '../../service';
 import moment from 'moment';
 
 export default function WhiteListModal(props: any) {

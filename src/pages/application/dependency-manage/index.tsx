@@ -19,20 +19,22 @@ export default function RelyMangement() {
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
-  const [drawer, setDrawer] = useState<EditorMode>('HIDE');
   const [whiteListDrawer, setWhiteListDrawer] = useState<EditorMode>('HIDE');
-  const [initData, setInitData] = useState<any>({});
-  const [visible, setVisible] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any[]>([]);
   const [dependencyMode, setDependencyMode] = useState<EditorMode>('HIDE');
+  useEffect(() => {
+    getRuleList();
+  }, []);
   // 获取列表数据
   const getRuleList = (params?: any) => {
     const value = form.getFieldsValue();
     setLoading(true);
     queryRuleList({ ...params, ...value })
       .then((res: any) => {
-        setRuleList(res?.data?.dataSource);
-        setTotal(res?.data?.pageInfo?.total);
+        debugger;
+        console.log('res?.dataSource', res);
+        setRuleList(res?.dataSource);
+        setTotal(res?.pageInfo?.total);
       })
       .catch((error) => {
         setRuleList([]);
@@ -42,6 +44,7 @@ export default function RelyMangement() {
         setLoading(false);
       });
   };
+  console.log('ruleList', ruleList);
   // 表格列配置
   const tableColumns = useMemo(() => {
     return dependecyTableSchema({
@@ -71,14 +74,6 @@ export default function RelyMangement() {
       pageSize: pagination.pageSize,
     };
     getRuleList(obj);
-  };
-
-  const handleUpdateRule = async (record: any) => {
-    const params = Object.assign(record, { isEnable: !record.isEnable });
-    const res = await updateRule({ ...params });
-    if (res && res.success) {
-      getRuleList({ pageIndex: 1, pageSize });
-    }
   };
 
   const handleDeleteRule = async (id: number) => {
@@ -143,7 +138,7 @@ export default function RelyMangement() {
             <Button
               type="primary"
               onClick={() => {
-                setVisible(true);
+                setWhiteListDrawer('VIEW');
               }}
             >
               全局白名单
@@ -152,7 +147,7 @@ export default function RelyMangement() {
             <Button
               type="primary"
               onClick={() => {
-                setDrawer('ADD');
+                setDependencyMode('ADD');
               }}
             >
               <PlusOutlined />
@@ -164,6 +159,7 @@ export default function RelyMangement() {
           <Table
             columns={tableColumns}
             dataSource={ruleList}
+            bordered
             loading={loading}
             pagination={{
               current: pageIndex,
@@ -181,27 +177,26 @@ export default function RelyMangement() {
         </div>
       </ContentCard>
       <RuleDrawer
-        mode={drawer}
+        mode={dependencyMode}
         onSave={() => {
-          setDrawer('HIDE');
+          setDependencyMode('HIDE');
           getRuleList({ pageIndex, pageSize });
         }}
         onClose={() => {
-          setDrawer('HIDE');
+          setDependencyMode('HIDE');
         }}
-        initData={initData}
-      ></RuleDrawer>
+        initData={curRecord}
+      />
       <WhiteListModal
         mode={whiteListDrawer}
         onSave={() => {
-          setVisible(false);
+          setWhiteListDrawer('HIDE');
         }}
         onClose={() => {
-          setVisible(false);
+          setWhiteListDrawer('HIDE');
         }}
-        visible={visible}
-        initData={initData}
-      ></WhiteListModal>
+        initData={curRecord}
+      />
     </PageContainer>
   );
 }
