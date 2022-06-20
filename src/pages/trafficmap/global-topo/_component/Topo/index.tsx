@@ -1,6 +1,6 @@
 import G6, { Graph, GraphData } from '@antv/g6';
 import moment, { Moment } from 'moment';
-import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, forwardRef, useRef, useMemo, useImperativeHandle } from 'react';
 import { getTopoList } from '../../../service';
 import { mockRomote, random } from './common';
 // import insertCss from 'insert-css';
@@ -20,18 +20,20 @@ const Topo = React.forwardRef((props: any, ref: any) => {
     const [originData, setOriginData] = useState<any>({}); //所有节点/边数据
     const [needExpandList, setNeedExpandList] = useState<any>({}); //需要展开但还没处理过的数据
     const [expandList, setExpandList] = useState<any>({}); //所有展开的数据
+
     let dataInterval: any;
     //传给父组件  全部展开/全部收起
     useImperativeHandle(ref, () => ({
         expandAll: () => {
             const nodes = originData.nodes.filter((item: any) => item.nodeType !== 'region');
             const edges = originData.edges;
-            setNeedExpandList({ nodes, edges });
+            setNeedExpandList({ nodes: nodes, edges });
         },
         collapseAll: () => {
+            const noReginNodes = originData?.nodes?.filter((item: any) => !item.region);
             const nodes = originData.nodes.filter((item: any) => item.nodeType === 'region');
             const edges = originData.edges;
-            setNeedExpandList({ nodes, edges });
+            setNeedExpandList({ nodes: nodes.concat(noReginNodes), edges });
         },
     }));
 
@@ -117,32 +119,32 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             },
             handleMenuClick(target, item) { },
         });
-        const tooltip = new G6.Tooltip({
-            offsetX: 10,
-            offsetY: 10,
-            itemTypes: ['node'],
-            getContent: (e: any) => {
-                const outDiv = document.createElement('div');
-                outDiv.style.width = 'fit-content';
-                outDiv.innerHTML = `
-          <ul>
-          <li>Id: ${e.item.getModel().id}</li>
-          <li>Type: ${e.item.getModel().nodeType}</li>
-          <li>Region: ${e.item.getModel().nodeRegion}</li>
-          </ul>
-          <ul>
-            <li>Label: ${e.item?.getModel().nodeLabel || e.item?.getModel().id}</li>
-          </ul>
-          `;
-                return outDiv;
-            },
-        });
+        // const tooltip = new G6.Tooltip({
+        //     offsetX: 10,
+        //     offsetY: 10,
+        //     itemTypes: ['node'],
+        //     getContent: (e: any) => {
+        //         const outDiv = document.createElement('div');
+        //         outDiv.style.width = 'fit-content';
+        //         outDiv.innerHTML = `
+        //   <ul>
+        //   <li>Id: ${e.item.getModel().id}</li>
+        //   <li>Type: ${e.item.getModel().type}</li>
+        //   <li>Region: ${e.item.getModel().region}</li>
+        //   </ul>
+        //   <ul>
+        //     <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
+        //   </ul>
+        //   `;
+        //         return outDiv;
+        //     },
+        // });
 
         g = new G6.Graph({
             container: 'topo',
             width: container?.clientWidth,
             height: container?.clientHeight,
-            plugins: [tooltip, edgeMenu, menu, toolbar], // 插件
+            plugins: [edgeMenu, menu, toolbar], // 插件
             // 设置为true，启用 redo & undo 栈功能
             enabledStack: true,
             modes: {
@@ -205,8 +207,8 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             const container = containerRef.current;
             const config = {
                 type: 'gForce',
-                minMovement: 0.1,
-                maxIteration: 1000,
+                minMovement: 0.6,
+                maxIteration: 500,
                 preventOverlap: true,
                 damping: 0.99,
                 gpuEnabled: true,
@@ -216,7 +218,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     const sourceNode = findNode(d.source, expandList.nodes);
                     const targetNode = findNode(d.target, expandList.nodes);
                     //   加长和域节点有关的边
-                    if (sourceNode.nodeType === 'region' || targetNode.nodeType === 'region') {
+                    if (sourceNode.type === 'region' || targetNode.type === 'region') {
                         dist = linkDistance * 5;
                     }
                     return dist;
@@ -253,21 +255,25 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             layout.instance = layoutInstance;
             const existData = graph.save() as GraphData;
             if (existData && existData.nodes && existData.nodes.length) {
+                console.log(expandList, 'expandList')
                 graph.changeData(expandList);
             } else {
                 graph.data(expandList);
                 graph.render();
             }
+            // graph.data(expandList)
+            // graph.render()
 
             const renderRegions = () => {
                 const regions: any = {};
                 // 计算现在有几个域
                 expandList.nodes.forEach((node: any) => {
-                    if (node.nodeType === 'node') {
-                        regions[node.nodeRegion] = regions[node.nodeRegion] || [];
-                        regions[node.nodeRegion].push(node.id);
+                    if (node.nodeType === 'app' && node.region) {
+                        regions[node.region] = regions[node.region] || [];
+                        regions[node.region].push(node.id);
                     }
                 });
+                console.log(regions, 'regions')
                 Object.keys(regions).forEach((k) => {
                     const id = random();
                     graph.createCombo(
@@ -293,24 +299,35 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     // 右键菜单展开
                     model = evt;
                 }
-                const oldNodes = expandList.nodes.filter((item: any) => item.id !== model.id);
+                const oldNodes = expandList.nodes.filter((item: any) => item?.region !== model.id);
+                const nodes = oldNodes.filter((item: any) => item.id !== model.id)
                 const currentRegion = expandList.nodes.find((item: any) => item.id === model.id);
                 // 找到当前域下的所有app节点并设置初始位置
                 const newNode = originData.nodes
-                    .filter((item: any) => item.nodeRegion === model.id && item.nodeType === 'node')
+                    .filter((item: any) => item.region === model.id && item.nodeType === 'app')
                     .map((n: Node) => ({
                         ...n,
                         x: (currentRegion.x || 0) + random(currentRegion.size) - currentRegion.size / 2,
                         y: (currentRegion.y || 0) + random(currentRegion.size) - currentRegion.size / 2,
                     }));
 
-                setNeedExpandList({ nodes: [...oldNodes, ...newNode], edges: originData.edges });
+                setNeedExpandList({ nodes: [...nodes, ...newNode], edges: originData.edges });
             };
 
             //   收起节点
             const collapseNode = (params: any) => {
-                const addRegion = originData.nodes.filter((item: any) => item.id === params.nodeRegion);
-                const nodes = expandList.nodes.filter((item: any) => item.nodeRegion !== params.nodeRegion);
+                console.log(params, 'params')
+                let addRegion: any;
+                let nodes: any;
+                if (params.type === 'region-combo') {
+                    // 点击combo icon收起
+                    addRegion = originData.nodes.filter((item: any) => item.oriLabel === params.label);
+                    nodes = expandList.nodes.filter((item: any) => item.region !== params.label);
+                } else {
+                    // 右键收起
+                    addRegion = originData.nodes.filter((item: any) => item.oriLabel === params.region);
+                    nodes = expandList.nodes.filter((item: any) => item.region !== params.region);
+                }
                 setNeedExpandList({ nodes: [...nodes, ...addRegion], edges: originData.edges });
             };
             graph.on('collapse-icon:click', expandNode);
@@ -336,34 +353,34 @@ const Topo = React.forwardRef((props: any, ref: any) => {
     }, [expandList]);
     //   处理数据
     const getTopoData = async () => {
-        // let res = await getTopoList({
-        //   duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
-        //   envCode: props.selectEnv,
-        // });
-        let res = mockRomote();
+        let res = await getTopoList({
+            duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
+            envCode: props.selectEnv,
+        });
+        // let res = mockRomote();
         const styledData = ({ Nodes, Calls }: any) => {
             const clusterSize: any = {};
-            Nodes.forEach((item: any) => {
-                item.id = item.nodeId;
+            Nodes?.forEach((item: any) => {
                 Object.assign(item, {
                     ...item,
-                    label: formatText(item.id, 7),
-                    shortLabel: formatText(item.id, 7),
-                    oriLabel: item.id,
-                    text: item.id,
+                    label: formatText(item.label, 7),
+                    shortLabel: formatText(item.label, 7),
+                    oriLabel: item.label,
+                    text: item.label,
                     ...nodeStyled(item),
                     degree: 0,
                     inDegree: 0,
                     outDegree: 0,
-                    type: item.nodeType == 'region' ? 'region-node' : 'app-node',
-                    size: item.nodeType == 'region' ? 60 : 40,
+                    type: item.type == 'region' ? 'region-node' : 'app-node',
+                    nodeType: item.type === 'region' ? 'region' : 'app',
+                    size: item.type == 'region' ? 60 : 40,
                 });
-                if (item.nodeType === 'node') {
-                    clusterSize[item.nodeRegion] = clusterSize[item.nodeRegion] || 0;
-                    clusterSize[item.nodeRegion]++;
+                if (item.type === 'region') {
+                    clusterSize[item.region] = clusterSize[item.region] || 0;
+                    clusterSize[item.region]++;
                 }
             });
-            Calls.forEach((item: any) => {
+            Calls?.forEach((item: any) => {
                 const sourceNode = findNode(item.source, nodes);
                 const targetNode = findNode(item.target, nodes);
                 if (sourceNode) {
@@ -374,7 +391,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     targetNode.degree++;
                     targetNode.inDegree++;
                 }
-                item.isReal = sourceNode && targetNode && sourceNode.nodeType === 'node' && targetNode.nodeType === 'node';
+                item.isReal = sourceNode && targetNode && sourceNode.nodeType === 'app' && targetNode.nodeType === 'app';
                 Object.assign(item, {
                     ...edgeStyled(item),
                     // label: item.rt,
@@ -382,11 +399,13 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 });
             });
         };
-        const nodes = res.data.Nodes;
-        styledData(res.data);
+        const nodes = res?.data?.Nodes || [];
+        styledData(res?.data);
         const region = nodes.filter((item: any) => item.nodeType === 'region');
-        setNeedExpandList({ nodes: region, edges: res.data.Calls });
-        setOriginData({ nodes, edges: res.data.Calls });
+        const otherNodes = nodes.filter((item: any) => !item.region)
+        // setNeedExpandList({ nodes: region, edges: res.data.Calls });
+        setNeedExpandList({ nodes: region.concat(otherNodes), edges: res?.data?.Calls || [] });
+        setOriginData({ nodes, edges: res?.data?.Calls || [] });
     };
 
     const clearFocusItemState = (graph: any) => {

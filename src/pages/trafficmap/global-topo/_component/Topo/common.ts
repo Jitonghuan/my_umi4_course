@@ -1,3 +1,5 @@
+import { identity } from "_@types_lodash@4.14.182@@types/lodash";
+
 export interface Node {
     id: string;
     x?: number;
@@ -39,23 +41,27 @@ export const mockRomote = (size = 20) => {
     let regionNode = domain.map((item: any) => ({
         id: item,
         nodeId: item,
-        nodeType: 'region',
+        label: item,
+        type: 'region',
         status: ['normal', 'dangerous', 'warning'][random(3)],
         envCode: 'hbos-dev',
         nodeLabel: 'test',
+        isRegion: true,
         step: random(100),
         nodeRegion: '',
     }));
     let appNode: any = domain
         .map((item) =>
             createArray(size).map((i) => ({
-                nodeId: `node${random(1001111)}`,
-                nodeType: 'node',
+                id: `node${random(1001111)}`,
+                type: 'app',
+                label: 111,
                 status: ['normal', 'dangerous', 'warning'][random(3)],
                 envCode: 'hbos-dev',
                 nodeLabel: 'app',
                 step: random(100),
-                nodeRegion: item,
+                isRegion: false,
+                region: item,
             })),
         )
         .flat(2);

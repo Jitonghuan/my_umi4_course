@@ -29,7 +29,7 @@ const globalTopo: React.FC = () => {
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
 
   const [clickId, setClickId] = useState<string>('');
-  const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
+  const [selectTime, setSelectTime] = useState(moment().subtract(1, 'minutes'));
   const [refreshFrequency, setRefreshFrequency] = useState<string>('infinity');
 
   const [selectEnv, setSelectEnv] = useState('');
@@ -46,8 +46,10 @@ const globalTopo: React.FC = () => {
   }, [clickId]);
 
   useEffect(() => {
-    setSelectEnv(envOptions[0]?.value);
-    setSelectEnvName(envOptions[0]?.label);
+    if (envOptions?.length) {
+      setSelectEnv(envOptions[0]?.value);
+      setSelectEnvName(envOptions[0]?.label);
+    }
   }, [envOptions]);
 
   const expandAll = useCallback(() => {
@@ -227,7 +229,7 @@ const globalTopo: React.FC = () => {
               onChange={(env, option: any) => {
                 setSelectEnv(env);
                 setSelectEnvName(option.label || env);
-                setSelectTime(moment().subtract(2, 'minutes'));
+                setSelectTime(moment().subtract(1, 'minutes'));
                 setRefreshFrequency('infinity');
               }}
               showSearch

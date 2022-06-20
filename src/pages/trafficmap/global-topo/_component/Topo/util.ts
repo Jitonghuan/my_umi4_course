@@ -55,12 +55,12 @@ const EXPAND_ICON = function EXPAND_ICON(x: number, y: number, r: number) {
  * @returns
  */
 export const nodeStyled: any = (node: Node) => {
-    const { nodeType, status } = node;
+    const { type, status } = node;
     const res = {
-        type: nodeType === 'region' ? '' : 'app-node',
+        // type: nodeType === 'region' ? '' : 'app-node',
         style: {
-            fill: APP_STATUS_FILL_COLOR[status],
-            stroke: APP_STATUS_COLOR[status],
+            fill: APP_STATUS_FILL_COLOR[status || 'normal'],
+            stroke: APP_STATUS_COLOR[status || 'normal'],
         },
         stateStyles: {
             focus: {
@@ -212,8 +212,8 @@ if (G6) {
                 const keyShape = group.addShape('circle', {
                     attrs: {
                         r: 40,
-                        fill: APP_STATUS_FILL_COLOR[status],
-                        stroke: APP_STATUS_COLOR[status],
+                        fill: APP_STATUS_FILL_COLOR[status || 'normal'],
+                        stroke: APP_STATUS_COLOR[status || 'normal'],
                         zIndex: -2,
                     },
                     name: 'collapse-icon-bg',
@@ -334,7 +334,7 @@ if (G6) {
                         fill: '#fff',
                         stroke: APP_STATUS_COLOR[cfg.status || 'normal'],
                         lineWidth: 1,
-                        opacity: 0.5,
+                        opacity: 0.7,
                         text: cfg.text,
                     },
                     draggable: true,
