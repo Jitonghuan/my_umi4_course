@@ -6,8 +6,9 @@
 import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import appConfig from '@/app.config';
 import DetailContext from '../pages/application/application-detail/context';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest } from '@/utils/request';
 import { BasicData } from '@hbos/component-position-switcher';
+import { message } from 'antd';
 import * as APIS from './apis';
 /** 全局上下文 */
 // export const GlobalContext = createContext({
@@ -186,8 +187,7 @@ export function useStaffOrgData(): [any, () => Promise<void>] {
 // 请求所属机构数据
 export function useStaffDepData(): [any, (orgId: any) => Promise<void>] {
   const [deptData, setDeptData] = useState<BasicData[]>();
-
-  const loadData = useCallback(async (orgId) => {
+  const loadData = useCallback(async (orgId: any) => {
     await postRequest(APIS.getStaffDeptList, { data: { orgId } }).then((result) => {
       if (result?.success) {
         const next = (result?.data || []).map((el: any) => ({
@@ -208,4 +208,86 @@ export function useChooseDept(): [(deptId: any) => Promise<void>] {
   }, []);
 
   return [chooseDept];
+}
+
+// 请求查询未读消息数
+export function useQueryUnreadNum(): [any, () => Promise<void>] {
+  const [data, setData] = useState<number>(0);
+
+  const loadData = useCallback(async () => {
+    await getRequest(APIS.unreadNumApi).then((result) => {
+      if (result?.success) {
+        const next = result?.data?.total || 0;
+        setData(next);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    loadData();
+    let intervalId = setInterval(() => {
+      loadData();
+    }, 60000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  return [data, loadData];
+}
+
+// 请求查询所有系统消息
+export function useQueryStemNoticeList(): [any, (pageIndex?: number, pageSize?: number) => Promise<void>] {
+  const [dataSource, setDataSource] = useState<number>(0);
+
+  const loadData = useCallback(async (pageIndex?: number, pageSize?: number) => {
+    await getRequest(APIS.systemNoticeListApi, {
+      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 2000 },
+    }).then((result) => {
+      if (result?.success) {
+        const next = result?.data?.dataSource || [];
+        let dataArry: any = [];
+        next?.map((item: any) => {
+          dataArry.push({
+            id: item.id,
+            title: item.title,
+            content: item.content,
+            // datetime:item.datetime,
+            readed: item.state,
+            systemNoticeId: item.systemNoticeId,
+          });
+        });
+
+        setDataSource(dataArry);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    loadData(1, 2000);
+  }, []);
+
+  return [dataSource, loadData];
+}
+
+// 请求查询未读消息数
+// 切换部门确认
+export function useReadList(): [(ids: any) => Promise<void>] {
+  const getReadList = useCallback(async (ids: any) => {
+    await postRequest(APIS.readListApi, { data: { ids } });
+  }, []);
+
+  return [getReadList];
+}
+export function useDeleteSystemNotice(): [(id: number) => Promise<void>] {
+  const deleteSystemNotice = useCallback(async (id: number) => {
+    await delRequest(`${APIS.deleteSystemNoticeApi}/${id}`).then((result) => {
+      if (result?.success) {
+        message.success('删除成功！');
+      }
+    });
+  }, []);
+
+  return [deleteSystemNotice];
 }

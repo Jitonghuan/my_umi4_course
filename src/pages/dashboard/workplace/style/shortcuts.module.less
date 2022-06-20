@@ -4,9 +4,11 @@
   // height: 180px;
   // overflow: auto;
 }
-
+.arco-space-item {
+  display: flex !important;
+}
 .item {
-  display: flex;
+  display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -14,7 +16,7 @@
   // padding: 4px;
   box-sizing: border-box;
   cursor: pointer;
-
+  position: relative;
   &:hover {
     .icon {
       background-color: var(--color-primary-light-1);

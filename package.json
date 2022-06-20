@@ -90,6 +90,7 @@
     "react-tsparticles": "^2.0.6",
     "tsparticles": "^2.0.6",
     "umi": "~3.5.18",
+    "wangeditor-for-react": "^1.5.6",
     "xterm": "^4.15.0",
     "xterm-addon-attach": "^0.6.0",
     "xterm-addon-fit": "^0.5.0",

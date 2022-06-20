@@ -112,7 +112,6 @@ export default function VersionDetail(props: DetailProps) {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    console.log('pagination', pagination);
     queryComponentList({
       componentType: currentTab,
       productLine: curProductLine,
