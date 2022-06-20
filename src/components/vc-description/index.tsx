@@ -44,7 +44,7 @@ const funcName = (props: any) => {
     },
     {
       title: '变更原因',
-      dataIndex: 'modifyResion',
+      dataIndex: 'modifyReason',
       width: 170,
     },
     {

@@ -6,10 +6,8 @@ import React, { useState, useContext, useCallback, useEffect } from 'react';
 import moment from 'moment';
 import { Button, Empty, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { FeContext } from '@/common/hooks';
 import DetailContext from '../../context';
 import { EnvDataVO } from '@/pages/application/interfaces';
-// import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useFeVersions, useAppEnvCodeData } from './hooks';
 import { listAppEnvType } from '@/common/apis';
 import { getRequest } from '@/utils/request';
@@ -18,7 +16,6 @@ import './index.less';
 
 export default function FEVersions() {
   const { appData } = useContext(DetailContext);
-  // const { envTypeData } = useContext(FeContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [feVersionData, isVersionLoading, reloadVersionData] = useFeVersions(appData!);
   const [rollbackEnv, setRollbackEnv] = useState<EnvDataVO>();

@@ -69,6 +69,8 @@ export interface AppItemVO {
   deployJobUrl?: string;
   /** 自定义配置参数 */
   customParams?: string;
+  /** 前端类型 */
+  feType?: string;
 }
 
 export interface AppMemberInfo {

@@ -478,6 +478,8 @@ export const createDeploy = (params: {
   envTypeCode: string;
   /** 选择的feature分支 */
   features: string[];
+  /** PDA 打包方式 apk bundles */
+  pdaDeployType?: string;
   /** 发布环境code */
   envCodes?: string[];
   pipelineCode?: string;
