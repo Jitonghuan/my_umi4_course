@@ -686,7 +686,6 @@ export default function PublishDetail(props: IProps) {
               onOperate('uploadImageStart');
               setDeployEnv(e.target.value);
               beforeUploadAction(e.target.value);
-              console.log('e.target.value', e.target.value);
             }}
             value={deployEnv}
             options={offlineEnvData || []}
