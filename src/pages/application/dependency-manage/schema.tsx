@@ -9,13 +9,11 @@ export const taskTableSchema = ({
   onEditClick,
   onViewClick,
   onDelClick,
-  onGetExecutionDetailClick,
   onSwitchEnableClick,
 }: {
   onEditClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
-  onGetExecutionDetailClick: (record: any, index: number) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
 }) =>
   [
