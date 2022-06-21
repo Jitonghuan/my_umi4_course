@@ -174,8 +174,8 @@ const Topo = React.forwardRef((props: any, ref: any) => {
     useEffect(() => {
         setIsExpand(true);
         graph?.clear();
-        getTopoData()
-        // props.selectEnv && getTopoData();
+        // getTopoData()
+        props.selectEnv && getTopoData();
     }, [props.selectTime, props.selectEnv]);
 
     //过滤数据、记录数据
@@ -207,7 +207,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         const linkDistance = 100;
         const edgeStrength = 50;
         const nodeStrength = 200;
-        const nodeSpacing = 10;
+        const nodeSpacing = 30;
         if (expandList && expandList.nodes && expandList.nodes.length > 0) {
             const container = containerRef.current;
             const config = {
@@ -360,8 +360,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
             envCode: props.selectEnv,
         })
-
-
         // let res = mockRomote();
         // let res = mockData;
         res.data = res?.data || JSON.parse(JSON.stringify(mockData.data));

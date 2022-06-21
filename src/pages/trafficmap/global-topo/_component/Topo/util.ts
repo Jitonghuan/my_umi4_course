@@ -328,7 +328,7 @@ if (G6) {
                 const keyShape = group.addShape('circle', {
                     attrs: {
                         ...style,
-                        r: 20,
+                        r: 15,
                         x: 0,
                         y: 0,
                         fill: '#fff',
@@ -344,12 +344,12 @@ if (G6) {
                     draggable: true,
                     name: 'app-node-icon',
                     attrs: {
-                        height: 20,
+                        height: 15,
                         img: APP_STATUS_ICON_MAP[cfg.status || 'normal'],
                         show: true,
-                        width: 20,
-                        x: -10,
-                        y: -10,
+                        width: 15,
+                        x: -7.5,
+                        y: -7.5,
                     },
                 });
                 if (cfg.label) {
