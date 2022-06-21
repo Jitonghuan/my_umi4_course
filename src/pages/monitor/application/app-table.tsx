@@ -157,11 +157,13 @@ const Coms = (props: IProps) => {
     {
       title: '堆内存详情/每分钟',
       getOption: getMemoryChartOption,
+      hasRadio: true,
       queryFn: queryJvmHeap,
     },
     {
       title: '元空间详情/每分钟',
       getOption: getGCDataChartOption,
+
       queryFn: queryJvmMetaspace,
     },
   ];
