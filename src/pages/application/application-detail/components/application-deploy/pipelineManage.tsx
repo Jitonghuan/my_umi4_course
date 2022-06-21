@@ -41,7 +41,7 @@ export default function PipeLineManage(props: any) {
     const successMessage = data.add ? '新增成功' : '编辑成功';
     let params;
     if (data.add) {
-      params = { appCode, pipelineCode: `${appCode}_${envTypeCode}_${pipelineCode}`, pipelineName, envTypeCode };
+      params = { appCode, pipelineName, envTypeCode };
     } else {
       params = { pipelineName, pipelineCode };
     }
@@ -77,7 +77,7 @@ export default function PipeLineManage(props: any) {
         };
       },
       ellipsis: true,
-      width: '35%',
+      width: '45%',
     },
     {
       title: '流水线code',
@@ -88,16 +88,16 @@ export default function PipeLineManage(props: any) {
       },
       key: 'pipelineCode',
       formItemProps: () => {
-        return {
-          errorType: 'default',
-          rules: [{ required: true, message: '不能包含中文', pattern: /^[^\u4e00-\u9fa5]*$/ }],
-        };
+        // return {
+        //   errorType: 'default',
+        //   rules: [{ required: true, message: '不能包含中文', pattern: /^[^\u4e00-\u9fa5]*$/ }],
+        // };
       },
       renderFormItem: (_: any, row: any) => {
-        return <Input addonBefore={`${appCode}_${envTypeCode}_`} autoFocus />
+        return <Input disabled placeholder='code系统自动生成' />
       },
       ellipsis: true,
-      width: '55%',
+      width: '45%',
     },
   ];
   return (
