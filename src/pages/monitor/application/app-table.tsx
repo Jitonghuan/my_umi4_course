@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Card, Select, Form, Tooltip, Tabs, Button } from 'antd';
+import { Card, Select, Form, Tooltip, Tabs, Button, Row, Col } from 'antd';
 import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
@@ -157,6 +157,7 @@ const Coms = (props: IProps) => {
     {
       title: '堆内存详情/每分钟',
       getOption: getMemoryChartOption,
+      hasRadio: true,
       queryFn: queryJvmHeap,
     },
     {
@@ -276,74 +277,6 @@ const Coms = (props: IProps) => {
         );
       });
   };
-  // const {
-  //   // run: queryNodeList,
-  //   reset,
-  //   tableProps,
-  // } = usePaginated({
-  //   requestUrl: queryPodInfoApi,
-  //   requestMethod: 'GET',
-  //   showRequestError: true,
-  //   didMounted: false,
-  //   formatRequestParams: (params) => {
-  //     return {
-  //       ...params,
-
-  //       start: Number((now - startTime) / 1000),
-  //       end: Number(now / 1000),
-  //       pageSize: 1000,
-  //       ...prevFilter.current,
-  //     };
-  //   },
-  //   formatResult: (resp) => {
-  //     if (resp.data && resp.data[0]) {
-  //       setCurtIp(resp.data[0].hostIP);
-  //       setHostName(resp.data[0].hostName);
-  //     }
-  //     return {
-  //       dataSource: resp.data || [],
-  //       pageInfo: {
-  //         pageIndex: 1,
-  //         pageSize: 1000,
-  //       },
-  //     };
-  //   },
-  //   successFunc: (resp: any) => {
-  //     queryPodCpu(
-  //       resp.data[0].hostName,
-  //       filter.envCode,
-  //       Number((now - startTime) / 1000),
-  //       Number(now / 1000),
-  //       filter.appCode,
-  //       resp.data[0].hostIP,
-  //     );
-  //     queryPodMem(
-  //       resp.data[0].hostName,
-  //       filter.envCode,
-  //       Number((now - startTime) / 1000),
-  //       Number(now / 1000),
-  //       filter.appCode,
-  //       resp.data[0].hostIP,
-  //     );
-  //     queryPodDisk(
-  //       resp.data[0].hostName,
-  //       filter.envCode,
-  //       Number((now - startTime) / 1000),
-  //       Number(now / 1000),
-  //       filter.appCode,
-  //       resp.data[0].hostIP,
-  //     );
-  //     queryPodNetwork(
-  //       resp.data[0].hostName,
-  //       filter.envCode,
-  //       Number((now - startTime) / 1000),
-  //       Number(now / 1000),
-  //       filter.appCode,
-  //       resp.data[0].hostIP,
-  //     );
-  //   },
-  //   pagination: false,
-  // });
 
   useEffect(() => {
     queryApps();
@@ -606,7 +539,7 @@ const Coms = (props: IProps) => {
               <TabPane tab={<span>进程监控</span>} key="1">
                 <h3 className="monitor-tabs-content-title">
                   监控图表&nbsp;&nbsp;
-                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                  {/* <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span> */}
                 </h3>
 
                 <VCCardLayout grid={layoutGrid} className="monitor-app-content">
@@ -622,9 +555,34 @@ const Coms = (props: IProps) => {
               <TabPane tab={<span>基础监控</span>} key="2">
                 <h3 className="monitor-tabs-content-title">
                   监控图表&nbsp;&nbsp;
-                  <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span>
+                  {/* <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span> */}
                 </h3>
-                <div style={{ width: '100%', height: '100%' }}>
+                <Row gutter={[16, 24]}>
+                  <Col span={12}>
+                    <div className="base-monitor-charts">
+                      <MemroyUtilization data={queryPodMemData} loading={podMemloading} />
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className="base-monitor-charts">
+                      <CpuUtilization data={queryPodCpuData} loading={podCpuloading} />
+                    </div>
+                  </Col>
+                </Row>
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <div className="base-monitor-charts">
+                      <NetWorkChart data={queryPodNetworkData} loading={podNetworkloading} />
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className="base-monitor-charts">
+                      <DiskIOChart data={queryPodDiskData} loading={podDiskloading} />
+                    </div>
+                  </Col>
+                </Row>
+
+                {/* <div style={{ width: '100%', height: '100%' }}>
                   <div className="base-monitor-charts">
                     <MemroyUtilization data={queryPodMemData} loading={podMemloading} />
                   </div>
@@ -637,7 +595,7 @@ const Coms = (props: IProps) => {
                   <div className="base-monitor-charts">
                     <DiskIOChart data={queryPodDiskData} loading={podDiskloading} />
                   </div>
-                </div>
+                </div> */}
               </TabPane>
             </Tabs>
           </div>
