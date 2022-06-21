@@ -44,7 +44,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
   };
 
-  const onScroll = (direction: any, e: any) => {};
+  const onScroll = (direction: any, e: any) => { };
   let getfilterOption = (inputValue: string, option: any) => option?.title?.indexOf(inputValue) > -1;
 
   const handleOk = () => {
@@ -68,7 +68,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       if (mode === 'ADD') {
         let addParamsObj = {
           benchmarkEnvCode: params.benchmarkEnvCode || '',
-          projectEnvCode: `pro-${params.envCode}` || '',
+          // projectEnvCode: `pro-${params.envCode}` || '',
           projectEnvName: params.envName || '',
           mark: params.mark || '',
           relationApps: selectedAppCode || [],
@@ -251,7 +251,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             //  rules={[{ required: true, message: '请输入项目环境CODE!' }]}
             rules={[
               {
-                required: true,
+                required: mode === 'EDIT',
                 message: '输入的项目环境CODE里请不要包含“dev,test,pre,prod”字符',
                 pattern: /^(?!.*dev|.*test|.*prod|.*pre)/,
               },
@@ -260,7 +260,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             {mode === 'EDIT' ? (
               <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
             ) : (
-              <Input addonBefore="pro-" style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+              <Input style={{ width: 300 }} placeholder="code系统自动生成" disabled></Input>
             )}
           </Form.Item>
           <Form.Item
