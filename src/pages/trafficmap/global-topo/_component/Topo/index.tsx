@@ -2,7 +2,9 @@ import G6, { Graph, GraphData } from '@antv/g6';
 import moment, { Moment } from 'moment';
 import React, { useEffect, useState, forwardRef, useRef, useMemo, useImperativeHandle } from 'react';
 import { getTopoList } from '../../../service';
-import { mockRomote, random } from './common';
+import { mockRomote, mockData, random } from './common';
+import _ from 'lodash';
+
 // import insertCss from 'insert-css';
 import { formatText, nodeStyled, edgeStyled, comboStyled, findNode } from './util';
 import './index.less';
@@ -171,7 +173,9 @@ const Topo = React.forwardRef((props: any, ref: any) => {
 
     useEffect(() => {
         setIsExpand(true);
-        props.selectEnv && getTopoData();
+        graph?.clear();
+        getTopoData()
+        // props.selectEnv && getTopoData();
     }, [props.selectTime, props.selectEnv]);
 
     //过滤数据、记录数据
@@ -182,6 +186,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         filterData.edges = filterData.edges.filter(
             (e: any) => findNode(e.source, filterData.nodes) && findNode(e.target, filterData.nodes),
         );
+
         setExpandList(filterData);
 
         const collapseNode = filterData.nodes.filter((item: any) => {
@@ -253,9 +258,9 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             layoutInstance.init(expandList);
             layoutInstance.execute();
             layout.instance = layoutInstance;
+
             const existData = graph.save() as GraphData;
             if (existData && existData.nodes && existData.nodes.length) {
-                console.log(expandList, 'expandList')
                 graph.changeData(expandList);
             } else {
                 graph.data(expandList);
@@ -273,7 +278,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                         regions[node.region].push(node.id);
                     }
                 });
-                console.log(regions, 'regions')
                 Object.keys(regions).forEach((k) => {
                     const id = random();
                     graph.createCombo(
@@ -316,15 +320,14 @@ const Topo = React.forwardRef((props: any, ref: any) => {
 
             //   收起节点
             const collapseNode = (params: any) => {
-                console.log(params, 'params')
                 let addRegion: any;
                 let nodes: any;
                 if (params.type === 'region-combo') {
                     // 点击combo icon收起
-                    addRegion = originData.nodes.filter((item: any) => item.oriLabel === params.label);
-                    nodes = expandList.nodes.filter((item: any) => item.region !== params.label);
+                    addRegion = originData.nodes.filter((item: any) => item.oriLabel === params.nodeRegion);
+                    nodes = expandList.nodes.filter((item: any) => item.region !== params.nodeRegion);
                 } else {
-                    // 右键收起
+                    // 右键
                     addRegion = originData.nodes.filter((item: any) => item.oriLabel === params.region);
                     nodes = expandList.nodes.filter((item: any) => item.region !== params.region);
                 }
@@ -356,8 +359,15 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         let res = await getTopoList({
             duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
             envCode: props.selectEnv,
-        });
+        })
+
+
         // let res = mockRomote();
+        // let res = mockData;
+        res.data = res?.data || JSON.parse(JSON.stringify(mockData.data));
+        res.data.Nodes = _.uniqBy(res?.data?.Nodes, 'id');
+        res.data.Calls = _.uniqBy(res?.data?.Calls?.map((e: any) => ({ ...e, id: e.id = e.source + "-" + e.target })), 'id');
+
         const styledData = ({ Nodes, Calls }: any) => {
             const clusterSize: any = {};
             Nodes?.forEach((item: any) => {
@@ -402,8 +412,9 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         const nodes = res?.data?.Nodes || [];
         styledData(res?.data);
         const region = nodes.filter((item: any) => item.nodeType === 'region');
-        const otherNodes = nodes.filter((item: any) => !item.region)
+        const otherNodes = nodes.filter((item: any) => !item.region && item.nodeType !== 'region')
         // setNeedExpandList({ nodes: region, edges: res.data.Calls });
+
         setNeedExpandList({ nodes: region.concat(otherNodes), edges: res?.data?.Calls || [] });
         setOriginData({ nodes, edges: res?.data?.Calls || [] });
     };

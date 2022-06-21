@@ -379,7 +379,7 @@ if (G6) {
                             cursor: 'pointer',
                             fontSize,
                             fill: APP_STATUS_ICON_MAP[cfg.status || 'normal'],
-                            opacity: 0.1,
+                            opacity: 0.2,
                             // fontWeight: 100,
                             // fill:"#666"
                             stroke: APP_STATUS_ICON_MAP[cfg.status || 'normal'],
