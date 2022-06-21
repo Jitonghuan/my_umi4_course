@@ -17,6 +17,8 @@ import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
 import { useEnvOptions } from '../hooks';
 import { getAppMonitorInfo } from '../service';
+import { getEnvs } from '.././service';
+
 import './index.less';
 
 const globalTopo: React.FC = () => {
@@ -36,8 +38,8 @@ const globalTopo: React.FC = () => {
   const [selectEnvName, setSelectEnvName] = useState('');
   const [isMock, setIsMock] = useState(false);
   const [isExpand, setIsExpand] = useState(true); // true显示全屏展开  false显示全屏收起。
-
-  const [envOptions]: any[][] = useEnvOptions();
+  const [envOptions, setEnvOptions] = useState<any>([]);
+  // const [envOptions]: any[][] = useEnvOptions();
 
   const TopoRef = useRef<any>();
 
@@ -45,12 +47,24 @@ const globalTopo: React.FC = () => {
     clickId && onAppClick(clickId);
   }, [clickId]);
 
+
+
   useEffect(() => {
     if (envOptions?.length) {
       setSelectEnv(envOptions[0]?.value);
       setSelectEnvName(envOptions[0]?.label);
     }
   }, [envOptions]);
+
+  //获取环境列表
+  useEffect(() => {
+    getEnvs().then((res: any) => {
+      if (res && res.success) {
+        const data = res?.data?.envs.map((item: any) => ({ label: item.envName, value: item.envCode }));
+        setEnvOptions(data);
+      }
+    });
+  }, []);
 
   const expandAll = useCallback(() => {
     if (isExpand) {
