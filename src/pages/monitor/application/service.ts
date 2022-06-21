@@ -151,6 +151,31 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       });
       console.log('gcFullSumArry,gcYoungCountArry,gcYoungSumArry', gcFullSumArry, gcYoungCountArry, gcYoungSumArry);
 
+      youngGCSum?.map((ele: any, index_one: number) => {
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+          let dataall: any = {
+            value: Number(item[1]).toFixed(2),
+            ip: Object.keys(ele)[0],
+            timeData: Number(item[0]) * 1000,
+          };
+          gcYoungSumArry.push(dataall);
+          curxAxis.push(Number(item[0]) * 1000);
+        });
+      });
+      gcYoungSumArry.sort((a: any, b: any) => {
+        return a.timeData - b.timeData;
+      });
+
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
+        return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
+      });
       return {
         //瞬时值
         fullCount: {
@@ -270,6 +295,16 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       // const fullSum = fullGCTimeSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
       // const youngSum = youngGCTimeSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
 
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
+        return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
+      });
       return {
         fullCount: {
           xAxis,
@@ -464,6 +499,17 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       });
       console.log('metaspaceArry', metaspaceArry);
 
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
+        return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
+      });
+      let arry = [0, 9, 0];
       return {
         fullCount: {
           xAxis,

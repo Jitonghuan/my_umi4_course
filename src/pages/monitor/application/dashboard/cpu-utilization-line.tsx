@@ -34,7 +34,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   const config = {
     data: sumData,
     xField: 'time',
-    yField: 'precentage',
+    yField: 'value',
     seriesField: 'category',
     // color: ['#8bc0d6', '#60d7a7', 'yellow'],
     xAxis: {
@@ -51,6 +51,17 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
         formatter: (v: any) => `${v}`,
       },
     },
+
+    title: 'fs writes/reads',
+    // yAxis: {
+    //   title: {
+    //     text: 'cores',
+    //   },
+    //   label: {
+    //     // 数值格式化为带百分号
+    //     formatter: (v: any) => `${v}`,
+    //   },
+    // },
     width: 550,
     height: 260,
   };

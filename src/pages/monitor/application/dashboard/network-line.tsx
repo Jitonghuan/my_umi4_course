@@ -37,7 +37,7 @@ export default function NetWorkLine(props: ChartCaseListProps) {
   const config = {
     data: sumData || [],
     xField: 'time',
-    yField: 'precentage',
+    yField: 'value',
     seriesField: 'category',
     // color: ['#8bc0d6', '#60d7a7'],
     yAxis: {

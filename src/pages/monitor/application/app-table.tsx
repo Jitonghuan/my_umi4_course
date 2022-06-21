@@ -586,13 +586,13 @@ const Coms = (props: IProps) => {
                   <div className="base-monitor-charts">
                     <MemroyUtilization data={queryPodMemData} loading={podMemloading} />
                   </div>
-                  <div className="base-monitor-charts">
+                  <div className="base-monitor-charts-two">
                     <CpuUtilization data={queryPodCpuData} loading={podCpuloading} />
                   </div>
-                  <div className="base-monitor-charts">
+                  <div className="base-monitor-charts-three">
                     <NetWorkChart data={queryPodNetworkData} loading={podNetworkloading} />
                   </div>
-                  <div className="base-monitor-charts">
+                  <div className="base-monitor-charts-four">
                     <DiskIOChart data={queryPodDiskData} loading={podDiskloading} />
                   </div>
                 </div> */}

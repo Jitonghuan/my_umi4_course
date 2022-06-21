@@ -38,13 +38,17 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
   const config = {
     data: sumData || [],
     xField: 'time',
-    yField: 'precentage',
+    yField: 'value',
     seriesField: 'category',
     // color: ['#6495ED', '#60d7a7', '#BDB76B'],
     xAxis: {
       range: [0, 1],
       // tickCount: 5,
     },
+    // xAxis: {
+    //   range: [0, 1],
+    //   // tickCount: 5,
+    // },
     yAxis: {
       label: {
         // 数值格式化为带百分号

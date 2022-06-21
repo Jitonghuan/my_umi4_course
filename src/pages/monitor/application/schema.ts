@@ -1,4 +1,6 @@
 // 应用详情表格 schema
+import moment from 'moment';
+
 export interface ITableSchema {
   ip: string;
   cpu: string;
@@ -97,6 +99,16 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0]?.seriesName}:` +
+          `${Number.parseInt(params[0]?.value)}次, ip:` +
+          params[0]?.data?.ip +
+          `<br> ${params[1]?.seriesName}:` +
+          `${Number.parseInt(params[1]?.value)}次, ip:` +
+          params[1]?.data?.ip
+        );
+      },
     },
     dataZoom: [
       {
@@ -104,7 +116,6 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
         show: false,
       },
     ],
-
     grid: {
       bottom: 45,
       top: 30,
@@ -163,6 +174,16 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0].seriesName}:` +
+          `${Number.parseInt(params[0].value)}次, ip:` +
+          params[0].data.ip +
+          `<br> ${params[1].seriesName}:` +
+          `${Number.parseInt(params[1].value)}次, ip:` +
+          params[1].data.ip
+        );
+      },
     },
     dataZoom: [
       {
@@ -170,7 +191,6 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
         show: false,
       },
     ],
-
     grid: {
       bottom: 45,
       top: 30,
@@ -229,6 +249,22 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0].seriesName}:` +
+          `${Number.parseInt(params[0].value)}MB, ip:` +
+          params[0].data.ip +
+          `<br> ${params[1].seriesName}:` +
+          `${Number.parseInt(params[1].value)}MB, ip:` +
+          params[1].data.ip +
+          `<br> ${params[2].seriesName}:` +
+          `${Number.parseInt(params[2].value)}MB, ip:` +
+          params[3].data.ip +
+          `<br> ${params[3].seriesName}:` +
+          `${Number.parseInt(params[3].value)}MB, ip:` +
+          params[3].data.ip
+        );
+      },
     },
     dataZoom: [
       {
@@ -236,7 +272,6 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
         show: false,
       },
     ],
-
     grid: {
       bottom: 70,
       top: 34,
@@ -299,6 +334,9 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return `${params[0].seriesName}:` + `${Number.parseInt(params[0].value)}MB, ip:` + params[0].data.ip;
+      },
     },
     dataZoom: [
       {
@@ -306,7 +344,6 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
         show: false,
       },
     ],
-
     grid: {
       bottom: 45,
       top: 30,
@@ -336,7 +373,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
           return value.substr(0, value.length - 3);
         },
       },
-      data: xAxis,
+      data: xAxisy,
     },
     yAxis: [
       {
