@@ -65,6 +65,8 @@ const Topo = React.forwardRef((props: any, ref: any) => {
 
         const toolbar = new G6.ToolBar();
 
+        console.log(toolbar);
+
         //   右键菜单栏
         const menu = new G6.Menu({
             offsetX: 6,
@@ -121,34 +123,32 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             },
             handleMenuClick(target, item) { },
         });
-        // const tooltip = new G6.Tooltip({
-        //     offsetX: 10,
-        //     offsetY: 10,
-        //     itemTypes: ['node'],
-        //     getContent: (e: any) => {
-        //         const outDiv = document.createElement('div');
-        //         outDiv.style.width = 'fit-content';
-        //         outDiv.innerHTML = `
-        //   <ul>
-        //   <li>Id: ${e.item.getModel().id}</li>
-        //   <li>Type: ${e.item.getModel().type}</li>
-        //   <li>Region: ${e.item.getModel().region}</li>
-        //   </ul>
-        //   <ul>
-        //     <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
-        //   </ul>
-        //   `;
-        //         return outDiv;
-        //     },
-        // });
+        const tooltip = new G6.Tooltip({
+            offsetX: 10,
+            offsetY: 10,
+            itemTypes: ['node'],
+            getContent: (e: any) => {
+                const outDiv = document.createElement('div');
+                outDiv.style.width = 'fit-content';
+                outDiv.innerHTML = `
+          <ul>
+          <li>Id: ${e.item.getModel().id}</li>
+          <li>Type: ${e.item.getModel().type}</li>
+          <li>Region: ${e.item.getModel().region}</li>
+          </ul>
+          <ul>
+            <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
+          </ul>
+          `;
+                return outDiv;
+            },
+        });
 
         g = new G6.Graph({
             container: 'topo',
             width: container?.clientWidth,
             height: container?.clientHeight,
-            plugins: [edgeMenu, menu, toolbar], // 插件
-            // 设置为true，启用 redo & undo 栈功能
-            enabledStack: true,
+            plugins: [edgeMenu, menu, toolbar, tooltip], // 插件
             modes: {
                 default: [
                     {
@@ -248,6 +248,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 },
                 onLayoutEnd: () => {
                     layout.stop(graph);
+
                 },
                 tick: () => {
                     graph.refreshPositions();
@@ -258,7 +259,15 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             layoutInstance.init(expandList);
             layoutInstance.execute();
             layout.instance = layoutInstance;
-
+            // 固定节点位置
+            expandList?.nodes?.forEach((node: any) => {
+                if (node.label === 'User') {
+                    fixedNode(node)
+                }
+                if (node.id === 'middleware') {
+                    fixedNode(node, ['bottom', 'center'])
+                }
+            })
             const existData = graph.save() as GraphData;
             if (existData && existData.nodes && existData.nodes.length) {
                 graph.changeData(expandList);
@@ -266,8 +275,11 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 graph.data(expandList);
                 graph.render();
             }
-            // graph.data(expandList)
-            // graph.render()
+            // 锁定节点
+            // const userNode = graph.findById('VXNlcg==.0') as any;
+            // const middlewareNode = graph.findById('middleware') as any;
+            // userNode?.lock();
+            // middlewareNode?.lock()
 
             const renderRegions = () => {
                 const regions: any = {};
@@ -284,11 +296,12 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                         {
                             id: `${k}-combo`,
                             type: 'region-combo',
-                            ...comboStyled({ region: k }),
+                            ...comboStyled({ region: k, count: regions[k].length || 0 }),
                         },
                         regions[k],
                     );
                 });
+                graph.fitView([20, 20]);
             };
 
             //   展开节点
@@ -306,15 +319,17 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 const oldNodes = expandList.nodes.filter((item: any) => item?.region !== model.id);
                 const nodes = oldNodes.filter((item: any) => item.id !== model.id)
                 const currentRegion = expandList.nodes.find((item: any) => item.id === model.id);
+                console.log(currentRegion.x, currentRegion.y, 'size')
                 // 找到当前域下的所有app节点并设置初始位置
                 const newNode = originData.nodes
                     .filter((item: any) => item.region === model.id && item.nodeType === 'app')
                     .map((n: Node) => ({
                         ...n,
-                        x: (currentRegion.x || 0) + random(currentRegion.size) - currentRegion.size / 2,
-                        y: (currentRegion.y || 0) + random(currentRegion.size) - currentRegion.size / 2,
+                        // x: (currentRegion.x || 0) + random(currentRegion.size) - currentRegion.size / 2,
+                        x: (currentRegion.x || 0) + random(10),
+                        y: (currentRegion.y || 0) + random(5),
                     }));
-
+                console.log(newNode.map((item: any) => item.x), newNode.map((item: any) => item.y))
                 setNeedExpandList({ nodes: [...nodes, ...newNode], edges: originData.edges });
             };
 
@@ -416,6 +431,29 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         setNeedExpandList({ nodes: region.concat(otherNodes), edges: res?.data?.Calls || [] });
         setOriginData({ nodes, edges: res?.data?.Calls || [] });
     };
+
+    // 用来固定节点
+    const fixedNode = (node: any, positions: string[] = ['top', 'right']) => {
+        let width = containerRef.current?.clientWidth;
+        let height = containerRef.current?.clientHeight;
+        positions.forEach((p: any) => {
+            const padding = node.nodeType == 'region' ? 50 : 25;
+            if (p === 'bottom') {
+                node.fy = height - padding;
+            } else if (p === 'top') {
+                node.fy = 0 + padding;
+            } else if (p === 'middle') {
+                node.fy = height / 2;
+            } else if (p === 'left') {
+                node.fx = 0 + padding;
+            } else if (p === 'center') {
+                node.fx = width / 2;
+            } else if (p === 'right') {
+                node.fx = width - padding;
+            }
+        });
+    };
+
 
     const clearFocusItemState = (graph: any) => {
         if (!graph) return;

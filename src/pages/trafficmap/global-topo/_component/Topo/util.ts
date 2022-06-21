@@ -85,10 +85,12 @@ export const nodeStyled: any = (node: Node) => {
  * @returns
  */
 export const comboStyled: any = (node: Node) => {
-    const { region, status } = node;
+    const { region, status, count } = node;
+
     const res = {
         nodeRegion: region,
         label: region,
+        // fixSize: count * 20,
         labelCfg: {
             refY: 5,
             position: 'top',
@@ -113,12 +115,12 @@ export const comboStyled: any = (node: Node) => {
 export const edgeStyled: any = (edge: Edge) => {
     const { status, isReal } = edge;
     const opacity = isReal ? realEdgeOpacity : virtualEdgeOpacity;
-    const arrowWidth = 2;
-    const arrowLength = 5;
+    const arrowWidth = 1;
+    const arrowLength = 2;
     const arrowBeging = 10 + arrowLength;
     let arrowPath = `M ${arrowBeging},0 L ${arrowBeging + arrowLength},-${arrowWidth} L ${arrowBeging + arrowLength
         },${arrowWidth} Z`;
-    let d = 10 + arrowLength;
+    // let d = 10 + arrowLength;
 
     return {
         style: {
@@ -160,14 +162,14 @@ export const arrowStyleType: any = {
         },
     },
     normal: {
-        stroke: NORMAL_COLOR,
+        stroke: '#74bcfd',
         defaultColor: NORMAL_COLOR,
         lineAppendWidth: 10,
         cursor: 'pointer',
         lineDash: [4, 4, 4, 4],
         lineWidth: 1,
         endArrow: {
-            path: G6.Arrow.triangle(8, 8),
+            path: G6.Arrow.triangle(4, 4),
             fill: NORMAL_COLOR,
             // strokeOpacity: 0,
         },
@@ -328,7 +330,7 @@ if (G6) {
                 const keyShape = group.addShape('circle', {
                     attrs: {
                         ...style,
-                        r: 15,
+                        r: 20,
                         x: 0,
                         y: 0,
                         fill: '#fff',
@@ -344,12 +346,12 @@ if (G6) {
                     draggable: true,
                     name: 'app-node-icon',
                     attrs: {
-                        height: 15,
+                        height: 20,
                         img: APP_STATUS_ICON_MAP[cfg.status || 'normal'],
                         show: true,
-                        width: 15,
-                        x: -7.5,
-                        y: -7.5,
+                        width: 20,
+                        x: -10,
+                        y: -10,
                     },
                 });
                 if (cfg.label) {
