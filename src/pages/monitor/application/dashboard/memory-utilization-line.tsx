@@ -31,9 +31,9 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
   };
 
   const podsMemoryOption = [
-    { label: 'memLimitInfo', value: '1' },
-    { label: 'rssInfo', value: '2' },
-    { label: 'wssInfo', value: '3' },
+    { label: 'rssInfo', value: '1' },
+    { label: 'wssInfo', value: '2' },
+    { label: 'memLimitInfo', value: '3' },
   ];
   const config = {
     data: sumData || [],

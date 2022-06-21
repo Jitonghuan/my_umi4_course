@@ -105,7 +105,7 @@ export function useQueryPodCpu() {
             cpuUseDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
           });
 
-          const sumData = [cpuLimitDataSource, cpuRequestDataSource, cpuUseDataSource];
+          const sumData = [cpuUseDataSource, cpuRequestDataSource, cpuLimitDataSource];
 
           setQueryPodCpuData(sumData);
         }
@@ -215,7 +215,7 @@ export function usequeryPodMem() {
             wssInfoDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
           });
 
-          const sumData = [memLimitInfoDataSource, rssInfoDataSource, wssInfoDataSource];
+          const sumData = [rssInfoDataSource, wssInfoDataSource, memLimitInfoDataSource];
 
           setQueryPodMemData(sumData);
         }

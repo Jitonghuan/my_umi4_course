@@ -56,9 +56,9 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   };
 
   const podsCpuOption = [
-    { label: 'cpuLimit', value: '1' },
+    { label: 'cpuUse', value: '1' },
     { label: 'cpuRequest', value: '2' },
-    { label: 'cpuUse', value: '3' },
+    { label: 'cpuLimit', value: '3' },
   ];
 
   return (
