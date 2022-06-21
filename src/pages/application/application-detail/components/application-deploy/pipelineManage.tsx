@@ -94,7 +94,7 @@ export default function PipeLineManage(props: any) {
         // };
       },
       renderFormItem: (_: any, row: any) => {
-        return <Input disabled placeholder='该code系统自动生成' />
+        return <Input disabled placeholder='code系统自动生成' />
       },
       ellipsis: true,
       width: '45%',

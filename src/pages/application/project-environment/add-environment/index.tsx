@@ -251,7 +251,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             //  rules={[{ required: true, message: '请输入项目环境CODE!' }]}
             rules={[
               {
-                required: true,
+                required: mode === 'EDIT',
                 message: '输入的项目环境CODE里请不要包含“dev,test,pre,prod”字符',
                 pattern: /^(?!.*dev|.*test|.*prod|.*pre)/,
               },
