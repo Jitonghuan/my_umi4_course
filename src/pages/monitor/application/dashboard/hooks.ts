@@ -51,18 +51,18 @@ export function useQueryPodCpu() {
                   });
                 });
               }
-              if (key === 'cpuRequest') {
-                dataSource['cpuRequest']?.map((ele: any, index_one: number) => {
-                  ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-                    cpuRequestData.push({
-                      category: 'cpuRequest_' + Object.keys(ele)[0],
-                      // time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                      time: parseInt(item[0]) * 1000,
-                      precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-                    });
-                  });
-                });
-              }
+              // if (key === 'cpuRequest') {
+              //   dataSource['cpuRequest']?.map((ele: any, index_one: number) => {
+              //     ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+              //       cpuRequestData.push({
+              //         category: 'cpuRequest_' + Object.keys(ele)[0],
+              //         // time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
+              //         time: parseInt(item[0]) * 1000,
+              //         precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
+              //       });
+              //     });
+              //   });
+              // }
               if (key === 'cpuUse') {
                 dataSource['cpuUse']?.map((ele: any, index_one: number) => {
                   ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
@@ -88,13 +88,13 @@ export function useQueryPodCpu() {
           });
 
           /* ---------------- */
-          cpuRequestData.sort((a: any, b: any) => {
-            return a.time - b.time;
-          });
+          // cpuRequestData.sort((a: any, b: any) => {
+          //   return a.time - b.time;
+          // });
 
-          cpuRequestData.map((el: any) => {
-            cpuRequestDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
-          });
+          // cpuRequestData.map((el: any) => {
+          //   cpuRequestDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
+          // });
 
           /* ---------------- */
           cpuUseData.sort((a: any, b: any) => {
@@ -105,7 +105,7 @@ export function useQueryPodCpu() {
             cpuUseDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
           });
 
-          const sumData = [cpuUseDataSource, cpuRequestDataSource, cpuLimitDataSource];
+          const sumData = [cpuUseDataSource, cpuLimitDataSource];
 
           setQueryPodCpuData(sumData);
         }

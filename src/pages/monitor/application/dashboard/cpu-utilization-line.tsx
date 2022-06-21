@@ -25,7 +25,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   }, [data]);
 
   const getData = (value: string) => {
-    let optionData = value === '1' ? data[0] : value === '2' ? data[1] : value === '3' ? data[2] : [];
+    let optionData = value === '1' ? data[0] : value === '2' ? data[1] : [];
     setSumData(optionData);
     // sumData=optionData
     setOption(value);
@@ -57,8 +57,8 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
 
   const podsCpuOption = [
     { label: 'cpuUse', value: '1' },
-    { label: 'cpuRequest', value: '2' },
-    { label: 'cpuLimit', value: '3' },
+    // { label: 'cpuRequest', value: '2' },
+    { label: 'cpuLimit', value: '2' },
   ];
 
   return (
