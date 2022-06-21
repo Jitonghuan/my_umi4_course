@@ -44,7 +44,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
   };
 
-  const onScroll = (direction: any, e: any) => {};
+  const onScroll = (direction: any, e: any) => { };
   let getfilterOption = (inputValue: string, option: any) => option?.title?.indexOf(inputValue) > -1;
 
   const handleOk = () => {
@@ -260,7 +260,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
             {mode === 'EDIT' ? (
               <Input style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
             ) : (
-              <Input addonBefore="pro-" style={{ width: 300 }} placeholder="单行输入" disabled={editDisabled}></Input>
+              <Input style={{ width: 300 }} placeholder="code系统自动生成" disabled></Input>
             )}
           </Form.Item>
           <Form.Item
