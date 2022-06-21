@@ -85,13 +85,11 @@ export const tableSchema = [
 export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
   let arry: any = [];
   let nameArry: any = [];
-  console.log('dataSource', dataSource);
   dataSource?.map((item: any) => {
     arry.push({
       name: item?.name,
       data: item.data,
       type: 'line',
-      smooth: 'true', //是否平滑显示折现
     });
     nameArry.push(item?.name);
   });
@@ -100,6 +98,13 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     tooltip: {
       trigger: 'axis',
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
+
     grid: {
       bottom: 45,
       top: 30,
@@ -152,7 +157,6 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
       name: item?.name,
       data: item.data,
       type: 'line',
-      smooth: 'true', //是否平滑显示折现
     });
     nameArry.push(item?.name);
   });
@@ -160,6 +164,13 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     tooltip: {
       trigger: 'axis',
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
+
     grid: {
       bottom: 45,
       top: 30,
@@ -212,7 +223,6 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
       name: item?.name,
       data: item.data,
       type: 'line',
-      smooth: 'true', //是否平滑显示折现
     });
     nameArry.push(item?.name);
   });
@@ -220,6 +230,13 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     tooltip: {
       trigger: 'axis',
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
+
     grid: {
       bottom: 70,
       top: 34,
@@ -265,7 +282,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
 };
 
 // 元空间
-export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
+export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
   let arry: any = [];
   let nameArry: any = [];
 
@@ -274,16 +291,22 @@ export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
       name: item?.name,
       data: item.data,
       type: 'line',
-      smooth: 'true', //是否平滑显示折现
     });
     nameArry.push(item?.name);
   });
-  console.log('xAxisy', xAxisy);
+  console.log('xAxisy', xAxis);
   console.log('data', arry);
   return {
     tooltip: {
       trigger: 'axis',
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
+
     grid: {
       bottom: 45,
       top: 30,
@@ -313,7 +336,7 @@ export const getGCDataChartOption: any = (xAxisy = [], dataSource = []) => {
           return value.substr(0, value.length - 3);
         },
       },
-      data: xAxisy,
+      data: xAxis,
     },
     yAxis: [
       {

@@ -271,19 +271,29 @@ export const queryGcTime = (params: { [key: string]: string }) =>
       // const youngSum = youngGCTimeSum?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
 
       return {
-        count: {
+        fullCount: {
           xAxis,
-          dataSource: fullGCTimeArry.concat(youngGCTimeArry),
+          dataSource: fullGCTimeArry,
         },
-        sum: {
+        fullSum: {
           xAxis,
-          dataSource: fullGCTimeSumArry.concat(youngGCTimeSumArry),
+          dataSource: fullGCTimeSumArry,
+        },
+        youngCount: {
+          xAxis,
+          dataSource: youngGCTimeArry,
+        },
+        youngSum: {
+          xAxis,
+          dataSource: youngGCTimeSumArry,
         },
       };
     }
     return {
-      count: {},
-      sum: {},
+      fullCount: {},
+      fullSum: {},
+      youngCount: {},
+      youngSum: {},
     };
   });
 
@@ -381,16 +391,34 @@ export const queryJvmHeap = (params: { [key: string]: string }) =>
       // const heapSurvivor = heapSurvivorSpace?.map((el: string[]) => Number(el[1]).toFixed(2)) || [];
 
       return {
-        count: {
+        //使用总和
+        fullCount: {
           xAxis,
-          dataSource: heapEdenSpaceArry.concat(heapMemSumArry, heapOldGenArry, heapSurvivorSpaceArry),
+          dataSource: heapMemSumArry,
+        },
+        //年轻代Eden区
+        fullSum: {
+          xAxis,
+          dataSource: heapEdenSpaceArry,
+        },
+        // 年轻代Survivor区
+        youngCount: {
+          xAxis,
+          dataSource: heapSurvivorSpaceArry,
+        },
+        //老年代
+        youngSum: {
+          xAxis,
+          dataSource: heapOldGenArry,
         },
         sum: {},
       };
     }
     return {
-      count: {},
-      sum: {},
+      fullCount: {},
+      fullSum: {},
+      youngCount: {},
+      youngSum: {},
     };
   });
 
@@ -434,9 +462,10 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
+      console.log('metaspaceArry', metaspaceArry);
 
       return {
-        count: {
+        fullCount: {
           xAxis,
           dataSource: metaspaceArry,
         },
@@ -444,8 +473,8 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       };
     }
     return {
-      count: {},
-      sum: {},
+      fullCount: {},
+      fullSum: {},
     };
   });
 

@@ -17,7 +17,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
     xField: 'time',
     yField: 'precentage',
     seriesField: 'category',
-    color: ['#6495ED', '#60d7a7', '#BDB76B'],
+    // color: ['#6495ED', '#60d7a7', '#BDB76B'],
     xAxis: {
       range: [0, 1],
       // tickCount: 5,

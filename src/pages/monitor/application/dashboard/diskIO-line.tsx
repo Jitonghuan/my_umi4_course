@@ -18,7 +18,7 @@ export default function DiskIOLine(props: ChartCaseListProps) {
     xField: 'time',
     yField: 'value',
     seriesField: 'category',
-    color: ['green', '#8bc0d6'],
+    // color: ['green', '#8bc0d6'],
     LegendCfg: {
       legend: {
         position: 'top-left',

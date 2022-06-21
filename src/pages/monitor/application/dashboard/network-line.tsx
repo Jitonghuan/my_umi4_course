@@ -17,7 +17,7 @@ export default function NetWorkLine(props: ChartCaseListProps) {
     xField: 'time',
     yField: 'precentage',
     seriesField: 'category',
-    color: ['#8bc0d6', '#60d7a7'],
+    // color: ['#8bc0d6', '#60d7a7'],
     yAxis: {
       label: {
         // 数值格式化为带百分号
