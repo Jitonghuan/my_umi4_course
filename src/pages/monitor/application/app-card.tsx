@@ -30,19 +30,35 @@ export interface IProps {
 }
 
 type IEchartResp = {
-  count: {
+  fullCount: {
     xAxis: string[];
     dataSource: string[][];
   };
-  sum: {
+  fullSum: {
+    xAxis: string[];
+    dataSource: string[][];
+  };
+  youngCount: {
+    xAxis: string[];
+    dataSource: string[][];
+  };
+  youngSum: {
     xAxis: string[];
     dataSource: string[][];
   };
 };
 
 const typeEnum = [
-  { label: '瞬时值', value: '1' },
-  { label: '累计值', value: '2' },
+  { label: 'FullGC-瞬时值', value: '1' },
+  { label: 'FullGC-累计值', value: '2' },
+  { label: 'YoungGC-瞬时值', value: '3' },
+  { label: 'YoungGC-累计值', value: '4' },
+];
+const memTypeEnum = [
+  { label: '使用总和', value: '1' },
+  { label: '年轻代Eden区', value: '2' },
+  { label: '年轻代Survivor区', value: '3' },
+  { label: '老年代', value: '4' },
 ];
 
 /**
@@ -89,8 +105,16 @@ const Coms = (props: IProps) => {
       },
     })
       .then((resp) => {
-        const resource = curtRadio === '1' ? resp.count : resp.sum;
+        const resource =
+          curtRadio === '1'
+            ? resp.fullCount
+            : curtRadio === '2'
+            ? resp.fullSum
+            : curtRadio === '3'
+            ? resp.youngCount
+            : resp.youngSum;
         const options = getOption(resource.xAxis, resource.dataSource);
+        console.log('');
         prevData.current = resp;
         setCurOptions(options);
       })
@@ -117,7 +141,14 @@ const Coms = (props: IProps) => {
       },
     })
       .then((resp) => {
-        const resource = fullRadio === '1' ? resp.count : resp.sum;
+        const resource =
+          fullRadio === '1'
+            ? resp.fullCount
+            : fullRadio === '2'
+            ? resp.fullSum
+            : fullRadio === '3'
+            ? resp.youngCount
+            : resp.youngSum;
         const options = getOption(resource.xAxis, resource.dataSource);
         prevFullData.current = resp;
         setFullOptions(options);
@@ -140,16 +171,31 @@ const Coms = (props: IProps) => {
     }
   }, [JSON.stringify(requestParams)]);
 
-  const handleRadioChange = (ev: RadioChangeEvent) => {
-    const { value } = ev.target;
+  const handleRadioChange = (value: string) => {
     if (fullDrawerShow) {
-      const resource = value === '1' ? prevFullData.current.count : prevFullData.current.sum;
+      const resource =
+        curtRadio === '1'
+          ? prevFullData.current.fullCount
+          : curtRadio === '2'
+          ? prevFullData.current.fullSum
+          : curtRadio === '3'
+          ? prevFullData.current.youngCount
+          : prevFullData.current.youngSum;
+      // const resource = value === '1' ? prevFullData.current.count : prevFullData.current.sum;
       const options = getOption(resource.xAxis, resource.dataSource);
       setFullOptions(options);
       setFullRadio(value);
     } else {
-      if (prevData.current?.count) {
-        const resource = value === '1' ? prevData.current.count : prevData.current.sum;
+      if (prevData.current?.fullCount) {
+        const resource =
+          value === '1'
+            ? prevData.current.fullCount
+            : value === '2'
+            ? prevData.current.fullSum
+            : value === '3'
+            ? prevData.current.youngCount
+            : prevData.current.youngSum;
+        // const resource = value === '1' ? prevData.current.count : prevData.current.sum;
         const options = getOption(resource.xAxis, resource.dataSource);
         setCurOptions(options);
       } else {
@@ -230,15 +276,22 @@ const Coms = (props: IProps) => {
               }}
             />
             <FullscreenOutlined className="app-operate-icon" onClick={handleFullClick} />
-            {hasRadio && (
-              <Radio.Group size="small" value={curtRadio} onChange={handleRadioChange}>
-                {typeEnum.map((el) => (
-                  <Radio.Button className="app-operate-switch" value={el.value}>
-                    {el.label}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-            )}
+            {hasRadio &&
+              (title === '堆内存详情/每分钟' ? (
+                <Select
+                  style={{ width: 170 }}
+                  onChange={handleRadioChange}
+                  value={curtRadio}
+                  options={memTypeEnum}
+                ></Select>
+              ) : (
+                <Select
+                  style={{ width: 170 }}
+                  onChange={handleRadioChange}
+                  value={curtRadio}
+                  options={typeEnum}
+                ></Select>
+              ))}
           </span>
         </div>
         <div className="app-content">
@@ -285,19 +338,26 @@ const Coms = (props: IProps) => {
                     queryFullDatas();
                   }}
                 />
-                {hasRadio && (
-                  <Radio.Group size="small" value={fullRadio} onChange={handleRadioChange}>
-                    {typeEnum.map((el) => (
-                      <Radio.Button className="app-operate-switch" value={el.value}>
-                        {el.label}
-                      </Radio.Button>
-                    ))}
-                  </Radio.Group>
-                )}
+                {hasRadio &&
+                  (title === '堆内存详情/每分钟' ? (
+                    <Select
+                      onChange={handleRadioChange}
+                      style={{ width: 170 }}
+                      value={fullRadio}
+                      options={memTypeEnum}
+                    ></Select>
+                  ) : (
+                    <Select
+                      onChange={handleRadioChange}
+                      style={{ width: 170 }}
+                      value={fullRadio}
+                      options={typeEnum}
+                    ></Select>
+                  ))}
               </span>
             </div>
             <ColorContainer roleKeys={['color']}>
-              <EchartsReact option={fullOptions} style={{ height: 400 }} />
+              <EchartsReact option={fullOptions} style={{ height: 500 }} />
             </ColorContainer>
           </div>
         </Spin>

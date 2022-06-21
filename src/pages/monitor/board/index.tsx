@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Tabs, Card, Form, Input, Spin, Select, Divider, Button } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
@@ -28,89 +28,12 @@ import {
   queryPodUrl,
 } from './service';
 import { resUseTableSchema, podUseTableSchema } from './schema';
-
+import { ITab, ICard, gridData, IMarket, tabList } from './type';
+import { AlarmModal } from './components/alarm-modal';
 import './index.less';
 import { getColorByValue } from './../util';
-export const START_TIME_ENUMS = [
-  {
-    label: 'Last 15 minutes',
-    value: 15 * 60 * 1000,
-  },
-  {
-    label: 'Last 30 minutes',
-    value: 30 * 60 * 1000,
-  },
-  {
-    label: 'Last 1 hours',
-    value: 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 6 hours',
-    value: 6 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 12 hours',
-    value: 12 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 24 hours',
-    value: 24 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 3 days',
-    value: 24 * 60 * 60 * 1000 * 3,
-  },
-  {
-    label: 'Last 7 days',
-    value: 24 * 60 * 60 * 1000 * 7,
-  },
-  {
-    label: 'Last 30 days',
-    value: 24 * 60 * 60 * 1000 * 30,
-  },
-];
-
-type ITab = {
-  /** key */
-  key: string;
-
-  /** title */
-  title: string | React.ReactNode;
-};
-
-type ICard = {
-  mode?: '1' | '2'; // 1 为资源使用率，2 为方块节点数
-  /** 标题 */
-  title?: string;
-  /** 值 */
-  value?: string;
-  /** 单位 */
-  unit?: string;
-  /** 警示 */
-  warn?: string;
-  /** 颜色 */
-  color?: string;
-  /** 方块显示数据源 */
-  dataSource?: ICard[];
-};
-
-const gridData = {
-  xs: 1,
-  sm: 1,
-  md: 2,
-  lg: 2,
-  xl: 4,
-  xxl: 4,
-  xxxl: 4,
-};
 
 const { ColorContainer } = colorUtil.context;
-
-// 大盘数据结构
-type IMarket = {
-  name: string;
-  href: string;
-};
 
 /**
  * Board
@@ -119,21 +42,12 @@ type IMarket = {
  */
 const Coms = (props: any) => {
   const [tabData, setTabData] = useState<ITab[]>();
-
   let href = window.location.href.includes('matrix-fygs') || window.location.href.includes('matrix-zslnyy');
-  const tabList = [
-    { label: 'DEV', value: 'dev' },
-    { label: 'TEST', value: 'test' },
-    { label: 'PRE', value: 'pre' },
-    { label: 'PROD', value: 'prod' },
-  ];
   const [currentTab, setCurrentTab] = useState<string>(href ? 'prod' : 'dev');
   const tabListFygs = [{ label: 'PROD', value: 'prod' }];
   const [cardDataLists, setCardDataLists] = useState<ICard[]>([]);
   const [useMarket, setUseMarket] = useState<IMarket[]>([]);
-  const [searchParams, setSearchParams] = useState<any>();
   const [ipDetailShow, setIpDetailShow] = useState<boolean>(false);
-  // const prevNode = useRef<INode>()
   const [resLoading, setResLoading] = useState<boolean>(false);
   const [podLoading, setPodLoading] = useState<boolean>(false);
   const [nodeLoading, setNodeLoading] = useState<boolean>(false);
@@ -152,6 +66,7 @@ const Coms = (props: any) => {
   const [queryNodeFileData, nodeFileloading, queryNodeFile] = useQueryNodeFile();
   const [queryNodeSocketData, nodeSocketloading, queryNodeSocket] = useQueryNodeSocket();
   const [queryNodeNetWorkData, nodeNetWorkloading, queryNodeNetWork] = useQueryNodeNetWork();
+  const [alarmInfoMode, setAlarmInfoMode] = useState<EditorMode>('HIDE');
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [total, setTotal] = useState(0);
@@ -265,16 +180,13 @@ const Coms = (props: any) => {
       queryClustersData({ envTypeCode: currentTab }).then((resp) => {
         setClusterList(resp);
         setCurrentCluster(resp[0]?.value);
-        // selectCluster(resp[0]);
         if (resp[0]?.value) {
           queryResData(resp[0]?.value);
           queryPodData(resp[0]?.value);
-          // // reset();
           queryNodeList({ clusterId: resp[0]?.value });
           queryNameSpace(resp[0]?.value);
           queryUseMarket(resp[0]?.value);
         } else {
-          // reset();
           setUseMarket([]);
           setPodDataSource([]);
           queryNodeList({ clusterId: '' });
@@ -297,7 +209,6 @@ const Coms = (props: any) => {
   const [queryCount, setQueryCount] = useState<number>(0);
   const querChartData = (getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) => {
     setQueryCount(queryCount + 1);
-
     queryNodeCpu(getCluster, ip, startTime, endTime);
     queryNodeMem(getCluster, ip, startTime, endTime);
     queryNodeDisk(getCluster, ip, startTime, endTime);
@@ -319,9 +230,7 @@ const Coms = (props: any) => {
   const handleRefresh = () => {
     queryResData(currentCluster);
     queryPodData(currentCluster);
-    // reset();
     queryNodeList({ clusterId: currentCluster });
-
     queryUseMarket(currentCluster);
   };
 
@@ -378,12 +287,10 @@ const Coms = (props: any) => {
   const handleSearchRes = () => {
     let param = searchField.getFieldsValue();
     setNodeKeyWords(param);
-    // setSearchParams(searchField.getFieldsValue());
     queryNodeList({ clusterId: currentCluster, keyword: param.keyword, pageIndex: pageIndex, pageSize: pageSize });
   };
   const handleSearchPod = () => {
     let param = searchPodField.getFieldsValue();
-
     setSearchKeyWords(param);
     queryPodData(currentCluster, pageIndex, pageSize, param.keyword, param.namespace);
   };
@@ -416,12 +323,35 @@ const Coms = (props: any) => {
         </div>
       </Card>
     ) : (
-      <Card className="mode-table" bodyStyle={{ padding: '16px' }}>
+      <Card className="mode-table" id="mode-table-card" bodyStyle={{ padding: '16px' }}>
         {dataSource.map((el) => (
           <div className="mode-table-item">
             <h4 className="title">{el.title}</h4>
             <div className="value" style={{ color: el.color }}>
-              {el.value || '-'}
+              {el.title === '节点数' || el.title === 'POD数' ? (
+                <a
+                  href={
+                    el.title === '节点数'
+                      ? '#monitor-tabs-content-sec-node'
+                      : el.title === 'POD数'
+                      ? '#monitor-tabs-content-sec-pod'
+                      : '#mode-table-card'
+                  }
+                >
+                  {el.value || '-'}
+                </a>
+              ) : el.title === '告警数' && el.value ? (
+                <a
+                  onClick={() => {
+                    setAlarmInfoMode('VIEW');
+                  }}
+                >
+                  {el.value || '-'}
+                </a>
+              ) : (
+                <span>{el.value || '-'}</span>
+              )}
+
               {el.unit || ''}
             </div>
           </div>
@@ -432,6 +362,13 @@ const Coms = (props: any) => {
 
   return (
     <PageContainer className="monitor-board">
+      <AlarmModal
+        mode={alarmInfoMode}
+        curClusterId={currentCluster}
+        onClose={() => {
+          setAlarmInfoMode('HIDE');
+        }}
+      />
       <Card className="monitor-board-content">
         {/* {
           ipDetailShow && ( */}
@@ -514,8 +451,8 @@ const Coms = (props: any) => {
               </Form.Item>
             </Form>
           </div>
-
-          <div className="monitor-tabs-content-sec">
+          {/* 节点表格 */}
+          <div className="monitor-tabs-content-sec" id="monitor-tabs-content-sec-node">
             <HulkTable
               rowKey="id"
               size="small"
@@ -600,7 +537,8 @@ const Coms = (props: any) => {
               </Form.Item>
             </Form>
           </div>
-          <div className="monitor-tabs-content-sec">
+          {/* pod表格 */}
+          <div className="monitor-tabs-content-sec" id="monitor-tabs-content-sec-pod">
             <HulkTable
               rowKey="id"
               size="small"
@@ -614,7 +552,6 @@ const Coms = (props: any) => {
                 current: pageIndex,
                 showSizeChanger: true,
                 onShowSizeChange: (_, next) => {
-                  // debugger
                   setPageIndex(1);
                   setPageSize(next);
                   // queryPodData(currentCluster, 1, next, searchKeyWords?.keyword);
@@ -623,7 +560,6 @@ const Coms = (props: any) => {
 
                 // showTotal: () => `总共 ${total} 条数据`,
                 onChange: (next, size: any) => {
-                  console.log('next', next, size);
                   setPageSize(size);
                   setPageIndex(next),
                     queryPodData(currentCluster, next, size, searchKeyWords?.keyword, searchKeyWords?.namespace);

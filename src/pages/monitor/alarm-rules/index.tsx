@@ -110,7 +110,9 @@ export default function AlarmRules() {
         </Form>
       </FilterCard>
       <ContentCard>
-        <RulesTable dataSource={tableProps} onQuery={queryList} />
+        <div id="rules-table">
+          <RulesTable dataSource={tableProps} onQuery={queryList} />
+        </div>
       </ContentCard>
     </PageContainer>
   );

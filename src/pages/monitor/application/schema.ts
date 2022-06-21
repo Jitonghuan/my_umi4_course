@@ -1,4 +1,6 @@
 // 应用详情表格 schema
+import moment from 'moment';
+
 export interface ITableSchema {
   ip: string;
   cpu: string;
@@ -60,8 +62,8 @@ export const tableSchema = [
   },
   {
     dataIndex: 'uptime',
-    title: '运行时长(天)',
-    width: 110,
+    title: '运行时长',
+    width: 120,
   },
   {
     dataIndex: 'health',
@@ -83,12 +85,39 @@ export const tableSchema = [
 
 // GC 次数
 export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+    });
+    nameArry.push(item?.name);
+  });
+
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0]?.seriesName}:` +
+          `${Number.parseInt(params[0]?.value)}次, ip:` +
+          params[0]?.data?.ip +
+          `<br> ${params[1]?.seriesName}:` +
+          `${Number.parseInt(params[1]?.value)}次, ip:` +
+          params[1]?.data?.ip
+        );
+      },
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
-      bottom: 34,
+      bottom: 45,
       top: 30,
       left: 30,
       right: 40,
@@ -96,10 +125,12 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['FullGC次数', 'YoungGC次数'],
+      data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {
@@ -124,30 +155,44 @@ export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: 'FullGC次数',
-        data: dataSource?.[0] || [],
-        type: 'line',
-      },
-      {
-        // yAxisIndex: 1,
-        name: 'YoungGC次数',
-        data: dataSource?.[1] || [],
-        type: 'line',
-      },
-    ],
+    series: arry,
   };
 };
 
 // GC 耗时
 export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+    });
+    nameArry.push(item?.name);
+  });
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0].seriesName}:` +
+          `${Number.parseInt(params[0].value)}次, ip:` +
+          params[0].data.ip +
+          `<br> ${params[1].seriesName}:` +
+          `${Number.parseInt(params[1].value)}次, ip:` +
+          params[1].data.ip
+        );
+      },
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
-      bottom: 34,
+      bottom: 45,
       top: 30,
       left: 30,
       right: 40,
@@ -155,10 +200,12 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['FullGC耗时', 'YoungGC耗时'],
+      data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {
@@ -183,30 +230,50 @@ export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: 'FullGC耗时',
-        data: dataSource[0],
-        type: 'line',
-      },
-      {
-        // yAxisIndex: 1,
-        name: 'YoungGC耗时',
-        data: dataSource[1],
-        type: 'line',
-      },
-    ],
+    series: arry,
   };
 };
 
 // 内存
 export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+    });
+    nameArry.push(item?.name);
+  });
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return (
+          `${params[0].seriesName}:` +
+          `${Number.parseInt(params[0].value)}MB, ip:` +
+          params[0].data.ip +
+          `<br> ${params[1].seriesName}:` +
+          `${Number.parseInt(params[1].value)}MB, ip:` +
+          params[1].data.ip +
+          `<br> ${params[2].seriesName}:` +
+          `${Number.parseInt(params[2].value)}MB, ip:` +
+          params[3].data.ip +
+          `<br> ${params[3].seriesName}:` +
+          `${Number.parseInt(params[3].value)}MB, ip:` +
+          params[3].data.ip
+        );
+      },
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
-      bottom: 34,
+      bottom: 70,
       top: 34,
       left: 30,
       right: 40,
@@ -214,10 +281,12 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['使用总和', '年轻代Eden区', '年轻代Survivor区', '老年代'],
+      data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
       axisLine: {
@@ -243,39 +312,40 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: '使用总和',
-        data: dataSource?.[0] || [],
-        type: 'line',
-      },
-      {
-        name: '年轻代Eden区',
-        data: dataSource?.[1] || [],
-        type: 'line',
-      },
-      {
-        name: '年轻代Survivor区',
-        data: dataSource?.[2] || [],
-        type: 'line',
-      },
-      {
-        name: '老年代',
-        data: dataSource?.[3] || [],
-        type: 'line',
-      },
-    ],
+    series: arry,
   };
 };
 
 // 元空间
 export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+
+  dataSource?.map((item: any) => {
+    arry.push({
+      name: item?.name,
+      data: item.data,
+      type: 'line',
+    });
+    nameArry.push(item?.name);
+  });
+  console.log('xAxisy', xAxis);
+  console.log('data', arry);
   return {
     tooltip: {
       trigger: 'axis',
+      formatter: function (params: any) {
+        return `${params[0].seriesName}:` + `${Number.parseInt(params[0].value)}MB, ip:` + params[0].data.ip;
+      },
     },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
     grid: {
-      bottom: 34,
+      bottom: 45,
       top: 30,
       left: 30,
       right: 40,
@@ -283,12 +353,15 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     },
     legend: {
       bottom: 0,
-      data: ['元空间'],
+      data: nameArry,
       icon: 'rect',
+      type: 'scroll', //分页类型
+      orient: 'horizontal',
     },
-    color: ['#4BA2FF', '#54DA81'],
+    // color: ['#4BA2FF', '#54DA81'],
     xAxis: {
       type: 'category',
+
       axisLine: {
         lineStyle: {
           color: '#4BA2FF',
@@ -300,7 +373,7 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
           return value.substr(0, value.length - 3);
         },
       },
-      data: xAxis,
+      data: xAxisy,
     },
     yAxis: [
       {
@@ -312,12 +385,6 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
         splitNumber: 3,
       },
     ],
-    series: [
-      {
-        name: '元空间',
-        data: dataSource?.[0] || [],
-        type: 'line',
-      },
-    ],
+    series: arry,
   };
 };
