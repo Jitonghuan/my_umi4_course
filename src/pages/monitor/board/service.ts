@@ -156,3 +156,27 @@ export const queryPodNamespaceData = (params: { clusterId: string }) =>
     }
     return [];
   });
+
+/**
+ * 告警数跳转告警列表
+ */
+export const clusterAlertInfoApi = `${appConfig.apiPrefix}/monitorManage/resource/clusterAlertInfo`;
+export const queryClusterAlertInfo = (params: { clusterId: string }) =>
+  getRequest(clusterAlertInfoApi, { data: params }).then((res: any) => {
+    if (res?.success) {
+      const result: any = [];
+      let dataSource = res.data;
+      dataSource?.map((ele: any, index_one: number) => {
+        result.push({
+          key: index_one,
+          alarmName: Object.keys(ele)[0],
+          activeAt: Object.values(dataSource[index_one])[0]?.activeAt,
+          description: Object.values(dataSource[index_one])[0]?.description,
+          labels: Object.values(dataSource[index_one])[0]?.labels,
+        });
+      }, []);
+
+      return result;
+    }
+    return [];
+  });
