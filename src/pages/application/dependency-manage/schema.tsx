@@ -1,5 +1,6 @@
-import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
+import { Popconfirm, Tooltip, Switch, Tag, Space } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+import { datetimeCellRender } from '@/utils';
 
 // 表格 schema
 export const dependecyTableSchema = ({
@@ -57,6 +58,9 @@ export const dependecyTableSchema = ({
       title: '升级截止日期',
       dataIndex: 'blockTime',
       key: 'blockTime',
+      render: (value: any, record: any) => {
+        return datetimeCellRender(value);
+      },
     },
     {
       title: '校验级别',
@@ -82,9 +86,10 @@ export const dependecyTableSchema = ({
       title: '操作',
       dataIndex: 'opt',
       key: 'action',
+      width: 130,
       render: (text: string, record: any, index: number) => {
         return (
-          <>
+          <Space>
             <a
               onClick={() => {
                 onViewClick(record, index);
@@ -109,7 +114,7 @@ export const dependecyTableSchema = ({
                 删除
               </a>
             </Popconfirm>
-          </>
+          </Space>
         );
       },
     },
