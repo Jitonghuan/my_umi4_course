@@ -68,7 +68,7 @@ export default function EnvironmentEditor(props: EnvironmentListProps) {
       if (mode === 'ADD') {
         let addParamsObj = {
           benchmarkEnvCode: params.benchmarkEnvCode || '',
-          projectEnvCode: `pro-${params.envCode}` || '',
+          // projectEnvCode: `pro-${params.envCode}` || '',
           projectEnvName: params.envName || '',
           mark: params.mark || '',
           relationApps: selectedAppCode || [],
