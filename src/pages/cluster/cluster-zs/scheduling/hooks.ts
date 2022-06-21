@@ -25,7 +25,6 @@ export function useInitClusterData() {
 
 export function useClusterSource() {
   const [data, setData] = useState<any[]>([]);
-
   useEffect(() => {
     let commonEnvCode = '';
     let dataArry: any = [];
@@ -41,6 +40,7 @@ export function useClusterSource() {
             if (resp?.success) {
               resp.data?.map((ele: any) => {
                 dataArry.push({
+                  ...ele,
                   title: ele.hospitalDistrictName,
                   name: ele.hospitalDistrictCode,
                   nowDisPatchCluster: ele?.nowDisPatchCluster,
