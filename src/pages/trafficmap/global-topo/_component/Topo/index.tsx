@@ -362,9 +362,9 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         })
         // let res = mockRomote();
         // let res = mockData;
-        res.data = res?.data || JSON.parse(JSON.stringify(mockData.data));
-        res.data.Nodes = _.uniqBy(res?.data?.Nodes, 'id');
-        res.data.Calls = _.uniqBy(res?.data?.Calls?.map((e: any) => ({ ...e, id: e.id = e.source + "-" + e.target })), 'id');
+        // res.data = res?.data || JSON.parse(JSON.stringify(mockData.data));
+        // res.data.Nodes = _.uniqBy(res?.data?.Nodes, 'id');
+        // res.data.Calls = _.uniqBy(res?.data?.Calls?.map((e: any) => ({ ...e, id: e.id = e.source + "-" + e.target })), 'id');
 
         const styledData = ({ Nodes, Calls }: any) => {
             const clusterSize: any = {};
