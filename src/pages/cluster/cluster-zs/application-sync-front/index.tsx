@@ -37,10 +37,9 @@ export default function FrontApplication() {
           return;
         }
         const source = result?.data;
-        if (Array.isArray(source) && source.length > 0) {
-          const differenceData = source.map((item: any) => '+' + item);
+        if (typeof source ==='string' && source !=='') {
           const next = [
-            { cluster: 'A', difference: differenceData.join(',') },
+            { cluster: 'A', difference: source },
             { cluster: 'B', difference: '-' },
           ];
           setClusterData(next);
@@ -136,7 +135,7 @@ export default function FrontApplication() {
         }}
       >
         <Table.Column dataIndex="cluster" title="集群" />
-        <Table.Column dataIndex="difference" title="差异文件" />
+        <Table.Column dataIndex="difference" title="差异版本号" />
       </Table>
     </ContentCard>
   );
