@@ -318,7 +318,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 const oldNodes = expandList.nodes.filter((item: any) => item?.region !== model.id);
                 const nodes = oldNodes.filter((item: any) => item.id !== model.id)
                 const currentRegion = expandList.nodes.find((item: any) => item.id === model.id);
-                console.log(currentRegion.x, currentRegion.y, 'size')
                 // 找到当前域下的所有app节点并设置初始位置
                 const newNode = originData.nodes
                     .filter((item: any) => item.region === model.id && item.nodeType === 'app')
@@ -328,7 +327,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                         x: (currentRegion.x || 0) + random(10),
                         y: (currentRegion.y || 0) + random(5),
                     }));
-                console.log(newNode.map((item: any) => item.x), newNode.map((item: any) => item.y))
                 setNeedExpandList({ nodes: [...nodes, ...newNode], edges: originData.edges });
             };
 
