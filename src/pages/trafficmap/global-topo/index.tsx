@@ -5,17 +5,20 @@
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Select, Button, DatePicker, message, Switch } from 'antd';
-import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined, MinusCircleOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
 import * as echarts from 'echarts';
 import moment from 'moment';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import Topo from './Topo';
+import Graph from '../global-topo/_component/Topo';
 import DragWrapper from './_component/DragWrapper';
 import RedLineModal from './_component/RedLineModal';
 import { IAppInfo } from '../interface';
 import { useEnvOptions } from '../hooks';
 import { getAppMonitorInfo } from '../service';
+import { getEnvs } from '.././service';
+
 import './index.less';
 
 const globalTopo: React.FC = () => {
@@ -28,15 +31,15 @@ const globalTopo: React.FC = () => {
   const [isRedLineVisible, setIsRedLineVisible] = useState<boolean>(false);
 
   const [clickId, setClickId] = useState<string>('');
-  const [selectTime, setSelectTime] = useState(moment().subtract(2, 'minutes'));
+  const [selectTime, setSelectTime] = useState(moment().subtract(1, 'minutes'));
   const [refreshFrequency, setRefreshFrequency] = useState<string>('infinity');
 
   const [selectEnv, setSelectEnv] = useState('');
   const [selectEnvName, setSelectEnvName] = useState('');
   const [isMock, setIsMock] = useState(false);
   const [isExpand, setIsExpand] = useState(true); // true显示全屏展开  false显示全屏收起。
-
-  const [envOptions]: any[][] = useEnvOptions();
+  const [envOptions, setEnvOptions] = useState<any>([]);
+  // const [envOptions]: any[][] = useEnvOptions();
 
   const TopoRef = useRef<any>();
 
@@ -44,10 +47,24 @@ const globalTopo: React.FC = () => {
     clickId && onAppClick(clickId);
   }, [clickId]);
 
+
+
   useEffect(() => {
-    setSelectEnv(envOptions[0]?.value);
-    setSelectEnvName(envOptions[0]?.label);
+    if (envOptions?.length) {
+      setSelectEnv(envOptions[0]?.value);
+      setSelectEnvName(envOptions[0]?.label);
+    }
   }, [envOptions]);
+
+  //获取环境列表
+  useEffect(() => {
+    getEnvs().then((res: any) => {
+      if (res && res.success) {
+        const data = res?.data?.envs.map((item: any) => ({ label: item.envName, value: item.envCode }));
+        setEnvOptions(data);
+      }
+    });
+  }, []);
 
   const expandAll = useCallback(() => {
     if (isExpand) {
@@ -210,7 +227,7 @@ const globalTopo: React.FC = () => {
     console.log('redline', id);
   }, []);
 
-  const onRedLineSelect = useCallback((record) => {
+  const onRedLineSelect = useCallback((record: any) => {
     setSelectTime(moment(record.time));
   }, []);
 
@@ -226,7 +243,7 @@ const globalTopo: React.FC = () => {
               onChange={(env, option: any) => {
                 setSelectEnv(env);
                 setSelectEnvName(option.label || env);
-                setSelectTime(moment().subtract(2, 'minutes'));
+                setSelectTime(moment().subtract(1, 'minutes'));
                 setRefreshFrequency('infinity');
               }}
               showSearch
@@ -237,8 +254,8 @@ const globalTopo: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>时间：</div>
               <DatePicker
-                showTime={{ format: 'HH:mm' }}
-                format="YYYY-MM-DD HH:mm"
+                showTime={{ format: 'HH:mm:ss' }}
+                format="YYYY-MM-DD HH:mm:ss"
                 value={selectTime}
                 onChange={(value, dateString) => {
                   setSelectTime(value || moment());
@@ -292,14 +309,14 @@ const globalTopo: React.FC = () => {
           </div>
         </div>
 
-        <ContentCard style={{ backgroundColor: '#F7F8FA' }}>
+        <ContentCard style={{ backgroundColor: '#F7F8FA', height: 'calc(100% - 60px)' }}>
           <div style={{ marginBottom: '10px' }} id="topo-box" className="topo-box">
             <div className="graph-box" style={{ position: 'relative' }}>
               {/**
                * DragWrapper:可拖拽弹窗组件
                * Topo:拓扑图
                */}
-              <Topo
+              {/* <Topo
                 // isFullScreen={isFullScreen}
                 onNodeClick={onNodeClick}
                 onRedLineClick={onRedLineClick}
@@ -311,7 +328,17 @@ const globalTopo: React.FC = () => {
                 setIsMock={setIsMock}
                 setIsExpand={setIsExpand}
                 setSelectTime={setSelectTime}
-              />
+              /> */}
+              <Graph
+                ref={TopoRef}
+                selectTime={selectTime}
+                selectEnv={selectEnv}
+                onNodeClick={onNodeClick}
+                onRedLineClick={onRedLineClick}
+                refreshFrequency={refreshFrequency}
+                setIsExpand={setIsExpand}
+                setSelectTime={setSelectTime}
+              ></Graph>
               <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
             </div>
           </div>
