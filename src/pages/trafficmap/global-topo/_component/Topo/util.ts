@@ -143,7 +143,7 @@ export const arrowStyleType: any = {
         lineDash: [4, 4, 4, 4],
         lineWidth: 1,
         endArrow: {
-            path: G6.Arrow.triangle(8, 8),
+            path: G6.Arrow.triangle(4, 4),
             fill: DANGEROUS_COLOR,
             // strokeOpacity: 0,
         },
@@ -156,7 +156,7 @@ export const arrowStyleType: any = {
         lineDash: [4, 4, 4, 4],
         lineWidth: 1,
         endArrow: {
-            path: G6.Arrow.triangle(8, 8),
+            path: G6.Arrow.triangle(4, 4),
             fill: WARNING_COLOR,
             // strokeOpacity: 0,
         },

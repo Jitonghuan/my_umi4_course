@@ -64,9 +64,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         const container = containerRef.current;
 
         const toolbar = new G6.ToolBar();
-
-        console.log(toolbar);
-
         //   右键菜单栏
         const menu = new G6.Menu({
             offsetX: 6,
@@ -76,15 +73,18 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 layout.stop(g);
                 const { item } = e;
                 const model = item?.getModel();
-                if (model.nodeType === 'region') {
-                    return `<ul class="g6-options-menu">
-        <li id='expand'>展开当前域</li>
-      </ul>`;
-                } else {
-                    return `<ul class="g6-options-menu">
-          <li id='collapse'>折叠当前域</li>
-        </ul>`;
+                if (model.region) {
+                    if (model.nodeType === 'region') {
+                        return `<ul class="g6-options-menu">
+            <li id='expand'>展开当前域</li>
+          </ul>`;
+                    } else {
+                        return `<ul class="g6-options-menu">
+              <li id='collapse'>折叠当前域</li>
+            </ul>`;
+                    }
                 }
+                return ''
             },
             handleMenuClick(target, item) {
                 const model = item?.getModel();
@@ -131,14 +131,13 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 const outDiv = document.createElement('div');
                 outDiv.style.width = 'fit-content';
                 outDiv.innerHTML = `
-          <ul>
-          <li>Id: ${e.item.getModel().id}</li>
-          <li>Type: ${e.item.getModel().type}</li>
-          <li>Region: ${e.item.getModel().region}</li>
-          </ul>
-          <ul>
-            <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
-          </ul>
+                <ul>
+                <li><div>Id: ${e.item.getModel().id}</div></li>
+                <li>Region: ${e.item.getModel().region || '无域节点'}</li>
+                </ul>
+                <ul>
+                  <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
+                </ul>
           `;
                 return outDiv;
             },
