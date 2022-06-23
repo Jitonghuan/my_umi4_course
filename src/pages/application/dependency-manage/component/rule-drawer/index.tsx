@@ -61,11 +61,11 @@ export default function RuleDrawer(props: any) {
           ? initData?.versionRange?.split(',')
           : [initData?.versionRange];
         if (versionRange) {
-          if ((versionRange.length = 2)) {
+          if (initData?.versionRange?.includes(',') && versionRange.length === 2) {
             setShowMore(true);
           }
           versionRange?.map((ele: any, index: any) => {
-            if (index == versionRange.length - 1) {
+            if (index == 1) {
               item2 = ele?.split('@')[0];
               version2 = ele?.split('@')[1];
             } else {
@@ -99,6 +99,7 @@ export default function RuleDrawer(props: any) {
       setisChecked(false);
       setisEnableChangeOption(0);
       setViewEditable(false);
+      setShowMore(false);
     };
   }, [mode]);
 
@@ -131,7 +132,8 @@ export default function RuleDrawer(props: any) {
     let versionRangeStringSecond: string = '';
     if (values?.versionRangeTwo && values?.versionRangeOne) {
       if (mode === 'EDIT') {
-        versionRangeStringFirst = splitReverseMap[values?.versionRangeOne] + '@' + values?.versionRangeTwo;
+        versionRangeStringFirst =
+          (splitReverseMap[values?.versionRangeOne] || values?.versionRangeOne) + '@' + values?.versionRangeTwo;
       }
       if (mode === 'ADD') {
         versionRangeStringFirst = values?.versionRangeOne + '@' + values?.versionRangeTwo;
@@ -142,7 +144,8 @@ export default function RuleDrawer(props: any) {
         versionRangeStringSecond = values?.versionRangeThree + '@' + values?.versionRangeFour;
       }
       if (mode === 'EDIT') {
-        versionRangeStringSecond = splitReverseMap[values?.versionRangeThree] + '@' + values?.versionRangeFour;
+        versionRangeStringSecond =
+          (splitReverseMap[values?.versionRangeThree] || values?.versionRangeThree) + '@' + values?.versionRangeFour;
       }
     }
 
@@ -159,6 +162,7 @@ export default function RuleDrawer(props: any) {
       groupId: values?.groupId,
       ruleName: values?.ruleName,
     };
+    console.log('paramsObj?.isEnable', paramsObj?.isEnable, versionRangeStringFirst);
     const res = await (mode === 'ADD' ? addRule({ ...paramsObj }) : updateRule({ ...paramsObj, id: initData?.id }));
     if (res && res.success) {
       message.success(`${mode === 'ADD' ? '新增' : '编辑'}成功`);
@@ -257,7 +261,6 @@ export default function RuleDrawer(props: any) {
           </Form.Item>
           <Form.Item label="升级截止日期：" name="blockTime" rules={[{ required: true, message: '这是必填项' }]}>
             <DatePicker format="YYYY-MM-DD" disabled={viewEditable} />
-            {console.log('currentDateTime00000', currentDateTime)}
           </Form.Item>
           <Form.Item label="校验级别：" name="checkLevel" rules={[{ required: true, message: '这是必填项' }]}>
             <Select style={{ width: 400 }} options={levelOption} disabled={viewEditable}></Select>

@@ -64,32 +64,52 @@ export const dependecyTableSchema = ({
           ne: '!=',
         };
         let dataobj2: any = {
-          '>': ')',
-          '>=': ']',
-          '<': '(',
-          '<=': '[',
+          '>': '(',
+          '>=': '[',
+          '<': ')',
+          '<=': ']',
           '=': '',
           '!=': '!',
         };
         let label1: any = '';
         let label2: any = '';
         let versionRange = value?.includes(',') ? value?.split(',') : [value];
-        if ((versionRange.length = 2)) {
+        if (value?.includes(',') && versionRange.length === 2) {
+          versionRange.map((ele: any, index: any) => {
+            if (index == versionRange.length - 1) {
+              const item2 = ele.split('@')[0];
+              const version2 = ele.split('@')[1];
+
+              label2 = `${version2}${dataobj2[dataObj[item2]]}`;
+            } else {
+              const item1 = ele.split('@')[0];
+              const version1 = ele.split('@')[1];
+
+              label1 = `${dataobj2[dataObj[item1]]}${version1}`;
+            }
+          });
         }
-        versionRange.map((ele: any, index: any) => {
-          if (index == versionRange.length - 1) {
+        if (!value?.includes(',') && versionRange.length === 1) {
+          versionRange.map((ele: any, index: any) => {
             const item1 = ele.split('@')[0];
             const version1 = ele.split('@')[1];
 
-            label1 = `${dataobj2[dataObj[item1]]}${version1}`;
-          } else {
-            const item2 = ele.split('@')[0];
-            const version2 = ele.split('@')[1];
+            if (item1 === 'gt' || item1 === 'ge') {
+              label1 = `${dataobj2[dataObj[item1]]}${version1})`;
+            }
+            if (item1 === 'lt' || item1 === 'le') {
+              label1 = `(${version1}${dataobj2[dataObj[item1]]}`;
+            }
+            if (item1 === 'ne') {
+              label1 = `${dataobj2[dataObj[item1]]}${version1}`;
+            }
+            if (item1 === 'eq') {
+              label1 = `${version1}`;
+            }
+          });
+        }
 
-            label2 = `${version2}${dataobj2[dataObj[item2]]}`;
-          }
-        });
-        let labela: any = label1 + label2;
+        let labela: any = label2 !== '' ? label1 + ',' + label2 : label1;
         return <span> {labela}</span>;
       },
     },
