@@ -26,6 +26,15 @@ export const getRuleListApi = addAPIPrefix('/appManage/dependencyManage/getRuleL
 
 export const queryAppListApi = addAPIPrefix('/appManage/list');
 
+/* GET 7、 获取需要依赖校验和不需要依赖校验的应用 */
+export const getDependencyManageAppListApi = addAPIPrefix('/appManage/dependencyManage/appList');
+
+/* POST 8、 应用依赖校验开关 */
+export const updateAppRuleApi = addAPIPrefix('/appManage/dependencyManage/updateAppRule');
+
+/* GET 9、 查询校验结果 */
+export const checkResultApi = addAPIPrefix('/appManage/dependencyManage/checkResult');
+
 // 新增依赖规则
 export const addRule = (data: any) => {
   const url = addAPIPrefix('/appManage/dependencyManage/addRule');

@@ -20,10 +20,11 @@ export const queryRuleList = (paramObj: {
     },
   }).then((res: any) => {
     if (res?.success) {
-      console.log('data----', res.data);
       const data = res.data || [];
       return data;
     }
     return [];
   });
 };
+
+/* 白名单 */

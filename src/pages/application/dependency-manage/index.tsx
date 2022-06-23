@@ -31,8 +31,6 @@ export default function RelyMangement() {
     setLoading(true);
     queryRuleList({ ...params, ...value })
       .then((res: any) => {
-        debugger;
-        console.log('res?.dataSource', res);
         setRuleList(res?.dataSource);
         setTotal(res?.pageInfo?.total);
       })
@@ -195,7 +193,6 @@ export default function RelyMangement() {
         onClose={() => {
           setWhiteListDrawer('HIDE');
         }}
-        initData={curRecord}
       />
     </PageContainer>
   );

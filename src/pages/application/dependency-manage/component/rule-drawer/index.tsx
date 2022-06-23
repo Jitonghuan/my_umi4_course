@@ -8,7 +8,7 @@ import { Drawer, Input, Button, Form, Select, message, Switch, DatePicker, Space
 import { addRule, updateRule } from '../../service';
 import { fetchEnvList } from '@/pages/application/_components/application-editor/service';
 import Icon, { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { operatorOption, operatorLessOption, operatorGreaterOption } from '../../schema';
+import { operatorOption, operatorLessOption, operatorGreaterOption, levelOption } from '../../schema';
 import moment from 'moment';
 
 export interface IProps {
@@ -18,11 +18,6 @@ export interface IProps {
   onSave?: () => any;
 }
 
-const levelOption = [
-  { label: '警告', value: 'warning' },
-  { label: '阻断', value: 'block' },
-];
-
 export default function RuleDrawer(props: any) {
   const { mode, onClose, onSave, initData } = props;
   const [form] = Form.useForm();
@@ -31,22 +26,80 @@ export default function RuleDrawer(props: any) {
   const [isEnableChangeOption, setisEnableChangeOption] = useState<number>(0);
   const [viewEditable, setViewEditable] = useState<boolean>(false);
   const [showMore, setShowMore] = useState<boolean>(false);
+  const [currentDateTime, setCurrentDateTime] = useState<any>();
 
+  const splitMap: any = {
+    gt: '>',
+    ge: '>=',
+    lt: '<',
+    le: '<=',
+    eq: '=',
+    ne: '!=',
+  };
+  const splitReverseMap: any = {
+    '>': 'gt',
+    '>=': 'ge',
+    '<': 'lt',
+    '<=': 'le',
+    '=': 'eq',
+    '!=': 'ne',
+  };
   useEffect(() => {
     if (mode === 'HIDE') return;
-    if (mode === 'ADD') {
-      form.resetFields();
+    if (mode === 'VIEW') {
+      setViewEditable(true);
     }
     if (mode === 'EDIT') {
-      // setIsDisabled(true);
+      if (initData) {
+        // let versionRange = ['gt@2.0.0','lt@9.0.0'];
+
+        let item1 = '';
+        let version1 = '';
+        let item2 = '';
+        let version2 = '';
+        let versionRange = initData?.versionRange?.includes(',')
+          ? initData?.versionRange?.split(',')
+          : [initData?.versionRange];
+        if (versionRange) {
+          if ((versionRange.length = 2)) {
+            setShowMore(true);
+          }
+          versionRange?.map((ele: any, index: any) => {
+            if (index == versionRange.length - 1) {
+              item2 = ele?.split('@')[0];
+              version2 = ele?.split('@')[1];
+            } else {
+              item1 = ele?.split('@')[0];
+              version1 = ele?.split('@')[1];
+            }
+          });
+          form.setFieldsValue({ versionRangeOne: splitMap[item1] });
+          form.setFieldsValue({ versionRangeTwo: version1 });
+          form.setFieldsValue({ versionRangeThree: splitMap[item2] });
+          form.setFieldsValue({ versionRangeFour: version2 });
+        }
+        form.setFieldsValue({
+          ruleName: initData?.ruleName,
+          groupId: initData?.groupId,
+          artifactId: initData?.artifactId,
+          envCode: initData?.envCode,
+          checkLevel: initData?.checkLevel,
+          blockTime: moment(initData?.blockTime, 'YYYY-MM-DD'),
+        });
+        setCurrentDateTime(initData?.blockTime);
+        setisChecked(initData?.isEnable === 0 ? false : true);
+        setisEnableChangeOption(initData?.isEnable);
+      }
     } else {
       // setIsDisabled(false);
     }
-    if (initData) {
-      form.setFieldsValue({
-        ...initData,
-      });
-    }
+
+    return () => {
+      form.resetFields();
+      setisChecked(false);
+      setisEnableChangeOption(0);
+      setViewEditable(false);
+    };
   }, [mode]);
 
   useEffect(() => {
@@ -74,18 +127,31 @@ export default function RuleDrawer(props: any) {
   const handleSubmit = async () => {
     const values = await form.validateFields();
 
-    let versionRangeArry: any = [];
+    let versionRangeStringFirst: string = '';
+    let versionRangeStringSecond: string = '';
     if (values?.versionRangeTwo && values?.versionRangeOne) {
-      versionRangeArry.push(values?.versionRangeOne + '@' + values?.versionRangeTwo);
+      if (mode === 'EDIT') {
+        versionRangeStringFirst = splitReverseMap[values?.versionRangeOne] + '@' + values?.versionRangeTwo;
+      }
+      if (mode === 'ADD') {
+        versionRangeStringFirst = values?.versionRangeOne + '@' + values?.versionRangeTwo;
+      }
     }
     if (values?.versionRangeThree && values?.versionRangeFour) {
-      versionRangeArry.push(values?.versionRangeThree + '@' + values?.versionRangeFour);
+      if (mode === 'ADD') {
+        versionRangeStringSecond = values?.versionRangeThree + '@' + values?.versionRangeFour;
+      }
+      if (mode === 'EDIT') {
+        versionRangeStringSecond = splitReverseMap[values?.versionRangeThree] + '@' + values?.versionRangeFour;
+      }
     }
 
-    console.log('versionRangeArry', versionRangeArry);
     let paramsObj = {
       isEnable: values?.isEnable ? 1 : 0,
-      versionRange: versionRangeArry,
+      versionRange:
+        versionRangeStringSecond !== ''
+          ? versionRangeStringFirst + ',' + versionRangeStringSecond
+          : versionRangeStringFirst,
       artifactId: values?.artifactId,
       blockTime: values?.blockTime,
       checkLevel: values?.checkLevel,
@@ -102,10 +168,10 @@ export default function RuleDrawer(props: any) {
   return (
     <Drawer
       visible={mode !== 'HIDE'}
-      title={mode === 'EDIT' ? '编辑规则' : '新增规则'}
+      title={mode === 'EDIT' ? '编辑规则' : mode === 'VIEW' ? '查看规则' : '新增规则'}
       maskClosable={false}
       onClose={onClose}
-      width={'40%'}
+      width={'50%'}
       footer={
         <div className="drawer-footer">
           <Button type="default" onClick={onClose}>
@@ -124,15 +190,23 @@ export default function RuleDrawer(props: any) {
           </Form.Item>
 
           <Form.Item label="groupId：" name="groupId" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 400 }} placeholder="请输入groupId" disabled={mode === 'EDIT'}></Input>
+            <Input
+              style={{ width: 400 }}
+              placeholder="请输入groupId"
+              disabled={mode === 'VIEW' ? viewEditable : mode === 'EDIT'}
+            ></Input>
           </Form.Item>
 
           <Form.Item label="artifactId：" name="artifactId" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 400 }} placeholder="请输入artifactId" disabled={mode === 'EDIT'}></Input>
+            <Input
+              style={{ width: 400 }}
+              placeholder="请输入artifactId"
+              disabled={mode === 'VIEW' ? viewEditable : mode === 'EDIT'}
+            ></Input>
           </Form.Item>
 
           <Form.Item label="校验环境：" name="envCode">
-            <Select style={{ width: 400 }} options={envData} allowClear showSearch></Select>
+            <Select style={{ width: 400 }} options={envData} allowClear showSearch disabled={viewEditable}></Select>
           </Form.Item>
           <Form.Item label="版本范围：">
             <Space>
@@ -140,11 +214,12 @@ export default function RuleDrawer(props: any) {
                 <Select
                   style={{ width: 150 }}
                   placeholder="请选择"
+                  disabled={viewEditable}
                   options={showMore ? operatorGreaterOption : operatorOption}
                 ></Select>
               </Form.Item>
               <Form.Item name="versionRangeTwo">
-                <Input style={{ width: 249 }} placeholder="请按照 1.0.0 的格式输入" />
+                <Input style={{ width: 249 }} placeholder="请按照 1.0.0 的格式输入" disabled={viewEditable} />
               </Form.Item>
               <Form.Item>
                 <PlusCircleOutlined
@@ -152,16 +227,22 @@ export default function RuleDrawer(props: any) {
                   onClick={() => {
                     setShowMore(true);
                   }}
+                  disabled={viewEditable}
                 />
               </Form.Item>
             </Space>
             {showMore && (
               <Space>
                 <Form.Item name="versionRangeThree">
-                  <Select style={{ width: 150 }} placeholder="请选择" options={operatorLessOption}></Select>
+                  <Select
+                    style={{ width: 150 }}
+                    placeholder="请选择"
+                    options={operatorLessOption}
+                    disabled={viewEditable}
+                  ></Select>
                 </Form.Item>
                 <Form.Item name="versionRangeFour">
-                  <Input style={{ width: 249 }} placeholder="请按照 1.0.0 的格式输入"></Input>
+                  <Input style={{ width: 249 }} placeholder="请按照 1.0.0 的格式输入" disabled={viewEditable}></Input>
                 </Form.Item>
                 <Form.Item>
                   <MinusCircleOutlined
@@ -175,10 +256,11 @@ export default function RuleDrawer(props: any) {
             )}
           </Form.Item>
           <Form.Item label="升级截止日期：" name="blockTime" rules={[{ required: true, message: '这是必填项' }]}>
-            <DatePicker format="YYYY-MM-DD" />
+            <DatePicker format="YYYY-MM-DD" disabled={viewEditable} />
+            {console.log('currentDateTime00000', currentDateTime)}
           </Form.Item>
           <Form.Item label="校验级别：" name="checkLevel" rules={[{ required: true, message: '这是必填项' }]}>
-            <Select style={{ width: 400 }} options={levelOption}></Select>
+            <Select style={{ width: 400 }} options={levelOption} disabled={viewEditable}></Select>
           </Form.Item>
           <Form.Item
             name="isEnable"
