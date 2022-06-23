@@ -807,6 +807,12 @@ export default [
         component: '@/pages/operation/task-manage',
       },
       {
+        path: 'helm-manage',
+        name: 'Helm管理',
+        key: 'helm-manage',
+        component: '@/pages/operation/helm-manage',
+      },
+      {
         path: 'tmpl-log',
         name: '操作日志',
         key: 'tmpl-log',
