@@ -3,7 +3,7 @@
 // @create 2021/08/19 10:57
 
 import React, { useState, useCallback, useContext } from 'react';
-import { Popover, Spin, Tag } from 'antd';
+import { Modal, Spin, Tag } from 'antd';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '@/pages/application/service';
@@ -27,28 +27,28 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
   const { appData } = useContext(DetailContext);
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<any>();
+  const [visable, setVisable] = useState(false);
 
-  const handleVisibleChange = useCallback(
-    async (nextVisible: boolean) => {
-      if (!nextVisible) return;
+  const handleVisibleChange = useCallback(async () => {
+    // if (!nextVisible) return;
 
-      setLoading(true);
-      try {
-        const result = await getRequest(APIS.checkResultUrl, {
-          data: {
-            deployId: deployInfo?.metadata?.id,
-          },
-        });
+    setVisable(true);
 
-        setDetail(result.data || '');
-      } catch {
-        return;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [deployInfo, appData],
-  );
+    setLoading(true);
+    try {
+      const result = await getRequest(APIS.checkResultUrl, {
+        data: {
+          deployId: deployInfo?.metadata?.id,
+        },
+      });
+
+      setDetail(result.data || '');
+    } catch {
+      return;
+    } finally {
+      setLoading(false);
+    }
+  }, [deployInfo, appData]);
 
   if (!visible) return null;
 
@@ -56,24 +56,36 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
   const result_qc = detail?.result_qc || {};
 
   return (
-    <Popover
-      title="查看详情"
-      trigger="click"
-      overlayStyle={{ width: 400 }}
-      overlayInnerStyle={{ width: 400 }}
-      onVisibleChange={handleVisibleChange}
-      content={
+    <>
+      <Modal
+        title="检验结果"
+        width={900}
+        visible={visable}
+        footer={null}
+        onOk={() => {
+          setVisable(false);
+        }}
+        onCancel={() => {
+          setVisable(false);
+        }}
+        // trigger="click"
+        // overlayStyle={{ width: 400 }}
+        // overlayInnerStyle={{ width: 400 }}
+        // onVisibleChange={handleVisibleChange}
+
+        // getPopupContainer={() =>
+        //   getParents(document.querySelector('#J_quality_check_detail_trigger')!, '.publish-content-compo')
+        // }
+      >
         <Spin spinning={loading}>
           <div className="quality-check-result">
             <pre> {detail}</pre>
           </div>
         </Spin>
-      }
-      getPopupContainer={() =>
-        getParents(document.querySelector('#J_quality_check_detail_trigger')!, '.publish-content-compo')
-      }
-    >
-      <a id="J_quality_check_detail_trigger">检验结果</a>
-    </Popover>
+      </Modal>
+      <a id="J_quality_check_detail_trigger" onClick={handleVisibleChange}>
+        检验结果
+      </a>
+    </>
   );
 }

@@ -28,6 +28,7 @@ export const dependecyTableSchema = ({
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      width: 20,
     },
     {
       title: '校验规则名称',
@@ -38,11 +39,25 @@ export const dependecyTableSchema = ({
       title: 'groupId',
       dataIndex: 'groupId',
       key: 'groupId',
+      render: (value: string) => {
+        return (
+          <Tooltip title={value} placement="topLeft">
+            {value}
+          </Tooltip>
+        );
+      },
     },
     {
       title: 'artifactId',
       dataIndex: 'artifactId',
       key: 'artifactId',
+      render: (value: string) => {
+        return (
+          <Tooltip title={value} placement="topLeft">
+            {value}
+          </Tooltip>
+        );
+      },
     },
     {
       title: '版本范围',
@@ -120,9 +135,16 @@ export const dependecyTableSchema = ({
       render: (value: any, record: any) => {
         return (
           <>
-            {value.split(',').map((item: any) => (
-              <Tag color="blue">{item}</Tag>
-            ))}
+            <Tooltip
+              placement="topLeft"
+              title={value.split(',').map((item: any) => (
+                <Tag color="blue">{item}</Tag>
+              ))}
+            >
+              {value.split(',').map((item: any) => (
+                <Tag color="blue">{item}</Tag>
+              ))}
+            </Tooltip>
           </>
         );
       },
@@ -139,7 +161,7 @@ export const dependecyTableSchema = ({
       title: '校验级别',
       dataIndex: 'checkLevel',
       key: 'checkLevel',
-      width: 96,
+      width: 80,
       render: (value: any, record: any) => {
         return <Tag color={levelOptionMap[value]?.color || 'default'}>{levelOptionMap[value]?.label || ''}</Tag>;
       },
@@ -148,7 +170,7 @@ export const dependecyTableSchema = ({
       title: '校验开关',
       dataIndex: 'isEnable',
       key: 'isEnable',
-      width: 96,
+      width: 80,
       render: (enable: any, record: any, index: number) => {
         return (
           <Switch
