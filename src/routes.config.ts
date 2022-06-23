@@ -94,6 +94,10 @@ export default [
     redirect: `${baseRoutePath}/operation/ng-manage/ng-list`,
   },
   {
+    path: `${baseRoutePath}/operation/helm-manage`,
+    redirect: `${baseRoutePath}/operation/ng-manage/helm-list`,
+  },
+  {
     path: `${baseRoutePath}/operation/label-manage`,
     redirect: `${baseRoutePath}/operation/label-manage/label-list`,
   },
@@ -811,6 +815,22 @@ export default [
         name: 'Helm管理',
         key: 'helm-manage',
         component: '@/pages/operation/helm-manage',
+        routes: [
+          {
+            path: 'helm-list',
+            name: 'NG配置列表',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/helm-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'helm-detail',
+            name: 'NG配置列表',
+            key: 'helm-detail',
+            component: '@/pages/operation/helm-manage/helm-detail',
+            hideInMenu: true,
+          },
+        ],
       },
       {
         path: 'tmpl-log',
