@@ -25,7 +25,7 @@ export default function QualityCheckStep(props: StepItemProps) {
       title="依赖检测"
       icon={isLoading && <LoadingOutlined />}
       status={status}
-      description={<DependencyCheckResult visible={isFinishCheck} deployInfo={deployInfo} />}
+      description={<DependencyCheckResult visible={isFinishCheck} deployInfo={deployInfo} status={status} />}
     />
   );
 }

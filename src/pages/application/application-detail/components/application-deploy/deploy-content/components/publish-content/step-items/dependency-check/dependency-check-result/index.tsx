@@ -5,6 +5,7 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { Modal, Spin, Tag } from 'antd';
 import { getRequest } from '@/utils/request';
+import { retry } from '@/pages/application/service';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
@@ -13,6 +14,7 @@ import './index.less';
 export interface QualityCheckResultProps {
   deployInfo: DeployInfoVO;
   visible?: boolean;
+  status?: string;
 }
 
 const getParents = (node: HTMLElement, selector: string): HTMLElement => {
@@ -22,12 +24,15 @@ const getParents = (node: HTMLElement, selector: string): HTMLElement => {
 };
 
 export default function QualityCheckResult(props: QualityCheckResultProps) {
-  const { visible, deployInfo } = props;
+  const { visible, deployInfo, status } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<any>();
   const [visable, setVisable] = useState(false);
+  const handleReTry = () => {
+    retry({ id: deployInfo?.metadata?.id });
+  };
 
   const handleVisibleChange = useCallback(async () => {
     // if (!nextVisible) return;
@@ -83,9 +88,16 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
           </div>
         </Spin>
       </Modal>
-      <a id="J_quality_check_detail_trigger" onClick={handleVisibleChange}>
-        检验结果
-      </a>
+      <p style={{ marginBottom: 2 }}>
+        <a id="J_quality_check_detail_trigger" onClick={handleVisibleChange}>
+          检验结果
+        </a>
+      </p>
+      {status === 'error' && (
+        <p>
+          <a onClick={handleReTry}>重试</a>
+        </p>
+      )}
     </>
   );
 }

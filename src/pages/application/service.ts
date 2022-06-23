@@ -544,7 +544,7 @@ export const retryBuild = (params: {
 export const retryDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
-  envCode: string;
+  envCode?: string;
 }) =>
   postRequest(retryDeployUrl, {
     data: params,
