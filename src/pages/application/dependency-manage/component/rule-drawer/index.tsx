@@ -181,7 +181,7 @@ export default function RuleDrawer(props: any) {
           <Button type="default" onClick={onClose}>
             取消
           </Button>
-          <Button type="primary" onClick={handleSubmit}>
+          <Button type="primary" onClick={handleSubmit} disabled={viewEditable}>
             保存
           </Button>
         </div>
