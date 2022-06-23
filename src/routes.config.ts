@@ -814,7 +814,6 @@ export default [
         path: 'helm-manage',
         name: 'Helm管理',
         key: 'helm-manage',
-        component: '@/pages/operation/helm-manage',
         routes: [
           {
             path: 'helm-list',
@@ -826,7 +825,7 @@ export default [
           {
             path: 'helm-detail',
             name: 'NG配置列表',
-            key: 'helm-detail',
+            key: 'helm-manage',
             component: '@/pages/operation/helm-manage/helm-detail',
             hideInMenu: true,
           },
