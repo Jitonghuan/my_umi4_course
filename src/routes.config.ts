@@ -95,7 +95,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/operation/helm-manage`,
-    redirect: `${baseRoutePath}/operation/ng-manage/helm-list`,
+    redirect: `${baseRoutePath}/operation/helm-manage/helm-list`,
   },
   {
     path: `${baseRoutePath}/operation/label-manage`,
@@ -827,6 +827,13 @@ export default [
             name: 'NG配置列表',
             key: 'helm-manage',
             component: '@/pages/operation/helm-manage/helm-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'create-release',
+            name: '创建release',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/create-release',
             hideInMenu: true,
           },
         ],

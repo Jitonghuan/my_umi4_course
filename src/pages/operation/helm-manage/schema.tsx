@@ -35,17 +35,17 @@ export const taskTableSchema = ({
   [
     {
       title: '发布名称',
-      dataIndex: 'jobName',
+      dataIndex: 'releaseName',
       width: 230,
     },
     {
       title: '命名空间',
-      dataIndex: 'jobName',
+      dataIndex: 'namespace',
       width: 230,
     },
     {
       title: 'Chart名称',
-      dataIndex: 'jobName',
+      dataIndex: 'chart',
       width: 230,
     },
     {
@@ -67,7 +67,7 @@ export const taskTableSchema = ({
 
     {
       title: '状态',
-      dataIndex: 'lastExecStatus',
+      dataIndex: 'status',
       width: 120,
 
       render: (status) => (

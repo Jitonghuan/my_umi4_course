@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
-import { Input, Table, Form, Button, Space } from 'antd';
+import { Input, Table, Form, Button, Space, Select } from 'antd';
 import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -139,7 +139,13 @@ export default function DNSManageList(props: any) {
               //   });
             }}
           >
-            <Form.Item label="任务Code：" name="jobCode">
+            <Form.Item label="选择集群" name="clusterName">
+              <Select placeholder="请输入任务Code" style={{ width: 290 }} />
+            </Form.Item>
+            <Form.Item label="命名空间" name="namespace">
+              <Select placeholder="请输入任务Code" style={{ width: 290 }} />
+            </Form.Item>
+            <Form.Item label="名称：" name="releaseName">
               <Input placeholder="请输入任务Code" style={{ width: 290 }} />
             </Form.Item>
             <Form.Item>
@@ -158,14 +164,12 @@ export default function DNSManageList(props: any) {
       <ContentCard>
         <div className="table-caption">
           <div className="caption-left">
-            <h3>任务列表</h3>
+            <h3>release列表</h3>
           </div>
           <div className="caption-right">
             <Space>
               {/* <RedoOutlined   onClick={onFresh} /> */}
-              <Button icon={<RedoOutlined />} onClick={onFresh}>
-                刷新
-              </Button>
+
               <Button
                 type="primary"
                 onClick={() => {
@@ -174,7 +178,7 @@ export default function DNSManageList(props: any) {
                 }}
               >
                 <PlusOutlined />
-                创建任务
+                创建
               </Button>
             </Space>
           </div>
