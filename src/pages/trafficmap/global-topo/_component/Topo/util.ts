@@ -136,7 +136,7 @@ const WARNING_COLOR = '#FFC020';
 const NORMAL_COLOR = '#3592FE';
 export const arrowStyleType: any = {
     dangerous: {
-        stroke: DANGEROUS_COLOR,
+        stroke: '#f6a0a7',
         defaultColor: DANGEROUS_COLOR,
         lineAppendWidth: 10,
         cursor: 'pointer',
@@ -149,7 +149,7 @@ export const arrowStyleType: any = {
         },
     },
     warning: {
-        stroke: WARNING_COLOR,
+        stroke: '#f7dfa0',
         defaultColor: WARNING_COLOR,
         lineAppendWidth: 10,
         cursor: 'pointer',
@@ -260,7 +260,20 @@ if (G6) {
                     if (value) {
                         fillShape?.attr('fill', APP_STATUS_FILL_COLOR[cfg.model.status || 'normal']);
                     } else {
-                        fillShape?.attr('fill', 'white');
+                        // fillShape?.attr('fill', 'white');
+                        // fillShape.attr('lineWidth', 1);
+                        // fillShape.attr('shadowColor', '');
+                    }
+                }
+                if (name === NODE_STATUS_FOCUS) {
+                    const shape = group.get('children')[0];
+                    if (value) {
+                        shape.attr('shadowBlur', APP_NODE_FOCUS_SHADOWBLUR);
+                        shape.attr('shadowColor', APP_STATUS_COLOR[cfg.model.status || 'normal']);
+                        shape.attr('lineWidth', 3);
+                    } else {
+                        shape.attr('shadowColor', '');
+                        shape.attr('lineWidth', 1);
                     }
                 }
             },
@@ -401,7 +414,7 @@ if (G6) {
                     if (value) {
                         shape.attr('shadowBlur', APP_NODE_FOCUS_SHADOWBLUR);
                         shape.attr('shadowColor', APP_STATUS_COLOR[cfg.model.status || 'normal']);
-                        shape.attr('lineWidth', APP_NODE_FOCUS_LineWidth);
+                        shape.attr('lineWidth', 3);
                     } else {
                         // shape.attr('shadowBlur', APP_NODE_DEFAULT_SHADOWBLUR);
                         shape.attr('shadowColor', '');

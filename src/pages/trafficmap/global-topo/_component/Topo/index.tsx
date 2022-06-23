@@ -30,14 +30,12 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         expandAll: () => {
             const nodes = originData.nodes.filter((item: any) => item.nodeType !== 'region');
             const edges = originData.edges;
-
             setNeedExpandList({ nodes: nodes, edges });
         },
         collapseAll: () => {
             const noReginNodes = originData?.nodes?.filter((item: any) => !item.region);
             const nodes = originData.nodes.filter((item: any) => item.nodeType === 'region');
             const edges = originData.edges;
-
             setNeedExpandList({ nodes: nodes.concat(noReginNodes), edges });
         },
     }), [originData, graph]);
@@ -183,6 +181,8 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 preventOverlap: true,
                 onLayoutEnd: () => {
                     renderRegions();
+                    g.fitView();
+
                 }
             },
         });
@@ -201,12 +201,12 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     {
                         id: `${k}-combo`,
                         type: 'region-combo',
+                        cluster: k,
                         ...comboStyled({ region: k, count: regions[k].length || 0 }),
                     },
                     regions[k],
                 );
             });
-            g.fitView();
         };
 
         // 关闭局部渲染，防止有残影
