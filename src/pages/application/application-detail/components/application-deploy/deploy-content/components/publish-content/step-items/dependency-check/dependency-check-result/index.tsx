@@ -36,11 +36,13 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
       try {
         const result = await getRequest(APIS.checkResultUrl, {
           data: {
-            deployId: deployInfo?.id,
+            deployId: deployInfo?.metadata?.id,
           },
         });
 
-        setDetail(result.data || {});
+        setDetail(result.data || '');
+      } catch {
+        return;
       } finally {
         setLoading(false);
       }
@@ -71,7 +73,7 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
         getParents(document.querySelector('#J_quality_check_detail_trigger')!, '.publish-content-compo')
       }
     >
-      <a id="J_quality_check_detail_trigger">查看详情</a>
+      <a id="J_quality_check_detail_trigger">检验结果</a>
     </Popover>
   );
 }

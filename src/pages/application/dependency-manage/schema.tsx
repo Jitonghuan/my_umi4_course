@@ -139,6 +139,7 @@ export const dependecyTableSchema = ({
       title: '校验级别',
       dataIndex: 'checkLevel',
       key: 'checkLevel',
+      width: 96,
       render: (value: any, record: any) => {
         return <Tag color={levelOptionMap[value]?.color || 'default'}>{levelOptionMap[value]?.label || ''}</Tag>;
       },
@@ -147,6 +148,7 @@ export const dependecyTableSchema = ({
       title: '校验开关',
       dataIndex: 'isEnable',
       key: 'isEnable',
+      width: 96,
       render: (enable: any, record: any, index: number) => {
         return (
           <Switch
@@ -188,7 +190,7 @@ export const dependecyTableSchema = ({
                 onDelClick(record, index);
               }}
             >
-              <a>删除</a>
+              <a style={{ color: 'red' }}>删除</a>
             </Popconfirm>
           </Space>
         );

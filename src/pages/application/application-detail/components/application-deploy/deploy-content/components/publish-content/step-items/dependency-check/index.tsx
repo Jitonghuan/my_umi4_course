@@ -14,9 +14,10 @@ const prevDeployStatus = ['merging', 'mergeErr', 'conflict', 'qualityChecking'];
 /** 依赖检测 */
 export default function QualityCheckStep(props: StepItemProps) {
   const { deployInfo, deployStatus, onOperate, envTypeCode, isFrontend, status, ...others } = props;
-  const isFinishCheck = status === 'finish' && !isFrontend;
+  const isFinishCheck = (status === 'finish' || status === 'error') && !isFrontend;
   const isLoading = status === 'process';
   const isError = status === 'error';
+  console.log('--------------deployInfo-----------', deployInfo);
 
   return (
     <Steps.Step

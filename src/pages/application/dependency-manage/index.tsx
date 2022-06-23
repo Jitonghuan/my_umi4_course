@@ -82,7 +82,7 @@ export default function RelyMangement() {
   };
   // 切换校验开关
   const switchChange = async (record: any) => {
-    const res = await updateRule({ isEnable: record.isEnable ? 0 : 1, id: record.id });
+    const res = await updateRule({ ...record, isEnable: record.isEnable ? 0 : 1, id: record.id });
     if (res.success) {
       message.success('操作成功！');
       getRuleList({ pageIndex: 1, pageSize });

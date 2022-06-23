@@ -49,7 +49,7 @@ export default function RuleDrawer(props: any) {
     if (mode === 'VIEW') {
       setViewEditable(true);
     }
-    if (mode === 'EDIT') {
+    if (mode === 'EDIT' || mode === 'VIEW') {
       if (initData) {
         // let versionRange = ['gt@2.0.0','lt@9.0.0'];
 
@@ -78,11 +78,12 @@ export default function RuleDrawer(props: any) {
           form.setFieldsValue({ versionRangeThree: splitMap[item2] });
           form.setFieldsValue({ versionRangeFour: version2 });
         }
+        let curEnvCode = initData?.envCode?.split(',');
         form.setFieldsValue({
           ruleName: initData?.ruleName,
           groupId: initData?.groupId,
           artifactId: initData?.artifactId,
-          envCode: initData?.envCode,
+          envCode: curEnvCode.length > 0 ? curEnvCode : undefined,
           checkLevel: initData?.checkLevel,
           blockTime: moment(initData?.blockTime, 'YYYY-MM-DD'),
         });
@@ -127,6 +128,18 @@ export default function RuleDrawer(props: any) {
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
+    let curEnvCode = '';
+    let curEnvCodeString = '';
+    // let curEnvCodeString= JSON.stringify(values?.envCode);
+    // let str1=curEnvCodeString.substr(1);
+    // let str2=str1.substring(0,str1.length-1);
+    // curEnvCode=str2;
+    values?.envCode?.map((item: any, index: number) => {
+      let envCodeString = `${item},`;
+      curEnvCodeString = curEnvCodeString + envCodeString;
+    });
+
+    curEnvCode = curEnvCodeString.substring(0, curEnvCodeString.length - 1);
 
     let versionRangeStringFirst: string = '';
     let versionRangeStringSecond: string = '';
@@ -158,11 +171,11 @@ export default function RuleDrawer(props: any) {
       artifactId: values?.artifactId,
       blockTime: values?.blockTime,
       checkLevel: values?.checkLevel,
-      envCode: values?.envCode,
+      envCode: curEnvCode,
       groupId: values?.groupId,
       ruleName: values?.ruleName,
     };
-    console.log('paramsObj?.isEnable', paramsObj?.isEnable, versionRangeStringFirst);
+
     const res = await (mode === 'ADD' ? addRule({ ...paramsObj }) : updateRule({ ...paramsObj, id: initData?.id }));
     if (res && res.success) {
       message.success(`${mode === 'ADD' ? '新增' : '编辑'}成功`);
@@ -190,7 +203,7 @@ export default function RuleDrawer(props: any) {
       <div className="creat-rule">
         <Form form={form} labelCol={{ flex: '120px' }} onFinish={handleSubmit}>
           <Form.Item label="规则名称：" name="ruleName" rules={[{ required: true, message: '这是必填项' }]}>
-            <Input style={{ width: 400 }} placeholder="请输入规则名称"></Input>
+            <Input style={{ width: 400 }} placeholder="请输入规则名称" disabled={viewEditable}></Input>
           </Form.Item>
 
           <Form.Item label="groupId：" name="groupId" rules={[{ required: true, message: '这是必填项' }]}>
@@ -210,7 +223,14 @@ export default function RuleDrawer(props: any) {
           </Form.Item>
 
           <Form.Item label="校验环境：" name="envCode">
-            <Select style={{ width: 400 }} options={envData} allowClear showSearch disabled={viewEditable}></Select>
+            <Select
+              style={{ width: 400 }}
+              options={envData}
+              allowClear
+              showSearch
+              disabled={viewEditable}
+              mode="multiple"
+            ></Select>
           </Form.Item>
           <Form.Item label="版本范围：">
             <Space>
