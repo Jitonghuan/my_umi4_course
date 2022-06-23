@@ -172,7 +172,7 @@ export default function WhiteListModal(props: any) {
           <Form.Item label="选择应用" name="categoryCode" noStyle>
             <Transfer
               dataSource={appsListData}
-              titles={['未开启白名单应用', '已开启白名单应用']}
+              titles={['不需要依赖校验的应用', '需要依赖校验的应用']}
               targetKeys={targetKeys}
               showSearch
               filterOption={getfilterOption}
