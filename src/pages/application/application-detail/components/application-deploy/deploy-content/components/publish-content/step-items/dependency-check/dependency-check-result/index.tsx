@@ -3,7 +3,7 @@
 // @create 2021/08/19 10:57
 
 import React, { useState, useCallback, useContext } from 'react';
-import { Modal, Spin, Tag } from 'antd';
+import { Modal, Spin, Tag, Button } from 'antd';
 import { getRequest } from '@/utils/request';
 import { retry } from '@/pages/application/service';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -30,8 +30,12 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<any>();
   const [visable, setVisable] = useState(false);
+  const [retryLoading, setRetryLoading] = useState(false);
   const handleReTry = () => {
-    retry({ id: deployInfo?.metadata?.id });
+    setRetryLoading(true);
+    retry({ id: deployInfo?.metadata?.id }).finally(() => {
+      setRetryLoading(false);
+    });
   };
 
   const handleVisibleChange = useCallback(async () => {
@@ -95,7 +99,9 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
       </p>
       {status === 'error' && (
         <p>
-          <a onClick={handleReTry}>重试</a>
+          <Button size="small" onClick={handleReTry} loading={retryLoading}>
+            重试
+          </Button>
         </p>
       )}
     </>

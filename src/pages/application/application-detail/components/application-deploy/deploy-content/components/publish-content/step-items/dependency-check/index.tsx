@@ -17,7 +17,6 @@ export default function QualityCheckStep(props: StepItemProps) {
   const isFinishCheck = (status === 'finish' || status === 'error') && !isFrontend;
   const isLoading = status === 'process';
   const isError = status === 'error';
-  console.log('--------------deployInfo-----------', deployInfo);
 
   return (
     <Steps.Step

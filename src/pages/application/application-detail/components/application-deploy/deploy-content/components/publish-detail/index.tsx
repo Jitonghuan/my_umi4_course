@@ -142,7 +142,7 @@ export default function PublishDetail(props: IProps) {
           setEnvDataList(envs);
         }
         if (params.proEnvType === 'project') {
-          setProjectEnvCodeOptions(envs)
+          setProjectEnvCodeOptions(envs);
         }
       }
     });
@@ -256,13 +256,15 @@ export default function PublishDetail(props: IProps) {
   let I = 0;
   const envNames = useMemo(() => {
     const { deployEnvs } = envInfo || {};
-    return envDataList
-      .filter((envItem) => {
-        return (deployEnvs || []).includes(envItem.value);
-      })
-      .map((envItem) => envItem.label)
-      // .map((envItem) => `${envItem.label}(${envItem.value})`)
-      .join(',');
+    return (
+      envDataList
+        .filter((envItem) => {
+          return (deployEnvs || []).includes(envItem.value);
+        })
+        .map((envItem) => envItem.label)
+        // .map((envItem) => `${envItem.label}(${envItem.value})`)
+        .join(',')
+    );
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
@@ -389,7 +391,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() { },
+      onCancel() {},
     });
   };
   let envDataOption: any = []; //重启时选择环境option
@@ -574,7 +576,11 @@ export default function PublishDetail(props: IProps) {
                       if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
                         goToJenkins(err);
                       }
-                      if (err?.errorMessage.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
+                      if (
+                        err?.errorMessage.indexOf('请查看jenkins详情') === -1 &&
+                        err?.key !== 'dependencyCheck' &&
+                        appData?.appType !== 'frontend'
+                      ) {
                         localStorage.setItem('__init_env_tab__', metadata?.envTypeCode);
                         history.push(
                           `/matrix/application/detail/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}`,
