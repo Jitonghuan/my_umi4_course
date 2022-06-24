@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { Modal, Spin, Tag, Button } from 'antd';
 import { getRequest } from '@/utils/request';
-import { retry } from '@/pages/application/service';
+import { retry, queryActiveDeployInfo } from '@/pages/application/service';
 import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '@/pages/application/service';
 import { DeployInfoVO } from '@/pages/application/application-detail/types';
@@ -33,8 +33,10 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
   const [retryLoading, setRetryLoading] = useState(false);
   const handleReTry = () => {
     setRetryLoading(true);
-    retry({ id: deployInfo?.metadata?.id }).finally(() => {
-      setRetryLoading(false);
+    retry({ id: deployInfo?.metadata?.id }).then(() => {
+      setTimeout(() => {
+        setRetryLoading(false);
+      }, 5000);
     });
   };
 
