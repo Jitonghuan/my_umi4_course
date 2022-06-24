@@ -181,7 +181,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 preventOverlap: true,
                 onLayoutEnd: () => {
                     renderRegions();
-                    g.fitView();
 
                 }
             },
@@ -207,6 +206,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     regions[k],
                 );
             });
+            g.fitView();
         };
 
         // 关闭局部渲染，防止有残影
