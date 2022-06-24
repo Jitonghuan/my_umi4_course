@@ -280,7 +280,7 @@ export default function RuleDrawer(props: any) {
             )}
           </Form.Item>
           <Form.Item label="升级截止日期：" name="blockTime" rules={[{ required: true, message: '这是必填项' }]}>
-            <DatePicker format="YYYY-MM-DD" disabled={viewEditable} />
+            <DatePicker format="YYYY-MM-DD" disabled={viewEditable} showTime={{ format: 'HH:mm:ss' }} />
           </Form.Item>
           <Form.Item label="校验级别：" name="checkLevel" rules={[{ required: true, message: '这是必填项' }]}>
             <Select style={{ width: 400 }} options={levelOption} disabled={viewEditable}></Select>
