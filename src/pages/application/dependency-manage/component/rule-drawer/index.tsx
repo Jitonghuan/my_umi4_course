@@ -15,14 +15,15 @@ import moment from 'moment';
 export interface IProps {
   mode?: EditorMode;
   initData: any;
+  envData: any;
   onClose?: () => any;
   onSave?: () => any;
 }
 
 export default function RuleDrawer(props: any) {
-  const { mode, onClose, onSave, initData } = props;
+  const { mode, onClose, onSave, initData, envData } = props;
   const [form] = Form.useForm();
-  const [envData, setEnvData] = useState<any>([]);
+  // const [envData, setEnvData] = useState<any>([]);
   const [isChecked, setisChecked] = useState<boolean>(false);
   const [isEnableChangeOption, setisEnableChangeOption] = useState<number>(0);
   const [viewEditable, setViewEditable] = useState<boolean>(false);
@@ -105,9 +106,6 @@ export default function RuleDrawer(props: any) {
     };
   }, [mode]);
 
-  useEffect(() => {
-    getEnvData();
-  }, []);
   //是否启用任务
   const isEnableChange = (checked: boolean) => {
     if (checked === true) {
@@ -118,14 +116,6 @@ export default function RuleDrawer(props: any) {
       setisEnableChangeOption(0);
     }
   };
-  // 获取环境列表
-  async function getEnvData() {
-    const res = await fetchEnvList({
-      pageIndex: 1,
-      pageSize: 1000,
-    });
-    setEnvData(res || []);
-  }
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
@@ -252,7 +242,8 @@ export default function RuleDrawer(props: any) {
                   onClick={() => {
                     setShowMore(true);
                     let value = form.getFieldValue('versionRangeOne');
-                    if ((value && value !== 'gt') || (value && value !== 'ge')) {
+
+                    if (value !== 'gt' && value !== 'ge') {
                       form.setFieldsValue({
                         versionRangeOne: '',
                       });

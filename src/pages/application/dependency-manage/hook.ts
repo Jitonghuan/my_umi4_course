@@ -9,10 +9,14 @@ export const queryRuleList = (paramObj: {
   checkLevel?: string;
   pageIndex?: string;
   pageSize?: string;
+  groupId?: string;
+  artifactId?: string;
 }) => {
   return getRequest(APIS.getRuleListApi, {
     data: {
       ruleName: paramObj?.ruleName,
+      groupId: paramObj?.groupId,
+      artifactId: paramObj?.artifactId,
       envCode: paramObj?.envCode,
       checkLevel: paramObj?.checkLevel,
       pageIndex: paramObj?.pageIndex || 1,

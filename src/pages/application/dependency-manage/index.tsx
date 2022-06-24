@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Table, Form, Input, Button, Popconfirm, Switch, message, Tag } from 'antd';
+import { Table, Form, Input, Button, Popconfirm, Switch, message, Tag, Select } from 'antd';
 import { history } from 'umi';
 import moment from 'moment';
+import { fetchEnvList } from '@/pages/application/_components/application-editor/service';
 import { queryRuleList } from './hook';
 import { dependecyTableSchema } from './schema';
 import { PlusOutlined } from '@ant-design/icons';
@@ -18,6 +19,7 @@ export default function RelyMangement() {
   const [ruleList, setRuleList] = useState<any[]>([]);
   const [pageSize, setPageSize] = useState<number>(20);
   const [pageIndex, setPageIndex] = useState<number>(1);
+  const [envData, setEnvData] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [whiteListDrawer, setWhiteListDrawer] = useState<EditorMode>('HIDE');
@@ -25,6 +27,7 @@ export default function RelyMangement() {
   const [dependencyMode, setDependencyMode] = useState<EditorMode>('HIDE');
   useEffect(() => {
     getRuleList();
+    getEnvData();
   }, []);
   // 获取列表数据
   const getRuleList = (params?: any) => {
@@ -74,6 +77,14 @@ export default function RelyMangement() {
     };
     getRuleList(obj);
   };
+  // 获取环境列表
+  async function getEnvData() {
+    const res = await fetchEnvList({
+      pageIndex: 1,
+      pageSize: 1000,
+    });
+    setEnvData(res || []);
+  }
 
   const handleDeleteRule = async (id: number) => {
     const res = await delRequest(`${appConfig.apiPrefix}/appManage/dependencyManage/deleteRule/${id}`);
@@ -99,8 +110,21 @@ export default function RelyMangement() {
             layout="inline"
             form={form}
             onFinish={(values: any) => {
+              let envCode = form.getFieldValue('envCode');
+              let curEnvCode = '';
+              let curEnvCodeString = '';
+              if (envCode) {
+                envCode?.map((item: any, index: number) => {
+                  let envCodeString = `${item},`;
+                  curEnvCodeString = curEnvCodeString + envCodeString;
+                });
+
+                curEnvCode = curEnvCodeString.substring(0, curEnvCodeString.length - 1);
+              }
+              console.log('values', values);
               getRuleList({
                 ...values,
+                envCode: curEnvCode,
                 pageIndex: 1,
                 pageSize: 20,
               });
@@ -115,6 +139,15 @@ export default function RelyMangement() {
           >
             <Form.Item label="规则名称：" name="ruleName">
               <Input placeholder="请输入规则名称" style={{ width: 240 }} />
+            </Form.Item>
+            <Form.Item label="groupId" name="groupId">
+              <Input placeholder="请输入groupId" style={{ width: 240 }} />
+            </Form.Item>
+            <Form.Item label="artifactId" name="artifactId">
+              <Input placeholder="请输入artifactId" style={{ width: 240 }} />
+            </Form.Item>
+            <Form.Item label="校验环境" name="envCode">
+              <Select placeholder="请选择校验环境" style={{ width: 440 }} options={envData} mode="multiple" />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -186,6 +219,7 @@ export default function RelyMangement() {
           setDependencyMode('HIDE');
         }}
         initData={curRecord}
+        envData={envData}
       />
       <WhiteListModal
         mode={whiteListDrawer}
