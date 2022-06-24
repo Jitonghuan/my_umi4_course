@@ -235,7 +235,7 @@ export default function RuleDrawer(props: any) {
           </Form.Item>
           <Form.Item label="版本范围：">
             <Space>
-              <Form.Item name="versionRangeOne">
+              <Form.Item name="versionRangeOne" rules={[{ required: true, message: '这是必填项' }]}>
                 <Select
                   style={{ width: 150 }}
                   placeholder="请选择"
@@ -243,41 +243,49 @@ export default function RuleDrawer(props: any) {
                   options={showMore ? operatorGreaterOption : operatorOption}
                 ></Select>
               </Form.Item>
-              <Form.Item name="versionRangeTwo">
-                <Input style={{ width: 249 }} placeholder="请按照 1.0.0 的格式输入" disabled={viewEditable} />
+              <Form.Item name="versionRangeTwo" rules={[{ required: true, message: '这是必填项' }]}>
+                <Input style={{ width: 249 }} placeholder="请输入版本号" disabled={viewEditable} />
               </Form.Item>
               <Form.Item>
                 <PlusCircleOutlined
                   style={{ marginLeft: '5px' }}
                   onClick={() => {
                     setShowMore(true);
+                    let value = form.getFieldValue('versionRangeOne');
+                    if ((value && value !== 'gt') || (value && value !== 'ge')) {
+                      form.setFieldsValue({
+                        versionRangeOne: '',
+                      });
+                    }
                   }}
                   disabled={viewEditable}
                 />
               </Form.Item>
             </Space>
             {showMore && (
-              <Space>
-                <Form.Item name="versionRangeThree">
-                  <Select
-                    style={{ width: 150 }}
-                    placeholder="请选择"
-                    options={operatorLessOption}
-                    disabled={viewEditable}
-                  ></Select>
-                </Form.Item>
-                <Form.Item name="versionRangeFour">
-                  <Input style={{ width: 249 }} placeholder="请按照 1.0.0 的格式输入" disabled={viewEditable}></Input>
-                </Form.Item>
-                <Form.Item>
-                  <MinusCircleOutlined
-                    style={{ marginLeft: '5px' }}
-                    onClick={() => {
-                      setShowMore(false);
-                    }}
-                  />
-                </Form.Item>
-              </Space>
+              <p>
+                <Space>
+                  <Form.Item name="versionRangeThree">
+                    <Select
+                      style={{ width: 150 }}
+                      placeholder="请选择"
+                      options={operatorLessOption}
+                      disabled={viewEditable}
+                    ></Select>
+                  </Form.Item>
+                  <Form.Item name="versionRangeFour">
+                    <Input style={{ width: 249 }} placeholder="请输入版本号" disabled={viewEditable}></Input>
+                  </Form.Item>
+                  <Form.Item>
+                    <MinusCircleOutlined
+                      style={{ marginLeft: '5px' }}
+                      onClick={() => {
+                        setShowMore(false);
+                      }}
+                    />
+                  </Form.Item>
+                </Space>
+              </p>
             )}
           </Form.Item>
           <Form.Item label="升级截止日期：" name="blockTime" rules={[{ required: true, message: '这是必填项' }]}>
