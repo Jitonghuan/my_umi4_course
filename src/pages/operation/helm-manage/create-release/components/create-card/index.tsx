@@ -3,7 +3,7 @@ import CardLayout from '@cffe/vc-b-card-layout';
 import { history } from 'umi';
 import { Tag, Tooltip, Popconfirm } from 'antd';
 import { StarFilled, StarTwoTone, Html5Outlined, CodeOutlined, UserOutlined } from '@ant-design/icons';
-
+import './index.less';
 const cardCls = 'all-application-page__card';
 
 const APP_TYPE_MAP: { [index: string]: any } = {
@@ -20,9 +20,9 @@ export function isValidKey(key: string | number | symbol, object: object): key i
 }
 
 export interface IProps {
-  dataSource: [];
+  dataSource?: [];
   type?: string;
-  loadAppListData: any;
+  loadAppListData?: any;
 }
 
 export default function ApplicationCardList(props: IProps) {
@@ -65,7 +65,9 @@ export default function ApplicationCardList(props: IProps) {
               },
             })
           }
-        ></div>
+        >
+          {item.id}
+        </div>
       ))}
     </CardLayout>
   );

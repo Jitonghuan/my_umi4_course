@@ -173,8 +173,9 @@ export default function DNSManageList(props: any) {
               <Button
                 type="primary"
                 onClick={() => {
-                  setCurRecord(undefined);
-                  setAddTaskMode('ADD');
+                  // setCurRecord(undefined);
+                  // setAddTaskMode('ADD');
+                  history.push('create-release');
                 }}
               >
                 <PlusOutlined />
