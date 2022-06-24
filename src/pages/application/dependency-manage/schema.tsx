@@ -1,6 +1,7 @@
 import { Popconfirm, Tooltip, Switch, Tag, Space } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
-import { datetimeCellRender } from '@/utils';
+import { dateCellRender } from '@/utils';
+import moment from 'moment';
 export const levelOption = [
   { label: '警告', value: 'warning' },
   { label: '阻断', value: 'block' },
@@ -154,7 +155,7 @@ export const dependecyTableSchema = ({
       dataIndex: 'blockTime',
       key: 'blockTime',
       render: (value: any, record: any) => {
-        return datetimeCellRender(value);
+        return dateCellRender(value);
       },
     },
     {

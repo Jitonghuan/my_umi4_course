@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Table, Form, Input, Button, Popconfirm, Switch, message, Tag } from 'antd';
 import { history } from 'umi';
+import moment from 'moment';
 import { queryRuleList } from './hook';
 import { dependecyTableSchema } from './schema';
 import { PlusOutlined } from '@ant-design/icons';
@@ -42,7 +43,7 @@ export default function RelyMangement() {
         setLoading(false);
       });
   };
-  console.log('ruleList', ruleList);
+
   // 表格列配置
   const tableColumns = useMemo(() => {
     return dependecyTableSchema({
@@ -82,7 +83,8 @@ export default function RelyMangement() {
   };
   // 切换校验开关
   const switchChange = async (record: any) => {
-    const res = await updateRule({ ...record, isEnable: record.isEnable ? 0 : 1, id: record.id });
+    let blockTime = moment(record?.blockTime).format('YYYY-MM-DD');
+    const res = await updateRule({ ...record, isEnable: record.isEnable ? 0 : 1, id: record.id, blockTime });
     if (res.success) {
       message.success('操作成功！');
       getRuleList({ pageIndex: 1, pageSize });

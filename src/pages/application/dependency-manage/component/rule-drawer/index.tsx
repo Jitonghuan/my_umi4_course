@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
+
 import { Drawer, Input, Button, Form, Select, message, Switch, DatePicker, Space } from 'antd';
 import { addRule, updateRule } from '../../service';
 import { fetchEnvList } from '@/pages/application/_components/application-editor/service';
@@ -163,13 +164,13 @@ export default function RuleDrawer(props: any) {
     }
 
     let paramsObj = {
-      isEnable: values?.isEnable ? 1 : 0,
+      isEnable: isEnableChangeOption,
       versionRange:
         versionRangeStringSecond !== ''
           ? versionRangeStringFirst + ',' + versionRangeStringSecond
           : versionRangeStringFirst,
       artifactId: values?.artifactId,
-      blockTime: values?.blockTime,
+      blockTime: moment(values?.blockTime).format('YYYY-MM-DD'),
       checkLevel: values?.checkLevel,
       envCode: curEnvCode,
       groupId: values?.groupId,
@@ -280,7 +281,7 @@ export default function RuleDrawer(props: any) {
             )}
           </Form.Item>
           <Form.Item label="升级截止日期：" name="blockTime" rules={[{ required: true, message: '这是必填项' }]}>
-            <DatePicker format="YYYY-MM-DD" disabled={viewEditable} showTime={{ format: 'HH:mm:ss' }} />
+            <DatePicker format="YYYY-MM-DD" disabled={viewEditable} />
           </Form.Item>
           <Form.Item label="校验级别：" name="checkLevel" rules={[{ required: true, message: '这是必填项' }]}>
             <Select style={{ width: 400 }} options={levelOption} disabled={viewEditable}></Select>
