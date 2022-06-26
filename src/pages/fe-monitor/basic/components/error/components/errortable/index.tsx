@@ -44,7 +44,7 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
 
   return (
     <div className="error-list-wrapper">
-      <div className="list-title">错误列表</div>
+      {/* <div className="list-title">错误列表</div> */}
       <div className="list-content">
         <div className="l">
           <Table

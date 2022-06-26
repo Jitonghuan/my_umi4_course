@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Descriptions } from 'antd';
 import Header from '../header';
 import { now } from '../../const';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
-import { getErrorChart, getErrorList, getPageErrorInfo } from '../../server';
-import { CloseOutlined } from '@ant-design/icons';
+import { getErrorChart, getErrorList } from '../../server';
 import './index.less';
 import ErrorTable from './components/errortable';
+import { Tabs } from '@cffe/h2o-design';
 
 interface IProps {
   appGroup: string;
@@ -31,10 +30,15 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [showDetail, setShowDetail] = useState<boolean>(false);
-  const [detail, setDetail] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [importantErrorList, setImportantErrorList] = useState<DataSourceItem[]>([]);
+  const [importantErrorLoading, setImportantErrorLoading] = useState<boolean>(false);
+  const [importantErrorTotal, setImportantErrorTotal] = useState<number>(0);
+
+
+
+  const [activeKey, setActiveKey] = useState<string>("1");
 
   function getParam(extra = {}) {
     let param: any = {
@@ -119,31 +123,46 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
     setDataSource(list);
     setTotal(data.length);
     setLoading(false);
-    if (list.length && showDetail) {
-      setSelectedRowKeys([list[0].id]);
-      void getDetail(list[0]);
-    } else {
-      setShowDetail(false);
-      setSelectedRowKeys([]);
-      setDetail({});
-    }
   }
 
-  async function getDetail(record: any) {
-    const res = await getPageErrorInfo(
-      getParam({
-        d1: record.d1,
-        d2: record.url,
-      }),
-    );
+  // 错误列表
+  async function onImportantErrorList() {
+    if (loading) {
+      return;
+    }
+    setImportantErrorLoading(true);
+    const res = await getErrorList(getParam());
     const data = res?.data || [];
-    setDetail(data[0]?._source || {});
+    const list: any = [];
+    for (const item of data) {
+      for (let i = 0; i < item[1].length; i++) {
+        const suItem = item[1][i];
+        list.push({
+          id: (Math.random() * 1000000).toFixed(0),
+          url: item[0],
+          colSpan: i === 0 ? 1 : 0,
+          i,
+          len: item[1].length,
+          rowSpan: i === 0 ? item[1].length : 1,
+          d1: suItem[0],
+          count: suItem[1],
+        });
+      }
+    }
+    setImportantErrorList(list);
+    setImportantErrorTotal(data.length);
+    setImportantErrorLoading(false);
   }
+
 
   useEffect(() => {
     void onErrorList();
     void onErrorChart();
   }, [timeList, appGroup, feEnv]);
+
+  useEffect(() => {
+    void onImportantErrorList();
+  }, [timeList, appGroup, feEnv, activeKey]);
 
   useEffect(() => {
     setChart(
@@ -188,7 +207,25 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
         <div className="line-chart-wrapper">
           <div className="error-chart"></div>
         </div>
-        <ErrorTable dataSource={dataSource} loading={loading} total={total} getParam={getParam}/>
+        <div style={{ marginTop: '10px' }}>
+          <div className="list-title">重点关注的错误</div>
+          <Tabs
+            activeKey={activeKey}
+            onChange={(val) => {
+              setActiveKey(val);
+            }}
+          >
+            <Tabs.TabPane tab="页面白屏/组件加载错误" key="1" />
+            <Tabs.TabPane tab="定制包加载错误" key="2" />
+            <Tabs.TabPane tab="页面重点资源加载错误" key="3" />
+            <Tabs.TabPane tab="定制包资源加载错误" key="4" />
+          </Tabs>
+          <ErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
+        </div>
+        <div>
+          <div className="list-title">错误列表</div>
+          <ErrorTable dataSource={dataSource} loading={loading} total={total} getParam={getParam} />
+        </div>
       </div>
     </div>
   );
