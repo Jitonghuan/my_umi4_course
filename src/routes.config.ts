@@ -109,55 +109,6 @@ export default [
     path: `${baseRoutePath}/test/quality-control-new`,
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
-
-  {
-    path: 'demo',
-    name: '示例页面',
-    icon: 'icon-report',
-    hideInMenu: process.env.NODE_ENV !== 'development',
-    routes: [
-      {
-        path: 'layout-normal',
-        name: '普通布局',
-        component: '@/pages/demo/layout-normal',
-      },
-      {
-        path: 'layout-lr',
-        name: '左右布局',
-        component: '@/pages/demo/layout-lr',
-      },
-      {
-        path: 'layout-tb',
-        name: '上下布局',
-        component: '@/pages/demo/layout-tb',
-      },
-      {
-        path: 'layout-box',
-        name: '盒子布局',
-        component: '@/pages/demo/layout-box',
-      },
-      {
-        path: 'list',
-        name: '列表页面',
-        component: '@/pages/demo/list',
-      },
-      {
-        path: 'rich-text',
-        name: '富文本组件',
-        component: '@/pages/demo/rich-text-demo',
-      },
-      {
-        path: 'apitest',
-        name: '接口测试',
-        component: '@/pages/demo/api-test',
-      },
-      {
-        path: 'icon-list',
-        name: '图标列表',
-        component: '@/pages/demo/icon-list',
-      },
-    ],
-  },
   {
     path: 'application',
     name: '应用管理',
@@ -416,6 +367,18 @@ export default [
         component: '@/pages/application/version-management',
       },
     ],
+  },
+  {
+    path: 'npm',
+    name: 'npm包管理',
+    icon: 'icon-poc_maindata',
+    routes: [
+      {
+        path: 'list',
+        name: 'npm 列表',
+        component: '@/pages/npm-manage/list',
+      },
+    ]
   },
   {
     path: 'publish',
