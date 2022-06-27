@@ -20,7 +20,7 @@ import { getTraceInfo, getNoiseList } from '../../../service';
 import './index.less';
 import DetailModal from '../detail-modal';
 import * as d3 from 'd3';
-import moment from '_moment@2.29.3@moment';
+import moment from 'moment';
 
 export default function RrightTrace(props: any) {
   const { item, data, envCode, selectTime, loading, noiseChange } = props;
