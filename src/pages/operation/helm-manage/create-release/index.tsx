@@ -38,8 +38,8 @@ export default function CreateRelease() {
                 <Form.Item label="chart版本">
                   <Select style={{ width: 320 }} allowClear showSearch />
                 </Form.Item>
-                <Form.Item>
-                  <Input.TextArea style={{ width: 320 }} />
+                <Form.Item label="详情">
+                  <Input.TextArea style={{ width: 820 }} />
                 </Form.Item>
               </>
             )}
@@ -66,9 +66,12 @@ export default function CreateRelease() {
               </div>
             )}
           </div> */}
-          <div className="create-card-content">
-            <CreatCard />
-          </div>
+          {!showNextStep && (
+            <div className="create-card-content">
+              <CreatCard />
+            </div>
+          )}
+
           <div className="create-card-footer">
             {!showNextStep && (
               <Space>

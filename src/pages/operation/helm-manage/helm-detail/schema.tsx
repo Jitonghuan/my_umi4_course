@@ -1,9 +1,10 @@
 import React from 'react';
 import { history } from 'umi';
 import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
+import { Html5Outlined, CodeOutlined, AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { datetimeCellRender } from '@/utils';
+
 // import { JOB_STATUS } from './type';
 
 export type AppType = 'frontend' | 'backend';
@@ -105,3 +106,21 @@ export const taskTableSchema = ({
       ),
     },
   ] as ColumnProps[];
+
+export const options = [
+  {
+    label: '基本信息',
+    value: 'basic-info',
+    icon: <BarsOutlined />,
+  },
+  {
+    label: '参数配置',
+    value: 'param-config',
+    icon: <AppstoreOutlined />,
+  },
+  {
+    label: '历史记录',
+    value: 'histiry-log',
+    icon: <AppstoreOutlined />,
+  },
+];

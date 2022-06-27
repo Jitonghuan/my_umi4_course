@@ -836,6 +836,13 @@ export default [
             component: '@/pages/operation/helm-manage/create-release',
             hideInMenu: true,
           },
+          {
+            path: 'helm-detail',
+            name: '详情页面',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/helm-detail',
+            hideInMenu: true,
+          },
         ],
       },
       {

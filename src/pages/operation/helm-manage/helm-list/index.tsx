@@ -5,16 +5,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
 import { Input, Table, Form, Button, Space, Select } from 'antd';
-import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-// import CreateTaskModal from './create-task';
-import { taskTableSchema } from '../schema';
-// import ExecutionDetailsModal from './execution-details-Modal';
-// import { useTaskList, useTaskImplementList, useDeleteTask, useUpdateTask } from './hooks';
-// import { recordEditData } from './type';
-
-// import './index.less';
+import { releaseTableSchema } from './schema';
+import { queryReleaseList, useGetClusterList } from './hook';
 
 type StatusTypeItem = {
   color: string;
@@ -27,32 +22,46 @@ const STATUS_TYPE: Record<string, StatusTypeItem> = {
 };
 
 export default function DNSManageList(props: any) {
-  //   const [tableLoading, taskTablePageInfo, taskTableSource, setTaskTableSource, setTaskTablePageInfo, getTaskList] =
+  //   const [tableLoading, taskTablePageInfo, taskTableSource, setTaskTableSource, setTaskTablePageInfo, queryReleaseList] =
   //     useTaskList();
   //   const [loading, pageInfo, source, setSource, setPageInfo, getTaskImplementList] = useTaskImplementList();
   //   const [delLoading, deleteTask] = useDeleteTask();
   const [executionDetailsMode, setExecutionDetailsMode] = useState<EditorMode>('HIDE');
-  const [addTaskMode, setAddTaskMode] = useState<EditorMode>('HIDE');
-  //   const [updateLoading, updateTaskManage] = useUpdateTask();
-  const [taskForm] = Form.useForm();
+  const [addTaskMode, setAddReleaseMode] = useState<EditorMode>('HIDE');
+  const [loading, clusterOptions, getClusterList] = useGetClusterList();
+  const [releaseForm] = Form.useForm();
   const [curRecord, setCurRecord] = useState<any>();
   const [createAppVisible, setCreateAppVisible] = useState(false);
+  const [pageInfo, setPageInfo] = useState<any>({});
 
   useEffect(() => {
-    // getTaskList();
+    queryReleaseList();
+    getClusterList();
   }, []);
 
-  const onFresh = () => {
-    loadListData({ pageIndex: 1, pageSize: 20 });
-  };
-
+  const dataSource = [
+    {
+      releaseName: 'dnsmasq',
+      status: 'deployed',
+      chart: 'dnsmasq',
+      namespace: 'devops',
+      cluster: 'future',
+    },
+    {
+      releaseName: 'xxl-job',
+      status: 'deployed',
+      chart: 'xxl-job',
+      namespace: 'devops',
+      cluster: 'future',
+    },
+  ];
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    // setPageInfo({
-    //   pageIndex: pagination.current,
-    //   pageSize: pagination.pageSize,
-    //   total: pagination.total,
-    // });
+    setPageInfo({
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+      total: pagination.total,
+    });
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -62,24 +71,28 @@ export default function DNSManageList(props: any) {
   };
 
   const loadListData = (params: any) => {
-    let value = taskForm.getFieldsValue();
-    // getTaskList({...params,...value});
+    let value = releaseForm.getFieldsValue();
+    queryReleaseList({ ...params, ...value });
   };
 
   // 表格列配置
   const tableColumns = useMemo(() => {
-    return taskTableSchema({
+    return releaseTableSchema({
       onEditClick: (record, index) => {
         setCurRecord(record);
-        setAddTaskMode('EDIT');
+        setAddReleaseMode('EDIT');
       },
       onViewClick: (record, index) => {
-        setCurRecord(record);
-        setAddTaskMode('VIEW');
+        history.push({
+          pathname: 'helm-detail',
+          state: {
+            record: record,
+          },
+        });
       },
       onDelClick: async (record, index) => {
         // await deleteTask({ jobCode: record?.jobCode }).then(() => {
-        //   getTaskList();
+        //   queryReleaseList();
         // });
       },
       onGetExecutionDetailClick: (record, index) => {
@@ -94,7 +107,7 @@ export default function DNSManageList(props: any) {
         };
 
         // updateTaskManage(paramsObj).then(() => {
-        //     getTaskList();
+        //     queryReleaseList();
         //   });
       },
     }) as any;
@@ -111,36 +124,36 @@ export default function DNSManageList(props: any) {
         mode={addTaskMode}
         initData={curRecord}
         onSave={() => {
-          setAddTaskMode('HIDE');
+          setAddReleaseMode('HIDE');
           setTimeout(() => {
-            getTaskList();
+            queryReleaseList();
           }, 200);
         }}
-        onClose={() => setAddTaskMode('HIDE')}
+        onClose={() => setAddReleaseMode('HIDE')}
       /> */}
 
       <FilterCard>
         <div>
           <Form
             layout="inline"
-            form={taskForm}
+            form={releaseForm}
             onFinish={(values: any) => {
-              //   getTaskList({
-              //     ...values,
-              //     pageIndex: 1,
-              //     pageSize: 20,
-              //   });
+              queryReleaseList({
+                ...values,
+                pageIndex: 1,
+                pageSize: 20,
+              });
             }}
             onReset={() => {
-              taskForm.resetFields();
-              //   getTaskList({
-              //     pageIndex: 1,
-              //     // pageSize: pageSize,
-              //   });
+              releaseForm.resetFields();
+              queryReleaseList({
+                pageIndex: 1,
+                // pageSize: pageSize,
+              });
             }}
           >
             <Form.Item label="选择集群" name="clusterName">
-              <Select placeholder="请输入任务Code" style={{ width: 290 }} />
+              <Select placeholder="请输入任务Code" options={clusterOptions} style={{ width: 290 }} />
             </Form.Item>
             <Form.Item label="命名空间" name="namespace">
               <Select placeholder="请输入任务Code" style={{ width: 290 }} />
@@ -168,13 +181,11 @@ export default function DNSManageList(props: any) {
           </div>
           <div className="caption-right">
             <Space>
-              {/* <RedoOutlined   onClick={onFresh} /> */}
-
               <Button
                 type="primary"
                 onClick={() => {
-                  // setCurRecord(undefined);
-                  // setAddTaskMode('ADD');
+                  setCurRecord(undefined);
+                  setAddReleaseMode('ADD');
                   history.push('create-release');
                 }}
               >
@@ -187,17 +198,15 @@ export default function DNSManageList(props: any) {
         <div>
           <Table
             columns={tableColumns}
-            dataSource={[]}
+            dataSource={dataSource}
             loading={false}
-            pagination={
-              {
-                //   current: taskTablePageInfo.pageIndex,
-                //   total: taskTablePageInfo.total,
-                //   pageSize: taskTablePageInfo.pageSize,
-                //   showSizeChanger: true,
-                //   showTotal: () => `总共 ${taskTablePageInfo.total} 条数据`,
-              }
-            }
+            pagination={{
+              current: pageInfo.pageIndex,
+              total: pageInfo.total,
+              pageSize: pageInfo.pageSize,
+              showSizeChanger: true,
+              showTotal: () => `总共 ${pageInfo.total} 条数据`,
+            }}
             onChange={pageSizeClick}
           ></Table>
         </div>
