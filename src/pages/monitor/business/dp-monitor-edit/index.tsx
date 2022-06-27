@@ -147,13 +147,13 @@ export default function DpMonitorEdit(props: any) {
   const onSubmit = async () => {
     const data: any = await getParam();
     if (data) {
-      // if (data.metricsQuery) {
-      //   for (const item of data.metricsQuery) {
-      //     if (!item.validate) {
-      //       return message.warning('请先测试sql是否正确');
-      //     }
-      //   }
-      // }
+      if (data.metricsQuery) {
+        for (const item of data.metricsQuery) {
+          if (!item.validate) {
+            return message.warning('请先测试sql是否正确');
+          }
+        }
+      }
       if (type === 'edit') {
         postRequest(updateDbMonitor, {
           data: { ...data, id: recordData.id },
@@ -192,25 +192,26 @@ export default function DpMonitorEdit(props: any) {
       setUnit(recordData.collectIntervalUnit);
     }
 
-    if (recordData?.envCode?.indexOf('dev') != -1) {
-      setCurrentEnvType('dev');
-      getEnvCodeList('dev');
-    } else if (recordData?.envCode?.indexOf('test') != -1) {
-      setCurrentEnvType('test');
-      getEnvCodeList('test');
-    } else if (recordData?.envCode?.indexOf('pre') != -1) {
-      setCurrentEnvType('pre');
-      getEnvCodeList('pre');
-    } else if (recordData?.envCode?.indexOf('prod') != -1) {
-      setCurrentEnvType('prod');
-      getEnvCodeList('prod');
+    if (recordData?.envCode) {
+      for (const item of envTypeData) {
+        if (recordData?.envCode?.indexOf(item.value) != -1) {
+          setCurrentEnvType(item.value);
+          getEnvCodeList(item.value);
+        }
+      }
     }
 
+    let metricsQuery =  recordData.metricsQuery || [];
+    for (const item of metricsQuery) {
+      Object.assign(item, {
+        validate: true
+      })
+    }
     setDbAddr(recordData?.dbAddr);
     setDbType(recordData?.dbType);
     setCurrentEnvCode(recordData?.envCode);
     tagrgetForm.setFieldsValue({
-      metricsQuery: recordData.metricsQuery || [],
+      metricsQuery,
     });
   }, [type]);
 
@@ -374,7 +375,18 @@ export default function DpMonitorEdit(props: any) {
                                 rules={[{ required: true, message: '输入查询sql' }]}
                                 {...restField}
                               >
-                                <TextArea rows={4} />
+                                <TextArea
+                                  rows={2}
+                                  onChange={() => {
+                                    let metricsQuery = tagrgetForm.getFieldValue('metricsQuery');
+                                    Object.assign(metricsQuery[name], {
+                                      validate: false
+                                    })
+                                    tagrgetForm.setFieldsValue({
+                                      metricsQuery
+                                    })
+                                  }}
+                                />
                               </Form.Item>
                               <Form.Item
                                 label="结果列"
@@ -419,20 +431,25 @@ export default function DpMonitorEdit(props: any) {
                                 </>
                               )}
                             </Form.List>
+                            <Form.Item noStyle>
+                              <Button style={{ margin: "0 30px" }} type="primary" ghost onClick={() => {onSqlTest(name)}}>查询测试</Button>
+                              {
+                                <Form.Item
+                                  shouldUpdate={(prevValues, curValues) => {
+                                    return prevValues?.metricsQuery[name]?.validate !== curValues?.metricsQuery[name]?.validate
+                                  }}
+                                >
+                                  {({ getFieldValue }) =>
+                                    getFieldValue(['metricsQuery', name, 'validate']) ? (
+                                      <span style={{ color: '#389e0d', fontSize: '16px' }} ><CheckOutlined />校验通过</span>
+                                    ) : (
+                                      <span style={{ color: '#ff4d4f', fontSize: '16px' }}><ExclamationOutlined  />未校验</span>
+                                    )
+                                  }
+                                </Form.Item>
+                              }
+                            </Form.Item>
                           </Space>
-                          <Button style={{ marginLeft: "30px" }} type="primary" ghost onClick={() => {onSqlTest(name)}}>查询测试</Button>
-                          {/*{*/}
-                          {/*  <Form.Item*/}
-                          {/*    shouldUpdate={(prevValues, curValues) =>*/}
-                          {/*      prevValues?.name?.validate == curValues?.name?.validate*/}
-                          {/*    }*/}
-                          {/*    noStyle*/}
-                          {/*  >*/}
-                          {/*    {({ getFieldValue }) =>*/}
-                          {/*      getFieldValue('validate') ? (<CheckOutlined />) : (<ExclamationOutlined />)*/}
-                          {/*    }*/}
-                          {/*  </Form.Item>*/}
-                          {/*}*/}
                           <Divider />
                         </div>
                       ))}

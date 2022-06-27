@@ -76,6 +76,7 @@ export default function DpMonitor() {
                   </Button>
                   <Button
                     type="primary"
+                    disabled={item.status === 0}
                     onClick={() => {
                       editMonitor(item);
                     }}
