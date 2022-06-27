@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
-import { Input, Table, Form, Button, Space, Select } from 'antd';
+import { Input, Table, Form, Button, Space, Select, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -202,6 +202,7 @@ export default function DNSManageList(props: any) {
             </Form.Item>
           </Form>
         </div>
+        <Divider />
         <div className="table-caption">
           <div className="caption-left">
             <h3>release列表</h3>
@@ -222,6 +223,7 @@ export default function DNSManageList(props: any) {
             </Space>
           </div>
         </div>
+
         <div>
           <Table
             columns={tableColumns}

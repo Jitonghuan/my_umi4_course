@@ -27,7 +27,7 @@ export default function UpdateDeploy(props: ReleaseProps) {
   const { mode, curRecord, curClusterName, onCancle } = props;
 
   useEffect(() => {
-    // queryProductVersionList(descriptionInfoData.id);
+    // queryProductVersionList(descriptionInfoData.id);//valuesPath
   }, []);
 
   return (

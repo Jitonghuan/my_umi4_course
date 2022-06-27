@@ -77,3 +77,44 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
 
   return [loading, data, getClusterList];
 }
+
+//release更新
+export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteTask = async (paramsObj: { jobCode: string }) => {
+    setLoading(true);
+    await delRequest(`${APIS.upgradeRelease}/${paramsObj.jobCode}`)
+      .then((result) => {
+        if (result.success) {
+          message.success('删除成功！');
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, deleteTask];
+}
+//release删除
+export function useDeleteRelease(): [boolean, (paramsObj: { jobCode: string }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteRelease = async (paramsObj: { jobCode: string }) => {
+    setLoading(true);
+    await delRequest(`${APIS.deleteRelease}/${paramsObj.jobCode}`)
+      .then((result) => {
+        if (result.success) {
+          message.success(result?.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, deleteRelease];
+}
