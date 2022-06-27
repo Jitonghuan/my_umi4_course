@@ -1,0 +1,69 @@
+import React from 'react';
+
+// 表格 schema
+export const createTableSchema = () => [
+  // {
+  //   title: '发布Id',
+  //   dataIndex: 'id',
+  // },
+  {
+    title: '发布人',
+    dataIndex: 'modifyUser',
+  },
+  {
+    title: '发布时间',
+    dataIndex: 'deployedTime',
+  },
+  {
+    title: '发布状态',
+    dataIndex: 'deployStatus',
+  },
+  {
+    title: '操作',
+    dataIndex: 'operate',
+    render: () => <a>详情</a>,
+  },
+];
+
+// 发布记录字段 map
+export const recordFieldMapOut: { [key: string]: any } = {
+  // id: '发布Id',
+  modifyUser: '发布人',
+  deployedTime: '发布时间',
+  deployStatus: '发布状态',
+  envs: '发布环境',
+
+  // conflictFeature: '冲突分支',
+  jenkinsUrl: 'jenkins',
+  branchInfo: '功能分支',
+  // releaseBranch: '发布分支',
+  // version: '版本号',
+  tagName: 'tag',
+};
+
+// 发布记录字段 map
+export const recordFieldMap: { [key: string]: any } = {
+  deployId: '发布Id',
+  modifyUser: '发布人',
+  deployedTime: '发布时间',
+  envs: '发布环境',
+  deployStatus: '发布状态',
+  // conflictFeature: '冲突分支',
+  jenkinsUrl: 'jenkins',
+  tagName: 'tag',
+  branchInfo: '功能分支',
+  // releaseBranch: '发布分支',
+  // version: '版本号',
+};
+
+// "wait" 发布开始
+// "process" 正在发布
+// "error" 发布失败
+// "finish" 发布完成
+
+export const recordDisplayMap: any = {
+  wait: { text: '发布开始', color: 'blue' },
+  process: { text: '正在发布', color: 'geekblue' },
+  error: { text: '发布失败', color: 'red' },
+  finish: { text: '发布完成', color: 'green' },
+};

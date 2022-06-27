@@ -390,6 +390,24 @@ export default [
             hideInMenu: true,
             component: '@/pages/npm-manage/detail/components/overview',
           },
+          {
+            path: 'branch',
+            name: '分支',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/branch-manage',
+          },
+          {
+            path: 'deploy',
+            name: '部署',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/deploy',
+          },
+          {
+            path: 'version',
+            name: '部署',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/versions-manage',
+          },
         ]
       },
     ]

@@ -1,4 +1,4 @@
-import {useMemo, useEffect, useState, ReactNode} from 'react';
+import { useMemo, ReactNode } from 'react';
 import { history } from 'umi';
 import { Tabs, Spin } from 'antd';
 import VCPermission from '@/components/vc-permission';
@@ -27,6 +27,18 @@ const tabsConfig: any = [
   {
     name: '概述',
     key: 'overview'
+  },
+  {
+    name: '分支',
+    key: 'branch'
+  },
+  {
+    name: '部署',
+    key: 'deploy'
+  },
+  {
+    name: '版本回滚',
+    key: 'version'
   }
 ];
 

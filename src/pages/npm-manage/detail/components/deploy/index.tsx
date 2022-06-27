@@ -1,0 +1,221 @@
+import React, { useContext, useState, useEffect, useMemo } from 'react';
+import { Tabs, Select, Tag } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
+import { ContentCard } from '@/components/vc-page-content';
+import DetailContext from '../../context';
+import DeployContent from './deploy-content';
+import { getRequest } from '@/utils/request';
+import { listAppEnvType } from '@/common/apis';
+import { history } from 'umi';
+import './index.less';
+import PipeLineManage from './pipelineManage';
+import { getPipelineUrl } from '@/pages/application/service';
+
+const { TabPane } = Tabs;
+
+export default function Deploy(props: any) {
+  const { npmData } = useContext(DetailContext);
+  // const { envTypeData } = useContext(FeContext);
+  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  const [currentValue, setCurrentValue] = useState('');
+  const [visible, setVisible] = useState<boolean>(false); //流水线管理
+  const [datasource, setDatasource] = useState<any>([]); //流水线
+  const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
+
+  let env = window.location.href.includes('matrix-zslnyy')
+    ? 'prod'
+    : window.location.href.includes('matrix-fygs')
+    ? 'prod'
+    : window.location.href.includes('matrix-base-poc')
+    ? 'prod'
+    : '';
+  const [tabActive, setTabActive] = useState(
+    props.location.query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem('__init_env_tab__', tabActive);
+    history.push({ query: { ...props.location.query, activeTab: tabActive } });
+    if (tabActive && +npmData?.isClient! === 0) {
+      getPipeline(tabActive);
+    }
+  }, [tabActive]);
+  useEffect(() => {
+    queryData();
+  }, []);
+
+  const nextTab = useMemo(() => {
+    let data = '';
+    if (envTypeData && tabActive) {
+      const i = envTypeData.findIndex((item: any) => item.value === tabActive);
+      data = envTypeData[i + 1]?.value || '';
+    }
+    return data;
+  }, [tabActive, envTypeData]);
+
+  // const pipelineName=useMemo(()=>{
+  //   let result=''
+  //  if(pipelineOption&&currentValue){
+  //   const data=pipelineOption.find((item:any)=>item.value===currentValue)
+  //   if(data){
+  //    result=data.label
+  //   }
+  //  }
+  //  return result
+  // },[currentValue,pipelineOption])
+
+  const queryData = () => {
+    getRequest(listAppEnvType, {
+      data: { appCode: npmData?.appCode, isClient: false },
+    }).then((result) => {
+      const { data } = result || [];
+      let next: any = [];
+      (data || []).map((el: any) => {
+        if (el?.typeCode === 'dev') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+        }
+        if (el?.typeCode === 'test') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+        }
+        if (el?.typeCode === 'pre') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+        }
+        if (el?.typeCode === 'prod') {
+          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+        }
+      });
+      next.sort((a: any, b: any) => {
+        return a.sortType - b.sortType;
+      }); //升序
+      const currentTab = sessionStorage.getItem('__init_env_tab__') || next[0]?.typeCode || env;
+      setTabActive(currentTab);
+      let pipelineObj: any = {};
+      const saveData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '{}');
+      next.forEach((e: any) => {
+        if (e.typeCode) {
+          pipelineObj[e.typeCode] = saveData && saveData[e.typeCode] ? saveData[e.typeCode] : '';
+        }
+      });
+      sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
+      setEnvTypeData(next);
+    });
+  };
+
+  // 流水线下拉框发生改变
+  const handleChange = (value: string) => {
+    setCurrentValue(value);
+    let data: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+    sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...data, [tabActive]: value }));
+  };
+
+  // tab页切换
+  const handleTabChange = (v: string) => {
+    setCurrentValue('');
+    setTabActive(v);
+    // getPipeline(v);
+  };
+
+  // 获取流水线
+  const getPipeline = (v?: string) => {
+    const tab = v ? v : tabActive;
+    getRequest(getPipelineUrl, {
+      data: { appCode: npmData?.appCode, envTypeCode: tab, pageIndex: -1, size: -1 },
+    }).then((res) => {
+      if (res?.success) {
+        let data = res?.data?.dataSource;
+        setDatasource(data);
+        const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
+        setPipelineOption(pipelineOptionData);
+        if (pipelineOptionData.length !== 0) {
+          handleData(pipelineOptionData, tab);
+        }
+      }
+    });
+  };
+
+  // 处理数据
+  const handleData = (data: any, tab: string) => {
+    let storageData = sessionStorage.getItem('env_pipeline_obj')
+      ? JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '')
+      : '';
+    if (storageData) {
+      let currentTabValue = storageData[tab];
+      const pipelineCodeList = data.map((item: any) => item.value);
+      // 选择的流水线被删除了或者第一次进入页面
+      if (!pipelineCodeList.includes(currentTabValue) || !currentTabValue) {
+        setCurrentValue(data[0].value);
+        let value: any = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '');
+        sessionStorage.setItem('env_pipeline_obj', JSON.stringify({ ...value, [tab]: data[0].value }));
+      }
+      // 设置过流水线且没被删除
+      if (pipelineCodeList.includes(currentTabValue)) {
+        setCurrentValue(storageData[tab]);
+      }
+    } else {
+      setCurrentValue(data[0].value);
+    }
+  };
+
+  return (
+    <ContentCard noPadding>
+      <PipeLineManage
+        visible={visible}
+        handleCancel={() => {
+          setVisible(false);
+        }}
+        dataSource={datasource}
+        onSave={getPipeline}
+        appData={npmData}
+        envTypeCode={tabActive}
+      />
+
+      <Tabs
+        onChange={(v) => {
+          handleTabChange(v);
+        }}
+        activeKey={tabActive}
+        type="card"
+        tabBarExtraContent={
+          <div className="tabs-extra">
+            <span>
+              当前流水线：<Tag color="blue">{currentValue || '---'}</Tag>
+            </span>
+            <span className="tabs-extra-select">
+              请选择：
+              <Select
+                value={currentValue}
+                style={{ width: 220 }}
+                size="small"
+                onChange={handleChange}
+                options={pipelineOption}
+              />
+              <SettingOutlined
+                style={{ marginLeft: '10px' }}
+                onClick={() => {
+                  setVisible(true);
+                }}
+              />
+            </span>
+          </div>
+        }
+      >
+        {envTypeData?.map((item) => (
+          <TabPane tab={item.label} key={item.value}>
+            <DeployContent
+              isActive={item.value === tabActive}
+              envTypeCode={item.value}
+              pipelineCode={currentValue}
+              visible={visible}
+              onDeployNextEnvSuccess={() => {
+                const i = envTypeData.findIndex((item) => item.value === tabActive);
+                setTabActive(envTypeData[i + 1]?.value);
+                getPipeline(envTypeData[i + 1]?.value);
+              }}
+              nextTab={nextTab}
+            />
+          </TabPane>
+        ))}
+      </Tabs>
+    </ContentCard>
+  );
+}
