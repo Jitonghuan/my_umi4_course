@@ -23,8 +23,6 @@ import PublishRecord from './components/publish-record';
 import { Spin } from 'antd';
 import { listAppEnv } from '@/pages/application/service';
 import './index.less';
-import { Iprops } from '_@cffe_fe-datav-components@0.1.8@@cffe/fe-datav-components/es/components/charts/chart-bar';
-
 const rootCls = 'deploy-content-compo';
 
 export interface DeployContentProps {
