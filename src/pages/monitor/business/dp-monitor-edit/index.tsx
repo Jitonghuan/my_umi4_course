@@ -46,7 +46,7 @@ export default function DpMonitorEdit(props: any) {
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
   const [dbType, setDbType] = useState(''); // 数据库类型
   const [dbAddr, setDbAddr] = useState(''); // 数据库地址
-  const [unit, setUnit] = useState('s'); // 单位
+  const [unit, setUnit] = useState('m'); // 单位
 
   const [visible, setVisible] = useState(false);
   const [logSample, loading, getLogSample] = useQueryLogSample();
@@ -129,13 +129,13 @@ export default function DpMonitorEdit(props: any) {
         ...param
       }
     })
+    Object.assign(list[key], {
+      validate: res?.success || false
+    })
+    tagrgetForm.setFieldsValue({
+      metricsQuery:list
+    });
     if (res?.success) {
-      Object.assign(list[key], {
-        validate: true
-      })
-      tagrgetForm.setFieldsValue({
-        metricsQuery:list
-      });
       message.success('校验通过')
     }
   }
@@ -315,8 +315,7 @@ export default function DpMonitorEdit(props: any) {
                   <InputNumber
                     step={1}
                     addonAfter={(
-                      <Select defaultValue="s" value={unit} onChange={setUnit} style={{ width: 80 }}>
-                        <Select.Option value="s">秒</Select.Option>
+                      <Select defaultValue="m" value={unit} onChange={setUnit} style={{ width: 80 }}>
                         <Select.Option value="m">分钟</Select.Option>
                         <Select.Option value="h">小时</Select.Option>
                       </Select>
