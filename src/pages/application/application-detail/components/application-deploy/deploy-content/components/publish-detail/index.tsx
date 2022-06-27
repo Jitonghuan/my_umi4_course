@@ -586,7 +586,11 @@ export default function PublishDetail(props: IProps) {
                       if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
                         goToJenkins(err);
                       }
-                      if (err?.errorMessage.indexOf('请查看jenkins详情') === -1 && appData?.appType !== 'frontend') {
+                      if (
+                        err?.errorMessage.indexOf('请查看jenkins详情') === -1 &&
+                        err?.key !== 'dependencyCheck' &&
+                        appData?.appType !== 'frontend'
+                      ) {
                         localStorage.setItem('__init_env_tab__', metadata?.envTypeCode);
                         history.push(
                           `/matrix/application/detail/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}`,
