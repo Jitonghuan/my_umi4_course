@@ -117,6 +117,16 @@ export default function DpMonitorEdit(props: any) {
     })
   }
 
+  function resetValidate(name: number) {
+    let metricsQuery = tagrgetForm.getFieldValue('metricsQuery');
+    Object.assign(metricsQuery[name], {
+      validate: false
+    })
+    tagrgetForm.setFieldsValue({
+      metricsQuery
+    })
+  }
+
   // sql 测试
   async function onSqlTest(key: number) {
     let list = tagrgetForm.getFieldsValue()?.metricsQuery || [];
@@ -314,7 +324,7 @@ export default function DpMonitorEdit(props: any) {
                 <Form.Item name="collectIntervalNum" label="采集间隔" rules={[{ required: true, message: '请填写采集间隔' }]}>
                   <InputNumber
                     step={1}
-                    min={1}
+                    min={5}
                     addonAfter={(
                       <Select defaultValue="m" value={unit} onChange={setUnit} style={{ width: 80 }}>
                         <Select.Option value="m">分钟</Select.Option>
@@ -383,15 +393,7 @@ export default function DpMonitorEdit(props: any) {
                               >
                                 <TextArea
                                   rows={2}
-                                  onChange={() => {
-                                    let metricsQuery = tagrgetForm.getFieldValue('metricsQuery');
-                                    Object.assign(metricsQuery[name], {
-                                      validate: false
-                                    })
-                                    tagrgetForm.setFieldsValue({
-                                      metricsQuery
-                                    })
-                                  }}
+                                  onChange={() => resetValidate(name)}
                                 />
                               </Form.Item>
                               <Form.Item
@@ -400,7 +402,7 @@ export default function DpMonitorEdit(props: any) {
                                 rules={[{ required: true, message: '输入结果列' }]}
                                 {...restField}
                               >
-                                <Input />
+                                <Input onChange={() => resetValidate(name)} />
                               </Form.Item>
                             </Form.Item>
                             <Form.List name={[name, 'labelColumn']}>
@@ -410,7 +412,10 @@ export default function DpMonitorEdit(props: any) {
                                     <Form.Item>
                                       <Button
                                         type="dashed"
-                                        onClick={() => add()}
+                                        onClick={() => {
+                                          add();
+                                          resetValidate(name);
+                                        }}
                                         block
                                         icon={<PlusOutlined />}
                                         style={{ width: 240, marginLeft: 30 }}
@@ -419,19 +424,25 @@ export default function DpMonitorEdit(props: any) {
                                       </Button>
                                     </Form.Item>
                                   </div>
-                                  {field.map(({ key, name, ...restField }) => (
+                                  {field.map(({ key, name: labelName, ...restField }) => (
                                     <div key={key} className="filters-list-wrapper">
                                       <Form.Item
                                         {...restField}
-                                        name={[name]}
+                                        name={[labelName]}
                                         rules={[{ required: true, message: '请输入!' }]}
                                       >
                                         <Input
                                           style={{ width: 210, marginLeft: 5 }}
+                                          onChange={() => resetValidate(name)}
                                           placeholder="输入"
                                         />
                                       </Form.Item>
-                                      <MinusCircleOutlined onClick={() => remove(name)} />
+                                      <MinusCircleOutlined
+                                        onClick={() => {
+                                          resetValidate(name);
+                                          remove(labelName);
+                                        }}
+                                      />
                                     </div>
                                   ))}
                                 </>
