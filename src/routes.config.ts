@@ -370,13 +370,27 @@ export default [
   },
   {
     path: 'npm',
-    name: 'npm包管理',
+    name: 'NPM',
     icon: 'icon-poc_maindata',
     routes: [
       {
         path: 'list',
-        name: 'npm 列表',
+        name: 'npm列表',
         component: '@/pages/npm-manage/list',
+      },
+      {
+        path: 'detail',
+        name: 'npm 详情',
+        component: '@/pages/npm-manage/detail',
+        hideInMenu: true,
+        routes: [
+          {
+            path: 'overview',
+            name: '概述',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/overview',
+          },
+        ]
       },
     ]
   },
