@@ -3,7 +3,7 @@ import { Tag, Tooltip, Pagination, Empty, Spin } from 'antd';
 import './index.less';
 import { leftItem } from '../../type';
 import { getListMonitor } from '@/pages/monitor/business/service';
-import moment from '_moment@2.29.3@moment';
+import moment from 'moment';
 
 interface IProps {
   listData: leftItem[];
