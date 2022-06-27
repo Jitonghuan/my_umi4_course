@@ -29,7 +29,7 @@ export const dependecyTableSchema = ({
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: 20,
+      width: 30,
     },
     {
       title: '校验规则名称',

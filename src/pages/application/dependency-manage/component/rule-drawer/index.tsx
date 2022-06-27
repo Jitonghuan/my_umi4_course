@@ -81,11 +81,12 @@ export default function RuleDrawer(props: any) {
           form.setFieldsValue({ versionRangeFour: version2 });
         }
         let curEnvCode = initData?.envCode?.split(',');
+        console.log('curEnvCode', curEnvCode, curEnvCode[0] === '' ? undefined : curEnvCode);
         form.setFieldsValue({
           ruleName: initData?.ruleName,
           groupId: initData?.groupId,
           artifactId: initData?.artifactId,
-          envCode: curEnvCode.length > 0 ? curEnvCode : undefined,
+          envCode: curEnvCode[0] === '' ? undefined : curEnvCode,
           checkLevel: initData?.checkLevel,
           blockTime: moment(initData?.blockTime, 'YYYY-MM-DD'),
         });
@@ -239,17 +240,19 @@ export default function RuleDrawer(props: any) {
               <Form.Item>
                 <PlusCircleOutlined
                   style={{ marginLeft: '5px' }}
+                  disabled={viewEditable}
                   onClick={() => {
-                    setShowMore(true);
-                    let value = form.getFieldValue('versionRangeOne');
+                    if (!viewEditable) {
+                      setShowMore(true);
+                      let value = form.getFieldValue('versionRangeOne');
 
-                    if (value !== 'gt' && value !== 'ge') {
-                      form.setFieldsValue({
-                        versionRangeOne: '',
-                      });
+                      if (value !== 'gt' && value !== 'ge') {
+                        form.setFieldsValue({
+                          versionRangeOne: '',
+                        });
+                      }
                     }
                   }}
-                  disabled={viewEditable}
                 />
               </Form.Item>
             </Space>
