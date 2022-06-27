@@ -108,7 +108,11 @@ export default function DpMonitorEdit(props: any) {
             metricsQuery: targetParams.metricsQuery
           }
           resolve(data);
+        }).catch(() => {
+          resolve(false)
         })
+      }).catch(() => {
+        resolve(false)
       })
     })
   }
@@ -132,7 +136,7 @@ export default function DpMonitorEdit(props: any) {
       tagrgetForm.setFieldsValue({
         metricsQuery:list
       });
-      message.success('校验通过～')
+      message.success('校验通过')
     }
   }
 
@@ -150,7 +154,7 @@ export default function DpMonitorEdit(props: any) {
       if (data.metricsQuery) {
         for (const item of data.metricsQuery) {
           if (!item.validate) {
-            return message.warning('请先测试sql是否正确');
+            return message.warning('有sql还未查询测试');
           }
         }
       }
@@ -173,6 +177,8 @@ export default function DpMonitorEdit(props: any) {
             }
           })
       }
+    } else {
+      message.warning('请填写完整')
     }
   };
 
