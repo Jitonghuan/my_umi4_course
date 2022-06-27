@@ -67,6 +67,9 @@ export const configUpdateUrl = `${appConfig.apiPrefix}/appManage/config/update`;
 /** GET 查看feature部署情况 */
 export const queryFeatureDeployedUrl = `${appConfig.apiPrefix}/releaseManage/branch/featureDeployed`;
 
+/** GET 查询依赖检测校验结果 */
+export const checkResultUrl = `${appConfig.apiPrefix}/appManage/dependencyManage/checkResult`;
+
 /** POST 创建部署 */
 export const createDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create`;
 
@@ -543,7 +546,7 @@ export const retryBuild = (params: {
 export const retryDeploy = (params: {
   /** 部署的数据库自增ID */
   id: number;
-  envCode: string;
+  envCode?: string;
 }) =>
   postRequest(retryDeployUrl, {
     data: params,

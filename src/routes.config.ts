@@ -415,6 +415,12 @@ export default [
         key: 'version-management',
         component: '@/pages/application/version-management',
       },
+      {
+        path: 'dependency-manage',
+        name: '依赖管理',
+        key: 'dependency-manage',
+        component: '@/pages/application/dependency-manage',
+      },
     ],
   },
   {
