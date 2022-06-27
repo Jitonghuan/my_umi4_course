@@ -19,13 +19,13 @@ import {
   Spin,
   Divider,
   message,
-  Space,
+  Space, Modal,
 } from 'antd';
 import PageContainer from '@/components/page-container';
 import moment, { Moment } from 'moment';
 import useRequest from '@/utils/useRequest';
 import { history } from 'umi';
-import { FileTextOutlined, EyeFilled, PlusOutlined, DeleteFilled, MinusCircleOutlined } from '@ant-design/icons';
+import { FileTextOutlined, EyeFilled, PlusOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { putRequest, postRequest } from '@/utils/request';
 import ReactJson from 'react-json-view';
 import { ContentCard } from '@/components/vc-page-content';
@@ -51,6 +51,8 @@ export default function LogMonitor(props: any) {
   let type = props.location.state?.type || props.location.query?.type;
   let recordData = props.location.state?.recordData;
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
+  const [visible, setVisible] = useState(false);
+  const [tab, setTab] = useState('log');
   const [appOptions] = useAppOptions();
   const [tagrgetForm] = Form.useForm();
   const [alarmForm] = Form.useForm();
@@ -103,6 +105,8 @@ export default function LogMonitor(props: any) {
   };
   const queryLogSample = () => {
     getLogSample(currentEnvCode, currentIndex, currentAppCode);
+    setTab('log');
+    setVisible(true);
   };
   const changeIndexModeField = (indexModeField: string) => {
     setCurrentIndexModeField(indexModeField);
@@ -292,221 +296,209 @@ export default function LogMonitor(props: any) {
   return (
     <PageContainer className="monitor-log">
       <ContentCard>
+        <div className="monitor-log-btn-wrapper">
+          <Button type="primary" onClick={submitMintorConfig}>
+            保存监控配置
+          </Button>
+          <Button
+            style={{ marginLeft: '15px' }}
+            onClick={() => {
+              history.goBack();
+            }}
+          >
+            取消
+          </Button>
+        </div>
+        <Divider />
         <div>
-          <Collapse bordered={false} defaultActiveKey={['1']} className="log-config-collapse">
-            <Panel header="日志源配置" key="1">
-              <div className="log-config">
-                <div className="log-config-left">
-                  <Form labelCol={{ flex: '100px' }} form={logForm}>
-                    <Form.Item
-                      label="监控名称"
-                      name="monitorName"
-                      rules={[{ required: true, message: '请输入监控名称!' }]}
-                    >
-                      <Input style={{ width: '362px' }}></Input>
-                    </Form.Item>
-                    <Form.Item label="选择环境" name="envCode" required={true}>
-                      <Select
-                        style={{ width: '140px' }}
-                        options={envTypeData}
-                        value={currentEnvType}
-                        onChange={selectEnvType}
-                        allowClear
-                      ></Select>
-                      <Select
-                        style={{ width: '220px' }}
-                        options={envCodeOption}
-                        onChange={selectEnvCode}
-                        value={currentEnvCode}
-                        allowClear
-                      ></Select>
-                    </Form.Item>
-                    <Form.Item
-                      label="选择日志索引"
-                      name="index"
-                      rules={[{ required: true, message: '请选择日志索引!' }]}
-                    >
-                      <Select
-                        style={{ width: '362px' }}
-                        options={logStoreOptions}
-                        onChange={selectIndex}
-                        showSearch
-                        allowClear
-                      ></Select>
-                    </Form.Item>
-                    <Form.Item label="应用" name="appCode">
-                      <Select
-                        style={{ width: '362px' }}
-                        options={appOptions}
-                        onChange={selectAppCode}
-                        showSearch
-                        allowClear
-                      ></Select>
-                    </Form.Item>
-                  </Form>
-                </div>
-                <div className="log-config-right">
-                  <div style={{ fontSize: 10, display: 'flex', justifyContent: 'space-between' }}>
-                    <span>
-                      <FileTextOutlined />
-                      日志抓取结果预览
-                    </span>
-                    <span>
-                      <Button type="primary" onClick={queryLogSample}>
-                        <EyeFilled />
-                        日志抓取预览
-                      </Button>
-                    </span>
-                  </div>
-
-                  <div className="log-board">
-                    <Spin spinning={loading} style={{ height: '100%', overflow: 'auto' }}>
-                      <ReactJson
-                        src={logSample}
-                        name={false}
-                        theme="apathy"
-                        style={{ height: '100%', overflow: 'auto' }}
-                        collapsed={false}
-                      />
-                    </Spin>
-                  </div>
-                </div>
+          <div className="log-config">
+            <div className="log-config-left">
+              <div className="target-item">
+                <span>日志源配置</span>
+                <Button type="primary" ghost onClick={queryLogSample}>
+                  <EyeFilled />
+                  日志抓取预览
+                </Button>
               </div>
-            </Panel>
-          </Collapse>
+              <Form labelCol={{ flex: '110px' }} layout="inline" form={logForm}>
+                <Form.Item
+                  label="监控名称"
+                  name="monitorName"
+                  rules={[{ required: true, message: '请输入监控名称!' }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item label="选择环境" name="envCode" required={true}>
+                  <Select
+                    style={{ width: '140px' }}
+                    options={envTypeData}
+                    value={currentEnvType}
+                    onChange={selectEnvType}
+                    allowClear
+                  />
+                  <Select
+                    style={{ width: '218px' }}
+                    options={envCodeOption}
+                    onChange={selectEnvCode}
+                    value={currentEnvCode}
+                    allowClear
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="选择日志索引"
+                  name="index"
+                  rules={[{ required: true, message: '请选择日志索引!' }]}
+                >
+                  <Select
+                    options={logStoreOptions}
+                    onChange={selectIndex}
+                    showSearch
+                    allowClear
+                  />
+                </Form.Item>
+                <Form.Item label="应用" name="appCode">
+                  <Select
+                    options={appOptions}
+                    onChange={selectAppCode}
+                    showSearch
+                    allowClear
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+          </div>
 
-          <Collapse bordered={false} className="target-config-collapse" defaultActiveKey={['2']}>
-            <Panel header={`指标配置`} key="2">
-              <div className="target-config">
-                <div className="target-config-left">
-                  <Form labelCol={{ flex: '100px' }} form={tagrgetForm}>
-                    <div className="target-item">指标项</div>
-                    <Form.List name="metrics">
-                      {(fields, { add, remove }) => (
-                        <>
-                          {fields.map(({ key, name, ...restField }) => (
-                            <Space key={key} style={{ marginBottom: 8, display: 'block' }} direction="vertical">
+          <Divider />
+
+          <div className="target-config">
+            <div className="target-config-left">
+              <Form labelCol={{ flex: '110px' }}  form={tagrgetForm}>
+                <div className="target-item">
+                  <span>指标配置</span>
+                  <Button type="primary" ghost>
+                    <EyeFilled />
+                    指标抓取预览
+                  </Button>
+                </div>
+                <Form.List name="metrics">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div>
+                          <div style={{color: '#1972cc', marginBottom: '10px'}}>
+                            指标{key + 1} <DeleteOutlined onClick={() => remove(name)} />
+                          </div>
+                          <Space key={key} className="space-list-item" direction="vertical">
+                            <Form.Item
+                              noStyle
+                              shouldUpdate={(prevValues, curValues) =>
+                                prevValues.name.metricName == curValues.name.metricName
+                              }
+                            >
                               <Form.Item
-                                noStyle
-                                shouldUpdate={(prevValues, curValues) =>
-                                  prevValues.name.metricName == curValues.name.metricName
-                                }
+                                {...restField}
+                                label="指标名称"
+                                name={[name, 'metricName', 'first']}
+                                rules={[{ required: true, message: '输入指标名称' }]}
                               >
-                                <Form.Item
-                                  {...restField}
-                                  label="指标名称"
-                                  name={[name, 'metricName', 'first']}
-                                  rules={[{ required: true, message: '输入指标名称' }]}
-                                >
-                                  <Input
-                                    style={{ width: '352px' }}
-                                    disabled={key <= initLength - 1}
-                                    placeholder="指标名称仅支持数字、字母、下划线"
-                                  ></Input>
-                                </Form.Item>
-
-                                <Form.Item
-                                  label="指标类型"
-                                  {...restField}
-                                  name={[name, 'metricType', 'second']}
-                                  rules={[{ required: true, message: '选择指标类型' }]}
-                                >
-                                  <Select
-                                    style={{ width: '352px' }}
-                                    options={targetOptions}
-                                    // value={currentTarget}
-                                    // name={[name,'currentTarget']}
-                                    onChange={selectTarget}
-                                  ></Select>
-                                </Form.Item>
-
-                                <Form.Item noStyle shouldUpdate>
-                                  {() => {
-                                    if (
-                                      tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
-                                      'histogram'
-                                    ) {
-                                      return (
-                                        <Form.Item
-                                          dependencies={[name, 'metricType', 'second']}
-                                          label="Buckets"
-                                          name={[name, 'buckets']}
-                                        >
-                                          <Input
-                                            style={{ width: 352 }}
-                                            placeholder="格式: 0.001;0.05;0.1   	冒号分割"
-                                          ></Input>
-                                        </Form.Item>
-                                      );
-                                    } else if (
-                                      tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
-                                      'summary'
-                                    ) {
-                                      return (
-                                        <div>
-                                          <Form.Item
-                                            dependencies={[name, 'metricType', 'second']}
-                                            label="Objectives"
-                                            name={[name, 'objectives']}
-                                          >
-                                            <Input
-                                              style={{ width: 352 }}
-                                              placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"
-                                            ></Input>
-                                          </Form.Item>
-                                          <Form.Item
-                                            dependencies={[name, 'metricType', 'second']}
-                                            label="MaxAge"
-                                            name={[name, 'MaxAge']}
-                                          >
-                                            <Input style={{ width: 352 }} placeholder="MaxAge"></Input>
-                                          </Form.Item>
-                                          <Form.Item
-                                            dependencies={[name, 'metricType', 'second']}
-                                            label="AgeBuckets"
-                                            name={[name, 'AgeBuckets']}
-                                          >
-                                            <Input style={{ width: 352 }} placeholder="AgeBuckets"></Input>
-                                          </Form.Item>
-                                        </div>
-                                      );
-                                    } else if (
-                                      tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
-                                      'counter'
-                                    ) {
-                                      return (
-                                        <Form.Item
-                                          label="指标值字段"
-                                          {...restField}
-                                          name={[name, 'metricValueField', 'third']}
-                                          rules={[{ required: true, message: '选择指标值字段' }]}
-                                          dependencies={[name, 'metricType', 'second']}
-                                        >
-                                          <Select style={{ width: '352px' }} options={indexModeFieldsOption}></Select>
-                                        </Form.Item>
-                                      );
-                                    }
-                                  }}
-                                </Form.Item>
+                                <Input
+                                  disabled={key <= initLength - 1}
+                                  placeholder="指标名称仅支持数字、字母、下划线"
+                                />
                               </Form.Item>
 
+                              <Form.Item
+                                label="指标类型"
+                                {...restField}
+                                name={[name, 'metricType', 'second']}
+                                rules={[{ required: true, message: '选择指标类型' }]}
+                              >
+                                <Select
+                                  options={targetOptions}
+                                  // value={currentTarget}
+                                  // name={[name,'currentTarget']}
+                                  onChange={selectTarget}
+                                />
+                              </Form.Item>
+                              <Form.Item noStyle shouldUpdate>
+                                {() => {
+                                  if (
+                                    tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
+                                    'histogram'
+                                  ) {
+                                    return (
+                                      <Form.Item
+                                        dependencies={[name, 'metricType', 'second']}
+                                        label="Buckets"
+                                        name={[name, 'buckets']}
+                                      >
+                                        <Input
+                                          placeholder="格式: 0.001;0.05;0.1   	冒号分割"
+                                        />
+                                      </Form.Item>
+                                    );
+                                  } else if (
+                                    tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second ===
+                                    'summary'
+                                  ) {
+                                    return (
+                                      <>
+                                        <Form.Item
+                                          dependencies={[name, 'metricType', 'second']}
+                                          label="Objectives"
+                                          name={[name, 'objectives']}
+                                        >
+                                          <Input
+                                            placeholder="格式: 0.5: 0.05;0.1:0.01 冒号分割"
+                                          />
+                                        </Form.Item>
+                                        <Form.Item
+                                          dependencies={[name, 'metricType', 'second']}
+                                          label="MaxAge"
+                                          name={[name, 'MaxAge']}
+                                        >
+                                          <Input placeholder="MaxAge" />
+                                        </Form.Item>
+                                        <Form.Item
+                                          dependencies={[name, 'metricType', 'second']}
+                                          label="AgeBuckets"
+                                          name={[name, 'AgeBuckets']}
+                                        >
+                                          <Input placeholder="AgeBuckets" />
+                                        </Form.Item>
+                                      </>
+                                    );
+                                  } else if (
+                                    tagrgetForm.getFieldsValue(['metrics']).metrics[name]?.metricType?.second !==
+                                    'counter'
+                                  ) {
+                                    return (
+                                      <Form.Item
+                                        label="指标值字段"
+                                        {...restField}
+                                        name={[name, 'metricValueField', 'third']}
+                                        rules={[{ required: true, message: '选择指标值字段' }]}
+                                        dependencies={[name, 'metricType', 'second']}
+                                      >
+                                        <Select options={indexModeFieldsOption} />
+                                      </Form.Item>
+                                    );
+                                  }
+                                }}
+                              </Form.Item>
                               <Form.Item
                                 dependencies={[name, 'metricType', 'second']}
                                 label="指标描述"
                                 name={[name, 'metricDesc', 'forth']}
                                 {...restField}
                               >
-                                <Input style={{ width: 352 }}></Input>
+                                <Input />
                               </Form.Item>
-                              <Form.List name={[name, 'filters']}>
-                                {(field, { add, remove }) => (
-                                  <>
-                                    {/* {console.log(
-                                      'name',
-                                      tagrgetForm.getFieldsValue(['metrics', name, 'metricType', 'second']).metrics[
-                                        name
-                                      ]?.metricType?.second,
-                                    )} */}
+                            </Form.Item>
+                            <Form.List name={[name, 'filters']}>
+                              {(field, { add, remove }) => (
+                                <>
+                                  <div style={{ width: '100%' }}>
                                     <Form.Item>
                                       <Button
                                         type="dashed"
@@ -514,227 +506,100 @@ export default function LogMonitor(props: any) {
                                         // disabled={editDisable}
                                         block
                                         icon={<PlusOutlined />}
-                                        style={{ width: 414, marginLeft: 40 }}
+                                        style={{ width: 240, marginLeft: 30 }}
                                       >
                                         新增过滤条件
                                       </Button>
                                     </Form.Item>
-                                    {field.map(({ key, name, ...restField }) => (
-                                      <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                        <Form.Item
-                                          {...restField}
-                                          name={[name, 'key']}
-                                          rules={[{ required: true, message: '请选择过滤字段!' }]}
-                                        >
-                                          <Select
-                                            style={{ width: 140, marginLeft: 40 }}
-                                            options={indexModeFieldsOption}
-                                            placeholder="选择过滤字段"
-                                            // disabled={editDisable}
-                                            onChange={changeIndexModeField}
-                                            value={currentIndexModeField}
-                                          ></Select>
-                                        </Form.Item>
-                                        <Form.Item
-                                          {...restField}
-                                          name={[name, 'operator']}
-                                          rules={[{ required: true, message: '请选择!' }]}
-                                        >
-                                          <Select
-                                            style={{ width: 80, paddingLeft: 5 }}
-                                            options={operatorOption}
-                                            // disabled={editDisable}
-                                          ></Select>
-                                        </Form.Item>
-                                        <Form.Item
-                                          {...restField}
-                                          name={[name, 'value']}
-                                          rules={[{ required: true, message: '请输入字段值!' }]}
-                                        >
-                                          <Input
-                                            style={{ width: 180, marginLeft: 5 }}
-                                            placeholder="输入字段值"
-                                            // disabled={editDisable}
-                                          ></Input>
-                                        </Form.Item>
-                                        <MinusCircleOutlined onClick={() => remove(name)} />
-                                      </Space>
-                                    ))}
-                                  </>
-                                )}
-                              </Form.List>
-                              <DeleteFilled style={{ color: '#346c9c' }} onClick={() => remove(name)} />
-                              <Divider />
-                            </Space>
-                          ))}
-                          <Form.Item>
-                            <Button
-                              type="primary"
-                              style={{ width: 414, marginLeft: 40 }}
-                              onClick={() => add()}
-                              block
-                              // disabled={editDisable}
-                              icon={<PlusOutlined />}
-                            >
-                              继续新增指标
-                            </Button>
-                          </Form.Item>
-                        </>
-                      )}
-                    </Form.List>
-
-                    <Form.Item>
-                      <Button type="primary" onClick={submitMintorConfig}>
-                        保存监控配置
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </div>
-                <div className="target-config-right">
-                  <div style={{ fontSize: 10, display: 'flex', justifyContent: 'space-between' }}>
-                    <span>
-                      <FileTextOutlined />
-                      指标预览
-                    </span>
-                    <span>
-                      <Button type="primary">
-                        <EyeFilled />
-                        指标预览
-                      </Button>
-                    </span>
-                  </div>
-                  <div className="target-board">
-                    {/* <Spin  style={{ height: '100%', overflow: 'auto' }}> */}
-                    <ReactJson
-                      src={[]}
-                      name={false}
-                      theme="apathy"
-                      style={{ height: '100%', overflow: 'auto' }}
-                      collapsed={false}
-                    />
-                    {/* </Spin> */}
-                  </div>
-                </div>
-              </div>
-            </Panel>
-          </Collapse>
-
-          {/* <Collapse bordered={false} activeKey={[selectNum]} onChange={onChangeTab}>
-            <Panel header="报警配置" key="3">
-              <Form labelCol={{ flex: '148px' }} form={alarmForm} onFinish={onFinish}>
-                <Form.Item
-                  label="报警名称"
-                  name="name"
-                  rules={[
-                    {
-                      whitespace: true,
-                      required: true,
-                      message: '请输入正确的名称',
-                      // message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
-                      // pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
-                      type: 'string',
-                      max: 200,
-                    },
-                  ]}
-                >
-                  <Input placeholder="请输入" style={{ width: '400px' }}></Input>
-                </Form.Item>
-                <Form.Item
-                  label="告警表达式(PromQL)"
-                  name="expression"
-                  rules={[{ required: true, message: '请输入告警表达式!' }]}
-                >
-                  <Input.TextArea placeholder="请输入" style={{ width: '400px' }}></Input.TextArea>
-                </Form.Item>
-                <Row>
-                  <Form.Item
-                    label="报警持续时间"
-                    name="duration"
-                    rules={[{ required: true, message: '请输入报警持续时间!' }]}
-                  >
-                    <InputNumber style={{ width: '290px' }} />
-                  </Form.Item>
-                  <Form.Item name="timeType" noStyle initialValue="m" className="extraStyleTime">
-                    <Select style={{ width: '20%' }} placeholder="选择时间单位" allowClear>
-                      <Select.Option value="h">小时</Select.Option>
-                      <Select.Option value="m">分钟</Select.Option>
-                      <Select.Option value="s">秒</Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Row>
-
-                <Form.Item label="报警级别" name="level" rules={[{ required: true, message: '请选择告警级别!' }]}>
-                  <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }} allowClear></Select>
-                </Form.Item>
-                <Form.Item label="报警消息" name="message" required={true}>
-                  <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }}></Input>
-                </Form.Item>
-                <Form.Item label="通知对象" name="receiver">
-                  <Select mode="multiple" showSearch style={{ width: '400px' }} allowClear></Select>
-                </Form.Item>
-                <Form.Item
-                  label="是否静默"
-                  name="silence"
-                  style={{ verticalAlign: 'sub' }}
-                  rules={[{ required: true, message: '请选择是否静默!' }]}
-                >
-                  <Radio.Group
-                    options={silenceOptions}
-                    value={getSilenceValue}
-                    onChange={(e) => {
-                      setGetSilenceValue(e.target.value);
-                    }}
-                  ></Radio.Group>
-                </Form.Item>
-                <Row>
-                  <Col span={5}></Col>
-                  <Col span={19}>
-                    <Form.Item
-                      noStyle
-                      shouldUpdate={(prevValues, curValues) => prevValues.silence !== curValues.silence}
-                    >
-                      {getSilenceValue !== 0 ? (
-                        <Form.Item
-                          name="silenceTime"
-                          rules={[
-                            {
-                              required: true,
-                              message: '请选择',
-                            },
-                          ]}
+                                  </div>
+                                  {field.map(({ key, name, ...restField }) => (
+                                    <Space key={key} className="filters-list-wrapper" align="baseline">
+                                      <Form.Item
+                                        {...restField}
+                                        name={[name, 'key']}
+                                        rules={[{ required: true, message: '请选择过滤字段!' }]}
+                                      >
+                                        <Select
+                                          style={{ width: 140, marginLeft: 30 }}
+                                          options={indexModeFieldsOption}
+                                          placeholder="选择过滤字段"
+                                          // disabled={editDisable}
+                                          onChange={changeIndexModeField}
+                                          value={currentIndexModeField}
+                                        />
+                                      </Form.Item>
+                                      <Form.Item
+                                        {...restField}
+                                        name={[name, 'operator']}
+                                        rules={[{ required: true, message: '请选择!' }]}
+                                      >
+                                        <Select
+                                          style={{ width: 80, paddingLeft: 5 }}
+                                          options={operatorOption}
+                                          // disabled={editDisable}
+                                        />
+                                      </Form.Item>
+                                      <Form.Item
+                                        {...restField}
+                                        name={[name, 'value']}
+                                        rules={[{ required: true, message: '请输入字段值!' }]}
+                                      >
+                                        <Input
+                                          style={{ width: 210, marginLeft: 5 }}
+                                          placeholder="输入字段值"
+                                          // disabled={editDisable}
+                                        />
+                                      </Form.Item>
+                                      <MinusCircleOutlined onClick={() => remove(name)} />
+                                    </Space>
+                                  ))}
+                                </>
+                              )}
+                            </Form.List>
+                            <Divider />
+                          </Space>
+                        </div>
+                      ))}
+                      <Form.Item>
+                        <Button
+                          type="primary"
+                          style={{ width: 414, marginLeft: 30 }}
+                          onClick={() => add()}
+                          block
+                          // disabled={editDisable}
+                          icon={<PlusOutlined />}
                         >
-                          <TimePicker.RangePicker format="HH:mm" style={{ width: '90%', marginTop: 8 }} />
-                        </Form.Item>
-                      ) : null}
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-                <Form.Item label="高级配置" rules={[{ required: true, message: '请填写高级配置!' }]}>
-                  <Form.Item noStyle>
-                    <span>标签（Labels):</span>
-                    <EditorTable
-                      columns={editColumns}
-                      onChange={labelFun}
-                      value={labelTableData}
-                      style={{ width: '90%' }}
-                    ></EditorTable>
-                    <span>注释（Annotations):</span>
-                    <EditorTable
-                      columns={editColumns}
-                      onChange={annotationsFun}
-                      value={annotationsTableData}
-                      style={{ width: '90%' }}
-                    ></EditorTable>
-                  </Form.Item>
-                </Form.Item>
-                <Form.Item>
-                  <Button type="primary">{type === 'add' ? '新增报警' : '编辑报警'}</Button>
-                </Form.Item>
+                          新增指标
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
               </Form>
-            </Panel>
-          </Collapse> */}
+            </div>
+          </div>
         </div>
+        <Modal
+          title="结果预览"
+          visible={visible}
+          width="80%"
+          onCancel={() => {
+            setVisible(false);
+          }}
+          footer={null}
+        >
+          <div className="log-monitor-board-con">
+            <Spin spinning={loading} style={{ height: '100%', overflow: 'auto' }}>
+              <ReactJson
+                src={tab === 'log' ? logSample : []}
+                name={false}
+                theme="apathy"
+                style={{ height: '100%', overflow: 'auto' }}
+                collapsed={false}
+              />
+            </Spin>
+          </div>
+        </Modal>
       </ContentCard>
     </PageContainer>
   );
