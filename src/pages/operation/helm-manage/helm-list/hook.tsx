@@ -12,8 +12,8 @@ export const queryReleaseList = (paramsObj?: {
 }) => {
   return postRequest(APIS.getReleaseList, {
     data: {
-      pageIndex: paramsObj?.pageIndex || 1,
-      pageSize: paramsObj?.pageSize || 20,
+      //   pageIndex: paramsObj?.pageIndex || 1,
+      //   pageSize: paramsObj?.pageSize || 20,
       releaseName: paramsObj?.releaseName || '',
       namespace: paramsObj?.namespace || '',
       clusterName: paramsObj?.clusterName || '',
@@ -65,7 +65,7 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
             });
           });
 
-          setData(result?.data);
+          setData(dataArry);
         } else {
           return;
         }

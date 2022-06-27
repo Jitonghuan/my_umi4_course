@@ -30,10 +30,10 @@ type releaseStatus = {
 };
 
 export default function HelmDetail(props: any) {
+  console.log('history.location?.state', history.location?.state);
   const record: any = history.location?.state || {
     releaseName: '',
     namespace: '',
-    clusterName: '',
   };
   const [activeValue, setActiveValue] = useState<string>('basic-info');
 

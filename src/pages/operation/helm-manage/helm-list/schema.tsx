@@ -20,13 +20,13 @@ const APP_TYPE_ICON = {
 
 // 表格 schema
 export const releaseTableSchema = ({
-  onEditClick,
+  onUpdateClick,
   onViewClick,
   onDelClick,
   onGetExecutionDetailClick,
   onSwitchEnableClick,
 }: {
-  onEditClick: (record: any, index: number) => void;
+  onUpdateClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
   onGetExecutionDetailClick: (record: any, index: number) => void;
@@ -87,7 +87,7 @@ export const releaseTableSchema = ({
 
           <a
             onClick={() => {
-              onEditClick(record, index);
+              onUpdateClick(record, index);
             }}
           >
             更新

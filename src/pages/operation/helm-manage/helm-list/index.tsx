@@ -10,6 +10,7 @@ import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
 import { queryReleaseList, useGetClusterList } from './hook';
+import UpdateDeploy from './update-deploy';
 
 type StatusTypeItem = {
   color: string;
@@ -33,11 +34,27 @@ export default function DNSManageList(props: any) {
   const [curRecord, setCurRecord] = useState<any>();
   const [createAppVisible, setCreateAppVisible] = useState(false);
   const [pageInfo, setPageInfo] = useState<any>({});
+  const [tableLoading, setTableLoading] = useState<any>(false);
+  const [tabledataSource, setDataSource] = useState<any>([]);
+  const [curClusterName, setCurClusterName] = useState<any>('来未来');
+  const [mode, setMode] = useState<boolean>(false);
 
   useEffect(() => {
-    queryReleaseList();
+    getReleaseList({ clusterName: '来未来' });
+    setCurClusterName('来未来' || clusterOptions[0].value);
     getClusterList();
   }, []);
+
+  const getReleaseList = (paramsObj?: { releaseName?: string; namespace?: string; clusterName?: string }) => {
+    setTableLoading(true);
+    queryReleaseList(paramsObj)
+      .then((res) => {
+        setDataSource(res);
+      })
+      .finally(() => {
+        setTableLoading(false);
+      });
+  };
 
   const dataSource = [
     {
@@ -56,37 +73,38 @@ export default function DNSManageList(props: any) {
     },
   ];
   //触发分页
-  const pageSizeClick = (pagination: any) => {
-    setPageInfo({
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize,
-      total: pagination.total,
-    });
-    let obj = {
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize,
-    };
+  // const pageSizeClick = (pagination: any) => {
+  //   setPageInfo({
+  //     pageIndex: pagination.current,
+  //     pageSize: pagination.pageSize,
+  //     total: pagination.total,
+  //   });
+  //   let obj = {
+  //     pageIndex: pagination.current,
+  //     pageSize: pagination.pageSize,
+  //   };
 
-    loadListData(obj);
-  };
+  //   loadListData(obj);
+  // };
 
-  const loadListData = (params: any) => {
-    let value = releaseForm.getFieldsValue();
-    queryReleaseList({ ...params, ...value });
-  };
+  // const loadListData = (params: any) => {
+  //   let value = releaseForm.getFieldsValue();
+  //   queryReleaseList({ ...params, ...value });
+  // };
 
   // 表格列配置
   const tableColumns = useMemo(() => {
     return releaseTableSchema({
-      onEditClick: (record, index) => {
+      onUpdateClick: (record, index) => {
         setCurRecord(record);
-        setAddReleaseMode('EDIT');
+        setMode(true);
       },
       onViewClick: (record, index) => {
         history.push({
           pathname: 'helm-detail',
           state: {
             record: record,
+            curClusterName: curClusterName,
           },
         });
       },
@@ -113,53 +131,64 @@ export default function DNSManageList(props: any) {
     }) as any;
   }, []);
 
+  const changeClusterName = (value: string) => {
+    const params = releaseForm.getFieldsValue();
+    setCurClusterName(value);
+    getReleaseList({ releaseName: params.releaseName, namespace: params.namespace, clusterName: value });
+  };
+
   return (
     <PageContainer>
-      {/* <ExecutionDetailsModal
-        mode={executionDetailsMode}
+      <UpdateDeploy
+        mode={mode}
         curRecord={curRecord}
-        onClose={() => setExecutionDetailsMode('HIDE')}
-      />
-      <CreateTaskModal
-        mode={addTaskMode}
-        initData={curRecord}
-        onSave={() => {
-          setAddReleaseMode('HIDE');
-          setTimeout(() => {
-            queryReleaseList();
-          }, 200);
+        curClusterName={curClusterName}
+        onCancle={() => {
+          setMode(false);
         }}
-        onClose={() => setAddReleaseMode('HIDE')}
-      /> */}
+        onSave={() => {
+          setMode(false);
+          getReleaseList({ clusterName: curClusterName });
+        }}
+      />
 
       <FilterCard>
+        <div>
+          <span>
+            <b>选择集群：</b>
+          </span>
+          <Select
+            loading={loading}
+            options={clusterOptions}
+            style={{ width: 290 }}
+            allowClear
+            showSearch
+            defaultValue="来未来"
+            onChange={changeClusterName}
+          />
+        </div>
+      </FilterCard>
+      <ContentCard>
         <div>
           <Form
             layout="inline"
             form={releaseForm}
             onFinish={(values: any) => {
-              queryReleaseList({
+              getReleaseList({
                 ...values,
-                pageIndex: 1,
-                pageSize: 20,
+                clusterName: curClusterName,
               });
             }}
             onReset={() => {
               releaseForm.resetFields();
-              queryReleaseList({
-                pageIndex: 1,
-                // pageSize: pageSize,
-              });
+              getReleaseList({ clusterName: curClusterName });
             }}
           >
-            <Form.Item label="选择集群" name="clusterName">
-              <Select placeholder="请输入任务Code" options={clusterOptions} style={{ width: 290 }} />
-            </Form.Item>
             <Form.Item label="命名空间" name="namespace">
-              <Select placeholder="请输入任务Code" style={{ width: 290 }} />
+              <Select placeholder="请输入命名空间" style={{ width: 290 }} />
             </Form.Item>
             <Form.Item label="名称：" name="releaseName">
-              <Input placeholder="请输入任务Code" style={{ width: 290 }} />
+              <Input placeholder="请输入名称" style={{ width: 290 }} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -173,8 +202,6 @@ export default function DNSManageList(props: any) {
             </Form.Item>
           </Form>
         </div>
-      </FilterCard>
-      <ContentCard>
         <div className="table-caption">
           <div className="caption-left">
             <h3>release列表</h3>
@@ -199,15 +226,15 @@ export default function DNSManageList(props: any) {
           <Table
             columns={tableColumns}
             dataSource={dataSource}
-            loading={false}
-            pagination={{
-              current: pageInfo.pageIndex,
-              total: pageInfo.total,
-              pageSize: pageInfo.pageSize,
-              showSizeChanger: true,
-              showTotal: () => `总共 ${pageInfo.total} 条数据`,
-            }}
-            onChange={pageSizeClick}
+            loading={tableLoading}
+            // pagination={{
+            //   current: pageInfo.pageIndex,
+            //   total: pageInfo.total,
+            //   pageSize: pageInfo.pageSize,
+            //   showSizeChanger: true,
+            //   showTotal: () => `总共 ${pageInfo.total} 条数据`,
+            // }}
+            // onChange={pageSizeClick}
           ></Table>
         </div>
       </ContentCard>

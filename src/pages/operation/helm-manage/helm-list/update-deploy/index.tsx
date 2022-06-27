@@ -3,20 +3,19 @@
 // @create 2022/06/24 17:10
 
 import { useEffect } from 'react';
-import { Button, Table, Space, Tag, Descriptions } from 'antd';
+import { Button, Table, Space, Tag, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
 import { ContentCard } from '@/components/vc-page-content';
 import './index.less';
 
-export interface Item {
-  id: number;
-  versionName: string;
-  versionDescription: string;
-  releaseTime: number;
-  gmtCreate: any;
-  releaseStatus: number;
+export interface ReleaseProps {
+  mode: boolean;
+  curRecord: any;
+  curClusterName: string;
+  onCancle: () => void;
+  onSave: () => void;
 }
 type releaseStatus = {
   text: string;
@@ -24,23 +23,20 @@ type releaseStatus = {
   disabled: boolean;
 };
 
-export default function deliveryDescription() {
+export default function UpdateDeploy(props: ReleaseProps) {
+  const { mode, curRecord, curClusterName, onCancle } = props;
+
   useEffect(() => {
     // queryProductVersionList(descriptionInfoData.id);
   }, []);
 
   return (
-    <PageContainer className="product-description">
-      <ContentCard>
-        <h3>metrics-sever</h3>
-        <AceEditor mode="yaml" height={'70%'} value={''} />
-        <div className="create-card-footer">
-          <Space>
-            <Button onClick={() => {}}>确定</Button>
-            <Button>取消</Button>
-          </Space>
-        </div>
-      </ContentCard>
-    </PageContainer>
+    <Modal visible={mode} width="60%" onOk={() => {}} onCancel={onCancle}>
+      <h3 className="update-title">
+        更新发布——metrics-sever{curRecord?.releaseName} &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
+      </h3>
+      <AceEditor mode="yaml" height={700} value={''} />
+      <div className="create-card-footer"></div>
+    </Modal>
   );
 }
