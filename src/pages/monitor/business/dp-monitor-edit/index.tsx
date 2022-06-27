@@ -324,7 +324,7 @@ export default function DpMonitorEdit(props: any) {
                 <Form.Item name="collectIntervalNum" label="采集间隔" rules={[{ required: true, message: '请填写采集间隔' }]}>
                   <InputNumber
                     step={1}
-                    min={5}
+                    min={unit === 'm' ? 5 : 1}
                     addonAfter={(
                       <Select defaultValue="m" value={unit} onChange={setUnit} style={{ width: 80 }}>
                         <Select.Option value="m">分钟</Select.Option>
