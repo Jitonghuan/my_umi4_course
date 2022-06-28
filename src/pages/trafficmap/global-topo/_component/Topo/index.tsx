@@ -74,7 +74,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 layout.stop(g);
                 const { item } = e;
                 const model = item?.getModel();
-                if (model.region) {
+                if (model.region || model.nodeType === 'region') {
                     if (model.nodeType === 'region') {
                         return `<ul class="g6-options-menu">
             <li id='expand'>展开当前域</li>
