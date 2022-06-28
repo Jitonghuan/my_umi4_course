@@ -79,14 +79,22 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
 }
 
 //release更新
-export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => Promise<void>] {
+export function useUpgradeRelease(): [
+  boolean,
+  (paramsObj: { releaseName: string; namespace: string; valuesPath: string; clusterName: string }) => Promise<void>,
+] {
   const [loading, setLoading] = useState<boolean>(false);
-  const deleteTask = async (paramsObj: { jobCode: string }) => {
+  const upgradeRelease = async (paramsObj: {
+    releaseName: string;
+    namespace: string;
+    valuesPath: string;
+    clusterName: string;
+  }) => {
     setLoading(true);
-    await delRequest(`${APIS.upgradeRelease}/${paramsObj.jobCode}`)
+    await postRequest(`${APIS.upgradeRelease}`, { data: paramsObj })
       .then((result) => {
         if (result.success) {
-          message.success('删除成功！');
+          message.success(result.data);
         } else {
           return;
         }
@@ -96,14 +104,17 @@ export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => P
       });
   };
 
-  return [loading, deleteTask];
+  return [loading, upgradeRelease];
 }
 //release删除
-export function useDeleteRelease(): [boolean, (paramsObj: { jobCode: string }) => Promise<void>] {
+export function useDeleteRelease(): [
+  boolean,
+  (paramsObj: { releaseName: string; namespace: string; clusterName: string }) => Promise<void>,
+] {
   const [loading, setLoading] = useState<boolean>(false);
-  const deleteRelease = async (paramsObj: { jobCode: string }) => {
+  const deleteRelease = async (paramsObj: { releaseName: string; namespace: string; clusterName: string }) => {
     setLoading(true);
-    await delRequest(`${APIS.deleteRelease}/${paramsObj.jobCode}`)
+    await postRequest(`${APIS.deleteRelease}`, { data: paramsObj })
       .then((result) => {
         if (result.success) {
           message.success(result?.data);
@@ -118,3 +129,52 @@ export function useDeleteRelease(): [boolean, (paramsObj: { jobCode: string }) =
 
   return [loading, deleteRelease];
 }
+//release-values
+export function useGetReleaseValues(): [
+  boolean,
+  any,
+  (paramsObj: { releaseName: string; namespace: string; clusterName: string; revision: number }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<any>();
+  const getReleaseValues = async (paramsObj: {
+    releaseName: string;
+    namespace: string;
+    clusterName: string;
+    revision: number;
+  }) => {
+    setLoading(true);
+    await postRequest(`${APIS.getReleaseValues}`, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          setData(result?.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, data, getReleaseValues];
+}
+
+//release-values
+export const getReleaseValues = (paramsObj: {
+  releaseName: string;
+  namespace: string;
+  clusterName: string;
+  revision?: number;
+}) => {
+  return postRequest(APIS.getReleaseValues, {
+    data: paramsObj,
+  }).then((res: any) => {
+    if (res?.success) {
+      const dataSource = res.data || [];
+
+      return dataSource;
+    }
+    return [];
+  });
+};

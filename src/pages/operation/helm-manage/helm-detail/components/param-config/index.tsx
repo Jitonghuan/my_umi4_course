@@ -3,19 +3,13 @@
 // @create 2022/06/24 17:10
 
 import { useEffect } from 'react';
-import { Button, Table, Space, Tag, Descriptions } from 'antd';
-import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { Form } from 'antd';
 import AceEditor from '@/components/ace-editor';
-import { ContentCard } from '@/components/vc-page-content';
+import { getReleaseValues } from '../../../helm-list/hook';
 
-export interface Item {
-  id: number;
-  versionName: string;
-  versionDescription: string;
-  releaseTime: number;
-  gmtCreate: any;
-  releaseStatus: number;
+export interface PorpsItem {
+  record: any;
+  curClusterName: string;
 }
 type releaseStatus = {
   text: string;
@@ -23,14 +17,26 @@ type releaseStatus = {
   disabled: boolean;
 };
 
-export default function deliveryDescription() {
+export default function deliveryDescription(props: PorpsItem) {
+  const { record, curClusterName } = props;
+  const [form] = Form.useForm();
   useEffect(() => {
-    // queryProductVersionList(descriptionInfoData.id);
+    getReleaseValues({
+      releaseName: record?.releaseName,
+      namespace: record?.namespace,
+      clusterName: curClusterName,
+    }).then((res) => {
+      form.setFieldsValue({ valuesPath: res });
+    });
   }, []);
 
   return (
-    <div style={{ height: '100%' }}>
-      <AceEditor mode="yaml" height={'80%'} value={''} />
+    <div>
+      <Form form={form}>
+        <Form.Item name="valuesPath">
+          <AceEditor mode="yaml" height={500} />
+        </Form.Item>
+      </Form>
     </div>
   );
 }

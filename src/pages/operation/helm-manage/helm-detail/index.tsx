@@ -31,14 +31,13 @@ type releaseStatus = {
 
 export default function HelmDetail(props: any) {
   console.log('history.location?.state', history.location?.state);
-  const record: any = history.location?.state || {
-    releaseName: '',
-    namespace: '',
-  };
+  const initInfo: any = history.location?.state || {};
+  const record = initInfo?.record || {};
+  const curClusterName = initInfo?.curClusterName || '';
   const [activeValue, setActiveValue] = useState<string>('basic-info');
 
   useEffect(() => {
-    if (!record) return;
+    if (!initInfo) return;
 
     if (record?.releaseName && record?.namespace && record?.clusterName) {
       queryReleaseInfo({ ...record });
@@ -60,17 +59,17 @@ export default function HelmDetail(props: any) {
         {/* <Divider/> */}
         {activeValue === 'basic-info' && (
           <div className="basic-info-content">
-            <BasicInfo />
+            <BasicInfo record={record} curClusterName={curClusterName} />
           </div>
         )}
         {activeValue === 'param-config' && (
           <div className="param-config-content">
-            <ParamConfig />
+            <ParamConfig record={record} curClusterName={curClusterName} />
           </div>
         )}
         {activeValue === 'histiry-log' && (
           <div className="histiry-log-content">
-            <HistoryLog />
+            <HistoryLog record={record} curClusterName={curClusterName} />
           </div>
         )}
       </ContentCard>

@@ -35,10 +35,10 @@ export const getReleaseList = addAPIPrefix('opsManage/helm/release/list');
 /** POST 9、 release详情 */
 export const getReleaseInfo = addAPIPrefix('opsManage/helm/release/info');
 /** POST 10、 release参数查询 */
-export const getReleaseValuesList = addAPIPrefix('opsManage/helm/release/values');
+export const getReleaseValues = addAPIPrefix('opsManage/helm/release/values');
 
 /** POST 11、 release历史版本查询*/
-export const gitHistoryReleaseList = addAPIPrefix('opsManage/helm/release/history');
+export const getHistoryReleaseList = addAPIPrefix('opsManage/helm/release/history');
 
 /** POST 12、 release删除 */
 export const deleteRelease = addAPIPrefix('opsManage/helm/release/delete');

@@ -2,21 +2,18 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/06/24 17:10
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Table, Space, Tag, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { history } from 'umi';
+import { getHistoryReleaseList } from '../../hook';
+import LogDetail from './log-detail';
 import AceEditor from '@/components/ace-editor';
 import { ContentCard } from '@/components/vc-page-content';
-
-export interface Item {
-  id: number;
-  versionName: string;
-  versionDescription: string;
-  releaseTime: number;
-  gmtCreate: any;
-  releaseStatus: number;
+export interface PorpsItem {
+  record: any;
+  curClusterName: string;
 }
 type releaseStatus = {
   text: string;
@@ -24,10 +21,31 @@ type releaseStatus = {
   disabled: boolean;
 };
 
-export default function deliveryDescription() {
+export default function deliveryDescription(props: PorpsItem) {
+  const { record, curClusterName } = props;
+  const [loading, setLoading] = useState<boolean>(false);
+  const [releaseData, setReleaseData] = useState<any>([]);
+  const [mode, setMode] = useState<boolean>(false);
+  const [curRecord, setCurRecord] = useState<any>({});
+
   useEffect(() => {
-    // queryProductVersionList(descriptionInfoData.id);
+    if (curClusterName) {
+      queryHistoryReleaseList();
+    }
   }, []);
+  const queryHistoryReleaseList = () => {
+    getHistoryReleaseList({
+      releaseName: record?.releaseName,
+      namespace: record?.namespace,
+      clusterName: curClusterName,
+    })
+      .then((res) => {
+        setReleaseData(res || []);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
   const confirm = () => {
     Modal.confirm({
       title: 'Confirm',
@@ -41,14 +59,14 @@ export default function deliveryDescription() {
   const columns = [
     {
       title: '发布名称',
-      dataIndex: 'versionName',
+      dataIndex: 'releaseName',
       width: '30%',
     },
     {
       title: '命名空间',
-      dataIndex: 'releaseStatus',
+      dataIndex: 'namespace',
       width: '10%',
-      render: (status: any, record: Item) => (
+      render: (status: any, record: any) => (
         <span>
           <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
         </span>
@@ -58,7 +76,7 @@ export default function deliveryDescription() {
       title: '更新时间',
       dataIndex: 'releaseStatus',
       width: '10%',
-      render: (status: any, record: Item) => (
+      render: (status: any, record: any) => (
         <span>
           <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
         </span>
@@ -66,9 +84,9 @@ export default function deliveryDescription() {
     },
     {
       title: ' 版本',
-      dataIndex: 'releaseStatus',
+      dataIndex: 'revisopn',
       width: '10%',
-      render: (status: any, record: Item) => (
+      render: (status: any, record: any) => (
         <span>
           <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
         </span>
@@ -79,13 +97,12 @@ export default function deliveryDescription() {
       title: '操作',
       dataIndex: 'option',
       width: 240,
-      render: (_: string, record: Item) => (
+      render: (_: string, record: any) => (
         <Space>
           <a
             onClick={() => {
-              history.push({
-                pathname: '/matrix/station/version-detail',
-              });
+              setMode(true);
+              setCurRecord(record);
             }}
           >
             详情
@@ -98,27 +115,30 @@ export default function deliveryDescription() {
 
   return (
     <div>
+      <LogDetail
+        mode={mode}
+        curRecord={curRecord}
+        curClusterName={curClusterName}
+        onCancle={() => {
+          setMode(false);
+        }}
+        onSave={() => {
+          setMode(false);
+          queryHistoryReleaseList();
+        }}
+      />
       <Table
         rowKey="id"
-        //   dataSource={dataSource}
+        dataSource={[]}
         bordered
         columns={columns}
-        //   loading={tableLoading}
-        //   pagination={{
-        //     total: pageInfo.total,
-        //     pageSize: pageInfo.pageSize,
-        //     current: pageInfo.pageIndex,
-        //     showSizeChanger: true,
-        //     onShowSizeChange: (_, size) => {
-        //       setPageInfo({
-        //         pageIndex: 1,
-        //         pageSize: size,
-        //       });
-        //     },
-        //     showTotal: () => `总共 ${pageInfo.total} 条数据`,
-        //   }}
-        // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
-        //   onChange={pageSizeClick}
+        loading={loading}
+        pagination={{
+          total: releaseData?.length,
+          pageSize: 20,
+          showSizeChanger: false,
+          showTotal: () => `总共 ${releaseData?.length} 条数据`,
+        }}
       ></Table>
     </div>
   );

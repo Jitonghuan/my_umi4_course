@@ -1,6 +1,6 @@
-// 任务管理
+// helm管理
 // @author JITONGHUAN <muxi.jth@come-future.com>
-// @create 2022/04/1 14:15
+// @create 2022/06/25 14:15
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
@@ -9,35 +9,18 @@ import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
-import { queryReleaseList, useGetClusterList } from './hook';
+import { queryReleaseList, useGetClusterList, useDeleteRelease } from './hook';
 import UpdateDeploy from './update-deploy';
 
-type StatusTypeItem = {
-  color: string;
-  tagText: string;
-};
-
-const STATUS_TYPE: Record<string, StatusTypeItem> = {
-  '0': { tagText: '正常', color: 'green' },
-  '1': { tagText: '暂停', color: 'default' },
-};
-
 export default function DNSManageList(props: any) {
-  //   const [tableLoading, taskTablePageInfo, taskTableSource, setTaskTableSource, setTaskTablePageInfo, queryReleaseList] =
-  //     useTaskList();
-  //   const [loading, pageInfo, source, setSource, setPageInfo, getTaskImplementList] = useTaskImplementList();
-  //   const [delLoading, deleteTask] = useDeleteTask();
-  const [executionDetailsMode, setExecutionDetailsMode] = useState<EditorMode>('HIDE');
-  const [addTaskMode, setAddReleaseMode] = useState<EditorMode>('HIDE');
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [releaseForm] = Form.useForm();
   const [curRecord, setCurRecord] = useState<any>();
-  const [createAppVisible, setCreateAppVisible] = useState(false);
-  const [pageInfo, setPageInfo] = useState<any>({});
   const [tableLoading, setTableLoading] = useState<any>(false);
   const [tabledataSource, setDataSource] = useState<any>([]);
   const [curClusterName, setCurClusterName] = useState<any>('来未来');
   const [mode, setMode] = useState<boolean>(false);
+  const [delLoading, deleteRelease] = useDeleteRelease();
 
   useEffect(() => {
     getReleaseList({ clusterName: '来未来' });
@@ -72,25 +55,6 @@ export default function DNSManageList(props: any) {
       cluster: 'future',
     },
   ];
-  //触发分页
-  // const pageSizeClick = (pagination: any) => {
-  //   setPageInfo({
-  //     pageIndex: pagination.current,
-  //     pageSize: pagination.pageSize,
-  //     total: pagination.total,
-  //   });
-  //   let obj = {
-  //     pageIndex: pagination.current,
-  //     pageSize: pagination.pageSize,
-  //   };
-
-  //   loadListData(obj);
-  // };
-
-  // const loadListData = (params: any) => {
-  //   let value = releaseForm.getFieldsValue();
-  //   queryReleaseList({ ...params, ...value });
-  // };
 
   // 表格列配置
   const tableColumns = useMemo(() => {
@@ -99,7 +63,7 @@ export default function DNSManageList(props: any) {
         setCurRecord(record);
         setMode(true);
       },
-      onViewClick: (record, index) => {
+      onDetailClick: (record, index) => {
         history.push({
           pathname: 'helm-detail',
           state: {
@@ -109,24 +73,13 @@ export default function DNSManageList(props: any) {
         });
       },
       onDelClick: async (record, index) => {
-        // await deleteTask({ jobCode: record?.jobCode }).then(() => {
-        //   queryReleaseList();
-        // });
-      },
-      onGetExecutionDetailClick: (record, index) => {
-        setCurRecord(record);
-        setExecutionDetailsMode('VIEW');
-      },
-      onSwitchEnableClick: (record, index) => {
-        let enable = record?.enable === 1 ? 2 : 1;
-        let paramsObj = {
-          ...record,
-          enable: enable,
-        };
-
-        // updateTaskManage(paramsObj).then(() => {
-        //     queryReleaseList();
-        //   });
+        await deleteRelease({
+          releaseName: record?.releaseName,
+          namespace: record?.namespace,
+          clusterName: record?.clusterName,
+        }).then(() => {
+          queryReleaseList();
+        });
       },
     }) as any;
   }, []);
@@ -213,7 +166,6 @@ export default function DNSManageList(props: any) {
                 type="primary"
                 onClick={() => {
                   setCurRecord(undefined);
-                  setAddReleaseMode('ADD');
                   history.push('create-release');
                 }}
               >
@@ -229,13 +181,12 @@ export default function DNSManageList(props: any) {
             columns={tableColumns}
             dataSource={dataSource}
             loading={tableLoading}
-            // pagination={{
-            //   current: pageInfo.pageIndex,
-            //   total: pageInfo.total,
-            //   pageSize: pageInfo.pageSize,
-            //   showSizeChanger: true,
-            //   showTotal: () => `总共 ${pageInfo.total} 条数据`,
-            // }}
+            pagination={{
+              total: tabledataSource.length,
+              pageSize: 20,
+              showSizeChanger: false,
+              showTotal: () => `总共 ${tabledataSource.length} 条数据`,
+            }}
             // onChange={pageSizeClick}
           ></Table>
         </div>

@@ -2,21 +2,16 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/06/24 17:10
 
-import { useEffect } from 'react';
-import { Button, Table, Space, Tag, Descriptions } from 'antd';
-import PageContainer from '@/components/page-container';
+import { useEffect, useState } from 'react';
+import AceEditor from '@/components/ace-editor';
+import { Button, Table, Space, Tag, Descriptions, Modal, Form } from 'antd';
 import { history } from 'umi';
-import moment from 'moment';
-import { ContentCard } from '@/components/vc-page-content';
+import { queryReleaseInfo } from '../../hook';
 import './index.less';
 
-export interface Item {
-  id: number;
-  versionName: string;
-  versionDescription: string;
-  releaseTime: number;
-  gmtCreate: any;
-  releaseStatus: number;
+export interface PorpsItem {
+  record: any;
+  curClusterName: string;
 }
 type releaseStatus = {
   text: string;
@@ -24,31 +19,39 @@ type releaseStatus = {
   disabled: boolean;
 };
 
-export default function deliveryDescription() {
+export default function deliveryDescription(props: PorpsItem) {
+  const { record, curClusterName } = props;
+  const [mode, setMode] = useState<boolean>(false);
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [releaseData, setReleaseData] = useState<any>([]);
   useEffect(() => {
-    // queryProductVersionList(descriptionInfoData.id);
+    if (curClusterName) {
+      getReleaseInfo();
+    }
   }, []);
-
-  const pageSizeClick = (pagination: any) => {
-    // setPageInfo({ pageIndex: pagination.current });
-    let obj = {
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize,
-    };
-    // queryProductVersionList(descriptionInfoData.id, obj.pageIndex, obj.pageSize);
+  const getReleaseInfo = () => {
+    setLoading(true);
+    queryReleaseInfo({ releaseName: record?.releaseName, namespace: record?.namespace, clusterName: curClusterName })
+      .then((res) => {
+        setReleaseData(res || []);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const columns = [
     {
       title: '名称',
-      dataIndex: 'versionName',
+      dataIndex: 'releaseName',
       width: '30%',
     },
     {
       title: '类型',
-      dataIndex: 'releaseStatus',
+      dataIndex: 'chart',
       width: '10%',
-      render: (status: any, record: Item) => (
+      render: (status: any, record: any) => (
         <span>
           <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
         </span>
@@ -59,15 +62,13 @@ export default function deliveryDescription() {
       title: '操作',
       dataIndex: 'option',
       width: 240,
-      render: (_: string, record: Item) => (
+      render: (_: string, record: any) => (
         <Space>
           <Button
             type="primary"
             size="small"
             onClick={() => {
-              history.push({
-                pathname: '/matrix/station/version-detail',
-              });
+              setMode(true);
             }}
           >
             查看yaml
@@ -79,6 +80,20 @@ export default function deliveryDescription() {
 
   return (
     <>
+      <Modal
+        visible={mode}
+        width="60%"
+        footer={null}
+        onCancel={() => {
+          setMode(false);
+        }}
+      >
+        <Form form={form}>
+          <Form.Item name="valuesPath">
+            <AceEditor mode="yaml" height={500} />
+          </Form.Item>
+        </Form>
+      </Modal>
       <div>
         <Descriptions
           title="基本信息"
@@ -97,13 +112,15 @@ export default function deliveryDescription() {
             </Button>
           }
         >
-          <Descriptions.Item label="名称"></Descriptions.Item>
-          <Descriptions.Item label="命名空间"></Descriptions.Item>
-          <Descriptions.Item label="版本"></Descriptions.Item>
+          <Descriptions.Item label="名称">{record?.releaseName || '--'}</Descriptions.Item>
+          <Descriptions.Item label="命名空间">{record?.namespace || '--'}</Descriptions.Item>
+          <Descriptions.Item label="版本">{record?.chart || '--'}</Descriptions.Item>
           <Descriptions.Item label="更新时间">
             {/* {moment(descriptionInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')} */}
           </Descriptions.Item>
-          <Descriptions.Item label="状态" span={2}></Descriptions.Item>
+          <Descriptions.Item label="状态" span={2}>
+            {record?.status || '--'}
+          </Descriptions.Item>
         </Descriptions>
       </div>
       <div className="version-manage">
@@ -115,25 +132,16 @@ export default function deliveryDescription() {
         <div>
           <Table
             rowKey="id"
-            //   dataSource={dataSource}
+            dataSource={[]}
             bordered
             columns={columns}
-            //   loading={tableLoading}
-            //   pagination={{
-            //     total: pageInfo.total,
-            //     pageSize: pageInfo.pageSize,
-            //     current: pageInfo.pageIndex,
-            //     showSizeChanger: true,
-            //     onShowSizeChange: (_, size) => {
-            //       setPageInfo({
-            //         pageIndex: 1,
-            //         pageSize: size,
-            //       });
-            //     },
-            //     showTotal: () => `总共 ${pageInfo.total} 条数据`,
-            //   }}
-            // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
-            onChange={pageSizeClick}
+            loading={loading}
+            pagination={{
+              total: releaseData?.length,
+              pageSize: 20,
+              showSizeChanger: false,
+              showTotal: () => `总共 ${releaseData?.length} 条数据`,
+            }}
           ></Table>
         </div>
       </div>

@@ -21,16 +21,12 @@ const APP_TYPE_ICON = {
 // 表格 schema
 export const releaseTableSchema = ({
   onUpdateClick,
-  onViewClick,
+  onDetailClick,
   onDelClick,
-  onGetExecutionDetailClick,
-  onSwitchEnableClick,
 }: {
   onUpdateClick: (record: any, index: number) => void;
-  onViewClick: (record: any, index: number) => void;
+  onDetailClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
-  onGetExecutionDetailClick: (record: any, index: number) => void;
-  onSwitchEnableClick: (record: any, index: number) => void;
 }) =>
   [
     {
@@ -77,13 +73,13 @@ export const releaseTableSchema = ({
     },
 
     {
-      width: 140,
+      width: 180,
       title: '操作',
 
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          <a onClick={() => onViewClick(record, index)}>详情</a>
+          <a onClick={() => onDetailClick(record, index)}>详情</a>
 
           <a
             onClick={() => {

@@ -3,11 +3,11 @@
 // @create 2022/06/24 17:10
 
 import { useEffect } from 'react';
-import { Button, Table, Space, Tag, Modal } from 'antd';
+import { Form, Modal } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
-import { ContentCard } from '@/components/vc-page-content';
+import { useUpgradeRelease, useGetReleaseValues, getReleaseValues } from '../hook';
 import './index.less';
 
 export interface ReleaseProps {
@@ -24,19 +24,44 @@ type releaseStatus = {
 };
 
 export default function UpdateDeploy(props: ReleaseProps) {
-  const { mode, curRecord, curClusterName, onCancle } = props;
-
+  const { mode, curRecord, curClusterName, onCancle, onSave } = props;
+  const [loading, upgradeRelease] = useUpgradeRelease();
+  const [form] = Form.useForm();
+  // const [updateLoading,values, getReleaseValues]=useGetReleaseValues();
   useEffect(() => {
-    // queryProductVersionList(descriptionInfoData.id);//valuesPath
-  }, []);
+    if (mode) {
+      getReleaseValues({
+        releaseName: curRecord?.releaseName,
+        namespace: curRecord?.namespace,
+        clusterName: curClusterName,
+      }).then((res) => {
+        form.setFieldsValue({ valuesPath: res });
+      });
+    }
+  }, [mode]);
+  const update = () => {
+    const valuesPath = form.getFieldsValue();
+    upgradeRelease({
+      releaseName: curRecord?.releaseName,
+      namespace: curRecord?.namespace,
+      valuesPath,
+      clusterName: curRecord?.clusterName,
+    }).then(() => {
+      onSave();
+    });
+  };
 
   return (
-    <Modal visible={mode} width="60%" onOk={() => {}} onCancel={onCancle}>
+    <Modal visible={mode} width="60%" onOk={update} confirmLoading={loading} onCancel={onCancle}>
       <h3 className="update-title">
-        更新发布——metrics-sever{curRecord?.releaseName} &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
+        更新发布——<span style={{ color: 'royalblue' }}>{curRecord?.releaseName}</span>{' '}
+        &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
       </h3>
-      <AceEditor mode="yaml" height={700} value={''} />
-      <div className="create-card-footer"></div>
+      <Form form={form}>
+        <Form.Item name="valuesPath">
+          <AceEditor mode="yaml" height={500} />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 }
