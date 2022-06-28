@@ -5,7 +5,14 @@
 import React, { useState } from 'react';
 import { List, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
 import PageContainer from '@/components/page-container';
-import {BarChartOutlined, FormOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusOutlined} from '@ant-design/icons';
+import {
+  BarChartOutlined,
+  DeleteOutlined,
+  FormOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  PlusOutlined
+} from '@ant-design/icons';
 import { history } from 'umi';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { colunms, envTypeData, STATUS_TYPE } from '../schema';
@@ -138,6 +145,7 @@ export default function LogAccess() {
                   <Button
                     danger
                     type="link"
+                    icon={<DeleteOutlined />}
                     onClick={() => {
                       delMonitorClick(item.monitorName);
                     }}
