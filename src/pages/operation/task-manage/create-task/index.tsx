@@ -159,7 +159,7 @@ export default function addEnvData(props: RecordEditDataProps) {
     }
     if (param.jobType === 2) {
       Object.assign(jobTypeContent, {
-        nodeIps: param?.nodeIps.split(','),
+        nodeIps: param?.nodeIps.split(';'),
         account: param?.account,
         password: param?.password,
         command: param?.command,
