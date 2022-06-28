@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { List, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
 import PageContainer from '@/components/page-container';
-import { PlusOutlined } from '@ant-design/icons';
+import {BarChartOutlined, FormOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusOutlined} from '@ant-design/icons';
 import { history } from 'umi';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { colunms, envTypeData, STATUS_TYPE } from '../schema';
@@ -22,6 +22,8 @@ const { Panel } = Collapse;
 
 export default function LogAccess() {
   const [form] = Form.useForm();
+  const [currentEnvType, setCurrentEnvType] = useState<string>(''); // 环境大类
+  const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [appOptions] = useAppOptions();
   const [listSource, total, getListMonitor] = useGetListMonitor();
@@ -83,41 +85,59 @@ export default function LogAccess() {
                   <span>
                     <Tag color="geekblue">{item.monitorName}</Tag>
                   </span>
-                  <span style={{ marginLeft: '20px', display: 'inline-block' }}>
-                  <i className="status" style={{ backgroundColor: STATUS_TYPE[item.status].color }}></i>
+                  <span style={{ marginLeft: '20px', display: 'inline-flex', alignItems: 'center' }}>
+                    <i className="status" style={{ backgroundColor: STATUS_TYPE[item.status].color, marginRight: '5px' }}  />
                     {STATUS_TYPE[item.status].text}
                 </span>
                 </div>
                 <Space>
-                  <Button type="primary">看板</Button>
                   <Button
-                    type="primary"
-                    onClick={() => {
+                    type="link"
+                    icon={<BarChartOutlined />}
+                    style={{ color: '#5468ff' }}
+                  >
+                    看板
+                  </Button>
+                  <Button
+                    type="link"
+                    icon={<FormOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
                       editMonitor(item);
                     }}
                   >
                     编辑
                   </Button>
-                  <Button
-                    type="primary"
-                    disabled={item.status === 0 ? false : true}
-                    onClick={() => {
-                      enableMonitorClick(item.monitorName);
-                    }}
-                  >
-                    启动
-                  </Button>
-                  <Button
-                    type="dashed"
-                    disabled={item.status === 0 ? true : false}
-                    onClick={() => {
-                      disableMonitorClick(item.monitorName);
-                    }}
-                  >
-                    停止
-                  </Button>
+                  {
+                    item.status === 0 ? (
+                      <Button
+                        type="link"
+                        style={{ color: '#52c41a' }}
+                        icon={<PlayCircleOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          enableMonitorClick(item.monitorName);
+                        }}
+                      >
+                        启动
+                      </Button>
+                    ) : (
+                      <Button
+                        type="link"
+                        style={{ color: '#FF7B15' }}
+                        icon={<PauseCircleOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          disableMonitorClick(item.monitorName);
+                        }}
+                      >
+                        停止
+                      </Button>
+                    )
+                  }
                   <Button
                     danger
+                    type="link"
                     onClick={() => {
                       delMonitorClick(item.monitorName);
                     }}
@@ -147,6 +167,7 @@ export default function LogAccess() {
     history.push({ pathname: '/matrix/monitor/log-monitor', state: { type: 'add' } });
   };
   const selectEnvType = (value: string) => {
+    setCurrentEnvType(value);
     getEnvCodeList(value);
   };
 
@@ -157,9 +178,11 @@ export default function LogAccess() {
           layout="inline"
           form={form}
           onFinish={(values: any) => {
-            getListMonitor(1, 5, values?.monitorName, values?.metricName, values?.appCode, values?.envCode);
+            getListMonitor(1, 5, values?.monitorName, values?.metricName, values?.appCode, currentEnvCode);
           }}
           onReset={() => {
+            setCurrentEnvCode('');
+            setCurrentEnvType('');
             form.resetFields();
             getListMonitor(
               1,
@@ -168,23 +191,35 @@ export default function LogAccess() {
             );
           }}
         >
-          <Form.Item label="环境大类" name="envTypeCode">
-            <Select showSearch style={{ width: 110 }} options={envTypeData} onChange={selectEnvType} />
-          </Form.Item>
-          <Form.Item label="环境：" name="envCode">
-            <Select options={envCodeOption} allowClear showSearch style={{ width: 120 }} />
+          <Form.Item label="环境" name="envCode">
+            <Select
+              style={{ width: '100px' }}
+              options={envTypeData}
+              value={currentEnvType}
+              onChange={selectEnvType}
+              allowClear
+            />
+            <Select
+              style={{ width: '140px', marginLeft: '5px' }}
+              options={envCodeOption}
+              onChange={(value => {
+                setCurrentEnvCode(value);
+              })}
+              value={currentEnvCode}
+              allowClear
+            />
           </Form.Item>
           <Form.Item label="关联应用" name="appCode">
             <Select showSearch allowClear style={{ width: 140 }} options={appOptions} />
           </Form.Item>
           <Form.Item name="monitorName" label="监控名称">
-            <Input placeholder="按监控名称模糊搜索" style={{ width: 180 }} />
+            <Input placeholder="按监控名称模糊搜索" style={{ width: 209 }} />
           </Form.Item>
           <Form.Item name="metricName" label="指标名称">
-            <Input placeholder="按指标名称模糊搜索" style={{ width: 180 }} />
+            <Input placeholder="按指标名称模糊搜索" style={{ width: 220 }} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" ghost>
               查询
             </Button>
           </Form.Item>

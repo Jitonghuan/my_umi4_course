@@ -85,7 +85,7 @@ export function useGetListMonitor() {
     });
   };
 
-  return [listSource, tablesource, total, getListMonitor];
+  return [listSource, total, getListMonitor];
 }
 
 export function useEnableMonitor() {
