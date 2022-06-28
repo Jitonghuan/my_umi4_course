@@ -7,7 +7,6 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void) => {
-  console.log(formOptions);
   if (!formOptions.length) return [];
   return formOptions.map((v) => {
     const {
@@ -42,8 +41,6 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
       max,
       ...rest
     } = v;
-
-    console.log(type);
 
     switch (type) {
       case 'select':
