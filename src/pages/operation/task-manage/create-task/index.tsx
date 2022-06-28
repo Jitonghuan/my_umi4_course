@@ -15,12 +15,13 @@ import {
 } from '../hooks';
 import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox, Tag } from 'antd';
 import { recordEditData, KVProps, jobContentProps } from '../type';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, EditOutlined } from '@ant-design/icons';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { TaskTypeOptions, RequestModeOptions, RequestMethodOptions } from './schema';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
+import IpModal from './ip-modal'
 
 export interface RecordEditDataProps {
   mode: EditorMode;
@@ -53,6 +54,8 @@ export default function addEnvData(props: RecordEditDataProps) {
   const [initPassWord, setInitPassWord] = useState<string | undefined>('');
   const [curTimeExpress, setCurTimeExpress] = useState<string>('');
   const [limitsLength, setLimitsLength] = useState<number>();
+  const [ipListVisible, setIpListVisible] = useState<boolean>(false);
+  const [ipList, setIpList] = useState<any>([])
 
   useEffect(() => {
     queryAppList().then((resp) => {
@@ -83,9 +86,11 @@ export default function addEnvData(props: RecordEditDataProps) {
     }
     if (mode === 'ADD') {
       createTaskForm.resetFields();
+      setIpList([])
     }
     if (initData && mode !== 'ADD') {
-      let jobContent: jobContentProps = {};
+      // let jobContent: jobContentProps = {};
+      let jobContent: any = {}
       let labelList: KVProps[] = [];
       setIsEditable(true);
       setFirstModify(true);
@@ -108,7 +113,7 @@ export default function addEnvData(props: RecordEditDataProps) {
       if (mode === 'VIEW') {
         setLimitsLength(labelList.length);
       }
-
+      setIpList(jobContent?.nodeIps?.map((item: any) => ({ ip: item })) || []);
       setCurTaskType(initData?.jobType);
       setCurRequestMethod(jobContent?.method);
       setInitPassWord(jobContent?.password);
@@ -116,6 +121,7 @@ export default function addEnvData(props: RecordEditDataProps) {
         ...initData,
         enable: isJobChecked,
         ...jobContent,
+        nodeIps: (jobContent?.nodeIps || []).join(';'),
         params: labelList,
       });
     }
@@ -133,6 +139,13 @@ export default function addEnvData(props: RecordEditDataProps) {
     };
   }, [mode]);
 
+  useEffect(() => {
+    const ipValue = createTaskForm.getFieldValue('nodeIps');
+    if (ipValue && mode !== 'ADD') {
+      setIpList(ipValue.split(';').map((item: any) => ({ ip: item })) || [])
+    }
+  }, [createTaskForm.getFieldValue('nodeIps'), mode])
+
   const handleSubmit = async () => {
     let param = await createTaskForm.validateFields();
     let jobTypeContent = {};
@@ -146,7 +159,7 @@ export default function addEnvData(props: RecordEditDataProps) {
     }
     if (param.jobType === 2) {
       Object.assign(jobTypeContent, {
-        nodeIp: param?.nodeIp,
+        nodeIps: param?.nodeIps.split(';'),
         account: param?.account,
         password: param?.password,
         command: param?.command,
@@ -184,7 +197,7 @@ export default function addEnvData(props: RecordEditDataProps) {
     if (param.jobType === 6) {
       Object.assign(jobTypeContent, {
         clusterName: param?.clusterName,
-        node: param?.node,
+        nodes: param?.nodes,
         command: param?.command,
       });
     }
@@ -262,7 +275,7 @@ export default function addEnvData(props: RecordEditDataProps) {
   const submitCluster = (clusterName: string) => {
     getNodeNameList(clusterName);
     createTaskForm.setFieldsValue({
-      node: '',
+      nodes: undefined,
     });
   };
 
@@ -278,6 +291,16 @@ export default function addEnvData(props: RecordEditDataProps) {
           createTaskForm.setFieldsValue({
             timeExpression: express,
           });
+        }}
+      />
+      <IpModal
+        visible={ipListVisible}
+        data={ipList}
+        handleCancel={() => { setIpListVisible(false) }}
+        handleSubmit={(data: any) => {
+          const dataList = data.map((item: any) => item.ip)
+          createTaskForm.setFieldsValue({ nodeIps: dataList.join(';') });
+          setIpListVisible(false);
         }}
       />
       <Drawer
@@ -314,13 +337,13 @@ export default function addEnvData(props: RecordEditDataProps) {
                   style={{ width: '20vw' }}
                   placeholder="请输入任务Code(不要包含中文）"
                   disabled={isEditable}
-                  // rules={[
-                  //   {
-                  //     required: true,
-                  //     message: '输入的任务Code里请不要包含中文',
-                  //     pattern: /^[^\u4e00-\u9fa5]*$/,
-                  //   }
-                  // ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: '输入的任务Code里请不要包含中文',
+                //     pattern: /^[^\u4e00-\u9fa5]*$/,
+                //   }
+                // ]}
                 ></Input>
               </Form.Item>
 
@@ -420,9 +443,20 @@ export default function addEnvData(props: RecordEditDataProps) {
               {/* ------------任务类型二节点命令任务---------- */}
               {curTaskType === 2 && (
                 <>
-                  <Form.Item label="节点Ip" name="nodeIp" rules={[{ required: true, message: '这是必填项' }]}>
-                    <Input style={{ width: '20vw' }} disabled={viewEditable}></Input>
-                  </Form.Item>
+                  <div style={{ display: 'flex' }}>
+                    <Form.Item label="节点IPs" name="nodeIps" style={{ width: '100%' }} rules={[{ required: true, message: '这是必填项' }]} tooltip={{
+                      title: '请确保该IP组存在相同的账号密码或公钥文件',
+                      icon: <QuestionCircleOutlined />,
+                    }} >
+                      <Input style={{ width: '18vw' }} disabled></Input>
+                    </Form.Item>
+                    {mode !== 'VIEW' && <EditOutlined
+                      style={{ marginLeft: '10px', paddingTop: '10px' }}
+                      onClick={() => {
+                        setIpListVisible(true)
+                      }}
+                    />}
+                  </div>
                   <Form.Item label="账号" name="account" rules={[{ required: true, message: '这是必填项' }]}>
                     <Input style={{ width: '20vw' }} disabled={viewEditable}></Input>
                   </Form.Item>
@@ -591,12 +625,13 @@ export default function addEnvData(props: RecordEditDataProps) {
                       disabled={viewEditable}
                     />
                   </Form.Item>
-                  <Form.Item label="节点名称" name="node" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Form.Item label="节点名称" name="nodes" rules={[{ required: true, message: '这是必填项' }]}>
                     <Select
                       style={{ width: '20vw' }}
                       disabled={viewEditable}
                       options={nodeNameOption}
                       loading={nodeNameLoading}
+                      mode="multiple"
                       showSearch
                       allowClear
                     ></Select>
