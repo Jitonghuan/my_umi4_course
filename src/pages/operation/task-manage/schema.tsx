@@ -24,14 +24,14 @@ export const taskTableSchema = ({
   onDelClick,
   onGetExecutionDetailClick,
   onSwitchEnableClick,
- 
+
 }: {
   onEditClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
   onGetExecutionDetailClick: (record: any, index: number) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
-  
+
 }) =>
   [
     {
@@ -64,6 +64,11 @@ export const taskTableSchema = ({
       dataIndex: 'desc',
     },
     {
+      title: '创建人',
+      width: 200,
+      dataIndex: 'createUser',
+    },
+    {
       title: '上次执行结果',
       dataIndex: 'lastExecStatus',
       width: 120,
@@ -80,10 +85,10 @@ export const taskTableSchema = ({
         <>
           <Switch
             checked={
-              enable === 1 ? true : false 
+              enable === 1 ? true : false
             }
             onClick={() => {
-          
+
               onSwitchEnableClick(record, index);
             }}
           />
