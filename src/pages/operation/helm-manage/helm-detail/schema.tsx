@@ -46,22 +46,22 @@ export const taskTableSchema = ({
     },
     {
       title: 'Chart名称',
-      dataIndex: 'chart',
+      dataIndex: 'chartName',
       width: 230,
     },
     {
       title: 'Chart版本',
-      dataIndex: 'jobName',
+      dataIndex: 'chartVersion',
       width: 230,
     },
     {
       title: '应用版本',
-      dataIndex: 'jobName',
+      dataIndex: 'appVersion',
       width: 230,
     },
     {
       title: '更新时间',
-      dataIndex: 'jobName',
+      dataIndex: 'updateTime',
       width: 230,
       render: (value: string) => datetimeCellRender(value),
     },
@@ -70,10 +70,10 @@ export const taskTableSchema = ({
       title: '状态',
       dataIndex: 'status',
       width: 120,
-
       render: (status) => (
-        <></>
-        // <Tag color={JOB_STATUS[status]?.color || 'default'}>{JOB_STATUS[status]?.text || status}</Tag>
+        <>
+          <Tag>{status}</Tag>
+        </>
       ),
     },
 

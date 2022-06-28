@@ -7,6 +7,7 @@ import AceEditor from '@/components/ace-editor';
 import { Button, Table, Space, Tag, Descriptions, Modal, Form } from 'antd';
 import { history } from 'umi';
 import { queryReleaseInfo } from '../../hook';
+import moment from 'moment';
 import './index.less';
 
 export interface PorpsItem {
@@ -45,23 +46,22 @@ export default function deliveryDescription(props: PorpsItem) {
     {
       title: '名称',
       dataIndex: 'releaseName',
-      width: '30%',
     },
     {
       title: '类型',
-      dataIndex: 'chart',
-      width: '10%',
-      render: (status: any, record: any) => (
-        <span>
-          <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
-        </span>
-      ),
+      dataIndex: 'sourceType',
+      width: 240,
+      // render: (status: any, record: any) => (
+      //   <span>
+      //     <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
+      //   </span>
+      // ),
     },
 
     {
       title: '操作',
       dataIndex: 'option',
-      width: 240,
+      width: 140,
       render: (_: string, record: any) => (
         <Space>
           <Button
@@ -69,6 +69,8 @@ export default function deliveryDescription(props: PorpsItem) {
             size="small"
             onClick={() => {
               setMode(true);
+              // setValues(record?.values)
+              form.setFieldsValue({ valuesPath: record?.values || '' });
             }}
           >
             查看yaml
@@ -90,7 +92,7 @@ export default function deliveryDescription(props: PorpsItem) {
       >
         <Form form={form}>
           <Form.Item name="valuesPath">
-            <AceEditor mode="yaml" height={500} />
+            <AceEditor mode="yaml" height={500} readOnly />
           </Form.Item>
         </Form>
       </Modal>
@@ -114,9 +116,9 @@ export default function deliveryDescription(props: PorpsItem) {
         >
           <Descriptions.Item label="名称">{record?.releaseName || '--'}</Descriptions.Item>
           <Descriptions.Item label="命名空间">{record?.namespace || '--'}</Descriptions.Item>
-          <Descriptions.Item label="版本">{record?.chart || '--'}</Descriptions.Item>
+          <Descriptions.Item label="版本">{record?.chartName || '--'}</Descriptions.Item>
           <Descriptions.Item label="更新时间">
-            {/* {moment(descriptionInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')} */}
+            {moment(record.updateTime).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item label="状态" span={2}>
             {record?.status || '--'}
@@ -132,7 +134,7 @@ export default function deliveryDescription(props: PorpsItem) {
         <div>
           <Table
             rowKey="id"
-            dataSource={[]}
+            dataSource={releaseData || []}
             bordered
             columns={columns}
             loading={loading}

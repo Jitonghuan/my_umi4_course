@@ -34,7 +34,7 @@ export default function deliveryDescription(props: PorpsItem) {
     <div>
       <Form form={form}>
         <Form.Item name="valuesPath">
-          <AceEditor mode="yaml" height={500} />
+          <AceEditor mode="yaml" height={500} readOnly />
         </Form.Item>
       </Form>
     </div>

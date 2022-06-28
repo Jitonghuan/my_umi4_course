@@ -4,13 +4,11 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Table, Space, Tag, Modal } from 'antd';
-import PageContainer from '@/components/page-container';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { history } from 'umi';
-import { getHistoryReleaseList } from '../../hook';
+import { datetimeCellRender } from '@/utils';
+import { getHistoryReleaseList, useRollbackRelease } from '../../hook';
 import LogDetail from './log-detail';
-import AceEditor from '@/components/ace-editor';
-import { ContentCard } from '@/components/vc-page-content';
+
 export interface PorpsItem {
   record: any;
   curClusterName: string;
@@ -27,6 +25,7 @@ export default function deliveryDescription(props: PorpsItem) {
   const [releaseData, setReleaseData] = useState<any>([]);
   const [mode, setMode] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any>({});
+  const [rollBackLoading, rollbackRelease] = useRollbackRelease();
 
   useEffect(() => {
     if (curClusterName) {
@@ -46,51 +45,46 @@ export default function deliveryDescription(props: PorpsItem) {
         setLoading(false);
       });
   };
-  const confirm = () => {
+  const confirm = (record: any) => {
     Modal.confirm({
-      title: 'Confirm',
+      title: '回滚提示',
       icon: <ExclamationCircleOutlined />,
-      content: 'xxx应用回滚到版本【1】，请确认！ ',
+      content: `${record?.releaseName}应用回滚到版本：${record?.revision}，请确认！`,
       okText: '确认',
       cancelText: '取消',
-      onOk: () => {},
+      onOk: () => {
+        rollbackRelease({
+          releaseName: record?.releaseName,
+          namespace: record?.namespace,
+          revision: record?.revision,
+          clusterName: curClusterName,
+        }).then(() => {
+          queryHistoryReleaseList();
+        });
+      },
     });
   };
   const columns = [
     {
       title: '发布名称',
       dataIndex: 'releaseName',
-      width: '30%',
+      // width: '30%',
     },
     {
       title: '命名空间',
       dataIndex: 'namespace',
-      width: '10%',
-      render: (status: any, record: any) => (
-        <span>
-          <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
-        </span>
-      ),
+      width: '16%',
     },
     {
       title: '更新时间',
-      dataIndex: 'releaseStatus',
+      dataIndex: 'updated',
       width: '10%',
-      render: (status: any, record: any) => (
-        <span>
-          <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
-        </span>
-      ),
+      render: (value: string) => datetimeCellRender(value),
     },
     {
       title: ' 版本',
-      dataIndex: 'revisopn',
+      dataIndex: 'app_version',
       width: '10%',
-      render: (status: any, record: any) => (
-        <span>
-          <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
-        </span>
-      ),
     },
 
     {
@@ -107,7 +101,7 @@ export default function deliveryDescription(props: PorpsItem) {
           >
             详情
           </a>
-          <a onClick={confirm}>回滚</a>
+          <a onClick={() => confirm(record)}>回滚</a>
         </Space>
       ),
     },
@@ -129,7 +123,7 @@ export default function deliveryDescription(props: PorpsItem) {
       />
       <Table
         rowKey="id"
-        dataSource={[]}
+        dataSource={releaseData}
         bordered
         columns={columns}
         loading={loading}

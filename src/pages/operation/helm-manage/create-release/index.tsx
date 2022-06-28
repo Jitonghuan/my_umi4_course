@@ -13,7 +13,7 @@ export default function CreateRelease() {
       <ContentCard>
         <div className="create-release-content">
           <Form
-            labelCol={{ flex: '120px' }}
+            labelCol={{ flex: '400px' }}
             form={createReleaseForm}
             onReset={() => {
               createReleaseForm.resetFields();

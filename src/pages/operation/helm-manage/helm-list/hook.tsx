@@ -3,17 +3,9 @@ import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request
 import * as APIS from '../service';
 import { message } from 'antd';
 /** 查询release列表 */
-export const queryReleaseList = (paramsObj?: {
-  pageIndex?: number;
-  pageSize?: number;
-  releaseName?: string;
-  namespace?: string;
-  clusterName?: string;
-}) => {
-  return postRequest(APIS.getReleaseList, {
+export const queryReleaseList = (paramsObj?: { releaseName?: string; namespace?: string; clusterName?: string }) => {
+  return getRequest(APIS.getReleaseList, {
     data: {
-      //   pageIndex: paramsObj?.pageIndex || 1,
-      //   pageSize: paramsObj?.pageSize || 20,
       releaseName: paramsObj?.releaseName || '',
       namespace: paramsObj?.namespace || '',
       clusterName: paramsObj?.clusterName || '',
@@ -144,7 +136,7 @@ export function useGetReleaseValues(): [
     revision: number;
   }) => {
     setLoading(true);
-    await postRequest(`${APIS.getReleaseValues}`, { data: paramsObj })
+    await getRequest(`${APIS.getReleaseValues}`, { data: paramsObj })
       .then((result) => {
         if (result.success) {
           setData(result?.data);
@@ -167,7 +159,7 @@ export const getReleaseValues = (paramsObj: {
   clusterName: string;
   revision?: number;
 }) => {
-  return postRequest(APIS.getReleaseValues, {
+  return getRequest(APIS.getReleaseValues, {
     data: paramsObj,
   }).then((res: any) => {
     if (res?.success) {

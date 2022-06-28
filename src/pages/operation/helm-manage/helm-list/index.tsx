@@ -179,7 +179,7 @@ export default function DNSManageList(props: any) {
         <div>
           <Table
             columns={tableColumns}
-            dataSource={dataSource}
+            dataSource={tabledataSource}
             loading={tableLoading}
             pagination={{
               total: tabledataSource.length,
