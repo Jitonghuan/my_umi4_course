@@ -158,7 +158,7 @@ const StepOne: React.FC<StepOneProps> = ({ getTableData, matchlabelsList = [], f
 
   formOptions.forEach((v) => {
     v.itemStyle = { width: '100%' };
-    v.labelCol = { span: 8 };
+    v.labelCol = { span: 6 };
     v.wrapperCol = { span: 12 };
   });
 

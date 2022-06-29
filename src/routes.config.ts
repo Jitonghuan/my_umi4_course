@@ -551,24 +551,13 @@ export default [
         path: 'business',
         name: '业务监控',
         key: 'business-monitor',
-        //测试环境和正式环境暂不展示
-        // hideInMenu: process.env.BUILD_ENV === 'prod',
         component: '@/pages/monitor/business/index',
-        // routes: [
-        //   // {
-        //   //   path: 'prometheus',
-        //   //   name: '接口方式接入',
-        //   //   key: 'business-monitor',
-        //   //   component: '@/pages/monitor/business/prometheus',
-        //   //   hideInMenu: true,
-        //   // },
-        //   {
-        //     path: 'log-monitor',
-        //     name: '日志监控',
-        //     component: '@/pages/monitor/business/log-monitor',
-        //     hideInMenu: true,
-        //   },
-        // ],
+      },
+      {
+        path: 'prometheus-edit',
+        name: '编辑Prometheus',
+        hideInMenu: true,
+        component: '@/pages/monitor/business/prometheus/prometheus-form',
       },
       {
         path: 'log-monitor',
@@ -577,7 +566,13 @@ export default [
         component: '@/pages/monitor/business/log-monitor',
         hideInMenu: true,
       },
-
+      {
+        path: 'dp-monitor-edit',
+        name: '配置数据库监控',
+        key: 'dp-monitor-edit',
+        component: '@/pages/monitor/business/dp-monitor-edit',
+        hideInMenu: true,
+      },
       {
         path: 'alarm-rules',
         name: '报警管理',
