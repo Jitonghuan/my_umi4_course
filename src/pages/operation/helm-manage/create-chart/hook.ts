@@ -21,8 +21,8 @@ export function useGetChartName(): [
           let dataArry: any = [];
           dataSource?.map((item: any) => {
             dataArry.push({
-              label: item?.name,
-              value: item?.name,
+              label: item?.chartName,
+              value: item?.chartName,
             });
           });
 
@@ -56,19 +56,61 @@ export const queryPodNamespaceData = (params: { clusterId: string }) =>
     return [];
   });
 
-export const queryChartVersions = (params: { chartName: string; clusterName: string }) =>
-  getRequest(APIS.chartVersions, { data: params }).then((res: any) => {
+export const queryChartVersions = (params: { chartName?: string; clusterName: string; repository?: string }) =>
+  getRequest(APIS.getRepositoryVersions, { data: params }).then((res: any) => {
     if (res?.success) {
       const result: any = [];
       let dataSource = res.data;
       dataSource?.map((ele: any) => {
         result.push({
-          label: ele.version,
-          value: ele.version,
+          label: ele.chartVersion,
+          value: ele.chartVersion,
         });
       }, []);
 
       return result;
+    }
+    return [];
+  });
+
+export const queryChartValues = (params: {
+  chartName: string;
+  clusterName: string;
+  repository: string;
+  chartVersion: string;
+}) =>
+  getRequest(APIS.chartValues, { data: params }).then((res: any) => {
+    if (res?.success) {
+      const result: any = [];
+      let dataSource = res.data;
+
+      return dataSource;
+    }
+    return [];
+  });
+
+export const queryChartList = (paramsObj: { clusterName: string; repository?: string; chartName?: string }) =>
+  getRequest(APIS.getChartList, { data: paramsObj }).then((res: any) => {
+    if (res?.success) {
+      const result: any = [];
+      let dataSource = res.data;
+
+      return dataSource;
+    }
+    return [];
+  });
+export const queryChartReadme = (paramsObj: {
+  clusterName: string;
+  repository?: string;
+  chartName?: string;
+  chartVersion: string;
+}) =>
+  getRequest(APIS.chartReadme, { data: paramsObj }).then((res: any) => {
+    if (res?.success) {
+      const result: any = [];
+      let dataSource = res.data;
+
+      return dataSource;
     }
     return [];
   });

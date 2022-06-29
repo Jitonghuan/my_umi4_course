@@ -3,7 +3,7 @@
 // @create 2022/02/21 17:10
 
 import { useState, useEffect } from 'react';
-import { Segmented, Divider } from 'antd';
+import { Segmented, Divider, Button } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
@@ -47,15 +47,28 @@ export default function HelmDetail(props: any) {
   return (
     <PageContainer className="product-description">
       <ContentCard>
-        <Segmented
-          size="large"
-          //  block
-          options={options}
-          defaultValue="basic-info"
-          onChange={(value: any) => {
-            setActiveValue(value);
-          }}
-        />
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Segmented
+            size="large"
+            //  block
+            options={options}
+            defaultValue="basic-info"
+            onChange={(value: any) => {
+              setActiveValue(value);
+            }}
+          />
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              history.push('/matrix/operation/helm-manage/helm-list');
+            }}
+          >
+            {' '}
+            返回
+          </Button>
+        </div>
+
         {/* <Divider/> */}
         {activeValue === 'basic-info' && (
           <div className="basic-info-content">

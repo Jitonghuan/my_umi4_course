@@ -1,16 +1,39 @@
 .create-release-content {
   height: 100% !important;
-  .create-card-content {
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
-    // width: 100%; calc(100% - 295px)
-    height: 470px !important;
-    background-color: rgb(163, 223, 163);
-  }
+  // .create-card-content {
+  //   // display: flex;
+  //   // justify-content: center;
+  //   // align-items: center;
+  //   // width: 100%; calc(100% - 295px)
+  //   // height: 470px !important;
+
+  // }
   .create-card-footer {
     display: flex;
     justify-content: flex-end;
     padding-top: 20px;
+  }
+}
+
+.all-chart-page {
+  .vc-page-content-body {
+    background-color: #f8f8f8;
+    background-color: rgb(163, 223, 163);
+  }
+
+  &__card-header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &-pagination-wrap {
+    margin: 16px 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .ant-form-inline .ant-form-item {
+    margin-bottom: 10px;
   }
 }

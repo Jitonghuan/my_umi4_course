@@ -102,17 +102,17 @@ export default function deliveryDescription(props: PorpsItem) {
           column={2}
           className="basic-info-description"
           bordered={true}
-          extra={
-            <Button
-              type="primary"
-              size="small"
-              onClick={() => {
-                history.push('/matrix/operation/helm-manage/helm-list');
-              }}
-            >
-              返回
-            </Button>
-          }
+          // extra={
+          //   <Button
+          //     type="primary"
+          //     size="small"
+          //     onClick={() => {
+          //       history.push('/matrix/operation/helm-manage/helm-list');
+          //     }}
+          //   >
+          //     返回
+          //   </Button>
+          // }
         >
           <Descriptions.Item label="名称">{record?.releaseName || '--'}</Descriptions.Item>
           <Descriptions.Item label="命名空间">{record?.namespace || '--'}</Descriptions.Item>

@@ -1,26 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Space } from 'antd';
+import { Form, Input, Select, Button, Space, Empty, Spin, Pagination, Divider } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import CreatCard from './components/create-card';
 import { ContentCard } from '@/components/vc-page-content';
 import AceEditor from '@/components/ace-editor';
-import { queryPodNamespaceData, useGetChartName, queryChartVersions } from './hook';
+import { queryPodNamespaceData, useGetChartName, queryChartVersions, queryChartList } from './hook';
 import './index.less';
 
 export default function CreateRelease() {
+  const rootCls = 'all-chart-page';
   const clusterInfo: any = history.location?.state || {};
   const [createReleaseForm] = Form.useForm();
   const [chartNameLoading, chartNameOptions, getChartList] = useGetChartName();
   const [showNextStep, setShowNextStep] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
   const [chartVersionOption, setChartVersionOption] = useState<any>([]);
+  const [chartListInfo, setChartListInfo] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(30);
+  const [curChartName, setCurChartName] = useState<string>('');
   console.log('clusterInfo', clusterInfo);
   // const [nameSpaceLoading, nameSpaceOption,getPodNamespace]=useGetClusterListPodNamespace();
   useEffect(() => {
     queryNameSpace(clusterInfo?.curClusterId);
     getChartList({ clusterName: clusterInfo?.curClusterName });
+    queryChartListInfo();
   }, []);
+  const queryChartListInfo = (chartName?: string) => {
+    setIsLoading(true);
+    queryChartList({ clusterName: clusterInfo?.curClusterName, chartName })
+      .then((res) => {
+        setChartListInfo(res);
+        setTotal(res?.length);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
   //查询nameSpace
   const queryNameSpace = (value: any) => {
     queryPodNamespaceData({ clusterId: value }).then((res) => {
@@ -28,19 +47,26 @@ export default function CreateRelease() {
     });
   };
   const changeChartName = (value: string) => {
+    console.log('value', value);
+    setCurChartName(value);
+    queryChartListInfo(value);
+  };
+  const getChartVersions = (chartName?: string, repository?: string) => {
     queryChartVersions({
       clusterName: clusterInfo?.curClusterName,
-      chartName: value,
+      chartName: chartName,
+      repository: repository,
     }).then((res) => {
       setChartVersionOption(res);
     });
   };
+
   return (
     <PageContainer>
       <ContentCard>
         <div className="create-release-content">
           <Form
-            labelCol={{ flex: '400px' }}
+            labelCol={{ flex: '120px' }}
             form={createReleaseForm}
             onReset={() => {
               createReleaseForm.resetFields();
@@ -55,16 +81,15 @@ export default function CreateRelease() {
                   <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
                 </Form.Item>
                 <Form.Item label="chart名称" name="chartName">
-                  <Select
+                  <Input.Search
                     style={{ width: 320 }}
-                    allowClear
-                    showSearch
-                    options={chartNameOptions}
-                    onChange={changeChartName}
+                    // options={chartNameOptions}
+                    onSearch={changeChartName}
                   />
                 </Form.Item>
               </>
             )}
+            {!showNextStep && <Divider />}
 
             {showNextStep && (
               <>
@@ -78,31 +103,39 @@ export default function CreateRelease() {
             )}
           </Form>
 
-          {/* <div className={`${rootCls}__card-wrapper`}>
-            {!isLoading && !appListData.length && (
-              <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
-            )}
-            <CreatCard key={type} type={type} dataSource={appListData} loadAppListData={loadAppListData} />
-            {total > 10 && (
-              <div className={`${rootCls}-pagination-wrap`}>
-                <Pagination
-                  pageSize={pageSize}
-                  total={total}
-                  current={pageIndex}
-                  showSizeChanger
-                  onShowSizeChange={(_, next) => {
-                    setPageIndex(1);
-                    setPageSize(next);
-                  }}
-                  onChange={(next) => setPageIndex(next)}
-                />
-              </div>
-            )}
-          </div> */}
           {!showNextStep && (
-            <div className="create-card-content">
-              <CreatCard />
-            </div>
+            <Spin spinning={isLoading}>
+              <div className="create-card-content">
+                {/* <CreatCard /> */}
+                <div className={`${rootCls}__card-wrapper`}>
+                  {!isLoading && !chartListInfo.length && (
+                    <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  )}
+                  <CreatCard
+                    curClusterName={clusterInfo?.curClusterName}
+                    curChartName={curChartName}
+                    dataSource={chartListInfo}
+                    queryChartListInfo={queryChartListInfo}
+                    getChartVersions={getChartVersions}
+                  />
+                  {total > 10 && (
+                    <div className={`${rootCls}-pagination-wrap`}>
+                      <Pagination
+                        pageSize={pageSize}
+                        total={total}
+                        current={pageIndex}
+                        showSizeChanger
+                        onShowSizeChange={(_, next) => {
+                          setPageIndex(1);
+                          setPageSize(next);
+                        }}
+                        onChange={(next) => setPageIndex(next)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Spin>
           )}
 
           <div className="create-card-footer">

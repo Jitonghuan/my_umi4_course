@@ -9,7 +9,7 @@ export const getChartList = addAPIPrefix('opsManage/helm/chart/list');
 
 /* POST 2、 repository查询 */
 
-export const getRepositoryList = addAPIPrefix('opsManage/helm/repository/list');
+// export const getRepositoryList = addAPIPrefix('opsManage/helm/repository/list');
 
 /* POST  3、 chart-readme查询 */
 
@@ -21,7 +21,7 @@ export const chartValues = addAPIPrefix('opsManage/helm/chart/values');
 
 /* POST 5、 chart版本查询 */
 
-export const chartVersions = addAPIPrefix('opsManage/helm/chart/versions');
+// export const chartVersions = addAPIPrefix('opsManage/helm/chart/versions');
 
 /* POST 6、 指定仓库后chart版本查询 */
 

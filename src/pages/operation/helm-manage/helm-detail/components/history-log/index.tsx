@@ -83,7 +83,7 @@ export default function deliveryDescription(props: PorpsItem) {
     },
     {
       title: ' 版本',
-      dataIndex: 'app_version',
+      dataIndex: 'revision',
       width: '10%',
     },
 
