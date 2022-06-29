@@ -70,7 +70,7 @@ export default function deliveryDescription(props: PorpsItem) {
             onClick={() => {
               setMode(true);
               // setValues(record?.values)
-              form.setFieldsValue({ valuesPath: record?.values || '' });
+              form.setFieldsValue({ values: record?.values || '' });
             }}
           >
             查看yaml
@@ -91,7 +91,7 @@ export default function deliveryDescription(props: PorpsItem) {
         }}
       >
         <Form form={form}>
-          <Form.Item name="valuesPath">
+          <Form.Item name="values">
             <AceEditor mode="yaml" height={500} readOnly />
           </Form.Item>
         </Form>

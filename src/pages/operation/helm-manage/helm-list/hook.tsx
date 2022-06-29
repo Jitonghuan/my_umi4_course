@@ -54,6 +54,8 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
             dataArry.push({
               label: item?.clusterName,
               value: item?.clusterName,
+              clusterId: item?.id,
+              key: item?.id,
             });
           });
 
@@ -70,16 +72,37 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
   return [loading, data, getClusterList];
 }
 
+/** 查询release列表 */
+export const getClusterList = () => {
+  return getRequest(APIS.getClusterList).then((res: any) => {
+    if (res?.success) {
+      let dataSource = res?.data;
+      let dataArry: any = [];
+      dataSource?.map((item: any) => {
+        dataArry.push({
+          label: item?.clusterName,
+          value: item?.clusterName,
+          clusterId: item?.id,
+          key: item?.id,
+        });
+      });
+
+      return dataArry;
+    }
+    return [];
+  });
+};
+
 //release更新
 export function useUpgradeRelease(): [
   boolean,
-  (paramsObj: { releaseName: string; namespace: string; valuesPath: string; clusterName: string }) => Promise<void>,
+  (paramsObj: { releaseName: string; namespace: string; values: string; clusterName: string }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const upgradeRelease = async (paramsObj: {
     releaseName: string;
     namespace: string;
-    valuesPath: string;
+    values: string;
     clusterName: string;
   }) => {
     setLoading(true);

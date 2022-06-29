@@ -35,16 +35,16 @@ export default function UpdateDeploy(props: ReleaseProps) {
         namespace: curRecord?.namespace,
         clusterName: curClusterName,
       }).then((res) => {
-        form.setFieldsValue({ valuesPath: res });
+        form.setFieldsValue({ values: res });
       });
     }
   }, [mode]);
   const update = () => {
-    const valuesPath = form.getFieldsValue();
+    const values = form.getFieldsValue();
     upgradeRelease({
       releaseName: curRecord?.releaseName,
       namespace: curRecord?.namespace,
-      valuesPath,
+      values,
       clusterName: curRecord?.clusterName,
     }).then(() => {
       onSave();
@@ -58,7 +58,7 @@ export default function UpdateDeploy(props: ReleaseProps) {
         &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
       </h3>
       <Form form={form}>
-        <Form.Item name="valuesPath">
+        <Form.Item name="values">
           <AceEditor mode="yaml" height={500} />
         </Form.Item>
       </Form>

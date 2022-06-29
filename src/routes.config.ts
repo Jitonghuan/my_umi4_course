@@ -830,10 +830,10 @@ export default [
             hideInMenu: true,
           },
           {
-            path: 'create-release',
-            name: '创建release',
+            path: 'create-chart',
+            name: '创建chart',
             key: 'helm-manage',
-            component: '@/pages/operation/helm-manage/create-release',
+            component: '@/pages/operation/helm-manage/create-chart',
             hideInMenu: true,
           },
           {

@@ -26,14 +26,14 @@ export default function deliveryDescription(props: PorpsItem) {
       namespace: record?.namespace,
       clusterName: curClusterName,
     }).then((res) => {
-      form.setFieldsValue({ valuesPath: res });
+      form.setFieldsValue({ values: res });
     });
   }, []);
 
   return (
     <div>
       <Form form={form}>
-        <Form.Item name="valuesPath">
+        <Form.Item name="values">
           <AceEditor mode="yaml" height={500} readOnly />
         </Form.Item>
       </Form>

@@ -9,24 +9,54 @@ import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
-import { queryReleaseList, useGetClusterList, useDeleteRelease } from './hook';
+import { queryReleaseList, useGetClusterList, useDeleteRelease, getClusterList } from './hook';
 import UpdateDeploy from './update-deploy';
 
 export default function DNSManageList(props: any) {
-  const [loading, clusterOptions, getClusterList] = useGetClusterList();
+  // const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [releaseForm] = Form.useForm();
   const [curRecord, setCurRecord] = useState<any>();
   const [tableLoading, setTableLoading] = useState<any>(false);
   const [tabledataSource, setDataSource] = useState<any>([]);
   const [curClusterName, setCurClusterName] = useState<any>('来未来');
+  const [clusterInfo, setClusterInfo] = useState<any>();
   const [mode, setMode] = useState<boolean>(false);
   const [delLoading, deleteRelease] = useDeleteRelease();
+  const [clusterOptions, setClusterOptions] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    getReleaseList({ clusterName: '来未来' });
-    setCurClusterName('来未来' || clusterOptions[0].value);
-    getClusterList();
+    getClusterList().then((res) => {
+      setClusterOptions(res);
+      const curClusterId = res?.filter((item: any) => {
+        if (item.value !== '来未来') return item?.clusterId;
+      });
+
+      if (curClusterId) {
+        setClusterInfo({
+          curClusterId: curClusterId,
+          curClusterName: '来未来',
+        });
+        getReleaseList({ clusterName: '来未来' });
+      } else {
+        setClusterInfo({
+          curClusterId: res[0].clusterId,
+          curClusterName: res[0].value,
+        });
+        getReleaseList({ clusterName: clusterOptions[0] });
+      }
+    });
   }, []);
+  const queryClusterList = () => {
+    setLoading(true);
+    getClusterList()
+      .then((res) => {
+        setClusterOptions(res);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const getReleaseList = (paramsObj?: { releaseName?: string; namespace?: string; clusterName?: string }) => {
     setTableLoading(true);
@@ -84,10 +114,12 @@ export default function DNSManageList(props: any) {
     }) as any;
   }, []);
 
-  const changeClusterName = (value: string) => {
+  const changeClusterName = (cluster: any) => {
     const params = releaseForm.getFieldsValue();
-    setCurClusterName(value);
-    getReleaseList({ releaseName: params.releaseName, namespace: params.namespace, clusterName: value });
+    setCurClusterName(cluster);
+    setClusterInfo(cluster);
+    console.log('cluster[0-----]', cluster);
+    getReleaseList({ releaseName: params.releaseName, namespace: params.namespace, clusterName: cluster });
   };
 
   return (
@@ -166,7 +198,10 @@ export default function DNSManageList(props: any) {
                 type="primary"
                 onClick={() => {
                   setCurRecord(undefined);
-                  history.push('create-release');
+                  history.push({
+                    pathname: 'create-chart',
+                    state: clusterInfo,
+                  });
                 }}
               >
                 <PlusOutlined />
