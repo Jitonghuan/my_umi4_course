@@ -1117,6 +1117,12 @@ export default [
     icon: 'icon-userRecent',
     routes: [
       {
+        path: 'user',
+        name: '用户管理',
+        key: 'user',
+        component: '@/pages/admin/user-manage',
+      },
+      {
         path: 'main',
         name: '主页管理',
         key: 'main',
