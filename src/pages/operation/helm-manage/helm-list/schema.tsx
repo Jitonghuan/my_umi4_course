@@ -37,7 +37,6 @@ export const releaseTableSchema = ({
     {
       title: '命名空间',
       dataIndex: 'namespace',
-      width: 230,
     },
     {
       title: 'Chart名称',
@@ -83,7 +82,7 @@ export const releaseTableSchema = ({
     },
 
     {
-      width: 180,
+      width: 200,
       title: '操作',
 
       dataIndex: 'operate',

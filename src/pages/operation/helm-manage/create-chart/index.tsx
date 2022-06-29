@@ -44,11 +44,8 @@ export default function CreateRelease() {
     setIsLoading(true);
     queryChartList({ clusterName: clusterInfo?.curClusterName, chartName })
       .then((res) => {
-        let moreList = res.splice(0, 30);
-        // let vivelist = viewLogSearchTabInfo.concat(moreList);
-        // setViewlogSeaechTabInfo(vivelist);
         setChartListInfo(res);
-        setReadMoreInfo(moreList);
+
         setTotal(res?.length);
       })
       .finally(() => {
@@ -200,6 +197,7 @@ export default function CreateRelease() {
             {!showNextStep && (
               <Space>
                 <Button
+                  type="primary"
                   onClick={() => {
                     setShowNextStep(true);
                   }}

@@ -29,7 +29,8 @@ export default function ApplicationCardList(props: IProps) {
   const { curClusterName, curChartName, dataSource, queryChartListInfo, getChartVersions, getChartValues } = props;
   const [mode, setMode] = useState<boolean>(false);
   const [readMe, setReadMe] = useState<string>('');
-  const [isClick, setIsClick] = useState<string>('');
+  const [isClick, setIsClick] = useState<number>();
+  console.log('-------dataSource------', dataSource);
 
   return (
     <>
@@ -50,60 +51,66 @@ export default function ApplicationCardList(props: IProps) {
           />
         </div>
       </Modal>
-      <CardLayout>
-        {dataSource.map((item: any) => (
-          <div
-            key={item.chartName}
-            className={cardCls}
-            onClick={() => {
-              getChartVersions(item?.chartName, item?.repository);
-              setIsClick('onClick');
-              getChartValues({
-                chartName: item?.chartName,
-                clusterName: curClusterName,
-                repository: item?.repository,
-              });
-            }}
-          >
-            <div onClick={(e) => e.stopPropagation()}>
-              <DeploymentUnitOutlined style={{ fontSize: 22, color: 'blueviolet' }} />
-            </div>
 
-            <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
-              {item.chartName}
-            </div>
-            <div className={`${cardCls}-content`}>
-              <div style={{ color: 'gray' }}>
-                {item?.repository}&nbsp;&nbsp; | &nbsp;&nbsp;{item.chartVersion}
+      <CardLayout>
+        {dataSource.map((item: any, index: number) => (
+          <>
+            {/* <div>
+      {JSON.stringify(item)}
+      </div> */}
+            <div
+              key={item.chartName}
+              className={index === isClick ? 'all-chart-page__onClickcard' : cardCls}
+              onClick={() => {
+                getChartVersions(item?.chartName, item?.repository);
+                setIsClick(index);
+                getChartValues({
+                  chartName: item?.chartName,
+                  clusterName: curClusterName,
+                  repository: item?.repository,
+                });
+              }}
+            >
+              <div>
+                <DeploymentUnitOutlined style={{ fontSize: 22, color: 'blueviolet' }} />
+              </div>
+
+              <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
+                {item.chartName}
+              </div>
+              <div className={`${cardCls}-content`}>
+                <div style={{ color: 'gray' }}>
+                  {item?.repository}&nbsp;&nbsp; | &nbsp;&nbsp;{item.chartVersion}
+                </div>
+              </div>
+              <Tooltip title={item.description} placement="topLeft">
+                {' '}
+                <div
+                  className="chart-description"
+                  style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
+                >
+                  {item?.description}
+                </div>
+              </Tooltip>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <a
+                  onClick={() => {
+                    setMode(true);
+                    queryChartReadme({
+                      clusterName: curClusterName,
+                      repository: item?.repository,
+                      chartName: item.chartName,
+                      chartVersion: item.chartVersion,
+                    }).then((res) => {
+                      setReadMe(res);
+                    });
+                  }}
+                >
+                  详情
+                </a>
               </div>
             </div>
-            <Tooltip title={item.description} placement="topLeft">
-              {' '}
-              <div
-                className="chart-description"
-                style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}
-              >
-                {item?.description}
-              </div>
-            </Tooltip>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <a
-                onClick={() => {
-                  setMode(true);
-                  queryChartReadme({
-                    clusterName: curClusterName,
-                    repository: item?.repository,
-                    chartName: item.chartName,
-                    chartVersion: item.chartVersion,
-                  }).then((res) => {
-                    setReadMe(res);
-                  });
-                }}
-              >
-                详情
-              </a>
-            </div>
-          </div>
+          </>
         ))}
       </CardLayout>
     </>
