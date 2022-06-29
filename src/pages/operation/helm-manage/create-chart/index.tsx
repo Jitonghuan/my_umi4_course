@@ -5,7 +5,14 @@ import { history } from 'umi';
 import CreatCard from './components/create-card';
 import { ContentCard } from '@/components/vc-page-content';
 import AceEditor from '@/components/ace-editor';
-import { queryPodNamespaceData, useGetChartName, queryChartVersions, queryChartList } from './hook';
+import {
+  queryPodNamespaceData,
+  useGetChartName,
+  queryChartVersions,
+  queryChartList,
+  queryChartValues,
+  useChartInstall,
+} from './hook';
 import './index.less';
 
 export default function CreateRelease() {
@@ -22,7 +29,11 @@ export default function CreateRelease() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(30);
   const [curChartName, setCurChartName] = useState<string>('');
-  console.log('clusterInfo', clusterInfo);
+  const [readMoreInfo, setReadMoreInfo] = useState<any>([]);
+  const [chartValues, setChartValues] = useState<string>('');
+  const [valueLoading, setValueLoading] = useState<boolean>(false);
+  const [chartParam, setChartParam] = useState<any>({});
+  const [intallLoading, chartInstall] = useChartInstall();
   // const [nameSpaceLoading, nameSpaceOption,getPodNamespace]=useGetClusterListPodNamespace();
   useEffect(() => {
     queryNameSpace(clusterInfo?.curClusterId);
@@ -33,7 +44,11 @@ export default function CreateRelease() {
     setIsLoading(true);
     queryChartList({ clusterName: clusterInfo?.curClusterName, chartName })
       .then((res) => {
+        let moreList = res.splice(0, 30);
+        // let vivelist = viewLogSearchTabInfo.concat(moreList);
+        // setViewlogSeaechTabInfo(vivelist);
         setChartListInfo(res);
+        setReadMoreInfo(moreList);
         setTotal(res?.length);
       })
       .finally(() => {
@@ -47,7 +62,6 @@ export default function CreateRelease() {
     });
   };
   const changeChartName = (value: string) => {
-    console.log('value', value);
     setCurChartName(value);
     queryChartListInfo(value);
   };
@@ -58,6 +72,41 @@ export default function CreateRelease() {
       repository: repository,
     }).then((res) => {
       setChartVersionOption(res);
+    });
+  };
+
+  const getChartValues = (params: {
+    chartName: string;
+    clusterName: string;
+    repository: string;
+    // chartVersion: string;
+  }) => {
+    setChartParam(params);
+  };
+
+  const changeVersion = (chartVersion: string) => {
+    setValueLoading(true);
+    // const chartVersion =createReleaseForm.getFieldValue('chartVersion')
+    queryChartValues({ ...chartParam, chartVersion })
+      .then((res) => {
+        setChartValues(res);
+
+        createReleaseForm.setFieldsValue({
+          values: res,
+        });
+      })
+      .finally(() => {
+        setValueLoading(false);
+      });
+  };
+  const hanleSubmit = () => {
+    const params = createReleaseForm.getFieldsValue();
+    chartInstall({
+      ...params,
+      chartName: chartParam?.chartName,
+      clusterName: clusterInfo?.curClusterName,
+    }).then(() => {
+      history.push('/matrix/operation/helm-manage/helm-list');
     });
   };
 
@@ -74,10 +123,10 @@ export default function CreateRelease() {
           >
             {!showNextStep && (
               <>
-                <Form.Item label="发布名称" name="releaseName">
+                <Form.Item label="发布名称" name="releaseName" rules={[{ required: true, message: '这是必填项' }]}>
                   <Input style={{ width: 320 }} />
                 </Form.Item>
-                <Form.Item label="命名空间" name="namespace">
+                <Form.Item label="命名空间" name="namespace" rules={[{ required: true, message: '这是必填项' }]}>
                   <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
                 </Form.Item>
                 <Form.Item label="chart名称" name="chartName">
@@ -93,12 +142,20 @@ export default function CreateRelease() {
 
             {showNextStep && (
               <>
-                <Form.Item label="chart版本" name="chartVersion">
-                  <Select style={{ width: 320 }} allowClear showSearch options={chartVersionOption} />
+                <Form.Item label="chart版本" name="chartVersion" rules={[{ required: true, message: '这是必填项' }]}>
+                  <Select
+                    style={{ width: 320 }}
+                    allowClear
+                    showSearch
+                    options={chartVersionOption}
+                    onChange={changeVersion}
+                  />
                 </Form.Item>
-                <Form.Item label="详情" name="values">
-                  <AceEditor mode="yaml" height={500} />
-                </Form.Item>
+                <Spin spinning={valueLoading}>
+                  <Form.Item label="详情" name="values">
+                    <AceEditor mode="yaml" height={500} />
+                  </Form.Item>
+                </Spin>
               </>
             )}
           </Form>
@@ -117,14 +174,15 @@ export default function CreateRelease() {
                     dataSource={chartListInfo}
                     queryChartListInfo={queryChartListInfo}
                     getChartVersions={getChartVersions}
+                    getChartValues={getChartValues}
                   />
-                  {total > 10 && (
+                  {/* {total > 10 && (
                     <div className={`${rootCls}-pagination-wrap`}>
                       <Pagination
                         pageSize={pageSize}
                         total={total}
                         current={pageIndex}
-                        showSizeChanger
+                        // showSizeChanger
                         onShowSizeChange={(_, next) => {
                           setPageIndex(1);
                           setPageSize(next);
@@ -132,7 +190,7 @@ export default function CreateRelease() {
                         onChange={(next) => setPageIndex(next)}
                       />
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </Spin>
@@ -148,20 +206,37 @@ export default function CreateRelease() {
                 >
                   下一步
                 </Button>
-                <Button>取消</Button>
+                <Button
+                  danger
+                  onClick={() => {
+                    createReleaseForm.resetFields();
+                  }}
+                >
+                  取消
+                </Button>
               </Space>
             )}
             {showNextStep && (
               <Space>
                 <Button
+                  type="ghost"
                   onClick={() => {
                     setShowNextStep(false);
                   }}
                 >
                   上一步
                 </Button>
-                <Button>确定</Button>
-                <Button>取消</Button>
+                <Button type="primary" onClick={hanleSubmit} loading={intallLoading}>
+                  确定
+                </Button>
+                <Button
+                  danger
+                  onClick={() => {
+                    createReleaseForm.resetFields();
+                  }}
+                >
+                  取消
+                </Button>
               </Space>
             )}
           </div>

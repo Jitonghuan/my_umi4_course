@@ -86,7 +86,7 @@ export const queryChartValues = (params: {
 
       return dataSource;
     }
-    return [];
+    return '';
   });
 
 export const queryChartList = (paramsObj: { clusterName: string; repository?: string; chartName?: string }) =>
@@ -114,3 +114,40 @@ export const queryChartReadme = (paramsObj: {
     }
     return [];
   });
+
+export function useChartInstall(): [
+  boolean,
+  (paramsObj: {
+    chartName: string;
+    namespace: string;
+    chartVersion: string;
+    clusterName: string;
+    releaseName: string;
+    values: string;
+  }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const chartInstall = async (paramsObj: {
+    chartName: string;
+    namespace: string;
+    chartVersion: string;
+    clusterName: string;
+    releaseName: string;
+    values: string;
+  }) => {
+    setLoading(true);
+    await postRequest(`${APIS.chartInstall}`, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          message.success(result?.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, chartInstall];
+}

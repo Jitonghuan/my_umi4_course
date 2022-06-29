@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import CardLayout from '@cffe/vc-b-card-layout';
 import { history } from 'umi';
+import ReactMarkdown from 'react-markdown';
 import { Tag, Tooltip, Popconfirm, Modal } from 'antd';
-import {
-  StarFilled,
-  StarTwoTone,
-  Html5Outlined,
-  CodeOutlined,
-  UserOutlined,
-  DeploymentUnitOutlined,
-} from '@ant-design/icons';
+import { DeploymentUnitOutlined } from '@ant-design/icons';
 import './index.less';
 import { queryChartReadme } from '../../hook';
 const cardCls = 'all-chart-page__card';
@@ -23,10 +17,16 @@ export interface IProps {
   dataSource: any;
   queryChartListInfo: () => any;
   getChartVersions: (chartName?: string, repository?: string) => any;
+  getChartValues: (params: {
+    chartName: string;
+    clusterName: string;
+    repository: string;
+    // chartVersion: string;
+  }) => any;
 }
 
 export default function ApplicationCardList(props: IProps) {
-  const { curClusterName, curChartName, dataSource, queryChartListInfo, getChartVersions } = props;
+  const { curClusterName, curChartName, dataSource, queryChartListInfo, getChartVersions, getChartValues } = props;
   const [mode, setMode] = useState<boolean>(false);
   const [readMe, setReadMe] = useState<string>('');
   const [isClick, setIsClick] = useState<string>('');
@@ -42,7 +42,13 @@ export default function ApplicationCardList(props: IProps) {
         }}
         width={660}
       >
-        <div style={{ height: 500, overflowY: 'auto' }}>{readMe}</div>
+        <div style={{ height: 500, overflowY: 'auto' }}>
+          <ReactMarkdown
+            children={readMe}
+            className="markdown-html"
+            // escapeHtml={false}  //不进行HTML标签的转化
+          />
+        </div>
       </Modal>
       <CardLayout>
         {dataSource.map((item: any) => (
@@ -52,6 +58,11 @@ export default function ApplicationCardList(props: IProps) {
             onClick={() => {
               getChartVersions(item?.chartName, item?.repository);
               setIsClick('onClick');
+              getChartValues({
+                chartName: item?.chartName,
+                clusterName: curClusterName,
+                repository: item?.repository,
+              });
             }}
           >
             <div onClick={(e) => e.stopPropagation()}>
@@ -65,13 +76,8 @@ export default function ApplicationCardList(props: IProps) {
               <div style={{ color: 'gray' }}>
                 {item?.repository}&nbsp;&nbsp; | &nbsp;&nbsp;{item.chartVersion}
               </div>
-              {/* <Tooltip title={item.chartVersion} placement='topLeft'>
-              <div>
-                <UserOutlined /> {item.chartVersion}
-              </div>
-            </Tooltip> */}
             </div>
-            <Tooltip title={item.description}>
+            <Tooltip title={item.description} placement="topLeft">
               {' '}
               <div
                 className="chart-description"
