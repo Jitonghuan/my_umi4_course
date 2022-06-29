@@ -228,7 +228,7 @@ export default function EnvironmentList() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset">
+            <Button danger htmlType="reset">
               重置
             </Button>
           </Form.Item>

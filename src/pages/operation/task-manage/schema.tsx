@@ -24,14 +24,12 @@ export const taskTableSchema = ({
   onDelClick,
   onGetExecutionDetailClick,
   onSwitchEnableClick,
-
 }: {
   onEditClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
   onGetExecutionDetailClick: (record: any, index: number) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
-
 }) =>
   [
     {
@@ -43,6 +41,7 @@ export const taskTableSchema = ({
       title: '任务名称',
       dataIndex: 'jobName',
       width: 230,
+      render: (value, record, index) => <a onClick={() => onViewClick(record, index)}>{value}</a>,
     },
     {
       title: '任务code',
@@ -84,11 +83,8 @@ export const taskTableSchema = ({
       render: (enable: number, record: any, index: number) => (
         <>
           <Switch
-            checked={
-              enable === 1 ? true : false
-            }
+            checked={enable === 1 ? true : false}
             onClick={() => {
-
               onSwitchEnableClick(record, index);
             }}
           />

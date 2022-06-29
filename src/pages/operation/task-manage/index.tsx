@@ -4,8 +4,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { history } from 'umi';
-import { Input, Table, Form, Button, Space, } from 'antd';
-import { PlusOutlined,RedoOutlined } from '@ant-design/icons';
+import { Input, Table, Form, Button, Space } from 'antd';
+import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import CreateTaskModal from './create-task';
@@ -42,11 +42,9 @@ export default function DNSManageList(props: any) {
     getTaskList();
   }, []);
 
-  const onFresh=()=>{
-    loadListData(
-      {pageIndex: 1,
-      pageSize: 20})
-  }
+  const onFresh = () => {
+    loadListData({ pageIndex: 1, pageSize: 20 });
+  };
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
@@ -65,7 +63,7 @@ export default function DNSManageList(props: any) {
 
   const loadListData = (params: any) => {
     let value = taskForm.getFieldsValue();
-    getTaskList({...params,...value});
+    getTaskList({ ...params, ...value });
   };
 
   // 表格列配置
@@ -88,19 +86,17 @@ export default function DNSManageList(props: any) {
         setCurRecord(record);
         setExecutionDetailsMode('VIEW');
       },
-      onSwitchEnableClick: (record, index) => {   
-        let enable=record?.enable === 1 ? 2 : 1
+      onSwitchEnableClick: (record, index) => {
+        let enable = record?.enable === 1 ? 2 : 1;
         let paramsObj = {
-           ...record,
-           enable: enable, }
+          ...record,
+          enable: enable,
+        };
 
-          
-          
         updateTaskManage(paramsObj).then(() => {
-            getTaskList();
-          });
+          getTaskList();
+        });
       },
-     
     }) as any;
   }, []);
 
@@ -144,7 +140,7 @@ export default function DNSManageList(props: any) {
             }}
           >
             <Form.Item label="任务Code：" name="jobCode">
-              <Input placeholder="请输入任务Code" style={{ width: 290 }} />
+              <Input placeholder="请输入任务Code" style={{ width: 300 }} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -152,7 +148,7 @@ export default function DNSManageList(props: any) {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button type="ghost" htmlType="reset">
+              <Button type="ghost" htmlType="reset" danger>
                 重置
               </Button>
             </Form.Item>
@@ -166,29 +162,27 @@ export default function DNSManageList(props: any) {
           </div>
           <div className="caption-right">
             <Space>
-            {/* <RedoOutlined   onClick={onFresh} /> */}
-            <Button icon={<RedoOutlined/> }  onClick={onFresh}>
+              {/* <RedoOutlined   onClick={onFresh} /> */}
+              <Button icon={<RedoOutlined />} onClick={onFresh}>
                 刷新
               </Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                setCurRecord(undefined);
-                setAddTaskMode('ADD');
-              }}
-            >
-              <PlusOutlined />
-              创建任务
-            </Button>
-
+              <Button
+                type="primary"
+                onClick={() => {
+                  setCurRecord(undefined);
+                  setAddTaskMode('ADD');
+                }}
+              >
+                <PlusOutlined />
+                创建任务
+              </Button>
             </Space>
-
           </div>
         </div>
         <div>
-          <Table 
-            columns={tableColumns} 
-            dataSource={taskTableSource} 
+          <Table
+            columns={tableColumns}
+            dataSource={taskTableSource}
             loading={tableLoading}
             pagination={{
               current: taskTablePageInfo.pageIndex,
@@ -199,7 +193,6 @@ export default function DNSManageList(props: any) {
             }}
             onChange={pageSizeClick}
           ></Table>
-        
         </div>
       </ContentCard>
     </PageContainer>

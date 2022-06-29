@@ -147,7 +147,7 @@ export default function RouteConfig() {
             />
           </div>
           <div className="caption-right">
-            <Button type="default" size="large" disabled={!envCode} onClick={handleReset}>
+            <Button danger size="large" disabled={!envCode} onClick={handleReset}>
               重置
             </Button>
             <Button type="primary" size="large" disabled={!envCode} onClick={handleSubmit}>

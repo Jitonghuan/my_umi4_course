@@ -285,7 +285,7 @@ export default function ConfigContent({ env, configType }: IProps) {
             />
           </Form.Item>
           <Form.Item>
-            <Button htmlType="reset" type="default">
+            <Button htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
@@ -322,7 +322,7 @@ export default function ConfigContent({ env, configType }: IProps) {
         </div>
         <div style={{ marginTop: '14px', marginRight: '4%', float: 'right' }}>
           <Form.Item name="ensure">
-            <Button type="ghost" htmlType="reset">
+            <Button type="ghost" htmlType="reset" danger>
               取消
             </Button>
             <Button
