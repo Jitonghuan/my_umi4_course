@@ -105,10 +105,12 @@ export function useEnvList() {
             let data = result?.data?.dataSource;
             let dataArry: any = [];
             data?.map((item: any) => {
-              dataArry.push({
-                label: item?.envName,
-                value: item?.envCode,
-              });
+              if (item?.envCode !== 'hbos-seenewhospital') {
+                dataArry.push({
+                  label: item?.envName,
+                  value: item?.envCode,
+                });
+              }
             });
             setEnvDataSource(dataArry);
           }
