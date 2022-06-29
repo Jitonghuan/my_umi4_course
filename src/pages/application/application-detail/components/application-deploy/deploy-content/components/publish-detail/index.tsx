@@ -484,7 +484,7 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {envTypeCode === 'prod' && appConfig.PRIVATE_METHODS === 'private' && (
+        {envTypeCode === 'prod' && (
           <Button
             type="primary"
             onClick={() => {
@@ -567,13 +567,11 @@ export default function PublishDetail(props: IProps) {
         <Descriptions.Item label="合并分支" span={4}>
           {branchInfo?.features.join(',') || '--'}
         </Descriptions.Item>
-        {
-          feType === 'pda' && (
-            <Descriptions.Item label="打包方式" span={4}>
-              <span style={{color: "#1873cc"}}>{metadata?.pdaDeployType || '--'}</span>
-            </Descriptions.Item>
-          )
-        }
+        {feType === 'pda' && (
+          <Descriptions.Item label="打包方式" span={4}>
+            <span style={{ color: '#1873cc' }}>{metadata?.pdaDeployType || '--'}</span>
+          </Descriptions.Item>
+        )}
         {status?.deployErrInfo && errorInfo.length && (
           <Descriptions.Item label="部署错误信息" span={4} contentStyle={{ color: 'red' }}>
             <div>

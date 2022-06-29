@@ -27,7 +27,8 @@ function getPrivateMethods(type: boolean) {
       href.includes('matrix-local') ||
       href.includes('matrix-test') ||
       href.includes('matrix.cfuture') ||
-      href.includes('matrix-base-poc')
+      href.includes('matrix-base-poc') ||
+      href.includes('matrix-jyglj')
     ) {
       return 'public';
     } else {
