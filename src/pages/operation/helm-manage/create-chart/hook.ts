@@ -4,7 +4,7 @@ import * as APIS from '../service';
 import { message } from 'antd';
 
 //获取chart名称
-export function useGetClusterListPodNamespace(): [
+export function useGetChartName(): [
   boolean,
   any,
   (paramsObj: { clusterName: string; repository?: string; chartName?: string }) => Promise<void>,
@@ -12,7 +12,7 @@ export function useGetClusterListPodNamespace(): [
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
 
-  const getPodNamespace = async () => {
+  const getChartList = async () => {
     setLoading(true);
     await getRequest(`${APIS.getChartList}`)
       .then((result) => {
@@ -21,8 +21,8 @@ export function useGetClusterListPodNamespace(): [
           let dataArry: any = [];
           dataSource?.map((item: any) => {
             dataArry.push({
-              label: item?.clusterName,
-              value: item?.clusterName,
+              label: item?.name,
+              value: item?.name,
             });
           });
 
@@ -36,7 +36,7 @@ export function useGetClusterListPodNamespace(): [
       });
   };
 
-  return [loading, data, getPodNamespace];
+  return [loading, data, getChartList];
 }
 
 export const queryPodNamespaceData = (params: { clusterId: string }) =>

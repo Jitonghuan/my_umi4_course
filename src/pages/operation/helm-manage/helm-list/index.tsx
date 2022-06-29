@@ -28,13 +28,13 @@ export default function DNSManageList(props: any) {
   useEffect(() => {
     getClusterList().then((res) => {
       setClusterOptions(res);
-      const curClusterId = res?.filter((item: any) => {
-        if (item.value !== '来未来') return item?.clusterId;
+      const curClusterOption = res?.filter((item: any) => {
+        if (item.value === '来未来') return item?.clusterId;
       });
 
-      if (curClusterId) {
+      if (curClusterOption[0].clusterId) {
         setClusterInfo({
-          curClusterId: curClusterId,
+          curClusterId: curClusterOption[0].clusterId,
           curClusterName: '来未来',
         });
         getReleaseList({ clusterName: '来未来' });
@@ -117,8 +117,15 @@ export default function DNSManageList(props: any) {
   const changeClusterName = (cluster: any) => {
     const params = releaseForm.getFieldsValue();
     setCurClusterName(cluster);
-    setClusterInfo(cluster);
+    const curClusterOption = clusterOptions?.filter((item: any) => {
+      if (item.value === cluster) return item?.clusterId;
+    });
+
     console.log('cluster[0-----]', cluster);
+    setClusterInfo({
+      curClusterId: curClusterOption[0].clusterId,
+      curClusterName: cluster,
+    });
     getReleaseList({ releaseName: params.releaseName, namespace: params.namespace, clusterName: cluster });
   };
 

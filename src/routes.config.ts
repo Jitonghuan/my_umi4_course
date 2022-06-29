@@ -817,14 +817,14 @@ export default [
         routes: [
           {
             path: 'helm-list',
-            name: 'NG配置列表',
+            name: 'helm列表',
             key: 'helm-manage',
             component: '@/pages/operation/helm-manage/helm-list',
             hideInMenu: true,
           },
           {
             path: 'helm-detail',
-            name: 'NG配置列表',
+            name: 'helm详情',
             key: 'helm-manage',
             component: '@/pages/operation/helm-manage/helm-detail',
             hideInMenu: true,
@@ -834,13 +834,6 @@ export default [
             name: '创建chart',
             key: 'helm-manage',
             component: '@/pages/operation/helm-manage/create-chart',
-            hideInMenu: true,
-          },
-          {
-            path: 'helm-detail',
-            name: '详情页面',
-            key: 'helm-manage',
-            component: '@/pages/operation/helm-manage/helm-detail',
             hideInMenu: true,
           },
         ],

@@ -5,18 +5,20 @@ import { history } from 'umi';
 import CreatCard from './components/create-card';
 import { ContentCard } from '@/components/vc-page-content';
 import AceEditor from '@/components/ace-editor';
-import { queryPodNamespaceData } from './hook';
+import { queryPodNamespaceData, useGetChartName } from './hook';
 import './index.less';
 
 export default function CreateRelease() {
   const clusterInfo: any = history.location?.state || {};
   const [createReleaseForm] = Form.useForm();
+  const [chartNameLoading, chartNameOptions, getChartList] = useGetChartName();
   const [showNextStep, setShowNextStep] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
   console.log('clusterInfo', clusterInfo);
   // const [nameSpaceLoading, nameSpaceOption,getPodNamespace]=useGetClusterListPodNamespace();
   useEffect(() => {
-    queryNameSpace(clusterInfo?.clusterId);
+    queryNameSpace(clusterInfo?.curClusterId);
+    getChartList({ clusterName: clusterInfo?.curClusterName });
   }, []);
   //查询nameSpace
   const queryNameSpace = (value: any) => {
