@@ -5,7 +5,7 @@ import { history } from 'umi';
 import CreatCard from './components/create-card';
 import { ContentCard } from '@/components/vc-page-content';
 import AceEditor from '@/components/ace-editor';
-import { queryPodNamespaceData, useGetChartName } from './hook';
+import { queryPodNamespaceData, useGetChartName, queryChartVersions } from './hook';
 import './index.less';
 
 export default function CreateRelease() {
@@ -14,6 +14,7 @@ export default function CreateRelease() {
   const [chartNameLoading, chartNameOptions, getChartList] = useGetChartName();
   const [showNextStep, setShowNextStep] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
+  const [chartVersionOption, setChartVersionOption] = useState<any>([]);
   console.log('clusterInfo', clusterInfo);
   // const [nameSpaceLoading, nameSpaceOption,getPodNamespace]=useGetClusterListPodNamespace();
   useEffect(() => {
@@ -24,6 +25,14 @@ export default function CreateRelease() {
   const queryNameSpace = (value: any) => {
     queryPodNamespaceData({ clusterId: value }).then((res) => {
       setNameSpaceOption(res);
+    });
+  };
+  const changeChartName = (value: string) => {
+    queryChartVersions({
+      clusterName: clusterInfo?.curClusterName,
+      chartName: value,
+    }).then((res) => {
+      setChartVersionOption(res);
     });
   };
   return (
@@ -46,7 +55,13 @@ export default function CreateRelease() {
                   <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
                 </Form.Item>
                 <Form.Item label="chart名称" name="chartName">
-                  <Select style={{ width: 320 }} allowClear showSearch />
+                  <Select
+                    style={{ width: 320 }}
+                    allowClear
+                    showSearch
+                    options={chartNameOptions}
+                    onChange={changeChartName}
+                  />
                 </Form.Item>
               </>
             )}
@@ -54,7 +69,7 @@ export default function CreateRelease() {
             {showNextStep && (
               <>
                 <Form.Item label="chart版本" name="chartVersion">
-                  <Select style={{ width: 320 }} allowClear showSearch />
+                  <Select style={{ width: 320 }} allowClear showSearch options={chartVersionOption} />
                 </Form.Item>
                 <Form.Item label="详情" name="values">
                   <AceEditor mode="yaml" height={500} />

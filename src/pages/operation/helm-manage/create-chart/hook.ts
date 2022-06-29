@@ -12,9 +12,9 @@ export function useGetChartName(): [
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
 
-  const getChartList = async () => {
+  const getChartList = async (paramsObj: { clusterName: string; repository?: string; chartName?: string }) => {
     setLoading(true);
-    await getRequest(`${APIS.getChartList}`)
+    await getRequest(`${APIS.getChartList}`, { data: paramsObj })
       .then((result) => {
         if (result?.success) {
           let dataSource = result?.data;
@@ -48,6 +48,23 @@ export const queryPodNamespaceData = (params: { clusterId: string }) =>
         result.push({
           label: ele.namespace,
           value: ele.namespace,
+        });
+      }, []);
+
+      return result;
+    }
+    return [];
+  });
+
+export const queryChartVersions = (params: { chartName: string; clusterName: string }) =>
+  getRequest(APIS.chartVersions, { data: params }).then((res: any) => {
+    if (res?.success) {
+      const result: any = [];
+      let dataSource = res.data;
+      dataSource?.map((ele: any) => {
+        result.push({
+          label: ele.version,
+          value: ele.version,
         });
       }, []);
 

@@ -9,7 +9,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
-import { queryReleaseList, useGetClusterList, useDeleteRelease, getClusterList } from './hook';
+import { queryReleaseList, useGetClusterList, useDeleteRelease, getClusterList, queryPodNamespaceData } from './hook';
 import UpdateDeploy from './update-deploy';
 
 export default function DNSManageList(props: any) {
@@ -24,6 +24,7 @@ export default function DNSManageList(props: any) {
   const [delLoading, deleteRelease] = useDeleteRelease();
   const [clusterOptions, setClusterOptions] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
 
   useEffect(() => {
     getClusterList().then((res) => {
@@ -33,12 +34,14 @@ export default function DNSManageList(props: any) {
       });
 
       if (curClusterOption[0].clusterId) {
+        queryNameSpace(curClusterOption[0].clusterId);
         setClusterInfo({
           curClusterId: curClusterOption[0].clusterId,
           curClusterName: '来未来',
         });
         getReleaseList({ clusterName: '来未来' });
       } else {
+        queryNameSpace(res[0].clusterId);
         setClusterInfo({
           curClusterId: res[0].clusterId,
           curClusterName: res[0].value,
@@ -113,6 +116,12 @@ export default function DNSManageList(props: any) {
       },
     }) as any;
   }, []);
+  //查询nameSpace
+  const queryNameSpace = (value: any) => {
+    queryPodNamespaceData({ clusterId: value }).then((res) => {
+      setNameSpaceOption(res);
+    });
+  };
 
   const changeClusterName = (cluster: any) => {
     const params = releaseForm.getFieldsValue();
@@ -120,8 +129,7 @@ export default function DNSManageList(props: any) {
     const curClusterOption = clusterOptions?.filter((item: any) => {
       if (item.value === cluster) return item?.clusterId;
     });
-
-    console.log('cluster[0-----]', cluster);
+    queryNameSpace(curClusterOption[0].clusterId);
     setClusterInfo({
       curClusterId: curClusterOption[0].clusterId,
       curClusterName: cluster,
@@ -177,7 +185,7 @@ export default function DNSManageList(props: any) {
             }}
           >
             <Form.Item label="命名空间" name="namespace">
-              <Select placeholder="请输入命名空间" style={{ width: 290 }} />
+              <Select placeholder="请输入命名空间" style={{ width: 290 }} options={nameSpaceOption} />
             </Form.Item>
             <Form.Item label="名称：" name="releaseName">
               <Input placeholder="请输入名称" style={{ width: 290 }} />

@@ -193,3 +193,20 @@ export const getReleaseValues = (paramsObj: {
     return [];
   });
 };
+
+export const queryPodNamespaceData = (params: { clusterId: string }) =>
+  getRequest(APIS.getPodNamespace, { data: params }).then((res: any) => {
+    if (res?.success) {
+      const result: any = [];
+      let dataSource = res.data;
+      dataSource?.map((ele: any) => {
+        result.push({
+          label: ele.namespace,
+          value: ele.namespace,
+        });
+      }, []);
+
+      return result;
+    }
+    return [];
+  });
