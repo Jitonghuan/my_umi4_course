@@ -55,3 +55,50 @@ export const createTableColumns = (params: {
     },
   ] as ColumnsType<any>;
 };
+
+// 列表页-表格
+export const roleTableColumns = (params: {
+  onEdit: (record: any, index: number) => void;
+  onDelete: (record: any) => void;
+}) => {
+  return [
+    {
+      title: '角色',
+      dataIndex: 'role',
+      key: 'role',
+      width: 120,
+    },
+    {
+      title: '应用分类',
+      dataIndex: 'categoryCode',
+      key: 'categoryCode',
+      width: '14%',
+    },
+    {
+      title: '应用组',
+      dataIndex: 'groupCode',
+      key: 'groupCode',
+      width: '30%',
+    },
+
+    {
+      title: '操作',
+      dataIndex: 'option',
+      key: 'option',
+      width: '14%',
+      render: (_: string, record, index: number) => (
+        <Space>
+          <a onClick={() => params.onEdit(record, index)}>编辑</a>
+          <Popconfirm
+            title="确认删除?"
+            onConfirm={() => {
+              params.onDelete(record);
+            }}
+          >
+            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ] as ColumnsType<any>;
+};

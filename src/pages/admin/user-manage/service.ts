@@ -7,8 +7,8 @@ export const getUserList = addAPIPrefix('/adminManage/user/list');
 /* PUT 2、 更新用户信息 */
 export const updateUser = addAPIPrefix('/adminManage/user/update');
 /* POST 3、新增用户角色 */
-export const createUser = addAPIPrefix('/adminManage/user/role/create');
+export const createUserRole = addAPIPrefix('/adminManage/user/role/create');
 /* PUT 4、更新用户角色 */
-export const updateRole = addAPIPrefix('/adminManage/user/role/update');
+export const updateUserRole = addAPIPrefix('/adminManage/user/role/update');
 /* DELETE 5、 删除用户角色 */
-export const deleteUser = addAPIPrefix('/adminManage/user/role/delete');
+export const deleteUserRole = addAPIPrefix('/adminManage/user/role/delete');

@@ -14,11 +14,15 @@ export default function DEMO() {
     return createTableColumns({
       onEdit: (record, index) => {
         setcurRecord(record);
+        history.push({
+          pathname: '/matrix/admin/create-user',
+          state: curRecord,
+        });
       },
       onView: (record, index) => {
         setcurRecord(record);
         history.push({
-          pathname: 'create-user',
+          pathname: '/matrix/admin/create-user',
           state: curRecord,
         });
       },
