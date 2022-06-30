@@ -124,6 +124,7 @@ export function useChartInstall(): [
     clusterName: string;
     releaseName: string;
     values: string;
+    repository: string;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
@@ -134,6 +135,7 @@ export function useChartInstall(): [
     clusterName: string;
     releaseName: string;
     values: string;
+    repository: string;
   }) => {
     setLoading(true);
     await postRequest(`${APIS.chartInstall}`, { data: paramsObj })

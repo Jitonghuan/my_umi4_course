@@ -19,6 +19,7 @@ export default function CreateRelease() {
   const rootCls = 'all-chart-page';
   const clusterInfo: any = history.location?.state || {};
   const [createReleaseForm] = Form.useForm();
+  const [createForm] = Form.useForm();
   const [chartNameLoading, chartNameOptions, getChartList] = useGetChartName();
   const [showNextStep, setShowNextStep] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
@@ -34,6 +35,7 @@ export default function CreateRelease() {
   const [valueLoading, setValueLoading] = useState<boolean>(false);
   const [chartParam, setChartParam] = useState<any>({});
   const [intallLoading, chartInstall] = useChartInstall();
+  const [oneStepData, setOneStepData] = useState<any>({});
   // const [nameSpaceLoading, nameSpaceOption,getPodNamespace]=useGetClusterListPodNamespace();
   useEffect(() => {
     queryNameSpace(clusterInfo?.curClusterId);
@@ -44,9 +46,10 @@ export default function CreateRelease() {
     setIsLoading(true);
     queryChartList({ clusterName: clusterInfo?.curClusterName, chartName })
       .then((res) => {
-        setChartListInfo(res);
+        let result = res ? res : [];
+        setChartListInfo(result);
 
-        setTotal(res?.length);
+        setTotal(result?.length);
       })
       .finally(() => {
         setIsLoading(false);
@@ -96,11 +99,20 @@ export default function CreateRelease() {
         setValueLoading(false);
       });
   };
+  const getOneStepData = async () => {
+    const paramsOneStep = await createForm.validateFields();
+    setOneStepData(paramsOneStep);
+  };
+
   const hanleSubmit = async () => {
     // const params = createReleaseForm.getFieldsValue();
     const params = await createReleaseForm.validateFields();
+
+    console.log('params', params, '------', oneStepData);
     chartInstall({
       ...params,
+      ...chartParam,
+      ...oneStepData,
       chartName: chartParam?.chartName,
       clusterName: clusterInfo?.curClusterName,
     }).then(() => {
@@ -124,19 +136,29 @@ export default function CreateRelease() {
             >
               {!showNextStep && (
                 <>
-                  <Form.Item label="发布名称" name="releaseName" rules={[{ required: true, message: '这是必填项' }]}>
-                    <Input style={{ width: 320 }} />
-                  </Form.Item>
-                  <Form.Item label="命名空间" name="namespace" rules={[{ required: true, message: '这是必填项' }]}>
-                    <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
-                  </Form.Item>
-                  <Form.Item label="chart名称" name="chartName">
-                    <Input.Search
-                      style={{ width: 320 }}
-                      // options={chartNameOptions}
-                      onSearch={changeChartName}
-                    />
-                  </Form.Item>
+                  <Form
+                    style={{ width: '56%' }}
+                    labelCol={{ flex: '120px' }}
+                    // layout='inline'
+                    form={createForm}
+                    onReset={() => {
+                      createForm.resetFields();
+                    }}
+                  >
+                    <Form.Item label="发布名称" name="releaseName" rules={[{ required: true, message: '这是必填项' }]}>
+                      <Input style={{ width: 320 }} />
+                    </Form.Item>
+                    <Form.Item label="命名空间" name="namespace" rules={[{ required: true, message: '这是必填项' }]}>
+                      <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
+                    </Form.Item>
+                    <Form.Item label="chart名称" name="chartName">
+                      <Input.Search
+                        style={{ width: 320 }}
+                        // options={chartNameOptions}
+                        onSearch={changeChartName}
+                      />
+                    </Form.Item>
+                  </Form>
                 </>
               )}
               {!showNextStep && <Divider />}
@@ -205,6 +227,7 @@ export default function CreateRelease() {
                   type="primary"
                   onClick={() => {
                     setShowNextStep(true);
+                    getOneStepData();
                   }}
                 >
                   下一步
