@@ -5,70 +5,41 @@ import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { Link } from 'umi';
 
-// 列表页-查询表单
-export const createFormColumns = (params: { onTypeChange: (value: string) => void }) => {
-  return [
-    {
-      key: '1',
-      type: 'input',
-      label: '姓名',
-      dataIndex: 'name',
-      width: '200px',
-      placeholder: '请选择',
-    },
-  ] as FormProps[];
-};
-
 // 列表页-表格
 export const createTableColumns = (params: {
   onEdit: (record: any, index: number) => void;
   onView: (record: any, index: number) => void;
-  onDelete: (record: any) => void;
 }) => {
   return [
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: '4%',
+      width: 120,
     },
     {
-      title: '类型',
-      dataIndex: 'type',
-      key: 'type',
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
       width: '14%',
     },
     {
-      title: '标题',
-      dataIndex: 'title',
-      key: 'title',
-      width: '40%',
+      title: '邮箱',
+      dataIndex: 'email',
+      key: 'email',
+      width: '30%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
-      title: '发布时间',
-      dataIndex: 'sendTime',
-      key: 'sendTime',
-      width: '20%',
-      render: (value) => <>{datetimeCellRender(value)} </>,
-    },
-    {
-      title: '内容',
-      dataIndex: 'content',
-      key: 'content',
+      title: '手机号',
+      dataIndex: 'mobile',
+      key: 'mobile',
       width: '28%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
-    {
-      title: '发送者',
-      dataIndex: 'senderName',
-      key: 'senderName',
-      width: '10%',
-      ellipsis: true,
-      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
-    },
+
     {
       title: '操作',
       dataIndex: 'option',
@@ -79,14 +50,6 @@ export const createTableColumns = (params: {
         <Space>
           <a onClick={() => params.onView(record, index)}>详情</a>
           <a onClick={() => params.onEdit(record, index)}>编辑</a>
-          <Popconfirm
-            title="确认删除?"
-            onConfirm={() => {
-              params?.onDelete(record.id);
-            }}
-          >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
-          </Popconfirm>
         </Space>
       ),
     },

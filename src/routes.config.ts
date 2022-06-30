@@ -1121,6 +1121,15 @@ export default [
         name: '用户管理',
         key: 'user',
         component: '@/pages/admin/user-manage',
+        routes: [
+          {
+            path: 'create-user',
+            name: '创建用户',
+            key: 'user',
+            component: '@/pages/user/create-user',
+            // hideInMenu: true,
+          },
+        ],
       },
       {
         path: 'main',
