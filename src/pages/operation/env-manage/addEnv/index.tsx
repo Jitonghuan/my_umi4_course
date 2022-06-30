@@ -325,7 +325,7 @@ export default function addEnvData(props: EnvEditorProps) {
           {isDisabled !== true && (
             <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
               <Form.Item>
-                <Button type="ghost" htmlType="reset" onClick={onClose}>
+                <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                   取消
                 </Button>
                 <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>

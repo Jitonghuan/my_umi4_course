@@ -302,7 +302,7 @@ export default function TaskEditor(props: TmplListProps) {
           </Row>
           <Form.Item>
             <Space size="small" style={{ float: 'right' }}>
-              <Button type="ghost" htmlType="reset" onClick={onClose}>
+              <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                 取消
               </Button>
               <Button type="primary" htmlType="submit" disabled={isDisabled}>

@@ -148,7 +148,7 @@ export default function applyResource() {
 
             <Form.Item>
               <Space size="small" style={{ marginTop: '50px', float: 'right', marginRight: '3%' }}>
-                <Button type="ghost" htmlType="reset">
+                <Button type="ghost" htmlType="reset" danger>
                   重置
                 </Button>
                 <Button type="primary" htmlType="submit" onClick={showModal}>

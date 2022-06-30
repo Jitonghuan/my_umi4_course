@@ -1,17 +1,18 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { List, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
 import PageContainer from '@/components/page-container';
-import { PlusOutlined, BarChartOutlined, FormOutlined, DeleteOutlined, PlayCircleOutlined, PauseCircleOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  BarChartOutlined,
+  FormOutlined,
+  DeleteOutlined,
+  PlayCircleOutlined,
+  PauseCircleOutlined,
+} from '@ant-design/icons';
 import { history } from 'umi';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import { envTypeData, } from '../schema';
-import {
-  useEnvListOptions,
-  useGetListMonitor,
-  useEnableMonitor,
-  useDisableMonitor,
-  useDelMonitor,
-} from './hooks';
+import { envTypeData } from '../schema';
+import { useEnvListOptions, useGetListMonitor, useEnableMonitor, useDisableMonitor, useDelMonitor } from './hooks';
 import './index.less';
 const { Panel } = Collapse;
 
@@ -73,7 +74,7 @@ export default function DpMonitor() {
                     icon={<BarChartOutlined />}
                     onClick={(e) => {
                       e.stopPropagation();
-                      window.open(item.dashboardUrl, '_blank')
+                      window.open(item.dashboardUrl, '_blank');
                     }}
                   >
                     看板
@@ -88,33 +89,31 @@ export default function DpMonitor() {
                   >
                     编辑
                   </Button>
-                  {
-                    item.status === 0 ? (
-                      <Button
-                        type="link"
-                        style={{ color: '#52c41a' }}
-                        icon={<PlayCircleOutlined />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          enableMonitorClick(item.id);
-                        }}
-                      >
-                        启动
-                      </Button>
-                    ) : (
-                      <Button
-                        type="link"
-                        style={{ color: '#FF7B15' }}
-                        icon={<PauseCircleOutlined />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          disableMonitorClick(item.id);
-                        }}
-                      >
-                        停止
-                      </Button>
-                    )
-                  }
+                  {item.status === 0 ? (
+                    <Button
+                      type="link"
+                      style={{ color: '#52c41a' }}
+                      icon={<PlayCircleOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        enableMonitorClick(item.id);
+                      }}
+                    >
+                      启动
+                    </Button>
+                  ) : (
+                    <Button
+                      type="link"
+                      style={{ color: '#FF7B15' }}
+                      icon={<PauseCircleOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        disableMonitorClick(item.id);
+                      }}
+                    >
+                      停止
+                    </Button>
+                  )}
                   <Button
                     danger
                     type="link"
@@ -140,7 +139,7 @@ export default function DpMonitor() {
                 },
                 {
                   title: 'sql',
-                  dataIndex: 'querySql'
+                  dataIndex: 'querySql',
                 },
               ]}
               pagination={false}
@@ -167,10 +166,7 @@ export default function DpMonitor() {
             form.resetFields();
             setCurrentEnvCode('');
             setCurrentEnvType('');
-            getListMonitor(
-              1,
-              5,
-            );
+            getListMonitor(1, 5);
           }}
         >
           <Form.Item label="环境" name="envCode">
@@ -187,9 +183,9 @@ export default function DpMonitor() {
             <Select
               style={{ width: '140px', marginLeft: '5px' }}
               options={envCodeOption}
-              onChange={(value => {
+              onChange={(value) => {
                 setCurrentEnvCode(value);
-              })}
+              }}
               value={currentEnvCode}
               allowClear
             />
@@ -206,14 +202,18 @@ export default function DpMonitor() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset">
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
           <Form.Item className="btn-r">
-            <Button type="primary" onClick={() => {
-              history.push({ pathname: '/matrix/monitor/dp-monitor-edit', state: { type: 'add' } });
-            }} icon={<PlusOutlined />}>
+            <Button
+              type="primary"
+              onClick={() => {
+                history.push({ pathname: '/matrix/monitor/dp-monitor-edit', state: { type: 'add' } });
+              }}
+              icon={<PlusOutlined />}
+            >
               新增
             </Button>
           </Form.Item>
@@ -232,12 +232,7 @@ export default function DpMonitor() {
               pageSize: 5,
             }}
             dataSource={listData}
-            renderItem={(item: any) => (
-              <List.Item
-              >
-                {item}
-              </List.Item>
-            )}
+            renderItem={(item: any) => <List.Item>{item}</List.Item>}
           />
         ) : (
           <Empty />

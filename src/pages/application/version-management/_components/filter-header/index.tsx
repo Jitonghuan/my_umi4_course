@@ -54,7 +54,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
           <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
             查询
           </Button>
-          <Button type="default" htmlType="reset">
+          <Button type="default" htmlType="reset" danger>
             重置
           </Button>
         </FormItem>
