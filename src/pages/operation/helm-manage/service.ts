@@ -21,7 +21,7 @@ export const chartValues = addAPIPrefix('opsManage/helm/chart/values');
 
 /* POST 5、 chart版本查询 */
 
-// export const chartVersions = addAPIPrefix('opsManage/helm/chart/versions');
+export const chartVersions = addAPIPrefix('opsManage/helm/chart/versions');
 
 /* POST 6、 指定仓库后chart版本查询 */
 

@@ -93,10 +93,37 @@ export const getClusterList = () => {
   });
 };
 
+/** 查询chart版本 */
+export const queryChartVersions = (paramsObj?: { chartName: string; clusterName?: string }) => {
+  return getRequest(APIS.chartVersions, {
+    data: paramsObj,
+  }).then((res: any) => {
+    if (res?.success) {
+      const dataSource = res.data || [];
+      let dataArry: any = [];
+      dataSource?.map((item: any) => {
+        dataArry.push({
+          label: item?.chartLink,
+          value: item?.chartLink,
+        });
+      });
+
+      return dataArry;
+    }
+    return [];
+  });
+};
+
 //release更新
 export function useUpgradeRelease(): [
   boolean,
-  (paramsObj: { releaseName: string; namespace: string; values: string; clusterName: string }) => Promise<void>,
+  (paramsObj: {
+    releaseName: string;
+    namespace: string;
+    values: string;
+    clusterName: string;
+    chartLink: string;
+  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const upgradeRelease = async (paramsObj: {
@@ -104,6 +131,7 @@ export function useUpgradeRelease(): [
     namespace: string;
     values: string;
     clusterName: string;
+    chartLink: string;
   }) => {
     setLoading(true);
     await postRequest(`${APIS.upgradeRelease}`, { data: paramsObj })

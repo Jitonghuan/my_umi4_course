@@ -2,12 +2,12 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/06/24 17:10
 
-import { useEffect } from 'react';
-import { Form, Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { Form, Modal, Select } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
-import { useUpgradeRelease, useGetReleaseValues, getReleaseValues } from '../hook';
+import { useUpgradeRelease, queryChartVersions, getReleaseValues } from '../hook';
 import './index.less';
 
 export interface ReleaseProps {
@@ -27,6 +27,7 @@ export default function UpdateDeploy(props: ReleaseProps) {
   const { mode, curRecord, curClusterName, onCancle, onSave } = props;
   const [loading, upgradeRelease] = useUpgradeRelease();
   const [form] = Form.useForm();
+  const [chartLinkOptions, setChartLinkOptions] = useState<any>([]);
   // const [updateLoading,values, getReleaseValues]=useGetReleaseValues();
   useEffect(() => {
     if (mode) {
@@ -37,6 +38,9 @@ export default function UpdateDeploy(props: ReleaseProps) {
       }).then((res) => {
         form.setFieldsValue({ values: res });
       });
+      queryChartVersions({ clusterName: curClusterName, chartName: curRecord?.chartName }).then((res) => {
+        setChartLinkOptions(res);
+      });
     }
   }, [mode]);
   const update = () => {
@@ -44,8 +48,8 @@ export default function UpdateDeploy(props: ReleaseProps) {
     upgradeRelease({
       releaseName: curRecord?.releaseName,
       namespace: curRecord?.namespace,
-      values,
-      clusterName: curRecord?.clusterName,
+      ...values,
+      clusterName: curClusterName,
     }).then(() => {
       onSave();
     });
@@ -57,7 +61,11 @@ export default function UpdateDeploy(props: ReleaseProps) {
         更新发布——<span style={{ color: 'royalblue' }}>{curRecord?.releaseName}</span>{' '}
         &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
       </h3>
+
       <Form form={form}>
+        <Form.Item label="chart版本" name="chartLink" rules={[{ required: true, message: '请选择' }]}>
+          <Select options={chartLinkOptions} />
+        </Form.Item>
         <Form.Item name="values">
           <AceEditor mode="yaml" height={500} />
         </Form.Item>
