@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
 
@@ -96,3 +96,44 @@ export function useUpdateUserRole(): [
 
   return [loading, updateUserRole];
 }
+
+// 获取应用分组选项
+export function useAppGroupOptions(categoryCode?: string): [any[], boolean] {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setData([]);
+    if (!categoryCode) return;
+
+    setLoading(true);
+    getRequest(APIS.queryBizData, {
+      data: { categoryCode },
+    })
+      .then((result) => {
+        const { dataSource } = result?.data || {};
+        const next = (dataSource || []).map((item: any) => ({
+          ...item,
+          value: item.groupCode,
+          label: item.groupName,
+        }));
+
+        setData(next);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [categoryCode]);
+
+  return [data, loading];
+}
+
+/* 查询对应人的角色信息 */
+export const queryRoleData = (name: string) => {
+  return getRequest(APIS.getUserList, { data: { name, pageSize: -1 } }).then((res) => {
+    if (res?.success) {
+      const dataSource = res?.data?.dataSource || [];
+      return dataSource;
+    }
+  });
+};

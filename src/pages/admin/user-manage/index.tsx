@@ -16,14 +16,14 @@ export default function DEMO() {
         setcurRecord(record);
         history.push({
           pathname: '/matrix/admin/create-user',
-          state: curRecord,
+          state: record,
         });
       },
       onView: (record, index) => {
         setcurRecord(record);
         history.push({
           pathname: '/matrix/admin/create-user',
-          state: curRecord,
+          state: { ...record, optType: 'VIEW' },
         });
       },
     }) as any;
