@@ -219,7 +219,7 @@ export default function MemberEditor() {
           <Form.Item label="角色" name="role" rules={[{ required: true, message: '这是必填项' }]}>
             <Input style={{ width: 420 }} disabled={mode === 'VIEW'} />
           </Form.Item>
-          <Form.Item label="应用分类" name="categoryCode" rules={[{ required: true, message: '这是必填项' }]}>
+          <Form.Item label="应用分类" name="categoryCode">
             <Select
               style={{ width: 420 }}
               options={categoryData}
@@ -229,7 +229,7 @@ export default function MemberEditor() {
               disabled={mode === 'VIEW'}
             />
           </Form.Item>
-          <Form.Item label="应用组" name="groupCode" rules={[{ required: true, message: '这是必填项' }]}>
+          <Form.Item label="应用组" name="groupCode">
             <Select
               disabled={mode === 'VIEW'}
               style={{ width: 420 }}
