@@ -1112,6 +1112,19 @@ export default [
     icon: 'icon-userRecent',
     routes: [
       {
+        path: 'user',
+        name: '用户管理',
+        key: 'user',
+        component: '@/pages/admin/user-manage',
+      },
+      {
+        path: 'create-user',
+        name: '新建用户',
+        key: 'user',
+        component: '@/pages/admin/user-manage/create-user',
+        hideInMenu: true,
+      },
+      {
         path: 'main',
         name: '主页管理',
         key: 'main',

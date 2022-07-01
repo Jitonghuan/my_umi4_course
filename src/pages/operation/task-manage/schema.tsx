@@ -1,22 +1,6 @@
-import React from 'react';
-import { history } from 'umi';
 import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { JOB_STATUS } from './type';
-
-export type AppType = 'frontend' | 'backend';
-
-const APP_TYPE_MAP = {
-  frontend: '前端',
-  backend: '后端',
-};
-
-const APP_TYPE_ICON = {
-  frontend: <Html5Outlined />,
-  backend: <CodeOutlined />,
-};
-
 // 表格 schema
 export const taskTableSchema = ({
   onEditClick,
