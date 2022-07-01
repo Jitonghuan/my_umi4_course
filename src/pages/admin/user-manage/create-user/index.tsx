@@ -133,7 +133,17 @@ export default function MemberEditor() {
     <PageContainer className="create-user">
       <ContentCard>
         <Card style={{ width: '100%' }}>
-          <Form labelCol={{ flex: '120px' }} form={editForm}>
+          <div>
+            <Button
+              size="small"
+              onClick={() => {
+                history.push('/matrix/admin/user');
+              }}
+            >
+              返回
+            </Button>
+          </div>
+          <Form labelCol={{ flex: '150px' }} form={editForm}>
             <Form.Item label="姓名" name="name" rules={[{ required: true, message: '这是必填项' }]}>
               <Input style={{ width: 420 }} disabled />
             </Form.Item>
