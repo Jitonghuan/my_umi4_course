@@ -72,23 +72,6 @@ export default function DNSManageList(props: any) {
       });
   };
 
-  const dataSource = [
-    {
-      releaseName: 'dnsmasq',
-      status: 'deployed',
-      chart: 'dnsmasq',
-      namespace: 'devops',
-      cluster: 'future',
-    },
-    {
-      releaseName: 'xxl-job',
-      status: 'deployed',
-      chart: 'xxl-job',
-      namespace: 'devops',
-      cluster: 'future',
-    },
-  ];
-
   // 表格列配置
   const tableColumns = useMemo(() => {
     return releaseTableSchema({
@@ -109,9 +92,11 @@ export default function DNSManageList(props: any) {
         await deleteRelease({
           releaseName: record?.releaseName,
           namespace: record?.namespace,
-          clusterName: record?.clusterName,
+          clusterName: curClusterName,
         }).then(() => {
-          queryReleaseList();
+          getReleaseList({
+            clusterName: curClusterName,
+          });
         });
       },
     }) as any;
@@ -185,7 +170,13 @@ export default function DNSManageList(props: any) {
             }}
           >
             <Form.Item label="命名空间" name="namespace">
-              <Select placeholder="请输入命名空间" style={{ width: 290 }} options={nameSpaceOption} />
+              <Select
+                placeholder="请输入命名空间"
+                showSearch
+                allowClear
+                style={{ width: 290 }}
+                options={nameSpaceOption}
+              />
             </Form.Item>
             <Form.Item label="名称：" name="releaseName">
               <Input placeholder="请输入名称" style={{ width: 290 }} />

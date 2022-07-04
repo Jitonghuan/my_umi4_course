@@ -101,14 +101,16 @@ export default function CreateRelease() {
   };
   const getOneStepData = async () => {
     const paramsOneStep = await createForm.validateFields();
+    setShowNextStep(true);
+    // createForm.validateFields().then(()=>{
+
+    // });
     setOneStepData(paramsOneStep);
   };
 
   const hanleSubmit = async () => {
     // const params = createReleaseForm.getFieldsValue();
     const params = await createReleaseForm.validateFields();
-
-    console.log('params', params, '------', oneStepData);
     chartInstall({
       ...params,
       ...chartParam,
@@ -239,7 +241,6 @@ export default function CreateRelease() {
                 <Button
                   type="primary"
                   onClick={() => {
-                    setShowNextStep(true);
                     getOneStepData();
                   }}
                 >
