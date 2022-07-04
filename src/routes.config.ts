@@ -94,6 +94,10 @@ export default [
     redirect: `${baseRoutePath}/operation/ng-manage/ng-list`,
   },
   {
+    path: `${baseRoutePath}/operation/helm-manage`,
+    redirect: `${baseRoutePath}/operation/helm-manage/helm-list`,
+  },
+  {
     path: `${baseRoutePath}/operation/label-manage`,
     redirect: `${baseRoutePath}/operation/label-manage/label-list`,
   },
@@ -806,6 +810,34 @@ export default [
         name: '任务管理',
         key: 'task-manage',
         component: '@/pages/operation/task-manage',
+      },
+      {
+        path: 'helm-manage',
+        name: 'Helm管理',
+        key: 'helm-manage',
+        routes: [
+          {
+            path: 'helm-list',
+            name: 'helm列表',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/helm-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'helm-detail',
+            name: 'helm详情',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/helm-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'create-chart',
+            name: '创建chart',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/create-chart',
+            hideInMenu: true,
+          },
+        ],
       },
       {
         path: 'tmpl-log',
