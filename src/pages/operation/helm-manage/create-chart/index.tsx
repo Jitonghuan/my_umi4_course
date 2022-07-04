@@ -171,15 +171,22 @@ export default function CreateRelease() {
 
               {showNextStep && (
                 <>
-                  <Form.Item label="chart版本" name="chartVersion" rules={[{ required: true, message: '这是必填项' }]}>
-                    <Select
-                      style={{ width: 540 }}
-                      allowClear
-                      showSearch
-                      options={chartVersionOption}
-                      onChange={changeVersion}
-                    />
-                  </Form.Item>
+                  <div className="second-create-step">
+                    <Form.Item
+                      label="chart版本"
+                      name="chartVersion"
+                      rules={[{ required: true, message: '这是必填项' }]}
+                    >
+                      <Select
+                        style={{ width: 540 }}
+                        allowClear
+                        showSearch
+                        options={chartVersionOption}
+                        onChange={changeVersion}
+                      />
+                    </Form.Item>
+                  </div>
+
                   <Spin spinning={valueLoading}>
                     <Form.Item label="详情" name="values">
                       <AceEditor mode="yaml" height={560} />
