@@ -1,0 +1,46 @@
+.cluster-info{
+    .search-wrapper{
+        border-bottom: solid 1px #ededed;
+        padding-bottom: 10px;
+    }
+    .list-wrapper{
+        display: flex;
+        margin-top: 20px;
+        border:1px solid black;
+        min-height: 100px;
+        .display-item{
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+        }
+        &-item{
+            display: flex;
+            flex:0 0 25%;
+            flex-direction: column;
+            border-right: 1px solid rgb(201, 198, 198);
+            .item-top{
+                border-bottom: 1px solid rgb(201, 198, 198);
+                padding:5px;
+                height: 66.66%;
+            }
+            
+        }
+        &-item-last{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            .last-item{
+                padding: 5px;
+            }
+            .last-item+.last-item{
+                border-top: 1px solid rgb(201, 198, 198);
+    
+            }
+        }
+    }
+    .page-wrapper{
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}

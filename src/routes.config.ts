@@ -1090,6 +1090,56 @@ export default [
         component: '@/pages/pedestal/storage-manage/volume-detail',
         hideInMenu: true,
       },
+      {
+        path: 'cluster-info',
+        name: '集群概览',
+        key: 'cluster-info',
+        component: '@/pages/pedestal/cluster-info',
+      },
+      {
+        path: 'cluster-detail',
+        name: '集群详情',
+        key: 'cluster-info',
+        component: '@/pages/pedestal/cluster-info/main',
+        hideInMenu: true,
+        routes: [
+          {
+            path: 'node-list',
+            name: '机器列表',
+            key: 'cluster-info',
+            component: '@/pages/pedestal/cluster-info/node-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'resource-detail',
+            name: '资源详情',
+            key: 'cluster-info',
+            component: '@/pages/pedestal/cluster-info/resource-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'load-detail',
+            name: '工作负载',
+            key: 'cluster-info',
+            component: '@/pages/pedestal/cluster-info/load-detail',
+            hideInMenu: true,
+          }
+        ]
+      },
+      {
+        path: 'view-log',
+        name: '查看日志',
+        key: 'cluster-info',
+        component: '@/pages/pedestal/cluster-info/load-detail/view-log',
+        hideInMenu: true,
+      },
+      {
+        path: 'login-shell',
+        name: '登陆shell',
+        key: 'cluster-info',
+        component: '@/pages/pedestal/cluster-info/load-detail/login-shell',
+        hideInMenu: true,
+      },
     ],
   },
   {
