@@ -145,19 +145,25 @@ export default function CreateRelease() {
                       createForm.resetFields();
                     }}
                   >
-                    <Form.Item label="发布名称" name="releaseName" rules={[{ required: true, message: '这是必填项' }]}>
-                      <Input style={{ width: 320 }} />
-                    </Form.Item>
-                    <Form.Item label="命名空间" name="namespace" rules={[{ required: true, message: '这是必填项' }]}>
-                      <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
-                    </Form.Item>
-                    <Form.Item label="chart名称" name="chartName">
-                      <Input.Search
-                        style={{ width: 320 }}
-                        // options={chartNameOptions}
-                        onSearch={changeChartName}
-                      />
-                    </Form.Item>
+                    <div className="first-create-step">
+                      <Form.Item
+                        label="发布名称"
+                        name="releaseName"
+                        rules={[{ required: true, message: '这是必填项' }]}
+                      >
+                        <Input style={{ width: 320 }} />
+                      </Form.Item>
+                      <Form.Item label="命名空间" name="namespace" rules={[{ required: true, message: '这是必填项' }]}>
+                        <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
+                      </Form.Item>
+                      <Form.Item label="chart名称" name="chartName">
+                        <Input.Search
+                          style={{ width: 320 }}
+                          // options={chartNameOptions}
+                          onSearch={changeChartName}
+                        />
+                      </Form.Item>
+                    </div>
                   </Form>
                 </>
               )}
