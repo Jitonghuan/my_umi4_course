@@ -42,9 +42,12 @@ export default function UpdateDeploy(props: ReleaseProps) {
         setChartLinkOptions(res);
       });
     }
+    return () => {
+      form.resetFields();
+    };
   }, [mode]);
-  const update = () => {
-    const values = form.getFieldsValue();
+  const update = async () => {
+    const values = await form.validateFields();
     upgradeRelease({
       releaseName: curRecord?.releaseName,
       namespace: curRecord?.namespace,
@@ -64,7 +67,7 @@ export default function UpdateDeploy(props: ReleaseProps) {
 
       <Form form={form}>
         <Form.Item label="chart版本" name="chartLink" rules={[{ required: true, message: '请选择' }]}>
-          <Select options={chartLinkOptions} />
+          <Select options={chartLinkOptions} showSearch allowClear />
         </Form.Item>
         <Form.Item name="values">
           <AceEditor mode="yaml" height={500} />

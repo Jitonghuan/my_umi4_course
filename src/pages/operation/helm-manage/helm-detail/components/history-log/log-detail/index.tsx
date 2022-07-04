@@ -4,10 +4,8 @@
 
 import { useEffect } from 'react';
 import { Form, Modal } from 'antd';
-import PageContainer from '@/components/page-container';
-import { history } from 'umi';
 import AceEditor from '@/components/ace-editor';
-import { useUpgradeRelease, getReleaseValues } from '../../../../helm-list/hook';
+import { getReleaseValues } from '../../../../helm-list/hook';
 
 export interface ReleaseProps {
   mode: boolean;
@@ -24,9 +22,7 @@ type releaseStatus = {
 
 export default function UpdateDeploy(props: ReleaseProps) {
   const { mode, curRecord, curClusterName, onCancle, onSave } = props;
-  const [loading, upgradeRelease] = useUpgradeRelease();
   const [form] = Form.useForm();
-  // const [updateLoading,values, getReleaseValues]=useGetReleaseValues();
   useEffect(() => {
     if (mode) {
       getReleaseValues({
@@ -39,27 +35,16 @@ export default function UpdateDeploy(props: ReleaseProps) {
       });
     }
   }, [mode]);
-  const update = () => {
-    const values = form.getFieldsValue();
-    upgradeRelease({
-      releaseName: curRecord?.releaseName,
-      namespace: curRecord?.namespace,
-      values,
-      clusterName: curRecord?.clusterName,
-    }).then(() => {
-      onSave();
-    });
-  };
 
   return (
-    <Modal visible={mode} width="60%" onOk={update} confirmLoading={loading} onCancel={onCancle}>
+    <Modal visible={mode} width="60%" onCancel={onCancle} footer={null}>
       <h3 className="update-title">
         更新发布——<span style={{ color: 'royalblue' }}>{curRecord?.releaseName}</span>{' '}
         &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
       </h3>
       <Form form={form}>
         <Form.Item name="values">
-          <AceEditor mode="yaml" height={500} />
+          <AceEditor mode="yaml" height={500} readOnly />
         </Form.Item>
       </Form>
 
