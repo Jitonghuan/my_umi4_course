@@ -1,9 +1,9 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
-import { createFormColumns, createTableColumns, typeOptions } from './schema';
-import { useDeleteArticle, useUpdateArticle } from './hook';
+import { createTableColumns, typeOptions } from './schema';
+import { useDeleteArticle } from './hook';
 import * as APIS from './service';
 import useTable from '@/utils/useTable';
 import CreatArticle from './creat-message';
@@ -12,14 +12,6 @@ export default function AdminList() {
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const [delLoading, deleteArticle] = useDeleteArticle();
-  const [updateLoading, updateArticle] = useUpdateArticle();
-
-  const onTypeChange = (type: string) => {};
-  const formOptions = useMemo(() => {
-    return createFormColumns({
-      onTypeChange,
-    });
-  }, []);
 
   const columns = useMemo(() => {
     return createTableColumns({
@@ -115,7 +107,6 @@ export default function AdminList() {
         className="table-form"
         onSearch={submit}
         reset={reset}
-        // scroll={tableProps.dataSource.length > 0 ? { x: '100%' } : {}}
         searchText="查询"
       />
     </PageContainer>

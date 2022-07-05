@@ -1,21 +1,20 @@
-// article editor
+// create message
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/06/15 14:50
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Switch } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Drawer, Form, Button, Select, Input } from 'antd';
 import { typeOptions } from '../schema';
 import { useAddArticle, useUpdateArticle, useSearchUser } from '../hook';
-import UserSelector, { stringToList } from '@/components/user-selector';
 
-export interface MemberEditorProps {
+export interface CreateMessageProps {
   mode?: EditorMode;
   initData?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
-export default function MemberEditor(props: MemberEditorProps) {
+export default function CreateMessage(props: CreateMessageProps) {
   const [addLoading, createArticle] = useAddArticle();
   const [updateLoading, updateArticle] = useUpdateArticle();
   const { mode, initData, onClose, onSave } = props;
@@ -29,7 +28,6 @@ export default function MemberEditor(props: MemberEditorProps) {
     if (mode === 'HIDE' || !initData) return;
     searchUser();
     if (mode !== 'ADD') {
-      console.log('initData?.targetId', initData?.targetId);
       setCurType(initData?.type);
       editForm.setFieldsValue({
         title: initData?.title,
