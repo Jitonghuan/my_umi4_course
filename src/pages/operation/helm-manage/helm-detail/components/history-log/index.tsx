@@ -1,9 +1,9 @@
-// 详情页-基本信息
+//历史Log
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/06/24 17:10
 
 import { useEffect, useState } from 'react';
-import { Button, Table, Space, Tag, Modal } from 'antd';
+import { Table, Space, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { datetimeCellRender } from '@/utils';
 import { getHistoryReleaseList, useRollbackRelease } from '../../hook';
@@ -13,13 +13,8 @@ export interface PorpsItem {
   record: any;
   curClusterName: string;
 }
-type releaseStatus = {
-  text: string;
-  type: any;
-  disabled: boolean;
-};
 
-export default function deliveryDescription(props: PorpsItem) {
+export default function HistoryLog(props: PorpsItem) {
   const { record, curClusterName } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [releaseData, setReleaseData] = useState<any>([]);

@@ -1,22 +1,6 @@
-import React from 'react';
-import { history } from 'umi';
-import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
+import { Popconfirm, Tag } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { datetimeCellRender } from '@/utils';
-// import { JOB_STATUS } from './type';
-
-export type AppType = 'frontend' | 'backend';
-
-const APP_TYPE_MAP = {
-  frontend: '前端',
-  backend: '后端',
-};
-
-const APP_TYPE_ICON = {
-  frontend: <Html5Outlined />,
-  backend: <CodeOutlined />,
-};
 
 // 表格 schema
 export const releaseTableSchema = ({
@@ -98,7 +82,7 @@ export const releaseTableSchema = ({
             更新
           </a>
           <Popconfirm
-            title="确定要删除该应用吗？"
+            title="确定要删除吗？"
             onConfirm={() => onDelClick(record, index)}
             okText="确定"
             cancelText="取消"

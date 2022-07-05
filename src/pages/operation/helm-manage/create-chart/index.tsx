@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Space, Empty, Spin, Pagination, Divider } from 'antd';
+import { Form, Input, Select, Button, Space, Empty, Spin, Divider } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import CreatCard from './components/create-card';
@@ -15,7 +15,7 @@ import {
 } from './hook';
 import './index.less';
 
-export default function CreateRelease() {
+export default function CreateChart() {
   const rootCls = 'all-chart-page';
   const clusterInfo: any = history.location?.state || {};
   const [createReleaseForm] = Form.useForm();
@@ -26,17 +26,13 @@ export default function CreateRelease() {
   const [chartVersionOption, setChartVersionOption] = useState<any>([]);
   const [chartListInfo, setChartListInfo] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(0);
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(30);
   const [curChartName, setCurChartName] = useState<string>('');
-  const [readMoreInfo, setReadMoreInfo] = useState<any>([]);
   const [chartValues, setChartValues] = useState<string>('');
   const [valueLoading, setValueLoading] = useState<boolean>(false);
   const [chartParam, setChartParam] = useState<any>({});
   const [intallLoading, chartInstall] = useChartInstall();
   const [oneStepData, setOneStepData] = useState<any>({});
-  // const [nameSpaceLoading, nameSpaceOption,getPodNamespace]=useGetClusterListPodNamespace();
+
   useEffect(() => {
     queryNameSpace(clusterInfo?.curClusterId);
     getChartList({ clusterName: clusterInfo?.curClusterName });
@@ -48,8 +44,6 @@ export default function CreateRelease() {
       .then((res) => {
         let result = res ? res : [];
         setChartListInfo(result);
-
-        setTotal(result?.length);
       })
       .finally(() => {
         setIsLoading(false);
@@ -75,18 +69,12 @@ export default function CreateRelease() {
     });
   };
 
-  const getChartValues = (params: {
-    chartName: string;
-    clusterName: string;
-    repository: string;
-    // chartVersion: string;
-  }) => {
+  const getChartValues = (params: { chartName: string; clusterName: string; repository: string }) => {
     setChartParam(params);
   };
 
   const changeVersion = (chartVersion: string) => {
     setValueLoading(true);
-    // const chartVersion =createReleaseForm.getFieldValue('chartVersion')
     queryChartValues({ ...chartParam, chartVersion })
       .then((res) => {
         setChartValues(res);
@@ -102,14 +90,10 @@ export default function CreateRelease() {
   const getOneStepData = async () => {
     const paramsOneStep = await createForm.validateFields();
     setShowNextStep(true);
-    // createForm.validateFields().then(()=>{
-
-    // });
     setOneStepData(paramsOneStep);
   };
 
   const hanleSubmit = async () => {
-    // const params = createReleaseForm.getFieldsValue();
     const params = await createReleaseForm.validateFields();
     chartInstall({
       ...params,
@@ -141,7 +125,6 @@ export default function CreateRelease() {
                   <Form
                     style={{ width: '56%' }}
                     labelCol={{ flex: '120px' }}
-                    // layout='inline'
                     form={createForm}
                     onReset={() => {
                       createForm.resetFields();

@@ -15,20 +15,10 @@ export function useTaskList() {
 
   const getTaskList = async (paramObj: { jobCode?: string; pageIndex?: number; pageSize?: number }) => {
     setLoading(true);
-    await getRequest(
-      APIS.getJobList,
-      { data: paramObj },
-      // `${APIS.getJobList}?jobCode=${paramObj?.jobCode||''}&pageIndex=${paramObj?.pageIndex || 1}&pageSize=${paramObj?.pageSize || 20}`,
-    )
+    await getRequest(APIS.getJobList, { data: paramObj })
       .then((result) => {
         if (result?.success) {
           const dataSource = result.data.dataSource || [];
-          // let dataArry:any=[];
-          // dataSource?.map((item:any)=>{
-          //   dataArry.push(
-          //     Object.assign(item.job,item.lastExecStatus)
-          //   )
-          // })
           const pageInfo = result.data.pageInfo;
           setSource(dataSource);
           setPageInfo(pageInfo);
@@ -42,7 +32,7 @@ export function useTaskList() {
       });
   };
 
-  return [loading, pageInfo, source, setSource, setPageInfo, getTaskList];
+  return [loading, pageInfo, source, getTaskList];
 }
 
 //任务执行情况列表查询
@@ -185,7 +175,7 @@ export function useUpdateTask(): [
 }
 
 //删除任务
-export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => Promise<void>] {
+export function useDeleteTask(): [(paramsObj: { jobCode: string }) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const deleteTask = async (paramsObj: { jobCode: string }) => {
     setLoading(true);
@@ -202,7 +192,7 @@ export function useDeleteTask(): [boolean, (paramsObj: { jobCode: string }) => P
       });
   };
 
-  return [loading, deleteTask];
+  return [deleteTask];
 }
 
 /** 查询应用列表 */
