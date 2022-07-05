@@ -601,6 +601,24 @@ export default [
     ],
   },
   {
+    path: 'database',
+    name: '数据库管理',
+    icon: 'icon-TableSettings',
+    routes: [
+      {
+        path: 'overview',
+        name: '概览',
+        component: '@/pages/database/overview',
+      },
+      {
+        path: 'instance-list',
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
+      },
+    ],
+  },
+  {
     path: 'logger',
     name: '日志管理',
     icon: 'icon-diagnose',
