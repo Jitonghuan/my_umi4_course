@@ -6,17 +6,19 @@ import { FilterCard } from '@/components/vc-page-content';
 import { Button, Space, Form, Card, Segmented } from 'antd';
 import useTable from '@/utils/useTable';
 import { options } from './schema';
+import PieOne from './dashboard/pie-one';
+import PieThree from './dashboard/pie-three';
 export default function DatabaseOverView() {
   const [activeValue, setActiveValue] = useState<string>('basic-info');
   const upperGridStyle: React.CSSProperties = {
     width: '50%',
-    textAlign: 'center',
+    // textAlign: 'center',
     height: 315,
     margin: 12,
   };
   const lowerGridStyle: React.CSSProperties = {
     width: '50%',
-    textAlign: 'center',
+    // textAlign: 'center',
     height: 204,
     margin: 12,
   };
@@ -37,12 +39,18 @@ export default function DatabaseOverView() {
                  
               </Card> */}
         <div style={{ display: 'flex' }}>
-          <Card style={upperGridStyle}></Card>
+          <Card style={upperGridStyle}>
+            <PieOne />
+          </Card>
           <Card style={upperGridStyle}></Card>
         </div>
         <div style={{ display: 'flex' }}>
-          <Card style={lowerGridStyle}></Card>
-          <Card style={lowerGridStyle}></Card>
+          <Card style={lowerGridStyle}>
+            <PieThree />
+          </Card>
+          <Card style={lowerGridStyle}>
+            <PieThree />
+          </Card>
         </div>
       </FilterCard>
       <ContentCard>
