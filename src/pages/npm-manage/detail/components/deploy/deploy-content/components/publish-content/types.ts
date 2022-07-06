@@ -6,11 +6,9 @@ export interface IProps {
   envTypeCode: string;
   deployInfo: DeployInfoVO;
   deployedList: any[];
-  appStatusInfo: IStatusInfoProps[];
   onOperate: (type: OperateType) => void;
   onSpin: any;
   stopSpin: any;
-  pipelineCode: string;
   envList: any;
 }
 

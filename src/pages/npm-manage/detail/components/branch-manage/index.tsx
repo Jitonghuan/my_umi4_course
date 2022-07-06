@@ -1,29 +1,32 @@
 import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
+
 import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
+
 import { ContentCard } from '@/components/vc-page-content';
-import { usePaginated } from '@cffe/vc-hulk-table';
-import { datetimeCellRender } from '@/utils';
 import BranchEditor from './branch-editor';
 import MasterBranchEditor from './master-editor';
+
+import { queryBranchListUrl, deleteBranch } from '../../server';
+import { delRequest} from '@/utils/request';
+
+import { datetimeCellRender } from '@/utils';
 import DetailContext from '../../context';
-import { queryBranchListUrl, deleteBranch } from '@/pages/application/service';
-import { createReview } from '@/pages/application/service';
-import { postRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
-import appConfig from '@/app.config';
+import { usePaginated } from '@cffe/vc-hulk-table';
+import { useMasterBranchList } from '../../hooks';
+
 
 export default function BranchManage() {
   const { npmData } = useContext(DetailContext);
-  const { appCode, appCategoryCode } = npmData || {};
+  const { npmName } = npmData || {};
   const [searchForm] = Form.useForm();
-  const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE');
-  const [masterBranchEditMode, setMasterBranchEditMode] = useState<EditorMode>('HIDE');
+  const [branchEditMode, setBranchEditMode] = useState<EditorMode>('HIDE'); // 新建分支弹窗
+  const [masterBranchEditMode, setMasterBranchEditMode] = useState<EditorMode>('HIDE'); // 新建主干分支弹窗
   const [pending, setPending] = useState(false);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('master');
-  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: npmName });
   const selectRef = useRef(null) as any;
 
   // 查询数据
@@ -37,11 +40,13 @@ export default function BranchManage() {
     },
   });
 
+  // feature分支列表
   useEffect(() => {
-    if (!appCode || !selectMaster) return;
-    queryBranchList({ appCode, branchType: 'feature', masterBranch: selectMaster });
-  }, [appCode, selectMaster]);
+    if (!npmName || !selectMaster) return;
+    queryBranchList({ appCode: npmName, branchType: 'feature', masterBranch: selectMaster });
+  }, [npmName, selectMaster]);
 
+  // 主干分支列表
   useEffect(() => {
     if (masterListData.length !== 0) {
       const option = masterListData.map((item: any) => ({ value: item.branchName, label: item.branchName }));
@@ -54,7 +59,6 @@ export default function BranchManage() {
   // 搜索
   const handleSearch = useCallback(() => {
     const values = searchForm.getFieldsValue();
-
     queryBranchList({
       pageIndex: 1,
       ...values,
@@ -65,7 +69,9 @@ export default function BranchManage() {
   const handleDelBranch = useCallback(async (record: any) => {
     try {
       setPending(true);
-      const res = await deleteBranch({ id: record.id });
+      const res = await delRequest(`${deleteBranch}/${record.id}`, {
+        data: { id: record.id }
+      });
       if (res?.success) {
         message.success('操作成功！');
         queryBranchList();
@@ -74,24 +80,6 @@ export default function BranchManage() {
       setPending(false);
     }
   }, []);
-
-  //创建Review
-  const creatReviewUrl = async (record: any) => {
-    await postRequest(createReview, { data: { appCode: record.appCode, branch: record.branchName } }).then((reslut) => {
-      if (reslut?.success) {
-        message.success('创建Review成功！');
-        queryBranchList({ branchType: 'feature', masterBranch: selectMaster });
-      }
-    });
-  };
-
-  const reviewUrl = (reviewId: string, record: any) => {
-    return (
-      <a href={'http://upsource.cfuture.shop/' + appCode + '/review/' + reviewId} target="_blank">
-        {reviewId}
-      </a>
-    );
-  };
 
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
@@ -169,18 +157,6 @@ export default function BranchManage() {
             </Tooltip>
           )}
         />
-        <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
-        <Table.Column
-          title="已部署流水线"
-          dataIndex="deployedPipeline"
-          width={200}
-          ellipsis
-          render={(value) => (
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          )}
-        />
         <Table.Column
           title="创建时间"
           dataIndex="gmtCreate"
@@ -200,11 +176,6 @@ export default function BranchManage() {
           align="center"
           render={(_, record: any, index) => (
             <div className="action-cell">
-              {appConfig.envType !== 'base-poc' && (
-                <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
-                  创建Review
-                </Button>
-              )}
 
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
                 <Button type="primary" danger size="small">
@@ -217,8 +188,7 @@ export default function BranchManage() {
       </Table>
 
       <BranchEditor
-        appCode={appCode!}
-        appCategoryCode={appCategoryCode || ''}
+        appCode={npmName!}
         mode={branchEditMode}
         onSubmit={() => {
           setBranchEditMode('HIDE');
@@ -234,7 +204,7 @@ export default function BranchManage() {
       />
 
       <MasterBranchEditor
-        appCode={appCode!}
+        appCode={npmName!}
         mode={masterBranchEditMode}
         onSubmit={() => {
           setMasterBranchEditMode('HIDE');

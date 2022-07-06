@@ -1,11 +1,7 @@
-// merge release
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/09/05 21:09
-
 import React, { useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Steps, Button, message, Spin } from 'antd';
-import { retryMerge, getMergeMessage, retry } from '@/pages/application/service';
+import { Steps, Button } from 'antd';
+import { getMergeMessage, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 import MergeConflict from '../../../merge-conflict';
 import NoConflict from '../../../merge-conflict/NoConflict';
@@ -26,7 +22,7 @@ export default function MergeReleaseStep(props: StepItemProps) {
     pipelineCode,
     ...others
   } = props;
-  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
+  const { metadata, branchInfo } = deployInfo || {};
   const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
   const [visible, setVisible] = useState(false); //无冲突
   const [mergeMessage, setMergeMessage] = useState<any>([]);
@@ -89,8 +85,8 @@ export default function MergeReleaseStep(props: StepItemProps) {
         mergeMessage={mergeMessage}
         releaseBranch={branchInfo?.releaseBranch}
         retryMergeClick={retryMergeClick}
-      ></MergeConflict>
-      <NoConflict visible={visible} handleCancel={handleCancel} retryMergeClick={retryMergeClick}></NoConflict>
+      />
+      <NoConflict visible={visible} handleCancel={handleCancel} retryMergeClick={retryMergeClick} />
       <Steps.Step
         {...others}
         title="合并release"

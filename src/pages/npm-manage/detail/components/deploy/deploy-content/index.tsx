@@ -1,27 +1,15 @@
-/**
- * DeployContent
- * @description 部署内容
- * @author moting.nq
- * @create 2021-04-15 10:04
- */
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { Spin } from 'antd';
 
-import React, { useState, useContext, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import useInterval from './useInterval';
-import DetailContext from '@/pages/application/application-detail/context';
-import {
-  queryDeployList,
-  queryFeatureDeployed,
-  queryApplicationStatus,
-  queryActiveDeployInfo,
-} from '@/pages/application/service';
-import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
-import { getRequest } from '@/utils/request';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
-import { Spin } from 'antd';
-import { listAppEnv } from '@/pages/application/service';
+
+import useInterval from './useInterval';
+import DetailContext from '@/pages/npm-manage/detail/context';
+import { queryFeatureDeployed, queryActiveDeployInfo } from '@/pages/application/service';
+
 import './index.less';
 const rootCls = 'deploy-content-compo';
 
@@ -30,61 +18,38 @@ export interface DeployContentProps {
   isActive?: boolean;
   /** 环境参数 */
   envTypeCode: string;
-  /** 流水线 */
-  pipelineCode: string;
-  visible: boolean;
-  /** 部署下个环境成功回调 */
-  onDeployNextEnvSuccess: () => void;
-  // 下一个tab
-  nextTab: string;
+  /** 环境列表 */
+  envList: any[];
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab } = props;
-  const { appData } = useContext(DetailContext);
-  const { appCode } = appData || {};
+  const { envTypeCode, isActive, envList } = props;
+  const { npmData } = useContext(DetailContext);
+  const { npmName } = npmData || {};
   const cachebranchName = useRef<string>();
   const masterBranchName = useRef<string>('master');
-  const [updating, setUpdating] = useState(false);
-  // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
   const [deployInfo, setDeployInfo] = useState<any>({});
   const [branchInfo, setBranchInfo] = useState<{
     deployed: any[];
     unDeployed: any[];
   }>({ deployed: [], unDeployed: [] });
-  // 应用状态，仅线上有
-  const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
-  const [envList, setEnvList] = useState([])
-  const publishContentRef = useRef<any>();
 
   const requestData = async () => {
-    if (!appCode || !isActive || !pipelineCode) return;
+    if (!npmName || !isActive) return;
 
-    setUpdating(true);
-
-    const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
-
-    // const resp1 = await queryDeployList({
-    //   appCode: appCode!,
-    //   envTypeCode,
-    //   isActive: 1,
-    //   pageIndex: 1,
-    //   pageSize: 10,
-    // });
+    const resp = await queryActiveDeployInfo({});
 
     const resp2 = await queryFeatureDeployed({
-      appCode: appCode!,
+      appCode: npmName!,
       envTypeCode,
-      pipelineCode,
       isDeployed: 1,
       masterBranch: masterBranchName.current,
     });
     const resp3 = await queryFeatureDeployed({
-      appCode: appCode!,
+      appCode: npmName!,
       envTypeCode,
       isDeployed: 0,
-      pipelineCode,
       branchName: cachebranchName.current,
       masterBranch: masterBranchName.current,
     });
@@ -100,31 +65,14 @@ export default function DeployContent(props: DeployContentProps) {
       setDeployInfo({});
     }
 
-    // 如果有部署信息，且为线上，则更新应用状态
-    if (envTypeCode === 'prod' && appData) {
-      const resp4 = await getRequest(queryApplicationStatus, {
-        data: {
-          deploymentName: appData?.deploymentName,
-          envCode: deployInfo?.envInfo?.deployEnvs,
-        },
-      }).catch(() => {
-        return { data: null };
-      });
-
-      const { Status: nextAppStatus } = resp4?.data || {};
-      setAppStatusInfo(nextAppStatus);
-    }
-    // }
-
     setBranchInfo({
       deployed: resp2?.data || [],
       unDeployed: resp3?.data || [],
     });
-    setUpdating(false);
   };
 
   // 定时请求发布内容
-  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: false });
+  const { handle: timerHandle } = useInterval(requestData, 8000, { immediate: false });
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;
@@ -142,40 +90,10 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode || !isActive || !pipelineCode) return;
+    if (!npmName || !isActive) return;
     timerHandle('do', true);
-  }, [appCode, isActive, pipelineCode]);
+  }, [npmName, isActive]);
 
-  useEffect(() => {
-    if (visible) {
-      timerHandle('stop');
-    }
-    if (!visible) {
-      timerHandle('do', true);
-    }
-  }, [visible]);
-
-  useEffect(() => {
-    if (!appCode || !envTypeCode) return;
-    getEnvList({ envTypeCode, appCode: appData?.appCode, proEnvType: 'benchmark' });
-  }, [envTypeCode, appCode])
-
-  // 获取该应用所有环境列表
-  const getEnvList = (params: any) => {
-    getRequest(listAppEnv, {
-      data: {
-        ...params,
-      },
-    }).then((result) => {
-      let envs: any = [];
-      if (result?.success) {
-        result?.data?.map((item: any) => {
-          envs.push({ label: item.envName, value: item.envCode });
-        });
-        setEnvList(envs)
-      }
-    });
-  };
 
   const onSpin = () => {
     setLoading(true);
@@ -192,25 +110,12 @@ export default function DeployContent(props: DeployContentProps) {
           <PublishDetail
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
-            appStatusInfo={appStatusInfo}
-            pipelineCode={pipelineCode}
-            nextTab={nextTab}
-            onOperate={(type) => {
-              if (type === 'deployNextEnvSuccess') {
-                onDeployNextEnvSuccess();
-                return;
-              }
-              requestData();
-              onOperate(type);
-            }}
           />
           <PublishContent
-            appCode={appCode!}
+            appCode={npmName!}
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
-            pipelineCode={pipelineCode}
             deployedList={branchInfo.deployed}
-            appStatusInfo={appStatusInfo}
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
@@ -222,7 +127,6 @@ export default function DeployContent(props: DeployContentProps) {
             dataSource={branchInfo.unDeployed}
             env={envTypeCode}
             onSearch={searchUndeployedBranch}
-            pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
             }}
@@ -230,14 +134,12 @@ export default function DeployContent(props: DeployContentProps) {
               masterBranchName.current = masterBranch;
               timerHandle('do', true);
             }}
-            changeBranchName={(branchName: string) => {
-              // cachebranchName.current = branchName;
-            }}
+            changeBranchName={(branchName: string) => {}}
           />
         </Spin>
       </div>
       <div className={`${rootCls}-sider`}>
-        <PublishRecord env={envTypeCode} appCode={appCode} />
+        <PublishRecord env={envTypeCode} npmName={npmName} />
       </div>
     </div>
   );

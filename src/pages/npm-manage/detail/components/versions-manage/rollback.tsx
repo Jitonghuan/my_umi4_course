@@ -1,26 +1,23 @@
-// 回滚前端版本
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/09/05 11:34
-
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import {Modal, message, Table, Empty, Radio} from 'antd';
-import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
+import { Modal, message, Table, Empty } from 'antd';
+import { AppItemVO } from '@/pages/npm-manage/detail/interfaces';
 import { datetimeCellRender } from '@/utils';
-import { rollbackFeApp } from '@/pages/application/service';
+import { rollback } from '@/pages/npm-manage/detail/server';
+import { postRequest } from '@/utils/request';
 import { FeVersionItemVO } from './types';
 import './index.less';
 
+
 export interface RollbackVersionProps {
-  appData?: AppItemVO;
-  envItem?: EnvDataVO;
+  npmData?: AppItemVO;
+  envItem?: any;
   versionList?: FeVersionItemVO[];
   onClose: () => any;
   onSubmit: () => any;
 }
 
 export default function RollbackVersion(props: RollbackVersionProps) {
-  const { appData, envItem, versionList, onClose, onSubmit } = props;
-  const [pdaDeployType, setPdaDeployType] = useState('bundles');
+  const { npmData, envItem, versionList, onClose, onSubmit } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
@@ -29,42 +26,24 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     setSelectedRowKeys([]);
   }, [envItem]);
 
-  function deployTypeChange(value: string) {
-    setPdaDeployType(value);
-    setSelectedRowKeys([]);
-  }
-
-  function getList () {
-    if (appData?.feType === 'pda') {
-      return versionList?.filter((val) => val.pdaDeployType === pdaDeployType);
-    }
-    return versionList;
-  }
-
   const handleOk = useCallback(async () => {
 
     let param = {
-      appCode: appData?.appCode,
+      npmName: npmData?.npmName,
       envCode: envItem?.envCode,
       version: selectedRowKeys[0],
     }
-    if (appData?.feType === 'pda') {
-      Object.assign(param, {
-        pdaDeployType
-      })
-    }
-    await rollbackFeApp(param);
+    await postRequest(rollback, {
+      data: param
+    });
 
     message.success('操作成功！');
     onSubmit();
-  }, [appData, envItem, versionList, selectedRowKeys]);
+  }, [npmData, envItem, versionList, selectedRowKeys]);
 
   const currVersion = useMemo(() => {
-    if (appData?.feType === 'pda') {
-      return versionList?.find((n) => n.pdaDeployType === pdaDeployType && n.isActive === 0);
-    }
     return versionList?.find((n) => n.isActive === 0);
-  }, [versionList, pdaDeployType]);
+  }, [versionList]);
 
   function getStatusName(status: number) {
     switch (status) {
@@ -89,19 +68,8 @@ export default function RollbackVersion(props: RollbackVersionProps) {
       onOk={handleOk}
       okButtonProps={{ disabled: !selectedRowKeys.length }}
     >
-      {
-        appData?.feType === 'pda' && (
-          <div style={{marginBottom: '10px'}}>
-            <span>打包类型：</span>
-            <Radio.Group onChange={(e) => deployTypeChange(e.target.value)} value={pdaDeployType}>
-              <Radio value='bundles'>bundles</Radio>
-              <Radio value='apk'>apk</Radio>
-            </Radio.Group>
-          </div>
-        )
-      }
       <Table
-        dataSource={getList() || []}
+        dataSource={versionList || []}
         rowClassName={(record) => {
           if (record.isActive === 0) {
             return 'table-color-rollback';

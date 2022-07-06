@@ -1,24 +1,11 @@
-// 分支编辑
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/08/27 10:58
-
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Modal, Input, Form, message, Select, Radio } from 'antd';
-import {
-  createFeatureBranch,
-  queryPortalList,
-  getDemandByProjectList,
-  getRegulusProjects,
-  getRegulusOnlineBugs,
-} from '@/pages/application/service';
-import { getRequest, postRequest } from '@/utils/request';
-import { debounce } from 'lodash';
-import { copyScene } from '@/pages/test/autotest/service';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Modal, Input, Form, message, Select } from 'antd';
+import { createFeatureBranchUrl } from '../../server';
+import { postRequest } from "@/utils/request";
 
 export interface IProps {
   mode?: EditorMode;
   appCode: string;
-  appCategoryCode: string;
   masterBranchOptions: any;
   selectMaster: any;
   onClose: () => void;
@@ -32,19 +19,13 @@ export default function BranchEditor(props: IProps) {
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
-    let demandArry: any = [];
-    values.demandId?.map((item: any) => {
-      demandArry.push(item.value + '');
-    });
     setLoading(true);
     try {
-      const res = await createFeatureBranch({
-        appCode,
-        relatedPlat: values?.relatedPlat,
-        demandId: demandArry,
-        branchName: values?.branchName,
-        desc: values?.desc,
-        masterBranch: values?.masterBranch,
+      const res = await postRequest(createFeatureBranchUrl, {
+        data: {
+          appCode,
+          ...values
+        }
       });
       if (res.success) {
         message.success('操作成功！');

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {Button, Form, Input, Modal, Radio, Select, Table} from 'antd';
-import PageContainer from '@/components/page-container';
-import UserSelector from "@/components/user-selector";
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { Button, Form, Input, message, Modal, Table } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import PageContainer from '@/components/page-container';
+import UserSelector, { stringToList } from "@/components/user-selector";
+import DebounceSelect from "@/components/debounce-select";
+import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import {getRequest, postRequest, putRequest} from "@/utils/request";
+import { npmCreate, searchGitAddress, npmUpdate, npmList } from './server';
 import { history } from 'umi';
 import './index.less';
-import DebounceSelect from "@/components/debounce-select";
-import {searchGitAddress} from "@/pages/application/_components/application-editor/service";
-
 
 const { Item: FormItem } = Form;
 
@@ -20,13 +20,50 @@ export default function NpmList() {
   const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [type, setType] = useState('add');
   const [form] = Form.useForm();
 
-  function handleSearch(pagination?: any) {}
+  async function handleSearch(pagination?: any ) {
+    const param = await searchField.getFieldsValue() || {};
+    const res = await getRequest(npmList, {
+      data: {
+        ...param,
+        pageIndex: page,
+        pageSize,
+        ...pagination || {}
+      }
+    })
+    const { dataSource, pageInfo } = res?.data || {};
+    setDataList(dataSource || []);
+    setTotal(pageInfo?.total || 0);
+  }
 
   async function handleSubmit() {
     const params = await form.validateFields();
-    if (params) {}
+    const { ownerList, ...others } = params;
+
+    const submitData: any = {
+      ...others,
+      npmOwner: ownerList?.join(',') || '',
+    };
+
+    setLoading(true);
+    let res = null;
+    if (type === 'add') {
+      res = await postRequest(npmCreate, {
+        data: submitData
+      });
+    } else {
+      res = await putRequest(npmUpdate, {
+        data: submitData
+      });
+    }
+    setLoading(false);
+    if (res?.success) {
+      message.success('新增成功!');
+      void handleClose();
+      void handleSearch();
+    }
   }
 
   function handleClose() {
@@ -44,12 +81,12 @@ export default function NpmList() {
         <Form
           layout="inline"
           form={searchField}
-          onFinish={handleSearch}
+          onFinish={() => handleSearch()}
           onReset={() => {
             searchField.resetFields();
           }}
         >
-          <FormItem label="包名" name="appCode">
+          <FormItem label="包名" name="npmName">
             <Input placeholder="请输入" style={{ width: 140 }} />
           </FormItem>
           <FormItem>
@@ -65,6 +102,7 @@ export default function NpmList() {
               <Button
                 type="primary"
                 onClick={() => {
+                  setType('add');
                   setVisible(true);
                 }}
                 icon={<PlusOutlined />}
@@ -87,7 +125,7 @@ export default function NpmList() {
               setPage(page);
               setPageSize(pageSize);
               handleSearch({
-                page,
+                pageIndex: page,
                 pageSize
               })
             }
@@ -95,7 +133,19 @@ export default function NpmList() {
           columns={[
             {
               title: '包名',
-              dataIndex: 'name'
+              dataIndex: 'npmName'
+            },
+            {
+              title: 'git地址',
+              width: 320,
+              ellipsis: true,
+              dataIndex: 'gitAddress',
+              render: (value: string) =>
+                value && (
+                  <a href={value} target="_blank">
+                    {value}
+                  </a>
+                ),
             },
             {
               title: '描述',
@@ -103,7 +153,7 @@ export default function NpmList() {
             },
             {
               title: '负责人',
-              dataIndex: 'owner'
+              dataIndex: 'npmOwner'
             },
             {
               width: 140,
@@ -115,11 +165,23 @@ export default function NpmList() {
                 <div className="action-cell">
                   <a
                     onClick={() => {
+                      setType('edit');
+                      setVisible(true);
+                      form.setFieldsValue({
+                        ...record,
+                        ownerList: stringToList(record?.npmOwner)
+                      });
+                    }}
+                  >
+                    编辑
+                  </a>
+                  <a
+                    onClick={() => {
                       history.push({
                         pathname: 'detail',
                         query: {
                           id: record.id,
-                          appCode: record.appCode,
+                          npmName: record.npmName,
                         },
                       });
                     }}
@@ -133,7 +195,7 @@ export default function NpmList() {
           />
       </ContentCard>
       <Modal
-        title="新增npm包"
+        title={type === 'add' ? '新增' : '编辑'}
         visible={visible}
         onOk={handleSubmit}
         onCancel={handleClose}
@@ -141,12 +203,13 @@ export default function NpmList() {
         maskClosable={false}
       >
         <Form form={form} labelCol={{ flex: '100px' }}>
-          <Form.Item label="包名" name="branchName" rules={[{ required: true, message: '请输入包名' }]}>
-            <Input />
+          <Form.Item label="包名" name="npmName" rules={[{ required: true, message: '请输入包名' }]}>
+            <Input disabled={type !== 'add'} />
           </Form.Item>
           <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
             <DebounceSelect
               fetchOptions={searchGitAddress}
+              disabled={type !== 'add'}
               labelInValue={false}
               placeholder="输入仓库名搜索"
             />

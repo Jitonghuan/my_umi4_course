@@ -1,8 +1,6 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, List, Tooltip, message, Popconfirm } from 'antd';
 import { CheckCircleTwoTone, QuestionCircleFilled } from '@ant-design/icons';
-import CodeMirrorEditor from './CodeMirrorEditor';
-import MonacoEditorMerge from './MonacoEditorMerge';
 import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
@@ -80,18 +78,6 @@ export default function MergeConflict(prop: MergeProp) {
     if (f) {
       setChooseFile({ ...f });
     }
-    // let f: any;
-    // let newArr = allFile.map((item: conflictItem) => {
-    //   if (item.id === chooseFile.id) {
-    //     item.releaseBranch.content = value;
-    //     f = item;
-    //   }
-    //   return item;
-    // });
-    // setAllFile(newArr);
-    // if (f) {
-    //   setChooseFile({ ...f });
-    // }
   };
   return (
     <>
@@ -153,18 +139,6 @@ export default function MergeConflict(prop: MergeProp) {
                 {chooseFile?.resolved ? '标记为未解决' : '标记为已解决'}
               </Button>
             </div>
-            {/* <CodeMirrorEditor
-              {...chooseFile}
-              value={chooseFile?.releaseBranch?.content}
-              orig={chooseFile?.featureBranch?.content}
-              onchange={handleChange}
-            /> */}
-            {/* <MonacoEditorMerge
-              {...chooseFile}
-              value={chooseFile?.releaseBranch?.content}
-              orig={chooseFile?.featureBranch?.content}
-              onchange={handleChange}
-            ></MonacoEditorMerge> */}
             <MonacoEditor onchange={handleChange} {...chooseFile}></MonacoEditor>
           </div>
         </div>

@@ -14,7 +14,7 @@ interface IProps {
     pathname: string;
     query: {
       id: string;
-      appCode: string;
+      npmName: string;
     };
   };
   route: {
@@ -47,8 +47,8 @@ const { TabPane } = Tabs;
 
 export default function NpmDetail(props: IProps) {
   const { location, children } = props;
-  const { id: appId, appCode } = location.query || {};
-  const [npmData, isLoading, queryNpmData] = useNpmDetail(+appId, appCode);
+  const { id: npmId, npmName } = location.query || {};
+  const [npmData, isLoading, queryNpmData] = useNpmDetail(+npmId, npmName);
 
   const tabActiveKey = useMemo(() => {
     return /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
@@ -89,8 +89,7 @@ export default function NpmDetail(props: IProps) {
           }}
           tabBarExtraContent={
             <div className="tab-right-extra">
-              <h4>{npmData?.appCode}</h4>
-              <span>{npmData?.appName}</span>
+              <h4>{npmData?.npmName}</h4>
             </div>
           }
         >

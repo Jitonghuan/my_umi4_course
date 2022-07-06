@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, Input, Form, message } from 'antd';
-import { createFeatureBranch } from '@/pages/application/service';
+import { createMainBranch } from '../../server';
+import { postRequest } from '@/utils/request';
 
 export interface IProps {
   mode?: EditorMode;
@@ -16,19 +17,13 @@ export default function MasterBranchEditor(props: IProps) {
 
   const handleSubmit = useCallback(async () => {
     const values = await form.validateFields();
-    let demandArry: any = [];
-    values.demandId?.map((item: any) => {
-      demandArry.push(item.value + '');
-    });
     setLoading(true);
     try {
-      const res = await createFeatureBranch({
-        appCode,
-        relatedPlat: values?.relatedPlat,
-        demandId: demandArry,
-        branchName: values?.branchName,
-        desc: values?.desc,
-        masterBranch: values?.masterBranch,
+      const res = await postRequest(createMainBranch, {
+        data: {
+          appCode,
+          ...values
+        }
       });
       if (res.success) {
         message.success('操作成功！');
@@ -57,6 +52,9 @@ export default function MasterBranchEditor(props: IProps) {
     >
       <Form form={form} labelCol={{ flex: '100px' }}>
         <Form.Item label="分支名称" name="branchName" rules={[{ required: true, message: '请输入分支名' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item label="描述" name="desc">
           <Input />
         </Form.Item>
       </Form>

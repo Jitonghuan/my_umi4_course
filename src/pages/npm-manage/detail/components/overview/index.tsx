@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Descriptions } from 'antd';
+import DetailContext from '../../context';
 import './index.less';
 
 export default function Overview() {
+  const { npmData } = useContext(DetailContext);
 
   return (
     <div className="npm-detail-overview">
@@ -13,14 +15,14 @@ export default function Overview() {
         column={1}
         labelStyle={{ width: 200 }}
       >
-        <Descriptions.Item label="包名">XXX</Descriptions.Item>
+        <Descriptions.Item label="包名">{npmData?.npmName}</Descriptions.Item>
         <Descriptions.Item label="git地址">
-          <a target="_blank">
-            地址
+          <a href={npmData?.gitAddress} target="_blank">
+            {npmData?.gitAddress}
           </a>
         </Descriptions.Item>
-        <Descriptions.Item label="owner">XXX</Descriptions.Item>
-        <Descriptions.Item label="应用描述">XXX</Descriptions.Item>
+        <Descriptions.Item label="owner">{npmData?.npmOwner}</Descriptions.Item>
+        <Descriptions.Item label="应用描述">{npmData?.desc}</Descriptions.Item>
       </Descriptions>
     </div>
   )

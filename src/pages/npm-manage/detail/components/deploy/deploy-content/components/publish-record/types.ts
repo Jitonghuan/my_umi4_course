@@ -1,8 +1,8 @@
 export interface IProps {
   // 环境
   env: string;
-  // appcode
-  appCode?: string;
+  // npmName
+  npmName?: string;
 }
 
 // 数据结构

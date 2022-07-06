@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Steps, Empty, Button } from 'antd';
 import StepItem from './step-item';
 
@@ -107,12 +107,12 @@ export default function DeploySteps(props: any) {
     envTypeCode,
     notShowCancel = () => { },
     showCancel = () => { },
-    isFrontend,
     envList = [],
     ...other
   } = props;
-  let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
+
   const [data, setData] = useState<any>([]);
+
   useEffect(() => {
     if (stepData && stepData.length !== 0) {
       const data = handleData(stepData);

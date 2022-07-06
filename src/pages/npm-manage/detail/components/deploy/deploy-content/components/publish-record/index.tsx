@@ -1,35 +1,19 @@
-/**
- * PublishRecord
- * @description 发布记录
- * @author moting.nq
- * @create 2021-04-25 16:05
- */
-
-import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
-import { Modal, Button, List, Tag } from 'antd';
-import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import VCDescription from '@/components/vc-description';
-import _ from 'lodash';
-import DetailContext from '@/pages/application/application-detail/context';
-import { recordFieldMap, recordFieldMapOut, recordDisplayMap } from './schema';
+import React, { useState, useEffect } from 'react';
+import {Modal, Button, List, Tag, Descriptions} from 'antd';
+import { recordDisplayMap } from './schema';
 import moment from 'moment';
 import { IProps, IRecord } from './types';
-import { queryRecordApi } from './service';
+import { queryRecordApi } from '@/pages/npm-manage/detail/server';
 import { usePaginated } from '@cffe/vc-hulk-table';
-import { queryEnvsReq } from '@/pages/application/service';
 import './index.less';
 
 const rootCls = 'publish-record-compo';
 
 export default function PublishRecord(props: IProps) {
-  const { env, appCode } = props;
-
-  const { appData } = useContext(DetailContext);
-  const { appCategoryCode } = appData || {};
+  const { env, npmName } = props;
 
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
-  const [envDataList, setEnvDataList] = useState<any>([]);
 
   const {
     run: queryDataSource,
@@ -43,17 +27,17 @@ export default function PublishRecord(props: IProps) {
   });
   useEffect(() => {
     queryDataSource({
-      appCode,
-      envTypeCode: env,
+      npmName,
+      npmEnvType: env,
       pageIndex: 1,
     });
-  }, [appCode]);
+  }, [npmName]);
 
   useEffect(() => {
     let intervalId = setInterval(() => {
-      if (appCode && env) {
+      if (npmName && env) {
         queryDataSource({
-          appCode,
+          npmName,
           envTypeCode: env,
           pageIndex: 1,
         });
@@ -64,93 +48,7 @@ export default function PublishRecord(props: IProps) {
       clearInterval(intervalId);
     };
   }, []);
-  // useEffect(() => {
-  //   queryDataSource({
-  //     appCode,
-  //     envTypeCode: env,
-  //     pageIndex: 1,
-  //   });
-  // }, []);
-  // useEffect(() => {
-  //   // let intervalId = setInterval(() => {
-  //   //   if (appCode && env) {
-  //   //     queryDataSource({
-  //   //       appCode,
-  //   //       envTypeCode: env,
-  //   //       pageIndex: 1,
-  //   //     });
-  //   //   }
-  //   // }, 8000);
-  //   timerHandle('do', true);
 
-  //   // return () => {
-  //   //   clearInterval(intervalId);
-  //   // };
-  // }, []);
-
-  let dom: any = document?.getElementById('load-more-list');
-  let scrollTop = useRef<any>(dom?.scrollTop);
-  // let scrollTop = dom?.scrollTop; // 滚动条距离顶部的距离
-  // useEffect(() => {
-  //   if (dom) {
-  //     console.log('00000');
-  //     dom.addEventListener('scroll', getScroll(), true);
-  //   }
-
-  //   // return () => {
-  //   //    dom?.removeEventListener('scroll', getScroll(),true);
-  //   // };
-  // }, [dom, scrollTop.current]);
-  //定义定时器方法
-  // const intervalFunc = () => {
-  //   if (appCode && env) {
-  //     queryDataSource({
-  //       appCode,
-  //       envTypeCode: env,
-  //       pageIndex: 1,
-  //     });
-  //   }
-  // };
-  // // 定时请求发布内容
-  // const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
-
-  useEffect(() => {
-    if (!appCategoryCode) return;
-    queryEnvsReq({
-      categoryCode: appCategoryCode as string,
-      envTypeCode: env,
-      appCode,
-    }).then((data) => {
-      let envSelect: any = [];
-      data?.list?.map((item: any) => {
-        envSelect.push({ label: item.envName, value: item.envCode });
-      });
-      setEnvDataList(envSelect);
-    });
-  }, [appCategoryCode, env]);
-
-  const envNames: IRecord = useMemo(() => {
-    const { envs } = curRecord;
-    const namesArr: any[] = [];
-    if (envs?.indexOf(',') > -1) {
-      const list = envs?.split(',') || [];
-
-      envDataList?.forEach((item: any) => {
-        list?.forEach((v: any) => {
-          if (item?.envCode === v) {
-            namesArr.push(item.envName);
-          }
-        });
-      });
-      return {
-        ...curRecord,
-      };
-    }
-
-    return {
-      ...curRecord,
-    };
-  }, [envDataList, curRecord]);
 
   const renderLoadMore = () => {
     const { pageSize = 0, total = 0, current = 0 } = tableProps?.pagination || {};
@@ -172,27 +70,6 @@ export default function PublishRecord(props: IProps) {
       )
     );
   };
-  const getScroll = () => {
-    // let dom: any = document?.getElementById('load-more-list');
-    console.log('dom.scrollTop', scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
-    if (dom) {
-      // dom?.scrollTo(0, 0);
-      scrollTop.current = dom?.scrollTop; // 滚动条距离顶部的距离
-      let windowHeight = dom?.clientHeight; // 可视区的高度
-      let scrollHeight = dom?.scrollHeight; //dom元素的高度，包含溢出不可见的内容
-      // const scroll =scrollHeight-scrollTop-windowHeight;
-      console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
-      if (scrollTop.current > 3) {
-        console.log('到达底部开始滑动！');
-        // timerHandle('stop');
-      }
-      if (scrollTop.current <= 20) {
-        // timerHandle('do', true);
-        console.log('到达顶部！');
-        console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
-      }
-    }
-  };
 
   // 显示详情
   const handleShowDetail = (record: IRecord) => {
@@ -208,22 +85,21 @@ export default function PublishRecord(props: IProps) {
           <List
             className="demo-loadmore-list"
             id="load-more-list"
-            // loading={tableProps.loading}
             itemLayout="vertical"
             loadMore={renderLoadMore()}
             dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
             renderItem={(item) => (
               <List.Item>
                 <div>
-                  <label>{recordFieldMapOut['modifyUser']}</label>:{item['modifyUser']}
+                  <label>发布人</label>:{item['npmDeployer']}
                 </div>
                 <div>
-                  <label>{recordFieldMapOut['deployedTime']}</label>:
+                  <label>发布时间</label>:
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
                 {item.deployStatus === 'multiEnvDeploying' && item.deploySubStates ? (
                   <div>
-                    <label>{recordFieldMapOut['deployStatus']}</label>:
+                    <label>发布状态</label>:
                     {JSON.parse(item.deploySubStates).map((subItem: any) => (
                       <div>
                         <label>{subItem.envCode}</label>:
@@ -239,7 +115,7 @@ export default function PublishRecord(props: IProps) {
                   </div>
                 ) : (
                   <div>
-                    <label>{recordFieldMapOut['deployStatus']}</label>:
+                    <label>发布状态</label>:
                     {
                       <span style={{ marginLeft: 6 }}>
                         <Tag color={recordDisplayMap[item['deployStatus']]?.color || 'red'}>
@@ -257,7 +133,25 @@ export default function PublishRecord(props: IProps) {
       ) : null}
 
       <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
-        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
+        <Descriptions
+          labelStyle={{ width: 100, justifyContent: 'flex-end' }}
+          column={1}
+        >
+          <Descriptions.Item label="版本号">{curRecord?.npmVersion}</Descriptions.Item>
+          <Descriptions.Item label="发布人">{curRecord?.npmDeployer}</Descriptions.Item>
+          <Descriptions.Item label="发布时间">
+            {moment(curRecord?.deployedTime).format('YYYY-MM-DD HH:mm:ss')}
+          </Descriptions.Item>
+          <Descriptions.Item label="发布完成时间">{curRecord?.deployFinishTime}</Descriptions.Item>
+          <Descriptions.Item label="发布环境">{curRecord?.envs}</Descriptions.Item>
+          <Descriptions.Item label="发布状态">
+            {
+              <Tag color={recordDisplayMap[curRecord?.deployStatus]?.color}>
+                {recordDisplayMap[curRecord?.deployStatus]?.text}
+              </Tag>
+            }
+          </Descriptions.Item>
+        </Descriptions>
       </Modal>
     </div>
   );

@@ -1,7 +1,4 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
-// import monaco from 'monaco-editor';
-// import monaco from '@monaco-editor/react';
-// import { editor } from 'monaco-editor';
 import * as monaco from 'monaco-editor';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import './monaco.less';
@@ -13,7 +10,7 @@ export default function MonacoEditor(prop: any) {
 
   const [dv, setDv] = useState<editor.IStandaloneDiffEditor | undefined>(undefined);
 
-  const codeContainer = useCallback((node) => {
+  const codeContainer = useCallback((node: any) => {
     if (node) {
       var diffEditor = monaco.editor.createDiffEditor(node, {});
 
@@ -72,7 +69,7 @@ export default function MonacoEditor(prop: any) {
         <div>{releaseBranch.branchName}</div>
       </div>
       <div style={{ height: '100%', minHeight: '590px' }}>
-        <div style={{ height: '500px' }} ref={codeContainer}></div>
+        <div style={{ height: '500px' }} ref={codeContainer} />
       </div>
     </div>
   );

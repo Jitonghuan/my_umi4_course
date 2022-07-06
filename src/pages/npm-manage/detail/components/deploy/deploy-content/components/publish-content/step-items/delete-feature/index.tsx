@@ -1,11 +1,7 @@
-// delete feature step
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/09/05 21:09
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
-import { retryDelFeature, venusAnalyze, retry } from '@/pages/application/service';
+import {  retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 
 /** 删除feature */
@@ -22,8 +18,7 @@ export default function DeleteFeatureStep(props: StepItemProps) {
     status,
     ...others
   } = props;
-  const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
-  const [venusLoading, setVenusLoading] = useState<boolean>(false);
+  const { metadata } = deployInfo || {};
   const isError = status === 'error';
   const isLoading = status === 'process';
 
@@ -38,26 +33,6 @@ export default function DeleteFeatureStep(props: StepItemProps) {
       onOperate('deleteFeatureRetryEnd');
     }
   };
-
-  async function analyze() {
-    setVenusLoading(true);
-    await venusAnalyze({
-      appCode: appData.appCode,
-      gitUrl: appData.gitAddress,
-    });
-    setVenusLoading(false);
-  }
-
-  // useEffect(() => {
-  //   if (steps && steps >= 7 && isFrontend && !venusLoading) {
-  //     void analyze();
-  //   }
-  // }, [deployStatus]);
-  useEffect(() => {
-    if (status === 'finish' && isFrontend && !venusLoading) {
-      void analyze();
-    }
-  }, [status]);
 
   return (
     <Steps.Step

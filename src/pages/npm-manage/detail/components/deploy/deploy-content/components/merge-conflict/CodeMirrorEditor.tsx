@@ -1,6 +1,5 @@
 import CodeMirror from 'codemirror';
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { MergeProp } from './types';
 import DiffMatchPatch from 'diff-match-patch';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/merge/merge.js';
@@ -25,6 +24,7 @@ window.diff_match_patch = DiffMatchPatch;
 window.DIFF_DELETE = -1;
 window.DIFF_INSERT = 1;
 window.DIFF_EQUAL = 0;
+
 declare global {
   interface Window {
     diff_match_patch: any;
@@ -33,6 +33,7 @@ declare global {
     DIFF_EQUAL: number;
   }
 }
+
 interface EditorProps {
   value: string;
   orig: string;
@@ -42,12 +43,14 @@ interface EditorProps {
   onchange: (value: string) => void;
   mode?: string;
 }
+
 function makePanel(content: string) {
   var node = document.createElement('div');
   node.innerText = content;
   node.className = 'title-panel';
   return node;
 }
+
 const extModeMap = {
   go: 'go',
   css: 'css',
@@ -67,6 +70,7 @@ const extModeMap = {
   js: 'jsx',
   ts: { name: 'jsx', typescript: true },
 } as any;
+
 export default function CodeMirrorEditor(props: any) {
   const { filePath, value, orig, releaseBranch, featureBranch, resolved, onchange } = props;
   const [dv, setDv]: any = useState(null);
@@ -74,6 +78,7 @@ export default function CodeMirrorEditor(props: any) {
   const [rightPanel, setRightPanel]: any = useState(null);
   const ext = useMemo(() => filePath?.substring(filePath?.lastIndexOf('.') + 1), [filePath]);
   const mode = useMemo(() => extModeMap[ext] || ext, [ext]);
+
   useEffect(() => {
     if (dv) {
       leftPanel.node.innerText = releaseBranch?.branchName;
@@ -117,7 +122,7 @@ export default function CodeMirrorEditor(props: any) {
     }
   });
 
-  const codeContainer = useCallback((node) => {
+  const codeContainer = useCallback((node: any) => {
     if (node) {
       if (node.childElementCount) {
         node.innerHTML = null;
@@ -145,7 +150,7 @@ export default function CodeMirrorEditor(props: any) {
 
   return (
     <div>
-      <div className={`${resolved ? 'readOnly' : ''} cm-s-material`} id="view" ref={codeContainer}></div>
+      <div className={`${resolved ? 'readOnly' : ''} cm-s-material`} id="view" ref={codeContainer} />
     </div>
   );
 }

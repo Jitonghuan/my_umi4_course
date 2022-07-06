@@ -3,7 +3,6 @@ import moment from 'moment';
 import { Button, Empty, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
-import { EnvDataVO } from '@/pages/application/interfaces';
 import { useFeVersions, useAppEnvCodeData } from './hooks';
 import { listAppEnvType } from '@/common/apis';
 import { getRequest } from '@/utils/request';
@@ -12,11 +11,11 @@ import './index.less';
 
 export default function VersionsManage() {
   const { npmData } = useContext(DetailContext);
-  const [appEnvCodeData, isLoading] = useAppEnvCodeData(npmData?.appCode);
+  const [appEnvCodeData, isLoading] = useAppEnvCodeData(npmData?.npmName);
   const [feVersionData, isVersionLoading, reloadVersionData] = useFeVersions(npmData!);
-  const [rollbackEnv, setRollbackEnv] = useState<EnvDataVO>();
+  const [rollbackEnv, setRollbackEnv] = useState<any>();
 
-  const handleRollbackClick = useCallback((envCodeItem: EnvDataVO) => {
+  const handleRollbackClick = useCallback((envCodeItem: any) => {
     setRollbackEnv(envCodeItem);
   }, []);
 
@@ -24,13 +23,16 @@ export default function VersionsManage() {
     setRollbackEnv(undefined);
     reloadVersionData();
   }, []);
+
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+
   useEffect(() => {
     queryData();
   }, []);
+
   const queryData = () => {
     getRequest(listAppEnvType, {
-      data: { appCode: npmData?.appCode, isClient: false },
+      data: { appCode: npmData?.npmName, isClient: false },
     }).then((result) => {
       const { data } = result || [];
       let next: any = [];
@@ -111,7 +113,7 @@ export default function VersionsManage() {
       })}
 
       <RollbackVersion
-        appData={npmData}
+        npmData={npmData}
         envItem={rollbackEnv}
         versionList={feVersionData[rollbackEnv?.envCode!]}
         onClose={() => setRollbackEnv(undefined)}

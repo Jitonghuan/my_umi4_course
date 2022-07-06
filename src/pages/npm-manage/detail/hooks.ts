@@ -1,30 +1,32 @@
-
-import {AppItemVO} from "@/pages/application/interfaces";
+import { AppItemVO } from './interfaces';
 import { useCallback, useEffect, useState} from 'react';
-import { queryApps } from "@/pages/application/service";
+import { npmList, queryBranchListUrl } from  './server';
+import { getRequest } from '@/utils/request';
 
 // 获取详情
-export function useNpmDetail(appId?: number, appCode?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
+export function useNpmDetail(npmId?: number, npmName?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
   const [data, setData] = useState<AppItemVO>();
   const [loading, setLoading] = useState(false);
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const appList = await queryApps({
-        id: appId || undefined,
-        // 有 appId 时就不需要 appCode
-        appCode: appId ? undefined : appCode,
-        pageIndex: 1,
-        pageSize: 10,
+      const res = await getRequest(npmList, {
+        data: {
+          id: npmId || undefined,
+          npmName: npmId ? undefined : npmName,
+          pageIndex: 1,
+          pageSize: 10,
+        }
       });
-      appList?.map((item: any) => {
-        if (appCode) {
-          if (item?.appCode === appCode) {
+      const { dataSource } = res?.data || {}
+      dataSource?.map((item: any) => {
+        if (npmName) {
+          if (item?.npmName === npmName) {
             setData(item);
           }
           return;
-        } else if (appId) {
-          if (item?.id === appId) {
+        } else if (npmId) {
+          if (item?.id === npmId) {
             setData(item);
           }
           return;
@@ -33,16 +35,44 @@ export function useNpmDetail(appId?: number, appCode?: string): [AppItemVO | und
     } finally {
       setLoading(false);
     }
-  }, [appId, appCode]);
+  }, [npmId, npmName]);
 
   useEffect(() => {
-    if (!appId && !appCode) {
+    if (!npmId && !npmName) {
       setLoading(false);
       return setData(undefined);
     }
 
-    loadData();
-  }, [appId, appCode]);
+    void loadData();
+  }, [npmId, npmName]);
 
   return [data, loading, loadData];
+}
+
+
+
+// 获取主干分支列表
+export function useMasterBranchList(props: any) {
+  const [data, setData] = useState<any>([]);
+  const loadData = useCallback(
+    async (extra?: any) => {
+      try {
+        const result = await getRequest(queryBranchListUrl, {
+          data: { ...props },
+        });
+        const { dataSource } = result.data || {};
+        setData(dataSource || []);
+      } catch (ex) {
+        setData([]);
+      } finally {
+      }
+    },
+    [props],
+  );
+
+  useEffect(() => {
+    void loadData({});
+  }, []);
+
+  return [data];
 }

@@ -1,10 +1,3 @@
-/**
- * useInterval
- * @description 定时器-hook
- * @author moting.nq
- * @create 2021-04-22 17:46
- */
-
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 export type Params = [
