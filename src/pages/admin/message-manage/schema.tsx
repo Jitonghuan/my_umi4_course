@@ -1,9 +1,7 @@
-import React from 'react';
 import { datetimeCellRender } from '@/utils';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
-import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
+import { FormProps } from '@/components/table-search/typing';
+import { Space, Popconfirm, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { Link } from 'umi';
 export const typeOptions = [
   { key: 'single', label: '个人', value: 'single' },
   {
@@ -89,7 +87,7 @@ export const createTableColumns = (params: {
           <a onClick={() => params.onView(record, index)}>详情</a>
           <a onClick={() => params.onEdit(record, index)}>编辑</a>
           <Popconfirm
-            title="确认删除?"
+            title="确认删除吗?"
             onConfirm={() => {
               params?.onDelete(record.id);
             }}

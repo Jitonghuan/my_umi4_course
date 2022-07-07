@@ -3,7 +3,7 @@
 // @create 2022/02/21 17:10
 
 import { useState, useEffect } from 'react';
-import { Segmented, Divider, Button } from 'antd';
+import { Segmented, Button } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
@@ -12,7 +12,6 @@ import HistoryLog from './components/history-log';
 import ParamConfig from './components/param-config';
 import { options } from './schema';
 import { queryReleaseInfo } from './hook';
-
 import './index.less';
 
 export interface Item {
@@ -23,14 +22,8 @@ export interface Item {
   gmtCreate: any;
   releaseStatus: number;
 }
-type releaseStatus = {
-  releaseName: string;
-  namespace: string;
-  clusterName: boolean;
-};
 
-export default function HelmDetail(props: any) {
-  console.log('history.location?.state', history.location?.state);
+export default function HelmDetail() {
   const initInfo: any = history.location?.state || {};
   const record = initInfo?.record || {};
   const curClusterName = initInfo?.curClusterName || '';
@@ -64,12 +57,10 @@ export default function HelmDetail(props: any) {
               history.push('/matrix/operation/helm-manage/helm-list');
             }}
           >
-            {' '}
             返回
           </Button>
         </div>
 
-        {/* <Divider/> */}
         {activeValue === 'basic-info' && (
           <div className="basic-info-content">
             <BasicInfo record={record} curClusterName={curClusterName} />

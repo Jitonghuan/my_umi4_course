@@ -47,6 +47,6 @@ export const upgradeRelease = addAPIPrefix('opsManage/helm/release/upgrade');
 /** POST 14、release回滚 */
 export const rollbackRelease = addAPIPrefix('opsManage/helm/release/rollback');
 /** GET 15、 获取集群 */
-export const getClusterList = addAPIPrefix('monitorManage/cluster');
+export const getClusterList = addAPIPrefix('opsManage/helm/cluster');
 /** GET 16、 获取namespace */
 export const getPodNamespace = addAPIPrefix('monitorManage/resource/podNamespace');

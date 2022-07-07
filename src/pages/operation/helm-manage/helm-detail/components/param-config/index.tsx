@@ -11,13 +11,8 @@ export interface PorpsItem {
   record: any;
   curClusterName: string;
 }
-type releaseStatus = {
-  text: string;
-  type: any;
-  disabled: boolean;
-};
 
-export default function deliveryDescription(props: PorpsItem) {
+export default function ParamConfig(props: PorpsItem) {
   const { record, curClusterName } = props;
   const [form] = Form.useForm();
   useEffect(() => {

@@ -2,18 +2,17 @@
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2022/06/25 14:15
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { history } from 'umi';
 import { Input, Table, Form, Button, Space, Select, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
-import { queryReleaseList, useGetClusterList, useDeleteRelease, getClusterList, queryPodNamespaceData } from './hook';
+import { queryReleaseList, useDeleteRelease, getClusterList, queryPodNamespaceData } from './hook';
 import UpdateDeploy from './update-deploy';
 
-export default function DNSManageList(props: any) {
-  // const [loading, clusterOptions, getClusterList] = useGetClusterList();
+export default function HelmList() {
   const [releaseForm] = Form.useForm();
   const [curRecord, setCurRecord] = useState<any>();
   const [tableLoading, setTableLoading] = useState<any>(false);
@@ -33,7 +32,7 @@ export default function DNSManageList(props: any) {
         if (item.value === '来未来') return item?.clusterId;
       });
 
-      if (curClusterOption[0].clusterId) {
+      if (curClusterOption[0]?.clusterId) {
         queryNameSpace(curClusterOption[0].clusterId);
         setClusterInfo({
           curClusterId: curClusterOption[0].clusterId,
@@ -41,25 +40,15 @@ export default function DNSManageList(props: any) {
         });
         getReleaseList({ clusterName: '来未来' });
       } else {
-        queryNameSpace(res[0].clusterId);
+        queryNameSpace(res[0]?.clusterId);
         setClusterInfo({
-          curClusterId: res[0].clusterId,
-          curClusterName: res[0].value,
+          curClusterId: res[0]?.clusterId,
+          curClusterName: res[0]?.value,
         });
         getReleaseList({ clusterName: clusterOptions[0] });
       }
     });
   }, []);
-  const queryClusterList = () => {
-    setLoading(true);
-    getClusterList()
-      .then((res) => {
-        setClusterOptions(res);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
 
   const getReleaseList = (paramsObj?: { releaseName?: string; namespace?: string; clusterName?: string }) => {
     setTableLoading(true);
@@ -222,13 +211,13 @@ export default function DNSManageList(props: any) {
             columns={tableColumns}
             dataSource={tabledataSource}
             loading={tableLoading}
+            bordered
             pagination={{
               total: tabledataSource.length,
               pageSize: 20,
               showSizeChanger: false,
               showTotal: () => `总共 ${tabledataSource.length} 条数据`,
             }}
-            // onChange={pageSizeClick}
           ></Table>
         </div>
       </ContentCard>

@@ -14,13 +14,8 @@ export interface ReleaseProps {
   onCancle: () => void;
   onSave: () => void;
 }
-type releaseStatus = {
-  text: string;
-  type: any;
-  disabled: boolean;
-};
 
-export default function UpdateDeploy(props: ReleaseProps) {
+export default function LogDetail(props: ReleaseProps) {
   const { mode, curRecord, curClusterName, onCancle, onSave } = props;
   const [form] = Form.useForm();
   useEffect(() => {
