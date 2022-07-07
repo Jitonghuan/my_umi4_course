@@ -16,17 +16,17 @@ export const releaseTableSchema = ({
     {
       title: '发布名称',
       dataIndex: 'releaseName',
-      width: 230,
+      width: '14%',
     },
     {
       title: '命名空间',
       dataIndex: 'namespace',
-      width: 270,
+      width: '18%',
     },
     {
       title: 'Chart名称',
       dataIndex: 'chartName',
-      width: 230,
+      width: '9%',
       render: (value) => (
         <>
           <Tag color="pink"> {value}</Tag>
@@ -36,7 +36,7 @@ export const releaseTableSchema = ({
     {
       title: 'Chart版本',
       dataIndex: 'chartVersion',
-      width: 140,
+      width: '9%',
       render: (value) => (
         <>
           <Tag color="green">{value}</Tag>
@@ -46,19 +46,19 @@ export const releaseTableSchema = ({
     {
       title: '应用版本',
       dataIndex: 'appVersion',
-      width: 140,
+      width: '8%',
     },
     {
       title: '更新时间',
       dataIndex: 'updateTime',
-      width: 230,
+      width: '17%',
       render: (value: string) => datetimeCellRender(value),
     },
 
     {
       title: '状态',
       dataIndex: 'status',
-      width: 120,
+      width: '10%',
       render: (status) => (
         <>
           <Tag>{status}</Tag>
@@ -67,9 +67,8 @@ export const releaseTableSchema = ({
     },
 
     {
-      width: 160,
       title: '操作',
-
+      width: '14%',
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">

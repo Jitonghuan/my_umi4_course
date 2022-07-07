@@ -211,6 +211,7 @@ export default function HelmList() {
             columns={tableColumns}
             dataSource={tabledataSource}
             loading={tableLoading}
+            bordered
             pagination={{
               total: tabledataSource.length,
               pageSize: 20,
