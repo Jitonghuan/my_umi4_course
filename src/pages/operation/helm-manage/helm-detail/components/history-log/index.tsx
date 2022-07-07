@@ -63,23 +63,23 @@ export default function HistoryLog(props: PorpsItem) {
     {
       title: '发布名称',
       dataIndex: 'releaseName',
-      width: '20%',
+      width: '25%',
     },
     {
       title: '命名空间',
       dataIndex: 'namespace',
-      width: '26%',
+      width: '25%',
     },
     {
       title: '更新时间',
       dataIndex: 'updated',
-      width: '22%',
+      width: '25%',
       render: (value: string) => datetimeCellRender(value),
     },
     {
       title: ' 版本',
       dataIndex: 'revision',
-      width: '20%',
+      width: '12%',
     },
 
     {
