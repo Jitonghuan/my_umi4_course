@@ -1,22 +1,6 @@
-import React from 'react';
-import { history } from 'umi';
-import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
+import { Popconfirm, Tag } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { datetimeCellRender } from '@/utils';
-// import { JOB_STATUS } from './type';
-
-export type AppType = 'frontend' | 'backend';
-
-const APP_TYPE_MAP = {
-  frontend: '前端',
-  backend: '后端',
-};
-
-const APP_TYPE_ICON = {
-  frontend: <Html5Outlined />,
-  backend: <CodeOutlined />,
-};
 
 // 表格 schema
 export const releaseTableSchema = ({
@@ -32,16 +16,17 @@ export const releaseTableSchema = ({
     {
       title: '发布名称',
       dataIndex: 'releaseName',
-      width: 230,
+      width: '14%',
     },
     {
       title: '命名空间',
       dataIndex: 'namespace',
+      width: '18%',
     },
     {
       title: 'Chart名称',
       dataIndex: 'chartName',
-      width: 230,
+      width: '9%',
       render: (value) => (
         <>
           <Tag color="pink"> {value}</Tag>
@@ -51,7 +36,7 @@ export const releaseTableSchema = ({
     {
       title: 'Chart版本',
       dataIndex: 'chartVersion',
-      width: 230,
+      width: '9%',
       render: (value) => (
         <>
           <Tag color="green">{value}</Tag>
@@ -61,19 +46,19 @@ export const releaseTableSchema = ({
     {
       title: '应用版本',
       dataIndex: 'appVersion',
-      width: 230,
+      width: '8%',
     },
     {
       title: '更新时间',
       dataIndex: 'updateTime',
-      width: 230,
+      width: '17%',
       render: (value: string) => datetimeCellRender(value),
     },
 
     {
       title: '状态',
       dataIndex: 'status',
-      width: 120,
+      width: '10%',
       render: (status) => (
         <>
           <Tag>{status}</Tag>
@@ -82,9 +67,8 @@ export const releaseTableSchema = ({
     },
 
     {
-      width: 200,
       title: '操作',
-
+      width: '14%',
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
@@ -98,7 +82,7 @@ export const releaseTableSchema = ({
             更新
           </a>
           <Popconfirm
-            title="确定要删除该应用吗？"
+            title="确定要删除吗？"
             onConfirm={() => onDelClick(record, index)}
             okText="确定"
             cancelText="取消"

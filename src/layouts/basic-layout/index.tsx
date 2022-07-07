@@ -2,8 +2,6 @@ import { useMemo, useState, useEffect } from 'react';
 import { ConfigProvider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
-import { Modal, Badge, message } from 'antd';
-import { BellFilled } from '@ant-design/icons';
 import 'antd/dist/antd.variable.min.css';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';

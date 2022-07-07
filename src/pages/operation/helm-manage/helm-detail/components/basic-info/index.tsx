@@ -4,8 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import AceEditor from '@/components/ace-editor';
-import { Button, Table, Space, Tag, Descriptions, Modal, Form } from 'antd';
-import { history } from 'umi';
+import { Button, Table, Space, Descriptions, Modal, Form } from 'antd';
 import { queryReleaseInfo } from '../../hook';
 import moment from 'moment';
 import './index.less';
@@ -14,11 +13,6 @@ export interface PorpsItem {
   record: any;
   curClusterName: string;
 }
-type releaseStatus = {
-  text: string;
-  type: any;
-  disabled: boolean;
-};
 
 export default function deliveryDescription(props: PorpsItem) {
   const { record, curClusterName } = props;
@@ -51,11 +45,6 @@ export default function deliveryDescription(props: PorpsItem) {
       title: '类型',
       dataIndex: 'sourceType',
       width: 240,
-      // render: (status: any, record: any) => (
-      //   <span>
-      //     <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
-      //   </span>
-      // ),
     },
 
     {
@@ -97,23 +86,7 @@ export default function deliveryDescription(props: PorpsItem) {
         </Form>
       </Modal>
       <div>
-        <Descriptions
-          title="基本信息"
-          column={2}
-          className="basic-info-description"
-          bordered={true}
-          // extra={
-          //   <Button
-          //     type="primary"
-          //     size="small"
-          //     onClick={() => {
-          //       history.push('/matrix/operation/helm-manage/helm-list');
-          //     }}
-          //   >
-          //     返回
-          //   </Button>
-          // }
-        >
+        <Descriptions title="基本信息" column={2} className="basic-info-description" bordered={true}>
           <Descriptions.Item label="名称">{record?.releaseName || '--'}</Descriptions.Item>
           <Descriptions.Item label="命名空间">{record?.namespace || '--'}</Descriptions.Item>
           <Descriptions.Item label="版本">{record?.chartName || '--'}</Descriptions.Item>

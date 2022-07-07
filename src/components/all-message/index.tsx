@@ -2,13 +2,13 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/06/16 12:16
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Popconfirm, Card, List, Tag, Spin } from 'antd';
-import { ReadOutlined, SoundOutlined, ThunderboltOutlined, SmileOutlined, TagOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Drawer, message, Popconfirm, Card, List, Tag, Spin } from 'antd';
+import { ReadOutlined, SoundOutlined, SmileOutlined, TagOutlined } from '@ant-design/icons';
 import './index.less';
-import { useReadList, useQueryUnreadNum, useDeleteSystemNotice } from '@/common/hooks';
+import { useReadList, useDeleteSystemNotice } from '@/common/hooks';
 
-export interface MemberEditorProps {
+export interface allMessageProps {
   mode?: EditorMode;
   allData?: any;
   onClose: () => any;
@@ -17,11 +17,10 @@ export interface MemberEditorProps {
   loadUnreadNum: () => any;
 }
 
-export default function MemberEditor(props: MemberEditorProps) {
+export default function AllMessage(props: allMessageProps) {
   const { mode, allData, onClose, unreadNum, loadStemNoticeList, loadUnreadNum } = props;
   const [getReadList] = useReadList();
   const [loading, setLoading] = useState(false);
-  // const [unreadNumData, loadUnreadNum] = useQueryUnreadNum();
   const [deleteSystemNotice] = useDeleteSystemNotice();
 
   useEffect(() => {
@@ -75,12 +74,6 @@ export default function MemberEditor(props: MemberEditorProps) {
       </div>
       <List
         dataSource={allData}
-        // pagination={{
-        //   onChange: page => {
-        //     console.log(page);
-        //   },
-        //   pageSize: 10,
-        // }}
         renderItem={(item: any) => (
           <List.Item>
             <Card
@@ -90,12 +83,9 @@ export default function MemberEditor(props: MemberEditorProps) {
                     <TagOutlined />
                     <span style={{ paddingLeft: 8 }}>{item.title}</span>
                     <span style={{ fontSize: 10, paddingLeft: 8 }}>
-                      {/* <Tag color={item?.readed === true ? 'green' : 'default'}> */}
                       <span className={item?.readed ? 'readed-title-wrap' : 'unReaded-title-wrap'}>
                         {item?.readed === true ? '已读' : '未读'}
                       </span>
-
-                      {/* </Tag> */}
                     </span>
                   </span>
                   <span>

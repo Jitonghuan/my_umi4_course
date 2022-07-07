@@ -14,7 +14,7 @@ import {
   useQueryClusterList,
 } from '../hooks';
 import { Input, Form, Select, Spin, Row, Button, Drawer, Switch, Divider, Col, Checkbox, Tag } from 'antd';
-import { recordEditData, KVProps, jobContentProps } from '../type';
+import { recordEditData, KVProps } from '../type';
 import { QuestionCircleOutlined, EditOutlined } from '@ant-design/icons';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
@@ -30,7 +30,7 @@ export interface RecordEditDataProps {
   onSave: () => any;
 }
 
-export default function addEnvData(props: RecordEditDataProps) {
+export default function CreatTask(props: RecordEditDataProps) {
   const [createTaskForm] = Form.useForm();
   const { mode, onClose, onSave, initData } = props;
   const [addLoading, addTaskManage] = useAddTask();
@@ -52,7 +52,6 @@ export default function addEnvData(props: RecordEditDataProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const [optType, setOptType] = useState<string>('');
   const [initPassWord, setInitPassWord] = useState<string | undefined>('');
-  const [curTimeExpress, setCurTimeExpress] = useState<string>('');
   const [limitsLength, setLimitsLength] = useState<number>();
   const [ipListVisible, setIpListVisible] = useState<boolean>(false);
   const [ipList, setIpList] = useState<any>([]);
@@ -89,7 +88,6 @@ export default function addEnvData(props: RecordEditDataProps) {
       setIpList([]);
     }
     if (initData && mode !== 'ADD') {
-      // let jobContent: jobContentProps = {};
       let jobContent: any = {};
       let labelList: KVProps[] = [];
       setIsEditable(true);
@@ -102,7 +100,7 @@ export default function addEnvData(props: RecordEditDataProps) {
         setIsJobChecked(false);
         setIsJobChangeOption(2);
       }
-      // initData?.params
+
       if (initData?.jobContent) {
         jobContent = JSON.parse(initData?.jobContent || '');
         labelList = Object.keys(jobContent.params || {}).map((key) => ({
@@ -287,7 +285,6 @@ export default function addEnvData(props: RecordEditDataProps) {
           setVisible(false);
         }}
         curTimeExpress={(express: string) => {
-          setCurTimeExpress(express);
           createTaskForm.setFieldsValue({
             timeExpression: express,
           });

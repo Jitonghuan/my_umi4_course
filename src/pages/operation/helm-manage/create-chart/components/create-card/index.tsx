@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CardLayout from '@cffe/vc-b-card-layout';
-import { history } from 'umi';
 import ReactMarkdown from 'react-markdown';
-import { Tag, Tooltip, Popconfirm, Modal } from 'antd';
+import { Tooltip, Modal } from 'antd';
 import { DeploymentUnitOutlined } from '@ant-design/icons';
 import './index.less';
 import { queryChartReadme } from '../../hook';
@@ -17,20 +16,14 @@ export interface IProps {
   dataSource: any;
   queryChartListInfo: () => any;
   getChartVersions: (chartName?: string, repository?: string) => any;
-  getChartValues: (params: {
-    chartName: string;
-    clusterName: string;
-    repository: string;
-    // chartVersion: string;
-  }) => any;
+  getChartValues: (params: { chartName: string; clusterName: string; repository: string }) => any;
 }
 
-export default function ApplicationCardList(props: IProps) {
+export default function ChartCardList(props: IProps) {
   const { curClusterName, curChartName, dataSource, queryChartListInfo, getChartVersions, getChartValues } = props;
   const [mode, setMode] = useState<boolean>(false);
   const [readMe, setReadMe] = useState<string>('');
   const [isClick, setIsClick] = useState<number>();
-  console.log('-------dataSource------', dataSource);
 
   return (
     <>
@@ -56,9 +49,6 @@ export default function ApplicationCardList(props: IProps) {
         {dataSource &&
           dataSource?.map((item: any, index: number) => (
             <>
-              {/* <div>
-      {JSON.stringify(item)}
-      </div> */}
               <div
                 key={item.chartName}
                 className={index === isClick ? 'all-chart-page__onClickcard' : cardCls}
@@ -85,7 +75,6 @@ export default function ApplicationCardList(props: IProps) {
                   </div>
                 </div>
                 <Tooltip title={item.description} placement="topLeft">
-                  {' '}
                   <div
                     className="chart-description"
                     style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}

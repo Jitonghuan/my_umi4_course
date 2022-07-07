@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
+import { useState } from 'react';
+import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
 /** 查询release列表 */

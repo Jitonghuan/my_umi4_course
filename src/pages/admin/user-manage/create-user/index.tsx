@@ -17,18 +17,15 @@ import {
   useUpdateUser,
 } from '../hook';
 import { useCategoryData } from '@/common/hooks';
-import type { ColumnsType } from 'antd/lib/table';
-
 import './index.less';
 
-export default function MemberEditor() {
+export default function CreateUser() {
   const [delLoading, deleteUserRole] = useDeleteUserRole();
   const curRecord: any = history.location.state || {};
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [saveDisabled, setSaveDisabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [roleTableSource, setRoleTableSource] = useState<any>([]);
-  const [roleInfo, setRoleInfo] = useState<any>({});
   const [addUserLoading, updateUser] = useUpdateUser();
   const [editForm] = Form.useForm();
   const [editRoleForm] = Form.useForm();
@@ -65,13 +62,6 @@ export default function MemberEditor() {
     queryRoleData(curRecord?.name)
       .then((res) => {
         setRoleTableSource(res[0].roles || []);
-
-        setRoleInfo({
-          id: res[0]?.id,
-          email: res[0]?.email,
-          name: res[0]?.name,
-          mobile: res[0]?.mobile,
-        });
       })
       .finally(() => {
         setLoading(false);
