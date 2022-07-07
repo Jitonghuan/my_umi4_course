@@ -2,11 +2,12 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 11:08:37
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-07 13:46:55
+ * @LastEditTime: 2022-07-07 15:28:36
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
+import { Space, Tag, Popconfirm, Tooltip } from 'antd';
+import type { ColumnsType } from 'antd/lib/table';
 export const formOptions = [
   {
     key: '1',
@@ -57,7 +58,7 @@ export const createTableColumns = (params: {
       title: '实例名称',
       dataIndex: 'id',
       key: 'id',
-      width: '4%',
+      width: '14%',
     },
     {
       title: 'Host',
@@ -69,7 +70,7 @@ export const createTableColumns = (params: {
       title: '数据库类型',
       dataIndex: 'title',
       key: 'title',
-      width: '40%',
+      width: '30%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },

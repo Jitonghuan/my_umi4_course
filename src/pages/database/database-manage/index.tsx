@@ -3,21 +3,14 @@ import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
 import useTable from '@/utils/useTable';
-import { formOptions, createTableColumns } from './schema';
+import { createTableColumns } from './schema';
+import CreateDataBase from './create-database';
 export default function DEMO() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const columns = useMemo(() => {
     return createTableColumns({
-      onManage: (record, index) => {
-        setcurRecord(record);
-        setMode('EDIT');
-      },
-      onViewPerformance: (record, index) => {
-        setcurRecord(record);
-        setMode('VIEW');
-      },
       onDelete: async (id) => {},
     }) as any;
   }, []);
@@ -43,11 +36,19 @@ export default function DEMO() {
 
   return (
     <PageContainer>
+      <CreateDataBase
+        mode={mode}
+        initData={curRecord}
+        onClose={() => {
+          setMode('HIDE');
+        }}
+        onSave={() => {
+          setMode('HIDE');
+        }}
+      />
       <TableSearch
-        form={form}
         bordered
-        formOptions={formOptions}
-        formLayout="inline"
+        splitLayout={false}
         columns={columns}
         {...tableProps}
         pagination={{
@@ -58,8 +59,7 @@ export default function DEMO() {
           defaultPageSize: 20,
         }}
         extraNode={
-          <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <h3>实例列表</h3>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
             <Button
               type="primary"
               ghost
@@ -67,9 +67,9 @@ export default function DEMO() {
                 setMode('ADD');
               }}
             >
-              新增实例接入
+              创建数据库
             </Button>
-          </Space>
+          </div>
         }
         className="table-form"
         onSearch={submit}

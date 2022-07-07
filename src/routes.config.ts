@@ -608,6 +608,7 @@ export default [
       {
         path: 'overview',
         name: '概览',
+        key: 'overview',
         component: '@/pages/database/overview',
       },
       {
@@ -615,6 +616,18 @@ export default [
         name: '实例列表',
         key: 'instance-list',
         component: '@/pages/database/instance-list',
+      },
+      {
+        path: 'database-manage',
+        name: '数据库管理',
+        key: 'database-manage',
+        component: '@/pages/database/database-manage',
+      },
+      {
+        path: 'account-manage',
+        name: '账号管理',
+        key: 'account-manage',
+        component: '@/pages/database/account-manage',
       },
     ],
   },
