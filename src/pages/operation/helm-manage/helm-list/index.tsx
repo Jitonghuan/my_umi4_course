@@ -32,7 +32,7 @@ export default function HelmList() {
         if (item.value === '来未来') return item?.clusterId;
       });
 
-      if (curClusterOption[0].clusterId) {
+      if (curClusterOption[0]?.clusterId) {
         queryNameSpace(curClusterOption[0].clusterId);
         setClusterInfo({
           curClusterId: curClusterOption[0].clusterId,
@@ -40,10 +40,10 @@ export default function HelmList() {
         });
         getReleaseList({ clusterName: '来未来' });
       } else {
-        queryNameSpace(res[0].clusterId);
+        queryNameSpace(res[0]?.clusterId);
         setClusterInfo({
-          curClusterId: res[0].clusterId,
-          curClusterName: res[0].value,
+          curClusterId: res[0]?.clusterId,
+          curClusterName: res[0]?.value,
         });
         getReleaseList({ clusterName: clusterOptions[0] });
       }

@@ -21,6 +21,7 @@ export const releaseTableSchema = ({
     {
       title: '命名空间',
       dataIndex: 'namespace',
+      width: 270,
     },
     {
       title: 'Chart名称',
@@ -35,7 +36,7 @@ export const releaseTableSchema = ({
     {
       title: 'Chart版本',
       dataIndex: 'chartVersion',
-      width: 230,
+      width: 140,
       render: (value) => (
         <>
           <Tag color="green">{value}</Tag>
@@ -45,7 +46,7 @@ export const releaseTableSchema = ({
     {
       title: '应用版本',
       dataIndex: 'appVersion',
-      width: 230,
+      width: 140,
     },
     {
       title: '更新时间',
@@ -66,7 +67,7 @@ export const releaseTableSchema = ({
     },
 
     {
-      width: 200,
+      width: 160,
       title: '操作',
 
       dataIndex: 'operate',

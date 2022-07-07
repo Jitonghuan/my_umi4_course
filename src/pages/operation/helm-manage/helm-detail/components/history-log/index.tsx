@@ -68,12 +68,12 @@ export default function HistoryLog(props: PorpsItem) {
     {
       title: '命名空间',
       dataIndex: 'namespace',
-      width: '16%',
+      width: '20%',
     },
     {
       title: '更新时间',
       dataIndex: 'updated',
-      width: '10%',
+      width: '16%',
       render: (value: string) => datetimeCellRender(value),
     },
     {
@@ -85,7 +85,7 @@ export default function HistoryLog(props: PorpsItem) {
     {
       title: '操作',
       dataIndex: 'option',
-      width: 240,
+      width: 140,
       render: (_: string, record: any) => (
         <Space>
           <a
