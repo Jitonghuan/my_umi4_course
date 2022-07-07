@@ -9,7 +9,8 @@ import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import './index.less'
 const mockdata = [{ disk: '11', ip: '12.12.12' }]
-export default function ResourceDetail() {
+export default function ResourceDetail(props: any) {
+    const { location, children } = props;
     const [visible, setVisble] = useState(false);
     const [tagVisible, setTagVisible] = useState(false);
     const [form] = Form.useForm();
@@ -28,7 +29,7 @@ export default function ResourceDetail() {
             handleDetail: (record: any, index: any) => {
                 history.push({
                     pathname: '/matrix/pedestal/cluster-detail/load-detail',
-                    query: { key: 'resource-detail' },
+                    query: { key: 'resource-detail', ...location.query },
                 })
             },
             rePublic: (record: any, index: any) => {

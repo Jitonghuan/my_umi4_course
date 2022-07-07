@@ -1,4 +1,4 @@
-import { eventTableSchema, podsTableSchema } from '../schema';
+import { eventTableSchema, podsTableSchema, envVarTableSchema } from '../schema';
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Descriptions, Table, Tag } from 'antd'
 import { Button } from '_@cffe_h2o-design@2.28.0-css-var.0@@cffe/h2o-design';
@@ -8,11 +8,13 @@ import AddModal from './add-modal'
 import './index.less'
 const tags = ['1111111', '1332434', '23324rerere', '234343434']
 const mockdata = [{ disk: '11', ip: '12.12.12' }]
+const mock = [{ value: '1111', key: '222' }]
 
 export default function LoadDetail(props: any) {
     const [dataSource, setDataSource] = useState(mockdata);
     const [loading, setLoading] = useState<boolean>(false);
     const [visible, setVisible] = useState<boolean>(false);
+    const [envDataSource, setEnvDataSource] = useState(mock);
     const [addTag, setAddTag] = useState<boolean>(false);//新增标签modal
     const [addEnvVar, setAddEnvVar] = useState<boolean>(false);//新增环境变量modal
     // 表格列配置
@@ -27,6 +29,14 @@ export default function LoadDetail(props: any) {
             download: (record: any, index: any) => {
                 setVisible(true)
             },
+            handleDelete: (record: any, index: any) => {
+
+            },
+        }) as any;
+    }, [dataSource]);
+    // 环境变量表格列配置
+    const envVarColumns = useMemo(() => {
+        return envVarTableSchema({
             handleDelete: (record: any, index: any) => {
 
             },
@@ -86,7 +96,7 @@ export default function LoadDetail(props: any) {
             bordered
             pagination={false}
             rowKey="id"
-            columns={eventTableSchema()}
+            columns={envVarColumns}
         ></Table>
     </div>
 }

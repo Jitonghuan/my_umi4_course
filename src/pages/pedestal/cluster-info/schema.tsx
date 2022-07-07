@@ -1,5 +1,5 @@
 import { history } from 'umi';
-import { Tooltip, Popconfirm, Button } from 'antd';
+import { Tooltip, Popconfirm, Button, Tag } from 'antd';
 import { Html5Outlined, CodeOutlined, MinusCircleFilled } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
@@ -7,29 +7,31 @@ import type { ColumnProps } from '@cffe/vc-hulk-table';
 export const nodeListTableSchema = ({
     clickTag,
     diaodu,
-    paikong,
-    handleDelete
+    drain,
+    handleDelete,
+    shell
 }: {
     clickTag: (record: any, index: number) => void;
     diaodu: (record: any, index: number) => void;
-    paikong: (record: any, index: number) => void;
+    drain: (record: any, index: number) => void;
     handleDelete: (record: any, index: number) => void;
+    shell: (record: any, index: number) => void;
 }) =>
     [
         {
             title: '主机名',
-            dataIndex: 'id',
+            dataIndex: 'nodeName',
             width: 100,
         },
         {
             title: 'IP',
-            dataIndex: 'ip',
+            dataIndex: 'nodeIp',
             width: 230,
         },
         {
             title: 'CPU',
             dataIndex: 'cpu',
-            width: 180,
+            width: 100,
             ellipsis: {
                 showTitle: false,
             },
@@ -43,41 +45,45 @@ export const nodeListTableSchema = ({
         {
             title: '内存',
             dataIndex: 'neicun',
-            width: 200,
+            width: 100,
             ellipsis: {
                 showTitle: false,
             },
         },
         {
             title: '磁盘',
-            dataIndex: 'disk',
-            width: 200,
+            dataIndex: ['memoryInfo', 'total'],
+            width: 100,
         },
         {
             title: '负载',
-            dataIndex: 'createUser',
-            width: 200,
+            dataIndex: 'load',
+            width: 100,
         },
         {
             title: '状态',
-            dataIndex: 'state',
-            width: 200,
+            dataIndex: 'status',
+            width: 100,
         },
         {
             title: '标签',
-            dataIndex: 'tag',
+            dataIndex: 'tags',
             width: 200,
+            render: (value: any) => (
+                <div>{value.map((item: string) => <Tag color="green">{item}</Tag>)}</div>
+            )
         },
         {
             title: '操作',
             fixed: 'right',
-            width: 250,
+            width: 240,
             dataIndex: 'operate',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
+                    <a onClick={() => shell(record, index)}>登陆shell</a>
                     <a onClick={() => clickTag(record, index)}>设置标签</a>
                     <a onClick={() => diaodu(record, index)}>不可调度</a>
-                    <a onClick={() => paikong(record, index)}>排空</a>
+                    <a onClick={() => drain(record, index)}>排空</a>
                     <Popconfirm
                         title="确定要删除该节点吗？"
                         onConfirm={() => {
@@ -322,7 +328,7 @@ export const eventTableSchema = () =>
         },
     ] as any;
 
-// 资源详情-负载-事件列表
+// 资源详情-负载-环境变量列表
 export const envVarTableSchema = ({ handleDelete }: {
     handleDelete: (record: any, index: number) => void;
 }) =>
@@ -330,15 +336,17 @@ export const envVarTableSchema = ({ handleDelete }: {
         {
             title: 'KEY',
             dataIndex: 'key',
+            width: 400,
         },
         {
             title: 'VALUE',
             dataIndex: 'value',
+            width: 400,
         },
         {
             title: '',
-            width: 330,
             dataIndex: 'operate',
+            align: 'right',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
                     <Popconfirm
@@ -347,7 +355,7 @@ export const envVarTableSchema = ({ handleDelete }: {
                             handleDelete(record, index)
                         }}
                     >
-                        <MinusCircleFilled />
+                        <MinusCircleFilled style={{ color: 'red' }} />
                         {/* <Button size="small" type="default" danger style={{ color: 'red' }}>
                             删除
                     </Button> */}

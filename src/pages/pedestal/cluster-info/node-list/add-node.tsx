@@ -36,7 +36,7 @@ export default function AddNode(props: any) {
     return (
         <Drawer
             width={700}
-            title='新增'
+            title='新增节点'
             placement="right"
             visible={visible}
             onClose={onClose}

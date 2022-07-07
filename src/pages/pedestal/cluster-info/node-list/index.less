@@ -7,6 +7,10 @@
 .tag-adder{
     display: flex;
     align-items: flex-end;
+    .item-bottom{
+        height: 32px;
+        line-height: 32px;
+    }
 
     .item{
         display: flex;
@@ -16,11 +20,26 @@
         }
         &.behavior{
             padding: 0 5px;
-        }
-        .item-bottom{
-            height: 32px;
-            line-height: 32px;
-        }
+        }  
     }
     
+}
+.form-wrapper{
+    max-height: 400px;
+    overflow: auto;
+    .ant-form .ant-row.ant-form-item{
+        flex-direction: column;
+        // margin:0px;
+        .ant-form-item-label{
+            text-align: center;
+        }
+    }
+    .ant-space-item{
+        align-self: end;
+        line-height: 33px;
+        .tag-icon{
+            vertical-align: middle;
+        }
+    }
+   
 }
