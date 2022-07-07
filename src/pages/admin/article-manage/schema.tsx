@@ -90,7 +90,6 @@ export const createTableColumns = (params: {
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record.id);
-              console.log('record000', record);
             }}
           >
             <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
