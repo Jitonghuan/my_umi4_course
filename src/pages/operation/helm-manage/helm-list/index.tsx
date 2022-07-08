@@ -127,65 +127,62 @@ export default function HelmList() {
       />
 
       <FilterCard>
-        <div>
-          <span>
-            <b>选择集群：</b>
-          </span>
-          <Select
-            loading={loading}
-            options={clusterOptions}
-            style={{ width: 290 }}
-            allowClear
-            showSearch
-            defaultValue="来未来"
-            onChange={changeClusterName}
-          />
-        </div>
+        <Form
+          layout="inline"
+          form={releaseForm}
+          onFinish={(values: any) => {
+            getReleaseList({
+              ...values,
+              clusterName: curClusterName,
+            });
+          }}
+          onReset={() => {
+            releaseForm.resetFields();
+            getReleaseList({ clusterName: curClusterName });
+          }}
+        >
+          <div style={{ marginRight: 10 }}>
+            <span>
+              <b>选择集群：</b>
+            </span>
+            <Select
+              loading={loading}
+              options={clusterOptions}
+              style={{ width: 190 }}
+              allowClear
+              showSearch
+              defaultValue="来未来"
+              onChange={changeClusterName}
+            />
+          </div>
+          <Form.Item label="命名空间" name="namespace">
+            <Select
+              placeholder="请输入命名空间"
+              showSearch
+              allowClear
+              style={{ width: 290 }}
+              options={nameSpaceOption}
+            />
+          </Form.Item>
+          <Form.Item label="名称：" name="releaseName">
+            <Input placeholder="请输入名称" style={{ width: 290 }} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="ghost" htmlType="reset">
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
       </FilterCard>
       <ContentCard>
-        <div>
-          <Form
-            layout="inline"
-            form={releaseForm}
-            onFinish={(values: any) => {
-              getReleaseList({
-                ...values,
-                clusterName: curClusterName,
-              });
-            }}
-            onReset={() => {
-              releaseForm.resetFields();
-              getReleaseList({ clusterName: curClusterName });
-            }}
-          >
-            <Form.Item label="命名空间" name="namespace">
-              <Select
-                placeholder="请输入命名空间"
-                showSearch
-                allowClear
-                style={{ width: 290 }}
-                options={nameSpaceOption}
-              />
-            </Form.Item>
-            <Form.Item label="名称：" name="releaseName">
-              <Input placeholder="请输入名称" style={{ width: 290 }} />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button type="ghost" htmlType="reset">
-                重置
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-        <Divider />
         <div className="table-caption">
           <div className="caption-left">
-            <h3>release列表</h3>
+            <h3>发布列表</h3>
           </div>
           <div className="caption-right">
             <Space>

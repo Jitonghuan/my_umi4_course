@@ -141,7 +141,7 @@ export default function CreateChart() {
                       <Form.Item label="命名空间" name="namespace" rules={[{ required: true, message: '这是必填项' }]}>
                         <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
                       </Form.Item>
-                      <Form.Item label="chart名称" name="chartName">
+                      <Form.Item label="Chart名称" name="chartName">
                         <Input.Search
                           style={{ width: 320 }}
                           // options={chartNameOptions}
