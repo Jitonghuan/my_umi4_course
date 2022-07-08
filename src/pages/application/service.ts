@@ -155,6 +155,9 @@ export const paramsList = `${appConfig.apiPrefix}/appManage/appTemplate/list`;
 /** PUT 应用模版-编辑应用参数 */
 export const editParams = `${appConfig.apiPrefix}/appManage/appTemplate/update`;
 
+/** DELETE 应用模版-删除 */
+export const deleteTempl = `${appConfig.apiPrefix}/appManage/appTemplate/delete`;
+
 /** POST 新建应用 */
 export const createAppUrl = `${appConfig.apiPrefix}/appManage/create`;
 

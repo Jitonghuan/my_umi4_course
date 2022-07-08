@@ -1,7 +1,6 @@
-import { useEffect, useState, useLayoutEffect } from 'react';
-import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
+import { useState } from 'react';
+import { getRequest } from '@/utils/request';
 import * as APIS from '../deployInfo-content/service';
-import { message } from 'antd';
 
 //查看deployment的事件
 export function useListDeploymentList() {
