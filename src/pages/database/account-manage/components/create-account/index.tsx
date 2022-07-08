@@ -2,17 +2,20 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 16:05:29
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-07 17:25:28
+ * @LastEditTime: 2022-07-07 17:22:44
  * @FilePath: /fe-matrix/src/pages/database/database-manage/create-database/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
+// article editor
+// @author JITONGHUAN <muxi@come-future.com>
+// @create 2022/06/15 14:50
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Drawer, message, Form, Button, Select, Input, Switch, Tag } from 'antd';
-import CreateAccount from '../../account-manage/components/create-account';
 import './index.less';
 
 export interface MemberEditorProps {
-  mode?: EditorMode;
+  mode: EditorMode;
   initData?: any;
   onClose: () => any;
   onSave: () => any;
@@ -27,7 +30,6 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [description, setDescription] = useState<any>(); // 富文本数据
   const [resetDescription, setResetDescription] = useState<any>(); // 重置富文本使用
   const [curType, setCurType] = useState<string>('');
-  const [accountMode, setAccountMode] = useState<EditorMode>('HIDE');
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
@@ -87,66 +89,47 @@ export default function MemberEditor(props: MemberEditorProps) {
   };
 
   return (
-    <>
-      <CreateAccount
-        mode={accountMode}
-        onClose={() => {
-          setAccountMode('HIDE');
-        }}
-        onSave={() => {
-          setAccountMode('HIDE');
-        }}
-      />
-      <Drawer
-        width={900}
-        title={mode === 'EDIT' ? '编辑数据库' : mode === 'VIEW' ? '查看数据库' : '新增数据库'}
-        placement="right"
-        visible={mode !== 'HIDE'}
-        onClose={onClose}
-        maskClosable={false}
-        footer={
-          <div className="drawer-footer">
-            <Button type="primary" loading={false} onClick={handleSubmit} disabled={viewDisabled}>
-              保存
-            </Button>
-            <Button type="default" onClick={onClose}>
-              取消
-            </Button>
-          </div>
-        }
-      >
-        <Form form={editForm} labelCol={{ flex: '120px' }}>
-          <Form.Item label="数据库(DB)名称" name="title" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={viewDisabled} style={{ width: 520 }} />
-          </Form.Item>
-          <Form.Item label="支持字符集" name="type" rules={[{ required: true, message: '请选择' }]}>
-            <Select options={[]} disabled={viewDisabled} onChange={changeType} style={{ width: 300 }} />
-          </Form.Item>
-          <Form.Item label="owner" name="type" rules={[{ required: true, message: '请选择' }]}>
-            <Select options={[]} disabled={viewDisabled} onChange={changeType} style={{ width: 300 }} />
-          </Form.Item>
-          <Form.Item label="所属账号" name="type" rules={[{ required: true, message: '请选择' }]}>
-            <Select
-              options={[]}
-              disabled={viewDisabled}
-              onChange={changeType}
-              style={{ width: 300 }}
-              placeholder="默认可以先不授权"
-            />
-            <Tag
-              color="geekblue"
-              onClick={() => {
-                setAccountMode('ADD');
-              }}
-            >
-              创建新账号
-            </Tag>
-          </Form.Item>
-          <Form.Item label="备注说明">
-            <Input.TextArea style={{ width: 520 }}></Input.TextArea>
-          </Form.Item>
-        </Form>
-      </Drawer>
-    </>
+    <Drawer
+      width={900}
+      title="新增账号"
+      placement="right"
+      visible={mode !== 'HIDE'}
+      onClose={onClose}
+      maskClosable={false}
+      footer={
+        <div className="drawer-footer">
+          <Button type="primary" loading={false} onClick={handleSubmit} disabled={viewDisabled}>
+            保存
+          </Button>
+          <Button type="default" onClick={onClose}>
+            取消
+          </Button>
+        </div>
+      }
+    >
+      <Form form={editForm} labelCol={{ flex: '120px' }}>
+        <Form.Item label="数据库账号" name="title" rules={[{ required: true, message: '请输入' }]}>
+          <Input disabled={viewDisabled} style={{ width: 520 }} />
+        </Form.Item>
+        <Form.Item label="授权地址" name="type" rules={[{ required: true, message: '请选择' }]}>
+          <Input disabled={viewDisabled} style={{ width: 520 }} />
+        </Form.Item>
+        <Form.Item label="密码" name="type" rules={[{ required: true, message: '请选择' }]}>
+          <Input.Password
+            style={{ width: 380 }}
+            placeholder="密码需要8-32个字符，至少包含英文、数字和特殊符号"
+          ></Input.Password>
+        </Form.Item>
+        <Form.Item label="密码确认" name="type" rules={[{ required: true, message: '请选择' }]}>
+          <Input.Password
+            style={{ width: 380 }}
+            placeholder="密码需要8-32个字符，至少包含英文、数字和特殊符号"
+          ></Input.Password>
+        </Form.Item>
+        <Form.Item label="备注说明">
+          <Input.TextArea style={{ width: 520 }}></Input.TextArea>
+        </Form.Item>
+      </Form>
+    </Drawer>
   );
 }
