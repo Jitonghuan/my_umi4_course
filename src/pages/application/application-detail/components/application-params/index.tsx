@@ -281,6 +281,7 @@ export default function ApplicationParams(props: any) {
           });
           setLimit(arr.length);
         } else {
+          setId(undefined);
           applicationForm.setFieldsValue({
             tmplConfigurableItem: [],
             jvm: '',
@@ -381,7 +382,7 @@ export default function ApplicationParams(props: any) {
               </Button>
               <Popconfirm title="确认删除此模板吗？" onConfirm={delTmpl} disabled={!id}>
                 <Button danger disabled={!id} loading={deleteTemplLoading}>
-                  删除模版
+                  删除模版{id}
                 </Button>
               </Popconfirm>
             </Space>
