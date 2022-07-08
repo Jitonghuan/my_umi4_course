@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button, Form, Modal, Table, Tooltip } from 'antd';
 import DebounceSelect from '@/components/debounce-select';
 import SelectVersion from './select-version';
 import { getRequest } from '@/utils/request';
 import { datetimeCellRender } from "@/utils";
-import { searchHotFixVersion } from "@/pages/npm-manage/detail/server";
+import { searchHotFixVersion, hotFixList } from "@/pages/npm-manage/detail/server";
 import './index.less';
 
-export default function HotFix() {
+interface IProps {
+  isActive: boolean
+}
+
+export default function HotFix(props: IProps) {
+  const { isActive } = props
   const [dataList, setDataList] = useState([]);
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [versionVisible, setVersionVisible] = useState(false);
@@ -27,6 +35,26 @@ export default function HotFix() {
     const { dataSource } = result.data || {};
     return (dataSource || []).map((str: string) => ({ label: str, value: str })) as IOption[];
   };
+
+  async function handleSearch(pagination?: any ) {
+    const res = await getRequest(hotFixList, {
+      data: {
+        branchType: 'hotfix',
+        pageIndex: page,
+        pageSize,
+        ...pagination || {}
+      }
+    })
+    const { dataSource, pageInfo } = res?.data || {};
+    setDataList(dataSource || []);
+    setTotal(pageInfo?.total || 0);
+  }
+
+  useEffect(() => {
+    if (isActive) {
+      void handleSearch();
+    }
+  }, [isActive])
 
 
   async function onOk() {
@@ -48,7 +76,19 @@ export default function HotFix() {
       <Table
         rowKey="id"
         dataSource={dataList}
-        pagination={false}
+        pagination={{
+          total,
+          pageSize,
+          current: page,
+          onChange: (page, pageSize) => {
+            setPage(page);
+            setPageSize(pageSize);
+            void handleSearch({
+              pageIndex: page,
+              pageSize
+            })
+          }
+        }}
         bordered
         scroll={{ x: '100%' }}
       >

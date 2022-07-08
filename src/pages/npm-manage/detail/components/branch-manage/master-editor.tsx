@@ -21,6 +21,7 @@ export default function MasterBranchEditor(props: IProps) {
     try {
       const res = await postRequest(createMainBranch, {
         data: {
+          isNpm: true,
           appCode,
           ...values
         }

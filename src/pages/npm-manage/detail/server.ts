@@ -16,19 +16,19 @@ export const createMainBranch = `${appConfig.apiPrefix}/releaseManage/branch/cre
 export const createFeatureBranchUrl = `${appConfig.apiPrefix}/releaseManage/branch/createFeature`;
 
 // 提交分支
-export const createDeploy = `${appConfig.apiPrefix}/appManage/npmDeploy/create`;
+export const createDeploy = `${appConfig.apiPrefix}/releaseManage/npmDeploy/create`;
 
 // 追加分支
-export const updateFeatures = `${appConfig.apiPrefix}/appManage/dependencyManage/npmDeploy/updateFeatures`;
+export const updateFeatures = `${appConfig.apiPrefix}/releaseManage/dependencyManage/npmDeploy/updateFeatures`;
 
 // 重新提交
-export const reCommit = `${appConfig.apiPrefix}/appManage/npmDeploy/reCommit`;
+export const reCommit = `${appConfig.apiPrefix}/releaseManage/npmDeploy/reCommit`;
 
 // 取消发布
 export const cancelDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/cancel`;
 
 // 退出分支
-export const withdrawFeatures = `${appConfig.apiPrefix}/appManage/npmDeploy/withdrawFeatures`;
+export const withdrawFeatures = `${appConfig.apiPrefix}/releaseManage/npmDeploy/withdrawFeatures`;
 
 // 指定环境大类下的版本列表
 export const queryRecordApi = `${appConfig.apiPrefix}/appManage/npmVersion/list`;
@@ -44,4 +44,7 @@ export const getVersionList = `${appConfig.apiPrefix}/appManage/npmVersion/list`
 
 // 查询HotFix 版本
 export const searchHotFixVersion = `${appConfig.apiPrefix}/appManage/npmDeploy/getHotfixVersion`;
+
+// 查询npm包的hotfix分支
+export const hotFixList = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 

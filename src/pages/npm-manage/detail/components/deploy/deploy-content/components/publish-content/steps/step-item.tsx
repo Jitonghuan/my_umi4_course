@@ -7,7 +7,7 @@ import BuildingStep from '../step-items/building';
 import DeleteFeatureStep from '../step-items/delete-feature';
 
 const stepMap: any = {
-  build: BuildingStep,
+  buildAndDeploy: BuildingStep,
   deleteFeature: DeleteFeatureStep,
   mergeMaster: MergeMasterStep,
   merge: MergeReleaseStep,

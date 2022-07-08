@@ -30,6 +30,7 @@ export interface PublishBranchProps {
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
   changeBranchName: any;
+  pipelineCode?: string;
 }
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
@@ -42,6 +43,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     onSearch,
     masterBranchChange,
     changeBranchName,
+    pipelineCode,
   } = publishBranchProps;
   const { npmData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -51,7 +53,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [deployVisible, setDeployVisible] = useState(false);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('master');
-  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: npmName });
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: npmName, isNpm: true });
   const [loading, setLoading] = useState<boolean>(false);
   const selectRef = useRef(null) as any;
 
@@ -71,7 +73,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       await postRequest(createDeploy, {
         data: {
           npmName: npmName!,
-          pipelineCode: gitAddress,
+          pipelineCode,
           envTypeCode: env,
           features: filter,
           masterBranch: selectMaster, //主干分支
@@ -79,6 +81,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         }
       });
     }
+    setDeployVisible(false);
     onSubmitBranch?.('end');
     setLoading(false);
   };
@@ -188,6 +191,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       </Table>
 
       <SelectVersion
+        loading={loading}
         onConfirm={(params) => {
           void submit(params);
         }}

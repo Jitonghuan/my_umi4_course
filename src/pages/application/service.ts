@@ -464,6 +464,7 @@ export const queryFeatureDeployed = async (params: {
   branchName?: string;
   pipelineCode?: string;
   masterBranch?: string;
+  isNpm?: boolean;
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,

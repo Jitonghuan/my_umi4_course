@@ -25,6 +25,7 @@ export default function PublishContent(props: IProps) {
   const isProd = envTypeCode === 'prod';
   const [isShow, setIsShow] = useState(false);
   const [deployVisible, setDeployVisible] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // 重新提交分支
   const handleReDeploy = () => {
@@ -37,15 +38,18 @@ export default function PublishContent(props: IProps) {
     });
   };
 
-  const onReSubmit = (params: any) => {
+  const onReSubmit = async (params: any) => {
+    setLoading(true);
     const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
-    return postRequest(reCommit, {
+    await postRequest(reCommit, {
       data: {
         id: metadata.id,
         features,
         ...params || {}
       }
-    })
+    });
+    setLoading(false);
+    setDeployVisible(false);
   }
 
   // 批量退出分支
@@ -218,6 +222,7 @@ export default function PublishContent(props: IProps) {
         />
       </Table>
       <SelectVersion
+        loading={loading}
         onConfirm={(params) => {
           void onReSubmit(params);
         }}

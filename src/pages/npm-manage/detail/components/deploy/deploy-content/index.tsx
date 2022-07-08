@@ -20,10 +20,11 @@ export interface DeployContentProps {
   envTypeCode: string;
   /** 环境列表 */
   envList: any[];
+  pipelineCode?: string;
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, envList } = props;
+  const { envTypeCode, isActive, envList, pipelineCode } = props;
   const { npmData } = useContext(DetailContext);
   const { npmName } = npmData || {};
   const cachebranchName = useRef<string>();
@@ -36,22 +37,26 @@ export default function DeployContent(props: DeployContentProps) {
   const [loading, setLoading] = useState(false);
 
   const requestData = async () => {
-    if (!npmName || !isActive) return;
+    if (!npmName || !isActive || !pipelineCode) return;
 
-    const resp = await queryActiveDeployInfo({});
+    const resp = await queryActiveDeployInfo({ pipelineCode });
 
     const resp2 = await queryFeatureDeployed({
       appCode: npmName!,
       envTypeCode,
       isDeployed: 1,
+      pipelineCode,
       masterBranch: masterBranchName.current,
+      isNpm: true
     });
     const resp3 = await queryFeatureDeployed({
       appCode: npmName!,
       envTypeCode,
+      pipelineCode,
       isDeployed: 0,
       branchName: cachebranchName.current,
       masterBranch: masterBranchName.current,
+      isNpm: true
     });
 
     if (resp && resp.success) {
@@ -126,6 +131,7 @@ export default function DeployContent(props: DeployContentProps) {
             hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
             dataSource={branchInfo.unDeployed}
             env={envTypeCode}
+            pipelineCode={pipelineCode}
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);

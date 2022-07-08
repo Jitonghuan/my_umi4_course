@@ -1,16 +1,12 @@
-import React, { useEffect, useContext } from 'react';
+import React from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
 import { retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
-import DetailContext from '@/pages/npm-manage/detail/context';
-import { listAppEnv } from '@/pages/application/service';
-import { getRequest } from '@/utils/request';
 
 /** 构建 */
 export default function BuildingStep(props: StepItemProps) {
   const { deployInfo, onOperate, envTypeCode, env = '', status, getItemByKey, item, ...others } = props;
-  const { npmData } = useContext(DetailContext);
   const { metadata, buildInfo } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
 
@@ -21,30 +17,6 @@ export default function BuildingStep(props: StepItemProps) {
     : '';
   const isError = status === 'error';
   const isLoading = status === 'process';
-
-
-  useEffect(() => {
-    if (!npmData?.npmName) return;
-    queryDownloadImageEnv();
-  }, []);
-
-  const queryDownloadImageEnv = () => {
-    getRequest(listAppEnv, {
-      data: {
-        envTypeCode: envTypeCode,
-        appCode: npmData?.npmName,
-        proEnvType: 'benchmark',
-        clusterName: 'private-cluster',
-      },
-    }).then((result) => {
-      let downloadImageEnv: any = [];
-      if (result?.success) {
-        result?.data?.map((item: any) => {
-          downloadImageEnv.push(item.envCode);
-        });
-      }
-    });
-  };
 
   const handleRebuildClick = () => {
     onOperate('retryDeployStart');
@@ -70,7 +42,7 @@ export default function BuildingStep(props: StepItemProps) {
     <>
       <Steps.Step
         {...others}
-        title="构建 & 发布"
+        title="构建&发布"
         status={status}
         icon={isLoading && <LoadingOutlined />}
         description={
@@ -80,13 +52,13 @@ export default function BuildingStep(props: StepItemProps) {
             {url && (
               <div style={{ marginTop: -5 }}>
                 <a target="_blank" href={url}>
-                  构建详情
+                  构建发布详情
                 </a>
               </div>
             )}
             {isError && (
               <Button style={{ paddingLeft: 4, paddingRight: 4 }} size="small" onClick={handleRebuildClick}>
-                重新构建
+                重试
               </Button>
             )}
           </>

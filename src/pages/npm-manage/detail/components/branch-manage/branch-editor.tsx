@@ -24,6 +24,7 @@ export default function BranchEditor(props: IProps) {
       const res = await postRequest(createFeatureBranchUrl, {
         data: {
           appCode,
+          isNpm: true,
           ...values
         }
       });

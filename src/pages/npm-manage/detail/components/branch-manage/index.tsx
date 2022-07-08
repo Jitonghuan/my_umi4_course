@@ -26,7 +26,7 @@ export default function BranchManage() {
   const [pending, setPending] = useState(false);
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('master');
-  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: npmName });
+  const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: npmName, isNpm: true });
   const selectRef = useRef(null) as any;
 
   // 查询数据
@@ -43,7 +43,7 @@ export default function BranchManage() {
   // feature分支列表
   useEffect(() => {
     if (!npmName || !selectMaster) return;
-    queryBranchList({ appCode: npmName, branchType: 'feature', masterBranch: selectMaster });
+    queryBranchList({ appCode: npmName, branchType: 'feature', masterBranch: selectMaster, isNpm: true });
   }, [npmName, selectMaster]);
 
   // 主干分支列表
@@ -61,6 +61,7 @@ export default function BranchManage() {
     const values = searchForm.getFieldsValue();
     queryBranchList({
       pageIndex: 1,
+      isNpm: true,
       ...values,
     });
   }, [searchForm]);
@@ -69,8 +70,8 @@ export default function BranchManage() {
   const handleDelBranch = useCallback(async (record: any) => {
     try {
       setPending(true);
-      const res = await delRequest(`${deleteBranch}/${record.id}`, {
-        data: { id: record.id }
+      const res = await delRequest(`${deleteBranch}/${record.id}?isNpm=true`, {
+        data: { id: record.id, isNpm: true }
       });
       if (res?.success) {
         message.success('操作成功！');
@@ -171,12 +172,11 @@ export default function BranchManage() {
         <Table.Column title="创建人" dataIndex="createUser" width={100} />
         <Table.Column
           title="操作"
-          width={200}
+          width={100}
           fixed="right"
           align="center"
           render={(_, record: any, index) => (
             <div className="action-cell">
-
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
                 <Button type="primary" danger size="small">
                   作废
