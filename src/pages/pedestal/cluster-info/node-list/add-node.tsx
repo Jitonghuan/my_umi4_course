@@ -19,7 +19,6 @@ export default function AddNode(props: any) {
     const handleSubmit = async () => {
         const formValue = await form.validateFields();
         if (formValue) {
-            console.log('wo jinlaile')
             const res = await addNode({ ...formValue });
             if (res?.success) {
                 message.success('新增成功！')
@@ -64,30 +63,30 @@ export default function AddNode(props: any) {
                         <Radio value="node"> Node </Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label='机器来源' name='origin' rules={[{ required: true, message: '请选择' }]} >
+                {/* <Form.Item label='机器来源' name='origin' rules={[{ required: true, message: '请选择' }]} >
                     <Radio.Group value='nodeOrigin' onChange={(e) => { setNodeOrigin(e.target.value) }}>
                         <Radio value="aleady">已有 </Radio>
                         <Radio value="create"> 新建 </Radio>
                     </Radio.Group>
-                </Form.Item>
+                </Form.Item> */}
                 {
-                    nodeOrigin === 'aleady' && (
-                        <div>
-                            <p className='title'>机器信息</p>
-                            <Form.Item label="IP地址" name="size" rules={[{ required: true, message: '请输入' }]}>
-                                <Input style={{ width: 300 }} />
-                                <span style={{ color: '#5183e7', marginLeft: '10px' }} onClick={() => { test }} >测试连通性</span>
-                            </Form.Item>
-                            <Form.Item label="ROOT账号" name="count" rules={[{ required: true, message: '请输入' }]}>
-                                <Input style={{ width: 300 }} />
-                            </Form.Item>
-                            <Form.Item label="ROOT密码" name="password" rules={[{ required: true, message: '请输入' }]}>
-                                <Input.Password style={{ width: 300 }} />
-                            </Form.Item>
-                        </div>
-                    )
+                    // nodeOrigin === 'aleady' && (
+                    <div>
+                        <p style={{ marginLeft: '24px' }}>节点信息</p>
+                        <Form.Item label="IP地址" name="size" rules={[{ required: true, message: '请输入' }]}>
+                            <Input style={{ width: 300 }} />
+                            <span style={{ color: '#5183e7', marginLeft: '10px' }} onClick={() => { test }} >测试连通性</span>
+                        </Form.Item>
+                        <Form.Item label="ROOT账号" name="count" rules={[{ required: true, message: '请输入' }]}>
+                            <Input style={{ width: 300 }} />
+                        </Form.Item>
+                        <Form.Item label="ROOT密码" name="password" rules={[{ required: true, message: '请输入' }]}>
+                            <Input.Password style={{ width: 300 }} />
+                        </Form.Item>
+                    </div>
+                    // )
                 }
-                {
+                {/* {
                     nodeOrigin === 'create' && (
                         <div>
                             <Form.Item label="供应商" name="person" rules={[{ required: true, message: '请选择' }]}>
@@ -98,7 +97,7 @@ export default function AddNode(props: any) {
                             </Form.Item>
                         </div>
                     )
-                }
+                } */}
             </Form>
         </Drawer>
     )
