@@ -294,13 +294,13 @@ const globalTopo: React.FC = () => {
               >
                 红线追踪
               </Button>
-              <Button
+              {/* <Button
                 type="default"
                 icon={isExpand ? <PlusCircleOutlined /> : <MinusCircleOutlined />}
                 onClick={expandAll}
               >
                 {isExpand ? '全部展开' : '全部收起'}
-              </Button>
+              </Button> */}
               <Button
                 type="default"
                 icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}

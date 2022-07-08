@@ -126,21 +126,24 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             offsetY: 10,
             itemTypes: ['node'],
             getContent: (e: any) => {
+                console.log(e.item.getModel(), 11)
                 const outDiv = document.createElement('div');
                 outDiv.style.width = 'fit-content';
                 outDiv.innerHTML = `
                 <ul>
-                <li><div>Id: ${e.item.getModel().id}</div></li>
-                <li>Region: ${e.item.getModel().region || '无域节点'}</li>
+                <li><div><b>Id:</b> ${e.item.getModel().id}</div></li>
+                </ul>
+                ${e.item.getModel().nodeType !== 'region' ?
+                        `<ul><li><b>Region: </b>${e.item.getModel().region || ''}</li></ul>`
+                        : ''}
+                <ul>
+                  <li><b>名称:</b> ${e.item?.getModel().label || e.item?.getModel().id}</li>
                 </ul>
                 <ul>
-                  <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
-                </ul>
-                <ul>
-                <li>rt(响应时间): ${e.item?.getModel().rt || ''}</li>
+                <li><b>rt(响应时间):</b> ${e.item?.getModel().rt || ''}</li>
               </ul>
               <ul>
-                <li>qps(请求频率): ${e.item?.getModel().qps || ''}</li>
+                <li><b>qps(请求频率):</b> ${e.item?.getModel().qps || ''}</li>
               </ul>
           `;
                 return outDiv;
@@ -274,9 +277,9 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         if (expandList && expandList.nodes && expandList.nodes.length > 0) {
             // 固定节点位置
             expandList?.nodes?.forEach((node: any) => {
-                if (node.label === 'User') {
-                    fixedNode(node)
-                }
+                // if (node.label === 'User') {
+                //     fixedNode(node)
+                // }
                 if (node.id === 'middleware') {
                     fixedNode(node, ['bottom', 'center'])
                 }
