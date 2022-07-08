@@ -76,7 +76,6 @@ export default function SetTag(props: any) {
                     <Radio value="dirty"> 污点标签 </Radio>
                 </Radio.Group>
             </div>
-            {/* {tagType !== '' && (<Tags tags={commitTags} onChange={onChange} tagType={tagType} />)} */}
             <div className='form-wrapper'>
                 <Form form={form} name="base" autoComplete="off" colon={false} >
                     <Form.List name="base-tags">
@@ -102,25 +101,26 @@ export default function SetTag(props: any) {
                                                     name={[field.name, 'key']}
                                                     rules={[{ required: true, message: '此项为必填项' }]}
                                                 >
-                                                    <Input />
+                                                    <Input size='small' />
                                                 </Form.Item>
                                             )}
                                         </Form.Item>
                                         <Form.Item
                                             {...field}
-                                            label="Value"
+                                            label="VALUE"
                                             name={[field.name, 'value']}
                                         >
-                                            <Input />
+                                            <Input size='small' />
                                         </Form.Item>
                                         {tagType === 'dirty' && (
                                             <Form.Item
                                                 {...field}
-                                                label="Behavior"
+                                                label="行为"
                                                 name={[field.name, 'effect']}
                                                 rules={[{ required: true, message: '此项为必填项' }]}
                                             >
                                                 <Select
+                                                    // size='small'
                                                     options={behaviorOptions}
                                                     style={{ width: '150px' }}
                                                 />

@@ -16,7 +16,6 @@ import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
 export default function AppDeployInfo(props: any) {
-    const { appData } = useContext(DetailContext);
     const [viewLogform] = Form.useForm();
     // const { appCode, envCode, optType, containerName, deploymentName } = props.location.query;
     const instName = props.location.query.instName;
@@ -199,7 +198,7 @@ export default function AppDeployInfo(props: any) {
                         </div>
                         <div className="caption-right">
                             <span>
-                                {/* 当前环境：<Tag color="geekblue">{envCode}</Tag> */}
+                                {/* 当前集群：<Tag color="geekblue">{envCode}</Tag> */}
                             </span>
                         </div>
                     </div>

@@ -1,31 +1,33 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from "react";
 import { Form, Button, Input, Pagination, Table, message } from "antd";
-import type { PaginationProps } from 'antd';
+import { delRequest } from '@/utils/request';
+import appConfig from '@/app.config';
 import PageContainer from '@/components/page-container';
 import clusterContext from '../main/context'
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { nodeListTableSchema } from '../schema';
 import { useNodeListData } from '../hook'
 import { history } from 'umi'
-import { nodeDrain } from '../service'
+import { nodeDrain, nodeUpdate } from '../service'
 import AddNode from './add-node'
 import SetTag from './set-tag'
 import './index.less'
 export default function NodeList() {
     const [visible, setVisble] = useState(false);
-    const { selectCluster } = useContext(clusterContext);
+    const { clusterCode, cluseterName } = useContext(clusterContext);
     const [tagVisible, setTagVisible] = useState(false);
     const [cluster, setCluster] = useState({}) as any;
     const [dataSource, setDataSource] = useState([]);
     const [pageSize, setPageSize] = useState<number>(10);
     const [pageIndex, setPageIndex] = useState<number>(1);
-    const [data, total, loading, loadData] = useNodeListData({ pageSize, pageIndex, cluseterName: selectCluster });
-    // 表格列配置
+    const [data, total, loading, loadData] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
+
     const tableColumns = useMemo(() => {
         return nodeListTableSchema({
             shell: (record: any, index: any) => {
                 history.push({ pathname: '/matrix/pedestal/login-shell' })
             },
+            // 设置标签
             clickTag: (record: any, index: any) => {
                 const c = {
                     taints: record.taints || [],
@@ -34,24 +36,35 @@ export default function NodeList() {
                 setCluster(c);
                 setTagVisible(true);
             },
-            diaodu: (record: any, index: any) => {
-
-            },
-            drain: async (record: any, index: any) => {
-                const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: selectCluster })
+            // 调度
+            updateNode: async (record: any, index: any) => {
+                const res = await nodeUpdate({ unschedulable: !record.unschedulable })
                 if (res?.success) {
-                    message.success('操作成功')
+                    message.success('操作成功');
+                    loadData();
                 }
             },
-            handleDelete: (record: any, index: any) => {
-
+            // 排空
+            drain: async (record: any, index: any) => {
+                const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode || '' })
+                if (res?.success) {
+                    message.success('操作成功');
+                    loadData();
+                }
+            },
+            // 删除
+            handleDelete: async (record: any, index: any) => {
+                const res = await delRequest(`${appConfig.apiPrefix}/infraManage/node/delete/${record?.nodeName}`);
+                if (res?.success) {
+                    loadData();
+                }
             },
         }) as any;
     }, [data]);
 
     return (
         <div className='cluster-node-list'>
-            <AddNode visible={visible} onClose={() => { setVisble(false) }}></AddNode>
+            <AddNode visible={visible} onClose={() => { setVisble(false) }} onSubmit={() => { setVisble(false); loadData() }}></AddNode>
             <SetTag visible={tagVisible}
                 onSubmit={(tag: any, data: any) => {
                     setTagVisible(false)

@@ -1,27 +1,30 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo, useContext } from "react";
 import { Form, Button, Input, Tag, Table, Select, message } from "antd";
 import type { PaginationProps } from 'antd';
 import { history } from 'umi';
 import PageContainer from '@/components/page-container';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { resourceDetailTableSchema } from '../schema';
+import clusterContext from '../main/context'
 import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
+import { useResourceListData } from '../hook';
 import './index.less'
 const mockdata = [{ disk: '11', ip: '12.12.12' }]
 export default function ResourceDetail(props: any) {
     const { location, children } = props;
+    const { clusterCode, cluseterName } = useContext(clusterContext);
     const [visible, setVisble] = useState(false);
-    const [tagVisible, setTagVisible] = useState(false);
     const [form] = Form.useForm();
-    const [loading, setLoading] = useState(false);
     const [dataSource, setDataSource] = useState(mockdata);
     const [yamlDetailVisible, setYamlDetailVisible] = useState(false);
     const [createYamlVisible, setCreateYamlVisbile] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-    const [pageInfo, setPageInfo] = useState<any>({ pageSize: 10, pageIndex: 1, total: 0 });
+    const [pageIndex, setPageIndex] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(20);
     const storeParams = JSON.parse(localStorage.getItem('resource_params_list') || '[]');
     const [selectParams, setSelectParams] = useState<any>(storeParams || []);
+    const [data, total, loading, loadData] = useResourceListData({ pageSize, pageIndex, clusterCode: clusterCode || '', selectParams });
 
     // 表格列配置
     const tableColumns = useMemo(() => {
@@ -67,8 +70,6 @@ export default function ResourceDetail(props: any) {
         }
     }
 
-
-
     return (
         <div className='cluster-resource-detail'>
             <CreateYaml visible={createYamlVisible} onClose={() => { setCreateYamlVisbile(false) }}></CreateYaml>
@@ -83,7 +84,7 @@ export default function ResourceDetail(props: any) {
                     }}
                 >
                     <Form.Item label="查询关键词" name="mainWord">
-                        <Select style={{ width: 240 }} allowClear options={[{ label: 'key1', value: 'key1' }]}></Select>
+                        <Select style={{ width: 240 }} allowClear options={[{ label: 'key1', value: 'key1' }]} ></Select>
                     </Form.Item>
                     <Form.Item label="查询内容" name="content" >
                         <Select style={{ width: 240 }} allowClear options={[{ label: 'test1', value: 'test1s' }]}>  </Select>
@@ -116,7 +117,7 @@ export default function ResourceDetail(props: any) {
                     <h3>资源列表</h3>
                 </div>
                 <div className="caption-right">
-                    搜索：<Input style={{ width: 200 }}></Input>
+                    搜索：<Input style={{ width: 200 }} size='small'></Input>
                     <Button type="primary" onClick={() => { setCreateYamlVisbile(true) }} size='small' style={{ marginLeft: '10px' }}>创建资源</Button>
                 </div>
             </div>
@@ -133,20 +134,15 @@ export default function ResourceDetail(props: any) {
                     },
                 }}
                 pagination={{
-                    pageSize: pageInfo.pageSize,
-                    total: pageInfo.total,
-                    current: pageInfo.pageIndex,
+                    pageSize: pageSize,
+                    total: 50,
+                    current: pageIndex,
                     showSizeChanger: true,
                     onShowSizeChange: (_, next) => {
-                        setPageInfo({
-                            pageIndex: 1,
-                            pageSize: next,
-                        });
+                        setPageSize(next)
                     },
                     onChange: (next) =>
-                        setPageInfo({
-                            pageIndex: next,
-                        }),
+                        setPageIndex(next)
                 }}
                 columns={tableColumns}
                 scroll={dataSource.length > 0 ? { x: 1800 } : undefined}

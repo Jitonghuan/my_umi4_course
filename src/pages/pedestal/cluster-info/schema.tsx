@@ -6,13 +6,13 @@ import type { ColumnProps } from '@cffe/vc-hulk-table';
 // 节点列表
 export const nodeListTableSchema = ({
     clickTag,
-    diaodu,
+    updateNode,
     drain,
     handleDelete,
     shell
 }: {
     clickTag: (record: any, index: number) => void;
-    diaodu: (record: any, index: number) => void;
+    updateNode: (record: any, index: number) => void;
     drain: (record: any, index: number) => void;
     handleDelete: (record: any, index: number) => void;
     shell: (record: any, index: number) => void;
@@ -21,17 +21,17 @@ export const nodeListTableSchema = ({
         {
             title: '主机名',
             dataIndex: 'nodeName',
-            width: 100,
+            width: 150,
         },
         {
             title: 'IP',
             dataIndex: 'nodeIp',
-            width: 230,
+            width: 120,
         },
         {
             title: 'CPU',
             dataIndex: 'cpu',
-            width: 100,
+            width: 80,
             ellipsis: {
                 showTitle: false,
             },
@@ -45,7 +45,7 @@ export const nodeListTableSchema = ({
         {
             title: '内存',
             dataIndex: 'neicun',
-            width: 100,
+            width: 80,
             ellipsis: {
                 showTitle: false,
             },
@@ -53,36 +53,40 @@ export const nodeListTableSchema = ({
         {
             title: '磁盘',
             dataIndex: ['memoryInfo', 'total'],
-            width: 100,
+            width: 80,
         },
         {
             title: '负载',
             dataIndex: 'load',
-            width: 100,
+            width: 80,
         },
         {
             title: '状态',
             dataIndex: 'status',
-            width: 100,
+            width: 80,
         },
         {
             title: '标签',
             dataIndex: 'tags',
-            width: 200,
-            render: (value: any) => (
-                <div>{value.map((item: string) => <Tag color="green">{item}</Tag>)}</div>
+            render: (value: any, record: any) => (
+                // <div>{value.map((item: string) => <Tag color="green">{item}</Tag>)}</div>
+                <div>{Object.keys(record.labels).map((k) =>
+                    <Tag color="green">{`${k}=${record.labels[k]}`}</Tag>
+                )}
+                    {record.taints.map((e: any) => <Tag color="green">{`${e.key}=${e.value}`}</Tag>)}
+                </div>
             )
         },
         {
             title: '操作',
             fixed: 'right',
-            width: 240,
+            width: 300,
             dataIndex: 'operate',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
                     <a onClick={() => shell(record, index)}>登陆shell</a>
                     <a onClick={() => clickTag(record, index)}>设置标签</a>
-                    <a onClick={() => diaodu(record, index)}>不可调度</a>
+                    <a onClick={() => updateNode(record, index)}>{record.unschedulable ? '可调度' : '不可调度'}</a>
                     <a onClick={() => drain(record, index)}>排空</a>
                     <Popconfirm
                         title="确定要删除该节点吗？"

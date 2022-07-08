@@ -25,3 +25,15 @@ export const nodeDrain = (data: any) => {
     const url = addAPIPrefix('/infraManage/node/drain');
     return postRequest(url, { data: data });
 };
+
+//新增节点
+export const addNode = (data: any) => {
+    const url = addAPIPrefix('/infraManage/node/add');
+    return postRequest(url, { data: data });
+};
+
+// 获取资源详情列表
+export const getResourceList = (data: any) => {
+    const url = addAPIPrefix('/infraManage/resource/list');
+    return getRequest(url, { data: data });
+};
