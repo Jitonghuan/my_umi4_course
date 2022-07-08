@@ -101,29 +101,26 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 }
             },
         });
-        const edgeMenu = new G6.Menu({
-            offsetX: -10,
-            offsetY: -10,
+
+        const edgeTooltip = new G6.Tooltip({
+            offsetX: 10,
+            offsetY: 10,
             itemTypes: ['edge'],
-            trigger: 'click',
             getContent: (e: any) => {
                 const outDiv = document.createElement('div');
-                outDiv.style.width = '160px';
+                outDiv.style.width = 'fit-content';
                 outDiv.innerHTML = `
-          <ul>
-            <li>rt(响应时间): ${e.item?.getModel().rt || ''}</li>
-          </ul>
-          <ul>
-            <li>suc(调用成功率): ${e.item?.getModel().suc || ''}</li>
-          </ul>
-          <ul>
-            <li>qps(请求频率): ${e.item?.getModel().qps || ''}</li>
-          </ul>
+                <ul>
+                <li>rt(响应时间): ${e.item?.getModel().rt || ''}</li>
+              </ul>
+              <ul>
+                <li>qps(请求频率): ${e.item?.getModel().qps || ''}</li>
+              </ul>
           `;
                 return outDiv;
             },
-            handleMenuClick(target, item) { },
         });
+
         const tooltip = new G6.Tooltip({
             offsetX: 10,
             offsetY: 10,
@@ -139,6 +136,12 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 <ul>
                   <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
                 </ul>
+                <ul>
+                <li>rt(响应时间): ${e.item?.getModel().rt || ''}</li>
+              </ul>
+              <ul>
+                <li>qps(请求频率): ${e.item?.getModel().qps || ''}</li>
+              </ul>
           `;
                 return outDiv;
             },
@@ -149,7 +152,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             container: 'topo',
             width: container?.clientWidth,
             height: container?.clientHeight,
-            plugins: [edgeMenu, menu, toolbar, tooltip], // 插件
+            plugins: [edgeTooltip, menu, toolbar, tooltip], // 插件
             modes: {
                 default: [
                     {
@@ -356,7 +359,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
     //   处理数据
     const getTopoData = async () => {
         let res = await getTopoList({
-            duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
+            duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm'),
             envCode: props.selectEnv,
         })
         // let res = mockRomote();
