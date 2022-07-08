@@ -3,7 +3,7 @@
 // @create 2021/07/23 17:20
 
 import React, { useContext, useRef } from 'react';
-import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio } from 'antd';
+import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, Popconfirm } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
@@ -208,6 +208,11 @@ export default function ApplicationParams(props: any) {
           setLimit(arr1.length);
         } else {
           message.info(`${envCode}的${templateType}类型模版为空`);
+          applicationForm.setFieldsValue({
+            value: '',
+            tmplConfigurableItem: [],
+            jvm: '',
+          });
         }
 
         //处理添加进表格的数据
@@ -340,7 +345,10 @@ export default function ApplicationParams(props: any) {
       message.info('不存在模版不可以删除！');
     }
     if (id) {
-      deleteTempl(id);
+      deleteTempl(id).then(() => {
+        console.log('selectEnvData, selectTmpl', selectEnvData, selectTmpl);
+        showAppList(selectEnvData, selectTmpl);
+      });
     }
   };
 
@@ -371,9 +379,11 @@ export default function ApplicationParams(props: any) {
               <Button danger onClick={inintData}>
                 重置
               </Button>
-              <Button danger onClick={delTmpl} disabled={!id} loading={deleteTemplLoading}>
-                删除模版
-              </Button>
+              <Popconfirm title="确认删除此模板吗？" onConfirm={delTmpl} disabled={!id}>
+                <Button danger disabled={!id} loading={deleteTemplLoading}>
+                  删除模版
+                </Button>
+              </Popconfirm>
             </Space>
           </div>
         </Row>
