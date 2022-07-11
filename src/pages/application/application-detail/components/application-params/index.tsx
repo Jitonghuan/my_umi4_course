@@ -382,7 +382,7 @@ export default function ApplicationParams(props: any) {
               </Button>
               <Popconfirm title="确认删除此模板吗？" onConfirm={delTmpl} disabled={!id}>
                 <Button danger disabled={!id} loading={deleteTemplLoading}>
-                  删除模版{id}
+                  删除模版
                 </Button>
               </Popconfirm>
             </Space>
