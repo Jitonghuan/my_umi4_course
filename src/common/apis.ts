@@ -57,5 +57,8 @@ export const readListApi = `${appConfig.apiPrefix}/adminManage/systemNotice/list
 /** POST 发送系统消息 */
 export const sendSystemNoticeApi = `${appConfig.apiPrefix}/adminManage/systemNotice/send`;
 
-//** DELETE 删除系统通知  */
+/** DELETE 删除系统通知  */
 export const deleteSystemNoticeApi = `${appConfig.apiPrefix}/adminManage/systemNotice/delete`;
+
+/** GET 获取Matrix配置信息  */
+export const getMatrixEnvConfig = `${appConfig.apiPrefix}/adminManage/matrixEnvConfig`;

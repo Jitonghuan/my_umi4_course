@@ -272,7 +272,6 @@ export function useQueryStemNoticeList(): [any, (pageIndex?: number, pageSize?: 
 }
 
 // 请求查询未读消息数
-// 切换部门确认
 export function useReadList(): [(ids: any) => Promise<void>] {
   const getReadList = useCallback(async (ids: any) => {
     await postRequest(APIS.readListApi, { data: { ids } });
@@ -291,3 +290,4 @@ export function useDeleteSystemNotice(): [(id: number) => Promise<void>] {
 
   return [deleteSystemNotice];
 }
+//getMatrixEnvConfig
