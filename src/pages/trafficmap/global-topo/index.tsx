@@ -256,8 +256,8 @@ const globalTopo: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>时间：</div>
               <DatePicker
-                showTime={{ format: 'HH:mm:ss' }}
-                format="YYYY-MM-DD HH:mm:ss"
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
                 value={selectTime}
                 onChange={(value, dateString) => {
                   setSelectTime(value || moment());
@@ -294,13 +294,13 @@ const globalTopo: React.FC = () => {
               >
                 红线追踪
               </Button>
-              <Button
+              {/* <Button
                 type="default"
                 icon={isExpand ? <PlusCircleOutlined /> : <MinusCircleOutlined />}
                 onClick={expandAll}
               >
                 {isExpand ? '全部展开' : '全部收起'}
-              </Button>
+              </Button> */}
               <Button
                 type="default"
                 icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
