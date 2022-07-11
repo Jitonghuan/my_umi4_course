@@ -11,6 +11,7 @@ import { Button, Form, Input, Tabs } from '@cffe/h2o-design';
 import './index.less';
 
 interface IProps {
+  timeList: any;
   appGroup: string;
   envCode: string;
   feEnv: string;
@@ -27,8 +28,7 @@ interface DataSourceItem {
   i: number;
 }
 
-const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
-  const [timeList, setTimeList] = useState<any>(now);
+const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
@@ -37,8 +37,6 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
   const [importantErrorList, setImportantErrorList] = useState<DataSourceItem[]>([]);
   const [importantErrorLoading, setImportantErrorLoading] = useState<boolean>(false);
   const [importantErrorTotal, setImportantErrorTotal] = useState<number>(0);
-
-
 
   const [activeKey, setActiveKey] = useState<string>("1");
 
@@ -203,7 +201,6 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
 
   return (
     <div className="basic-error-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} />
       <div className="performance-wrapper">
         <div className="list-title chart-title">错误情况</div>
         <div className="line-chart-wrapper">
@@ -227,7 +224,7 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
           {
             activeKey == '1' ?
               <ErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
-            :
+              :
               <ResourceErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
           }
         </div>

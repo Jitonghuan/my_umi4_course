@@ -12,13 +12,13 @@ import SuccessRate from './components/success-rate';
 const { TabPane } = Tabs;
 
 interface IProps {
+  timeList:any;
   appGroup: string;
   envCode: string;
   feEnv: string;
 }
 
-const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
-  const [timeList, setTimeList] = useState<any>(now);
+const BasicApi = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [active, setActive] = useState('1');
 
   // 失败
@@ -87,7 +87,6 @@ const BasicApi = ({ appGroup, envCode, feEnv }: IProps) => {
 
   return (
     <div className="basic-api-wrapper">
-      <Header onChange={setTimeList} defaultTime={timeList} />
       <Tabs
         activeKey={active}
         onChange={(val) => {
