@@ -47,15 +47,15 @@ const SlowApiRequest = (props: IProps) => {
             },
             render: (text) => <Input bordered={false} disabled value={text}></Input>,
           },
-          {
-            title: '页面',
-            dataIndex: 'url',
-            width: '250px',
-            ellipsis: {
-              showTitle: false,
-            },
-            render: (text) => <Input bordered={false} disabled value={text}></Input>,
-          },
+          // {
+          //   title: '页面',
+          //   dataIndex: 'url',
+          //   width: '250px',
+          //   ellipsis: {
+          //     showTitle: false,
+          //   },
+          //   render: (text) => <Input bordered={false} disabled value={text}></Input>,
+          // },
           {
             title: '耗时(秒)',
             width: '100px',

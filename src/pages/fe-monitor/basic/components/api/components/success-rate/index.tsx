@@ -69,7 +69,7 @@ const SuccessRate = (props: IProps) => {
             {
               title: 'API',
               dataIndex: 'api',
-              width: '300px',
+              width: '400px',
               ellipsis: {
                 showTitle: false,
               },
@@ -78,7 +78,8 @@ const SuccessRate = (props: IProps) => {
             {
               title: '错误率(百分比)',
               dataIndex: 'errorRate',
-              width: '250px',
+              width: '100px',
+              sorter:true,
               ellipsis: {
                 showTitle: false,
               },
@@ -87,7 +88,8 @@ const SuccessRate = (props: IProps) => {
             {
               title: '请求次数',
               dataIndex: 'allcount',
-              width: '400px',
+              width: '100px',
+              sorter:true,
               ellipsis: {
                 showTitle: false,
               },
@@ -96,7 +98,8 @@ const SuccessRate = (props: IProps) => {
             {
               title: '平均响应时长(ms)',
               dataIndex: 'avgtime',
-              width: '250px',
+              width: '100px',
+              sorter:true,
               ellipsis: {
                 showTitle: false,
               },

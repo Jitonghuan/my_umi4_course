@@ -21,7 +21,7 @@ interface DataSourceItem {
   i: number;
 }
 
-const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
+const ResourceErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
@@ -80,13 +80,6 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
                 },
               },
               {
-                title: '错误信息',
-                dataIndex: 'd1',
-                ellipsis: {
-                  showTitle: true,
-                },
-              },
-              {
                 title: '次数',
                 dataIndex: 'count',
                 width: '80px',
@@ -135,4 +128,4 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
   );
 };
 
-export default ErrorTable;
+export default ResourceErrorTable;

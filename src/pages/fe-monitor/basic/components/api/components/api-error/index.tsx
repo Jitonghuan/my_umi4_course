@@ -104,12 +104,12 @@ const APIError = (props: IProps) => {
                 </Popover>
               ),
             },
-            {
-              title: '页面名称',
-              dataIndex: 'url',
-              width: '250px',
-              render: (text) => <Input bordered={false} disabled value={text}></Input>,
-            },
+            // {
+            //   title: '页面名称',
+            //   dataIndex: 'url',
+            //   width: '250px',
+            //   render: (text) => <Input bordered={false} disabled value={text}></Input>,
+            // },
             {
               title: '上报时间',
               width: '180px',

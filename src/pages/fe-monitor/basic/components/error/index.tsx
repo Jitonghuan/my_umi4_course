@@ -4,9 +4,11 @@ import { now } from '../../const';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
 import { getErrorChart, getErrorList } from '../../server';
-import './index.less';
 import ErrorTable from './components/errortable';
-import { Tabs } from '@cffe/h2o-design';
+import ResourceErrorTable from './components/resource-error-table';
+
+import { Button, Form, Input, Tabs } from '@cffe/h2o-design';
+import './index.less';
 
 interface IProps {
   appGroup: string;
@@ -207,23 +209,38 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
         <div className="line-chart-wrapper">
           <div className="error-chart"></div>
         </div>
-        <div style={{ marginTop: '10px' }}>
+        <div className='important-error'>
           <div className="list-title">重点关注的错误</div>
           <Tabs
+            className='error-tabs'
             activeKey={activeKey}
+            destroyInactiveTabPane
             onChange={(val) => {
               setActiveKey(val);
             }}
           >
-            <Tabs.TabPane tab="页面白屏/组件加载错误" key="1" />
-            <Tabs.TabPane tab="定制包加载错误" key="2" />
+            <Tabs.TabPane tab="组件加载错误" key="1" />
+            {/* <Tabs.TabPane tab="定制包加载错误" key="2" /> */}
             <Tabs.TabPane tab="页面重点资源加载错误" key="3" />
             <Tabs.TabPane tab="定制包资源加载错误" key="4" />
           </Tabs>
-          <ErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
+          {
+            activeKey == '1' ?
+              <ErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
+            :
+              <ResourceErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
+          }
         </div>
         <div>
           <div className="list-title">错误列表</div>
+          <Form layout="inline">
+            <Form.Item>
+              <Input />
+            </Form.Item>
+            <Form.Item>
+              <Button type='primary'>查询</Button>
+            </Form.Item>
+          </Form>
           <ErrorTable dataSource={dataSource} loading={loading} total={total} getParam={getParam} />
         </div>
       </div>
