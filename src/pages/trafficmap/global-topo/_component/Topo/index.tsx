@@ -126,7 +126,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             offsetY: 10,
             itemTypes: ['node'],
             getContent: (e: any) => {
-                console.log(e.item.getModel(), 11)
                 const outDiv = document.createElement('div');
                 outDiv.style.width = 'fit-content';
                 outDiv.innerHTML = `
