@@ -157,7 +157,7 @@ export default function LoggerAlarm() {
           <Button type="primary" ghost onClick={handleSearch}>
             查询
           </Button>
-          <Button type="default" htmlType="reset" style={{ marginLeft: 12 }}>
+          <Button type="default" htmlType="reset" danger style={{ marginLeft: 12 }}>
             重置
           </Button>
         </Form.Item>

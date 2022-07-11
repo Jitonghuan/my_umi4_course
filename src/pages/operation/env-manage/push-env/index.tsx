@@ -153,7 +153,7 @@ export default function PushEnv(props: any) {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset" danger danger>
               重置
             </Button>
           </Form.Item>
@@ -191,7 +191,7 @@ export default function PushEnv(props: any) {
             </Form.Item>
             <Space size="middle" style={{ float: 'right' }}>
               <Form.Item>
-                <Button type="ghost" htmlType="reset">
+                <Button type="ghost" htmlType="reset" danger>
                   清空
                 </Button>
               </Form.Item>

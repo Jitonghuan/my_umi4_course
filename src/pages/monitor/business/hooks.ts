@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { getRequest, putRequest, delRequest } from '@/utils/request';
 import { message } from 'antd';
 import * as APIS from './service';
+
 export function useEnvListOptions() {
   const [envCodeOption, setEnvCodeOption] = useState<any>([]);
   let envOptions: any = [];
@@ -84,7 +85,7 @@ export function useGetListMonitor() {
     });
   };
 
-  return [listSource, tablesource, total, getListMonitor];
+  return [listSource, total, getListMonitor];
 }
 
 export function useEnableMonitor() {

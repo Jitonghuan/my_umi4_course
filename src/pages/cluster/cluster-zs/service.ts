@@ -70,3 +70,12 @@ export const syncSingleFeApp = addAPIPrefix('/opsManage/k8s/multiple/syncFeSingl
 
 /** GET 项目环境 */
 export const getCommonEnvCode = addAPIPrefix('/opsManage/multiple/common/getEnvCode');
+
+/** POST 新增机构信息 */
+export const addHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/common/addHospitalDistrictInfo');
+
+/** POST 编辑机构信息 */
+export const updateHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/common/updateHospitalDistrictInfo');
+
+/** POST 编辑机构信息 */
+export const deleteHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/common/deleteHospitalDistrictInfo');

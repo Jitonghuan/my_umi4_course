@@ -3,7 +3,7 @@
 // @create 2022/04/25 14:29
 import appConfig from '@/app.config';
 import { useState, useEffect, useCallback } from 'react';
-import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
+import { postRequest, getRequest, putRequest } from '@/utils/request';
 import { message } from 'antd';
 
 /** GET 创建版本 */
@@ -155,10 +155,7 @@ export function useAppList(): [boolean, any, any, (appCategoryCode: string, appG
       .then((result) => {
         if (result?.success) {
           const { dataSource } = result?.data || {};
-          // const next = (dataSource || []).map((item: any) => ({
-          //   label: item.appCode,
-          //   value: item.appCode,
-          // }));
+
           setSource(dataSource || []);
         } else {
           setSource([]);

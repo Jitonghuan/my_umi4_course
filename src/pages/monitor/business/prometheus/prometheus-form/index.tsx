@@ -113,7 +113,7 @@ const PrometheusForm: React.FC = () => {
 
   const reset = () => {
     setCurrent(0);
-    history.push('./prometheus-add');
+    history.push('./prometheus-edit');
     form.resetFields();
   };
 
@@ -145,7 +145,7 @@ const PrometheusForm: React.FC = () => {
   ];
 
   return (
-    <ContentCard style={{ background: '#F7F8FA' }}>
+    <ContentCard style={{ background: '#F7F8FA', height: '100%', overflow: 'auto' }}>
       <div className="step-style">
         <Steps current={current} onChange={isEdit ? (current) => setCurrent(current) : undefined}>
           {stepOption.map((v) => (
@@ -156,7 +156,7 @@ const PrometheusForm: React.FC = () => {
       <Form className="form" requiredMark={false} form={form}>
         <Form.Item>{renderDom.find((v) => v.current === current)?.dom}</Form.Item>
         {current !== 2 && (
-          <Form.Item wrapperCol={{ span: 20 }}>
+          <Form.Item wrapperCol={{ span: 18 }}>
             <div style={{ textAlign: 'right' }}>
               <Space>
                 <Button type="primary" onClick={next}>

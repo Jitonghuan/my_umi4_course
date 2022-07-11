@@ -268,6 +268,7 @@ export default function DemoPageTb(porps: any) {
               <Button
                 type="ghost"
                 htmlType="reset"
+                danger
                 onClick={() =>
                   history.push({
                     pathname: 'tmpl-list',

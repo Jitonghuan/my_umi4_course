@@ -1,8 +1,8 @@
-// 应用编辑/新增
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/08/25 09:23
+// 绑定应用
+// @author JITONGHUAN <muxi.jth@come-future.com>
+// @create 2022/04/21 15:30
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Select, Descriptions, Divider, Form, Modal, Table, Popconfirm } from 'antd';
 import { columns } from '../version-editor/schema';
 import { useVersionAppList, useBoundApp, useQueryCategory } from '../../hooks';
@@ -21,12 +21,11 @@ export default function BindAppEditor(props: IProps) {
   const [form] = Form.useForm<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [unAddLoading, unAddAppDataSource, setSource, queryVersionAppList] = useVersionAppList();
-  const [categoryCode, setCategoryCode] = useState<string>();
   const [bundLoading, handleBoundApp] = useBoundApp();
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [categoryLoading, categoryData] = useQueryCategory();
   const { initData, visible, onClose } = props;
-  const isEdit = !!initData?.id;
+
   useEffect(() => {
     if (!initData?.versionCode) {
       return;
@@ -41,7 +40,6 @@ export default function BindAppEditor(props: IProps) {
   }, [visible]);
 
   const selectAppCategoryCode = (next: string) => {
-    setCategoryCode(next);
     queryVersionAppList({ versionCode: initData?.versionCode, appCategoryCode: next, isBoundVersion: false });
   };
 
@@ -104,9 +102,6 @@ export default function BindAppEditor(props: IProps) {
             loading={categoryLoading}
           ></Select>
         </FormItem>
-        {/* <FormItem label="应用组">
-           <Select style={{ width: 380}} placeholder="通过应用组筛选应用" options={appGroupOptions} loading={appGroupLoading} ></Select>
-        </FormItem> */}
         <FormItem>
           <div style={{ marginLeft: 8 }}>{hasSelected ? `共选择 ${selectedRowKeys.length} 个应用` : ''}</div>
           <Table
@@ -118,7 +113,6 @@ export default function BindAppEditor(props: IProps) {
             dataSource={unAddAppDataSource}
             loading={unAddLoading}
             style={{ height: 200 }}
-            // scroll={{ x: '100%' }}
             pagination={false}
             scroll={{ y: window.innerHeight - 600, x: '100%' }}
           />
