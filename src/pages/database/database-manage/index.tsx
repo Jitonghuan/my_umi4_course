@@ -5,6 +5,7 @@ import { Button, Space, Form } from 'antd';
 import useTable from '@/utils/useTable';
 import { createTableColumns } from './schema';
 import CreateDataBase from './create-database';
+import { getSchemaList } from '../service';
 export default function DEMO() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
@@ -18,7 +19,7 @@ export default function DEMO() {
     tableProps,
     search: { submit, reset },
   } = useTable({
-    url: '',
+    url: getSchemaList,
     method: 'GET',
     form,
     formatter: (params) => {
