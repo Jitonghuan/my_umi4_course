@@ -7,7 +7,8 @@ export default function YamlDetail(props: any) {
     const [form] = Form.useForm();
     const [readOnly, setReadOnly] = useState<boolean>(true);
     const handleOk = () => {
-        // const values = form.getFieldValue('value');
+        const values = form.getFieldValue('value');
+        console.log(values, 'values')
         // putRequest(updateNg, {
         //   data: {
         //     id: id,
@@ -37,11 +38,11 @@ export default function YamlDetail(props: any) {
             });
         }
     }, [templateContext, visible]);
-    useEffect(() => {
-        if (visible) {
-            setReadOnly(true);
-        }
-    }, [visible]);
+    // useEffect(() => {
+    //     if (visible) {
+    //         setReadOnly(true);
+    //     }
+    // }, [visible]);
     return (
         <Modal
             title="YAML详情"

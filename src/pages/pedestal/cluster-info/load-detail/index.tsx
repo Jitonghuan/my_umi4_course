@@ -46,15 +46,21 @@ export default function LoadDetail(props: any) {
         <DownLoadFile visible={visible} onCancel={() => { setVisible(false) }}></DownLoadFile>
         <AddModal visible={addTag} onCancel={() => { setAddTag(false) }} title='新增标签'></AddModal>
         <AddModal visible={addEnvVar} onCancel={() => { setAddEnvVar(false) }} title='新增环境变量'></AddModal>
-        <p>工作负载：<span style={{ color: 'green' }}>eventTableSchema</span></p>
-        <Descriptions title="" bordered>
+        <div className='flex-wrapper'>
+            <p>工作负载：<span style={{ color: 'green' }}>eventTableSchema</span></p>
+            <Button onClick={() => { history.push({ pathname: `/matrix/pedestal/cluster-detail/resource-detail`, query: { ...props.location.query } }) }}>返回</Button>
+        </div>
+        {/* <Descriptions title="" bordered>
             <Descriptions.Item label="命名空间">Cloud Database</Descriptions.Item>
             <Descriptions.Item label="镜像">Prepaid</Descriptions.Item>
             <Descriptions.Item label="资源类型">18:00:00</Descriptions.Item>
             <Descriptions.Item label="容器重启次数">$80.00</Descriptions.Item>
             <Descriptions.Item label="副本数">$20.00</Descriptions.Item>
             <Descriptions.Item label="创建时间">$60.00</Descriptions.Item>
-        </Descriptions>
+        </Descriptions> */}
+        <div>
+
+        </div>
         {/* pods */}
         <p className='title'>Pods</p>
         <Table

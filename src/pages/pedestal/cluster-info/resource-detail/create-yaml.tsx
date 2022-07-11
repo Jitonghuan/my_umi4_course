@@ -12,14 +12,17 @@ import './index.less';
 
 export default function CreateYaml(props: any) {
     const { visible, onClose, onSave, initData } = props;
-    const [createNgForm] = Form.useForm();
+    const [form] = Form.useForm();
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     useEffect(() => {
-
+        if (visible) {
+            form.resetFields();
+        }
     }, [visible]);
 
     const handleSubmit = async () => {
-
+        const value = form.getFieldsValue();
+        console.log(value, 'value')
     };
     return (
         <Drawer
@@ -29,22 +32,19 @@ export default function CreateYaml(props: any) {
             onClose={onClose}
             width={'40%'}
             footer={
-                isDisabled !== true && (
-                    <div className="drawer-footer">
-                        <Button type="default" onClick={onClose}>取消 </Button>
-                        <Button type="primary" onClick={handleSubmit}>保存</Button>
-                    </div>
-                )
+                // isDisabled !== true && (
+                <div className="drawer-footer">
+                    <Button type="default" onClick={onClose}>取消 </Button>
+                    <Button type="primary" onClick={handleSubmit}>保存</Button>
+                </div>
+                // )
             }
         >
             <div className="add-yaml">
                 <Form
-                    form={createNgForm}
+                    form={form}
                     labelCol={{ flex: '120px' }}
                     onFinish={handleSubmit}
-                    onReset={() => {
-                        createNgForm.resetFields();
-                    }}
                 >
                     <Form.Item label="" name="value" className="form-ace" style={{ flexDirection: 'column' }}>
                         <AceEditor mode="yaml" height={800} />
