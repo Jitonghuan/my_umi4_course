@@ -6,12 +6,9 @@
  * @FilePath: /fe-matrix/src/pages/database/database-manage/create-database/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-// article editor
-// @author JITONGHUAN <muxi@come-future.com>
-// @create 2022/06/15 14:50
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Switch, Tag } from 'antd';
+import { Drawer, message, Form, Button, Select, Input, Switch, Tag, Modal } from 'antd';
 import './index.less';
 
 export interface MemberEditorProps {
@@ -89,12 +86,13 @@ export default function MemberEditor(props: MemberEditorProps) {
   };
 
   return (
-    <Drawer
+    <Modal
       width={900}
       title="新增账号"
-      placement="right"
+      // placement="right"
       visible={mode !== 'HIDE'}
-      onClose={onClose}
+      // onClose={onClose}
+      onCancel={onClose}
       maskClosable={false}
       footer={
         <div className="drawer-footer">
@@ -116,13 +114,13 @@ export default function MemberEditor(props: MemberEditorProps) {
         </Form.Item>
         <Form.Item label="密码" name="type" rules={[{ required: true, message: '请选择' }]}>
           <Input.Password
-            style={{ width: 380 }}
+            style={{ width: 400 }}
             placeholder="密码需要8-32个字符，至少包含英文、数字和特殊符号"
           ></Input.Password>
         </Form.Item>
         <Form.Item label="密码确认" name="type" rules={[{ required: true, message: '请选择' }]}>
           <Input.Password
-            style={{ width: 380 }}
+            style={{ width: 400 }}
             placeholder="密码需要8-32个字符，至少包含英文、数字和特殊符号"
           ></Input.Password>
         </Form.Item>
@@ -130,6 +128,6 @@ export default function MemberEditor(props: MemberEditorProps) {
           <Input.TextArea style={{ width: 520 }}></Input.TextArea>
         </Form.Item>
       </Form>
-    </Drawer>
+    </Modal>
   );
 }
