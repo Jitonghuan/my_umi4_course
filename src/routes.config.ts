@@ -366,21 +366,14 @@ export default [
         key: 'version-management',
         component: '@/pages/application/version-management',
       },
-    ],
-  },
-  {
-    path: 'npm',
-    name: 'NPM管理',
-    icon: 'icon-poc_maindata',
-    routes: [
       {
-        path: 'list',
-        name: 'npm列表',
+        path: 'npm-list',
+        name: 'NPM管理',
         component: '@/pages/npm-manage/list',
       },
       {
-        path: 'detail',
-        name: 'npm 详情',
+        path: 'npm-detail',
+        name: 'NPM详情',
         component: '@/pages/npm-manage/detail',
         hideInMenu: true,
         routes: [
@@ -410,7 +403,7 @@ export default [
           },
         ]
       },
-    ]
+    ],
   },
   {
     path: 'publish',

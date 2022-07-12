@@ -42,7 +42,7 @@ const tabsConfig: any = [
   }
 ];
 
-const detailPath = '/matrix/npm/detail';
+const detailPath = '/matrix/application/npm-detail';
 const { TabPane } = Tabs;
 
 export default function NpmDetail(props: IProps) {

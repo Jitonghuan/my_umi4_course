@@ -135,7 +135,7 @@ export default function NpmList() {
                 <a
                   onClick={() => {
                     history.push({
-                      pathname: 'detail',
+                      pathname: 'npm-detail',
                       query: {
                         id: record.id,
                         npmName: record.npmName,
@@ -190,7 +190,7 @@ export default function NpmList() {
                   <a
                     onClick={() => {
                       history.push({
-                        pathname: 'detail',
+                        pathname: 'npm-detail',
                         query: {
                           id: record.id,
                           npmName: record.npmName,
