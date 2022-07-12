@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 16:05:29
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-07 17:25:28
+ * @LastEditTime: 2022-07-12 14:27:09
  * @FilePath: /fe-matrix/src/pages/database/database-manage/create-database/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,13 +14,12 @@ import './index.less';
 
 export interface MemberEditorProps {
   mode?: EditorMode;
-  initData?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
 export default function MemberEditor(props: MemberEditorProps) {
-  const { mode, initData, onClose, onSave } = props;
+  const { mode, onClose, onSave } = props;
   const [createLoading, createSchema] = useCreateSchema();
   const [accountListLoading, accountData, getAccountList] = useGetAccountList();
   const [userOptions] = useUserOptions();
@@ -29,7 +28,7 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [accountMode, setAccountMode] = useState<EditorMode>('HIDE');
 
   useEffect(() => {
-    if (mode === 'HIDE' || !initData) return;
+    if (mode === 'HIDE') return;
     getAccountList({ clusterId: 2 });
     return () => {
       seViewDisabled(false);

@@ -6,13 +6,20 @@ import useTable from '@/utils/useTable';
 import { createTableColumns } from './schema';
 import CreateDataBase from './create-database';
 import { getSchemaList } from '../service';
+import { useDeleteSchema } from './hook';
+
 export default function DEMO() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
-  const [curRecord, setcurRecord] = useState<any>({});
+  const [delLoading, deleteSchema] = useDeleteSchema();
   const columns = useMemo(() => {
     return createTableColumns({
-      onDelete: async (id) => {},
+      onDelete: async (record) => {
+        deleteSchema({ clusterId: 2, id: record?.id }).then(() => {
+          reset();
+        });
+      },
+      delLoading: delLoading,
     }) as any;
   }, []);
   const {
@@ -40,7 +47,6 @@ export default function DEMO() {
     <PageContainer>
       <CreateDataBase
         mode={mode}
-        initData={curRecord}
         onClose={() => {
           setMode('HIDE');
         }}
@@ -49,6 +55,7 @@ export default function DEMO() {
           reset();
         }}
       />
+
       <TableSearch
         bordered
         splitLayout={false}

@@ -83,3 +83,33 @@ export function useDeleteAccount(): [boolean, (paramsObj: { clusterId: number; i
 
   return [loading, deleteAccount];
 }
+
+//grantAccount
+export function useGrantAccount(): [
+  boolean,
+  (paramsObj: { clusterId: number; id: number; grantType: number; privType: string; privs: any }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const grantAccount = async (paramsObj: {
+    clusterId: number;
+    id: number;
+    grantType: number;
+    privType: string;
+    privs: any;
+  }) => {
+    setLoading(true);
+    await postRequest(`${APIS.grantAccount}`, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          message.success(result.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, grantAccount];
+}

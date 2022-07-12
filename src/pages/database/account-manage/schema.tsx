@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 17:02:02
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-07 17:08:03
+ * @LastEditTime: 2022-07-12 16:44:20
  * @FilePath: /fe-matrix/src/pages/database/account-manage/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,6 +12,8 @@ import type { ColumnsType } from 'antd/lib/table';
 export const createTableColumns = (params: {
   onDelete: (id: any) => void;
   onUpdate: (id: any) => void;
+  onGrant: (record: any) => void;
+  onRecovery: (record: any) => void;
   deleteLoading: boolean;
 }) => {
   return [
@@ -45,8 +47,20 @@ export const createTableColumns = (params: {
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
-          <a>授权</a>
-          <a>回收</a>
+          <a
+            onClick={() => {
+              params?.onGrant(record);
+            }}
+          >
+            授权
+          </a>
+          <a
+            onClick={() => {
+              params?.onRecovery(record);
+            }}
+          >
+            回收
+          </a>
           <a
             onClick={() => {
               params?.onUpdate(record.id);
@@ -69,3 +83,97 @@ export const createTableColumns = (params: {
     },
   ] as ColumnsType<any>;
 };
+
+export const privTypeOptions = [
+  {
+    label: '全局权限',
+    value: 'global',
+  },
+  {
+    label: '库权限',
+    value: 'schema',
+  },
+];
+
+export const dataTreeOption = [
+  {
+    key: 'select',
+    title: 'SELECT',
+  },
+  {
+    key: 'insert',
+    title: 'INSERT',
+  },
+  {
+    key: 'update',
+    title: 'UPDATE',
+  },
+  {
+    key: 'delete',
+    title: 'DELETE',
+  },
+];
+export const structOption = [
+  {
+    key: 'create',
+    title: 'CREATE',
+  },
+  {
+    key: 'alter',
+    title: 'ALTER',
+  },
+  {
+    key: 'index',
+    title: 'INDEX',
+  },
+  {
+    key: 'drop',
+    title: 'DROP',
+  },
+  {
+    key: 'create temporary tables',
+    title: 'CREATE TEMPORARY TABLES',
+  },
+  {
+    key: 'show view',
+    title: 'SHOW VIEW',
+  },
+  {
+    key: 'create routime',
+    title: 'CREATE ROUTINE',
+  },
+  {
+    key: 'alter routine',
+    title: 'ALTER ROUTINE',
+  },
+  {
+    key: 'execute',
+    title: 'EXECUTE',
+  },
+  {
+    key: 'create view',
+    title: 'CREATE VIEW',
+  },
+  {
+    key: 'envent',
+    title: 'ENVENT',
+  },
+  {
+    key: 'trigger',
+    title: 'TRIGGER',
+  },
+];
+export const manageOption = [
+  {
+    key: 'grant',
+    title: 'GRANT',
+  },
+  {
+    key: 'lcok tables',
+    title: 'LOCK TABLES',
+  },
+  {
+    key: 'references',
+    title: 'REFERENCES',
+  },
+];

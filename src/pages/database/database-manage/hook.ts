@@ -41,16 +41,13 @@ export function useCreateSchema(): [
   return [loading, createSchema];
 }
 //数据库管理-删除数据库
-export function useDeleteSchema(): [
-  boolean,
-  (paramsObj: { clusterId: number; dbName: string; id: number }) => Promise<void>,
-] {
+export function useDeleteSchema(): [boolean, (paramsObj: { clusterId: number; id: number }) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const deleteSchema = async (paramsObj: { clusterId: number; dbName: string; id: number }) => {
+  const deleteSchema = async (paramsObj: { clusterId: number; id: number }) => {
     setLoading(true);
-    await postRequest(`${APIS.deleteSchema}`, { data: paramsObj })
+    await delRequest(`${APIS.deleteSchema}?clusterId=${paramsObj?.clusterId}&id=${paramsObj?.id}`)
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           message.success(result?.data);
         } else {
           return;
