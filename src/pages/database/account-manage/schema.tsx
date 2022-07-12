@@ -9,10 +9,11 @@
 import { Space, Tag, Popconfirm, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 // 列表页-表格
-export const createTableColumns = (
-  params: { onDelete: (record: any) => void; onUpdate: () => void },
-  deleteLoading: boolean,
-) => {
+export const createTableColumns = (params: {
+  onDelete: (record: any) => void;
+  onUpdate: () => void;
+  deleteLoading: boolean;
+}) => {
   return [
     {
       title: '账号',
@@ -59,7 +60,7 @@ export const createTableColumns = (
               params?.onDelete(record.id);
             }}
           >
-            <Spin spinning={deleteLoading}>
+            <Spin spinning={params?.deleteLoading}>
               <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
             </Spin>
           </Popconfirm>
