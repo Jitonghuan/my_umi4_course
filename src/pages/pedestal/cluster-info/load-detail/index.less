@@ -2,13 +2,14 @@
     overflow-y: auto;
     .title{
         font-weight: 600;
-        margin-top: 10px;
+        line-height: 28px;
+        margin: 5px 0;
     }
     .flex-wrapper{
         display: flex;
         justify-content: space-between;
-        margin: 10px 0px;
         align-items: center;
+       
     }
     .tag-container{
         display: flex;
@@ -21,5 +22,24 @@
     }
     .ant-table-content{
         overflow-x: auto;
+    }
+    .grid-wrapper{
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-rows: 2;
+        align-items: center;
+        justify-content: center;
+        background-color: #ededed;
+        grid-gap:1px;
+        &-item{
+            text-align: center;
+            background-color: #cdcfd3;
+            height: 40px;
+            line-height: 40px;
+        }
+        .sign{
+            font-size: 20px;
+            margin:0px 5px;
+        }
     }
 }

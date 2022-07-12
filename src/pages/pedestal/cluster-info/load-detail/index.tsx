@@ -10,6 +10,15 @@ const tags = ['1111111', '1332434', '23324rerere', '234343434']
 const mockdata = [{ disk: '11', ip: '12.12.12' }]
 const mock = [{ value: '1111', key: '222' }]
 
+const obj: any = {
+    namespace: '命名空间',
+    jingxiang: '镜像',
+    type: '资源类型',
+    count: '容器重启次数',
+    fuben: '副本数',
+    createTime: '创建时间'
+}
+
 export default function LoadDetail(props: any) {
     const [dataSource, setDataSource] = useState(mockdata);
     const [loading, setLoading] = useState<boolean>(false);
@@ -42,13 +51,17 @@ export default function LoadDetail(props: any) {
             },
         }) as any;
     }, [dataSource]);
+
+    const clickSign = () => {
+        console.log(11)
+    }
     return <div className='load-detail-wrapper'>
         <DownLoadFile visible={visible} onCancel={() => { setVisible(false) }}></DownLoadFile>
         <AddModal visible={addTag} onCancel={() => { setAddTag(false) }} title='新增标签'></AddModal>
         <AddModal visible={addEnvVar} onCancel={() => { setAddEnvVar(false) }} title='新增环境变量'></AddModal>
         <div className='flex-wrapper'>
-            <p>工作负载：<span style={{ color: 'green' }}>eventTableSchema</span></p>
-            <Button onClick={() => { history.push({ pathname: `/matrix/pedestal/cluster-detail/resource-detail`, query: { ...props.location.query } }) }}>返回</Button>
+            <p className="title">工作负载：<span style={{ color: 'green' }}>eventTableSchema</span></p>
+            <Button type="link" onClick={() => { history.push({ pathname: `/matrix/pedestal/cluster-detail/resource-detail`, query: { ...props.location.query } }) }}>返回</Button>
         </div>
         {/* <Descriptions title="" bordered>
             <Descriptions.Item label="命名空间">Cloud Database</Descriptions.Item>
@@ -58,8 +71,18 @@ export default function LoadDetail(props: any) {
             <Descriptions.Item label="副本数">$20.00</Descriptions.Item>
             <Descriptions.Item label="创建时间">$60.00</Descriptions.Item>
         </Descriptions> */}
-        <div>
-
+        <div className='grid-wrapper'>
+            {Object.keys(obj).map((item: any) => {
+                if (item === 'fuben') {
+                    return <div className='grid-wrapper-item'>
+                        <a className='sign' style={{ color: '#e74848' }} onClick={clickSign}>—</a>
+                        {obj[item]}：2
+                        <a className='sign' style={{ color: 'green' }} onClick={clickSign}>+</a>
+                    </div>
+                } else {
+                    return <div className='grid-wrapper-item'>{obj[item]}：</div>
+                }
+            })}
         </div>
         {/* pods */}
         <p className='title'>Pods</p>

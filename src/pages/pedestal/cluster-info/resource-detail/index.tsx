@@ -147,7 +147,7 @@ export default function ResourceDetail(props: any) {
                 columns={tableColumns}
                 scroll={dataSource.length > 0 ? { x: 1800 } : undefined}
             ></Table>
-            {/* <Button onClick={() => { }}>批量删除</Button> */}
+            <Button className="batch-deletes" onClick={() => { }}>批量删除</Button>
 
         </div >
     );
