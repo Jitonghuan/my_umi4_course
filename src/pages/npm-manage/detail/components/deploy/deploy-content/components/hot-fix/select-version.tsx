@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Modal, Radio} from 'antd';
 
 interface IProps {
@@ -16,6 +16,12 @@ export default function SelectVersion (props: IProps) {
     const values = await form.validateFields();
     onConfirm(values);
   }
+
+  useEffect(() => {
+    if (visible) {
+      form.resetFields();
+    }
+  }, [visible]);
 
   return (
     <Modal

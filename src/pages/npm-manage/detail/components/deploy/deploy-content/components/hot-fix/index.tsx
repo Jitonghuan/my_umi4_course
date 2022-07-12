@@ -39,7 +39,7 @@ export default function HotFix(props: IProps) {
   const { npmData } = useContext(DetailContext);
   const { npmName } = npmData || {};
   const [dataList, setDataList] = useState([]);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -245,18 +245,20 @@ export default function HotFix(props: IProps) {
               dataIndex: 'branchName',
               title: '分支名',
               fixed: 'left',
-              width: 320
+              width: 220
             },
             {
               dataIndex: 'desc',
-              title: '分支描述'
+              title: '分支描述',
+              width: 120
             },
             {
               title: '发布状态',
+              width: 120,
               render: (value, record) => (
-                <span>
-                {recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.text || '---'}
-              </span>
+                <span style={{ color:  recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.color || '#000'}}>
+                  {recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.text || '---'}
+                </span>
               )
             },
             {
@@ -267,7 +269,19 @@ export default function HotFix(props: IProps) {
             },
             {
               dataIndex: 'createUser',
-              title: '创建人'
+              title: '创建人',
+              width: 100
+            },
+            {
+              dataIndex: 'gmtModify',
+              title: '更新时间',
+              width: 160,
+              render: datetimeCellRender
+            },
+            {
+              dataIndex: 'modifyUser',
+              title: '更新人',
+              width: 100
             },
             {
               width: 140,

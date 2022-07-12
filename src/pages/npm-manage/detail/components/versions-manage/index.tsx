@@ -29,7 +29,7 @@ export default function VersionsManage() {
     })
     setIsLoading(false);
     if (res) {
-      setDataList(res?.data || []);
+      setDataList(res?.data?.filter(val => val.tag !== 'hotfix') || []);
     }
   };
 
@@ -44,7 +44,7 @@ export default function VersionsManage() {
       <div className="version-card-list clearfix">
         {isLoading && <Spin className="block-loading" />}
         {!isLoading && !dataList.length && (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="发布记录为空" />
         )}
         <CardLayout>
           {dataList.map((item) => (
