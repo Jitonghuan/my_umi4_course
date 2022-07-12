@@ -10,7 +10,7 @@ import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
 import AddEnvDraw from '../addEnv';
-import { queryEnvList, appTypeList, deleteEnv, updateEnv } from '../service';
+import { queryEnvList, appTypeList, updateEnv } from '../service';
 import appConfig from '@/app.config';
 import NGDetailModal from './ng-detail';
 import BlockModal from './block-modal';
@@ -66,16 +66,7 @@ export default function envManageList(props: any) {
       value: 'prod',
     },
   ]; //环境大类
-  const proEnvTypeData = [
-    {
-      label: '项目环境',
-      value: 'project',
-    },
-    {
-      label: '基准环境',
-      value: 'benchmark',
-    },
-  ]; //项目环境分类选择
+
   useEffect(() => {
     selectCategory();
   }, []);
@@ -137,13 +128,11 @@ export default function envManageList(props: any) {
       })
       .finally(() => {
         setLoading(false);
-        // setPageCurrentIndex(1);
       });
   };
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    //  setPageIndexInfo(pagination.current);
     setPageCurrentIndex(pagination.current);
     let obj = {
       pageIndex: pagination.current,
@@ -158,7 +147,6 @@ export default function envManageList(props: any) {
       ...values,
       ...params,
     });
-    // setPageCurrentIndex(pageIndex);
   };
 
   //删除数据
@@ -171,7 +159,6 @@ export default function envManageList(props: any) {
         pageSize: 20,
       });
     });
-    // message.success('删除成功！');
   };
 
   let useNacosData: number;

@@ -5,7 +5,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Form, Input, Select, Button, Table, Space, message } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { appTypeList, appList, pushAppEnv } from '../service';
@@ -51,7 +50,6 @@ export default function PushEnv(props: any) {
 
   useEffect(() => {
     selectCategory();
-    // loadListData({ pageIndex: 1, pageSize: 20 })
     getApplication({ pageIndex: 1, pageSize: 20 });
   }, []);
 
@@ -67,18 +65,14 @@ export default function PushEnv(props: any) {
         isClient: 0,
         pageSize: value?.pageSize,
         pageIndex: value?.pageIndex,
-
-        // pageSize: value.pageSize,
       },
     })
       .then((res: any) => {
         if (res.success) {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
-          // let pageIndex = res.data.pageInfo.pageIndex;
           setPageTotal(pageTotal);
           setDataSource(dataSource);
-          // setPageIndex(pageIndex);
         }
       })
       .finally(() => {
@@ -153,7 +147,7 @@ export default function PushEnv(props: any) {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger danger>
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
@@ -161,7 +155,6 @@ export default function PushEnv(props: any) {
       </FilterCard>
       <ContentCard>
         <div>
-          {/* onFinish={} */}
           <Form form={envDataForm} onFinish={pushEnv}>
             <Form.Item name="tableData">
               <Table
