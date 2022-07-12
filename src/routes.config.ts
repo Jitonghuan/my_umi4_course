@@ -370,7 +370,7 @@ export default [
   },
   {
     path: 'npm',
-    name: 'NPM',
+    name: 'NPM管理',
     icon: 'icon-poc_maindata',
     routes: [
       {

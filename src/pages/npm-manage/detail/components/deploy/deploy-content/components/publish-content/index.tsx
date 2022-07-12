@@ -18,7 +18,7 @@ const rootCls = 'publish-content-compo';
 export default function PublishContent(props: IProps) {
   const { envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, envList } = props;
   let { metadata, status } = deployInfo;
-  const { deployNodes } = status || {}; //步骤条数据
+  const { deployNodes, deployStatus } = status || {}; //步骤条数据
   const { npmData } = useContext(DetailContext);
   const { gitAddress } = npmData || {};
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -124,7 +124,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
       <div className={`${rootCls}__right-top-btns`}>
-        {isShow && deployNodes?.length !== 0 && (
+        { deployStatus === 'buildAndDeploy' && (
           <Button
             danger
             onClick={() => {

@@ -2,4 +2,28 @@
   box-sizing: border-box;
   padding: 0 16px;
   margin-top: 0;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow: hidden;
+
+  .vc-page-content-filter {
+    border: 0;
+    padding: 10px;
+  }
+
+  .hotfix-content-body {
+    flex: 1;
+    height: 100%;
+    overflow: auto;
+    padding-right: 12px;
+    border-right: solid 1px #d2d8e6;
+    margin-right: 12px;
+  }
+
+  .hotfix-content-sider {
+    width: 205px;
+    height: 100%;
+    overflow: auto;
+  }
 }

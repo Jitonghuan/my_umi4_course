@@ -22,8 +22,8 @@ export const createTableSchema = () => [
 ];
 
 export const recordDisplayMap: any = {
-  wait: { text: '发布开始', color: 'blue' },
-  process: { text: '正在发布', color: 'geekblue' },
-  error: { text: '发布失败', color: 'red' },
-  finish: { text: '发布完成', color: 'green' },
+  1: { text: '当前', color: 'blue' },
+  2: { text: '历史', color: 'green' },
+  3: { text: '部署中', color: 'geekblue' },
+  4: { text: '部署失败', color: 'red' },
 };

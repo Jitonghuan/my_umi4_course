@@ -110,14 +110,16 @@ export default function BranchManage() {
             <Input.Search placeholder="搜索分支名" enterButton onSearch={handleSearch} style={{ width: 320 }} />
           </Form.Item>
         </Form>
-        <Button type="primary" onClick={() => setMasterBranchEditMode('ADD')}>
-          <PlusOutlined />
-          新建主干
-        </Button>
-        <Button type="primary" onClick={() => setBranchEditMode('ADD')}>
-          <PlusOutlined />
-          新建分支
-        </Button>
+        <div>
+          <Button type="primary" ghost onClick={() => setMasterBranchEditMode('ADD')}>
+            <PlusOutlined />
+            新建主干
+          </Button>
+          <Button type="primary" onClick={() => setBranchEditMode('ADD')} style={{marginLeft: '10px'}}>
+            <PlusOutlined />
+            新建分支
+          </Button>
+        </div>
       </div>
       <Table
         rowKey="id"

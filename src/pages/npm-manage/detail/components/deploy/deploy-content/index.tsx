@@ -77,7 +77,7 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   // 定时请求发布内容
-  const { handle: timerHandle } = useInterval(requestData, 8000, { immediate: false });
+  const { handle: timerHandle } = useInterval(requestData, 8000, { immediate: true });
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;
@@ -95,9 +95,13 @@ export default function DeployContent(props: DeployContentProps) {
 
   // appCode变化时
   useEffect(() => {
-    if (!npmName || !isActive) return;
-    timerHandle('do', true);
-  }, [npmName, isActive]);
+    if (!npmName || !isActive || !pipelineCode) {
+      timerHandle('stop');
+    } else {
+      timerHandle('stop');
+      timerHandle('do', true);
+    }
+  }, [npmName, isActive, pipelineCode]);
 
 
   const onSpin = () => {

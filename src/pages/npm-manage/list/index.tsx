@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, message, Modal, Table } from 'antd';
+import { Button, Form, Input, message, Modal, Table, Drawer } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import UserSelector, { stringToList } from "@/components/user-selector";
@@ -87,14 +87,11 @@ export default function NpmList() {
           }}
         >
           <FormItem label="包名" name="npmName">
-            <Input placeholder="请输入" style={{ width: 140 }} />
+            <Input placeholder="请输入" style={{ width: 240 }} onPressEnter={() => handleSearch()} />
           </FormItem>
           <FormItem>
             <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
               查询
-            </Button>
-            <Button type="default" htmlType="reset">
-              重置
             </Button>
           </FormItem>
           <FormItem noStyle>
@@ -133,7 +130,22 @@ export default function NpmList() {
           columns={[
             {
               title: '包名',
-              dataIndex: 'npmName'
+              dataIndex: 'npmName',
+              render: (text, record) => (
+                <a
+                  onClick={() => {
+                    history.push({
+                      pathname: 'detail',
+                      query: {
+                        id: record.id,
+                        npmName: record.npmName,
+                      },
+                    });
+                  }}
+                >
+                  {text}
+                </a>
+              ),
             },
             {
               title: 'git地址',
@@ -194,13 +206,22 @@ export default function NpmList() {
           ]}
           />
       </ContentCard>
-      <Modal
+      <Drawer
+        width={660}
         title={type === 'add' ? '新增' : '编辑'}
         visible={visible}
-        onOk={handleSubmit}
-        onCancel={handleClose}
-        confirmLoading={loading}
+        onClose={handleClose}
         maskClosable={false}
+        footer={
+          <div className="drawer-footer">
+            <Button type="primary" loading={loading} onClick={handleSubmit}>
+              保存
+            </Button>
+            <Button type="default" onClick={handleClose}>
+              取消
+            </Button>
+          </div>
+        }
       >
         <Form form={form} labelCol={{ flex: '100px' }}>
           <Form.Item label="包名" name="npmName" rules={[{ required: true, message: '请输入包名' }]}>
@@ -221,7 +242,7 @@ export default function NpmList() {
             <Input.TextArea placeholder="请输入描述" rows={3} />
           </Form.Item>
         </Form>
-      </Modal>
+      </Drawer>
     </PageContainer>
   );
 }

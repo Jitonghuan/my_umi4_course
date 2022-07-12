@@ -3,17 +3,18 @@ import { Form, Input, Modal, Radio} from 'antd';
 
 interface IProps {
   visible: boolean;
+  loading?: boolean;
   onClose: () => void;
+  onConfirm: (data: any) => void;
 }
 
 export default function SelectVersion (props: IProps) {
-  const { visible, onClose } = props;
-  const [loading, setLoading] = useState(false);
+  const { visible, loading, onClose, onConfirm } = props;
   const [form] = Form.useForm();
 
   async function onOk () {
     const values = await form.validateFields();
-    onClose();
+    onConfirm(values);
   }
 
   return (
@@ -26,13 +27,13 @@ export default function SelectVersion (props: IProps) {
       maskClosable={false}
     >
       <Form form={form} labelCol={{ flex: '100px' }}>
-        <Form.Item label="选择版本" name="version" rules={[{ required: true, message: '请选择版本' }]}>
+        <Form.Item label="选择版本" name="versionType" rules={[{ required: true, message: '请选择版本' }]}>
           <Radio.Group defaultValue="beta">
-            <Radio value='beta'>beta测试版本</Radio>
-            <Radio value='latest'>正式版本</Radio>
+            <Radio value={4}>beta测试版本</Radio>
+            <Radio value={5}>正式版本</Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item label="发布描述" name="desc" rules={[{ required: true, message: '请输入' }]}>
+        <Form.Item label="发布描述" name="deployDesc" rules={[{ required: true, message: '请输入' }]}>
           <Input.TextArea placeholder="请输入描述" rows={4} />
         </Form.Item>
       </Form>

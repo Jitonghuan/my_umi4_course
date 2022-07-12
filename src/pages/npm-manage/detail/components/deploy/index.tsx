@@ -1,13 +1,13 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Tabs } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DeployContent from './deploy-content';
 import HotFix from './deploy-content/components/hot-fix';
+import { getRequest } from "@/utils/request";
+import { getPipelineUrl } from "@/pages/application/service";
+import DetailContext from "@/pages/npm-manage/detail/context";
 import { history } from 'umi';
 import './index.less';
-import {getRequest} from "@/utils/request";
-import {getPipelineUrl} from "@/pages/application/service";
-import DetailContext from "@/pages/npm-manage/detail/context";
 
 const { TabPane } = Tabs;
 
@@ -25,8 +25,8 @@ const envTypeData = [
     value: 'pre'
   },
   {
-    label: 'PROD',
-    value: 'latest'
+    label: 'LATEST',
+    value: 'prod'
   }
 ];
 
@@ -38,12 +38,17 @@ export default function Deploy(props: any) {
   );
 
   useEffect(() => {
-    history.push({ query: { ...props.location.query, activeTab: tabActive } });
-  }, [tabActive]);
+    getPipeline();
+  }, [])
 
   // tab页切换
   const handleTabChange = (v: string) => {
     setTabActive(v);
+    history.push({ query: { ...props.location.query, activeTab: v } });
+    setCurrentValue('');
+    if (v) {
+      getPipeline(v);
+    }
   };
 
   // 获取流水线
@@ -61,10 +66,6 @@ export default function Deploy(props: any) {
       }
     });
   };
-
-  useEffect(() => {
-    getPipeline();
-  }, [])
 
   return (
     <ContentCard noPadding>
@@ -86,8 +87,8 @@ export default function Deploy(props: any) {
             />
           </TabPane>
         ))}
-        <TabPane tab="HOTFIX" key='hotFix'>
-          <HotFix isActive={'hotFix' === tabActive} />
+        <TabPane tab="HOTFIX" key='hotfix'>
+          <HotFix isActive={'hotfix' === tabActive} envTypeCode='hotfix' pipelineCode={currentValue} />
         </TabPane>
       </Tabs>
     </ContentCard>

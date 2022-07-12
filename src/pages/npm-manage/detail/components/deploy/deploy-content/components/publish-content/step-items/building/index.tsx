@@ -52,7 +52,7 @@ export default function BuildingStep(props: StepItemProps) {
             {url && (
               <div style={{ marginTop: -5 }}>
                 <a target="_blank" href={url}>
-                  构建发布详情
+                  jenkins详情
                 </a>
               </div>
             )}

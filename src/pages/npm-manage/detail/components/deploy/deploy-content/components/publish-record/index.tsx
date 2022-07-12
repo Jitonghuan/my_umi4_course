@@ -80,14 +80,14 @@ export default function PublishRecord(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布记录</div>
-      {tableProps.dataSource?.filter((v) => v?.envTypeCode === env)?.length ? (
+      {tableProps.dataSource?.filter((v) => v?.npmEnvType === env)?.length ? (
         <div>
           <List
             className="demo-loadmore-list"
             id="load-more-list"
             itemLayout="vertical"
             loadMore={renderLoadMore()}
-            dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
+            dataSource={tableProps.dataSource?.filter((v) => v?.npmEnvType === env) as IRecord[]}
             renderItem={(item) => (
               <List.Item>
                 <div>
@@ -95,36 +95,11 @@ export default function PublishRecord(props: IProps) {
                 </div>
                 <div>
                   <label>发布时间</label>:
-                  {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
+                  {moment(item['gmtCreate']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
-                {item.deployStatus === 'multiEnvDeploying' && item.deploySubStates ? (
-                  <div>
-                    <label>发布状态</label>:
-                    {JSON.parse(item.deploySubStates).map((subItem: any) => (
-                      <div>
-                        <label>{subItem.envCode}</label>:
-                        {
-                          <span style={{ marginLeft: 6 }}>
-                            <Tag color={recordDisplayMap[subItem['subState']]?.color || 'red'}>
-                              {recordDisplayMap[subItem['subState']]?.text || '---'}
-                            </Tag>
-                          </span>
-                        }
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div>
-                    <label>发布状态</label>:
-                    {
-                      <span style={{ marginLeft: 6 }}>
-                        <Tag color={recordDisplayMap[item['deployStatus']]?.color || 'red'}>
-                          {recordDisplayMap[item['deployStatus']]?.text || '---'}
-                        </Tag>
-                      </span>
-                    }
-                  </div>
-                )}
+                <div>
+                  <label>版本号</label>:{item.npmVersion}
+                </div>
                 <a onClick={() => handleShowDetail(item)}>详情</a>
               </List.Item>
             )}
@@ -138,17 +113,23 @@ export default function PublishRecord(props: IProps) {
           column={1}
         >
           <Descriptions.Item label="版本号">{curRecord?.npmVersion}</Descriptions.Item>
-          <Descriptions.Item label="发布人">{curRecord?.npmDeployer}</Descriptions.Item>
+          <Descriptions.Item label="发布人">{curRecord?.modifyUser}</Descriptions.Item>
           <Descriptions.Item label="发布时间">
-            {moment(curRecord?.deployedTime).format('YYYY-MM-DD HH:mm:ss')}
+            {moment(curRecord?.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
-          <Descriptions.Item label="发布完成时间">{curRecord?.deployFinishTime}</Descriptions.Item>
-          <Descriptions.Item label="发布环境">{curRecord?.envs}</Descriptions.Item>
+          <Descriptions.Item label="版本号">
+            {curRecord.npmVersion}
+          </Descriptions.Item>
+          <Descriptions.Item label="发布描述">
+            {curRecord.deployDesc}
+          </Descriptions.Item>
           <Descriptions.Item label="发布状态">
             {
-              <Tag color={recordDisplayMap[curRecord?.deployStatus]?.color}>
-                {recordDisplayMap[curRecord?.deployStatus]?.text}
-              </Tag>
+              <span style={{ marginLeft: 6 }}>
+                <Tag color={recordDisplayMap[curRecord['isActive']]?.color || 'red'}>
+                  {recordDisplayMap[curRecord['isActive']]?.text || '---'}
+                </Tag>
+              </span>
             }
           </Descriptions.Item>
         </Descriptions>

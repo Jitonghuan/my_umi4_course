@@ -1,123 +1,87 @@
-import React, { useState, useContext, useCallback, useEffect } from 'react';
-import moment from 'moment';
+import React, { useState, useContext, useEffect } from 'react';
 import { Button, Empty, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
-import { useFeVersions, useAppEnvCodeData } from './hooks';
-import { listAppEnvType } from '@/common/apis';
+import CardLayout from '@cffe/vc-b-card-layout';
+import { getTagList } from '@/pages/npm-manage/detail/server';
 import { getRequest } from '@/utils/request';
 import RollbackVersion from './rollback';
 import './index.less';
 
 export default function VersionsManage() {
   const { npmData } = useContext(DetailContext);
-  const [appEnvCodeData, isLoading] = useAppEnvCodeData(npmData?.npmName);
-  const [feVersionData, isVersionLoading, reloadVersionData] = useFeVersions(npmData!);
-  const [rollbackEnv, setRollbackEnv] = useState<any>();
-
-  const handleRollbackClick = useCallback((envCodeItem: any) => {
-    setRollbackEnv(envCodeItem);
-  }, []);
-
-  const handleRollbackSubmit = useCallback(() => {
-    setRollbackEnv(undefined);
-    reloadVersionData();
-  }, []);
-
-  const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
+  const [dataList, setDataList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tag, setTag] = useState('');
+  const [activeVersion, setActiveVersion] = useState('');
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    queryData();
+    void queryData();
   }, []);
 
-  const queryData = () => {
-    getRequest(listAppEnvType, {
-      data: { appCode: npmData?.npmName, isClient: false },
-    }).then((result) => {
-      const { data } = result || [];
-      let next: any = [];
-      (data || []).map((el: any) => {
-        if (el?.typeCode === 'dev') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
-        }
-        if (el?.typeCode === 'test') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
-        }
-        if (el?.typeCode === 'pre') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
-        }
-        if (el?.typeCode === 'prod') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
-        }
-      });
-      next.sort((a: any, b: any) => {
-        return a.sortType - b.sortType;
-      }); //升序
-      setEnvTypeData(next);
-    });
+  const queryData = async () => {
+    setIsLoading(true);
+    const res = await getRequest(getTagList, {
+      data: {
+        npmName: npmData?.npmName
+      }
+    })
+    setIsLoading(false);
+    if (res) {
+      setDataList(res?.data || []);
+    }
   };
+
+  async function handleRollbackClick(item: any) {
+    setTag(item.tag);
+    setActiveVersion(item.version);
+    setVisible(true);
+  }
 
   return (
     <ContentCard className="page-fe-version">
-      {envTypeData?.map((envTypeItem) => {
-        const envCodeList = appEnvCodeData[envTypeItem.value] || [];
-        return (
-          <section key={envTypeItem.value}>
-            <header>{envTypeItem.label}</header>
-            <div className="version-card-list clearfix">
-              {isLoading && <Spin className="block-loading" />}
-              {!isLoading && !envCodeList.length && (
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
-              )}
-              {envCodeList.map((envCodeItem) => {
-                const versionList = feVersionData[envCodeItem.envCode] || [];
-                const latestVersion = versionList.find((n) => n.isActive === 0);
-
-                return (
-                  envCodeItem.proEnvType === 'benchmark' && (
-                    <div className="version-card-item" key={envCodeItem.envCode}>
-                      <div className="card-item-header">
-                        <h4>{envCodeItem.envName}</h4>
-                        <small>{envCodeItem.envCode}</small>
-                      </div>
-                      <div className="card-item-body">
-                        <p>
-                          当前版本: <b>{latestVersion?.version || '--'}</b>
-                        </p>
-                        <p>
-                          发布时间:{' '}
-                          {(latestVersion?.gmtModify &&
-                            moment(latestVersion.gmtModify).format('YYYY-MM-DD HH:mm:ss')) ||
-                            '--'}
-                        </p>
-                      </div>
-                      <div className="card-item-actions">
-                        <Button
-                          type="default"
-                          danger
-                          size="small"
-                          loading={isVersionLoading}
-                          disabled={!latestVersion}
-                          onClick={() => handleRollbackClick(envCodeItem)}
-                        >
-                          {envTypeItem.value === 'prod' ? '回滚' : '切换版本'}
-                        </Button>
-                      </div>
-                    </div>
-                  )
-                );
-              })}
+      <div className="version-card-list clearfix">
+        {isLoading && <Spin className="block-loading" />}
+        {!isLoading && !dataList.length && (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="没有可布署环境" />
+        )}
+        <CardLayout>
+          {dataList.map((item) => (
+            <div className="version-card-item" key={item.tag}>
+              <div className="card-item-header">
+                <h4>{item.tag}</h4>
+              </div>
+              <div className="card-item-body">
+                <p>
+                  当前版本: <b>{item?.version || '--'}</b>
+                </p>
+              </div>
+              <div className="card-item-actions">
+                <Button
+                  type="default"
+                  danger
+                  size="small"
+                  onClick={() => handleRollbackClick(item)}
+                >
+                  回滚
+                </Button>
+              </div>
             </div>
-          </section>
-        );
-      })}
+          ))}
+        </CardLayout>
+      </div>
 
       <RollbackVersion
         npmData={npmData}
-        envItem={rollbackEnv}
-        versionList={feVersionData[rollbackEnv?.envCode!]}
-        onClose={() => setRollbackEnv(undefined)}
-        onSubmit={handleRollbackSubmit}
+        tag={tag}
+        activeVersion={activeVersion}
+        visible={visible}
+        onClose={() => setVisible(false)}
+        onSubmit={() => {
+          setVisible(false);
+          void queryData();
+        }}
       />
     </ContentCard>
   );

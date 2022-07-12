@@ -34,17 +34,22 @@ export const withdrawFeatures = `${appConfig.apiPrefix}/releaseManage/npmDeploy/
 export const queryRecordApi = `${appConfig.apiPrefix}/appManage/npmVersion/list`;
 
 // 版本回滚
-export const rollback = `${appConfig.apiPrefix}/appManage/npmDeploy/rollback`;
+export const rollback = `${appConfig.apiPrefix}/releaseManage/npmDeploy/rollback`;
 
 // 获取tag
-export const getTagList = `${appConfig.apiPrefix}/appManage/npmVersion/list`;
+export const getTagList = `${appConfig.apiPrefix}/appManage/npmVersion/getActiveVersion`;
 
 // 获取tag下对应的版本
 export const getVersionList = `${appConfig.apiPrefix}/appManage/npmVersion/list`;
 
 // 查询HotFix 版本
-export const searchHotFixVersion = `${appConfig.apiPrefix}/appManage/npmDeploy/getHotfixVersion`;
+export const searchHotFixVersion = `${appConfig.apiPrefix}/releaseManage/npmDeploy/getHotfixVersion`;
 
 // 查询npm包的hotfix分支
 export const hotFixList = `${appConfig.apiPrefix}/releaseManage/branch/list`;
 
+// 创建Hotfix分支
+export const createHotfixBranch = `${appConfig.apiPrefix}/releaseManage/branch/createHotfixBranch`;
+
+// 创建hotfix发布
+export const createHotfixDeploy = `${appConfig.apiPrefix}/releaseManage/npmDeploy/create`;
