@@ -10,8 +10,8 @@ import { Space, Tag, Popconfirm, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 // 列表页-表格
 export const createTableColumns = (params: {
-  onDelete: (record: any) => void;
-  onUpdate: () => void;
+  onDelete: (id: any) => void;
+  onUpdate: (id: any) => void;
   deleteLoading: boolean;
 }) => {
   return [
@@ -49,7 +49,7 @@ export const createTableColumns = (params: {
           <a>回收</a>
           <a
             onClick={() => {
-              params?.onUpdate();
+              params?.onUpdate(record.id);
             }}
           >
             改密

@@ -14,6 +14,7 @@ export default function AccountList() {
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [updateMode, setUpdateMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteAccount] = useDeleteAccount();
+  const [curId, setCurId] = useState<any>({});
   const columns = useMemo(() => {
     return createTableColumns({
       onDelete: async (id) => {
@@ -21,7 +22,8 @@ export default function AccountList() {
           reset();
         });
       },
-      onUpdate: () => {
+      onUpdate: (id) => {
+        setCurId(id);
         setUpdateMode('EDIT');
       },
       deleteLoading: delLoading,
@@ -62,6 +64,7 @@ export default function AccountList() {
       />
       <UpdatePassword
         mode={updateMode}
+        curId={curId}
         onClose={() => {
           setUpdateMode('HIDE');
         }}

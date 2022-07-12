@@ -12,18 +12,18 @@ import { useChangePassword } from '../../hook';
 
 export interface AccountEditorProps {
   mode: EditorMode;
-  initData?: any;
+  curId?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
 export default function AccountEditor(props: AccountEditorProps) {
-  const { mode, initData, onClose, onSave } = props;
+  const { mode, curId, onClose, onSave } = props;
   const [editForm] = Form.useForm();
   const [updateLoading, updatePassword] = useChangePassword();
 
   useEffect(() => {
-    if (mode === 'HIDE' || !initData) return;
+    if (mode === 'HIDE' || !curId) return;
 
     return () => {
       editForm.resetFields();
@@ -31,7 +31,7 @@ export default function AccountEditor(props: AccountEditorProps) {
   }, [mode]);
   const handleSubmit = async () => {
     const params = await editForm.validateFields();
-    updatePassword({ ...params, clusterId: 2 }).then(() => {
+    updatePassword({ password: params?.password, clusterId: 2, id: curId }).then(() => {
       onSave();
     });
   };

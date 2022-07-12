@@ -68,7 +68,7 @@ export function useDeleteAccount(): [boolean, (paramsObj: { clusterId: number; i
   const [loading, setLoading] = useState<boolean>(false);
   const deleteAccount = async (paramsObj: { clusterId: number; id: number }) => {
     setLoading(true);
-    await delRequest(`${APIS.deleteAccount}`, { data: paramsObj })
+    await delRequest(`${APIS.deleteAccount}?clusterId=${paramsObj?.clusterId}&id=${paramsObj?.id}`)
       .then((result) => {
         if (result.success) {
           message.success(result.data);
