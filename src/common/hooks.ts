@@ -27,6 +27,14 @@ interface IPermission {
   /** 权限对应的路由地址 */
   permissionUrl: string;
 }
+export interface matrixConfigProps {
+  curEnvType: string;
+  locationHref: string;
+  domainName: string;
+  wsPrefixName: string;
+  LogoName: string;
+  waterMarkName: string;
+}
 
 /** 全局上下文 */
 export const FeContext = createContext({
@@ -41,6 +49,8 @@ export const FeContext = createContext({
   /** 应用组 */
   businessData: [] as IOption[],
   envTypeData: [] as IOption[],
+  /* matrix 接口获取配置信息数据 */
+  matrixConfigData: {} as matrixConfigProps,
 });
 
 /** 修改标题和 favicon */
@@ -290,4 +300,30 @@ export function useDeleteSystemNotice(): [(id: number) => Promise<void>] {
 
   return [deleteSystemNotice];
 }
-//getMatrixEnvConfig
+//
+
+// 请求matrix配置信息 getMatrixEnvConfig
+export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
+  const [configData, setConfigData] = useState<matrixConfigProps>({
+    curEnvType: 'dev', //监狱管理局
+    locationHref: '',
+    domainName: 'http://c2f.apex-dev.cfuture.shop',
+    wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
+    LogoName: '——监狱管理局',
+    waterMarkName: 'Matrix-监狱管理局',
+  });
+  const loadData = useCallback(async () => {
+    await getRequest(APIS.getMatrixEnvConfig).then((result) => {
+      if (result?.success) {
+        setConfigData(result?.data);
+      } else {
+        return;
+      }
+    });
+  }, []);
+  // const getMatrixEnvConfig = useCallback(async () => {
+  //   await getRequest(APIS.getMatrixEnvConfig);
+  // }, []);
+
+  return [configData, loadData];
+}

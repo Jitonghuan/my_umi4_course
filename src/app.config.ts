@@ -39,6 +39,7 @@ function getPrivateMethods(type: boolean) {
 
 const PRIVATE_METHODS = getPrivateMethods(false);
 const IS_Matrix = getPrivateMethods(true);
+// console.log('全局配置中信息能不能拿到---',matrixConfigData)
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('matrix-jyglj') ? 'jyglj' : envType;
@@ -80,12 +81,16 @@ export default {
   BUILD_ENV,
   // apex 地址
   apexDomainName: domainName[envType],
+  // apexDomainName: matrixConfigData?.domainName,
   // webSocket 地址
   wsPrefix: wsPrefixName[envType],
+  // wsPrefix: matrixConfigData?.wsPrefixName,
   // logo 名字
   logoName: LogoName[envType] || '',
+  // logoName:matrixConfigData?.LogoName || '',
   // 水印
   waterMarkName: waterMarkName[envType] || '',
+  // waterMarkName: matrixConfigData?.waterMarkName || '',
   //是否为司内Matrix环境
   PRIVATE_METHODS: PRIVATE_METHODS,
   IS_Matrix: IS_Matrix,

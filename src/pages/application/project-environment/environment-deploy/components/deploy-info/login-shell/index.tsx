@@ -13,6 +13,7 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import { FeContext } from '@/common/hooks';
 import './index.less';
 
 export default function loginShell(props: any) {
@@ -22,6 +23,7 @@ export default function loginShell(props: any) {
   const [previous, setPrevious] = useState<boolean>(false);
   let currentContainerName = '';
   const { appData } = useContext(DetailContext);
+  const { matrixConfigData } = useContext(FeContext);
   const [viewLogform] = Form.useForm();
   const term = useRef<any>();
   const ws = useRef<WebSocket>();
@@ -61,7 +63,7 @@ export default function loginShell(props: any) {
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(
       // http://matrix-test.cfuture.shop/
-      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+      `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -148,7 +150,7 @@ export default function loginShell(props: any) {
     }
     currentContainerName = getContainer;
     ws.current = new WebSocket(
-      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+      `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     ws.current.onopen = () => {

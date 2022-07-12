@@ -24,6 +24,7 @@ import {
   useQueryUnreadNum,
   useQueryStemNoticeList,
   useReadList,
+  useGetMatrixEnvConfig,
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
@@ -63,13 +64,23 @@ export default function Layout(props: any) {
   const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
   const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
   const [getReadList] = useReadList();
+  const [matrixConfigInfo, getMatrixEnvConfig] = useGetMatrixEnvConfig();
+  // const [matrixConfigInfo,setMatrixConfigInfo]=useState<any>({});
   const [style, setStyle] = useState<any>('matrixLight');
+  // 页面图表宽度自动适配
+  const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
+  const effectResize = useDebounce(width, 100);
+  const [posVisible, setPosVisible] = useState<boolean>(false);
+  const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
       loadUnreadNum();
       loadStemNoticeList();
     });
   };
+  useEffect(() => {
+    getMatrixEnvConfig();
+  }, []);
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -77,13 +88,6 @@ export default function Layout(props: any) {
     DFSFunc(props.routes, 'routes', (node) => (map[node.path] = node));
     return map;
   }, [props.routes]);
-
-  // 页面图表宽度自动适配
-  const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
-  const effectResize = useDebounce(width, 100);
-  const [posVisible, setPosVisible] = useState<boolean>(false);
-  const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
-  const [curMsg, setCurMsg] = useState<any>();
 
   useEffect(() => {
     if (unreadNum !== 0) {
@@ -112,8 +116,6 @@ export default function Layout(props: any) {
   ConfigProvider.config({
     theme: {
       primaryColor: '#1973CC',
-
-      //#92a6bb
     },
   });
 
@@ -154,7 +156,14 @@ export default function Layout(props: any) {
         onSubmit={onPositionSubmit}
         onCancel={() => setPosVisible(false)}
       />
-      <WaterMark content={appConfig.waterMarkName} zIndex={0} fontSize={22} fontColor="#B0C4DE2B">
+      <WaterMark
+        content={
+          appConfig.envType === 'prod' ? null : appConfig.envType === 'dev' ? null : matrixConfigInfo?.waterMarkName
+        }
+        zIndex={0}
+        fontSize={22}
+        fontColor="#B0C4DE2B"
+      >
         <FeContext.Provider
           value={{
             breadcrumbMap,
@@ -162,6 +171,7 @@ export default function Layout(props: any) {
             permissionData,
             businessData,
             categoryData,
+            matrixConfigData: matrixConfigInfo,
           }}
         >
           <ChartsContext.Provider value={{ effectResize }}>
@@ -178,9 +188,10 @@ export default function Layout(props: any) {
               showSiderMenu={!fromThird}
               headerProps={{
                 // env: getEnv(),
-                userApi: `${appConfig.apexDomainName}/kapi/apex-sso/getLoginUserInfo`,
-                logoutApi: `${appConfig.apexDomainName}/kapi/apex-sso/logout`,
-                loginUrl: `${appConfig.apexDomainName}/login`,
+                userApi:
+                  matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                logoutApi: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                loginUrl: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/login`,
                 onClickPosition: () => {
                   setPosVisible(true);
                   loadStaffOrgData();
@@ -195,18 +206,11 @@ export default function Layout(props: any) {
                   data: stemNoticeListData,
                   onClickMsgEntry: (id: number, msg: any) => {
                     setAllMessageMode('VIEW');
-                    setCurMsg(msg);
                     oneKeyRead([id]);
 
-                    return (
-                      <a href={`'#'+${msg.systemNoticeId}`}>
-                        {msg.title}
-                        {console.log('渲染了')}
-                      </a>
-                    );
+                    return <a href={`'#'+${msg.systemNoticeId}`}>{msg.title}</a>;
                   },
                   onClickAllMsg: () => {
-                    console.log('点击这里');
                     setAllMessageMode('VIEW');
                   },
                   render: (active: boolean, setActive: (status: boolean) => void) => {
@@ -228,7 +232,13 @@ export default function Layout(props: any) {
                     <div className="matrix-title">
                       <span>
                         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
-                        {appConfig.title + appConfig.logoName}
+                        {console.log('appConfig.title', appConfig.title)}
+                        {appConfig.title}
+                        {appConfig.envType === 'prod'
+                          ? null
+                          : appConfig.envType === 'dev'
+                          ? null
+                          : matrixConfigInfo?.LogoName}
                       </span>
                     </div>
                   </>

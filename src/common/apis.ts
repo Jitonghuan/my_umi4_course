@@ -32,7 +32,6 @@ export const queryPermission = `${appConfig.apiPrefix}/rightManage/getUserMenus`
 
 /** 获取应用环境类型 */
 export const listAppEnvType = `${appConfig.apiPrefix}/appManage/env/listAppEnvType`;
-
 // `http://c2f.apex.cfuture.shop/kapi/apex-osc/org/getStaffOrgList`
 /** POST 获取所属组织数据 */
 export const getStaffOrgList = `${appConfig.apexDomainName}/kapi/apex-osc/org/getStaffOrgList`;
