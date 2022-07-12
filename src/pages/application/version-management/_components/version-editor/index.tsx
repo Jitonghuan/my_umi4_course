@@ -1,6 +1,6 @@
-// 应用编辑/新增
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/08/25 09:23
+// 版本编辑
+// @author JITONGHUAN <muxi.jth@come-future.com>
+// @create 2022/04/21 15:30
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button, Select, Input, Divider, Form, Modal, Table } from 'antd';
@@ -97,8 +97,6 @@ export default function VersionEditor(props: IProps) {
     queryAppsList(next);
   }, []);
   const selectAppGroupCode = (appGroupCode: string) => {
-    console.log('选择应用组', type, appGroupCode);
-
     queryAppsList(categoryCode || '', appGroupCode);
   };
 

@@ -2,59 +2,35 @@
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2022/04/1 14:15
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { history } from 'umi';
-import { Input, Table, Form, Button, Space, } from 'antd';
-import { PlusOutlined,RedoOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Input, Table, Form, Button, Space } from 'antd';
+import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import CreateTaskModal from './create-task';
 import { taskTableSchema } from './schema';
 import ExecutionDetailsModal from './execution-details-Modal';
 import { useTaskList, useTaskImplementList, useDeleteTask, useUpdateTask } from './hooks';
-import { recordEditData } from './type';
 
-import './index.less';
-
-type StatusTypeItem = {
-  color: string;
-  tagText: string;
-};
-
-const STATUS_TYPE: Record<string, StatusTypeItem> = {
-  '0': { tagText: '正常', color: 'green' },
-  '1': { tagText: '暂停', color: 'default' },
-};
-
-export default function DNSManageList(props: any) {
-  const [tableLoading, taskTablePageInfo, taskTableSource, setTaskTableSource, setTaskTablePageInfo, getTaskList] =
-    useTaskList();
-  const [loading, pageInfo, source, setSource, setPageInfo, getTaskImplementList] = useTaskImplementList();
-  const [delLoading, deleteTask] = useDeleteTask();
+export default function TaskManageList(props: any) {
+  const [tableLoading, taskTablePageInfo, taskTableSource, getTaskList] = useTaskList();
+  const [deleteTask] = useDeleteTask();
   const [executionDetailsMode, setExecutionDetailsMode] = useState<EditorMode>('HIDE');
   const [addTaskMode, setAddTaskMode] = useState<EditorMode>('HIDE');
   const [updateLoading, updateTaskManage] = useUpdateTask();
   const [taskForm] = Form.useForm();
   const [curRecord, setCurRecord] = useState<any>();
-  const [createAppVisible, setCreateAppVisible] = useState(false);
 
   useEffect(() => {
     getTaskList();
   }, []);
 
-  const onFresh=()=>{
-    loadListData(
-      {pageIndex: 1,
-      pageSize: 20})
-  }
+  const onFresh = () => {
+    loadListData({ pageIndex: 1, pageSize: 20 });
+  };
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    setPageInfo({
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize,
-      total: pagination.total,
-    });
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -65,7 +41,7 @@ export default function DNSManageList(props: any) {
 
   const loadListData = (params: any) => {
     let value = taskForm.getFieldsValue();
-    getTaskList({...params,...value});
+    getTaskList({ ...params, ...value });
   };
 
   // 表格列配置
@@ -88,19 +64,17 @@ export default function DNSManageList(props: any) {
         setCurRecord(record);
         setExecutionDetailsMode('VIEW');
       },
-      onSwitchEnableClick: (record, index) => {   
-        let enable=record?.enable === 1 ? 2 : 1
+      onSwitchEnableClick: (record, index) => {
+        let enable = record?.enable === 1 ? 2 : 1;
         let paramsObj = {
-           ...record,
-           enable: enable, }
+          ...record,
+          enable: enable,
+        };
 
-          
-          
         updateTaskManage(paramsObj).then(() => {
-            getTaskList();
-          });
+          getTaskList();
+        });
       },
-     
     }) as any;
   }, []);
 
@@ -139,12 +113,11 @@ export default function DNSManageList(props: any) {
               taskForm.resetFields();
               getTaskList({
                 pageIndex: 1,
-                // pageSize: pageSize,
               });
             }}
           >
             <Form.Item label="任务Code：" name="jobCode">
-              <Input placeholder="请输入任务Code" style={{ width: 290 }} />
+              <Input placeholder="请输入任务Code" style={{ width: 300 }} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -152,7 +125,7 @@ export default function DNSManageList(props: any) {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button type="ghost" htmlType="reset">
+              <Button type="ghost" htmlType="reset" danger>
                 重置
               </Button>
             </Form.Item>
@@ -166,29 +139,26 @@ export default function DNSManageList(props: any) {
           </div>
           <div className="caption-right">
             <Space>
-            {/* <RedoOutlined   onClick={onFresh} /> */}
-            <Button icon={<RedoOutlined/> }  onClick={onFresh}>
+              <Button icon={<RedoOutlined />} onClick={onFresh}>
                 刷新
               </Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                setCurRecord(undefined);
-                setAddTaskMode('ADD');
-              }}
-            >
-              <PlusOutlined />
-              创建任务
-            </Button>
-
+              <Button
+                type="primary"
+                onClick={() => {
+                  setCurRecord(undefined);
+                  setAddTaskMode('ADD');
+                }}
+              >
+                <PlusOutlined />
+                创建任务
+              </Button>
             </Space>
-
           </div>
         </div>
         <div>
-          <Table 
-            columns={tableColumns} 
-            dataSource={taskTableSource} 
+          <Table
+            columns={tableColumns}
+            dataSource={taskTableSource}
             loading={tableLoading}
             pagination={{
               current: taskTablePageInfo.pageIndex,
@@ -199,7 +169,6 @@ export default function DNSManageList(props: any) {
             }}
             onChange={pageSizeClick}
           ></Table>
-        
         </div>
       </ContentCard>
     </PageContainer>

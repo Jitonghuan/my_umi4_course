@@ -5,7 +5,7 @@
  */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Select, Button, DatePicker, message, Switch } from 'antd';
-import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined, MinusCircleOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, FullscreenOutlined, FullscreenExitOutlined, MinusCircleOutlined, ConsoleSqlOutlined, EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import * as echarts from 'echarts';
 import moment from 'moment';
 import PageContainer from '@/components/page-container';
@@ -39,6 +39,7 @@ const globalTopo: React.FC = () => {
   const [isMock, setIsMock] = useState(false);
   const [isExpand, setIsExpand] = useState(true); // true显示全屏展开  false显示全屏收起。
   const [envOptions, setEnvOptions] = useState<any>([]);
+  const [showEyes, setShowEyes] = useState<any>(false);
   // const [envOptions]: any[][] = useEnvOptions();
 
   const TopoRef = useRef<any>();
@@ -245,6 +246,7 @@ const globalTopo: React.FC = () => {
                 setSelectEnvName(option.label || env);
                 setSelectTime(moment().subtract(1, 'minutes'));
                 setRefreshFrequency('infinity');
+                setShowEyes(false);
               }}
               showSearch
               style={{ width: 140 }}
@@ -254,8 +256,8 @@ const globalTopo: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>时间：</div>
               <DatePicker
-                showTime={{ format: 'HH:mm:ss' }}
-                format="YYYY-MM-DD HH:mm:ss"
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
                 value={selectTime}
                 onChange={(value, dateString) => {
                   setSelectTime(value || moment());
@@ -280,6 +282,9 @@ const globalTopo: React.FC = () => {
           <div className="content-header">
             <div className="env-name">{selectEnvName}</div>
             <div className="action-bar">
+              <Button icon={showEyes ? <EyeInvisibleOutlined /> : <EyeOutlined />} onClick={() => { setShowEyes(!showEyes) }}>
+                {showEyes ? '关闭放大镜' : '启用放大镜'}
+              </Button>
               <Button
                 type="default"
                 icon={<PlusCircleOutlined />}
@@ -289,13 +294,13 @@ const globalTopo: React.FC = () => {
               >
                 红线追踪
               </Button>
-              <Button
+              {/* <Button
                 type="default"
                 icon={isExpand ? <PlusCircleOutlined /> : <MinusCircleOutlined />}
                 onClick={expandAll}
               >
                 {isExpand ? '全部展开' : '全部收起'}
-              </Button>
+              </Button> */}
               <Button
                 type="default"
                 icon={isFullScreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
@@ -338,6 +343,7 @@ const globalTopo: React.FC = () => {
                 refreshFrequency={refreshFrequency}
                 setIsExpand={setIsExpand}
                 setSelectTime={setSelectTime}
+                showEyes={showEyes}
               ></Graph>
               <DragWrapper appInfoList={appInfoList} deleteModal={deleteModal} />
             </div>

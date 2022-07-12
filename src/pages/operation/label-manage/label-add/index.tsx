@@ -97,7 +97,7 @@ export default function LabelEditor(props: LabelListProps) {
           <span style={{ marginLeft: 120, color: 'gray' }}>(该分类下新建应用时会自动绑定该标签)</span>
           <Form.Item>
             <Space size="small" style={{ marginTop: '50px', marginLeft: '220px' }}>
-              <Button type="ghost" htmlType="reset" onClick={onClose}>
+              <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                 取消
               </Button>
               <Button type="primary" htmlType="submit">

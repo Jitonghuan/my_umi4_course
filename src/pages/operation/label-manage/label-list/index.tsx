@@ -120,7 +120,7 @@ export default function LanbelList() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset">
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>

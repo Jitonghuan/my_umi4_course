@@ -33,3 +33,33 @@ export const createRules = `${appConfig.apiPrefix}/monitorManage/rules/create`;
 
 // 编辑
 export const updateRules = `${appConfig.apiPrefix}/monitorManage/rules/update`;
+
+// 数据库新增监控项
+export const addDbMonitor = `${appConfig.apiPrefix}/monitorManage/biz/sql/create`;
+
+// 数据库修改监控项
+export const updateDbMonitor = `${appConfig.apiPrefix}/monitorManage/biz/sql/modify`;
+
+// 获取数据库类型
+export const getDbType = `${appConfig.apiPrefix}/monitorManage/biz/sql/dbType`;
+
+// 获取数据库地址
+export const getDbAddr = `${appConfig.apiPrefix}/monitorManage/biz/sql/dbAddr`;
+
+// 获取数据库地址
+export const postSqlTest = `${appConfig.apiPrefix}/monitorManage/biz/sql/test`;
+
+// 获取数据库监控项
+export const getDbListMonitor = `${appConfig.apiPrefix}/monitorManage/biz/sql/list`;
+
+// 数据库监控项启动
+export const enableDbMonitor = `${appConfig.apiPrefix}/monitorManage/biz/sql/enable`;
+
+// 数据库监控项停用
+export const disableDbMonitor = `${appConfig.apiPrefix}/monitorManage/biz/sql/disable`;
+
+// 数据库监控项删除
+export const deleteDbMonitor = `${appConfig.apiPrefix}/monitorManage/biz/sql/delete`;
+
+// 数据库监控项预览
+export const metricPreview = `${appConfig.apiPrefix}/monitorManage/biz/sql/metricPreview`;

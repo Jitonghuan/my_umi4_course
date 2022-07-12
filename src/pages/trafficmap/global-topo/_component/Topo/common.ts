@@ -107,7 +107,9 @@ export const mockData = {
                 "type": "HttpClient",
                 "label": "120.26.165.76:80",
                 "region": "",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qps': 200
             },
             {
                 "id": "MTIzLjE2MC4yNDcuMTA1OjcwNzc=.0",
@@ -115,7 +117,9 @@ export const mockData = {
                 "type": "HttpClient",
                 "label": "123.160.247.105:7077",
                 "region": "",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qps': 200
             },
             {
                 "id": "MTkyLjE2OC41My4xMzA6ODEyMw==.0",
@@ -123,7 +127,9 @@ export const mockData = {
                 "type": "HttpClient",
                 "label": "192.168.53.130:8123",
                 "region": "",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qps': 200
             },
             {
                 "id": "MTkyLjE2OC41NC4yMDE6OTg3Ng==.0",
@@ -131,39 +137,19 @@ export const mockData = {
                 "type": "RocketMQ",
                 "label": "192.168.54.201:9876",
                 "region": "middleware",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qps': 200
             },
-            // {
-            //     "id": "MTkyLjE2OC41NC4yMDc6MzI0ODk7.0",
-            //     "timestamp": "2022-06-20 15:21:49",
-            //     "type": "Redis",
-            //     "label": "192.168.54.207:32489;",
-            //     "region": "middleware",
-            //     "status": ""
-            // },
-            // {
-            //     "id": "MTkyLjE2OC41NC4yMjA6MzMwNg==.0",
-            //     "timestamp": "2022-06-20 15:21:49",
-            //     "type": "Mysql",
-            //     "label": "192.168.54.220:3306",
-            //     "region": "middleware",
-            //     "status": ""
-            // },
-            // {
-            //     "id": "MTkyLjE2OC41NC4yMjI6MzMwNg==.0",
-            //     "timestamp": "2022-06-20 15:21:49",
-            //     "type": "Mysql",
-            //     "label": "192.168.54.222:3306",
-            //     "region": "middleware",
-            //     "status": ""
-            // },
             {
                 "id": "VXNlcg==.0",
                 "timestamp": "2022-06-20 15:21:49",
                 "type": "USER",
                 "label": "User",
                 "region": "",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qps': 200
             },
             {
                 "id": "YWNlLXBsYXRmb3Jt.1",
@@ -179,7 +165,9 @@ export const mockData = {
                 "type": "Dubbo",
                 "label": "apex",
                 "region": "",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qts': 200
             },
             {
                 "id": "YXBleC1kaWM=.1",
@@ -187,7 +175,9 @@ export const mockData = {
                 "type": "Dubbo",
                 "label": "apex-dic",
                 "region": "",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qts': 200
             },
             {
                 "id": "YXBleC1ub3RpZnk=.1",
@@ -195,7 +185,9 @@ export const mockData = {
                 "type": "SpringMVC",
                 "label": "apex-notify",
                 "region": "",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qts': 200
             },
             {
                 "id": "YXBleC1vcGVyYXRpb24=.1",
@@ -203,7 +195,9 @@ export const mockData = {
                 "type": "SpringMVC",
                 "label": "apex-operation",
                 "region": "cis",
-                "status": ""
+                "status": "",
+                'rt': '100',
+                'qts': 200
             },
             {
                 "id": "YXBleC1zZWFyY2hkdW1w.1",

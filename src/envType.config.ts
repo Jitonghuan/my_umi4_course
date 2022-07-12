@@ -1,5 +1,6 @@
 // Apex 域名配置
 export const domainName: any = {
+  jyglj: 'http://c2f.apex-jyglj.zfy.zjsjy.gov',
   gushangke: 'http://c2f.apex.gushangke.com',
   'bf-daily': 'http://c2f.apex-bf-daily.cfuture.shop',
   zsdata: 'http://c2f.apex.cfuture.shop',
@@ -12,6 +13,7 @@ export const domainName: any = {
 
 // websocket 配置
 export const wsPrefixName: any = {
+  jyglj: 'ws://matrix-jyglj.cfuture.shop',
   gushangke: 'ws://matrix-api.gushangke.com',
   'bf-daily': 'ws://matrix-bf-daily.cfuture.shop',
   zsdata: 'ws://matrix-zsdata.cfuture.shop',
@@ -24,6 +26,7 @@ export const wsPrefixName: any = {
 
 // logo 名字
 export const LogoName: any = {
+  jyglj: '——监狱管理局',
   gushangke: '——富阳骨伤',
   'bf-daily': '——宝丰测试',
   zsdata: '——中山数据中台',
@@ -36,6 +39,7 @@ export const LogoName: any = {
 
 // 水印
 export const waterMarkName: any = {
+  jyglj: 'Matrix-监狱管理局',
   gushangke: 'Matrix-富阳骨伤',
   'bf-daily': 'Matrix-宝丰测试',
   zsdata: 'Matrix-中山数据中台',

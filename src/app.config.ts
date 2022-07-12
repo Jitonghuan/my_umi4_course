@@ -27,7 +27,8 @@ function getPrivateMethods(type: boolean) {
       href.includes('matrix-local') ||
       href.includes('matrix-test') ||
       href.includes('matrix.cfuture') ||
-      href.includes('matrix-base-poc')
+      href.includes('matrix-base-poc') ||
+      href.includes('matrix-jyglj')
     ) {
       return 'public';
     } else {
@@ -40,6 +41,7 @@ const PRIVATE_METHODS = getPrivateMethods(false);
 const IS_Matrix = getPrivateMethods(true);
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
+envType = window.location.href.includes('matrix-jyglj') ? 'jyglj' : envType;
 envType = window.location.href.includes('matrix-bf-daily') ? 'bf-daily' : envType;
 envType = window.location.href.includes('matrix-fygs') ? 'fygs' : envType;
 envType = window.location.href.includes('matrix-zslnyy') ? 'zslnyy' : envType;

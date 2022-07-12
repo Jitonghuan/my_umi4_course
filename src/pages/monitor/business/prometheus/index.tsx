@@ -252,7 +252,7 @@ const PrometheusCom: React.FC = () => {
   return (
     <>
       <TableSearch
-        splitLayout={false}
+        splitLayout={true}
         form={form}
         formOptions={formOptions}
         formLayout="inline"
@@ -271,7 +271,7 @@ const PrometheusCom: React.FC = () => {
           <Button
             type="primary"
             onClick={() => {
-              history.push('./prometheus-add');
+              history.push('./prometheus-edit');
             }}
             icon={<PlusOutlined />}
           >

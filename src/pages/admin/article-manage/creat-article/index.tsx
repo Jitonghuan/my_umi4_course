@@ -2,20 +2,20 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/06/15 14:50
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Switch } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Drawer, Form, Button, Select, Input, Switch } from 'antd';
 import ReactWEditor from 'wangeditor-for-react/lib/core';
 import { typeOptions } from '../schema';
 import { useAddArticle, useUpdateArticle } from '../hook';
 
-export interface MemberEditorProps {
+export interface CreateArticleProps {
   mode?: EditorMode;
   initData?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
-export default function MemberEditor(props: MemberEditorProps) {
+export default function CreateArticle(props: CreateArticleProps) {
   const [addLoading, createArticle] = useAddArticle();
   const [updateLoading, updateArticle] = useUpdateArticle();
   const { mode, initData, onClose, onSave } = props;

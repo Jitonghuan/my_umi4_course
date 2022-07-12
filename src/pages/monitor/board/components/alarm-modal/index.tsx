@@ -30,18 +30,23 @@ export function AlarmModal(props: boardInfo) {
         let labelsInfo: any = [];
         if (res.length !== 0) {
           res?.map((item: any) => {
-            let arry: any = [];
-
+            // let arry: any = [];
+            item.labelesinfo = [];
             for (const key in item.labels) {
               const element = item.labels[key];
-              arry.push({
+              // arry.push({
+              //   key: item.key,
+              //   label: key,
+              //   value: element,
+              // });
+              item.labelesinfo.push({
                 key: item.key,
                 label: key,
                 value: element,
               });
             }
 
-            labelsInfo.push(arry);
+            // labelsInfo.push(arry);
           });
         }
 
@@ -67,17 +72,17 @@ export function AlarmModal(props: boardInfo) {
         expandable={{
           expandedRowRender: (record: any, index_one: number) => (
             <p style={{ margin: 0 }}>
-              {labelsInfo.length !== 0 &&
-                labelsInfo[index_one]?.map((item: any, index_two: number) => {
-                  return (
-                    <li>
-                      <span>
-                        <b>{item?.label}:</b>
-                      </span>
-                      <span className="labels-info-content">{item?.value}</span>
-                    </li>
-                  );
-                })}
+              {/* <li>{JSON.stringify(record.labelesinfo) }</li> */}
+              {record.labelesinfo?.map((item: any, index_two: number) => {
+                return (
+                  <li>
+                    <span>
+                      <b>{item?.label}:</b>
+                    </span>
+                    <span className="labels-info-content">{item?.value}</span>
+                  </li>
+                );
+              })}
             </p>
           ),
           rowExpandable: (record) => Object.keys(record?.labels).length !== 0,

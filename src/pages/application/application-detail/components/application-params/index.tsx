@@ -3,7 +3,7 @@
 // @create 2021/07/23 17:20
 
 import React, { useContext, useRef } from 'react';
-import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio } from 'antd';
+import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, Popconfirm } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
@@ -12,25 +12,28 @@ import AceEditor from '@/components/ace-editor';
 import DetailContext from '@/pages/application/application-detail/context';
 import EditorTable from '@cffe/pc-editor-table';
 import * as APIS from '@/pages/application/service';
+import { useDeleteTempl } from './hook';
 import './index.less';
 
 export default function ApplicationParams(props: any) {
   const { appData } = useContext(DetailContext);
   const [applicationForm] = Form.useForm();
   const [restarForm] = Form.useForm();
+  const [deleteTemplLoading, deleteTempl] = useDeleteTempl();
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [selectEnvData, setSelectEnvData] = useState<string>(''); //下拉选择应用环境
   const [selectTmpl, setSelectTmpl] = useState<string>(''); //下拉选择应用模版
   const [applicationlist, setApplicationlist] = useState<any>([]); //获取到的结果
   const [inintDatas, setInintDatas] = useState<any>([]); //初始化的数据
-  const [id, setId] = useState<string>();
+  const [id, setId] = useState<number>();
   const [isDeployment, setIsDeployment] = useState<string>();
   const [ensureDisable, setEnsureDisable] = useState<boolean>(false);
   const [infoLoading, setInfoloading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [value, setValue] = useState<number>(1);
   const [limit, setLimit] = useState<number>(0);
+
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
   const { templateType, envCode } = props?.history.location?.query || {};
@@ -85,6 +88,7 @@ export default function ApplicationParams(props: any) {
       });
     });
   }, []);
+  //deleteTempl
 
   useEffect(() => {
     if (modalVisible) {
@@ -200,12 +204,15 @@ export default function ApplicationParams(props: any) {
             tmplConfigurableItem: arr1,
             jvm: jvm,
           });
-          // changeEnvCode(applicationlist.envCode);
-          // changeTmplType(applicationlist.templateType);
           setIsDeployment(applicationlist.templateType);
           setLimit(arr1.length);
         } else {
           message.info(`${envCode}的${templateType}类型模版为空`);
+          applicationForm.setFieldsValue({
+            value: '',
+            tmplConfigurableItem: [],
+            jvm: '',
+          });
         }
 
         //处理添加进表格的数据
@@ -274,6 +281,7 @@ export default function ApplicationParams(props: any) {
           });
           setLimit(arr.length);
         } else {
+          setId(undefined);
           applicationForm.setFieldsValue({
             tmplConfigurableItem: [],
             jvm: '',
@@ -333,6 +341,17 @@ export default function ApplicationParams(props: any) {
       });
     }
   };
+  const delTmpl = () => {
+    if (!id) {
+      message.info('不存在模版不可以删除！');
+    }
+    if (id) {
+      deleteTempl(id).then(() => {
+        console.log('selectEnvData, selectTmpl', selectEnvData, selectTmpl);
+        showAppList(selectEnvData, selectTmpl);
+      });
+    }
+  };
 
   return (
     <ContentCard>
@@ -357,9 +376,16 @@ export default function ApplicationParams(props: any) {
             {/* <Button type="primary" onClick={queryTmpl}>
               查询
             </Button> */}
-            <Button type="default" onClick={inintData}>
-              重置
-            </Button>
+            <Space>
+              <Button danger onClick={inintData}>
+                重置
+              </Button>
+              <Popconfirm title="确认删除此模板吗？" onConfirm={delTmpl} disabled={!id}>
+                <Button danger disabled={!id} loading={deleteTemplLoading}>
+                  删除模版
+                </Button>
+              </Popconfirm>
+            </Space>
           </div>
         </Row>
         <Row style={{ marginTop: '20px' }}>
@@ -429,7 +455,7 @@ export default function ApplicationParams(props: any) {
         </Row>
         <Form.Item>
           <Space size="small" style={{ float: 'right' }}>
-            <Button type="ghost" onClick={inintData}>
+            <Button danger onClick={inintData}>
               重置
             </Button>
             <Button type="primary" htmlType="submit" disabled={ensureDisable}>
@@ -468,7 +494,7 @@ export default function ApplicationParams(props: any) {
               value={value}
             >
               {/* <Radio value={3}>定时生效</Radio> */}
-              <Radio value={1}>不生效</Radio>
+              <Radio value={1}>下次发布生效</Radio>
               <Radio value={2}>立即生效</Radio>
             </Radio.Group>
           </Form.Item>

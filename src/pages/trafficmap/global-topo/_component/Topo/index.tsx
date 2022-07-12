@@ -17,11 +17,12 @@ const layout: any = {
 };
 const Topo = React.forwardRef((props: any, ref: any) => {
     const containerRef: any = useRef(null);
-    const { onNodeClick, onRedLineClick, setIsExpand, setSelectTime, selectTime } = props;
+    const { onNodeClick, onRedLineClick, setIsExpand, setSelectTime, selectTime, showEyes } = props;
     const [graph, setGraph] = useState<Graph>(); //graph实例
     const [originData, setOriginData] = useState<any>({}); //所有节点/边数据
     const [needExpandList, setNeedExpandList] = useState<any>({}); //需要展开但还没处理过的数据
     const [expandList, setExpandList] = useState<any>({}); //所有展开的数据
+    const [fishEyes, setFishEyes] = useState<any>({});//鱼眼放大镜对象
 
     let dataInterval: any;
     //传给父组件  全部展开/全部收起
@@ -37,7 +38,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             const edges = originData.edges;
             setNeedExpandList({ nodes: nodes.concat(noReginNodes), edges });
         },
-    }));
+    }), [originData, graph]);
 
     useEffect(() => {
         if (props.refreshFrequency == 'infinity') {
@@ -73,7 +74,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 layout.stop(g);
                 const { item } = e;
                 const model = item?.getModel();
-                if (model.region) {
+                if (model.region || model.nodeType === 'region') {
                     if (model.nodeType === 'region') {
                         return `<ul class="g6-options-menu">
             <li id='expand'>展开当前域</li>
@@ -100,29 +101,26 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 }
             },
         });
-        const edgeMenu = new G6.Menu({
-            offsetX: -10,
-            offsetY: -10,
+
+        const edgeTooltip = new G6.Tooltip({
+            offsetX: 10,
+            offsetY: 10,
             itemTypes: ['edge'],
-            trigger: 'click',
             getContent: (e: any) => {
                 const outDiv = document.createElement('div');
-                outDiv.style.width = '160px';
+                outDiv.style.width = 'fit-content';
                 outDiv.innerHTML = `
-          <ul>
-            <li>rt(响应时间): ${e.item?.getModel().rt || ''}</li>
-          </ul>
-          <ul>
-            <li>suc(调用成功率): ${e.item?.getModel().suc || ''}</li>
-          </ul>
-          <ul>
-            <li>qps(请求频率): ${e.item?.getModel().qps || ''}</li>
-          </ul>
+                <ul>
+                <li>rt(响应时间): ${e.item?.getModel().rt || ''}</li>
+              </ul>
+              <ul>
+                <li>qps(请求频率): ${e.item?.getModel().qps || ''}</li>
+              </ul>
           `;
                 return outDiv;
             },
-            handleMenuClick(target, item) { },
         });
+
         const tooltip = new G6.Tooltip({
             offsetX: 10,
             offsetY: 10,
@@ -132,22 +130,34 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 outDiv.style.width = 'fit-content';
                 outDiv.innerHTML = `
                 <ul>
-                <li><div>Id: ${e.item.getModel().id}</div></li>
-                <li>Region: ${e.item.getModel().region || '无域节点'}</li>
+                <li><div><b>Id:</b> ${e.item.getModel().id}</div></li>
+                </ul>
+                ${e.item.getModel().nodeType !== 'region' ?
+                        `<ul><li><b>Region: </b>${e.item.getModel().region || ''}</li></ul>`
+                        : ''}
+                <ul>
+                  <li><b>名称:</b> ${e.item?.getModel().label || e.item?.getModel().id}</li>
                 </ul>
                 <ul>
-                  <li>Label: ${e.item?.getModel().label || e.item?.getModel().id}</li>
-                </ul>
+                <li><b>类型:</b> ${e.item?.getModel().typeLabel || '---'}</li>
+              </ul>
+                <ul>
+                <li><b>rt(响应时间):</b> ${e.item?.getModel().rt || '---'}</li>
+              </ul>
+              <ul>
+                <li><b>qps(请求频率):</b> ${e.item?.getModel().qps || '---'}</li>
+              </ul>
           `;
                 return outDiv;
             },
         });
 
+
         g = new G6.Graph({
             container: 'topo',
             width: container?.clientWidth,
             height: container?.clientHeight,
-            plugins: [edgeMenu, menu, toolbar, tooltip], // 插件
+            plugins: [edgeTooltip, menu, toolbar, tooltip], // 插件
             modes: {
                 default: [
                     {
@@ -162,11 +172,56 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     'drag-combo',
                 ],
             },
+            layout: {
+                type: 'force',
+                clustering: true,
+                clusterNodeStrength: -5,
+                // clusterEdgeDistance: 1000,
+                clusterNodeSize: (d: any) => {
+                    if (d.size) return d.size;
+                    return 40;
+                },
+                clusterFociStrength: 16,
+                nodeSpacing: 20,
+                alphaDecay: 0.3,
+                // alphaMin: 0.2,
+                collideStrength: 0.8,
+                preventOverlap: true,
+                onLayoutEnd: () => {
+                    renderRegions();
+
+                }
+            },
         });
+        const renderRegions = () => {
+            const regions: any = {};
+            // 计算现在有几个域
+            g?.save()?.nodes?.forEach((node: any) => {
+                if (node.nodeType === 'app' && node.region) {
+                    regions[node.region] = regions[node.region] || [];
+                    regions[node.region].push(node.id);
+                }
+            });
+            Object.keys(regions).forEach((k) => {
+                const id = random();
+                g.createCombo(
+                    {
+                        id: `${k}-combo`,
+                        type: 'region-combo',
+                        cluster: k,
+                        ...comboStyled({ region: k, count: regions[k].length || 0 }),
+                    },
+                    regions[k],
+                );
+            });
+            g.fitView();
+        };
+
         // 关闭局部渲染，防止有残影
         g.get('canvas').set('localRefresh', false);
         bindListener(g);
         setGraph(g);
+
         return () => g && g.destroy();
     }, [containerRef]);
 
@@ -177,6 +232,26 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         props.selectEnv && getTopoData();
     }, [props.selectTime, props.selectEnv]);
 
+    useEffect(() => {
+        if (!graph) return;
+        let fisheye = new G6.Fisheye({
+            r: 400,
+            showLabel: true,
+            d: 5
+        });
+        if (showEyes) {
+            graph?.addPlugin(fisheye);
+        } else {
+            graph?.removePlugin(fisheye)
+
+        }
+        return () => {
+            if (graph.get('plugins') && (graph.get('plugins') || []).includes(fisheye)) {
+                graph?.removePlugin(fisheye)
+            }
+        }
+    }, [showEyes, graph])
+
     //过滤数据、记录数据
     useEffect(() => {
         if (!needExpandList || !needExpandList.nodes) return;
@@ -185,9 +260,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         filterData.edges = filterData.edges.filter(
             (e: any) => findNode(e.source, filterData.nodes) && findNode(e.target, filterData.nodes),
         );
-
-        setExpandList(filterData);
-
+        setExpandList(JSON.parse(JSON.stringify(filterData)));
         const collapseNode = filterData.nodes.filter((item: any) => {
             if (item.nodeType == 'region') {
                 return item;
@@ -203,66 +276,12 @@ const Topo = React.forwardRef((props: any, ref: any) => {
     // 渲染数据
     useEffect(() => {
         if (!graph) return;
-        const linkDistance = 100;
-        const edgeStrength = 50;
-        const nodeStrength = 200;
-        const nodeSpacing = 30;
         if (expandList && expandList.nodes && expandList.nodes.length > 0) {
-            const container = containerRef.current;
-            const config = {
-                type: 'gForce',
-                minMovement: 0.6,
-                maxIteration: 500,
-                preventOverlap: true,
-                damping: 0.99,
-                gpuEnabled: true,
-                center: [container?.clientWidth / 2, container?.clientHeight / 2],
-                linkDistance: (d: any) => {
-                    let dist = linkDistance;
-                    const sourceNode = findNode(d.source, expandList.nodes);
-                    const targetNode = findNode(d.target, expandList.nodes);
-                    //   加长和域节点有关的边
-                    if (sourceNode.type === 'region' || targetNode.type === 'region') {
-                        dist = linkDistance * 5;
-                    }
-                    return dist;
-                },
-                edgeStrength: (d: any) => {
-                    return edgeStrength;
-                },
-                nodeStrength: (d: any) => {
-                    // 给离散点引力，让它们聚集
-                    // if (d.degree === 0) return -10;
-                    // 聚合点的斥力大
-                    if (d.nodeType === 'region') return nodeStrength * 2;
-                    return nodeStrength;
-                },
-                nodeSize: (d: any) => {
-                    if (d.size) return d.size;
-                    return 40;
-                },
-                nodeSpacing: (d: any) => {
-                    if (d.degree === 0) return nodeSpacing * 3;
-                    return nodeSpacing;
-                },
-                onLayoutEnd: () => {
-                    layout.stop(graph);
-
-                },
-                tick: () => {
-                    graph.refreshPositions();
-                },
-            };
-
-            const layoutInstance = new G6.Layout['gForce'](config);
-            layoutInstance.init(expandList);
-            layoutInstance.execute();
-            layout.instance = layoutInstance;
             // 固定节点位置
             expandList?.nodes?.forEach((node: any) => {
-                if (node.label === 'User') {
-                    fixedNode(node)
-                }
+                // if (node.label === 'User') {
+                //     fixedNode(node)
+                // }
                 if (node.id === 'middleware') {
                     fixedNode(node, ['bottom', 'center'])
                 }
@@ -279,29 +298,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             // const middlewareNode = graph.findById('middleware') as any;
             // userNode?.lock();
             // middlewareNode?.lock()
-
-            const renderRegions = () => {
-                const regions: any = {};
-                // 计算现在有几个域
-                expandList.nodes.forEach((node: any) => {
-                    if (node.nodeType === 'app' && node.region) {
-                        regions[node.region] = regions[node.region] || [];
-                        regions[node.region].push(node.id);
-                    }
-                });
-                Object.keys(regions).forEach((k) => {
-                    const id = random();
-                    graph.createCombo(
-                        {
-                            id: `${k}-combo`,
-                            type: 'region-combo',
-                            ...comboStyled({ region: k, count: regions[k].length || 0 }),
-                        },
-                        regions[k],
-                    );
-                });
-                graph.fitView([20, 20]);
-            };
 
             //   展开节点
             const expandNode = (evt: any) => {
@@ -348,7 +344,6 @@ const Topo = React.forwardRef((props: any, ref: any) => {
             graph.on('collapse-icon:click', expandNode);
             graph.on('node:collapse', collapseNode);
             graph.on('node:expand', expandNode);
-            graph.on('layoutEnd', renderRegions);
             graph.on('combo:click', ({ target, item }: any) => {
                 if (target.get('name') === 'combo-marker-shape') {
                     collapseNode(item.getModel());
@@ -356,20 +351,20 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                 clearAllStats(graph);
             });
             return () => {
-                layoutInstance.stop();
-                layoutInstance.destroy();
+
                 graph.off('collapse-icon:click', expandNode);
                 graph.off('node:collapse', collapseNode);
                 graph.off('node:expand', expandNode);
-                graph.off('layoutEnd', renderRegions);
                 graph.off('combo:click');
             };
         }
     }, [expandList]);
+
+
     //   处理数据
     const getTopoData = async () => {
         let res = await getTopoList({
-            duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm:ss'),
+            duration: moment(props.selectTime).format('YYYY-MM-DD HH:mm'),
             envCode: props.selectEnv,
         })
         // let res = mockRomote();
@@ -391,9 +386,11 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     degree: 0,
                     inDegree: 0,
                     outDegree: 0,
-                    type: item.type == 'region' ? 'region-node' : 'app-node',
+                    typeLabel: item.type,
+                    type: item.type === 'region' ? 'region-node' : 'app-node',
                     nodeType: item.type === 'region' ? 'region' : 'app',
-                    size: item.type == 'region' ? 60 : 40,
+                    size: item.type === 'region' ? 60 : 40,
+                    cluster: item.type === 'region' ? item.id : item.region || 'default'
                 });
                 if (item.type === 'region') {
                     clusterSize[item.region] = clusterSize[item.region] || 0;
@@ -424,9 +421,9 @@ const Topo = React.forwardRef((props: any, ref: any) => {
         const region = nodes.filter((item: any) => item.nodeType === 'region');
         const otherNodes = nodes.filter((item: any) => !item.region && item.nodeType !== 'region')
         // setNeedExpandList({ nodes: region, edges: res.data.Calls });
-
-        setNeedExpandList({ nodes: region.concat(otherNodes), edges: res?.data?.Calls || [] });
-        setOriginData({ nodes, edges: res?.data?.Calls || [] });
+        const edges = res?.data?.Calls ? JSON.parse(JSON.stringify(res?.data?.Calls)) : [];
+        setNeedExpandList({ nodes: region.concat(otherNodes), edges: edges });
+        setOriginData({ nodes, edges: edges });
     };
 
     // 用来固定节点

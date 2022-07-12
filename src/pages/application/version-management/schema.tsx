@@ -1,6 +1,4 @@
-import { history } from 'umi';
 import { Tooltip } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
 export type AppType = 'frontend' | 'backend';

@@ -1,22 +1,6 @@
-import React from 'react';
-import { history } from 'umi';
 import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { JOB_STATUS } from './type';
-
-export type AppType = 'frontend' | 'backend';
-
-const APP_TYPE_MAP = {
-  frontend: '前端',
-  backend: '后端',
-};
-
-const APP_TYPE_ICON = {
-  frontend: <Html5Outlined />,
-  backend: <CodeOutlined />,
-};
-
 // 表格 schema
 export const taskTableSchema = ({
   onEditClick,
@@ -24,14 +8,12 @@ export const taskTableSchema = ({
   onDelClick,
   onGetExecutionDetailClick,
   onSwitchEnableClick,
- 
 }: {
   onEditClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
   onGetExecutionDetailClick: (record: any, index: number) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
-  
 }) =>
   [
     {
@@ -43,6 +25,7 @@ export const taskTableSchema = ({
       title: '任务名称',
       dataIndex: 'jobName',
       width: 230,
+      render: (value, record, index) => <a onClick={() => onViewClick(record, index)}>{value}</a>,
     },
     {
       title: '任务code',
@@ -64,6 +47,11 @@ export const taskTableSchema = ({
       dataIndex: 'desc',
     },
     {
+      title: '创建人',
+      width: 200,
+      dataIndex: 'createUser',
+    },
+    {
       title: '上次执行结果',
       dataIndex: 'lastExecStatus',
       width: 120,
@@ -79,11 +67,8 @@ export const taskTableSchema = ({
       render: (enable: number, record: any, index: number) => (
         <>
           <Switch
-            checked={
-              enable === 1 ? true : false 
-            }
+            checked={enable === 1 ? true : false}
             onClick={() => {
-          
               onSwitchEnableClick(record, index);
             }}
           />

@@ -3,67 +3,104 @@
     .ant-collapse-content-box {
       height: 280px;
     }
-
-    .log-config {
-      display: flex;
-      height: 100%;
-
-      // justify-content: space-around;
-      .log-config-left {
-        width: 45%;
-        .ant-form,
-        .ant-form-horizontal {
-          margin-top: 30px;
-        }
-      }
-
-      .log-config-right {
-        width: 55%;
-        // height: 100%;
-        .log-board,
-        .target-board {
-          width: 100%;
-          height: 96%;
-          background-color: rgb(8, 29, 16);
-          overflow: auto;
-        }
-      }
-    }
   }
   .target-config-collapse {
     .ant-collapse-content-box {
       height: 420px;
     }
-    .target-config {
-      display: flex;
-      height: 100%;
-      .target-config-left {
-        width: 45%;
-        height: 100%;
-        overflow: auto;
-        .target-item {
-          &::before {
-            display: inline-block;
-            content: '';
-            margin-right: 8px;
-            width: 4px;
-            height: 16px;
-            background: #1973cc;
-          }
-        }
+  }
+
+  .log-config {
+    display: flex;
+    margin: 10px 0 20px;
+
+    .log-config-left {
+      flex: 1;
+      .ant-row {
+        width: 470px;
+        margin-bottom: 10px;
+      }
+
+      .ant-form-item-control-input-content {
+        display: flex;
       }
     }
 
-    .target-config-right {
+    .log-config-right {
       width: 55%;
-      // height: 100%;
       .log-board,
       .target-board {
         width: 100%;
-        height: 93%;
+        height: 96%;
         background-color: rgb(8, 29, 16);
         overflow: auto;
       }
     }
   }
+
+  .monitor-log-btn-wrapper {
+    display: flex;
+    margin-bottom: 10px;
+  }
+
+  .target-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 20px;
+    font-size: 16px;
+    box-sizing: border-box;
+    padding: 0 10px;
+    &::before {
+      position: absolute;
+      left: 0;
+      display: inline-block;
+      content: '';
+      margin-right: 8px;
+      width: 4px;
+      height: 16px;
+      background: #1973cc;
+    }
+  }
+
+  .target-config {
+    display: flex;
+    height: 100%;
+    .target-config-left {
+      flex: 1;
+      height: 100%;
+      overflow: auto;
+    }
+  }
+
+  .space-list-item {
+    display: flex;
+    .ant-space-item {
+      display: flex;
+      flex-wrap: wrap;
+      .ant-form-item {
+        width: 480px;
+      }
+    }
+
+    .filters-list-wrapper {
+      .ant-form-item {
+        width: auto;
+      }
+    }
+  }
+
+  .target-item-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.log-monitor-board-con {
+  width: 100%;
+  height: 93%;
+  min-height: 550px;
+  background-color: rgb(8, 29, 16);
+  overflow: auto;
 }

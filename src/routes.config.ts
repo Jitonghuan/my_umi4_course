@@ -94,6 +94,10 @@ export default [
     redirect: `${baseRoutePath}/operation/ng-manage/ng-list`,
   },
   {
+    path: `${baseRoutePath}/operation/helm-manage`,
+    redirect: `${baseRoutePath}/operation/helm-manage/helm-list`,
+  },
+  {
     path: `${baseRoutePath}/operation/label-manage`,
     redirect: `${baseRoutePath}/operation/label-manage/label-list`,
   },
@@ -367,6 +371,12 @@ export default [
         component: '@/pages/application/version-management',
       },
       {
+        path: 'dependency-manage',
+        name: '依赖管理',
+        key: 'dependency-manage',
+        component: '@/pages/application/dependency-manage',
+      },
+      {
         path: 'npm-list',
         name: 'NPM管理',
         component: '@/pages/npm-manage/list',
@@ -533,24 +543,13 @@ export default [
         path: 'business',
         name: '业务监控',
         key: 'business-monitor',
-        //测试环境和正式环境暂不展示
-        // hideInMenu: process.env.BUILD_ENV === 'prod',
         component: '@/pages/monitor/business/index',
-        // routes: [
-        //   // {
-        //   //   path: 'prometheus',
-        //   //   name: '接口方式接入',
-        //   //   key: 'business-monitor',
-        //   //   component: '@/pages/monitor/business/prometheus',
-        //   //   hideInMenu: true,
-        //   // },
-        //   {
-        //     path: 'log-monitor',
-        //     name: '日志监控',
-        //     component: '@/pages/monitor/business/log-monitor',
-        //     hideInMenu: true,
-        //   },
-        // ],
+      },
+      {
+        path: 'prometheus-edit',
+        name: '编辑Prometheus',
+        hideInMenu: true,
+        component: '@/pages/monitor/business/prometheus/prometheus-form',
       },
       {
         path: 'log-monitor',
@@ -559,7 +558,13 @@ export default [
         component: '@/pages/monitor/business/log-monitor',
         hideInMenu: true,
       },
-
+      {
+        path: 'dp-monitor-edit',
+        name: '配置数据库监控',
+        key: 'dp-monitor-edit',
+        component: '@/pages/monitor/business/dp-monitor-edit',
+        hideInMenu: true,
+      },
       {
         path: 'alarm-rules',
         name: '报警管理',
@@ -793,6 +798,34 @@ export default [
         name: '任务管理',
         key: 'task-manage',
         component: '@/pages/operation/task-manage',
+      },
+      {
+        path: 'helm-manage',
+        name: 'Helm管理',
+        key: 'helm-manage',
+        routes: [
+          {
+            path: 'helm-list',
+            name: 'helm列表',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/helm-list',
+            hideInMenu: true,
+          },
+          {
+            path: 'helm-detail',
+            name: 'helm详情',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/helm-detail',
+            hideInMenu: true,
+          },
+          {
+            path: 'create-chart',
+            name: '创建chart',
+            key: 'helm-manage',
+            component: '@/pages/operation/helm-manage/create-chart',
+            hideInMenu: true,
+          },
+        ],
       },
       {
         path: 'tmpl-log',
@@ -1098,6 +1131,19 @@ export default [
     name: '管理员菜单',
     icon: 'icon-userRecent',
     routes: [
+      {
+        path: 'user',
+        name: '用户管理',
+        key: 'user',
+        component: '@/pages/admin/user-manage',
+      },
+      {
+        path: 'create-user',
+        name: '新建用户',
+        key: 'user',
+        component: '@/pages/admin/user-manage/create-user',
+        hideInMenu: true,
+      },
       {
         path: 'main',
         name: '主页管理',

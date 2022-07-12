@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
-
 import { message } from 'antd';
 
 //新增
@@ -84,9 +83,6 @@ export function useSearchUser(): [boolean, any, () => Promise<void>] {
         if (result.success) {
           let dataSource = result?.data?.dataSource;
           let data = dataSource?.map((item: any) => item.username);
-          // data = data.filter((currentValue:any, index:number, arr:any) => {
-          //   return arr.indexOf(currentValue.value) === index;
-          // });
 
           const dataOptions = [...new Set(data)].map((item) => ({ label: item, value: item }));
           setData(dataOptions);

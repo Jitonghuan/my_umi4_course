@@ -12,6 +12,7 @@ import DeleteFeatureStep from '../step-items/delete-feature';
 import FinishedStep from '../step-items/finished';
 import DeployingStep from '../step-items/deploying';
 import QualityCheckStep from '../step-items/quality-check';
+import DependencyCheckStep from '../step-items/dependency-check';
 
 // nodeCode和旧的步骤组件的映射关系 如果返回的title在这个对象中能找到 就用之前旧的组件 否则用默认的
 const stepMap: any = {
@@ -25,6 +26,7 @@ const stepMap: any = {
   pushResource: PushResourceStep,
   pushVersion: PushVersionStep,
   qualityCheck: QualityCheckStep,
+  dependencyCheck: DependencyCheckStep,
 };
 
 export default function StepItem(props: any) {
