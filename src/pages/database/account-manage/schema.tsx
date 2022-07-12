@@ -6,10 +6,13 @@
  * @FilePath: /fe-matrix/src/pages/database/account-manage/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Tag, Popconfirm, Tooltip } from 'antd';
+import { Space, Tag, Popconfirm, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 // 列表页-表格
-export const createTableColumns = (params: { onDelete: (record: any) => void }) => {
+export const createTableColumns = (
+  params: { onDelete: (record: any) => void; onUpdate: () => void },
+  deleteLoading: boolean,
+) => {
   return [
     {
       title: '账号',
@@ -43,14 +46,22 @@ export const createTableColumns = (params: { onDelete: (record: any) => void }) 
         <Space>
           <a>授权</a>
           <a>回收</a>
-          <a>改密</a>
+          <a
+            onClick={() => {
+              params?.onUpdate();
+            }}
+          >
+            改密
+          </a>
           <Popconfirm
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record.id);
             }}
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <Spin spinning={deleteLoading}>
+              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            </Spin>
           </Popconfirm>
         </Space>
       ),

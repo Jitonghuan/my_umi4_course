@@ -3,7 +3,7 @@ import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request
 import * as APIS from '../service';
 import { message } from 'antd';
 
-//数据库管理-新建数据库
+//新建账号
 export function useCreateAccount(): [
   boolean,
   (paramsObj: {
@@ -37,4 +37,49 @@ export function useCreateAccount(): [
   };
 
   return [loading, createAccount];
+}
+
+//修改密码
+export function useChangePassword(): [
+  boolean,
+  (paramsObj: { clusterId: number; password: string; id: number }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const changePassword = async (paramsObj: { clusterId: number; password: string; id: number }) => {
+    setLoading(true);
+    await putRequest(`${APIS.changePassword}`, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          message.success(result.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, changePassword];
+}
+
+//deleteAccount
+export function useDeleteAccount(): [boolean, (paramsObj: { clusterId: number; id: number }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteAccount = async (paramsObj: { clusterId: number; id: number }) => {
+    setLoading(true);
+    await delRequest(`${APIS.deleteAccount}`, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          message.success(result.data);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, deleteAccount];
 }

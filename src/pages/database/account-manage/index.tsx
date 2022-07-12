@@ -6,13 +6,25 @@ import { getAccountList } from '../service';
 import useTable from '@/utils/useTable';
 import { createTableColumns } from './schema';
 import CreateAccount from './components/create-account';
+import UpdatePassword from './components/update-password';
+import { useDeleteAccount } from './hook';
+
 export default function AccountList() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
-  const [curRecord, setcurRecord] = useState<any>({});
+  const [updateMode, setUpdateMode] = useState<EditorMode>('HIDE');
+  const [delLoading, deleteAccount] = useDeleteAccount();
   const columns = useMemo(() => {
     return createTableColumns({
-      onDelete: async (id) => {},
+      onDelete: async (id) => {
+        deleteAccount({ clusterId: 2, id }).then(() => {
+          reset();
+        });
+      },
+      onUpdate: () => {
+        setUpdateMode('EDIT');
+      },
+      deleteLoading: delLoading,
     }) as any;
   }, []);
   const {
@@ -40,12 +52,21 @@ export default function AccountList() {
     <PageContainer>
       <CreateAccount
         mode={mode}
-        initData={curRecord}
         onClose={() => {
           setMode('HIDE');
         }}
         onSave={() => {
           setMode('HIDE');
+          reset();
+        }}
+      />
+      <UpdatePassword
+        mode={updateMode}
+        onClose={() => {
+          setUpdateMode('HIDE');
+        }}
+        onSave={() => {
+          setUpdateMode('HIDE');
           reset();
         }}
       />

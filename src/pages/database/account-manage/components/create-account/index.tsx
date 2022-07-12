@@ -7,61 +7,26 @@
  * @Description: 新增账号
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Switch, Tag, Modal, Divider } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Input, Modal, Divider } from 'antd';
 import { useCreateAccount } from '../../hook';
 import './index.less';
-
 export interface AccountEditorProps {
   mode: EditorMode;
-  initData?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
-export default function MemberEditor(props: AccountEditorProps) {
-  const { mode, initData, onClose, onSave } = props;
-  const [editForm] = Form.useForm<Record<string, string>>();
-  const [viewDisabled, seViewDisabled] = useState<boolean>(false);
+export default function AccountEditor(props: AccountEditorProps) {
+  const { mode, onClose, onSave } = props;
+  const [editForm] = Form.useForm();
   const [createLoading, createAccount] = useCreateAccount();
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);
-  const [description, setDescription] = useState<any>(); // 富文本数据
-  const [resetDescription, setResetDescription] = useState<any>(); // 重置富文本使用
-  const [curType, setCurType] = useState<string>('');
 
   useEffect(() => {
-    if (mode === 'HIDE' || !initData) return;
-    setCurType(initData?.type);
-    if (mode !== 'ADD') {
-      if (initData.priority === 1) {
-        setIsChecked(true);
-        setIsPriorityChangeOption(1);
-      } else {
-        setIsChecked(false);
-        setIsPriorityChangeOption(0);
-      }
-
-      editForm.setFieldsValue({
-        title: initData?.title,
-        type: initData?.type,
-        content: initData?.content,
-      });
-      setResetDescription(initData?.content);
-    }
-
-    if (mode === 'VIEW') {
-      seViewDisabled(true);
-    }
-    // if (mode === 'ADD') return;
+    if (mode === 'HIDE') return;
 
     return () => {
-      seViewDisabled(false);
-      setIsChecked(false);
-      setIsPriorityChangeOption(0);
       editForm.resetFields();
-      setResetDescription('');
-      setCurType('');
     };
   }, [mode]);
   const handleSubmit = async () => {
@@ -70,7 +35,6 @@ export default function MemberEditor(props: AccountEditorProps) {
       onSave();
     });
   };
-  /^\S*(?=\S{8,32})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/;
 
   return (
     <Modal
@@ -81,7 +45,7 @@ export default function MemberEditor(props: AccountEditorProps) {
       maskClosable={false}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={createLoading} onClick={handleSubmit} disabled={viewDisabled}>
+          <Button type="primary" loading={createLoading} onClick={handleSubmit}>
             保存
           </Button>
           <Button type="default" onClick={onClose}>
@@ -95,10 +59,10 @@ export default function MemberEditor(props: AccountEditorProps) {
       </Divider>
       <Form form={editForm} labelCol={{ flex: '120px' }}>
         <Form.Item label="数据库账号" name="user" rules={[{ required: true, message: '请输入' }]}>
-          <Input disabled={viewDisabled} style={{ width: 520 }} />
+          <Input style={{ width: 520 }} />
         </Form.Item>
         <Form.Item label="授权地址" name="host" rules={[{ required: true, message: '请选择' }]}>
-          <Input disabled={viewDisabled} style={{ width: 520 }} />
+          <Input style={{ width: 520 }} />
         </Form.Item>
         <Form.Item
           label="密码"
