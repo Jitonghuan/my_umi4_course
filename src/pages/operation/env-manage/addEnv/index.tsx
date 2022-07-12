@@ -283,7 +283,7 @@ export default function addEnvData(props: EnvEditorProps) {
             )}
           </div>
           <Form.Item name="ngInstCode" label="NG实例">
-            <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} />
+            <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} allowClear />
           </Form.Item>
           <Form.Item name="clusterName" label="集群名称" rules={[{ required: true, message: '这是必填项' }]}>
             <Input placeholder="请输入集群名称" style={{ width: 280 }} disabled={isDisabled}></Input>
