@@ -26,3 +26,6 @@ export const getAccountList = `${appConfig.apiPrefix}/databaseManage/account/lis
 
 /**9、 GET 日志管理-慢日志统计 */
 export const getStatistics = `${appConfig.apiPrefix}/databaseManage/log/slowLog/statistics`;
+
+/**10、 GET 获取用户名 */
+export const getUserList = `${appConfig.apiPrefix}/appManage/user/listAll`;

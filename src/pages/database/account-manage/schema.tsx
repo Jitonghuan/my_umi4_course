@@ -13,21 +13,25 @@ export const createTableColumns = (params: { onDelete: (record: any) => void }) 
   return [
     {
       title: '账号',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'user',
+      key: 'user',
       width: '14%',
     },
     {
       title: '权限',
-      dataIndex: 'type',
-      key: 'type',
-      width: '14%',
+      dataIndex: 'grantPrivs',
+      key: 'grantPrivs',
+      width: '20%',
+      render: (grantPrivs: any, record, index: number) =>
+        grantPrivs?.map((item: string) => {
+          return <p>{item},</p>;
+        }),
     },
     {
       title: '备注',
-      dataIndex: 'priority',
-      key: 'priority',
-      width: '20%',
+      dataIndex: 'description',
+      key: 'description',
+      width: '14%',
     },
     {
       title: '操作',

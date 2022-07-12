@@ -7,8 +7,9 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Switch, Tag } from 'antd';
+import { Drawer, message, Form, Button, Select, Input, Row, Tag } from 'antd';
 import CreateAccount from '../../account-manage/components/create-account';
+import { useCreateSchema, useGetAccountList, useUserOptions } from '../hook';
 import './index.less';
 
 export interface MemberEditorProps {
@@ -20,70 +21,26 @@ export interface MemberEditorProps {
 
 export default function MemberEditor(props: MemberEditorProps) {
   const { mode, initData, onClose, onSave } = props;
+  const [createLoading, createSchema] = useCreateSchema();
+  const [accountListLoading, accountData, getAccountList] = useGetAccountList();
+  const [userOptions] = useUserOptions();
   const [editForm] = Form.useForm<Record<string, string>>();
   const [viewDisabled, seViewDisabled] = useState<boolean>(false);
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [isPriorityChangeOption, setIsPriorityChangeOption] = useState<number>(0);
-  const [description, setDescription] = useState<any>(); // 富文本数据
-  const [resetDescription, setResetDescription] = useState<any>(); // 重置富文本使用
-  const [curType, setCurType] = useState<string>('');
   const [accountMode, setAccountMode] = useState<EditorMode>('HIDE');
 
   useEffect(() => {
     if (mode === 'HIDE' || !initData) return;
-    setCurType(initData?.type);
-    if (mode !== 'ADD') {
-      if (initData.priority === 1) {
-        setIsChecked(true);
-        setIsPriorityChangeOption(1);
-      } else {
-        setIsChecked(false);
-        setIsPriorityChangeOption(0);
-      }
-
-      editForm.setFieldsValue({
-        title: initData?.title,
-        type: initData?.type,
-        content: initData?.content,
-      });
-      setResetDescription(initData?.content);
-    }
-
-    if (mode === 'VIEW') {
-      seViewDisabled(true);
-    }
-    // if (mode === 'ADD') return;
-
+    getAccountList({ clusterId: 2 });
     return () => {
       seViewDisabled(false);
-      setIsChecked(false);
-      setIsPriorityChangeOption(0);
       editForm.resetFields();
-      setResetDescription('');
-      setCurType('');
     };
   }, [mode]);
-  const handleSubmit = () => {
-    const params = editForm.getFieldsValue();
-
-    if (mode === 'EDIT') {
-    }
-    if (mode === 'ADD') {
-    }
-  };
-
-  //是否置顶
-  const isPriorityChange = (checked: boolean) => {
-    if (checked === true) {
-      setIsChecked(true);
-      setIsPriorityChangeOption(1);
-    } else {
-      setIsChecked(false);
-      setIsPriorityChangeOption(0);
-    }
-  };
-  const changeType = (values: any) => {
-    setCurType(values);
+  const handleSubmit = async () => {
+    const params = await editForm.validateFields();
+    createSchema({ ...params, clusterId: 2, characterset: 'utf8mb4_bin' }).then(() => {
+      onSave();
+    });
   };
 
   return (
@@ -95,6 +52,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         }}
         onSave={() => {
           setAccountMode('HIDE');
+          getAccountList({ clusterId: 2 });
         }}
       />
       <Drawer
@@ -116,33 +74,38 @@ export default function MemberEditor(props: MemberEditorProps) {
         }
       >
         <Form form={editForm} labelCol={{ flex: '120px' }}>
-          <Form.Item label="数据库(DB)名称" name="title" rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item label="数据库(DB)名称" name="name" rules={[{ required: true, message: '请输入' }]}>
             <Input disabled={viewDisabled} style={{ width: 520 }} />
           </Form.Item>
-          <Form.Item label="支持字符集" name="type" rules={[{ required: true, message: '请选择' }]}>
-            <Select options={[]} disabled={viewDisabled} onChange={changeType} style={{ width: 300 }} />
+          <Form.Item label="支持字符集" name="characterset">
+            <Select options={[]} disabled={viewDisabled} style={{ width: 300 }} />
           </Form.Item>
-          <Form.Item label="owner" name="type" rules={[{ required: true, message: '请选择' }]}>
-            <Select options={[]} disabled={viewDisabled} onChange={changeType} style={{ width: 300 }} />
+          <Form.Item label="owner" name="owner" rules={[{ required: true, message: '请选择' }]}>
+            <Select options={userOptions} disabled={viewDisabled} style={{ width: 300 }} />
           </Form.Item>
-          <Form.Item label="所属账号" name="type" rules={[{ required: true, message: '请选择' }]}>
-            <Select
-              options={[]}
-              disabled={viewDisabled}
-              onChange={changeType}
-              style={{ width: 300 }}
-              placeholder="默认可以先不授权"
-            />
-            <Tag
-              color="geekblue"
-              onClick={() => {
-                setAccountMode('ADD');
-              }}
-            >
-              创建新账号
-            </Tag>
-          </Form.Item>
-          <Form.Item label="备注说明">
+          <Row>
+            <Form.Item label="所属账号" name="accountId" rules={[{ required: true, message: '请选择' }]}>
+              <Select
+                options={accountData}
+                disabled={viewDisabled}
+                loading={accountListLoading}
+                style={{ width: 300 }}
+                placeholder="默认可以先不授权"
+              />
+            </Form.Item>
+            <span style={{ marginTop: 4 }}>
+              <Tag
+                color="geekblue"
+                onClick={() => {
+                  setAccountMode('ADD');
+                }}
+              >
+                创建新账号
+              </Tag>
+            </span>
+          </Row>
+
+          <Form.Item label="备注说明" name="description">
             <Input.TextArea style={{ width: 520 }}></Input.TextArea>
           </Form.Item>
         </Form>

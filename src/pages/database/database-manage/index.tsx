@@ -25,6 +25,7 @@ export default function DEMO() {
     formatter: (params) => {
       return {
         ...params,
+        clusterId: 2,
       };
     },
     formatResult: (result) => {
@@ -45,6 +46,7 @@ export default function DEMO() {
         }}
         onSave={() => {
           setMode('HIDE');
+          reset();
         }}
       />
       <TableSearch

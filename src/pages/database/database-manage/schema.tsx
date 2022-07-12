@@ -13,35 +13,27 @@ export const createTableColumns = (params: { onDelete: (record: any) => void }) 
   return [
     {
       title: '数据库名称',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'name',
+      key: 'name',
       width: '14%',
     },
     {
       title: '字符集',
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'characterset',
+      key: 'characterset',
       width: '14%',
     },
     {
-      title: '排序规则',
-      dataIndex: 'title',
-      key: 'title',
-      width: '30%',
-      ellipsis: true,
-      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
-    },
-    {
       title: '授权账号',
-      dataIndex: 'gmtCreate',
-      key: 'gmtCreate',
+      dataIndex: 'owner',
+      key: 'owner',
       width: '20%',
     },
 
     {
       title: '备注说明',
-      dataIndex: 'priority',
-      key: 'priority',
+      dataIndex: 'description',
+      key: 'description',
       width: '20%',
     },
     {

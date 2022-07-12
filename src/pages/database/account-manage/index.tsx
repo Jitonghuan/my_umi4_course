@@ -2,10 +2,11 @@ import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
+import { getAccountList } from '../service';
 import useTable from '@/utils/useTable';
 import { createTableColumns } from './schema';
 import CreateAccount from './components/create-account';
-export default function DEMO() {
+export default function AccountList() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
@@ -18,12 +19,13 @@ export default function DEMO() {
     tableProps,
     search: { submit, reset },
   } = useTable({
-    url: '',
+    url: getAccountList,
     method: 'GET',
     form,
     formatter: (params) => {
       return {
         ...params,
+        clusterId: 2,
       };
     },
     formatResult: (result) => {
@@ -44,6 +46,7 @@ export default function DEMO() {
         }}
         onSave={() => {
           setMode('HIDE');
+          reset();
         }}
       />
       <TableSearch
