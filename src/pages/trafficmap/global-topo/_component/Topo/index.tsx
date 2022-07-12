@@ -139,10 +139,13 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                   <li><b>名称:</b> ${e.item?.getModel().label || e.item?.getModel().id}</li>
                 </ul>
                 <ul>
-                <li><b>rt(响应时间):</b> ${e.item?.getModel().rt || ''}</li>
+                <li><b>类型:</b> ${e.item?.getModel().typeLabel || '---'}</li>
+              </ul>
+                <ul>
+                <li><b>rt(响应时间):</b> ${e.item?.getModel().rt || '---'}</li>
               </ul>
               <ul>
-                <li><b>qps(请求频率):</b> ${e.item?.getModel().qps || ''}</li>
+                <li><b>qps(请求频率):</b> ${e.item?.getModel().qps || '---'}</li>
               </ul>
           `;
                 return outDiv;
@@ -383,6 +386,7 @@ const Topo = React.forwardRef((props: any, ref: any) => {
                     degree: 0,
                     inDegree: 0,
                     outDegree: 0,
+                    typeLabel: item.type,
                     type: item.type === 'region' ? 'region-node' : 'app-node',
                     nodeType: item.type === 'region' ? 'region' : 'app',
                     size: item.type === 'region' ? 60 : 40,
