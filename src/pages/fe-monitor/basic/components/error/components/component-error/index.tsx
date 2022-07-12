@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Table, Descriptions, message } from 'antd';
+import { Button, Table, Descriptions } from 'antd';
 import { getPageErrorInfo } from '../../../../server';
 import { CloseOutlined } from '@ant-design/icons';
-import { Modal } from '@cffe/h2o-design';
-import MonacoEditor from 'react-monaco-editor';
 
 interface IProps {
   dataSource: DataSourceItem[];
@@ -23,12 +21,11 @@ interface DataSourceItem {
   i: number;
 }
 
-const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
+const ComponentError = ({ dataSource, total, loading, getParam }: IProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
-  const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false)
-  const [sourceInfo, setSourceInfo] = useState<any>({})
+
   async function getDetail(record: any) {
     const res = await getPageErrorInfo(
       getParam({
@@ -43,27 +40,6 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
   const handleClose = () => {
     setShowDetail(false)
     setDetail({})
-  }
-
-
-  const handleSourceMap = () => {
-    const rowCol = detail.d3?.split(":")
-    if (rowCol.length > 0) {
-      const params = {
-        row: rowCol[1],
-        col: rowCol[2],
-        url: detail.d2
-      }
-      setSourceInfo({
-        code: 'sdads\ndasdasda\ndasdasda\n',
-        line: 10
-      })
-      setSourceMapVisible(true)
-    }else{
-      message.info({
-        content:'未获取到错误堆栈信息！'
-      })
-    }
   }
 
   return (
@@ -91,17 +67,13 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
             rowClassName={(record) => (record.id === selectedRowKeys[0] ? 'row-active' : '')}
             columns={[
               {
-                title: '错误文件',
-                dataIndex: 'url',
-                onCell: (record, index) => {
-                  return {
-                    rowSpan: index === 0 ? record.len - record.i : record.rowSpan,
-                    colSpan: index === 0 ? 1 : record.colSpan,
-                  };
-                },
+                title: '组件名称',
+                // dataIndex: 'd1',
                 ellipsis: {
                   showTitle: true,
                 },
+                width:200,
+                render: () => 'd5',
               },
               {
                 title: '错误信息',
@@ -152,24 +124,11 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
             </Descriptions>
             <div className="sub-title">堆栈信息</div>
             <div style={{ wordBreak: 'break-all' }}>{detail.d4}</div>
-            <div className="sub-title">SourceMap还原</div>
-            <div style={{ wordBreak: 'break-all' }}>
-              无法定位报错位置？
-              <Button type='link' onClick={handleSourceMap}>SourceMap还原</Button>
-            </div>
           </div>
         )}
       </div>
-      <Modal
-        title='SourceMap还原'
-        visible={sourceMapVisible}
-        destroyOnClose
-        onCancel={() => { setSourceMapVisible(false) }}
-      >
-        <MonacoEditor value={sourceInfo?.code} height={200} options={{ lineNumbers: (line) => sourceInfo ? (sourceInfo.line + line) : line }} />
-      </Modal>
     </div>
   );
 };
 
-export default ErrorTable;
+export default ComponentError;

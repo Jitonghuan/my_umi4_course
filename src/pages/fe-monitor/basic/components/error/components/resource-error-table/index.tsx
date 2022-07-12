@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
 import { getPageErrorInfo } from '../../../../server';
 import { CloseOutlined } from '@ant-design/icons';
-
 interface IProps {
   dataSource: DataSourceItem[];
   loading: boolean;
@@ -37,10 +36,11 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam }: IProps) =>
     setDetail(data[0]?._source || {});
   }
 
-  const handleClose=()=>{
+  const handleClose = () => {
     setShowDetail(false)
     setDetail({})
   }
+
 
   return (
     <div className="error-list-wrapper">
@@ -67,17 +67,13 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam }: IProps) =>
             rowClassName={(record) => (record.id === selectedRowKeys[0] ? 'row-active' : '')}
             columns={[
               {
-                title: '错误文件',
-                dataIndex: 'url',
-                onCell: (record, index) => {
-                  return {
-                    rowSpan: index === 0 ? record.len - record.i : record.rowSpan,
-                    colSpan: index === 0 ? 1 : record.colSpan,
-                  };
-                },
+                title: '资源路径',
+                // dataIndex: 'd1',
                 ellipsis: {
                   showTitle: true,
                 },
+                width: 200,
+                render: () => 'd1',
               },
               {
                 title: '次数',

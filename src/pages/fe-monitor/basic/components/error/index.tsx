@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../header';
-import { now } from '../../const';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
 import { getErrorChart, getErrorList } from '../../server';
 import ErrorTable from './components/errortable';
 import ResourceErrorTable from './components/resource-error-table';
+import ComponentError from './components/component-error';
 
 import { Button, Form, Input, Tabs } from '@cffe/h2o-design';
 import './index.less';
@@ -223,7 +222,7 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
           </Tabs>
           {
             activeKey == '1' ?
-              <ErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
+              <ComponentError dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
               :
               <ResourceErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
           }
