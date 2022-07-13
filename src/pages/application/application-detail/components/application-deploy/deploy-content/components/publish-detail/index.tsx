@@ -135,10 +135,10 @@ export default function PublishDetail(props: IProps) {
         result?.data?.map((item: any) => {
           envs.push({ label: item.envName, value: item.envCode });
         });
-        if (params.clusterName) {
-          setOffLineEnvData(envs);
-        }
-        if (params.proEnvType === 'benchmark' && !params?.clusterName) {
+        // if (params.clusterName) {
+        setOffLineEnvData(envs);
+        // }
+        if (params.proEnvType === 'benchmark') {
           setEnvDataList(envs);
         }
         if (params.proEnvType === 'project') {
@@ -685,6 +685,7 @@ export default function PublishDetail(props: IProps) {
         key="deployOffline"
         title="选择部署环境"
         visible={deployVisible}
+        width={700}
         footer={null}
         onCancel={handleCancel}
         maskClosable={false}
