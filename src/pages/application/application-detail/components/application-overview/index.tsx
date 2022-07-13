@@ -164,22 +164,22 @@ export default function ApplicationOverview() {
           <UserTagList color="#1973CC" data={memberData?.owner} />
         </Descriptions.Item>
         <Descriptions.Item label="开发负责人">
-          <UserTagList data={memberData?.developerOwner} />
+          <UserTagList color="#1973CC" data={memberData?.developerOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="发布负责人">
-          <UserTagList data={memberData?.deployOwner} />
+          <UserTagList color="#1973CC" data={memberData?.deployOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="CodeReviewer">
-          <UserTagList data={memberData?.codeReviewer} />
+          <UserTagList color="#1973CC" data={memberData?.codeReviewer} />
         </Descriptions.Item>
         <Descriptions.Item label="测试负责人">
-          <UserTagList data={memberData?.testOwner} />
+          <UserTagList color="#1973CC" data={memberData?.testOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="自动化测试人员">
-          <UserTagList data={memberData?.autoTestOwner} />
+          <UserTagList color="#1973CC" data={memberData?.autoTestOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="报警接收人">
-          <UserTagList data={memberData?.alertReceiver} />
+          <UserTagList color="#1973CC" data={memberData?.alertReceiver} />
         </Descriptions.Item>
         <Descriptions.Item label="">&nbsp;</Descriptions.Item>
       </Descriptions>
