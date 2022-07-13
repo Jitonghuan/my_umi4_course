@@ -504,7 +504,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-        {envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
           <Button
             type="primary"
             onClick={() => {
@@ -520,7 +520,7 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        {envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
           <Button type="primary" onClick={deployNext}>
             部署到下个环境
           </Button>

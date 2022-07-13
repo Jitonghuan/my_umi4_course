@@ -106,12 +106,14 @@ export default function ApplicationOverview() {
           <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
         )}
         {appData?.appType === 'backend' && (
-          <Descriptions.Item label="自定义maven构建">
-            {appData?.customParams ? JSON.parse(appData.customParams).custom_maven : ''}
+          <Descriptions.Item label="发布模式">
+            {appData?.deployModel === 'offline' ? '离线发布' : '在线发布'}
           </Descriptions.Item>
         )}
         {appData?.appType === 'backend' && (
-          <Descriptions.Item label="发布模式">{appData?.deployModel}</Descriptions.Item>
+          <Descriptions.Item label="自定义maven构建">
+            {appData?.customParams ? JSON.parse(appData.customParams).custom_maven : ''}
+          </Descriptions.Item>
         )}
 
         {/* 前端 */}
@@ -131,7 +133,9 @@ export default function ApplicationOverview() {
           </Descriptions.Item>
         )}
         {appData?.appType === 'frontend' && (
-          <Descriptions.Item label="发布模式">{appData?.deployModel}</Descriptions.Item>
+          <Descriptions.Item label="发布模式">
+            {appData?.deployModel === 'offline' ? '离线发布' : '在线发布'}
+          </Descriptions.Item>
         )}
         {appData?.microFeType === 'mainProject' && (
           <Descriptions.Item label="路由文件">{appData.routeFile || '--'}</Descriptions.Item>

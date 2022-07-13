@@ -219,9 +219,11 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           />
         </div>
         <div className="caption-right">
-          <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-            {hasPublishContent ? '追加分支' : '提交分支'}
-          </Button>
+          {appData?.deployModel === 'online' && (
+            <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+              {hasPublishContent ? '追加分支' : '提交分支'}
+            </Button>
+          )}
         </div>
       </div>
       <Table

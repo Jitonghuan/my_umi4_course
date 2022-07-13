@@ -284,7 +284,12 @@ export default function ApplicationEditor(props: IProps) {
         </FormItem> */}
 
         <Divider />
-        <FormItem label="发布模式" name="deployModel" rules={[{ required: true, message: '请选择发布模式' }]}>
+        <FormItem
+          label="发布模式"
+          name="deployModel"
+          initialValue={deployModelOptions[0].value}
+          rules={[{ required: true, message: '请选择发布模式' }]}
+        >
           <Radio.Group options={deployModelOptions} />
         </FormItem>
 
