@@ -91,12 +91,14 @@ export default function PublishDetail(props: IProps) {
   // 确认发布操master作
   const confirmPublishToMaster = async () => {
     setConfirmLoading(true);
+
     try {
       const res = await deployMaster({
         pipelineCode,
         envCodes: [envCode],
         buildType: getBuildType(),
         masterBranch: selectMaster, //主干分支
+        deployModel: appData?.deployModel,
       });
       if (res?.success) {
         message.success('操作成功，正在部署中...');
@@ -184,7 +186,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() { },
+      onCancel() {},
     });
   };
   let envDataOption: any = []; //重启时选择环境option
