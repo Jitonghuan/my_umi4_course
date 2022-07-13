@@ -9,7 +9,7 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import {Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio} from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures } from '@/pages/application/service';
@@ -114,6 +114,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envCodes: deployEnv,
       masterBranch: selectMaster, //主干分支
       buildType: getBuildType(),
+      deployModel: appData?.deployModel,
     });
   };
 
@@ -305,17 +306,15 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         <div>
           <span>发布环境：</span>
           <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
-          {
-            feType === 'pda' && (
-              <div style={{ marginTop: "10px" }}>
-                <span>打包类型：</span>
-                <Radio.Group onChange={(e) => setPdaDeployType(e.target.value)} value={pdaDeployType}>
-                  <Radio value='bundles'>bundles</Radio>
-                  <Radio value='apk'>apk</Radio>
-                </Radio.Group>
-              </div>
-            )
-          }
+          {feType === 'pda' && (
+            <div style={{ marginTop: '10px' }}>
+              <span>打包类型：</span>
+              <Radio.Group onChange={(e) => setPdaDeployType(e.target.value)} value={pdaDeployType}>
+                <Radio value="bundles">bundles</Radio>
+                <Radio value="apk">apk</Radio>
+              </Radio.Group>
+            </div>
+          )}
         </div>
       </Modal>
     </div>

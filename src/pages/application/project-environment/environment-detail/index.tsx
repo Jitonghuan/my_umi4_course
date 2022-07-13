@@ -63,7 +63,7 @@ export default function EnvironmentList() {
   };
 
   useEffect(() => {
-    queryProjectEnv(projectEnvInfo.benchmarkEnvCode, projectEnvInfo.envCode);
+    queryProjectEnv(projectEnvInfo?.benchmarkEnvCode, projectEnvInfo?.envCode);
     // queryAppsListData(queryCommonParamsRef.current);
   }, []);
 

@@ -20,6 +20,7 @@ import {
   feTypeOptions,
   singleFeTypeOptions,
   microFeTypeOptions,
+  deployModelOptions,
 } from './common';
 import { AppItemVO } from '../../interfaces';
 import { useFeMicroMainProjectOptions } from './hooks';
@@ -283,6 +284,9 @@ export default function ApplicationEditor(props: IProps) {
         </FormItem> */}
 
         <Divider />
+        <FormItem label="发布模式" name="deployModel" rules={[{ required: true, message: '请选择发布模式' }]}>
+          <Radio.Group options={deployModelOptions} />
+        </FormItem>
 
         <FormItem noStyle shouldUpdate={shouldUpdate(['appType'])}>
           {({ getFieldValue }) =>
@@ -313,12 +317,12 @@ export default function ApplicationEditor(props: IProps) {
                         >
                           <Input placeholder="请输入应用的 pom 文件的相对路径" />
                         </FormItem>
+                        <FormItem label="自定义maven构建" name="customMaven">
+                          <Input />
+                        </FormItem>
                       </>
                     )
                   }
-                </FormItem>
-                <FormItem label="自定义maven构建" name="customMaven">
-                  <Input />
                 </FormItem>
               </>
             ) : (

@@ -104,6 +104,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       // isClient: +appData?.isClient! === 1,
       masterBranch: selectMaster, //主干分支
       buildType: getBuildType(),
+      deployModel: appData?.deployModel,
     });
   };
 

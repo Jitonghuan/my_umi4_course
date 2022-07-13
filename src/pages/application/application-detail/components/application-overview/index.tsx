@@ -110,6 +110,9 @@ export default function ApplicationOverview() {
             {appData?.customParams ? JSON.parse(appData.customParams).custom_maven : ''}
           </Descriptions.Item>
         )}
+        {appData?.appType === 'backend' && (
+          <Descriptions.Item label="发布模式">{appData?.deployModel}</Descriptions.Item>
+        )}
 
         {/* 前端 */}
         {appData?.appType === 'frontend' && (
@@ -126,6 +129,9 @@ export default function ApplicationOverview() {
           <Descriptions.Item label="构建任务类型">
             {deployJobUrlOptionsMap[appData.deployJobUrl!] || '--'}
           </Descriptions.Item>
+        )}
+        {appData?.appType === 'frontend' && (
+          <Descriptions.Item label="发布模式">{appData?.deployModel}</Descriptions.Item>
         )}
         {appData?.microFeType === 'mainProject' && (
           <Descriptions.Item label="路由文件">{appData.routeFile || '--'}</Descriptions.Item>

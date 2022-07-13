@@ -36,7 +36,7 @@ export default function PublishDetail(props: IProps) {
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode, feType } = appData || {};
+  const { appCategoryCode, feType, deployModel } = appData || {};
   const [loading, envDataSource] = useEnvList();
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
@@ -73,7 +73,7 @@ export default function PublishDetail(props: IProps) {
       envTypeCode: envTypeCode,
       appCode: appData?.appCode,
       proEnvType: 'benchmark',
-      clusterName: 'private-cluster',
+      // clusterName: 'private-cluster',
     });
 
     if (metadata?.id !== undefined) {
@@ -236,6 +236,7 @@ export default function PublishDetail(props: IProps) {
     setConfirmLoading(true);
     try {
       const res = await deployMaster({
+        deployMaster: deployModel,
         pipelineCode,
         envCodes: deployMasterEnv,
         buildType: getBuildType(),
@@ -484,7 +485,7 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {envTypeCode === 'prod' && (
+        {appData?.deployModel === 'offline' && (
           <Button
             type="primary"
             onClick={() => {
@@ -513,7 +514,7 @@ export default function PublishDetail(props: IProps) {
             项目环境部署
           </Button>
         )}
-        {envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
           <Button type="primary" onClick={deployToMaster}>
             部署主干分支
           </Button>

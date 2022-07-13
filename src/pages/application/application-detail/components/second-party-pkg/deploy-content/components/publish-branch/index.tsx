@@ -73,6 +73,7 @@ export default function PublishBranch(props: IProps) {
       pipelineCode,
       buildType: 'beClientBuild',
       masterBranch: selectMaster, //主干分支
+      deployModel: appData?.deployModel,
     }).then((res: any) => {
       if (!res.success) {
         message.error(res.errorMsg);
