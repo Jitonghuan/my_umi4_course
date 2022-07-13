@@ -157,7 +157,7 @@ export default function ApplicationDetail(props: IProps) {
               <h4>{appData?.appCode}</h4>
               <span>{appData?.appName}</span>&nbsp;<span className="deploy-model-division">|</span>&nbsp;
               <span className="deploy-model-title">
-                {appData?.deployModel === 'online' ? '在线发布模式' : '离线发布模式'}
+                {appData?.deployModel === 'online' ? '在线发布应用' : '离线发布应用'}
               </span>
             </div>
           }
