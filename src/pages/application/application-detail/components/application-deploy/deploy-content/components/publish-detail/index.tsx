@@ -236,7 +236,7 @@ export default function PublishDetail(props: IProps) {
     setConfirmLoading(true);
     try {
       const res = await deployMaster({
-        deployMaster: deployModel,
+        deployModel: deployModel,
         pipelineCode,
         envCodes: deployMasterEnv,
         buildType: getBuildType(),
@@ -269,7 +269,7 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}`;
+    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}&deployModel=${deployModel}`;
   };
   const beforeUploadAction = (envCode: string) => {
     // setBeforeUploadInfo(true);
