@@ -201,9 +201,11 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   return (
     <div className="basic-error-wrapper">
       <div className="performance-wrapper">
-        <div className="list-title chart-title">错误情况</div>
-        <div className="line-chart-wrapper">
-          <div className="error-chart"></div>
+        <div>
+          <div className="list-title chart-title">错误情况</div>
+          <div className="line-chart-wrapper">
+            <div className="error-chart"></div>
+          </div>
         </div>
         <div className='important-error'>
           <div className="list-title">重点关注的错误</div>
@@ -227,7 +229,7 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
               <ResourceErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
           }
         </div>
-        <div>
+        <div className='error-list'>
           <div className="list-title">错误列表</div>
           <Form layout="inline">
             <Form.Item>
