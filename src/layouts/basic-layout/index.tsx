@@ -25,6 +25,7 @@ import {
   useQueryStemNoticeList,
   useReadList,
   useGetMatrixEnvConfig,
+  getMatrixEnvConfig,
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
@@ -64,8 +65,9 @@ export default function Layout(props: any) {
   const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
   const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
   const [getReadList] = useReadList();
-  const [matrixConfigInfo, getMatrixEnvConfig] = useGetMatrixEnvConfig();
-  // const [matrixConfigInfo,setMatrixConfigInfo]=useState<any>({});
+  // const [matrixConfigInfo, getMatrixEnvConfig] = useGetMatrixEnvConfig();
+
+  const [matrixConfigInfo, setMatrixConfigInfo] = useState<any>({});
   const [style, setStyle] = useState<any>('matrixLight');
   // 页面图表宽度自动适配
   const [{ width }] = useSize(() => document.querySelector(`.vc-layout-inner`) as HTMLElement);
@@ -79,7 +81,17 @@ export default function Layout(props: any) {
     });
   };
   useEffect(() => {
-    getMatrixEnvConfig();
+    getMatrixEnvConfig().then((res) => {
+      setMatrixConfigInfo(res);
+      window.matrixConfigData = res || {
+        curEnvType: 'dev',
+        locationHref: '',
+        domainName: 'http://c2f.apex-dev.cfuture.shop',
+        wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
+        LogoName: '',
+        waterMarkName: '',
+      };
+    });
   }, []);
 
   // 处理 breadcrumb, 平铺所有的路由
@@ -95,12 +107,12 @@ export default function Layout(props: any) {
     }
   }, [unreadNum]);
 
-  // const matrixConfigData = window.matrixConfigData || {};
-
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
     //请求所属部门数据
-    loadStaffDepData(orgId);
+    if (window.matrixConfigData?.domainName) {
+      loadStaffDepData(orgId);
+    }
   };
 
   //切换部门确认
@@ -161,7 +173,8 @@ export default function Layout(props: any) {
       />
       <WaterMark
         content={
-          appConfig.envType === 'prod' ? null : appConfig.envType === 'dev' ? null : matrixConfigInfo?.waterMarkName
+          matrixConfigInfo?.waterMarkName
+          // appConfig.envType === 'prod' ? null : appConfig.envType === 'dev' ? null : matrixConfigInfo?.waterMarkName
         }
         zIndex={0}
         fontSize={22}
@@ -197,7 +210,9 @@ export default function Layout(props: any) {
                 loginUrl: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/login`,
                 onClickPosition: () => {
                   setPosVisible(true);
-                  loadStaffOrgData();
+                  if (window.matrixConfigData?.domainName) {
+                    loadStaffOrgData();
+                  }
                   setUserPosition({
                     orgId: userInfo?.orgId,
                     // campusId: 2000001,
@@ -235,13 +250,16 @@ export default function Layout(props: any) {
                     <div className="matrix-title">
                       <span>
                         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
-                        {console.log('appConfig.title', appConfig.title)}
+
                         {appConfig.title}
-                        {appConfig.envType === 'prod'
-                          ? null
-                          : appConfig.envType === 'dev'
-                          ? null
-                          : matrixConfigInfo?.LogoName}
+                        {
+                          matrixConfigInfo?.LogoName
+                          // appConfig.envType === 'prod'
+                          //   ? null
+                          //   : appConfig.envType === 'dev'
+                          //   ? null
+                          //   : matrixConfigInfo?.LogoName
+                        }
                       </span>
                     </div>
                   </>

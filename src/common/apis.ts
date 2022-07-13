@@ -2,10 +2,7 @@
 // 这里存在一些全局通用接口，比如用户、环境、枚举等
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/24 14:32
-import React, { useContext } from 'react';
 import appConfig from '@/app.config';
-import { FeContext } from '@/common/hooks';
-const { matrixConfigData } = useContext(FeContext);
 
 /* 用户退出接口 */
 export const doLogoutApi = '/user_backend/v1/logout';
@@ -36,13 +33,13 @@ export const queryPermission = `${appConfig.apiPrefix}/rightManage/getUserMenus`
 export const listAppEnvType = `${appConfig.apiPrefix}/appManage/env/listAppEnvType`;
 // `http://c2f.apex.cfuture.shop/kapi/apex-osc/org/getStaffOrgList`
 /** POST 获取所属组织数据 */
-export const getStaffOrgList = `${matrixConfigData?.domainName}/kapi/apex-osc/org/getStaffOrgList`;
+// export const getStaffOrgList = `${matrixConfigData?.domainName}/kapi/apex-osc/org/getStaffOrgList`;
 
 /** POST 获取所属部门数据 */
-export const getStaffDeptList = `${matrixConfigData?.domainName}/kapi/apex-osc/dept/getStaffDeptList`;
+// export const getStaffDeptList = `${matrixConfigData?.domainName}/kapi/apex-osc/dept/getStaffDeptList`;
 
 /** POST 切换部门确认接口 */
-export const chooseDept = `${matrixConfigData?.domainName}/kapi/apex-sso/chooseDept`;
+// export const chooseDept = `${matrixConfigData?.domainName}/kapi/apex-sso/chooseDept`;
 
 /* ---------------站内系统消息接口--------------- */
 
