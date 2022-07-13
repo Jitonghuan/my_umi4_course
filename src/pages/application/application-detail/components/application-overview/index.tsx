@@ -106,6 +106,11 @@ export default function ApplicationOverview() {
           <Descriptions.Item label="pom文件路径">{appData?.deployPomPath}</Descriptions.Item>
         )}
         {appData?.appType === 'backend' && (
+          <Descriptions.Item label="发布模式">
+            {appData?.deployModel === 'offline' ? '离线发布' : '在线发布'}
+          </Descriptions.Item>
+        )}
+        {appData?.appType === 'backend' && (
           <Descriptions.Item label="自定义maven构建">
             {appData?.customParams ? JSON.parse(appData.customParams).custom_maven : ''}
           </Descriptions.Item>
@@ -125,6 +130,11 @@ export default function ApplicationOverview() {
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="构建任务类型">
             {deployJobUrlOptionsMap[appData.deployJobUrl!] || '--'}
+          </Descriptions.Item>
+        )}
+        {appData?.appType === 'frontend' && (
+          <Descriptions.Item label="发布模式">
+            {appData?.deployModel === 'offline' ? '离线发布' : '在线发布'}
           </Descriptions.Item>
         )}
         {appData?.microFeType === 'mainProject' && (
@@ -154,22 +164,22 @@ export default function ApplicationOverview() {
           <UserTagList color="#1973CC" data={memberData?.owner} />
         </Descriptions.Item>
         <Descriptions.Item label="开发负责人">
-          <UserTagList data={memberData?.developerOwner} />
+          <UserTagList color="#1973CC" data={memberData?.developerOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="发布负责人">
-          <UserTagList data={memberData?.deployOwner} />
+          <UserTagList color="#1973CC" data={memberData?.deployOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="CodeReviewer">
-          <UserTagList data={memberData?.codeReviewer} />
+          <UserTagList color="#1973CC" data={memberData?.codeReviewer} />
         </Descriptions.Item>
         <Descriptions.Item label="测试负责人">
-          <UserTagList data={memberData?.testOwner} />
+          <UserTagList color="#1973CC" data={memberData?.testOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="自动化测试人员">
-          <UserTagList data={memberData?.autoTestOwner} />
+          <UserTagList color="#1973CC" data={memberData?.autoTestOwner} />
         </Descriptions.Item>
         <Descriptions.Item label="报警接收人">
-          <UserTagList data={memberData?.alertReceiver} />
+          <UserTagList color="#1973CC" data={memberData?.alertReceiver} />
         </Descriptions.Item>
         <Descriptions.Item label="">&nbsp;</Descriptions.Item>
       </Descriptions>

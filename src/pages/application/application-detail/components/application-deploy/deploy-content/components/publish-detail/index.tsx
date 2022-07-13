@@ -36,7 +36,7 @@ export default function PublishDetail(props: IProps) {
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode, feType } = appData || {};
+  const { appCategoryCode, feType, deployModel } = appData || {};
   const [loading, envDataSource] = useEnvList();
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
@@ -73,7 +73,7 @@ export default function PublishDetail(props: IProps) {
       envTypeCode: envTypeCode,
       appCode: appData?.appCode,
       proEnvType: 'benchmark',
-      clusterName: 'private-cluster',
+      // clusterName: 'private-cluster',
     });
 
     if (metadata?.id !== undefined) {
@@ -135,10 +135,10 @@ export default function PublishDetail(props: IProps) {
         result?.data?.map((item: any) => {
           envs.push({ label: item.envName, value: item.envCode });
         });
-        if (params.clusterName) {
-          setOffLineEnvData(envs);
-        }
-        if (params.proEnvType === 'benchmark' && !params?.clusterName) {
+        // if (params.clusterName) {
+        setOffLineEnvData(envs);
+        // }
+        if (params.proEnvType === 'benchmark') {
           setEnvDataList(envs);
         }
         if (params.proEnvType === 'project') {
@@ -236,6 +236,7 @@ export default function PublishDetail(props: IProps) {
     setConfirmLoading(true);
     try {
       const res = await deployMaster({
+        deployModel: deployModel,
         pipelineCode,
         envCodes: deployMasterEnv,
         buildType: getBuildType(),
@@ -268,7 +269,7 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}`;
+    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}&deployModel=${deployModel}`;
   };
   const beforeUploadAction = (envCode: string) => {
     // setBeforeUploadInfo(true);
@@ -484,7 +485,7 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {envTypeCode === 'prod' && (
+        {appData?.deployModel === 'offline' && (
           <Button
             type="primary"
             onClick={() => {
@@ -503,7 +504,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-        {envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
           <Button
             type="primary"
             onClick={() => {
@@ -513,13 +514,13 @@ export default function PublishDetail(props: IProps) {
             项目环境部署
           </Button>
         )}
-        {envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
           <Button type="primary" onClick={deployToMaster}>
             部署主干分支
           </Button>
         )}
 
-        {envTypeCode !== 'prod' && (
+        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
           <Button type="primary" onClick={deployNext}>
             部署到下个环境
           </Button>
@@ -684,6 +685,7 @@ export default function PublishDetail(props: IProps) {
         key="deployOffline"
         title="选择部署环境"
         visible={deployVisible}
+        width={700}
         footer={null}
         onCancel={handleCancel}
         maskClosable={false}

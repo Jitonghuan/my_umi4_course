@@ -494,6 +494,7 @@ export const createDeploy = (params: {
   // isClient: boolean;
   masterBranch?: string;
   buildType?: string;
+  deployModel: string;
 }) =>
   postRequest(createDeployUrl, {
     data: params,
@@ -644,6 +645,7 @@ export const deployMaster = (params: {
   envCodes?: any;
   buildType?: string;
   masterBranch?: string; //主干分支
+  deployModel?: string;
 }) =>
   postRequest(deployMasterUrl, {
     data: params,

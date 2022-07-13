@@ -1,6 +1,9 @@
 /** 应用类型 */
 export type AppType = 'frontend' | 'backend';
 
+/** 自定义发布模式类型 */
+export type deployModelType = 'online' | 'offline';
+
 /** 应用开发语言(后端) */
 export type AppDevelopLanguage = 'java' | 'golang' | 'python';
 
@@ -18,6 +21,8 @@ export interface AppItemVO {
   appCode: string;
   /** 应用名称 */
   appName: string;
+  /** 发布模式 */
+  deployModel?: string;
   /** 应用类型 */
   appType: AppType;
   /** 应用分类 */

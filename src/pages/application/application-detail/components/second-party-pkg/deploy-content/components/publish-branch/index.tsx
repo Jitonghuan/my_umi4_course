@@ -73,6 +73,7 @@ export default function PublishBranch(props: IProps) {
       pipelineCode,
       buildType: 'beClientBuild',
       masterBranch: selectMaster, //主干分支
+      deployModel: appData?.deployModel,
     }).then((res: any) => {
       if (!res.success) {
         message.error(res.errorMsg);
@@ -147,14 +148,16 @@ export default function PublishBranch(props: IProps) {
           />
 
           <div className="caption-right">
-            <Button
-              type="primary"
-              disabled={!selectedRowKeys?.length}
-              onClick={submitClick}
-              style={{ marginLeft: '20px' }}
-            >
-              {hasPublishContent ? '追加分支' : '提交分支'}
-            </Button>
+            {appData?.deployModel === 'online' && (
+              <Button
+                type="primary"
+                disabled={!selectedRowKeys?.length}
+                onClick={submitClick}
+                style={{ marginLeft: '20px' }}
+              >
+                {hasPublishContent ? '追加分支' : '提交分支'}
+              </Button>
+            )}
           </div>
         </div>
 
