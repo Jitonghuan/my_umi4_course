@@ -94,6 +94,9 @@ export default function Layout(props: any) {
       loadStemNoticeList();
     }
   }, [unreadNum]);
+
+  // const matrixConfigData = window.matrixConfigData || {};
+
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
     //请求所属部门数据
