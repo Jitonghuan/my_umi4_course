@@ -60,7 +60,7 @@ export default function NpmList() {
     }
     setLoading(false);
     if (res?.success) {
-      message.success('新增成功!');
+      message.success(type === 'add' ? '新增成功!' : '修改成功');
       void handleClose();
       void handleSearch();
     }
