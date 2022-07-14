@@ -6,10 +6,10 @@
  * @FilePath: /fe-matrix/src/pages/database/account-manage/components/grant/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, Input, message, Card, Button, Form, Select, Row, Col, Tag, Divider, Tree } from 'antd';
-import { privTypeOptions, dataTreeOption, structOption, manageOption } from '../../schema';
-import { useGrantAccount } from '../../hook';
+import { privTypeOptions, schemaDataTreeOption, schemaStructOption, schemaManageOption } from '../../schema';
+import { useGrantAccount, useGetSchemaList } from '../../hook';
 import './index.less';
 
 export interface GrantProps {
@@ -24,9 +24,13 @@ export default function ScriptEditor(props: GrantProps) {
   const [objectForm] = Form.useForm();
   const [grantLoading, grantAccount] = useGrantAccount();
   const [selectedDataKeys, setSelectedDataKeys] = useState<any>([]);
+  const [loading, schemaOptions, getSchemaList] = useGetSchemaList();
   const [selectedStructKeys, setSelectedStructKeys] = useState<any>([]);
   const [selectedManageKeys, setSelectedManageKeys] = useState<any>([]);
   const [curPrivType, setCurPrivType] = useState<string>('');
+  useEffect(() => {
+    getSchemaList({ clusterId: 2 });
+  }, []);
   const onDataCheck = (checkedKeys: React.Key[], info: any) => {
     let nameArry: any = [];
     console.log('checkedKeys', checkedKeys, '----info', info);
@@ -117,7 +121,7 @@ export default function ScriptEditor(props: GrantProps) {
               </Form.Item>
               {curPrivType === 'schema' && (
                 <Form.Item label="请选择数据库:" name="" rules={[{ required: true, message: '请选择' }]}>
-                  <Select options={privTypeOptions} allowClear />
+                  <Select options={schemaOptions} loading={loading} allowClear showSearch />
                 </Form.Item>
               )}
             </Form>
@@ -133,7 +137,7 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedDataKeys}
                   onCheck={onDataCheck}
                   height={495}
-                  treeData={dataTreeOption}
+                  treeData={schemaDataTreeOption}
                 />
               </Col>
               <Col span={8}>
@@ -145,7 +149,7 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedStructKeys}
                   onCheck={onStructCheck}
                   height={495}
-                  treeData={structOption}
+                  treeData={schemaStructOption}
                 />
               </Col>
               <Col span={8}>
@@ -157,7 +161,7 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedManageKeys}
                   onCheck={onManageCheck}
                   height={495}
-                  treeData={manageOption}
+                  treeData={schemaManageOption}
                 />
               </Col>
             </Row>

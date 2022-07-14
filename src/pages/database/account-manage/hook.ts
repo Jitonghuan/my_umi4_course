@@ -113,3 +113,30 @@ export function useGrantAccount(): [
 
   return [loading, grantAccount];
 }
+
+//数据库管理-数据库列表
+export function useGetSchemaList(): [boolean, any, (paramsObj: { clusterId: number }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<any>([]);
+  const getSchemaList = async (paramsObj: { clusterId: number }) => {
+    setLoading(true);
+    await getRequest(`${APIS.getSchemaList}`, { data: { ...paramsObj, pageIndex: -1, pageSize: -1 } })
+      .then((result) => {
+        if (result.success) {
+          let dataSource = result?.data?.dataSource;
+          const dataArry = dataSource?.map((item: any) => ({
+            label: item?.name,
+            value: item?.name,
+          }));
+          setData(dataArry || []);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, data, getSchemaList];
+}

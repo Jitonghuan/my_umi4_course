@@ -95,7 +95,7 @@ export const privTypeOptions = [
   },
 ];
 
-export const dataTreeOption = [
+export const schemaDataTreeOption = [
   {
     key: 'select',
     title: 'SELECT',
@@ -113,7 +113,7 @@ export const dataTreeOption = [
     title: 'DELETE',
   },
 ];
-export const structOption = [
+export const schemaStructOption = [
   {
     key: 'create',
     title: 'CREATE',
@@ -163,7 +163,7 @@ export const structOption = [
     title: 'TRIGGER',
   },
 ];
-export const manageOption = [
+export const schemaManageOption = [
   {
     key: 'grant',
     title: 'GRANT',
