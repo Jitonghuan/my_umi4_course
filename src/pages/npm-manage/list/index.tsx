@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, message, Modal, Table, Drawer } from 'antd';
+import {Button, Form, Input, message, Modal, Table, Drawer, Tooltip} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import UserSelector, { stringToList } from "@/components/user-selector";
@@ -15,7 +15,7 @@ const { Item: FormItem } = Form;
 export default function NpmList() {
   const [searchField] = Form.useForm();
   const [dataList, setDataList] = useState([]);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -132,6 +132,7 @@ export default function NpmList() {
             {
               title: '包名',
               dataIndex: 'npmName',
+              width: 320,
               render: (text, record) => (
                 <a
                   onClick={() => {
@@ -162,11 +163,15 @@ export default function NpmList() {
             },
             {
               title: '描述',
-              dataIndex: 'desc'
+              dataIndex: 'desc',
+              width: 200,
+              ellipsis: true,
+              render: (text) => <Tooltip title={text}>{text}</Tooltip>,
             },
             {
               title: '负责人',
-              dataIndex: 'npmOwner'
+              dataIndex: 'npmOwner',
+              width: 420,
             },
             {
               width: 140,
