@@ -210,11 +210,13 @@ export default function HelmList() {
             loading={tableLoading}
             bordered
             pagination={{
-              total: tabledataSource.length,
-              pageSize: 20,
-              showSizeChanger: false,
-              showTotal: () => `总共 ${tabledataSource.length} 条数据`,
+              // current: taskTablePageInfo.pageIndex,
+              // total: taskTablePageInfo.total,
+              // pageSize: taskTablePageInfo.pageSize,
+              showSizeChanger: true,
+              // showTotal: () => `总共 ${taskTablePageInfo.total} 条数据`,
             }}
+            // onChange={pageSizeClick}
           ></Table>
         </div>
       </ContentCard>
