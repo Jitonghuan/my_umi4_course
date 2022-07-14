@@ -18,7 +18,7 @@ export default function SourceLoading(props: any) {
         <Result
           status="500"
           title=""
-          subTitle="加载出错啦，尝试刷新一下吧"
+          subTitle="加载出错啦，请尝试刷新一下吧～"
           extra={<Button type="primary" onClick={() => history.go(0)}>刷新</Button>}
         />
       )}
