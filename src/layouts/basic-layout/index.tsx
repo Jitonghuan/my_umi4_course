@@ -83,6 +83,7 @@ export default function Layout(props: any) {
   useEffect(() => {
     getMatrixEnvConfig().then((res) => {
       setMatrixConfigInfo(res);
+      // @ts-ignore
       window.matrixConfigData = res || {
         curEnvType: 'dev',
         locationHref: '',
@@ -110,6 +111,7 @@ export default function Layout(props: any) {
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
     //请求所属部门数据
+    // @ts-ignore
     if (window.matrixConfigData?.domainName) {
       loadStaffDepData(orgId);
     }
@@ -210,6 +212,7 @@ export default function Layout(props: any) {
                 loginUrl: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/login`,
                 onClickPosition: () => {
                   setPosVisible(true);
+                  // @ts-ignore
                   if (window.matrixConfigData?.domainName) {
                     loadStaffOrgData();
                   }

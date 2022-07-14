@@ -39,7 +39,6 @@ function getPrivateMethods(type: boolean) {
 
 const PRIVATE_METHODS = getPrivateMethods(false);
 const IS_Matrix = getPrivateMethods(true);
-// console.log('全局配置中信息能不能拿到---',matrixConfigData)
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
 envType = window.location.href.includes('matrix-jyglj') ? 'jyglj' : envType;
