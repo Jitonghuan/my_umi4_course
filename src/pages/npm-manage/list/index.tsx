@@ -79,7 +79,6 @@ export default function NpmList() {
     <PageContainer className="npm-list-page">
       <FilterCard>
         <Form
-          layout="inline"
           form={searchField}
           onFinish={() => handleSearch()}
           onReset={() => {
@@ -87,30 +86,29 @@ export default function NpmList() {
           }}
         >
           <FormItem label="包名" name="npmName">
-            <Input placeholder="请输入" style={{ width: 240 }} onPressEnter={() => handleSearch()} />
-          </FormItem>
-          <FormItem>
-            <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
-              查询
-            </Button>
-          </FormItem>
-          <FormItem noStyle>
-            <div className="list-btn-wrapper">
-              <Button
-                type="primary"
-                onClick={() => {
-                  setType('add');
-                  setVisible(true);
-                }}
-                icon={<PlusOutlined />}
-              >新增</Button>
-            </div>
+            <Input.Search
+              placeholder="请输入"
+              onChange={() => handleSearch()}
+              onPressEnter={() => handleSearch()}
+              onSearch={handleSearch}
+              enterButton
+            />
           </FormItem>
         </Form>
       </FilterCard>
       <ContentCard>
         <div className="table-caption">
           <h3>NPM列表</h3>
+          <Button
+            type="primary"
+            onClick={() => {
+              setType('add');
+              setVisible(true);
+            }}
+          >
+            <PlusOutlined />
+            新增
+          </Button>
         </div>
         <Table
           bordered
