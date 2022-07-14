@@ -109,6 +109,9 @@ export default function NpmList() {
         </Form>
       </FilterCard>
       <ContentCard>
+        <div className="table-caption">
+          <h3>NPM列表</h3>
+        </div>
         <Table
           bordered
           dataSource={dataList}

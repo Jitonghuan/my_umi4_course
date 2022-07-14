@@ -23,6 +23,11 @@ export default function Overview() {
         </Descriptions.Item>
         <Descriptions.Item label="owner">{npmData?.npmOwner}</Descriptions.Item>
         <Descriptions.Item label="应用描述">{npmData?.desc}</Descriptions.Item>
+        <Descriptions.Item label="fnpm文档">
+          <a href={`http://web.npm.cfuture.cc/package/${npmData?.npmName}`} target="_blank">
+            {`http://web.npm.cfuture.cc/package/${npmData?.npmName}`}
+          </a>
+        </Descriptions.Item>
       </Descriptions>
     </div>
   )
