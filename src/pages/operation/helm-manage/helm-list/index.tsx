@@ -24,6 +24,8 @@ export default function HelmList() {
   const [clusterOptions, setClusterOptions] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(20);
 
   useEffect(() => {
     getClusterList().then((res) => {
@@ -54,7 +56,8 @@ export default function HelmList() {
     setTableLoading(true);
     queryReleaseList(paramsObj)
       .then((res) => {
-        setDataSource(res);
+        setDataSource(res[0]);
+        setTotal(res[1]);
       })
       .finally(() => {
         setTableLoading(false);
@@ -109,6 +112,22 @@ export default function HelmList() {
       curClusterName: cluster,
     });
     getReleaseList({ releaseName: params.releaseName, namespace: params.namespace, clusterName: cluster });
+  };
+
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    setPageSize(pagination.pageSize);
+
+    loadListData(obj);
+  };
+
+  const loadListData = (params: any) => {
+    let value = releaseForm.getFieldsValue();
+    getReleaseList({ ...params, ...value });
   };
 
   return (
@@ -211,12 +230,12 @@ export default function HelmList() {
             bordered
             pagination={{
               // current: taskTablePageInfo.pageIndex,
-              // total: taskTablePageInfo.total,
-              // pageSize: taskTablePageInfo.pageSize,
+              total: total,
+              pageSize: pageSize,
               showSizeChanger: true,
-              // showTotal: () => `总共 ${taskTablePageInfo.total} 条数据`,
+              showTotal: () => `总共 ${total} 条数据`,
             }}
-            // onChange={pageSizeClick}
+            onChange={pageSizeClick}
           ></Table>
         </div>
       </ContentCard>

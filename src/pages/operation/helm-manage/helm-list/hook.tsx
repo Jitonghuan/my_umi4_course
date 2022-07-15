@@ -20,9 +20,10 @@ export const queryReleaseList = (paramsObj?: {
     },
   }).then((res: any) => {
     if (res?.success) {
-      const dataSource = res.data || [];
+      const dataSource = res.data?.releaseLists || [];
+      const total = res.data?.total || 0;
 
-      return dataSource;
+      return [dataSource, total];
     }
     return [];
   });
