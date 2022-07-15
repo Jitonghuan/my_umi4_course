@@ -7,10 +7,11 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
 import { rePushFeVersion, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
+import appConfig from "@/app.config";
 
 /** 发布HTML */
 export default function PushVersionStep(props: StepItemProps) {
-  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', status, ...others } = props;
+  const { deployInfo, deployStatus, onOperate, envTypeCode, env = '', status, appData, ...others } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   // const isLoading = deployStatus === 'pushVersion';
   // const isWait = deployStatus === 'deployWait' || deployStatus == 'verifySuccess';
@@ -45,6 +46,13 @@ export default function PushVersionStep(props: StepItemProps) {
               重试
             </Button>
           )}
+          {
+            appData?.feType === 'pda' && metadata?.pdaDeployType === 'bundles' && status === 'finish' && appConfig.IS_Matrix === 'public' ? (
+              <a style={{marginLeft: '-9px'}} target="_blank" href="http://code-push.cfuture.shop/versions">
+                CodePush版本管理
+              </a>
+            ) : ''
+          }
         </>
       }
     />

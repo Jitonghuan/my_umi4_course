@@ -13,7 +13,7 @@ export function useNpmDetail(npmId?: number, npmName?: string): [AppItemVO | und
       const res = await getRequest(npmList, {
         data: {
           id: npmId || undefined,
-          npmName: npmId ? undefined : npmName,
+          npmName,
           pageIndex: 1,
           pageSize: 10,
         }
