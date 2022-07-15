@@ -28,29 +28,11 @@ export default function DatabaseOverView() {
   return (
     <PageContainer>
       <FilterCard>
-        {/* <Card>
-                  <Card.Grid hoverable={false} style={upperGridStyle}>Content</Card.Grid>
-                  <Card.Grid hoverable={false} style={upperGridStyle}>
-                      Content
-                  </Card.Grid>
-                  <Card.Grid hoverable={false} style={lowerGridStyle}>Content</Card.Grid>
-                  <Card.Grid hoverable={false} style={lowerGridStyle}>Content</Card.Grid>
-                 
-                 
-              </Card> */}
         <div style={{ display: 'flex' }}>
           <Card style={upperGridStyle}>
             <PieOne />
           </Card>
           <Card style={upperGridStyle}></Card>
-        </div>
-        <div style={{ display: 'flex' }}>
-          <Card style={lowerGridStyle}>
-            <PieThree />
-          </Card>
-          <Card style={lowerGridStyle}>
-            <PieThree />
-          </Card>
         </div>
       </FilterCard>
       <ContentCard>
