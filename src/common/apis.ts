@@ -2,7 +2,6 @@
 // 这里存在一些全局通用接口，比如用户、环境、枚举等
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/24 14:32
-
 import appConfig from '@/app.config';
 
 /* 用户退出接口 */
@@ -32,16 +31,15 @@ export const queryPermission = `${appConfig.apiPrefix}/rightManage/getUserMenus`
 
 /** 获取应用环境类型 */
 export const listAppEnvType = `${appConfig.apiPrefix}/appManage/env/listAppEnvType`;
-
 // `http://c2f.apex.cfuture.shop/kapi/apex-osc/org/getStaffOrgList`
 /** POST 获取所属组织数据 */
-export const getStaffOrgList = `${appConfig.apexDomainName}/kapi/apex-osc/org/getStaffOrgList`;
+// export const getStaffOrgList = `${matrixConfigData?.domainName}/kapi/apex-osc/org/getStaffOrgList`;
 
 /** POST 获取所属部门数据 */
-export const getStaffDeptList = `${appConfig.apexDomainName}/kapi/apex-osc/dept/getStaffDeptList`;
+// export const getStaffDeptList = `${matrixConfigData?.domainName}/kapi/apex-osc/dept/getStaffDeptList`;
 
 /** POST 切换部门确认接口 */
-export const chooseDept = `${appConfig.apexDomainName}/kapi/apex-sso/chooseDept`;
+// export const chooseDept = `${matrixConfigData?.domainName}/kapi/apex-sso/chooseDept`;
 
 /* ---------------站内系统消息接口--------------- */
 
@@ -57,5 +55,8 @@ export const readListApi = `${appConfig.apiPrefix}/adminManage/systemNotice/list
 /** POST 发送系统消息 */
 export const sendSystemNoticeApi = `${appConfig.apiPrefix}/adminManage/systemNotice/send`;
 
-//** DELETE 删除系统通知  */
+/** DELETE 删除系统通知  */
 export const deleteSystemNoticeApi = `${appConfig.apiPrefix}/adminManage/systemNotice/delete`;
+
+/** GET 获取Matrix配置信息  */
+export const getMatrixEnvConfig = `${appConfig.apiPrefix}/adminManage/matrixEnvConfig`;
