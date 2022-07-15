@@ -29,3 +29,17 @@ export const getStatistics = `${appConfig.apiPrefix}/databaseManage/log/slowLog/
 
 /**10、 GET 获取用户名 */
 export const getUserList = `${appConfig.apiPrefix}/appManage/user/listAll`;
+
+/* -----------------------概览-------------------- */
+
+/**11、 GET 仪表盘概览 */
+export const getOverviewDashboards = `${appConfig.apiPrefix}/databaseManage/overview/dashboards`;
+
+/**12、 GET 实例概览列表 */
+export const getOverviewInstances = `${appConfig.apiPrefix}/databaseManage/overview/instances`;
+
+/**13、 GET 实例性能趋势 */
+export const getPerformanceTrends = `${appConfig.apiPrefix}/databaseManage/instance/performanceTrends`;
+
+/**14、 GET 实例列表 */
+export const getInstanceList = `${appConfig.apiPrefix}/databaseManage/instance/list`;

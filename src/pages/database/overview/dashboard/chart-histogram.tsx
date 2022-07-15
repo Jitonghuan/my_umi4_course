@@ -2,10 +2,11 @@ import React, { useMemo, useEffect, useState } from 'react';
 // import { Column } from '@ant-design/charts';
 import { Column } from '@ant-design/plots';
 import { Button, Space, Form } from 'antd';
-import useTable from '@/utils/useTable';
+
 export default function DEMO() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
+
   const data = [
     {
       type: '1-3秒',
@@ -66,7 +67,7 @@ export default function DEMO() {
 
   return (
     <>
-      <h3>按数据库类型分布情况</h3>
+      <h3>按集群部署类型分布情况</h3>
       <div style={{ padding: 10, height: 250 }}>
         <Column {...config} />
       </div>

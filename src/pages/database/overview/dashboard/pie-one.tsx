@@ -10,9 +10,12 @@ import React, { useMemo, useEffect, useState } from 'react';
 import { Pie } from '@ant-design/charts';
 import { Button, Space, Form } from 'antd';
 import useTable from '@/utils/useTable';
+import { useQueryOverviewDashboards } from '../hook';
 export default function DEMO() {
-  const [form] = Form.useForm();
-  const [mode, setMode] = useState<EditorMode>('HIDE');
+  const [loading, infodata, getOverviewDashboards] = useQueryOverviewDashboards();
+  useEffect(() => {
+    getOverviewDashboards();
+  }, []);
   const data = [
     {
       type: '分类一',
