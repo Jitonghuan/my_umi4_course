@@ -41,13 +41,6 @@ const PRIVATE_METHODS = getPrivateMethods(false);
 const IS_Matrix = getPrivateMethods(true);
 
 let envType = BUILD_ENV === 'prod' ? 'prod' : 'dev';
-envType = window.location.href.includes('matrix-jyglj') ? 'jyglj' : envType;
-envType = window.location.href.includes('matrix-bf-daily') ? 'bf-daily' : envType;
-envType = window.location.href.includes('matrix-fygs') ? 'fygs' : envType;
-envType = window.location.href.includes('matrix-zslnyy') ? 'zslnyy' : envType;
-envType = window.location.href.includes('matrix-base-poc') ? 'base-poc' : envType;
-envType = window.location.href.includes('matrix-zsdata') ? 'zsdata' : envType;
-envType = window.location.href.includes('matrix.gushangke') ? 'gushangke' : envType;
 
 export default {
   /** 站点图标 */
@@ -79,17 +72,17 @@ export default {
   // 当前环境
   BUILD_ENV,
   // apex 地址
-  apexDomainName: domainName[envType],
-  // apexDomainName: matrixConfigData?.domainName,
+  // apexDomainName: domainName[envType],
+
   // webSocket 地址
-  wsPrefix: wsPrefixName[envType],
-  // wsPrefix: matrixConfigData?.wsPrefixName,
+  // wsPrefix: wsPrefixName[envType],
+
   // logo 名字
-  logoName: LogoName[envType] || '',
-  // logoName:matrixConfigData?.LogoName || '',
+  // logoName: LogoName[envType] || '',
+
   // 水印
-  waterMarkName: waterMarkName[envType] || '',
-  // waterMarkName: matrixConfigData?.waterMarkName || '',
+  // waterMarkName: waterMarkName[envType] || '',
+
   //是否为司内Matrix环境
   PRIVATE_METHODS: PRIVATE_METHODS,
   IS_Matrix: IS_Matrix,

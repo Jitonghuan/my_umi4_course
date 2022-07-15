@@ -24,7 +24,6 @@ import {
   useQueryUnreadNum,
   useQueryStemNoticeList,
   useReadList,
-  useGetMatrixEnvConfig,
   getMatrixEnvConfig,
 } from '@/common/hooks';
 import './index.less';
@@ -65,8 +64,6 @@ export default function Layout(props: any) {
   const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
   const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
   const [getReadList] = useReadList();
-  // const [matrixConfigInfo, getMatrixEnvConfig] = useGetMatrixEnvConfig();
-
   const [matrixConfigInfo, setMatrixConfigInfo] = useState<any>({});
   const [style, setStyle] = useState<any>('matrixLight');
   // 页面图表宽度自动适配
@@ -175,8 +172,7 @@ export default function Layout(props: any) {
       />
       <WaterMark
         content={
-          matrixConfigInfo?.waterMarkName
-          // appConfig.envType === 'prod' ? null : appConfig.envType === 'dev' ? null : matrixConfigInfo?.waterMarkName
+          appConfig.envType === 'prod' ? null : appConfig.envType === 'dev' ? null : matrixConfigInfo?.waterMarkName
         }
         zIndex={0}
         fontSize={22}
@@ -255,14 +251,11 @@ export default function Layout(props: any) {
                         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
 
                         {appConfig.title}
-                        {
-                          matrixConfigInfo?.LogoName
-                          // appConfig.envType === 'prod'
-                          //   ? null
-                          //   : appConfig.envType === 'dev'
-                          //   ? null
-                          //   : matrixConfigInfo?.LogoName
-                        }
+                        {appConfig.envType === 'prod'
+                          ? null
+                          : appConfig.envType === 'dev'
+                          ? null
+                          : matrixConfigInfo?.LogoName}
                       </span>
                     </div>
                   </>
