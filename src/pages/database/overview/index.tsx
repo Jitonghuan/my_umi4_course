@@ -7,7 +7,7 @@ import { Button, Space, Form, Card, Segmented } from 'antd';
 import useTable from '@/utils/useTable';
 import { options } from './schema';
 import PieOne from './dashboard/pie-one';
-import PieThree from './dashboard/pie-three';
+import SchemaChart from './dashboard/chart-histogram';
 export default function DatabaseOverView() {
   const [activeValue, setActiveValue] = useState<string>('basic-info');
   const upperGridStyle: React.CSSProperties = {
@@ -32,7 +32,9 @@ export default function DatabaseOverView() {
           <Card style={upperGridStyle}>
             <PieOne />
           </Card>
-          <Card style={upperGridStyle}></Card>
+          <Card style={upperGridStyle}>
+            <SchemaChart />
+          </Card>
         </div>
       </FilterCard>
       <ContentCard>
