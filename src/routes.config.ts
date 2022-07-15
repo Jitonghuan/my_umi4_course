@@ -616,6 +616,7 @@ export default [
         name: '性能趋势',
         key: 'overview',
         component: '@/pages/database/overview/trends',
+        hideInMenu: true,
       },
       {
         path: 'instance-list',
