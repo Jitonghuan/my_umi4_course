@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Space, Empty, Spin, Divider } from 'antd';
+import { Form, Input, Select, Button, Space, Empty, Spin, Divider, Pagination } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import CreatCard from './components/create-card';
@@ -32,18 +32,21 @@ export default function CreateChart() {
   const [chartParam, setChartParam] = useState<any>({});
   const [intallLoading, chartInstall] = useChartInstall();
   const [oneStepData, setOneStepData] = useState<any>({});
+  const [total, setTotal] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(20);
 
   useEffect(() => {
     queryNameSpace(clusterInfo?.curClusterId);
     getChartList({ clusterName: clusterInfo?.curClusterName });
     queryChartListInfo();
   }, []);
-  const queryChartListInfo = (chartName?: string) => {
+  const queryChartListInfo = (chartName?: string, pageIndex?: number, pageSize?: number) => {
     setIsLoading(true);
-    queryChartList({ clusterName: clusterInfo?.curClusterName, chartName })
+    queryChartList({ clusterName: clusterInfo?.curClusterName, chartName, pageIndex, pageSize })
       .then((res) => {
-        let result = res ? res : [];
+        let result = res[0] ? res[0] : [];
         setChartListInfo(result);
+        setTotal(res[1]);
       })
       .finally(() => {
         setIsLoading(false);
@@ -104,6 +107,22 @@ export default function CreateChart() {
     }).then(() => {
       history.push('/matrix/operation/helm-manage/helm-list');
     });
+  };
+
+  //触发分页
+  const pageSizeClick = (page: number, pageSize: number) => {
+    let obj = {
+      pageIndex: page,
+      pageSize: pageSize,
+    };
+    setPageSize(pageSize);
+
+    loadListData(obj);
+  };
+
+  const loadListData = (params: any) => {
+    console.log('params', params);
+    queryChartListInfo('', params?.pageIndex, params?.pageSize);
   };
 
   return (
@@ -198,21 +217,22 @@ export default function CreateChart() {
                     getChartVersions={getChartVersions}
                     getChartValues={getChartValues}
                   />
-                  {/* {total > 10 && (
+                  {total > 10 && (
                     <div className={`${rootCls}-pagination-wrap`}>
                       <Pagination
                         pageSize={pageSize}
                         total={total}
-                        current={pageIndex}
-                        // showSizeChanger
-                        onShowSizeChange={(_, next) => {
-                          setPageIndex(1);
-                          setPageSize(next);
-                        }}
-                        onChange={(next) => setPageIndex(next)}
+                        // current={pageIndex}
+                        // showSizeChanger={false}
+                        // onShowSizeChange={(_, next) => {
+                        //   setPageIndex(1);
+                        //   setPageSize(next);
+                        // }}
+
+                        onChange={pageSizeClick}
                       />
                     </div>
-                  )} */}
+                  )}
                 </div>
               </div>
             </Spin>
