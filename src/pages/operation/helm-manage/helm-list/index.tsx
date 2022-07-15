@@ -127,7 +127,7 @@ export default function HelmList() {
 
   const loadListData = (params: any) => {
     let value = releaseForm.getFieldsValue();
-    getReleaseList({ ...params, ...value });
+    getReleaseList({ ...params, ...value, clusterName: curClusterName });
   };
 
   return (
