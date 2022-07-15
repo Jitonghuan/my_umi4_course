@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography } from 'antd';
+import {Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography} from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { history } from 'umi';
@@ -60,6 +60,7 @@ export default function PublishDetail(props: IProps) {
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [beforeUploadInfo, setBeforeUploadInfo] = useState<boolean>(true);
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
+  const [pdaDeployType, setPdaDeployType] = useState('bundles');
 
   let newNextEnvTypeCode = '';
   useEffect(() => {
@@ -240,6 +241,7 @@ export default function PublishDetail(props: IProps) {
         pipelineCode,
         envCodes: deployMasterEnv,
         buildType: getBuildType(),
+        pdaDeployType: feType === 'pda' ? pdaDeployType : '',
         masterBranch: selectMaster, //主干分支
       });
       if (res?.success) {
@@ -269,7 +271,7 @@ export default function PublishDetail(props: IProps) {
   }, [envDataList, deployInfo]);
 
   const uploadImages = () => {
-    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}&deployModel=${deployModel}`;
+    return `${feOfflineDeploy}?pipelineCode=${pipelineCode}&envCodes=${deployEnv}&deployModel=${deployModel}&pdaDeployType=${feType === 'pda' ? pdaDeployType : ''}`;
   };
   const beforeUploadAction = (envCode: string) => {
     // setBeforeUploadInfo(true);
@@ -504,7 +506,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
+        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && feType !== 'pda' && (
           <Button
             type="primary"
             onClick={() => {
@@ -520,7 +522,7 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        {envTypeCode !== 'prod' && appData?.deployModel === 'online' && (
+        {envTypeCode !== 'prod' && feType !== 'pda' && appData?.deployModel === 'online' && (
           <Button type="primary" onClick={deployNext}>
             部署到下个环境
           </Button>
@@ -677,6 +679,17 @@ export default function PublishDetail(props: IProps) {
           </div>
           <span>发布环境：</span>
           <Checkbox.Group value={deployMasterEnv} onChange={(v: any) => setDeployMasterEnv(v)} options={envDataList} />
+          {
+            feType === 'pda' && (
+              <div style={{ marginTop: "10px" }}>
+                <span>打包类型：</span>
+                <Radio.Group onChange={(e) => setPdaDeployType(e.target.value)} value={pdaDeployType}>
+                  <Radio value='bundles'>bundles</Radio>
+                  <Radio value='apk'>apk</Radio>
+                </Radio.Group>
+              </div>
+            )
+          }
         </div>
       </Modal>
 
@@ -710,6 +723,17 @@ export default function PublishDetail(props: IProps) {
             options={envDataList || []}
           /> */}
         </div>
+        {
+          feType === 'pda' && (
+            <div style={{ marginTop: "10px" }}>
+              <span>打包类型：</span>
+              <Radio.Group onChange={(e) => setPdaDeployType(e.target.value)} value={pdaDeployType}>
+                <Radio value='bundles'>bundles</Radio>
+                <Radio value='apk'>apk</Radio>
+              </Radio.Group>
+            </div>
+          )
+        }
 
         <div style={{ display: 'flex', marginTop: '12px' }} key={Math.random()}>
           <span>配置文件：</span>

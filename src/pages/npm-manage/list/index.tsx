@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, message, Modal, Table, Drawer } from 'antd';
+import {Button, Form, Input, message, Modal, Table, Drawer, Tooltip} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import UserSelector, { stringToList } from "@/components/user-selector";
@@ -15,7 +15,7 @@ const { Item: FormItem } = Form;
 export default function NpmList() {
   const [searchField] = Form.useForm();
   const [dataList, setDataList] = useState([]);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -60,7 +60,7 @@ export default function NpmList() {
     }
     setLoading(false);
     if (res?.success) {
-      message.success('新增成功!');
+      message.success(type === 'add' ? '新增成功!' : '修改成功');
       void handleClose();
       void handleSearch();
     }
@@ -79,7 +79,6 @@ export default function NpmList() {
     <PageContainer className="npm-list-page">
       <FilterCard>
         <Form
-          layout="inline"
           form={searchField}
           onFinish={() => handleSearch()}
           onReset={() => {
@@ -87,28 +86,30 @@ export default function NpmList() {
           }}
         >
           <FormItem label="包名" name="npmName">
-            <Input placeholder="请输入" style={{ width: 240 }} onPressEnter={() => handleSearch()} />
-          </FormItem>
-          <FormItem>
-            <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
-              查询
-            </Button>
-          </FormItem>
-          <FormItem noStyle>
-            <div className="list-btn-wrapper">
-              <Button
-                type="primary"
-                onClick={() => {
-                  setType('add');
-                  setVisible(true);
-                }}
-                icon={<PlusOutlined />}
-              >新增</Button>
-            </div>
+            <Input.Search
+              placeholder="请输入"
+              onChange={() => handleSearch()}
+              onPressEnter={() => handleSearch()}
+              onSearch={handleSearch}
+              enterButton
+            />
           </FormItem>
         </Form>
       </FilterCard>
       <ContentCard>
+        <div className="table-caption">
+          <h3>NPM列表</h3>
+          <Button
+            type="primary"
+            onClick={() => {
+              setType('add');
+              setVisible(true);
+            }}
+          >
+            <PlusOutlined />
+            新增
+          </Button>
+        </div>
         <Table
           bordered
           dataSource={dataList}
@@ -131,6 +132,7 @@ export default function NpmList() {
             {
               title: '包名',
               dataIndex: 'npmName',
+              width: 320,
               render: (text, record) => (
                 <a
                   onClick={() => {
@@ -161,11 +163,15 @@ export default function NpmList() {
             },
             {
               title: '描述',
-              dataIndex: 'desc'
+              dataIndex: 'desc',
+              width: 200,
+              ellipsis: true,
+              render: (text) => <Tooltip title={text}>{text}</Tooltip>,
             },
             {
               title: '负责人',
-              dataIndex: 'npmOwner'
+              dataIndex: 'npmOwner',
+              width: 420,
             },
             {
               width: 140,
