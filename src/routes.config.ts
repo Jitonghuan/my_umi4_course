@@ -612,6 +612,12 @@ export default [
         component: '@/pages/database/overview',
       },
       {
+        path: 'trends',
+        name: '性能趋势',
+        key: 'overview',
+        component: '@/pages/database/overview/trends',
+      },
+      {
         path: 'instance-list',
         name: '实例列表',
         key: 'instance-list',

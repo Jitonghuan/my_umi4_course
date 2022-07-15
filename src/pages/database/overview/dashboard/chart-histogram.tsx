@@ -2,43 +2,27 @@ import React, { useMemo, useEffect, useState } from 'react';
 // import { Column } from '@ant-design/charts';
 import { Column } from '@ant-design/plots';
 import { Button, Space, Form } from 'antd';
+export interface ChartHistorgramIProps {
+  dataSource: any;
+}
 
-export default function DEMO() {
-  const [form] = Form.useForm();
-  const [mode, setMode] = useState<EditorMode>('HIDE');
+export default function ChartHistogram(props: ChartHistorgramIProps) {
+  const { dataSource } = props;
+  console.log('dataSource', dataSource);
 
   const data = [
     {
-      type: '1-3秒',
-      value: 0.16,
+      type: 'Mysql operator',
+      value: dataSource?.sumOperator,
     },
     {
-      type: '4-10秒',
-      value: 0.125,
+      type: 'MHA',
+      value: dataSource?.sumLocal,
     },
+
     {
-      type: '11-30秒',
-      value: 0.24,
-    },
-    {
-      type: '31-60秒',
-      value: 0.19,
-    },
-    {
-      type: '1-3分',
-      value: 0.22,
-    },
-    {
-      type: '3-10分',
-      value: 0.05,
-    },
-    {
-      type: '10-30分',
-      value: 0.01,
-    },
-    {
-      type: '30+分',
-      value: 0.015,
+      type: 'Cloud',
+      value: dataSource?.sumCloud,
     },
   ];
   const config = {
@@ -48,15 +32,15 @@ export default function DEMO() {
     seriesField: '',
     label: {
       content: (originData: any) => {
-        const val = parseFloat(originData.value);
-
-        if (val < 0.05) {
-          return (val * 100).toFixed(1) + '%';
-        }
+        // const val = parseFloat(originData.value);
+        // if (val < 0.05) {
+        //   return (val * 100).toFixed(1) + '%';
+        // }
       },
       offset: 10,
     },
-    legend: false,
+    legend: true,
+
     xAxis: {
       label: {
         autoHide: true,

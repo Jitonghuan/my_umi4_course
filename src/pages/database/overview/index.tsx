@@ -3,37 +3,56 @@ import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { ContentCard } from '@/components/vc-page-content';
 import { FilterCard } from '@/components/vc-page-content';
-import { Button, Space, Form, Card, Segmented } from 'antd';
+import { history } from 'umi';
+import { Button, Space, Form, Card, Segmented, Spin, Table } from 'antd';
 import useTable from '@/utils/useTable';
+import { tableSchema } from './schema';
+import { useQueryOverviewDashboards, useQueryOverviewInstances } from './hook';
 import { options } from './schema';
 import PieOne from './dashboard/pie-one';
 import SchemaChart from './dashboard/chart-histogram';
 export default function DatabaseOverView() {
-  const [activeValue, setActiveValue] = useState<string>('basic-info');
+  const [loading, infodata, getOverviewDashboards] = useQueryOverviewDashboards();
+  const [tableLoading, tableData, getOverviewInstances] = useQueryOverviewInstances();
+  const [activeValue, setActiveValue] = useState<number>(3);
+  const [curRecord, setCurRecord] = useState<any>();
+
+  useEffect(() => {
+    getOverviewDashboards();
+    getOverviewInstances({ instanceType: activeValue });
+  }, []);
+
+  // 表格列配置
+  const tableColumns = useMemo(() => {
+    return tableSchema({
+      onPerformanceTrendsClick: (record, index) => {
+        setCurRecord(record);
+        history.push({
+          pathname: 'trends',
+          state: {
+            instanceId: record?.id,
+          },
+        });
+      },
+    }) as any;
+  }, []);
   const upperGridStyle: React.CSSProperties = {
     width: '50%',
     // textAlign: 'center',
-    height: 315,
+    height: 280,
     margin: 12,
   };
-  const lowerGridStyle: React.CSSProperties = {
-    width: '50%',
-    // textAlign: 'center',
-    height: 204,
-    margin: 12,
-  };
-  const [form] = Form.useForm();
-  const [mode, setMode] = useState<EditorMode>('HIDE');
 
   return (
     <PageContainer>
       <FilterCard>
         <div style={{ display: 'flex' }}>
           <Card style={upperGridStyle}>
-            <PieOne />
+            <PieOne dataSource={infodata} />
           </Card>
+
           <Card style={upperGridStyle}>
-            <SchemaChart />
+            <SchemaChart dataSource={infodata} />
           </Card>
         </div>
       </FilterCard>
@@ -42,11 +61,14 @@ export default function DatabaseOverView() {
           size="large"
           //  block
           options={options}
-          defaultValue="basic-info"
+          defaultValue="mysql"
           onChange={(value: any) => {
             setActiveValue(value);
           }}
         />
+        <div style={{ marginTop: 10 }}>
+          <Table loading={tableLoading} columns={tableColumns} dataSource={tableData || []} />
+        </div>
       </ContentCard>
     </PageContainer>
   );

@@ -37,178 +37,14 @@ export function useQueryOverviewDashboards(): [boolean, any, () => Promise<void>
   return [loading, data, getOverviewDashboards];
 }
 
-/** 查询release列表 */
-export const queryReleaseList = () => {
-  return getRequest(APIS.getOverviewDashboards, {}).then((res: any) => {
-    if (res?.success) {
-      const dataSource = res.data || [];
-
-      return dataSource;
-    }
-    return [];
-  });
-};
-
-/** 查询release详情 */
-export const queryReleaseInfo = (paramsObj: { releaseName?: string; namespace?: string; clusterName?: string }) => {
-  return postRequest(APIS.getOverviewDashboards, {
-    data: {
-      releaseName: paramsObj?.releaseName || '',
-      namespace: paramsObj?.namespace || '',
-      clusterName: paramsObj?.clusterName || '',
-    },
-  }).then((res: any) => {
-    if (res?.success) {
-      const dataSource = res.data || [];
-
-      return dataSource;
-    }
-    return {};
-  });
-};
-
-//获取集群
-export function useGetClusterList(): [boolean, any, () => Promise<void>] {
+//实例概览列表
+export function useQueryOverviewInstances(): [boolean, any, (paramsObj: { instanceType: number }) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
 
-  const getClusterList = async () => {
+  const getOverviewInstances = async (paramsObj: { instanceType: number }) => {
     setLoading(true);
-    await getRequest(`${APIS.getOverviewDashboards}`)
-      .then((result) => {
-        if (result?.success) {
-          let dataSource = result?.data;
-          let dataArry: any = [];
-          dataSource?.map((item: any) => {
-            dataArry.push({
-              label: item?.clusterName,
-              value: item?.clusterName,
-              clusterId: item?.id,
-              key: item?.id,
-            });
-          });
-
-          setData(dataArry);
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  return [loading, data, getClusterList];
-}
-
-/** 查询release列表 */
-export const getClusterList = () => {
-  return getRequest(APIS.getOverviewDashboards).then((res: any) => {
-    if (res?.success) {
-      let dataSource = res?.data;
-      let dataArry: any = [];
-      dataSource?.map((item: any) => {
-        dataArry.push({
-          label: item?.clusterName,
-          value: item?.clusterName,
-          clusterId: item?.id,
-          key: item?.id,
-        });
-      });
-
-      return dataArry;
-    }
-    return [];
-  });
-};
-
-/** 查询chart版本 */
-export const queryChartVersions = (paramsObj?: { chartName: string; clusterName?: string }) => {
-  return getRequest(APIS.getOverviewDashboards, {
-    data: paramsObj,
-  }).then((res: any) => {
-    if (res?.success) {
-      const dataSource = res.data || [];
-      let dataArry: any = [];
-
-      return dataArry;
-    }
-    return [];
-  });
-};
-
-//release更新
-export function useUpgradeRelease(): [
-  boolean,
-  (paramsObj: {
-    releaseName: string;
-    namespace: string;
-    values: string;
-    clusterName: string;
-    chartLink: string;
-  }) => Promise<void>,
-] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const upgradeRelease = async (paramsObj: {
-    releaseName: string;
-    namespace: string;
-    values: string;
-    clusterName: string;
-    chartLink: string;
-  }) => {
-    setLoading(true);
-    await postRequest(`${APIS.getOverviewDashboards}`, { data: paramsObj })
-      .then((result) => {
-        if (result.success) {
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  return [loading, upgradeRelease];
-}
-//release删除
-export function useDeleteRelease(): [
-  boolean,
-  (paramsObj: { releaseName: string; namespace: string; clusterName: string }) => Promise<void>,
-] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const deleteRelease = async (paramsObj: { releaseName: string; namespace: string; clusterName: string }) => {
-    setLoading(true);
-    await postRequest(`${APIS.getOverviewDashboards}`, { data: paramsObj })
-      .then((result) => {
-        if (result.success) {
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  return [loading, deleteRelease];
-}
-//release-values
-export function useGetReleaseValues(): [
-  boolean,
-  any,
-  (paramsObj: { releaseName: string; namespace: string; clusterName: string; revision: number }) => Promise<void>,
-] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<any>();
-  const getReleaseValues = async (paramsObj: {
-    releaseName: string;
-    namespace: string;
-    clusterName: string;
-    revision: number;
-  }) => {
-    setLoading(true);
-    await getRequest(`${APIS.getOverviewDashboards}`, { data: paramsObj })
+    await getRequest(`${APIS.getOverviewInstances}`, { data: { ...paramsObj } })
       .then((result) => {
         if (result.success) {
           setData(result?.data);
@@ -221,35 +57,37 @@ export function useGetReleaseValues(): [
       });
   };
 
-  return [loading, data, getReleaseValues];
+  return [loading, data, getOverviewInstances];
 }
 
-//release-values
-export const getReleaseValues = (paramsObj: {
-  releaseName: string;
-  namespace: string;
-  clusterName: string;
-  revision?: number;
-}) => {
-  return getRequest(APIS.getOverviewDashboards, {
+/** 实例性能趋势 */
+export const queryPerformanceTrends = (paramsObj: { instanceId: number; start: string; end: string }) => {
+  return postRequest(APIS.getPerformanceTrends, {
     data: paramsObj,
   }).then((res: any) => {
     if (res?.success) {
       const dataSource = res.data || [];
+      const connections = dataSource?.connections || [];
+      const cpuLimit = dataSource?.cpuLimit || [];
+      const cpuUse = dataSource?.cpuUse || [];
+      const diskReads = dataSource?.diskReads || [];
+
+      const diskWrites = dataSource?.diskWrites || [];
+
+      const memLimitInfo = dataSource?.memLimitInfo || [];
+      const qps = dataSource?.qps || [];
+      const receive = dataSource?.receive || [];
+      const rowsOps = dataSource?.rowsOps || [];
+      const rssInfo = dataSource?.rssInfo || [];
+      const tps = dataSource?.tps || [];
+      //"transmit": null,
+      // "wssInfo": null
+      const transmit = dataSource?.transmit || [];
+
+      const wssInfo = dataSource?.wssInfo || [];
 
       return dataSource;
     }
-    return [];
+    return {};
   });
 };
-
-export const queryPodNamespaceData = (params: { clusterId: string }) =>
-  getRequest(APIS.getOverviewDashboards, { data: params }).then((res: any) => {
-    if (res?.success) {
-      const result: any = [];
-      let dataSource = res.data;
-
-      return result;
-    }
-    return [];
-  });
