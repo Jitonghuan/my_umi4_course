@@ -12,6 +12,7 @@ import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import DetailContext from '../../../context';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { FeContext } from '@/common/hooks';
 import './index.less';
 
 export default function ViewLog(props: any) {
@@ -29,6 +30,7 @@ export default function ViewLog(props: any) {
   let ansi_up = new AnsiUp();
   let ws = useRef<WebSocket>();
   let scrollBegin = useRef<boolean>(true);
+  const { matrixConfigData } = useContext(FeContext);
 
   useLayoutEffect(() => {
     if (Object.getOwnPropertyNames(infoRecord).length == 0) {
@@ -60,7 +62,7 @@ export default function ViewLog(props: any) {
             setQueryListContainer(listContainer);
           }
           ws.current = new WebSocket(
-            `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,
+            `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,
           ); //建立通道
           let dom: any = document?.getElementById('result-log');
           ws.current.onmessage = (evt: any) => {
@@ -171,7 +173,7 @@ export default function ViewLog(props: any) {
       setLog(logData.current);
       scrollBegin.current = true;
       ws.current = new WebSocket(
-        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&previous=${previous}&action=watchContainerLog&tailLine=200`,
+        `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&previous=${previous}&action=watchContainerLog&tailLine=200`,
       ); //建立通道
       ws.current.onopen = () => {
         message.success('更换容器成功!');
@@ -209,7 +211,7 @@ export default function ViewLog(props: any) {
       setLog(logData.current);
       scrollBegin.current = true;
       ws.current = new WebSocket(
-        `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
+        `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${projectEnvCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
       ); //建立通道
       if (e.target.checked) {
         ws.current.onopen = () => {
