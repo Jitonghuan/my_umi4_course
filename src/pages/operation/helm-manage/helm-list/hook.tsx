@@ -3,18 +3,27 @@ import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
 /** 查询release列表 */
-export const queryReleaseList = (paramsObj?: { releaseName?: string; namespace?: string; clusterName?: string }) => {
+export const queryReleaseList = (paramsObj?: {
+  releaseName?: string;
+  namespace?: string;
+  clusterName?: string;
+  pageSize?: 20;
+  pageIndex?: 1;
+}) => {
   return getRequest(APIS.getReleaseList, {
     data: {
       releaseName: paramsObj?.releaseName || '',
       namespace: paramsObj?.namespace || '',
       clusterName: paramsObj?.clusterName || '',
+      pageIndex: paramsObj?.pageIndex || 1,
+      pageSize: paramsObj?.pageSize || 20,
     },
   }).then((res: any) => {
     if (res?.success) {
-      const dataSource = res.data || [];
+      const dataSource = res.data?.releaseLists || [];
+      const total = res.data?.total || 0;
 
-      return dataSource;
+      return [dataSource, total];
     }
     return [];
   });
