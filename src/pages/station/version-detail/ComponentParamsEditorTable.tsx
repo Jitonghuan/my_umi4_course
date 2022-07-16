@@ -184,7 +184,9 @@ export default (props: VersionDetailProps) => {
             });
           }}
         >
-          <a key="delete">删除</a>
+          <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>
+            删除
+          </a>
         </Popconfirm>,
       ],
     },
