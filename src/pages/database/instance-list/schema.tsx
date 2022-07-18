@@ -6,8 +6,84 @@
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Tag, Popconfirm, Tooltip } from 'antd';
+import { Space, Avatar, Popconfirm, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
+import {
+  UserOutlined,
+  HomeOutlined,
+  MailOutlined,
+  TeamOutlined,
+  InsertRowAboveOutlined,
+  GroupOutlined,
+  ForkOutlined,
+  MoreOutlined,
+} from '@ant-design/icons';
+
+export const infoOptions = [
+  {
+    label: (
+      <div style={{ padding: 4 }}>
+        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<HomeOutlined />} />
+        <div>实例详情</div>
+      </div>
+    ),
+    value: 'info',
+  },
+  {
+    label: (
+      <div style={{ padding: 4 }}>
+        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<MailOutlined />} />
+        <div>性能趋势</div>
+      </div>
+    ),
+    value: 'trend',
+  },
+  {
+    label: (
+      <div style={{ padding: 4 }}>
+        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<TeamOutlined />} />
+        <div>会话管理</div>
+      </div>
+    ),
+    value: 'session',
+  },
+  {
+    label: (
+      <div style={{ padding: 4 }}>
+        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<InsertRowAboveOutlined />} />
+        <div>数据库管理</div>
+      </div>
+    ),
+    value: 'schema',
+  },
+  {
+    label: (
+      <div style={{ padding: 4 }}>
+        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<GroupOutlined />} />
+        <div>账号管理</div>
+      </div>
+    ),
+    value: 'account',
+  },
+  {
+    label: (
+      <div style={{ padding: 4 }}>
+        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<ForkOutlined />} />
+        <div>慢SQL</div>
+      </div>
+    ),
+    value: 'sql',
+  },
+  {
+    label: (
+      <div style={{ padding: 4 }}>
+        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<MoreOutlined />} />
+        <div>敬请期待</div>
+      </div>
+    ),
+    value: 'waitting',
+  },
+];
 export const formOptions = [
   {
     key: '1',

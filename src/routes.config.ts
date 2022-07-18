@@ -616,7 +616,7 @@ export default [
         name: '实例详情',
         key: 'info',
         component: '@/pages/database/instance-list/components/instance-info',
-        hideInMenu: true,
+        // hideInMenu: true,
       },
       {
         path: 'trends',
