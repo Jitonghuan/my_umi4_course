@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {Modal, Button, List, Tag, Descriptions} from 'antd';
+import { Modal, Button, List, Tag, Descriptions } from 'antd';
 import { recordDisplayMap } from './schema';
 import moment from 'moment';
 import { IProps, IRecord } from './types';
@@ -60,7 +60,7 @@ export default function PublishRecord(props: IProps) {
             ghost
             type="primary"
             onClick={() => {
-              loadMore;
+              loadMore && loadMore();
               // timerHandle('stop');
             }}
           >
