@@ -170,14 +170,7 @@ export default function Layout(props: any) {
         onSubmit={onPositionSubmit}
         onCancel={() => setPosVisible(false)}
       />
-      <WaterMark
-        content={
-          appConfig.envType === 'prod' ? null : appConfig.envType === 'dev' ? null : matrixConfigInfo?.waterMarkName
-        }
-        zIndex={0}
-        fontSize={22}
-        fontColor="#B0C4DE2B"
-      >
+      <WaterMark content={matrixConfigInfo?.waterMarkName} zIndex={0} fontSize={22} fontColor="#B0C4DE2B">
         <FeContext.Provider
           value={{
             breadcrumbMap,
@@ -251,11 +244,7 @@ export default function Layout(props: any) {
                         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
 
                         {appConfig.title}
-                        {appConfig.envType === 'prod'
-                          ? null
-                          : appConfig.envType === 'dev'
-                          ? null
-                          : matrixConfigInfo?.LogoName}
+                        {matrixConfigInfo?.LogoName}
                       </span>
                     </div>
                   </>
