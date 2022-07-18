@@ -57,18 +57,20 @@ export default function CreatTask(props: RecordEditDataProps) {
   const [ipList, setIpList] = useState<any>([]);
 
   useEffect(() => {
-    queryAppList().then((resp) => {
-      setAppList(
-        resp.map((el: any) => {
-          return {
-            ...el,
-            key: el.value,
-            value: el.label,
-          };
-        }),
-      );
-    });
-  }, []);
+    if (mode !== 'HIDE' && mode !== 'VIEW') {
+      queryAppList().then((resp) => {
+        setAppList(
+          resp.map((el: any) => {
+            return {
+              ...el,
+              key: el.value,
+              value: el.label,
+            };
+          }),
+        );
+      });
+    }
+  }, [mode]);
   useEffect(() => {
     getClusterList();
     if (initData && mode !== 'ADD') {
@@ -76,6 +78,14 @@ export default function CreatTask(props: RecordEditDataProps) {
       getNodeNameList(clusterName);
     }
   }, []);
+  useEffect(() => {
+    console.log('initData?.appCode&&mode!=="HIDE"&&mode!=="VIEW"', initData?.appCode, mode !== 'HIDE', mode !== 'VIEW');
+
+    if (initData?.appCode && mode !== 'HIDE' && mode !== 'VIEW') {
+      debugger;
+      queryAppEnvData({ appCode: initData?.appCode });
+    }
+  }, [mode]);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -115,6 +125,10 @@ export default function CreatTask(props: RecordEditDataProps) {
       setCurTaskType(initData?.jobType);
       setCurRequestMethod(jobContent?.method);
       setInitPassWord(jobContent?.password);
+      if (jobContent?.appCode) {
+        queryAppEnvData({ appCode: jobContent?.appCode });
+      }
+      getListContainer({ appCode: jobContent?.appCode, envCode: jobContent?.envCode });
       createTaskForm.setFieldsValue({
         ...initData,
         enable: isJobChecked,
