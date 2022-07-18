@@ -1118,6 +1118,27 @@ export default [
             hideInMenu: true,
           },
           {
+            path: 'resource-statistics',
+            name: '资源详情',
+            key: 'cluster-info',
+            component: '@/pages/pedestal/cluster-info/resource-statistics',
+            hideInMenu: true,
+          },
+          {
+            path: 'event-warning',
+            name: '资源详情',
+            key: 'cluster-info',
+            component: '@/pages/pedestal/cluster-info/event-warning',
+            hideInMenu: true,
+          },
+          {
+            path: 'task-manage',
+            name: '任务管理',
+            key: 'cluster-info',
+            component: '@/pages/pedestal/cluster-info/task-manage',
+            hideInMenu: true,
+          },
+          {
             path: 'load-detail',
             name: '工作负载',
             key: 'cluster-info',

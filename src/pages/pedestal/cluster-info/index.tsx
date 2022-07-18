@@ -7,7 +7,8 @@ import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import ProgessComponent from './component/progress';
 import { history } from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
-import { useClusterListData } from './hook'
+import { useClusterListData } from './hook';
+import { getMetric, getNode } from './service'
 import './index.less'
 
 export default function Test() {
@@ -15,7 +16,30 @@ export default function Test() {
     const [searchValue, setSearchValue] = useState<string>('');
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [data, total, loading, loadData] = useClusterListData({ searchValue, pageIndex, pageSize })
+    const [clusterDatas, total, loading, loadData] = useClusterListData({ searchValue, pageIndex, pageSize })
+    const [data, setData] = useState([]);//数据合集
+    useEffect(() => {
+        if (clusterDatas.length !== 0) {
+            const codeLists = clusterDatas.map((item: any) => item.clusterCode);
+            getMetric({ clusterCodes: codeLists }).then((res) => {
+                if (res?.success) {
+                    clusterDatas.forEach((item: any) => {
+                        const current = res.data.find((e: any) => e.clusterCode === item.clusterCode);
+                        item.metricInfo = current;
+                    })
+                    setData([...clusterDatas] as any)
+                }
+            })
+            clusterDatas.forEach((item: any) => {
+                getNode({ clusterCode: item.code }).then((res) => {
+                    if (res?.success) {
+                        item.nodeInfo = res.data;
+                        setData([...clusterDatas] as any)
+                    }
+                })
+            });
+        }
+    }, [clusterDatas])
     const mockData = [
         {
             clusterName: '集群测试1',
@@ -54,13 +78,9 @@ export default function Test() {
                 <div className='search-wrapper'>
                     查询：<Input placeholder="请输入" allowClear value={searchValue} onChange={valueChange} style={{ width: 240 }} />
                 </div>
-                <div className="table-caption" style={{ marginTop: '5px' }}>
-                    <div className="caption-left">
-                        <h3>集群概览</h3>
-                    </div>
-                    <div className="caption-right">
-                        <Button type="primary" disabled>新增集群</Button>
-                    </div>
+                <div className="flex-space-between" style={{ margin: '5px 0px' }}>
+                    <h3>集群概览</h3>
+                    <Button type="primary" disabled>新增集群</Button>
                 </div>
                 {(mockData.length > 0 || loading) ?
                     <Spin spinning={loading}>
@@ -94,7 +114,7 @@ export default function Test() {
                                 </div>
                                 {/* 第三个单元格 */}
                                 <div className='list-wrapper-item'>
-                                    <div className='item-top'>版本:{item.version}</div>
+                                    <div className='item-top'>版本:{item.clusterVersion}</div>
                                     <div className="display-item">内存:
                                 <span>{item.neicun}</span>
                                         <ProgessComponent percent={30} />
@@ -102,8 +122,8 @@ export default function Test() {
                                 </div>
                                 {/* 第四个单元格 */}
                                 <div className='list-wrapper-item-last'>
-                                    <div className='last-item' style={{ flex: '1', color: `${STATUS_COLOR[item.status] || '#857878'}` }}>集群状态：{STATUS_TEXT[item.status] || '---'}</div>
-                                    <div className='last-item ' style={{ flex: '1' }}>集群类型：{item.type}</div>
+                                    <div className='last-item' style={{ flex: '1' }}>集群状态：<span style={{ color: `${STATUS_COLOR[item.status] || '#857878'}` }}>{STATUS_TEXT[item.status] || '---'}</span></div>
+                                    <div className='last-item ' style={{ flex: '1' }}>集群类型：{item.clusterType}</div>
                                     <div className='last-item display-item' style={{ flex: '1' }}>
                                         <span> 磁盘：</span>
                                         <ProgessComponent percent={30} />

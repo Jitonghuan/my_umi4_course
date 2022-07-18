@@ -8,6 +8,12 @@ export const getCluster = (data: any) => {
     return getRequest(url, { data: data });
 };
 
+// 集群概览-集群指标查询
+export const getMetric = (data: any) => {
+    const url = addAPIPrefix('/infraManage/cluster/metric/list');
+    return getRequest(url, { data: data });
+};
+
 // 节点查询
 export const getNode = (data: any) => {
     const url = addAPIPrefix('/infraManage/node/list');

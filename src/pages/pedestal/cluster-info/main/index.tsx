@@ -13,6 +13,9 @@ const { TabPane } = Tabs;
 const TabList = [
     { label: '节点列表', key: 'node-list' },
     { label: '资源详情', key: 'resource-detail' },
+    { label: '资源统计', key: 'resource-statistics' },
+    { label: '事件告警', key: 'event-warning' },
+    { label: '任务管理', key: 'task-manage' }
 ]
 
 const path = '/matrix/pedestal/cluster-detail'

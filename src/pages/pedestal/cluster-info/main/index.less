@@ -7,6 +7,13 @@
     }
     .ant-card-body{
         padding:12px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        &>:nth-child(3){
+            flex: 1;
+            overflow: auto;
+        }
     }
 
     // .vc-page-content-body>.ant-card-body{

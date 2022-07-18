@@ -10,7 +10,7 @@ import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import { useResourceListData } from '../hook';
 import './index.less'
-const mockdata = [{ disk: '11', ip: '12.12.12' }]
+const mockdata = [{ disk: '11', ip: '12.12.12', id: 1 }]
 export default function ResourceDetail(props: any) {
     const { location, children } = props;
     const { clusterCode, cluseterName } = useContext(clusterContext);
@@ -68,6 +68,10 @@ export default function ResourceDetail(props: any) {
             setSelectParams(res)
             localStorage.setItem('resource_params_list', JSON.stringify(res));
         }
+    }
+
+    const batchDelete = () => {
+        console.log(selectedRowKeys, 'selectRowKeys')
     }
 
     return (
@@ -147,8 +151,7 @@ export default function ResourceDetail(props: any) {
                 columns={tableColumns}
                 scroll={dataSource.length > 0 ? { x: 1800 } : undefined}
             ></Table>
-            <Button className="batch-deletes" onClick={() => { }}>批量删除</Button>
-
+            <Button className="batch-deletes" danger onClick={batchDelete} disabled={!selectedRowKeys.length} type='primary' size='small'>批量删除</Button>
         </div >
     );
 }

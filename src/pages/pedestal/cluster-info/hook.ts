@@ -57,9 +57,9 @@ export function useNodeListData(props: any) {
             try {
                 setLoading(true);
                 const result = await getNode({ ...props, ...extra })
-                const { dataSource, pageInfo } = result?.data || {};
+                const { dataSource } = result?.data || {};
                 // setData(dataSource || []);
-                setTotal(pageInfo.total)
+                setTotal(dataSource?.length)
             } catch (ex) {
                 // setData([]);
             } finally {
@@ -104,7 +104,7 @@ export function useResourceListData(props: any) {
                 const result = await getResourceList({ ...props, ...extra })
                 const { dataSource, pageInfo } = result?.data || {};
                 // setData(dataSource || []);
-                setTotal(pageInfo.total)
+                setTotal(dataSource?.length)
             } catch (ex) {
                 // setData([]);
             } finally {
