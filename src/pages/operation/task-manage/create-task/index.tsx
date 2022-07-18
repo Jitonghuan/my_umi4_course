@@ -128,7 +128,10 @@ export default function CreatTask(props: RecordEditDataProps) {
       if (jobContent?.appCode) {
         queryAppEnvData({ appCode: jobContent?.appCode });
       }
-      getListContainer({ appCode: jobContent?.appCode, envCode: jobContent?.envCode });
+      if (jobContent?.appCode && jobContent?.envCode) {
+        getListContainer({ appCode: jobContent?.appCode, envCode: jobContent?.envCode });
+      }
+
       createTaskForm.setFieldsValue({
         ...initData,
         enable: isJobChecked,
