@@ -68,7 +68,7 @@ export const createTableSchema = ({
       ),
     },
     {
-      title: 'git仓库名',
+      title: 'Git仓库地址',
       width: 320,
       ellipsis: true,
       dataIndex: 'gitAddress',
@@ -150,7 +150,7 @@ export const createTableSchema = ({
             cancelText="取消"
             placement="topLeft"
           >
-            <a>删除</a>
+            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </div>
       ),

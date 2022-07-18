@@ -520,7 +520,7 @@ export default function LoggerSearch(props: any) {
                       查询
                     </Button>
                   </Form.Item>
-                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
+                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo} danger>
                     重置
                   </Button>
                   {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>

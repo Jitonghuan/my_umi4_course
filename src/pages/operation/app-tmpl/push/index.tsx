@@ -534,7 +534,7 @@ export default function Push(props: any) {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger danger>
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>

@@ -65,6 +65,7 @@ export default function AddConfigParameters(props: IProps) {
               </a>,
               <a
                 key="delete"
+                style={{ color: 'rgb(255, 48, 3)' }}
                 onClick={() => {
                   setDataSource(dataSource.filter((item) => item.id !== record.id));
                 }}

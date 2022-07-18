@@ -99,7 +99,7 @@ export const taskTableSchema = ({
             cancelText="取消"
             placement="topLeft"
           >
-            <a>删除</a>
+            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </div>
       ),
