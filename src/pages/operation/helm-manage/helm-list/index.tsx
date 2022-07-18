@@ -2,18 +2,17 @@
 // @author JITONGHUAN <muxi.jth@come-future.com>
 // @create 2022/06/25 14:15
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { history } from 'umi';
 import { Input, Table, Form, Button, Space, Select, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
-import { queryReleaseList, useGetClusterList, useDeleteRelease, getClusterList, queryPodNamespaceData } from './hook';
+import { queryReleaseList, useDeleteRelease, getClusterList, queryPodNamespaceData } from './hook';
 import UpdateDeploy from './update-deploy';
 
-export default function DNSManageList(props: any) {
-  // const [loading, clusterOptions, getClusterList] = useGetClusterList();
+export default function HelmList() {
   const [releaseForm] = Form.useForm();
   const [curRecord, setCurRecord] = useState<any>();
   const [tableLoading, setTableLoading] = useState<any>(false);
@@ -25,6 +24,8 @@ export default function DNSManageList(props: any) {
   const [clusterOptions, setClusterOptions] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(20);
 
   useEffect(() => {
     getClusterList().then((res) => {
@@ -33,7 +34,7 @@ export default function DNSManageList(props: any) {
         if (item.value === '来未来') return item?.clusterId;
       });
 
-      if (curClusterOption[0].clusterId) {
+      if (curClusterOption[0]?.clusterId) {
         queryNameSpace(curClusterOption[0].clusterId);
         setClusterInfo({
           curClusterId: curClusterOption[0].clusterId,
@@ -41,31 +42,22 @@ export default function DNSManageList(props: any) {
         });
         getReleaseList({ clusterName: '来未来' });
       } else {
-        queryNameSpace(res[0].clusterId);
+        queryNameSpace(res[0]?.clusterId);
         setClusterInfo({
-          curClusterId: res[0].clusterId,
-          curClusterName: res[0].value,
+          curClusterId: res[0]?.clusterId,
+          curClusterName: res[0]?.value,
         });
         getReleaseList({ clusterName: clusterOptions[0] });
       }
     });
   }, []);
-  const queryClusterList = () => {
-    setLoading(true);
-    getClusterList()
-      .then((res) => {
-        setClusterOptions(res);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
 
   const getReleaseList = (paramsObj?: { releaseName?: string; namespace?: string; clusterName?: string }) => {
     setTableLoading(true);
     queryReleaseList(paramsObj)
       .then((res) => {
-        setDataSource(res);
+        setDataSource(res[0]);
+        setTotal(res[1]);
       })
       .finally(() => {
         setTableLoading(false);
@@ -122,6 +114,22 @@ export default function DNSManageList(props: any) {
     getReleaseList({ releaseName: params.releaseName, namespace: params.namespace, clusterName: cluster });
   };
 
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    setPageSize(pagination.pageSize);
+
+    loadListData(obj);
+  };
+
+  const loadListData = (params: any) => {
+    let value = releaseForm.getFieldsValue();
+    getReleaseList({ ...params, ...value, clusterName: curClusterName });
+  };
+
   return (
     <PageContainer>
       <UpdateDeploy
@@ -138,65 +146,62 @@ export default function DNSManageList(props: any) {
       />
 
       <FilterCard>
-        <div>
-          <span>
-            <b>选择集群：</b>
-          </span>
-          <Select
-            loading={loading}
-            options={clusterOptions}
-            style={{ width: 290 }}
-            allowClear
-            showSearch
-            defaultValue="来未来"
-            onChange={changeClusterName}
-          />
-        </div>
+        <Form
+          layout="inline"
+          form={releaseForm}
+          onFinish={(values: any) => {
+            getReleaseList({
+              ...values,
+              clusterName: curClusterName,
+            });
+          }}
+          onReset={() => {
+            releaseForm.resetFields();
+            getReleaseList({ clusterName: curClusterName });
+          }}
+        >
+          <div style={{ marginRight: 10 }}>
+            <span>
+              <b>选择集群：</b>
+            </span>
+            <Select
+              loading={loading}
+              options={clusterOptions}
+              style={{ width: 190 }}
+              allowClear
+              showSearch
+              defaultValue="来未来"
+              onChange={changeClusterName}
+            />
+          </div>
+          <Form.Item label="命名空间" name="namespace">
+            <Select
+              placeholder="请输入命名空间"
+              showSearch
+              allowClear
+              style={{ width: 290 }}
+              options={nameSpaceOption}
+            />
+          </Form.Item>
+          <Form.Item label="名称：" name="releaseName">
+            <Input placeholder="请输入名称" style={{ width: 290 }} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="ghost" htmlType="reset" danger>
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
       </FilterCard>
       <ContentCard>
-        <div>
-          <Form
-            layout="inline"
-            form={releaseForm}
-            onFinish={(values: any) => {
-              getReleaseList({
-                ...values,
-                clusterName: curClusterName,
-              });
-            }}
-            onReset={() => {
-              releaseForm.resetFields();
-              getReleaseList({ clusterName: curClusterName });
-            }}
-          >
-            <Form.Item label="命名空间" name="namespace">
-              <Select
-                placeholder="请输入命名空间"
-                showSearch
-                allowClear
-                style={{ width: 290 }}
-                options={nameSpaceOption}
-              />
-            </Form.Item>
-            <Form.Item label="名称：" name="releaseName">
-              <Input placeholder="请输入名称" style={{ width: 290 }} />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button type="ghost" htmlType="reset">
-                重置
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-        <Divider />
         <div className="table-caption">
           <div className="caption-left">
-            <h3>release列表</h3>
+            <h3>发布列表</h3>
           </div>
           <div className="caption-right">
             <Space>
@@ -222,13 +227,15 @@ export default function DNSManageList(props: any) {
             columns={tableColumns}
             dataSource={tabledataSource}
             loading={tableLoading}
+            bordered
             pagination={{
-              total: tabledataSource.length,
-              pageSize: 20,
-              showSizeChanger: false,
-              showTotal: () => `总共 ${tabledataSource.length} 条数据`,
+              // current: taskTablePageInfo.pageIndex,
+              total: total,
+              pageSize: pageSize,
+              showSizeChanger: true,
+              showTotal: () => `总共 ${total} 条数据`,
             }}
-            // onChange={pageSizeClick}
+            onChange={pageSizeClick}
           ></Table>
         </div>
       </ContentCard>

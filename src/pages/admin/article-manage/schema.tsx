@@ -1,9 +1,7 @@
-import React from 'react';
 import { datetimeCellRender } from '@/utils';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
-import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
+import { FormProps } from '@/components/table-search/typing';
+import { Space, Popconfirm, Tooltip, Switch } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { Link } from 'umi';
 export const typeOptions = [
   { key: 'announcement', label: '公告', value: 'announcement' },
   { key: 'document', label: '文件', value: 'document' },
@@ -30,7 +28,6 @@ export const createTableColumns = (params: {
   onView: (record: any, index: number) => void;
   onDelete: (record: any) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
-  // curRecord: any;
 }) => {
   return [
     {

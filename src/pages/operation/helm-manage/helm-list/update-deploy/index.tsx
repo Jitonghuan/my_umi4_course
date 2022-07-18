@@ -3,9 +3,7 @@
 // @create 2022/06/24 17:10
 
 import { useEffect, useState } from 'react';
-import { Form, Modal, Select } from 'antd';
-import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { Form, Drawer, Select, Divider, Button } from 'antd';
 import AceEditor from '@/components/ace-editor';
 import { useUpgradeRelease, queryChartVersions, getReleaseValues } from '../hook';
 import './index.less';
@@ -17,18 +15,12 @@ export interface ReleaseProps {
   onCancle: () => void;
   onSave: () => void;
 }
-type releaseStatus = {
-  text: string;
-  type: any;
-  disabled: boolean;
-};
 
 export default function UpdateDeploy(props: ReleaseProps) {
   const { mode, curRecord, curClusterName, onCancle, onSave } = props;
   const [loading, upgradeRelease] = useUpgradeRelease();
   const [form] = Form.useForm();
   const [chartLinkOptions, setChartLinkOptions] = useState<any>([]);
-  // const [updateLoading,values, getReleaseValues]=useGetReleaseValues();
   useEffect(() => {
     if (mode) {
       getReleaseValues({
@@ -59,20 +51,28 @@ export default function UpdateDeploy(props: ReleaseProps) {
   };
 
   return (
-    <Modal visible={mode} width="60%" onOk={update} confirmLoading={loading} onCancel={onCancle}>
+    <Drawer visible={mode} width="50%" onClose={onCancle} placement="right">
       <h3 className="update-title">
         更新发布——<span style={{ color: 'royalblue' }}>{curRecord?.releaseName}</span>{' '}
         &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
       </h3>
+      <Divider />
 
       <Form form={form}>
         <Form.Item label="chart版本" name="chartLink" rules={[{ required: true, message: '请选择' }]}>
-          <Select options={chartLinkOptions} showSearch allowClear />
+          <Select options={chartLinkOptions} showSearch allowClear style={{ width: 400 }} />
         </Form.Item>
         <Form.Item name="values">
-          <AceEditor mode="yaml" height={500} />
+          <AceEditor mode="yaml" height={'calc(100vh - 270px)'} />
+        </Form.Item>
+        <Form.Item>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button onClick={update} loading={loading} type="primary">
+              保存
+            </Button>
+          </div>
         </Form.Item>
       </Form>
-    </Modal>
+    </Drawer>
   );
 }

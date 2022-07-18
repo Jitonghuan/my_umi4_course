@@ -1,6 +1,6 @@
 // Apex 域名配置
 export const domainName: any = {
-  jyglj: 'http://c2f.apex-jyglj.cfuture.shop',
+  jyglj: 'http://c2f.apex-jyglj.zfy.zjsjy.gov',
   gushangke: 'http://c2f.apex.gushangke.com',
   'bf-daily': 'http://c2f.apex-bf-daily.cfuture.shop',
   zsdata: 'http://c2f.apex.cfuture.shop',

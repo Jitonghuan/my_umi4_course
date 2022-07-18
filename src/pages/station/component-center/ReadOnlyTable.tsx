@@ -97,7 +97,7 @@ export default function VersionDetail(props: DetailProps) {
                 });
               }}
             >
-              <a>删除</a>
+              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
             </Popconfirm>
           </Space>
         ),

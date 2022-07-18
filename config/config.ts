@@ -10,7 +10,7 @@ import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 const sourceRoot = '/';
 
 const { VERSION, NODE_ENV, BUILD_ENV } = process.env;
-// console.log(' BUILD_ENV ', BUILD_ENV )
+
 const publicPathPrefix = NODE_ENV === 'development' ? '/' : !VERSION ? `${sourceRoot}` : `${sourceRoot}${VERSION}/`;
 
 // 更多配置查看: https://umijs.org/zh-CN/config
@@ -39,7 +39,7 @@ export default defineConfig({
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',
       // target: 'http://10.10.129.165:8080',//木南本地
-      // target: 'http://10.10.129.167:8080',//时雨本地
+      // target: 'http://10.10.129.159:8080',//时雨本地
       // target: 'http://10.10.129.55:8080',//习习本地
       // target: 'http://10.10.128.250:8080',//不辣本地
       // target: 'http://10.10.129.56:80',//小庄本地

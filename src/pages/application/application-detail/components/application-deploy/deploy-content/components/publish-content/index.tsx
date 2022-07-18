@@ -219,21 +219,24 @@ export default function PublishContent(props: IProps) {
         <div className="caption-right">
           {!isProd && (
             <span style={{ marginRight: 14 }}>
-              <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
-                重新提交
-                <Tooltip placement="topRight" title={resubmitText}>
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </Button>
+              {appData?.deployModel === 'online' && (
+                <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
+                  重新提交
+                  <Tooltip placement="topRight" title={resubmitText}>
+                    <QuestionCircleOutlined />
+                  </Tooltip>
+                </Button>
+              )}
             </span>
           )}
-
-          <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
-            退出分支
-            <Tooltip placement="topRight" title={exitBranch}>
-              <QuestionCircleOutlined />
-            </Tooltip>
-          </Button>
+          {appData?.deployModel === 'online' && (
+            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
+              退出分支
+              <Tooltip placement="topRight" title={exitBranch}>
+                <QuestionCircleOutlined />
+              </Tooltip>
+            </Button>
+          )}
 
           {/* {!isFrontend && !isProd && (
             <Popconfirm

@@ -1,9 +1,5 @@
-import React from 'react';
-import { datetimeCellRender } from '@/utils';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
-import { Space, Tag, Popconfirm, Tooltip, Switch } from 'antd';
+import { Space, Popconfirm, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { Link } from 'umi';
 
 // 列表页-表格
 export const createTableColumns = (params: {

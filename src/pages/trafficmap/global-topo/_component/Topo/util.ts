@@ -4,6 +4,13 @@ import { Node, Edge } from './common';
 import serverblue from '@/assets/imgs/serverblue.svg';
 import serverred from '@/assets/imgs/serverred.svg';
 import serveryellow from '@/assets/imgs/serveryellow.svg';
+import regionblue from '@/assets/imgs/regionblue.svg';
+import regionred from '@/assets/imgs/regionred.svg';
+import regionyellow from '@/assets/imgs/regionyellow.svg';
+import middlewareblue from '@/assets/imgs/middlewareblue.svg';
+import middlewarered from '@/assets/imgs/middlewarered.svg';
+import middlewareyellow from '@/assets/imgs/middlewareyellow.svg';
+
 
 export const findNode = (id: any, nodes: any) => nodes.find((e: any) => e.id == id) as Node;
 const calcMarkerPostion = (r: number, radius = 45) => ({ x: r * Math.cos(radius), y: -r * Math.sin(radius) });
@@ -13,6 +20,19 @@ export const APP_STATUS_ICON_MAP: any = {
     dangerous: serverred,
     normal: serverblue,
 };
+
+export const REGION_STATUS_ICON_MAP: any = {
+    warning: regionyellow,
+    dangerous: regionred,
+    normal: regionblue,
+};
+
+export const MIDDLEWARE_STATUS_SVG_MAP: any = {
+    warning: middlewareyellow,
+    dangerous: middlewarered,
+    normal: middlewareblue,
+};
+
 export const APP_STATUS_COLOR: any = {
     dangerous: '#F54F37',
     warning: '#FFC21A',
@@ -23,6 +43,7 @@ const APP_STATUS_FILL_COLOR: any = {
     warning: '#faf7b1',
     normal: '#EAF4FE',
 };
+
 
 const NODE_STATUS_HOVER = 'hover';
 const NODE_STATUS_FOCUS = 'focus';
@@ -206,6 +227,7 @@ if (G6) {
         {
             draw: (cfg: any, group: any) => {
                 const { status } = cfg;
+                console.log(cfg, 'cfg')
                 let config = {
                     fontColor: '#000000',
                     borderColor: APP_STATUS_COLOR[status || 'normal'],
@@ -232,21 +254,65 @@ if (G6) {
                     },
                     name: 'collapse-icon',
                 });
-                /* name */
-                group?.addShape('text', {
-                    attrs: {
-                        text: cfg?.label || cfg?.id,
-                        x: 0,
-                        y: 0,
-                        fontSize: 14,
-                        fontWeight: 500,
-                        textAlign: 'center',
-                        textBaseline: 'middle',
-                        fill: config.fontColor,
-                    },
+                group.addShape('image', {
                     draggable: true,
-                    name: 'name-text-shape',
+                    name: 'region-node-icon',
+                    attrs: {
+                        height: 40,
+                        img: cfg.id === 'middleware' ? MIDDLEWARE_STATUS_SVG_MAP[cfg.status || 'normal'] : REGION_STATUS_ICON_MAP[cfg.status || 'normal'],
+                        show: true,
+                        width: 40,
+                        x: -20,
+                        y: -20,
+                    },
                 });
+                /* name */
+                // group?.addShape('text', {
+                //     attrs: {
+                //         text: cfg?.label || cfg?.id,
+                //         x: -10,
+                //         y: -40,
+                //         fontSize: 14,
+                //         fontWeight: 500,
+                //         textAlign: 'center',
+                //         textBaseline: 'middle',
+                //         fill: config.fontColor,
+                //     },
+                //     draggable: true,
+                //     name: 'name-text-shape',
+                // });
+
+                if (cfg.label) {
+                    const text = cfg.label;
+                    let labelStyle: any = {};
+                    let refY = 0;
+                    if (cfg.labelCfg) {
+                        labelStyle = Object.assign(labelStyle, cfg.labelCfg.style);
+                        refY += cfg.labelCfg.refY || 0;
+                    }
+                    let offsetY = 0;
+                    const lineNum = (cfg.labelLineNum as number) || 1;
+                    offsetY = lineNum * 14;
+
+                    group.addShape('text', {
+                        draggable: true,
+                        name: 'name-text-shape',
+                        className: 'text-shape',
+                        attrs: {
+                            text,
+                            x: 0,
+                            // y: 25 + refY + offsetY ,//文字在下面
+                            y: refY + offsetY - 55,
+                            textAlign: 'center',
+                            textBaseLine: 'alphabetic',
+                            cursor: 'pointer',
+                            fontSize: 14,
+                            fontWeight: 500,
+                            fill: APP_STATUS_ICON_MAP[cfg.status || 'normal'],
+                            // stroke: APP_STATUS_ICON_MAP[cfg.status || 'normal'],
+                        },
+                    });
+                }
 
                 return keyShape;
             },

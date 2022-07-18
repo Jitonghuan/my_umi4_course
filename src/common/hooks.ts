@@ -27,6 +27,14 @@ interface IPermission {
   /** 权限对应的路由地址 */
   permissionUrl: string;
 }
+export interface matrixConfigProps {
+  curEnvType: string;
+  locationHref: string;
+  domainName: string;
+  wsPrefixName: string;
+  LogoName: string;
+  waterMarkName: string;
+}
 
 /** 全局上下文 */
 export const FeContext = createContext({
@@ -41,6 +49,8 @@ export const FeContext = createContext({
   /** 应用组 */
   businessData: [] as IOption[],
   envTypeData: [] as IOption[],
+  /* matrix 接口获取配置信息数据 */
+  matrixConfigData: {} as matrixConfigProps,
 });
 
 /** 修改标题和 favicon */
@@ -171,7 +181,10 @@ export function useStaffOrgData(): [any, () => Promise<void>] {
   const [orgData, setOrgData] = useState<BasicData[]>();
 
   const loadData = useCallback(async () => {
-    await postRequest(APIS.getStaffOrgList).then((result) => {
+    // @ts-ignore
+    let getStaffOrgListApi = window.matrixConfigData?.domainName;
+    console.log('getStaffOrgListApi', getStaffOrgListApi);
+    await postRequest(`${getStaffOrgListApi}/kapi/apex-osc/org/getStaffOrgList`).then((result) => {
       if (result.success) {
         const next = (result?.data || []).map((el: any) => ({
           name: el.name,
@@ -188,15 +201,19 @@ export function useStaffOrgData(): [any, () => Promise<void>] {
 export function useStaffDepData(): [any, (orgId: any) => Promise<void>] {
   const [deptData, setDeptData] = useState<BasicData[]>();
   const loadData = useCallback(async (orgId: any) => {
-    await postRequest(APIS.getStaffDeptList, { data: { orgId } }).then((result) => {
-      if (result?.success) {
-        const next = (result?.data || []).map((el: any) => ({
-          name: el.name,
-          id: el.id,
-        }));
-        setDeptData(next);
-      }
-    });
+    // @ts-ignore
+    let getStaffDeptListApi = window.matrixConfigData?.domainName;
+    await postRequest(`${getStaffDeptListApi}/kapi/apex-osc/dept/getStaffDeptList`, { data: { orgId } }).then(
+      (result) => {
+        if (result?.success) {
+          const next = (result?.data || []).map((el: any) => ({
+            name: el.name,
+            id: el.id,
+          }));
+          setDeptData(next);
+        }
+      },
+    );
   }, []);
   return [deptData, loadData];
 }
@@ -204,7 +221,10 @@ export function useStaffDepData(): [any, (orgId: any) => Promise<void>] {
 // 切换部门确认
 export function useChooseDept(): [(deptId: any) => Promise<void>] {
   const chooseDept = useCallback(async (deptId: any) => {
-    await postRequest(APIS.chooseDept, { data: { deptId } });
+    // @ts-ignore
+    let chooseDeptApi = window.matrixConfigData?.domainName;
+    console.log('chooseDeptApi', chooseDeptApi);
+    await postRequest(`${chooseDeptApi}/kapi/apex-sso/chooseDept`, { data: { deptId } });
   }, []);
 
   return [chooseDept];
@@ -272,7 +292,6 @@ export function useQueryStemNoticeList(): [any, (pageIndex?: number, pageSize?: 
 }
 
 // 请求查询未读消息数
-// 切换部门确认
 export function useReadList(): [(ids: any) => Promise<void>] {
   const getReadList = useCallback(async (ids: any) => {
     await postRequest(APIS.readListApi, { data: { ids } });
@@ -291,3 +310,47 @@ export function useDeleteSystemNotice(): [(id: number) => Promise<void>] {
 
   return [deleteSystemNotice];
 }
+//
+
+// 请求matrix配置信息 getMatrixEnvConfig
+export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
+  const [configData, setConfigData] = useState<matrixConfigProps>({
+    curEnvType: 'dev', //监狱管理局
+    locationHref: '',
+    domainName: 'http://c2f.apex-dev.cfuture.shop',
+    wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
+    LogoName: '',
+    waterMarkName: 'Matrix',
+  });
+  const loadData = useCallback(async () => {
+    await getRequest(APIS.getMatrixEnvConfig).then((result) => {
+      if (result?.success) {
+        setConfigData(result?.data);
+        // @ts-ignore
+        window.matrixConfigData = result?.data || {
+          curEnvType: 'dev', //监狱管理局
+          locationHref: '',
+          domainName: 'http://c2f.apex-dev.cfuture.shop',
+          wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
+          LogoName: '',
+          waterMarkName: '',
+        };
+      } else {
+        return;
+      }
+    });
+  }, []);
+  // const getMatrixEnvConfig = useCallback(async () => {
+  //   await getRequest(APIS.getMatrixEnvConfig);
+  // }, []);
+
+  return [configData, loadData];
+}
+export const getMatrixEnvConfig = () =>
+  getRequest(APIS.getMatrixEnvConfig).then((res: any) => {
+    if (res?.success) {
+      const dataSource = res?.data || {};
+      return dataSource;
+    }
+    return {};
+  });

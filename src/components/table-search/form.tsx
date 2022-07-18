@@ -326,7 +326,11 @@ const FormList: React.FC<TableSearchProps> = ({
               {searchText}
             </Button>
           )}
-          {showReset && <Button onClick={reset}>重置</Button>}
+          {showReset && (
+            <Button onClick={reset} danger>
+              重置
+            </Button>
+          )}
         </Space>
       </Item>
     </Form>

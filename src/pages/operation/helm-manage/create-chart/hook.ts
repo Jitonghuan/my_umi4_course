@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
 
@@ -7,7 +7,13 @@ import { message } from 'antd';
 export function useGetChartName(): [
   boolean,
   any,
-  (paramsObj: { clusterName: string; repository?: string; chartName?: string }) => Promise<void>,
+  (paramsObj: {
+    clusterName: string;
+    repository?: string;
+    chartName?: string;
+    pageSize?: 20;
+    pageIndex?: 1;
+  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>([]);
@@ -17,7 +23,7 @@ export function useGetChartName(): [
     await getRequest(`${APIS.getChartList}`, { data: paramsObj })
       .then((result) => {
         if (result?.success) {
-          let dataSource = result?.data;
+          let dataSource = result?.data?.chartLists;
           let dataArry: any = [];
           dataSource?.map((item: any) => {
             dataArry.push({
@@ -89,13 +95,21 @@ export const queryChartValues = (params: {
     return '';
   });
 
-export const queryChartList = (paramsObj: { clusterName: string; repository?: string; chartName?: string }) =>
-  getRequest(APIS.getChartList, { data: paramsObj }).then((res: any) => {
+export const queryChartList = (paramsObj: {
+  clusterName: string;
+  repository?: string;
+  chartName?: string;
+  pageSize?: number;
+  pageIndex?: number;
+}) =>
+  getRequest(APIS.getChartList, {
+    data: { ...paramsObj, pageIndex: paramsObj?.pageIndex || 1, pageSize: paramsObj?.pageSize || 20 },
+  }).then((res: any) => {
     if (res?.success) {
-      const result: any = [];
-      let dataSource = res.data;
+      let dataSource = res.data?.chartLists;
+      const total = res?.data?.total;
 
-      return dataSource;
+      return [dataSource, total];
     }
     return [];
   });

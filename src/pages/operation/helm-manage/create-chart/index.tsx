@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Space, Empty, Spin, Pagination, Divider } from 'antd';
+import { Form, Input, Select, Button, Space, Empty, Spin, Divider, Pagination } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import CreatCard from './components/create-card';
@@ -15,7 +15,7 @@ import {
 } from './hook';
 import './index.less';
 
-export default function CreateRelease() {
+export default function CreateChart() {
   const rootCls = 'all-chart-page';
   const clusterInfo: any = history.location?.state || {};
   const [createReleaseForm] = Form.useForm();
@@ -26,30 +26,27 @@ export default function CreateRelease() {
   const [chartVersionOption, setChartVersionOption] = useState<any>([]);
   const [chartListInfo, setChartListInfo] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(0);
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(30);
   const [curChartName, setCurChartName] = useState<string>('');
-  const [readMoreInfo, setReadMoreInfo] = useState<any>([]);
   const [chartValues, setChartValues] = useState<string>('');
   const [valueLoading, setValueLoading] = useState<boolean>(false);
   const [chartParam, setChartParam] = useState<any>({});
   const [intallLoading, chartInstall] = useChartInstall();
   const [oneStepData, setOneStepData] = useState<any>({});
-  // const [nameSpaceLoading, nameSpaceOption,getPodNamespace]=useGetClusterListPodNamespace();
+  const [total, setTotal] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(20);
+
   useEffect(() => {
     queryNameSpace(clusterInfo?.curClusterId);
     getChartList({ clusterName: clusterInfo?.curClusterName });
     queryChartListInfo();
   }, []);
-  const queryChartListInfo = (chartName?: string) => {
+  const queryChartListInfo = (chartName?: string, pageIndex?: number, pageSize?: number) => {
     setIsLoading(true);
-    queryChartList({ clusterName: clusterInfo?.curClusterName, chartName })
+    queryChartList({ clusterName: clusterInfo?.curClusterName, chartName, pageIndex, pageSize })
       .then((res) => {
-        let result = res ? res : [];
+        let result = res[0] ? res[0] : [];
         setChartListInfo(result);
-
-        setTotal(result?.length);
+        setTotal(res[1]);
       })
       .finally(() => {
         setIsLoading(false);
@@ -75,18 +72,12 @@ export default function CreateRelease() {
     });
   };
 
-  const getChartValues = (params: {
-    chartName: string;
-    clusterName: string;
-    repository: string;
-    // chartVersion: string;
-  }) => {
+  const getChartValues = (params: { chartName: string; clusterName: string; repository: string }) => {
     setChartParam(params);
   };
 
   const changeVersion = (chartVersion: string) => {
     setValueLoading(true);
-    // const chartVersion =createReleaseForm.getFieldValue('chartVersion')
     queryChartValues({ ...chartParam, chartVersion })
       .then((res) => {
         setChartValues(res);
@@ -102,14 +93,10 @@ export default function CreateRelease() {
   const getOneStepData = async () => {
     const paramsOneStep = await createForm.validateFields();
     setShowNextStep(true);
-    // createForm.validateFields().then(()=>{
-
-    // });
     setOneStepData(paramsOneStep);
   };
 
   const hanleSubmit = async () => {
-    // const params = createReleaseForm.getFieldsValue();
     const params = await createReleaseForm.validateFields();
     chartInstall({
       ...params,
@@ -120,6 +107,22 @@ export default function CreateRelease() {
     }).then(() => {
       history.push('/matrix/operation/helm-manage/helm-list');
     });
+  };
+
+  //触发分页
+  const pageSizeClick = (page: number, pageSize: number) => {
+    let obj = {
+      pageIndex: page,
+      pageSize: pageSize,
+    };
+    setPageSize(pageSize);
+
+    loadListData(obj);
+  };
+
+  const loadListData = (params: any) => {
+    console.log('params', params);
+    queryChartListInfo('', params?.pageIndex, params?.pageSize);
   };
 
   return (
@@ -141,7 +144,6 @@ export default function CreateRelease() {
                   <Form
                     style={{ width: '56%' }}
                     labelCol={{ flex: '120px' }}
-                    // layout='inline'
                     form={createForm}
                     onReset={() => {
                       createForm.resetFields();
@@ -158,7 +160,7 @@ export default function CreateRelease() {
                       <Form.Item label="命名空间" name="namespace" rules={[{ required: true, message: '这是必填项' }]}>
                         <Select style={{ width: 320 }} allowClear showSearch options={nameSpaceOption} />
                       </Form.Item>
-                      <Form.Item label="chart名称" name="chartName">
+                      <Form.Item label="Chart名称" name="chartName">
                         <Input.Search
                           style={{ width: 320 }}
                           // options={chartNameOptions}
@@ -215,21 +217,22 @@ export default function CreateRelease() {
                     getChartVersions={getChartVersions}
                     getChartValues={getChartValues}
                   />
-                  {/* {total > 10 && (
+                  {total > 10 && (
                     <div className={`${rootCls}-pagination-wrap`}>
                       <Pagination
                         pageSize={pageSize}
                         total={total}
-                        current={pageIndex}
-                        // showSizeChanger
-                        onShowSizeChange={(_, next) => {
-                          setPageIndex(1);
-                          setPageSize(next);
-                        }}
-                        onChange={(next) => setPageIndex(next)}
+                        // current={pageIndex}
+                        // showSizeChanger={false}
+                        // onShowSizeChange={(_, next) => {
+                        //   setPageIndex(1);
+                        //   setPageSize(next);
+                        // }}
+
+                        onChange={pageSizeClick}
                       />
                     </div>
-                  )} */}
+                  )}
                 </div>
               </div>
             </Spin>
@@ -249,7 +252,8 @@ export default function CreateRelease() {
                 <Button
                   danger
                   onClick={() => {
-                    createReleaseForm.resetFields();
+                    createForm.resetFields();
+                    history.push('/matrix/operation/helm-manage/helm-list');
                   }}
                 >
                   取消

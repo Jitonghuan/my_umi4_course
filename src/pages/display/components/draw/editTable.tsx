@@ -101,7 +101,7 @@ const ETable = React.forwardRef((props: any, ref) => {
           okText="确定"
           cancelText="取消"
         >
-          <a style={{ marginLeft: '10px' }}>删除</a>
+          <a style={{ marginLeft: '10px', color: 'rgb(255, 48, 3)' }}>删除</a>
         </Popconfirm>,
         //     <a
         //         key="delete"

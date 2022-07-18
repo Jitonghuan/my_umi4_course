@@ -2,11 +2,15 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/24 19:33
 
-import { AppType, AppDevelopLanguage, AppFeProjectType, AppMicroFeType } from '../../interfaces';
+import { AppType, AppDevelopLanguage, deployModelType, AppFeProjectType, AppMicroFeType } from '../../interfaces';
 
 export const appTypeOptions: IOption<AppType>[] = [
   { label: '后端', value: 'backend' },
   { label: '前端', value: 'frontend' },
+];
+export const deployModelOptions: IOption<deployModelType>[] = [
+  { label: '在线发布', value: 'online' },
+  { label: '离线发布', value: 'offline' },
 ];
 
 export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
@@ -36,7 +40,10 @@ export const feTypeOptions: IOption<any>[] = [
   { label: '定制页面', value: 'customPage' },
   { label: 'PDA', value: 'pda' },
 ];
-export const singleFeTypeOptions: IOption<any>[] = [{ label: 'web', value: 'web' }, { label: 'PDA', value: 'pda' },];
+export const singleFeTypeOptions: IOption<any>[] = [
+  { label: 'web', value: 'web' },
+  { label: 'PDA', value: 'pda' },
+];
 export const microFeTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: '定制包', value: 'customPack' },
