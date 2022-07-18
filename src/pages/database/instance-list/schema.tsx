@@ -11,15 +11,22 @@ import type { ColumnsType } from 'antd/lib/table';
 export const formOptions = [
   {
     key: '1',
-    type: 'select',
-    label: '实例名称/Ip',
+    type: 'input',
+    label: '实例名称',
     dataIndex: 'type',
     width: '200px',
-    placeholder: '请选择',
-    option: [],
+    placeholder: '请输入',
   },
   {
     key: '2',
+    type: 'input',
+    label: 'Host',
+    dataIndex: 'type',
+    width: '200px',
+    placeholder: '请输入',
+  },
+  {
+    key: '3',
     type: 'select',
     label: '类型',
     dataIndex: 'type',
@@ -28,7 +35,7 @@ export const formOptions = [
     option: [],
   },
   {
-    key: '3',
+    key: '4',
     type: 'select',
     label: '所属集群',
     dataIndex: 'type',
@@ -49,6 +56,7 @@ export const formOptions = [
 
 // 列表页-表格
 export const createTableColumns = (params: {
+  onEdit: (record: any, index: number) => void;
   onManage: (record: any, index: number) => void;
   onViewPerformance: (record: any, index: number) => void;
   onDelete: (record: any) => void;
@@ -106,6 +114,7 @@ export const createTableColumns = (params: {
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
+          <a onClick={() => params.onEdit(record, index)}>编辑</a>
           <a onClick={() => params.onManage(record, index)}>管理</a>
           <a onClick={() => params.onViewPerformance(record, index)}>性能</a>
           <Popconfirm
