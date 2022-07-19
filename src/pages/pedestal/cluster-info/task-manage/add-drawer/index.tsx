@@ -29,7 +29,6 @@ export default function AddDrawer(props: any) {
                 setCronVisible(false);
             }}
             curTimeExpress={(express: string) => {
-                console.log(express, 'express')
                 // setCurTimeExpress(express);
                 form.setFieldsValue({
                     timeExpression: express,
@@ -70,7 +69,8 @@ export default function AddDrawer(props: any) {
                             <Switch />
                         </Form.Item>
                         <Row>
-                            <Form.Item name="timeExpression" label="时间表达式" rules={[{ required: true, message: '这是必填项' }]}>
+                            <Form.Item className="timeExpression" name="timeExpression" label="时间表达式"
+                                rules={[{ required: true, message: '这是必填项' }]}>
                                 <Input style={{ width: 200 }} />
                             </Form.Item>
                             <span style={{ marginTop: 4 }}>
@@ -124,7 +124,7 @@ export default function AddDrawer(props: any) {
                     <>
                         <p>标签：</p>
                         <div className='tags-container'>{tags.map((item) => <Tag>{item}</Tag>)}</div>
-                        <Form.List name="base-tags">
+                        <Form.List name="base-tags" >
                             {(fields, { add, remove }) => (
                                 <>
                                     {fields.map(field => (
@@ -142,6 +142,7 @@ export default function AddDrawer(props: any) {
                                             >
                                                 {() => (
                                                     <Form.Item
+                                                        className="tag-key"
                                                         {...field}
                                                         label="KEY"
                                                         name={[field.name, 'key']}
@@ -153,6 +154,7 @@ export default function AddDrawer(props: any) {
                                             </Form.Item>
                                             <Form.Item
                                                 {...field}
+                                                className="tag-value"
                                                 label="VALUE"
                                                 name={[field.name, 'value']}
                                             >
