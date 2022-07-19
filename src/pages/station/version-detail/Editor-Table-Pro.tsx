@@ -248,7 +248,7 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          {/* {currentTabType === 'app' && (
+          {currentTabType === 'app' && (
             <Button
               type="primary"
               disabled={isEditable}
@@ -258,7 +258,7 @@ export default (props: VersionDetailProps) => {
             >
               添加应用
             </Button>
-          )} */}
+          )}
 
           {/* {currentTabType !== 'app' && (
             <Button
