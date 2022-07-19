@@ -6,7 +6,7 @@
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Avatar, Popconfirm, Tooltip } from 'antd';
+import { Space, Avatar, Popconfirm, Tooltip, Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
   UserOutlined,
@@ -129,6 +129,68 @@ export const formOptions = [
     option: [],
   },
 ];
+// 实例类型枚举       3:mysql 4:postgresql 5:redis 6:mongdb
+type instanceTypeItem = {
+  color: string;
+  tagText: string;
+};
+
+export const INSTANCE_TYPE: Record<number, instanceTypeItem> = {
+  3: { tagText: 'mysql', color: 'green' },
+  4: { tagText: 'postgresql', color: 'default' },
+  5: { tagText: 'redis', color: 'default' },
+  6: { tagText: 'mongdb', color: 'default' },
+};
+
+export const instanceTypeOption = [
+  {
+    label: 'mysql',
+    value: 3,
+  },
+  {
+    label: 'postgresql',
+    value: 4,
+  },
+  {
+    label: 'redis',
+    value: 5,
+  },
+  {
+    label: 'mongdb',
+    value: 6,
+  },
+];
+
+// 集群角色枚举        3:主库 4:从库
+type clusterRoleTypeItem = {
+  color: string;
+  tagText: string;
+};
+
+export const ROLE_TYPE: Record<number, clusterRoleTypeItem> = {
+  3: { tagText: '主库', color: 'green' },
+  4: { tagText: '从库', color: 'blue' },
+};
+export const roleTypeOption = [
+  {
+    label: '主库',
+    value: 3,
+  },
+  {
+    label: '从库',
+    value: 4,
+  },
+];
+// 集群状态：1 - 运行中  2 - 异常
+type clusterStatusTypeItem = {
+  color: string;
+  tagText: string;
+};
+
+export const CLUSTER_STATUS_TYPE: Record<number, clusterStatusTypeItem> = {
+  1: { tagText: '运行中', color: 'green' },
+  2: { tagText: '异常', color: 'red' },
+};
 
 // 列表页-表格
 export const createTableColumns = (params: {
@@ -140,53 +202,56 @@ export const createTableColumns = (params: {
   return [
     {
       title: '实例名称',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'name',
+      key: 'name',
       width: '14%',
     },
     {
       title: 'Host',
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'instanceHost',
+      key: 'instanceHost',
       width: '14%',
     },
     {
       title: '数据库类型',
-      dataIndex: 'title',
-      key: 'title',
-      width: '30%',
+      dataIndex: 'instanceType',
+      key: 'instanceType',
+      width: '10%',
       ellipsis: true,
-      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+      render: (value) => <Tag color={ROLE_TYPE[value]?.color || 'default'}>{ROLE_TYPE[value]?.tagText || '--'}</Tag>,
     },
     {
       title: '所属集群',
-      dataIndex: 'gmtCreate',
-      key: 'gmtCreate',
-      width: '20%',
+      dataIndex: 'clusterName',
+      key: 'clusterName',
+      width: '14%',
     },
     {
       title: '所属环境',
-      dataIndex: 'priority',
-      key: 'priority',
+      dataIndex: 'envCode',
+      key: 'envCode',
       width: '10%',
     },
     {
       title: '实例简述',
-      dataIndex: 'priority',
-      key: 'priority',
-      width: '10%',
+      dataIndex: 'description',
+      key: 'description',
+      width: '12%',
     },
     {
       title: '服务状态',
-      dataIndex: 'priority',
-      key: 'priority',
+      dataIndex: 'status',
+      key: 'status',
       width: '10%',
+      render: (value: number) => {
+        return <Tag color={CLUSTER_STATUS_TYPE[value]?.color || 'default'}>{CLUSTER_STATUS_TYPE[value].tagText}</Tag>;
+      },
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '12%',
+      width: '16%',
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>

@@ -3,6 +3,7 @@ import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
 import useTable from '@/utils/useTable';
+import { getInstanceList } from '../service';
 import { formOptions, createTableColumns } from './schema';
 export default function DEMO() {
   const [form] = Form.useForm();
@@ -10,6 +11,10 @@ export default function DEMO() {
   const [curRecord, setcurRecord] = useState<any>({});
   const columns = useMemo(() => {
     return createTableColumns({
+      onEdit: (record, index) => {
+        setcurRecord(record);
+        setMode('EDIT');
+      },
       onManage: (record, index) => {
         setcurRecord(record);
         setMode('EDIT');
@@ -25,7 +30,7 @@ export default function DEMO() {
     tableProps,
     search: { submit, reset },
   } = useTable({
-    url: '',
+    url: getInstanceList,
     method: 'GET',
     form,
     formatter: (params) => {
@@ -34,9 +39,19 @@ export default function DEMO() {
       };
     },
     formatResult: (result) => {
+      let dataSource = result.data?.dataSource;
+      let dataArry: any = [];
+      dataSource?.map((item: any) => {
+        dataArry.push({
+          ...item?.instance,
+          status: item?.status,
+          clusterName: item?.clusterName,
+          envCode: item?.envCode,
+        });
+      });
       return {
         total: result.data?.pageInfo?.total,
-        list: result.data?.dataSource || [],
+        list: dataArry || [],
       };
     },
   });

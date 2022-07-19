@@ -43,3 +43,7 @@ export const getPerformanceTrends = `${appConfig.apiPrefix}/databaseManage/insta
 
 /**14、 GET 实例列表 */
 export const getInstanceList = `${appConfig.apiPrefix}/databaseManage/instance/list`;
+
+//databaseManage/instance/add
+/**15、 POST 新增实例 */
+export const addInstance = `${appConfig.apiPrefix}/databaseManage/instance/add`;
