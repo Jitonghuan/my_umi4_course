@@ -162,7 +162,7 @@ export default function PublishRecord(props: IProps) {
             ghost
             type="primary"
             onClick={() => {
-              loadMore;
+              loadMore && loadMore();
               // timerHandle('stop');
             }}
           >
