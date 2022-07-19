@@ -411,7 +411,7 @@ export default [
             hideInMenu: true,
             component: '@/pages/npm-manage/detail/components/versions-manage',
           },
-        ]
+        ],
       },
     ],
   },
@@ -604,7 +604,7 @@ export default [
         name: '实例详情',
         key: 'info',
         component: '@/pages/database/instance-list/components/instance-info',
-        // hideInMenu: true,
+        hideInMenu: true,
       },
       {
         path: 'trends',
@@ -620,17 +620,25 @@ export default [
         component: '@/pages/database/instance-list',
       },
       {
-        path: 'database-manage',
-        name: '数据库管理',
-        key: 'database-manage',
-        component: '@/pages/database/database-manage',
+        path: 'cluster-list',
+        name: '集群列表',
+        key: 'cluster-list',
+        component: '@/pages/database/cluster-list',
       },
-      {
-        path: 'account-manage',
-        name: '账号管理',
-        key: 'account-manage',
-        component: '@/pages/database/account-manage',
-      },
+      // {
+      //   path: 'database-manage',
+      //   name: '数据库管理',
+      //   key: 'database-manage',
+      //   component: '@/pages/database/database-manage',
+      //   hideInMenu: true,
+      // },
+      // {
+      //   path: 'account-manage',
+      //   name: '账号管理',
+      //   key: 'account-manage',
+      //   component: '@/pages/database/account-manage',
+      //   hideInMenu: true,
+      // },
     ],
   },
   {

@@ -13,12 +13,13 @@ import { useChangePassword } from '../../hook';
 export interface AccountEditorProps {
   mode: EditorMode;
   curId?: any;
+  clusterId: number;
   onClose: () => any;
   onSave: () => any;
 }
 
 export default function AccountEditor(props: AccountEditorProps) {
-  const { mode, curId, onClose, onSave } = props;
+  const { mode, curId, onClose, onSave, clusterId } = props;
   const [editForm] = Form.useForm();
   const [updateLoading, updatePassword] = useChangePassword();
 
@@ -31,7 +32,7 @@ export default function AccountEditor(props: AccountEditorProps) {
   }, [mode]);
   const handleSubmit = async () => {
     const params = await editForm.validateFields();
-    updatePassword({ password: params?.password, clusterId: 2, id: curId }).then(() => {
+    updatePassword({ password: params?.password, clusterId, id: curId }).then(() => {
       onSave();
     });
   };

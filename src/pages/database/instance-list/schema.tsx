@@ -6,7 +6,7 @@
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Avatar, Popconfirm, Tooltip, Tag } from 'antd';
+import { Space, Avatar, Popconfirm, Tooltip, Tag, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
   UserOutlined,
@@ -89,15 +89,7 @@ export const formOptions = [
     key: '1',
     type: 'input',
     label: '实例名称',
-    dataIndex: 'type',
-    width: '200px',
-    placeholder: '请输入',
-  },
-  {
-    key: '2',
-    type: 'input',
-    label: 'Host',
-    dataIndex: 'type',
+    dataIndex: 'name',
     width: '200px',
     placeholder: '请输入',
   },
@@ -114,16 +106,7 @@ export const formOptions = [
     key: '4',
     type: 'select',
     label: '所属集群',
-    dataIndex: 'type',
-    width: '200px',
-    placeholder: '请选择',
-    option: [],
-  },
-  {
-    key: '4',
-    type: 'select',
-    label: '所属环境',
-    dataIndex: 'type',
+    dataIndex: 'clusterName',
     width: '200px',
     placeholder: '请选择',
     option: [],
@@ -198,6 +181,7 @@ export const createTableColumns = (params: {
   onManage: (record: any, index: number) => void;
   onViewPerformance: (record: any, index: number) => void;
   onDelete: (record: any) => void;
+  delLoading: boolean;
 }) => {
   return [
     {
@@ -264,7 +248,9 @@ export const createTableColumns = (params: {
               params?.onDelete(record.id);
             }}
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <Spin spinning={params?.delLoading}>
+              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            </Spin>
           </Popconfirm>
         </Space>
       ),

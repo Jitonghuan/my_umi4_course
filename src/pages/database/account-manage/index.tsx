@@ -9,20 +9,27 @@ import CreateAccount from './components/create-account';
 import UpdatePassword from './components/update-password';
 import { useDeleteAccount } from './hook';
 import GrantModal from './components/grant';
-
-export default function AccountList() {
+export interface AccountProps {
+  clusterId: number;
+}
+export default function AccountList(props: AccountProps) {
+  //clusterId={clusterId}
   const [form] = Form.useForm();
+  const { clusterId } = props;
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [updateMode, setUpdateMode] = useState<EditorMode>('HIDE');
   const [grantMode, setGrantMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteAccount] = useDeleteAccount();
   const [curId, setCurId] = useState<any>();
   const [curRecord, setCurRecord] = useState<any>({});
+  useEffect(() => {
+    if (!clusterId) return;
+  }, [clusterId]);
 
   const columns = useMemo(() => {
     return createTableColumns({
       onDelete: async (id) => {
-        deleteAccount({ clusterId: 2, id }).then(() => {
+        deleteAccount({ clusterId, id }).then(() => {
           reset();
         });
       },
@@ -51,7 +58,7 @@ export default function AccountList() {
     formatter: (params) => {
       return {
         ...params,
-        clusterId: 2,
+        clusterId,
       };
     },
     formatResult: (result) => {
@@ -66,6 +73,7 @@ export default function AccountList() {
     <PageContainer>
       <CreateAccount
         mode={mode}
+        clusterId={clusterId}
         onClose={() => {
           setMode('HIDE');
         }}
@@ -77,6 +85,7 @@ export default function AccountList() {
       <UpdatePassword
         mode={updateMode}
         curId={curId}
+        clusterId={clusterId}
         onClose={() => {
           setUpdateMode('HIDE');
         }}
@@ -87,6 +96,7 @@ export default function AccountList() {
       />
       <GrantModal
         mode={grantMode}
+        clusterId={clusterId}
         curRecord={curRecord}
         onClose={() => {
           setGrantMode('HIDE');

@@ -7,15 +7,22 @@ import { createTableColumns } from './schema';
 import CreateDataBase from './create-database';
 import { getSchemaList } from '../service';
 import { useDeleteSchema } from './hook';
+export interface SchemaProps {
+  clusterId: number;
+}
 
-export default function DEMO() {
+export default function DEMO(props: SchemaProps) {
   const [form] = Form.useForm();
+  const { clusterId } = props;
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteSchema] = useDeleteSchema();
+  useEffect(() => {
+    if (!clusterId) return;
+  }, [clusterId]);
   const columns = useMemo(() => {
     return createTableColumns({
       onDelete: async (record) => {
-        deleteSchema({ clusterId: 2, id: record?.id }).then(() => {
+        deleteSchema({ clusterId, id: record?.id }).then(() => {
           reset();
         });
       },
@@ -32,7 +39,7 @@ export default function DEMO() {
     formatter: (params) => {
       return {
         ...params,
-        clusterId: 2,
+        clusterId,
       };
     },
     formatResult: (result) => {
@@ -47,6 +54,7 @@ export default function DEMO() {
     <PageContainer>
       <CreateDataBase
         mode={mode}
+        clusterId={clusterId}
         onClose={() => {
           setMode('HIDE');
         }}

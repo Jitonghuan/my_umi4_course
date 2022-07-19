@@ -2,37 +2,29 @@ import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
-import { history } from 'umi';
 import useTable from '@/utils/useTable';
-import { getInstanceList } from '../service';
-import { formOptions, createTableColumns } from './schema';
-import CreateInstance from './components/create-instance';
-import { useDeleteInstance } from './hook';
+import { getClusterList } from '../service';
+import { createTableColumns, formOptions } from './schema';
+import CreateCluster from './create-cluster';
+import { useDeleteCluster } from './hook';
 export default function DEMO() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
-  const [delLoading, deleteInstance] = useDeleteInstance();
+  const [delLoading, deleteCluster] = useDeleteCluster();
+
   const columns = useMemo(() => {
     return createTableColumns({
-      onEdit: (record, index) => {
+      onEdit: (record) => {
         setcurRecord(record);
         setMode('EDIT');
       },
-      onManage: (record, index) => {
-        history.push({
-          pathname: 'info',
-          state: record?.id,
-        });
-      },
-      onViewPerformance: (record, index) => {
-        history.push({
-          pathname: 'trends',
-          state: {},
-        });
+      onView: (record) => {
+        setcurRecord(record);
+        setMode('VIEW');
       },
       onDelete: async (id) => {
-        deleteInstance({ id }).then(() => {
+        deleteCluster({ id }).then(() => {
           reset();
         });
       },
@@ -43,7 +35,7 @@ export default function DEMO() {
     tableProps,
     search: { submit, reset },
   } = useTable({
-    url: getInstanceList,
+    url: getClusterList,
     method: 'GET',
     form,
     formatter: (params) => {
@@ -52,26 +44,16 @@ export default function DEMO() {
       };
     },
     formatResult: (result) => {
-      let dataSource = result.data?.dataSource;
-      let dataArry: any = [];
-      dataSource?.map((item: any) => {
-        dataArry.push({
-          ...item?.instance,
-          status: item?.status,
-          clusterName: item?.clusterName,
-          envCode: item?.envCode,
-        });
-      });
       return {
         total: result.data?.pageInfo?.total,
-        list: dataArry || [],
+        list: result.data?.dataSource,
       };
     },
   });
 
   return (
     <PageContainer>
-      <CreateInstance
+      <CreateCluster
         mode={mode}
         curRecord={curRecord}
         onClose={() => {
@@ -100,7 +82,7 @@ export default function DEMO() {
         }}
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <h3>实例列表</h3>
+            <h3>集群列表</h3>
             <Button
               type="primary"
               ghost
@@ -108,7 +90,7 @@ export default function DEMO() {
                 setMode('ADD');
               }}
             >
-              新增实例接入
+              新集群接入
             </Button>
           </Space>
         }

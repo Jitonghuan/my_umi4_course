@@ -14,13 +14,15 @@ import './index.less';
 
 export interface GrantProps {
   mode: string;
+  clusterId: number;
   curRecord: any;
+
   onSave: () => void;
   onClose: () => void;
 }
 
 export default function ScriptEditor(props: GrantProps) {
-  const { mode, curRecord, onSave, onClose } = props;
+  const { mode, curRecord, onSave, onClose, clusterId } = props;
   const [objectForm] = Form.useForm();
   const [grantLoading, grantAccount] = useGrantAccount();
   const [selectedDataKeys, setSelectedDataKeys] = useState<any>([]);
@@ -29,7 +31,7 @@ export default function ScriptEditor(props: GrantProps) {
   const [selectedManageKeys, setSelectedManageKeys] = useState<any>([]);
   const [curPrivType, setCurPrivType] = useState<string>('');
   useEffect(() => {
-    getSchemaList({ clusterId: 2 });
+    getSchemaList({ clusterId });
   }, []);
   const onDataCheck = (checkedKeys: React.Key[], info: any) => {
     let nameArry: any = [];
@@ -64,7 +66,7 @@ export default function ScriptEditor(props: GrantProps) {
     grantAccount({
       ...objParams,
       grantType: curRecord?.grantType,
-      clusterId: 2,
+      clusterId,
       id: curRecord?.id,
       privs: privsDataArry,
       object: {},

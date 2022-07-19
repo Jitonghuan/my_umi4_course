@@ -13,12 +13,13 @@ import { useCreateAccount } from '../../hook';
 import './index.less';
 export interface AccountEditorProps {
   mode: EditorMode;
+  clusterId: number;
   onClose: () => any;
   onSave: () => any;
 }
 
 export default function AccountEditor(props: AccountEditorProps) {
-  const { mode, onClose, onSave } = props;
+  const { mode, onClose, onSave, clusterId } = props;
   const [editForm] = Form.useForm();
   const [createLoading, createAccount] = useCreateAccount();
 
@@ -31,7 +32,7 @@ export default function AccountEditor(props: AccountEditorProps) {
   }, [mode]);
   const handleSubmit = async () => {
     const params = await editForm.validateFields();
-    createAccount({ ...params, clusterId: 2 }).then(() => {
+    createAccount({ ...params, clusterId }).then(() => {
       onSave();
     });
   };

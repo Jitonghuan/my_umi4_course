@@ -14,12 +14,13 @@ import './index.less';
 
 export interface MemberEditorProps {
   mode?: EditorMode;
+  clusterId: number;
   onClose: () => any;
   onSave: () => any;
 }
 
 export default function MemberEditor(props: MemberEditorProps) {
-  const { mode, onClose, onSave } = props;
+  const { mode, onClose, onSave, clusterId } = props;
   const [createLoading, createSchema] = useCreateSchema();
   const [accountListLoading, accountData, getAccountList] = useGetAccountList();
   const [userOptions] = useUserOptions();
@@ -29,7 +30,7 @@ export default function MemberEditor(props: MemberEditorProps) {
 
   useEffect(() => {
     if (mode === 'HIDE') return;
-    getAccountList({ clusterId: 2 });
+    getAccountList({ clusterId });
     return () => {
       seViewDisabled(false);
       editForm.resetFields();
@@ -37,7 +38,7 @@ export default function MemberEditor(props: MemberEditorProps) {
   }, [mode]);
   const handleSubmit = async () => {
     const params = await editForm.validateFields();
-    createSchema({ ...params, clusterId: 2, characterset: 'utf8mb4_bin' }).then(() => {
+    createSchema({ ...params, clusterId, characterset: 'utf8mb4_bin' }).then(() => {
       onSave();
     });
   };
@@ -51,7 +52,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         }}
         onSave={() => {
           setAccountMode('HIDE');
-          getAccountList({ clusterId: 2 });
+          getAccountList({ clusterId });
         }}
       />
       <Drawer
