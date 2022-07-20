@@ -69,3 +69,6 @@ export const syncMetaData = `${appConfig.apiPrefix}/databaseManage/syncMetaData`
 
 /** 获取应用环境 */
 export const envList = `${appConfig.apiPrefix}/appManage/env/list`;
+
+/** GET 实例性能趋势 */
+export const performanceTrends = `${appConfig.apiPrefix}/databaseManage/instance/performanceTrends`;

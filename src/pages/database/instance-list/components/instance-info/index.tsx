@@ -10,6 +10,7 @@ import SessionManage from './components/session-manage';
 import { useGetInstanceDetail } from '../../hook';
 import AccountManage from '../../../account-manage';
 import SchemaManage from '../../../database-manage';
+import Trends from '../../../overview/trends';
 
 import useTable from '@/utils/useTable';
 export default function DEMO() {
@@ -41,6 +42,7 @@ export default function DEMO() {
       )}
       {activeTab === 'schema' && <SchemaManage clusterId={clusterId} />}
       {activeTab === 'account' && <AccountManage clusterId={clusterId} />}
+      {activeTab === 'trend' && <Trends clusterId={clusterId} />}
     </PageContainer>
   );
 }

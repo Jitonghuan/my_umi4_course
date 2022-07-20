@@ -223,9 +223,7 @@ export default function DEMO(props: instanceInfoProps) {
                 type="primary"
                 loading={syncLoading}
                 onClick={() => {
-                  syncMetaData({ clusterId }).then(() => {
-                    getInstanceDetail({ id: clusterId });
-                  });
+                  syncMetaData({ clusterId });
                 }}
               >
                 同步元数据
@@ -243,7 +241,7 @@ export default function DEMO(props: instanceInfoProps) {
             <Descriptions.Item label="内存(GB)">{infoData?.memory || '-'}</Descriptions.Item>
             <Descriptions.Item label="最大连接数">{infoData?.maxConnection || '-'}</Descriptions.Item>
             <Descriptions.Item label="描述">{infoData?.desc || '-'}</Descriptions.Item>
-            <Descriptions.Item label="存储空间">{infoData?.diskCapacity || '-'}</Descriptions.Item>
+            <Descriptions.Item label="存储空间(GB)">{infoData?.diskCapacity || '-'}</Descriptions.Item>
           </Descriptions>
         </Spin>
       </div>

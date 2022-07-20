@@ -11,15 +11,7 @@ import SocketCharts from './socket-charts';
 import './index.less';
 
 export interface minitorDashboardProps {
-  ipDetailVisiable?: boolean;
-  onOk?: () => any;
-  onCancel?: () => any;
-  initData?: any;
-  loadings?: any;
-  currentIpData: string;
-  currentClusterData: string;
-  querChartData: (getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) => any;
-  queryCount: number;
+  clusterId: number;
 }
 export const START_TIME_ENUMS = [
   {
@@ -61,17 +53,7 @@ export const START_TIME_ENUMS = [
 ];
 
 export default function DashboardsModal(props: minitorDashboardProps) {
-  const {
-    ipDetailVisiable,
-    onOk,
-    onCancel,
-    initData,
-    loadings,
-    currentIpData,
-    currentClusterData,
-    querChartData,
-    queryCount,
-  } = props;
+  const { clusterId } = props;
 
   //数据驱动视图 ，需要用useState来驱动，不可以在选择事件中直接赋值
   const [nodeCpuData, setNodeCpuData] = useState<any>();
@@ -91,58 +73,7 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
 
-  useEffect(() => {
-    if (initData?.nodeCpu) {
-      setNodeCpuData(initData?.nodeCpu);
-    }
-  }, [initData?.nodeCpu]);
-  useEffect(() => {
-    if (initData?.nodeMem) {
-      setNodeMemData(initData?.nodeMem);
-    }
-  }, [initData?.nodeMem]);
-  useEffect(() => {
-    if (initData?.nodeDisk) {
-      setNodeDiskData(initData?.nodeDisk);
-    }
-  }, [initData?.nodeDisk]);
-  useEffect(() => {
-    if (initData?.nodeLoad) {
-      setNodeLoadData(initData?.nodeLoad);
-    }
-  }, [initData?.nodeLoad]);
-  useEffect(() => {
-    if (initData?.nodeMem) {
-      setNodeDiskData(initData?.nodeDisk);
-    }
-  }, [initData?.nodeMem]);
-  useEffect(() => {
-    if (initData?.nodeIO) {
-      setNodeIOData(initData?.nodeIO);
-    }
-  }, [initData?.nodeIO]);
-  useEffect(() => {
-    if (initData?.nodeFile) {
-      setNodeFileData(initData?.nodeFile);
-    }
-  }, [initData?.nodeFile]);
-  useEffect(() => {
-    if (initData?.nodeNetWork) {
-      setNodeNetWorkData(initData?.nodeNetWork);
-      // console.log('99999')
-    }
-  }, [initData?.nodeNetWork]);
-  useEffect(() => {
-    if (initData?.nodeSocket) {
-      setNodeSocketData(initData?.nodeSocket);
-    }
-  }, [initData?.nodeSocket]);
-  useEffect(() => {
-    if (ipDetailVisiable) {
-      setStartTime(30 * 60 * 1000);
-      // console.log('进入页面重置时间')
-    }
-  }, [ipDetailVisiable]);
+  useEffect(() => {}, []);
 
   // 选择就近时间触发的事件
   const selectRelativeTime = (value: any) => {
@@ -152,7 +83,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
     let endTimepl = Number(now / 1000).toString();
     setStartTimestamp(startTimepl);
     setEndTimestamp(endTimepl);
-    querChartData(currentClusterData, startTimepl, endTimepl, currentIpData, false);
   };
 
   return (

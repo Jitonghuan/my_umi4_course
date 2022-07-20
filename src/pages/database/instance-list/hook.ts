@@ -148,7 +148,7 @@ export function useSyncMetaData(): [boolean, (paramsObj: { clusterId: number }) 
   const [loading, setLoading] = useState<boolean>(false);
   const syncMetaData = async (paramsObj: { clusterId: number }) => {
     setLoading(true);
-    await delRequest(`${APIS.syncMetaData}?clusterId=${paramsObj?.clusterId}`)
+    await getRequest(`${APIS.syncMetaData}?clusterId=${paramsObj?.clusterId}`)
       .then((result) => {
         if (result.success) {
           message.success(result.data);
