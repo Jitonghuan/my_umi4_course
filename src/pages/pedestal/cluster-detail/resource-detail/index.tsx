@@ -5,7 +5,7 @@ import { history } from 'umi';
 import PageContainer from '@/components/page-container';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { resourceDetailTableSchema } from '../schema';
-import clusterContext from '../main/context'
+import clusterContext from '../context'
 import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import { useResourceListData } from '../hook';
@@ -142,9 +142,6 @@ export default function ResourceDetail(props: any) {
                     total: 50,
                     current: pageIndex,
                     showSizeChanger: true,
-                    onShowSizeChange: (_, next) => {
-                        setPageSize(next)
-                    },
                     onChange: (next) =>
                         setPageIndex(next)
                 }}

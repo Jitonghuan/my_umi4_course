@@ -5,7 +5,7 @@ import { history } from 'umi';
 import './index.less'
 import { warningTableSchema, eventSchema } from '../schema';
 
-import { useResourceListData } from '../hook';
+import { useResourceListData } from '../../cluster-info/hook';
 import './index.less';
 const mockData: any = []
 const statusColor: any = { Etcd: '#2fce4b', Controller: '#2fce4b', Scheduler: '#dccc43', ApiServer: '#c12726' }

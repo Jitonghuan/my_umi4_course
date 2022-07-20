@@ -3,7 +3,7 @@ import { Form, Button, Input, Pagination, Table, message } from "antd";
 import { delRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 import PageContainer from '@/components/page-container';
-import clusterContext from '../main/context'
+import clusterContext from '../context'
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { nodeListTableSchema } from '../schema';
 import { useNodeListData } from '../hook'

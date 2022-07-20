@@ -8,7 +8,8 @@ import ProgessComponent from './component/progress';
 import { history } from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
 import { useClusterListData } from './hook';
-import { getMetric, getNode } from './service'
+import { getMetric } from './service';
+import { getNode } from '../cluster-detail/service'
 import './index.less'
 
 export default function Test() {

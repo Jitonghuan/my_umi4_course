@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect, useContext } from 're
 import { Modal, Tag, Radio, Input, Form, Button, Space, Select, message } from 'antd';
 import { PlusCircleOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { nodeUpdate } from '../service'
-import clusterContext from '../main/context'
+import clusterContext from '../context'
 import './index.less'
 
 const behaviorOptions = [
