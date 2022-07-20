@@ -16,7 +16,8 @@ import useTable from '@/utils/useTable';
 export default function DEMO() {
   const [form] = Form.useForm();
   const curRecordData: any = history.location?.state;
-  const clusterId = curRecordData?.instanceId;
+  const instanceId = curRecordData?.instanceId;
+  const clusterId = curRecordData?.clusterId;
   const optType = curRecordData?.optType;
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [activeTab, setActiveTab] = useState<string | number>('info');
@@ -25,8 +26,8 @@ export default function DEMO() {
     setActiveTab(value);
   };
   useEffect(() => {
-    if (clusterId) {
-      getInstanceDetail({ id: clusterId });
+    if (instanceId) {
+      getInstanceDetail({ id: instanceId });
     }
     if (optType) {
       if (optType === 'instance-list-manage') {
@@ -36,7 +37,7 @@ export default function DEMO() {
         setActiveTab('trend');
       }
     }
-  }, [clusterId]);
+  }, [instanceId]);
 
   return (
     <PageContainer>
@@ -52,7 +53,7 @@ export default function DEMO() {
       )}
       {activeTab === 'schema' && <SchemaManage clusterId={clusterId} />}
       {activeTab === 'account' && <AccountManage clusterId={clusterId} />}
-      {activeTab === 'trend' && <Trends clusterId={clusterId} />}
+      {activeTab === 'trend' && <Trends instanceId={instanceId} />}
     </PageContainer>
   );
 }

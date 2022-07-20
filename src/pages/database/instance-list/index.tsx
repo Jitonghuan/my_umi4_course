@@ -25,6 +25,7 @@ export default function DEMO() {
           state: {
             curRecord: record,
             instanceId: record?.id,
+            clusterId: record?.clusterId,
             optType: 'instance-list-manage',
           },
         });
@@ -35,6 +36,7 @@ export default function DEMO() {
           state: {
             curRecord: record,
             instanceId: record?.id,
+            usterId: record?.clusterId,
             optType: 'instance-list-trend',
           },
         });

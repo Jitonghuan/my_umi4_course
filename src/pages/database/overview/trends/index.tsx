@@ -11,7 +11,7 @@ import { useQueryPerformanceTrends } from './hooks';
 import './index.less';
 
 export interface minitorDashboardProps {
-  clusterId: any;
+  instanceId: any;
 }
 export const START_TIME_ENUMS = [
   {
@@ -53,7 +53,7 @@ export const START_TIME_ENUMS = [
 ];
 
 export default function DashboardsModal(props: minitorDashboardProps) {
-  const { clusterId } = props;
+  const { instanceId } = props;
 
   const [lineData, loading, queryPerformanceTrends] = useQueryPerformanceTrends();
 
@@ -69,14 +69,14 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
 
   useEffect(() => {
-    if (clusterId) {
+    if (instanceId) {
       queryPerformanceTrends({
-        instanceId: clusterId,
+        instanceId: instanceId,
         start: startTimestamp,
         end: endTimestamp,
       });
     }
-  }, [clusterId, startTimestamp]);
+  }, [instanceId, startTimestamp]);
 
   // 选择就近时间触发的事件
   const selectRelativeTime = (value: any) => {
