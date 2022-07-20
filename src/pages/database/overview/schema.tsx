@@ -6,27 +6,27 @@ export const options = [
   {
     label: 'Mysql',
     value: 3,
-    icon: <BarsOutlined />,
+    // icon: <BarsOutlined />,
   },
   {
     label: 'Postares',
     value: 4,
-    icon: <AppstoreOutlined />,
+    // icon: <AppstoreOutlined />,
   },
   {
     label: 'Redis',
     value: 5,
-    icon: <ControlOutlined />,
+    // icon: <ControlOutlined />,
   },
   {
     label: 'MogoDB',
     value: 6,
-    icon: <RocketOutlined />,
+    // icon: <RocketOutlined />,
   },
   {
     label: 'Rds',
     value: 7,
-    icon: <RocketOutlined />,
+    // icon: <RocketOutlined />,
   },
 ];
 
