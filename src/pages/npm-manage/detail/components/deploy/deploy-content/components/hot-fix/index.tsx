@@ -171,7 +171,7 @@ export default function HotFix(props: IProps) {
     }
   }, [npmName, isActive, pipelineCode]);
 
-  function judgeActiveDeploy(record) {
+  function judgeActiveDeploy(record: any) {
     if (record.branchName === deployInfo?.branchInfo?.features[0]) {
       console.log(deployInfo?.status?.deployStatus)
       return {

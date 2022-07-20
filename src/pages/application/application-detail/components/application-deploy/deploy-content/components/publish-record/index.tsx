@@ -26,6 +26,7 @@ export default function PublishRecord(props: IProps) {
 
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
+  const [intervalId, setIntervalId] = useState<any>(null);
 
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
@@ -60,59 +61,15 @@ export default function PublishRecord(props: IProps) {
       }
     }, 8000);
 
+    setIntervalId(intervalId);
+
     return () => {
-      clearInterval(intervalId);
+      intervalId && clearInterval(intervalId);
     };
   }, []);
-  // useEffect(() => {
-  //   queryDataSource({
-  //     appCode,
-  //     envTypeCode: env,
-  //     pageIndex: 1,
-  //   });
-  // }, []);
-  // useEffect(() => {
-  //   // let intervalId = setInterval(() => {
-  //   //   if (appCode && env) {
-  //   //     queryDataSource({
-  //   //       appCode,
-  //   //       envTypeCode: env,
-  //   //       pageIndex: 1,
-  //   //     });
-  //   //   }
-  //   // }, 8000);
-  //   timerHandle('do', true);
-
-  //   // return () => {
-  //   //   clearInterval(intervalId);
-  //   // };
-  // }, []);
 
   let dom: any = document?.getElementById('load-more-list');
   let scrollTop = useRef<any>(dom?.scrollTop);
-  // let scrollTop = dom?.scrollTop; // 滚动条距离顶部的距离
-  // useEffect(() => {
-  //   if (dom) {
-  //     console.log('00000');
-  //     dom.addEventListener('scroll', getScroll(), true);
-  //   }
-
-  //   // return () => {
-  //   //    dom?.removeEventListener('scroll', getScroll(),true);
-  //   // };
-  // }, [dom, scrollTop.current]);
-  //定义定时器方法
-  // const intervalFunc = () => {
-  //   if (appCode && env) {
-  //     queryDataSource({
-  //       appCode,
-  //       envTypeCode: env,
-  //       pageIndex: 1,
-  //     });
-  //   }
-  // };
-  // // 定时请求发布内容
-  // const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -162,8 +119,8 @@ export default function PublishRecord(props: IProps) {
             ghost
             type="primary"
             onClick={() => {
-              loadMore;
-              // timerHandle('stop');
+              loadMore && loadMore();
+              intervalId && clearInterval(intervalId);
             }}
           >
             加载更多
