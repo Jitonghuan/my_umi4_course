@@ -143,15 +143,15 @@ export const createTableSchema = ({
           >
             详情
           </a>
-          <Popconfirm
+          {/* <Popconfirm
             title="确定要删除该应用吗？"
             onConfirm={() => onDelClick(record, index)}
             okText="确定"
             cancelText="取消"
             placement="topLeft"
-          >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
-          </Popconfirm>
+          > */}
+          <a style={{ color: 'rgb(255, 48, 3)' }} onClick={() => { onDelClick(record, index) }}>删除</a>
+          {/* </Popconfirm> */}
         </div>
       ),
     },
