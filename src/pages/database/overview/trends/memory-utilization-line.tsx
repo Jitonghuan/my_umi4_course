@@ -17,26 +17,26 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
   const config = {
     data,
     xField: 'time',
-    yField: 'precentage',
+    yField: 'count',
     xAxis: {
       range: [0, 1],
       // tickCount: 5,
     },
     yAxis: {
-      title: {
-        text: '内存',
-      },
+      // title: {
+      //   text: '内存',
+      // },
       label: {
         // 数值格式化为带百分号
-        formatter: (v: any) => `${v}%`,
+        formatter: (v: any) => `${v}K`,
       },
     },
-    LegendCfg: {
-      legend: {
-        position: 'top-left',
-        text: '内存',
-      },
-    },
+    // LegendCfg: {
+    //   legend: {
+    //     position: 'top-left',
+    //     text: '内存',
+    //   },
+    // },
 
     // pattern: {
     //   type: 'dot',
@@ -61,7 +61,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>内存使用率</h3>
+        <h3>MySQL存储空间使用量</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

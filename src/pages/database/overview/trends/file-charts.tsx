@@ -17,7 +17,7 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
   const config = {
     data,
     xField: 'time',
-    yField: 'value',
+    yField: 'count',
     seriesField: 'category',
     xAxis: {
       // tickInterval:6,
@@ -26,8 +26,8 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
     yAxis: {
       label: {
         // 数值格式化为带百分号
-        // formatter: (v:any) => `${v}%`,
-        formatter: (v: any) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
+        formatter: (v: any) => `${v}K`,
+        // formatter: (v: any) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
       },
     },
     // width: 550,
@@ -37,7 +37,7 @@ export default function LoadUsingLine(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>使用的文件描述符/每秒上下文切换次数</h3>
+        <h3>执行次数</h3>
       </header>
       <div>
         {/* <div style={{ height: 'calc(100% - 120px)' }}>

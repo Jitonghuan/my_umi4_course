@@ -606,13 +606,13 @@ export default [
         component: '@/pages/database/instance-list/components/instance-info',
         hideInMenu: true,
       },
-      {
-        path: 'trends',
-        name: '性能趋势',
-        key: 'overview',
-        component: '@/pages/database/overview/trends',
-        hideInMenu: true,
-      },
+      // {
+      //   path: 'trends',
+      //   name: '性能趋势',
+      //   key: 'overview',
+      //   component: '@/pages/database/overview/trends',
+      //   hideInMenu: true,
+      // },
       {
         path: 'instance-list',
         name: '实例列表',

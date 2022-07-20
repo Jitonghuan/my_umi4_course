@@ -18,8 +18,10 @@ export default function DatabaseOverView() {
   const [curRecord, setCurRecord] = useState<any>();
 
   useEffect(() => {
-    getOverviewDashboards();
     getOverviewInstances({ instanceType: activeValue });
+  }, [activeValue]);
+  useEffect(() => {
+    getOverviewDashboards();
   }, []);
 
   // 表格列配置
@@ -28,9 +30,10 @@ export default function DatabaseOverView() {
       onPerformanceTrendsClick: (record, index) => {
         setCurRecord(record);
         history.push({
-          pathname: 'trends',
+          pathname: 'info',
           state: {
             instanceId: record?.id,
+            optType: 'overview-list-trend',
           },
         });
       },

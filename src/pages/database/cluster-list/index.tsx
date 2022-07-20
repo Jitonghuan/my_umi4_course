@@ -117,7 +117,6 @@ export default function DEMO() {
             <h3>集群列表</h3>
             <Button
               type="primary"
-              ghost
               onClick={() => {
                 setMode('ADD');
               }}

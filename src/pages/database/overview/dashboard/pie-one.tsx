@@ -82,7 +82,7 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
     <>
       <h3>按数据库类型分布情况</h3>
 
-      <div style={{ padding: 10, height: 250 }}>
+      <div style={{ padding: 10, height: 220 }}>
         <Pie {...config} />
       </div>
     </>

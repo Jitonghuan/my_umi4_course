@@ -3,7 +3,7 @@
 // @create 2021/08/09 10:30
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { Area } from '@ant-design/charts';
+import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
 
 export interface ChartCaseListProps {
@@ -16,7 +16,7 @@ export default function DiskUsingLine(props: ChartCaseListProps) {
   const config = {
     data: data || [],
     xField: 'time',
-    yField: 'value',
+    yField: 'count',
     seriesField: 'category',
     color: ['#1890ff', '#8bc0d6'],
     // xAxis: {
@@ -42,12 +42,12 @@ export default function DiskUsingLine(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>磁盘使用率</h3>
+        <h3>会话连接</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>
           <ColorContainer roleKeys={['color']}>
-            <Area {...config} />
+            <Line {...config} />
           </ColorContainer>
         </div>
       </div>

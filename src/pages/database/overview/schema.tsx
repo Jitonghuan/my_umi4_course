@@ -97,7 +97,9 @@ export const tableSchema = ({
       render: (value: string, record: any, index: number) => {
         return (
           <Space>
-            <Button onClick={() => onPerformanceTrendsClick(record, index)}>性能趋势</Button>
+            <Button size="small" type="primary" onClick={() => onPerformanceTrendsClick(record, index)}>
+              性能趋势
+            </Button>
           </Space>
         );
       },

@@ -170,7 +170,7 @@ export default function DEMO(props: instanceInfoProps) {
             return 20;
           },
           getHGap: function getHGap() {
-            return 80;
+            return 100;
           },
         },
       });

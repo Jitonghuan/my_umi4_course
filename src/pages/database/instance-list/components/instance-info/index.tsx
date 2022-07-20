@@ -15,7 +15,9 @@ import Trends from '../../../overview/trends';
 import useTable from '@/utils/useTable';
 export default function DEMO() {
   const [form] = Form.useForm();
-  const clusterId: any = history.location?.state;
+  const curRecordData: any = history.location?.state;
+  const clusterId = curRecordData?.instanceId;
+  const optType = curRecordData?.optType;
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [activeTab, setActiveTab] = useState<string | number>('info');
   const [infoLoading, infoData, topoData, getInstanceDetail] = useGetInstanceDetail();
@@ -26,11 +28,19 @@ export default function DEMO() {
     if (clusterId) {
       getInstanceDetail({ id: clusterId });
     }
+    if (optType) {
+      if (optType === 'instance-list-manage') {
+        setActiveTab('info');
+      }
+      if (optType === 'instance-list-trend' || optType === 'overview-list-trend') {
+        setActiveTab('trend');
+      }
+    }
   }, [clusterId]);
 
   return (
     <PageContainer>
-      <Segmented block options={infoOptions} onChange={changeInfoOption} />
+      <Segmented block options={infoOptions} onChange={changeInfoOption} value={activeTab} />
       {activeTab === 'info' && (
         <SessionManage
           loading={infoLoading}

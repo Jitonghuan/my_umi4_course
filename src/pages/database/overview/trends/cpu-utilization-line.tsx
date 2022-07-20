@@ -15,7 +15,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   const config = {
     data,
     xField: 'time',
-    yField: 'precentage',
+    yField: 'count',
     seriesField: 'category',
     xAxis: {
       // tickInterval:6,
@@ -34,7 +34,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>cpu利用率</h3>
+        <h3>MySQL cpu/内存利用率</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

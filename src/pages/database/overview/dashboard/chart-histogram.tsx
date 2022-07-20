@@ -52,7 +52,7 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
   return (
     <>
       <h3>按集群部署类型分布情况</h3>
-      <div style={{ padding: 10, height: 250 }}>
+      <div style={{ padding: 10, height: 210 }}>
         <Column {...config} />
       </div>
     </>

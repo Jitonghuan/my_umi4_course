@@ -22,13 +22,21 @@ export default function DEMO() {
       onManage: (record, index) => {
         history.push({
           pathname: 'info',
-          state: record?.id,
+          state: {
+            curRecord: record,
+            instanceId: record?.id,
+            optType: 'instance-list-manage',
+          },
         });
       },
       onViewPerformance: (record, index) => {
         history.push({
-          pathname: 'trends',
-          state: {},
+          pathname: 'info',
+          state: {
+            curRecord: record,
+            instanceId: record?.id,
+            optType: 'instance-list-trend',
+          },
         });
       },
       onDelete: async (id) => {
