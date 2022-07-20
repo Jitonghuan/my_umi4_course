@@ -411,7 +411,7 @@ export default [
             hideInMenu: true,
             component: '@/pages/npm-manage/detail/components/versions-manage',
           },
-        ]
+        ],
       },
     ],
   },
@@ -827,12 +827,6 @@ export default [
           },
         ],
       },
-      {
-        path: 'tmpl-log',
-        name: '操作日志',
-        key: 'tmpl-log',
-        component: '@/pages/operation/tmpl-log',
-      },
     ],
   },
   {
@@ -1155,6 +1149,12 @@ export default [
         name: '消息管理',
         key: 'message',
         component: '@/pages/admin/message-manage',
+      },
+      {
+        path: 'tmpl-log',
+        name: '操作日志',
+        key: 'tmpl-log',
+        component: '@/pages/operation/tmpl-log',
       },
     ],
   },

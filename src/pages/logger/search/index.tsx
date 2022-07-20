@@ -406,6 +406,8 @@ export default function LoggerSearch(props: any) {
                   options={envOptions}
                   style={{ width: 140 }}
                   placeholder="请选择环境"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
               <Form.Item label="日志库">
@@ -415,6 +417,8 @@ export default function LoggerSearch(props: any) {
                   options={logStoreOptions}
                   style={{ width: 140 }}
                   placeholder="请选择日志库"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
             </Form>

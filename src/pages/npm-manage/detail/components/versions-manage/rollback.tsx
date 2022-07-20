@@ -33,7 +33,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     }
   }, [visible]);
 
-  async function handleSearch (pagination?: any) {
+  async function handleSearch(pagination?: any) {
     setSelectedRowKeys([]);
     const res = await getRequest(getVersionList, {
       data: {
@@ -41,9 +41,9 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         npmEnvType: tag === 'latest' ? 'prod' : tag,
         pageIndex: page,
         pageSize,
-        ...pagination || {}
-      }
-    })
+        ...(pagination || {}),
+      },
+    });
     const { dataSource, pageInfo } = res?.data || {};
     setDataList(dataSource || []);
     setTotal(pageInfo?.total || 0);
@@ -55,14 +55,14 @@ export default function RollbackVersion(props: RollbackVersionProps) {
       npmEnvType: tag === 'latest' ? 'prod' : tag,
       tag,
       version: selectedRowKeys[0],
-    }
+    };
     await postRequest(rollback, {
-      data: param
+      data: param,
     });
 
     message.success('操作成功！');
     onSubmit();
-  }
+  };
 
   function getStatusName(status: number) {
     switch (status) {
@@ -120,14 +120,15 @@ export default function RollbackVersion(props: RollbackVersionProps) {
           total,
           pageSize,
           current: page,
+          showTotal: () => `总共 ${total} 条数据`,
           onChange: (page, pageSize) => {
             setPage(page);
             setPageSize(pageSize);
             void handleSearch({
               pageIndex: page,
-              pageSize
-            })
-          }
+              pageSize,
+            });
+          },
         }}
         bordered
         locale={{ emptyText: <Empty description="没有可回滚的版本" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
@@ -142,11 +143,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         <Table.Column dataIndex="deployDesc" title="发布描述" />
         <Table.Column dataIndex="gmtCreate" title="发布时间" render={datetimeCellRender} width={200} />
         <Table.Column dataIndex="npmDeployer" title="发布人" />
-        <Table.Column
-          dataIndex="isActive"
-          title="状态"
-          render={(value: number) => getStatusName(value)}
-        />
+        <Table.Column dataIndex="isActive" title="状态" render={(value: number) => getStatusName(value)} />
       </Table>
     </Modal>
   );

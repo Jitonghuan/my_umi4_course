@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {Button, Form, Input, message, Modal, Table, Drawer, Tooltip} from 'antd';
+import { Button, Form, Input, message, Modal, Table, Drawer, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
-import UserSelector, { stringToList } from "@/components/user-selector";
-import DebounceSelect from "@/components/debounce-select";
+import UserSelector, { stringToList } from '@/components/user-selector';
+import DebounceSelect from '@/components/debounce-select';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import {getRequest, postRequest, putRequest} from "@/utils/request";
+import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { npmCreate, searchGitAddress, npmUpdate, npmList } from './server';
 import { history } from 'umi';
 import './index.less';
@@ -23,16 +23,16 @@ export default function NpmList() {
   const [type, setType] = useState('add');
   const [form] = Form.useForm();
 
-  async function handleSearch(pagination?: any ) {
-    const param = await searchField.getFieldsValue() || {};
+  async function handleSearch(pagination?: any) {
+    const param = (await searchField.getFieldsValue()) || {};
     const res = await getRequest(npmList, {
       data: {
         ...param,
         pageIndex: page,
         pageSize,
-        ...pagination || {}
-      }
-    })
+        ...(pagination || {}),
+      },
+    });
     const { dataSource, pageInfo } = res?.data || {};
     setDataList(dataSource || []);
     setTotal(pageInfo?.total || 0);
@@ -51,11 +51,11 @@ export default function NpmList() {
     let res = null;
     if (type === 'add') {
       res = await postRequest(npmCreate, {
-        data: submitData
+        data: submitData,
       });
     } else {
       res = await putRequest(npmUpdate, {
-        data: submitData
+        data: submitData,
       });
     }
     setLoading(false);
@@ -73,7 +73,7 @@ export default function NpmList() {
 
   useEffect(() => {
     handleSearch();
-  }, [])
+  }, []);
 
   return (
     <PageContainer className="npm-list-page">
@@ -113,20 +113,21 @@ export default function NpmList() {
         <Table
           bordered
           dataSource={dataList}
-          rowKey='name'
+          rowKey="name"
           scroll={{ x: '100%' }}
           pagination={{
             total,
             pageSize,
             current: page,
+            showTotal: () => `总共 ${total} 条数据`,
             onChange: (page, pageSize) => {
               setPage(page);
               setPageSize(pageSize);
               handleSearch({
                 pageIndex: page,
-                pageSize
-              })
-            }
+                pageSize,
+              });
+            },
           }}
           columns={[
             {
@@ -187,7 +188,7 @@ export default function NpmList() {
                       setVisible(true);
                       form.setFieldsValue({
                         ...record,
-                        ownerList: stringToList(record?.npmOwner)
+                        ownerList: stringToList(record?.npmOwner),
                       });
                     }}
                   >
@@ -208,9 +209,9 @@ export default function NpmList() {
                   </a>
                 </div>
               ),
-            }
+            },
           ]}
-          />
+        />
       </ContentCard>
       <Drawer
         width={660}

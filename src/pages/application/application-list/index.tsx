@@ -84,6 +84,7 @@ export default function ApplicationList() {
               setPageSize(next);
             },
             onChange: (next) => setPageIndex(next),
+            showTotal: () => `总共 ${total} 条数据`,
           }}
           columns={tableColumns}
         ></Table>
