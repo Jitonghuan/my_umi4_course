@@ -109,6 +109,7 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
           const dataArry = dataSource?.map((item: any) => ({
             label: item?.name,
             value: item?.id,
+            key: item?.id,
           }));
           setData(dataArry || []);
         } else {

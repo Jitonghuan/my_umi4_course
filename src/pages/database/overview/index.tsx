@@ -33,6 +33,7 @@ export default function DatabaseOverView() {
           pathname: 'info',
           state: {
             instanceId: record?.id,
+            clusterId: record?.clusterId,
             optType: 'overview-list-trend',
           },
         });
@@ -65,6 +66,7 @@ export default function DatabaseOverView() {
           //  block
           options={options}
           defaultValue="mysql"
+          value={activeValue}
           onChange={(value: any) => {
             setActiveValue(value);
           }}

@@ -41,7 +41,7 @@ export default function DEMO() {
 
   return (
     <PageContainer>
-      <Segmented block options={infoOptions} onChange={changeInfoOption} value={activeTab} />
+      <Segmented block size="small" options={infoOptions} onChange={changeInfoOption} value={activeTab} />
       {activeTab === 'info' && (
         <SessionManage
           loading={infoLoading}

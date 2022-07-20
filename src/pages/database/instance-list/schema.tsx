@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 11:08:37
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-07 15:28:36
+ * @LastEditTime: 2022-07-21 00:48:49
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -124,23 +124,30 @@ export const INSTANCE_TYPE: Record<number, instanceTypeItem> = {
   5: { tagText: 'redis', color: 'default' },
   6: { tagText: 'mongdb', color: 'default' },
 };
-
+export const typeOptions = [
+  { key: 3, label: 'mysql', value: 3 },
+  { key: 4, label: 'postgresql', value: 4 },
+];
 export const instanceTypeOption = [
   {
     label: 'mysql',
-    value: 3,
+    value: '3',
+    key: '3',
   },
   {
     label: 'postgresql',
-    value: 4,
+    value: '4',
+    key: '4',
   },
   {
     label: 'redis',
-    value: 5,
+    value: '5',
+    key: '5',
   },
   {
     label: 'mongdb',
-    value: 6,
+    value: '6',
+    key: '6',
   },
 ];
 

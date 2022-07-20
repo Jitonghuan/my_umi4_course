@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Row, Tag } from 'antd';
+import { Drawer, message, Form, Button, Select, Input, Modal, Tag } from 'antd';
 import { clusterTypeOption } from '../schema';
 import { useQueryEnvList, useAddCluster, useUpdateCluster } from '../hook';
 
 export interface MemberEditorProps {
   mode?: EditorMode;
-  curRecord: any;
+  curRecord?: any;
   onClose: () => any;
   onSave: () => any;
 }
@@ -52,12 +52,13 @@ export default function MemberEditor(props: MemberEditorProps) {
 
   return (
     <>
-      <Drawer
+      <Modal
         width={900}
         title={mode === 'EDIT' ? '编辑集群' : mode === 'VIEW' ? '查看集群' : '新增集群'}
-        placement="right"
+        // placement="right"
         visible={mode !== 'HIDE'}
-        onClose={onClose}
+        // onClose={onClose}
+        onCancel={onClose}
         maskClosable={false}
         footer={
           <div className="drawer-footer">
@@ -106,7 +107,7 @@ export default function MemberEditor(props: MemberEditorProps) {
             <Input.TextArea style={{ width: 520 }} disabled={mode === 'VIEW'}></Input.TextArea>
           </Form.Item>
         </Form>
-      </Drawer>
+      </Modal>
     </>
   );
 }

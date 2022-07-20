@@ -4,6 +4,7 @@ import { useAddInstance, useUpdateInstance } from '../../hook';
 import { instanceTypeOption, roleTypeOption } from '../../schema';
 import { useGetClusterList } from '../../hook';
 import { INSTANCE_TYPE } from '../../schema';
+import CreateCluster from '../../../cluster-list/create-cluster';
 
 import './index.less';
 
@@ -20,6 +21,7 @@ export default function MemberEditor(props: MemberEditorProps) {
   const [editForm] = Form.useForm<Record<string, string>>();
   const [addLoading, addInstance] = useAddInstance();
   const [updateLoading, updateInstance] = useUpdateInstance();
+  const [clusterMode, setClusterMode] = useState<EditorMode>('HIDE');
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -50,6 +52,16 @@ export default function MemberEditor(props: MemberEditorProps) {
 
   return (
     <>
+      <CreateCluster
+        mode={clusterMode}
+        onClose={() => {
+          setClusterMode('HIDE');
+        }}
+        onSave={() => {
+          setClusterMode('HIDE');
+          getClusterList();
+        }}
+      />
       <Drawer
         width={900}
         title={mode === 'EDIT' ? '编辑实例' : mode === 'VIEW' ? '查看实例' : '新接入实例'}
@@ -98,7 +110,12 @@ export default function MemberEditor(props: MemberEditorProps) {
             </Form.Item>
             {mode === 'ADD' && (
               <span style={{ marginTop: 4 }}>
-                <Tag color="geekblue" onClick={() => {}}>
+                <Tag
+                  color="geekblue"
+                  onClick={() => {
+                    setClusterMode('ADD');
+                  }}
+                >
                   新增集群
                 </Tag>
               </span>

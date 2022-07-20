@@ -241,7 +241,10 @@ export default function DEMO(props: instanceInfoProps) {
             <Descriptions.Item label="内存(GB)">{infoData?.memory || '-'}</Descriptions.Item>
             <Descriptions.Item label="最大连接数">{infoData?.maxConnection || '-'}</Descriptions.Item>
             <Descriptions.Item label="描述">{infoData?.desc || '-'}</Descriptions.Item>
-            <Descriptions.Item label="存储空间(GB)">{infoData?.diskCapacity || '-'}</Descriptions.Item>
+            <Descriptions.Item label="存储空间(GB)">
+              {`已使用${infoData?.diskUsed || '-'}G`}&nbsp;
+              <span style={{ color: 'blue' }}>{`(共${infoData?.diskCapacity}G)` || '-'}</span>
+            </Descriptions.Item>
           </Descriptions>
         </Spin>
       </div>

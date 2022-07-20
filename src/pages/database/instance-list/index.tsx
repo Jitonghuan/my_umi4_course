@@ -5,14 +5,46 @@ import { Button, Space, Form } from 'antd';
 import { history } from 'umi';
 import useTable from '@/utils/useTable';
 import { getInstanceList } from '../service';
-import { formOptions, createTableColumns } from './schema';
+import { createTableColumns, instanceTypeOption, typeOptions } from './schema';
 import CreateInstance from './components/create-instance';
-import { useDeleteInstance } from './hook';
+import { useDeleteInstance, useGetClusterList } from './hook';
 export default function DEMO() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
+  const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [delLoading, deleteInstance] = useDeleteInstance();
+  const formOptions = [
+    {
+      key: '1',
+      type: 'input',
+      label: '实例名称',
+      dataIndex: 'name',
+      width: '200px',
+      placeholder: '请输入',
+    },
+    {
+      key: '3',
+      type: 'select',
+      label: '类型',
+      dataIndex: 'type',
+      width: '200px',
+      placeholder: '请选择',
+      option: instanceTypeOption,
+    },
+    {
+      key: '4',
+      type: 'select',
+      label: '所属集群',
+      dataIndex: 'clusterName',
+      width: '200px',
+      placeholder: '请选择',
+      option: clusterOptions,
+    },
+  ];
+  useEffect(() => {
+    getClusterList();
+  }, []);
   const columns = useMemo(() => {
     return createTableColumns({
       onEdit: (record, index) => {
@@ -57,6 +89,7 @@ export default function DEMO() {
     method: 'GET',
     form,
     formatter: (params) => {
+      console.log('params', params);
       return {
         ...params,
       };
@@ -96,7 +129,35 @@ export default function DEMO() {
         form={form}
         bordered
         // @ts-ignore
-        formOptions={formOptions}
+        formOptions={[
+          {
+            key: '1',
+            type: 'input',
+            label: '实例名称',
+            dataIndex: 'name',
+            width: '200px',
+            placeholder: '请输入',
+          },
+          {
+            key: '2',
+            type: 'select',
+            label: '类型',
+            dataIndex: 'type',
+            width: '200px',
+            placeholder: '请选择',
+            option: typeOptions,
+          },
+          {
+            key: '3',
+            type: 'select',
+            label: '所属集群',
+            dataIndex: 'clusterName',
+            width: '200px',
+            placeholder: '请选择',
+            option: clusterOptions,
+          },
+        ]}
+        // formOptions={formOptions}
         formLayout="inline"
         columns={columns}
         {...tableProps}

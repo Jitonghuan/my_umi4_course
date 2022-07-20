@@ -4,12 +4,12 @@ import type { ColumnProps } from '@cffe/vc-hulk-table';
 //3:mysql 4:postgresql 5:redis 6:mongdb 7:rds
 export const options = [
   {
-    label: 'Mysql',
+    label: 'MySQL',
     value: 3,
     // icon: <BarsOutlined />,
   },
   {
-    label: 'Postares',
+    label: 'PostgreSQL',
     value: 4,
     // icon: <AppstoreOutlined />,
   },
