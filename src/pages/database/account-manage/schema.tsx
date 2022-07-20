@@ -6,11 +6,13 @@
  * @FilePath: /fe-matrix/src/pages/database/account-manage/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Tag, Popconfirm, Spin } from 'antd';
+import { Space, Tag, Popconfirm, Spin, Modal, Form } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+
 // 列表页-表格
 export const createTableColumns = (params: {
-  onDelete: (id: any) => void;
+  onDelete: (record: any) => void;
   onUpdate: (id: any) => void;
   onGrant: (record: any) => void;
   onRecovery: (record: any) => void;
@@ -71,7 +73,7 @@ export const createTableColumns = (params: {
           <Popconfirm
             title="确认删除?"
             onConfirm={() => {
-              params?.onDelete(record.id);
+              params?.onDelete(record);
             }}
           >
             <Spin spinning={params?.deleteLoading}>
@@ -111,6 +113,28 @@ export const schemaDataTreeOption = [
   {
     key: 'delete',
     title: 'DELETE',
+  },
+];
+export const globalDataTreeOption = [
+  {
+    key: 'select',
+    title: 'SELECT',
+  },
+  {
+    key: 'insert',
+    title: 'INSERT',
+  },
+  {
+    key: 'update',
+    title: 'UPDATE',
+  },
+  {
+    key: 'delete',
+    title: 'DELETE',
+  },
+  {
+    key: 'file',
+    title: 'FILE',
   },
 ];
 export const schemaStructOption = [
@@ -175,5 +199,51 @@ export const schemaManageOption = [
   {
     key: 'references',
     title: 'REFERENCES',
+  },
+];
+export const globalManageOption = [
+  {
+    key: 'grant',
+    title: 'GRANT',
+  },
+  {
+    key: 'super',
+    title: 'SUPER',
+  },
+  {
+    key: 'process',
+    title: 'PROCESS',
+  },
+  {
+    key: 'reload',
+    title: 'RELOAD',
+  },
+  {
+    key: 'shutdown',
+    title: 'SHUTDOWN',
+  },
+  {
+    key: 'show databases',
+    title: 'SHOW DATABASES',
+  },
+  {
+    key: 'lcok tables',
+    title: 'LOCK TABLES',
+  },
+  {
+    key: 'references',
+    title: 'REFERENCES',
+  },
+  {
+    key: 'replication client',
+    title: 'REPLICATION CLIENT',
+  },
+  {
+    key: 'replication slave',
+    title: 'REPLICATION SLAVE',
+  },
+  {
+    key: 'create user',
+    title: 'CREATE USER',
   },
 ];

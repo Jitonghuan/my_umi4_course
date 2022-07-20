@@ -50,7 +50,7 @@ export const createTableColumns = (params: {
       title: '部署类型',
       dataIndex: 'clusterType',
       key: 'clusterType',
-      width: '18%',
+      width: '14%',
       render: (value: number) => {
         return <Tag color={CLUSTER_TYPE[value]?.color || 'default'}>{CLUSTER_TYPE[value]?.tagText}</Tag>;
       },
@@ -60,25 +60,25 @@ export const createTableColumns = (params: {
       title: '读写地址',
       dataIndex: 'masterVipHost',
       key: 'masterVipHost',
-      width: '18%',
+      width: '15%',
     },
     {
       title: '只读地址',
       dataIndex: 'slaveVipHost',
       key: 'slaveVipHost',
-      width: '18%',
+      width: '15%',
     },
     {
       title: '集群描述',
       dataIndex: 'description',
       key: 'description',
-      width: '18%',
+      width: '14%',
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '18%',
+      width: '10%',
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
@@ -127,7 +127,7 @@ export const formOptions = [
     dataIndex: 'type',
     width: '200px',
     placeholder: '请选择',
-    option: [],
+    option: clusterTypeOption,
   },
   {
     key: '4',

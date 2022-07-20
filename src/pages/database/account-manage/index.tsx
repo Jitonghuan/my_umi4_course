@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Button, Space, Form } from 'antd';
+import { Button, Modal, Form, Input, message } from 'antd';
 import { getAccountList } from '../service';
 import useTable from '@/utils/useTable';
 import { createTableColumns } from './schema';
@@ -9,12 +9,14 @@ import CreateAccount from './components/create-account';
 import UpdatePassword from './components/update-password';
 import { useDeleteAccount } from './hook';
 import GrantModal from './components/grant';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 export interface AccountProps {
   clusterId: number;
 }
 export default function AccountList(props: AccountProps) {
   //clusterId={clusterId}
   const [form] = Form.useForm();
+  const [ensureForm] = Form.useForm();
   const { clusterId } = props;
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [updateMode, setUpdateMode] = useState<EditorMode>('HIDE');
@@ -28,10 +30,8 @@ export default function AccountList(props: AccountProps) {
 
   const columns = useMemo(() => {
     return createTableColumns({
-      onDelete: async (id) => {
-        deleteAccount({ clusterId, id }).then(() => {
-          reset();
-        });
+      onDelete: async (record) => {
+        ensureModal(record);
       },
       onUpdate: (id) => {
         setCurId(id);
@@ -68,6 +68,37 @@ export default function AccountList(props: AccountProps) {
       };
     },
   });
+  const ensureModal = (record: any) => {
+    Modal.confirm({
+      title: '确定删除该数据库账号吗？',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          <p>
+            您确定要删除此数据库账号吗？如果是这样，<b>请在此输入数据库账号</b>(
+            <span style={{ color: 'red' }}>{record?.user}</span>)并点击确认删除数据库账号按钮
+          </p>
+          <Form form={ensureForm}>
+            <Form.Item name="account">
+              <Input />
+            </Form.Item>
+          </Form>
+          <span>注意：生产环境禁止直接删除数据库账号！</span>
+        </>
+      ),
+      okText: '确认删除数据库账号',
+      onOk: async () => {
+        const ensure = record?.user === ensureForm.getFieldsValue()?.account;
+        if (!ensure) {
+          message.warning('账号不一致！');
+        } else {
+          await deleteAccount({ clusterId, id: record?.id }).then(() => {
+            reset();
+          });
+        }
+      },
+    });
+  };
 
   return (
     <PageContainer>

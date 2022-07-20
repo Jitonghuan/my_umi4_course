@@ -602,7 +602,7 @@ export default [
       {
         path: 'info',
         name: '实例详情',
-        key: 'info',
+        key: 'instance-list',
         component: '@/pages/database/instance-list/components/instance-info',
         hideInMenu: true,
       },

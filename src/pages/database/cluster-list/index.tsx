@@ -4,14 +4,18 @@ import TableSearch from '@/components/table-search';
 import { Button, Space, Form } from 'antd';
 import useTable from '@/utils/useTable';
 import { getClusterList } from '../service';
-import { createTableColumns, formOptions } from './schema';
+import { createTableColumns, clusterTypeOption } from './schema';
 import CreateCluster from './create-cluster';
-import { useDeleteCluster } from './hook';
+import { useDeleteCluster, useQueryEnvList } from './hook';
 export default function DEMO() {
   const [form] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
+  const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
   const [curRecord, setcurRecord] = useState<any>({});
   const [delLoading, deleteCluster] = useDeleteCluster();
+  useEffect(() => {
+    queryEnvData();
+  }, []);
 
   const columns = useMemo(() => {
     return createTableColumns({
@@ -50,6 +54,34 @@ export default function DEMO() {
       };
     },
   });
+  const formOptions = [
+    {
+      key: '1',
+      type: 'input',
+      label: '集群名称',
+      dataIndex: 'name',
+      width: '200px',
+      placeholder: '请输入',
+    },
+    {
+      key: '3',
+      type: 'select',
+      label: '部署类型',
+      dataIndex: 'type',
+      width: '200px',
+      placeholder: '请选择',
+      option: clusterTypeOption,
+    },
+    {
+      key: '4',
+      type: 'select',
+      label: '所属环境',
+      dataIndex: 'clusterName',
+      width: '200px',
+      placeholder: '请选择',
+      option: envDataSource,
+    },
+  ];
 
   return (
     <PageContainer>

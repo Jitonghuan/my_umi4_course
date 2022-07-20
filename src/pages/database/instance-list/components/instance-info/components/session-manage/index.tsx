@@ -192,17 +192,18 @@ export default function DEMO(props: instanceInfoProps) {
       graph.data(treeData);
       graph.render();
       graph.fitView();
-    }
-
-    if (typeof window !== 'undefined') {
-      window.onresize = () => {
-        // @ts-ignore
-        if (!graph || graph.get('destroyed')) return;
-        // @ts-ignore
-        if (!container || !container.scrollWidth || !container.scrollHeight) return;
-        // @ts-ignore
-        graph.changeSize(container.scrollWidth, container.scrollHeight);
-      };
+      if (typeof window !== 'undefined') {
+        window.onresize = () => {
+          if (graph) {
+            // @ts-ignore
+            if (!graph || graph.get('destroyed')) return;
+            // @ts-ignore
+            if (!container || !container.scrollWidth || !container.scrollHeight) return;
+            // @ts-ignore
+            graph.changeSize(container.scrollWidth, container.scrollHeight);
+          }
+        };
+      }
     }
   }, [topoData]);
 

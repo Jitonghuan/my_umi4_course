@@ -8,7 +8,14 @@
  */
 import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, Input, message, Card, Button, Form, Select, Row, Col, Tag, Divider, Tree } from 'antd';
-import { privTypeOptions, schemaDataTreeOption, schemaStructOption, schemaManageOption } from '../../schema';
+import {
+  privTypeOptions,
+  schemaDataTreeOption,
+  schemaStructOption,
+  schemaManageOption,
+  globalDataTreeOption,
+  globalManageOption,
+} from '../../schema';
 import { useGrantAccount, useGetSchemaList } from '../../hook';
 import './index.less';
 
@@ -64,12 +71,14 @@ export default function ScriptEditor(props: GrantProps) {
     let privsDataArry: any = [];
     privsDataArry = selectedDataKeys.concat(selectedStructKeys, selectedManageKeys);
     grantAccount({
-      ...objParams,
       grantType: curRecord?.grantType,
       clusterId,
       id: curRecord?.id,
       privs: privsDataArry,
-      object: {},
+      privType: objParams?.privType,
+      object: {
+        schemaList: objParams?.schemaList,
+      },
     });
   };
 
@@ -122,8 +131,8 @@ export default function ScriptEditor(props: GrantProps) {
                 <Select options={privTypeOptions} allowClear onChange={changePrivType} />
               </Form.Item>
               {curPrivType === 'schema' && (
-                <Form.Item label="请选择数据库:" name="" rules={[{ required: true, message: '请选择' }]}>
-                  <Select options={schemaOptions} loading={loading} allowClear showSearch />
+                <Form.Item label="请选择数据库:" name="schemaList" rules={[{ required: true, message: '请选择' }]}>
+                  <Select options={schemaOptions} loading={loading} allowClear showSearch mode="multiple" />
                 </Form.Item>
               )}
             </Form>
@@ -139,7 +148,7 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedDataKeys}
                   onCheck={onDataCheck}
                   height={495}
-                  treeData={schemaDataTreeOption}
+                  treeData={curPrivType === 'schema' ? schemaDataTreeOption : globalDataTreeOption}
                 />
               </Col>
               <Col span={8}>
@@ -163,7 +172,7 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedManageKeys}
                   onCheck={onManageCheck}
                   height={495}
-                  treeData={schemaManageOption}
+                  treeData={curPrivType === 'schema' ? schemaManageOption : globalManageOption}
                 />
               </Col>
             </Row>

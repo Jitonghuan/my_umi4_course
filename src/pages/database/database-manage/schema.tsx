@@ -6,8 +6,9 @@
  * @FilePath: /fe-matrix/src/pages/database/database-manage/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Tag, Popconfirm, Spin } from 'antd';
+import { Space, Tag, Popconfirm, Spin, Modal } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 // 列表页-表格
 export const createTableColumns = (params: { onDelete: (record: any) => void; delLoading: boolean }) => {
   return [
