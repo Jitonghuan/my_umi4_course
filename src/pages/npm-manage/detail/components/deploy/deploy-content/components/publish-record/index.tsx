@@ -104,7 +104,7 @@ export default function PublishRecord(props: IProps) {
                   <label>发布人: </label>{item['modifyUser']}
                 </div>
                 <div>
-                  <label>发布时间: </label>
+                  <label>发布时间:</label>
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
                 <div>
@@ -118,7 +118,7 @@ export default function PublishRecord(props: IProps) {
                     </Tag>
                   }
                 </div>
-                <a onClick={() => handleShowDetail(item)}>详情</a>
+                <a style={{ marginTop: '5px' }} onClick={() => handleShowDetail(item)}>详情</a>
               </List.Item>
             )}
           />

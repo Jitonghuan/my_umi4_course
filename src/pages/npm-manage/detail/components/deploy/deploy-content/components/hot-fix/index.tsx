@@ -15,7 +15,7 @@ import './index.less';
 import { useMasterBranchList } from "@/pages/npm-manage/detail/hooks";
 import { PlusOutlined } from "@ant-design/icons";
 import { FilterCard } from "@/components/vc-page-content";
-import { queryActiveDeployInfo, queryFeatureDeployed } from "@/pages/application/service";
+import { queryActiveDeployInfo, retry } from "@/pages/application/service";
 import useInterval from "../../useInterval";
 import PublishRecord from "../publish-record";
 
@@ -173,9 +173,17 @@ export default function HotFix(props: IProps) {
 
   function judgeActiveDeploy(record: any) {
     if (record.branchName === deployInfo?.branchInfo?.features[0]) {
-      console.log(deployInfo?.status?.deployStatus)
+      let errorInfo: string[] = [];
+      if (deployInfo?.status?.deployErrInfo) {
+        Object.keys(deployInfo?.status?.deployErrInfo).forEach((item) => {
+          if (deployInfo?.status?.deployErrInfo[item]) {
+            errorInfo.push(deployInfo?.status?.deployErrInfo[item]);
+          }
+        });
+      }
       return {
         deployStatus: deployInfo?.status?.deployStatus,
+        errorMessage: errorInfo.join(';'),
         jenkinsUrl: deployInfo?.buildInfo?.buildUrl?.singleBuild
       }
     }
@@ -197,6 +205,10 @@ export default function HotFix(props: IProps) {
                 style={{ width: '200px', marginRight: '20px' }}
                 showSearch
                 optionFilterProp="label"
+                onChange={async () => {
+                  const param = await searchField.getFieldsValue();
+                  handleSearch(param);
+                }}
                 filterOption={(input, option) => {
                   // @ts-ignore
                   return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -256,15 +268,16 @@ export default function HotFix(props: IProps) {
               title: '发布状态',
               width: 120,
               render: (value, record) => (
-                <span style={{ color:  recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.color || '#000'}}>
-                  {recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.text || '---'}
-                </span>
+                <div style={{ color:  recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.color || '#000'}}>
+                  <div>{recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.text || '---'}</div>
+                  <div>{judgeActiveDeploy(record)?.errorMessage}</div>
+                </div>
               )
             },
             {
               dataIndex: 'gmtCreate',
               title: '创建时间',
-              width: 160,
+              width: 180,
               render: datetimeCellRender
             },
             {
@@ -275,7 +288,7 @@ export default function HotFix(props: IProps) {
             {
               dataIndex: 'gmtModify',
               title: '更新时间',
-              width: 160,
+              width: 180,
               render: datetimeCellRender
             },
             {
@@ -289,16 +302,31 @@ export default function HotFix(props: IProps) {
               fixed: 'right',
               dataIndex: 'operate',
               align: 'left',
-              render: (_: any, record: any, index: number) => (
+              render: (_: any, record: any) => (
                 <div className="action-cell">
-                  <a
-                    onClick={() => {
-                      setVersionVisible(true);
-                      setCurRecord(record);
-                    }}
-                  >
-                    发布
-                  </a>
+                  {
+                    judgeActiveDeploy(record)?.deployStatus === 'error' ? (
+                      <a
+                        onClick={() => {
+                          void retry({
+                            id: deployInfo?.metadata?.id,
+                            envCode: envTypeCode
+                          })
+                        }}
+                      >
+                        重试
+                      </a>
+                    ) : (
+                      <a
+                        onClick={() => {
+                          setVersionVisible(true);
+                          setCurRecord(record);
+                        }}
+                      >
+                        发布
+                      </a>
+                    )
+                  }
                   {
                     judgeActiveDeploy(record)?.jenkinsUrl && (
                       <a
