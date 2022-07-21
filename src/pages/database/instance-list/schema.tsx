@@ -11,10 +11,10 @@ import type { ColumnsType } from 'antd/lib/table';
 import {
   UserOutlined,
   HomeOutlined,
-  MailOutlined,
+  StockOutlined,
   TeamOutlined,
   InsertRowAboveOutlined,
-  GroupOutlined,
+  HourglassOutlined,
   ForkOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
@@ -23,7 +23,7 @@ export const infoOptions = [
   {
     label: (
       <div style={{ padding: 4 }}>
-        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<HomeOutlined />} />
+        <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<HomeOutlined />} />
         <div>实例详情</div>
       </div>
     ),
@@ -32,7 +32,7 @@ export const infoOptions = [
   {
     label: (
       <div style={{ padding: 4 }}>
-        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<MailOutlined />} />
+        <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<StockOutlined />} />
         <div>性能趋势</div>
       </div>
     ),
@@ -41,7 +41,7 @@ export const infoOptions = [
   {
     label: (
       <div style={{ padding: 4 }}>
-        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<TeamOutlined />} />
+        <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<HourglassOutlined />} />
         <div>会话管理</div>
       </div>
     ),
@@ -50,7 +50,7 @@ export const infoOptions = [
   {
     label: (
       <div style={{ padding: 4 }}>
-        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<InsertRowAboveOutlined />} />
+        <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<InsertRowAboveOutlined />} />
         <div>数据库管理</div>
       </div>
     ),
@@ -59,7 +59,7 @@ export const infoOptions = [
   {
     label: (
       <div style={{ padding: 4 }}>
-        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<GroupOutlined />} />
+        <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<TeamOutlined />} />
         <div>账号管理</div>
       </div>
     ),
@@ -68,7 +68,7 @@ export const infoOptions = [
   {
     label: (
       <div style={{ padding: 4 }}>
-        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<ForkOutlined />} />
+        <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<ForkOutlined />} />
         <div>慢SQL</div>
       </div>
     ),
@@ -77,7 +77,7 @@ export const infoOptions = [
   {
     label: (
       <div style={{ padding: 4 }}>
-        <Avatar style={{ backgroundColor: '#6495ED' }} icon={<MoreOutlined />} />
+        <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<MoreOutlined />} />
         <div>敬请期待</div>
       </div>
     ),
@@ -209,7 +209,9 @@ export const createTableColumns = (params: {
       key: 'instanceType',
       width: '10%',
       ellipsis: true,
-      render: (value) => <Tag color={ROLE_TYPE[value]?.color || 'default'}>{ROLE_TYPE[value]?.tagText || '--'}</Tag>,
+      render: (value) => (
+        <Tag color={INSTANCE_TYPE[value]?.color || 'default'}>{INSTANCE_TYPE[value]?.tagText || '--'}</Tag>
+      ),
     },
     {
       title: '所属集群',

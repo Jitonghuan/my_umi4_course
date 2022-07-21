@@ -16,32 +16,32 @@ export const createTableColumns = (params: { onDelete: (record: any) => void; de
       title: '数据库名称',
       dataIndex: 'name',
       key: 'name',
-      width: '14%',
+      width: '20%',
     },
     {
       title: '字符集',
       dataIndex: 'characterset',
       key: 'characterset',
-      width: '14%',
+      width: '20%',
     },
     {
       title: '授权账号',
       dataIndex: 'owner',
       key: 'owner',
-      width: '20%',
+      width: '25%',
     },
 
     {
       title: '备注说明',
       dataIndex: 'description',
       key: 'description',
-      width: '20%',
+      width: '25%',
     },
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '12%',
+      width: 100,
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>

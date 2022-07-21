@@ -70,5 +70,9 @@ export const syncMetaData = `${appConfig.apiPrefix}/databaseManage/syncMetaData`
 /** 获取应用环境 */
 export const envList = `${appConfig.apiPrefix}/appManage/env/list`;
 
+// /databaseManage/schema/getCharacterSetList
+/**获取schema字符集和排序规则 */
+export const getCharacterSetList = `${appConfig.apiPrefix}/databaseManage/schema/getCharacterSetList`;
+
 /** GET 实例性能趋势 */
 export const performanceTrends = `${appConfig.apiPrefix}/databaseManage/instance/performanceTrends`;

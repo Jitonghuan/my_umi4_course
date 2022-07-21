@@ -62,6 +62,16 @@ export default function AccountList(props: AccountProps) {
       };
     },
     formatResult: (result) => {
+      //  let dataSource= result.data?.dataSource;
+      //  let dataArry:any=[]
+      //  dataSource?.map((item:any)=>{
+      //   dataArry.push({
+      //     userAccount:`${item?.user}@${item?.host}`,
+      //     ...item
+      //   })
+
+      //  })
+
       return {
         total: result.data?.pageInfo?.total,
         list: result.data?.dataSource || [],

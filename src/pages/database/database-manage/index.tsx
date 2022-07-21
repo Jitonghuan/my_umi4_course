@@ -32,13 +32,13 @@ export default function DEMO(props: SchemaProps) {
 
   const ensureModal = (record: any) => {
     Modal.confirm({
-      title: '确定删除该数据库账号吗？',
+      title: '确定删除该数据库吗？',
       icon: <ExclamationCircleOutlined />,
       content: (
         <>
           <p>
             您确定要删除此数据库吗？如果是这样，<b>请在此输入数据库名称</b>(
-            <span style={{ color: 'red' }}>{record?.user}</span>)并点击确认删除数据库按钮
+            <span style={{ color: 'red' }}>{record?.name}</span>)并点击确认删除数据库按钮
           </p>
           <Form form={ensureForm}>
             <Form.Item name="schema">

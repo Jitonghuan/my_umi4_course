@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Drawer, message, Form, Button, Select, Input, Row, Tag } from 'antd';
 import CreateAccount from '../../account-manage/components/create-account';
-import { useCreateSchema, useGetAccountList, useUserOptions } from '../hook';
+import { useCreateSchema, useGetAccountList, useUserOptions, useGetCharacterSetList } from '../hook';
 import './index.less';
 
 export interface MemberEditorProps {
@@ -23,22 +23,23 @@ export default function MemberEditor(props: MemberEditorProps) {
   const { mode, onClose, onSave, clusterId } = props;
   const [createLoading, createSchema] = useCreateSchema();
   const [accountListLoading, accountData, getAccountList] = useGetAccountList();
+  const [loading, CharacterSetListOptions, getCharacterSetList] = useGetCharacterSetList();
   const [userOptions] = useUserOptions();
-  const [editForm] = Form.useForm<Record<string, string>>();
-  const [viewDisabled, seViewDisabled] = useState<boolean>(false);
+  const [editForm] = Form.useForm();
+
   const [accountMode, setAccountMode] = useState<EditorMode>('HIDE');
 
   useEffect(() => {
     if (mode === 'HIDE') return;
     getAccountList({ clusterId });
+    getCharacterSetList({ clusterId });
     return () => {
-      seViewDisabled(false);
       editForm.resetFields();
     };
   }, [mode]);
   const handleSubmit = async () => {
     const params = await editForm.validateFields();
-    createSchema({ ...params, clusterId, characterset: 'utf8mb4_bin' }).then(() => {
+    createSchema({ ...params, clusterId, characterset: params?.characterset }).then(() => {
       onSave();
     });
   };
@@ -47,6 +48,7 @@ export default function MemberEditor(props: MemberEditorProps) {
     <>
       <CreateAccount
         mode={accountMode}
+        clusterId={clusterId}
         onClose={() => {
           setAccountMode('HIDE');
         }}
@@ -56,7 +58,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         }}
       />
       <Drawer
-        width={900}
+        width={700}
         title={mode === 'EDIT' ? '编辑数据库' : mode === 'VIEW' ? '查看数据库' : '新增数据库'}
         placement="right"
         visible={mode !== 'HIDE'}
@@ -64,7 +66,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         maskClosable={false}
         footer={
           <div className="drawer-footer">
-            <Button type="primary" loading={false} onClick={handleSubmit} disabled={viewDisabled}>
+            <Button type="primary" loading={false} onClick={handleSubmit}>
               保存
             </Button>
             <Button type="default" onClick={onClose}>
@@ -75,19 +77,18 @@ export default function MemberEditor(props: MemberEditorProps) {
       >
         <Form form={editForm} labelCol={{ flex: '120px' }}>
           <Form.Item label="数据库(DB)名称" name="name" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={viewDisabled} style={{ width: 520 }} />
+            <Input style={{ width: 360 }} />
           </Form.Item>
           <Form.Item label="支持字符集" name="characterset">
-            <Select options={[]} disabled={viewDisabled} style={{ width: 300 }} />
+            <Select options={CharacterSetListOptions} loading={loading} allowClear showSearch style={{ width: 300 }} />
           </Form.Item>
           <Form.Item label="owner" name="owner" rules={[{ required: true, message: '请选择' }]}>
-            <Select options={userOptions} disabled={viewDisabled} style={{ width: 300 }} />
+            <Select options={userOptions} allowClear showSearch style={{ width: 300 }} />
           </Form.Item>
           <Row>
             <Form.Item label="所属账号" name="accountId" rules={[{ required: true, message: '请选择' }]}>
               <Select
                 options={accountData}
-                disabled={viewDisabled}
                 loading={accountListLoading}
                 style={{ width: 300 }}
                 placeholder="默认可以先不授权"
@@ -106,7 +107,7 @@ export default function MemberEditor(props: MemberEditorProps) {
           </Row>
 
           <Form.Item label="备注说明" name="description">
-            <Input.TextArea style={{ width: 520 }}></Input.TextArea>
+            <Input.TextArea style={{ width: 360 }}></Input.TextArea>
           </Form.Item>
         </Form>
       </Drawer>

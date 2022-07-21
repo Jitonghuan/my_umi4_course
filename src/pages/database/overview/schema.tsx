@@ -38,7 +38,7 @@ export const tableSchema = ({
 }) =>
   [
     {
-      title: '实例id/名称',
+      title: '实例ID/名称',
       dataIndex: 'name',
 
       width: 200,
@@ -49,43 +49,43 @@ export const tableSchema = ({
       width: 180,
     },
     {
-      title: 'memory',
+      title: 'Memory',
       dataIndex: 'memory',
 
       width: 220,
     },
     {
-      title: 'disk',
+      title: 'Disk',
       dataIndex: 'disk',
 
       width: 300,
     },
     {
-      title: 'tps',
+      title: 'TPS',
       dataIndex: 'tps',
 
       width: 200,
     },
     {
-      title: 'qps',
+      title: 'QPS',
       dataIndex: 'qps',
 
       width: 200,
     },
     {
-      title: 'slowQueries',
+      title: 'SlowQueries',
       dataIndex: 'slowQueries',
 
       width: 200,
     },
     {
-      title: 'connectedThreads',
+      title: 'ConnectedThreads',
       dataIndex: 'connectedThreads',
       width: 200,
     },
     //runningThreads
     {
-      title: 'runningThreads',
+      title: 'RunningThreads',
       dataIndex: 'runningThreads',
       width: 200,
     },

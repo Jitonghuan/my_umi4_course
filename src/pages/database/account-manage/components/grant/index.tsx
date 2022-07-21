@@ -38,11 +38,19 @@ export default function ScriptEditor(props: GrantProps) {
   const [selectedManageKeys, setSelectedManageKeys] = useState<any>([]);
   const [curPrivType, setCurPrivType] = useState<string>('');
   useEffect(() => {
-    getSchemaList({ clusterId });
-  }, []);
+    if (mode !== 'HIDE') {
+      getSchemaList({ clusterId });
+    }
+
+    return () => {
+      objectForm.resetFields();
+      setSelectedDataKeys([]);
+      setSelectedStructKeys([]);
+      setSelectedManageKeys([]);
+    };
+  }, [mode]);
   const onDataCheck = (checkedKeys: React.Key[], info: any) => {
     let nameArry: any = [];
-    console.log('checkedKeys', checkedKeys, '----info', info);
 
     info.checkedNodes?.map((item: any) => {
       nameArry.push(item.title);

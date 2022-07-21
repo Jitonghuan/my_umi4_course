@@ -63,7 +63,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         }}
       />
       <Drawer
-        width={900}
+        width={700}
         title={mode === 'EDIT' ? '编辑实例' : mode === 'VIEW' ? '查看实例' : '新接入实例'}
         placement="right"
         visible={mode !== 'HIDE'}
@@ -85,62 +85,69 @@ export default function MemberEditor(props: MemberEditorProps) {
           </div>
         }
       >
-        <Form form={editForm} labelCol={{ flex: '120px' }}>
-          <Form.Item label="实例名称" name="name" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} />
-          </Form.Item>
-          <Form.Item label="数据库类型" name="instanceType">
-            <Select options={instanceTypeOption} disabled={mode !== 'ADD'} style={{ width: 300 }} />
-          </Form.Item>
-          <Form.Item label="数据库版本" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode !== 'ADD'} style={{ width: 520 }} />
-          </Form.Item>
-
-          <Row>
-            <Form.Item label="所属集群" name="clusterId" rules={[{ required: true, message: '请选择' }]}>
-              <Select
-                loading={loading}
-                allowClear
-                showSearch
-                options={clusterOptions}
-                disabled={mode !== 'ADD'}
-                style={{ width: 300 }}
-                placeholder="默认可以先不授权"
-              />
+        <div className="recordAdd">
+          <Form form={editForm} labelCol={{ flex: '120px' }}>
+            <Form.Item label="实例名称" name="name" rules={[{ required: true, message: '请输入' }]}>
+              <Input disabled={mode === 'VIEW'} style={{ width: 360 }} />
             </Form.Item>
-            {mode === 'ADD' && (
-              <span style={{ marginTop: 4 }}>
-                <Tag
-                  color="geekblue"
-                  onClick={() => {
-                    setClusterMode('ADD');
-                  }}
-                >
-                  新增集群
-                </Tag>
-              </span>
-            )}
-          </Row>
-          <Form.Item label="集群角色" name="clusterRole" rules={[{ required: true, message: '请选择' }]}>
-            <Select options={roleTypeOption} disabled={mode !== 'ADD'} style={{ width: 300 }} />
-          </Form.Item>
-          <Form.Item label="实例地址" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} placeholder="格式如：192.168.0.1" />
-          </Form.Item>
-          <Form.Item label="端口" name="instancePort" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} />
-          </Form.Item>
-          <Form.Item label="数据库账号" name="manageUser" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} />
-          </Form.Item>
-          <Form.Item label="数据库密码" name="managePassword" rules={[{ required: true, message: '请输入' }]}>
-            <Input.Password disabled={mode === 'VIEW'} style={{ width: 520 }} />
-          </Form.Item>
+            <Form.Item label="数据库类型" name="instanceType">
+              <Select options={instanceTypeOption} disabled={mode !== 'ADD'} style={{ width: 360 }} />
+            </Form.Item>
+            <Form.Item label="数据库版本" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
+              <Input disabled={mode !== 'ADD'} style={{ width: 360 }} />
+            </Form.Item>
 
-          <Form.Item label="描述" name="description">
-            <Input.TextArea style={{ width: 520 }}></Input.TextArea>
-          </Form.Item>
-        </Form>
+            <Row>
+              <Form.Item
+                style={{ width: '60%' }}
+                label="所属集群"
+                name="clusterId"
+                rules={[{ required: true, message: '请选择' }]}
+              >
+                <Select
+                  loading={loading}
+                  allowClear
+                  showSearch
+                  options={clusterOptions}
+                  disabled={mode !== 'ADD'}
+                  style={{ width: 360 }}
+                  placeholder="默认可以先不授权"
+                />
+              </Form.Item>
+              {mode === 'ADD' && (
+                <span style={{ marginTop: 4 }}>
+                  <Tag
+                    color="geekblue"
+                    onClick={() => {
+                      setClusterMode('ADD');
+                    }}
+                  >
+                    新增集群
+                  </Tag>
+                </span>
+              )}
+            </Row>
+            <Form.Item label="集群角色" name="clusterRole" rules={[{ required: true, message: '请选择' }]}>
+              <Select options={roleTypeOption} disabled={mode !== 'ADD'} style={{ width: 360 }} />
+            </Form.Item>
+            <Form.Item label="实例地址" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
+              <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="格式如：192.168.0.1" />
+            </Form.Item>
+            <Form.Item label="端口" name="instancePort" rules={[{ required: true, message: '请输入' }]}>
+              <Input disabled={mode === 'VIEW'} style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item label="数据库账号" name="manageUser" rules={[{ required: true, message: '请输入' }]}>
+              <Input disabled={mode === 'VIEW'} style={{ width: 360 }} />
+            </Form.Item>
+            <Form.Item label="数据库密码" name="managePassword" rules={[{ required: true, message: '请输入' }]}>
+              <Input.Password disabled={mode === 'VIEW'} style={{ width: 360 }} />
+            </Form.Item>
+
+            <Form.Item label="描述" name="description">
+              <Input.TextArea style={{ width: 360 }}></Input.TextArea>
+            </Form.Item>
+          </Form>
+        </div>
       </Drawer>
     </>
   );

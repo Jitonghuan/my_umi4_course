@@ -53,7 +53,7 @@ export default function MemberEditor(props: MemberEditorProps) {
   return (
     <>
       <Modal
-        width={900}
+        width={700}
         title={mode === 'EDIT' ? '编辑集群' : mode === 'VIEW' ? '查看集群' : '新增集群'}
         // placement="right"
         visible={mode !== 'HIDE'}
@@ -73,7 +73,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       >
         <Form form={editForm} labelCol={{ flex: '120px' }}>
           <Form.Item label="集群名称" name="name" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} />
+            <Input disabled={mode === 'VIEW'} style={{ width: 360 }} />
           </Form.Item>
           <Form.Item label="所属环境" name="instanceType">
             <Select
@@ -86,25 +86,25 @@ export default function MemberEditor(props: MemberEditorProps) {
             />
           </Form.Item>
           <Form.Item label="部署类型" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
-            <Select disabled={mode !== 'ADD'} style={{ width: 520 }} options={clusterTypeOption} />
+            <Select disabled={mode !== 'ADD'} style={{ width: 360 }} options={clusterTypeOption} />
           </Form.Item>
 
           <Form.Item label="读写地址" name="clusterId" rules={[{ required: true, message: '请选择' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 300 }} placeholder="如：10.21.4.10" />
+            <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="如：10.21.4.10" />
           </Form.Item>
 
           <Form.Item label="读写地址端口" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} />
+            <Input disabled={mode === 'VIEW'} style={{ width: 300 }} />
           </Form.Item>
           <Form.Item label="只读地址" name="instancePort" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} placeholder="如：10.21.4.90" />
+            <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="如：10.21.4.90" />
           </Form.Item>
           <Form.Item label="只读地址端口" name="manageUser" rules={[{ required: true, message: '请输入' }]}>
-            <Input disabled={mode === 'VIEW'} style={{ width: 520 }} />
+            <Input disabled={mode === 'VIEW'} style={{ width: 300 }} />
           </Form.Item>
 
           <Form.Item label="描述" name="description">
-            <Input.TextArea style={{ width: 520 }} disabled={mode === 'VIEW'}></Input.TextArea>
+            <Input.TextArea style={{ width: 360 }} disabled={mode === 'VIEW'}></Input.TextArea>
           </Form.Item>
         </Form>
       </Modal>

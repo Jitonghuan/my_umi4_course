@@ -23,16 +23,22 @@ export const createTableColumns = (params: {
       title: '账号',
       dataIndex: 'user',
       key: 'user',
-      width: '14%',
+      width: '6%',
+    },
+    {
+      title: 'HOST',
+      dataIndex: 'host',
+      key: 'host',
+      width: '6%',
     },
     {
       title: '权限',
       dataIndex: 'grantPrivs',
       key: 'grantPrivs',
-      width: '20%',
+      width: '30%',
       render: (grantPrivs: any, record, index: number) =>
         grantPrivs?.map((item: string) => {
-          return <p>{item},</p>;
+          return <p>{item};</p>;
         }),
     },
     {

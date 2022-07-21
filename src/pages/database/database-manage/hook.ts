@@ -106,3 +106,30 @@ export function useUserOptions() {
 
   return [source];
 }
+
+//账号管理-账号列表
+export function useGetCharacterSetList(): [boolean, any, (paramsObj: { clusterId: number }) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<any>([]);
+  const getCharacterSetList = async (paramsObj: { clusterId: number }) => {
+    setLoading(true);
+    await getRequest(`${APIS.getCharacterSetList}`, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          let dataSource = result?.data?.dataSource;
+          const dataArry = dataSource?.map((item: any) => ({
+            label: item,
+            value: item,
+          }));
+          setData(dataArry || []);
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, data, getCharacterSetList];
+}

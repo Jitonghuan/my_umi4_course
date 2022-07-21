@@ -146,7 +146,7 @@ export default function DEMO() {
               <Input placeholder="请输入实例名称" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="类型" name="type">
-              <Select placeholder="请选择实例类型" options={roleTypeOption} style={{ width: 200 }} />
+              <Select placeholder="请选择实例类型" options={instanceTypeOption} style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="所属集群" name="clusterName">
               <Select placeholder="请选择集群" options={clusterOptions} allowClear showSearch style={{ width: 200 }} />
