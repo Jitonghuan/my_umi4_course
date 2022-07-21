@@ -16,28 +16,27 @@ export interface OverviewDashboardsIProps {
 
 export default function OverviewDashboards(props: OverviewDashboardsIProps) {
   const { dataSource } = props;
-  console.log('dataSource', dataSource, props);
   const data = [
     {
       type: 'MySQL',
-      value: dataSource?.sumMysql,
+      value: dataSource?.sumMysql === 0 ? null : dataSource?.sumMysql,
     },
 
     {
       type: 'Postgre',
-      value: dataSource?.sumPostgre,
+      value: dataSource?.sumPostgre === 0 ? null : dataSource?.sumPostgre,
     },
     {
       type: 'Mongdb',
-      value: dataSource?.sumMongdb,
+      value: dataSource?.sumMongdb === 0 ? null : dataSource?.sumMongdb,
     },
     {
       type: 'Redis',
-      value: dataSource?.sumRedis,
+      value: dataSource?.sumRedis === 0 ? null : dataSource?.sumRedis,
     },
     {
       type: 'RDS',
-      value: dataSource?.sumRds,
+      value: dataSource?.sumRds === 0 ? null : dataSource?.sumRds,
     },
   ];
   const config = {

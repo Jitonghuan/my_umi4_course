@@ -82,7 +82,7 @@ export default function DEMO(props: instanceInfoProps) {
     },
     'single-node',
   );
-  let currentInfo = '';
+
   useEffect(() => {
     if (topoData.length > 0) {
       let childrenArry: any = [];
@@ -91,11 +91,24 @@ export default function DEMO(props: instanceInfoProps) {
 
       topoData?.map((item: any, index: number) => {
         if (item?.role === 'master') {
-          masterName = item?.instanceName;
+          if (item?.current) {
+            masterName = '当前' + item?.instanceName;
+          } else {
+            masterName = item?.instanceName;
+          }
         } else {
-          childrenArry.push({
-            name: item?.instanceName,
-          });
+          if (item?.current) {
+            childrenArry.push({
+              name: '当前' + item?.instanceName,
+              // current:item?.current
+            });
+          } else {
+            childrenArry.push({
+              name: item?.instanceName,
+              // current:item?.current
+            });
+          }
+
           labelData.push({
             label: `延迟${item?.delay}s`,
             value: item?.delay,
@@ -105,13 +118,12 @@ export default function DEMO(props: instanceInfoProps) {
 
       const treeData = {
         name: masterName,
-
         children: childrenArry,
       };
 
       const container = document.getElementById('container');
-      const width = container?.scrollWidth || 1200;
-      const height = container?.scrollHeight || 200;
+      const width = container?.scrollWidth;
+      const height = container?.scrollHeight || 100;
       const graph = new G6.TreeGraph({
         container: 'container',
         width,
@@ -122,6 +134,19 @@ export default function DEMO(props: instanceInfoProps) {
               type: 'collapse-expand',
               onChange: function onChange(item: any, collapsed) {
                 const data = item.get('model');
+                let i = 0;
+                graph.edge((edge) => {
+                  i++;
+                  return {
+                    type: 'line',
+                    color: labelData[i - 1]?.value === 0 ? '#A3B1BF' : 'red',
+                    label: labelData[i - 1]?.label,
+                    // style: {
+                    //   fill: 'steelblue',
+                    // },
+                  };
+                });
+
                 graph.updateItem(item, {
                   collapsed,
                 });
@@ -135,17 +160,19 @@ export default function DEMO(props: instanceInfoProps) {
         },
         defaultNode: {
           type: 'tree-node',
+          // size: 18,
           anchorPoints: [
             [0, 0.5],
             [1, 0.5],
           ],
-          style: {
-            radius: 10,
-            stroke: '#69c0ff',
-            fill: '#fff899',
-            lineWidth: 1,
-            fillOpacity: 1,
-          },
+          // //节点样式----todo
+          // style: {
+          //   radius: 10,
+          //   stroke: '#69c0ff',
+          //   fill: '#fff899',
+          //   lineWidth: 1,
+          //   fillOpacity: 1,
+          // },
         },
         defaultEdge: {
           type: 'line',
@@ -157,6 +184,7 @@ export default function DEMO(props: instanceInfoProps) {
         layout: {
           type: 'compactBox',
           direction: 'LR',
+          nodeSep: 50, // 节点之间间距
           getId: function getId(d: any) {
             return d.id;
           },
@@ -170,7 +198,7 @@ export default function DEMO(props: instanceInfoProps) {
             return 20;
           },
           getHGap: function getHGap() {
-            return 100;
+            return 80;
           },
         },
       });
@@ -178,7 +206,6 @@ export default function DEMO(props: instanceInfoProps) {
       let i = 0;
       graph.edge((edge) => {
         i++;
-        console.log('edge', edge);
         return {
           type: 'line',
           color: labelData[i - 1]?.value === 0 ? '#A3B1BF' : 'red',
@@ -186,6 +213,25 @@ export default function DEMO(props: instanceInfoProps) {
           // style: {
           //   fill: 'steelblue',
           // },
+        };
+      });
+      graph.node(function (node: any) {
+        console.log('node--->', node);
+        console.log('node?.name?.includes("当前")', node?.name?.includes('当前'));
+        return {
+          // labelCfg: {
+          //   position: node.children && node.children.length > 0 ? 'left' : 'right',
+          //   offset: 5,
+          // },
+          size: 10,
+          //节点样式----todo
+          style: {
+            radius: 10,
+            stroke: node?.name?.includes('当前') ? '#DC143C' : '#69c0ff',
+            // fill: '#fff899',
+            lineWidth: 1,
+            fillOpacity: 0.7,
+          },
         };
       });
 

@@ -16,7 +16,7 @@ export const createAccount = `${appConfig.apiPrefix}/databaseManage/account/crea
 export const deleteAccount = `${appConfig.apiPrefix}/databaseManage/account/delete`;
 
 /**6、 POST 账号授权 */
-export const grantAccount = `${appConfig.apiPrefix}/databaseManage/account/grant`;
+export const grantAccount = `${appConfig.apiPrefix}/databaseManage/account/grantAccount`;
 
 /**7、 PUT 修改密码 */
 export const changePassword = `${appConfig.apiPrefix}/databaseManage/account/changePassword`;

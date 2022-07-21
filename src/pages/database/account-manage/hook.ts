@@ -108,7 +108,7 @@ export function useGrantAccount(): [
     setLoading(true);
     await postRequest(`${APIS.grantAccount}`, { data: paramsObj })
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           message.success(result.data);
         } else {
           return;

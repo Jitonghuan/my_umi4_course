@@ -39,7 +39,7 @@ export default function AccountEditor(props: AccountEditorProps) {
 
   return (
     <Modal
-      width={900}
+      width={650}
       title="新增账号"
       visible={mode !== 'HIDE'}
       onCancel={onClose}
@@ -60,10 +60,10 @@ export default function AccountEditor(props: AccountEditorProps) {
       </Divider>
       <Form form={editForm} labelCol={{ flex: '120px' }}>
         <Form.Item label="数据库账号" name="user" rules={[{ required: true, message: '请输入' }]}>
-          <Input style={{ width: 520 }} />
+          <Input style={{ width: 300 }} />
         </Form.Item>
         <Form.Item label="授权地址" name="host" rules={[{ required: true, message: '请选择' }]}>
-          <Input style={{ width: 520 }} />
+          <Input style={{ width: 300 }} />
         </Form.Item>
         <Form.Item
           label="密码"
@@ -108,7 +108,7 @@ export default function AccountEditor(props: AccountEditorProps) {
           ></Input.Password>
         </Form.Item>
         <Form.Item label="备注说明" name="description">
-          <Input.TextArea style={{ width: 520 }}></Input.TextArea>
+          <Input.TextArea style={{ width: 400 }}></Input.TextArea>
         </Form.Item>
       </Form>
     </Modal>

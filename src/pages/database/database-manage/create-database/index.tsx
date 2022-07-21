@@ -33,6 +33,7 @@ export default function MemberEditor(props: MemberEditorProps) {
     if (mode === 'HIDE') return;
     getAccountList({ clusterId });
     getCharacterSetList({ clusterId });
+
     return () => {
       editForm.resetFields();
     };

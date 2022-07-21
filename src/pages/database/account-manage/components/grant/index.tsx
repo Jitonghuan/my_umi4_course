@@ -87,6 +87,8 @@ export default function ScriptEditor(props: GrantProps) {
       object: {
         schemaList: objParams?.schemaList,
       },
+    }).then(() => {
+      onSave();
     });
   };
 
@@ -98,7 +100,7 @@ export default function ScriptEditor(props: GrantProps) {
     <>
       <Modal
         title={mode === 'ADD' ? '授权变更' : '回收'}
-        width={'80%'}
+        width={'70%'}
         visible={mode !== 'HIDE'}
         maskClosable={false}
         onCancel={onClose}
@@ -119,7 +121,7 @@ export default function ScriptEditor(props: GrantProps) {
             type="primary"
             loading={grantLoading}
             onClick={() => {
-              handleSubmit;
+              handleSubmit();
             }}
           >
             执行

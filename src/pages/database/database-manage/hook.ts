@@ -71,10 +71,13 @@ export function useGetAccountList(): [boolean, any, (paramsObj: { clusterId: num
       .then((result) => {
         if (result.success) {
           let dataSource = result?.data?.dataSource;
-          const dataArry = dataSource?.map((item: any) => ({
-            label: item?.user,
-            value: item?.id,
-          }));
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({
+              label: item?.user,
+              value: item?.id,
+            });
+          });
           setData(dataArry || []);
         } else {
           return;
@@ -116,11 +119,15 @@ export function useGetCharacterSetList(): [boolean, any, (paramsObj: { clusterId
     await getRequest(`${APIS.getCharacterSetList}`, { data: paramsObj })
       .then((result) => {
         if (result.success) {
-          let dataSource = result?.data?.dataSource;
-          const dataArry = dataSource?.map((item: any) => ({
-            label: item,
-            value: item,
-          }));
+          let dataSource = result?.data;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({
+              label: item,
+              value: item,
+            });
+          });
+
           setData(dataArry || []);
         } else {
           return;
