@@ -1,20 +1,27 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Button, Space, Form } from 'antd';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { Button, Space, Form, Table, Input, Select } from 'antd';
+import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import useTable from '@/utils/useTable';
 import { getClusterList } from '../service';
 import { createTableColumns, clusterTypeOption } from './schema';
 import CreateCluster from './create-cluster';
-import { useDeleteCluster, useQueryEnvList } from './hook';
+import { useDeleteCluster, useQueryEnvList, useClusterList } from './hook';
 export default function DEMO() {
-  const [form] = Form.useForm();
+  const [clusterForm] = Form.useForm();
+  const [tableLoading, clusterTablePageInfo, clusterTableSource, getClusterList] = useClusterList();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
   const [curRecord, setcurRecord] = useState<any>({});
   const [delLoading, deleteCluster] = useDeleteCluster();
   useEffect(() => {
     queryEnvData();
+    getClusterList({
+      pageIndex: 1,
+      pageSize: 20,
+    });
   }, []);
 
   const columns = useMemo(() => {
@@ -29,59 +36,27 @@ export default function DEMO() {
       },
       onDelete: async (id) => {
         deleteCluster({ id }).then(() => {
-          reset();
+          loadListData({ pageIndex: 1, pageSize: 20 });
         });
       },
       delLoading: delLoading,
     }) as any;
   }, []);
-  const {
-    tableProps,
-    search: { submit, reset },
-  } = useTable({
-    url: getClusterList,
-    method: 'GET',
-    form,
-    formatter: (params) => {
-      return {
-        ...params,
-      };
-    },
-    formatResult: (result) => {
-      return {
-        total: result.data?.pageInfo?.total,
-        list: result.data?.dataSource,
-      };
-    },
-  });
-  const formOptions = [
-    {
-      key: '1',
-      type: 'input',
-      label: '集群名称',
-      dataIndex: 'name',
-      width: '200px',
-      placeholder: '请输入',
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '部署类型',
-      dataIndex: 'type',
-      width: '200px',
-      placeholder: '请选择',
-      option: clusterTypeOption,
-    },
-    {
-      key: '4',
-      type: 'select',
-      label: '所属环境',
-      dataIndex: 'clusterName',
-      width: '200px',
-      placeholder: '请选择',
-      option: envDataSource,
-    },
-  ];
+
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+
+    loadListData(obj);
+  };
+
+  const loadListData = (params: any) => {
+    let value = clusterForm.getFieldsValue();
+    getClusterList({ ...params, ...value });
+  };
 
   return (
     <PageContainer>
@@ -93,44 +68,92 @@ export default function DEMO() {
         }}
         onSave={() => {
           setMode('HIDE');
-          reset();
+          loadListData({ pageIndex: 1, pageSize: 20 });
         }}
       />
-      <TableSearch
-        form={form}
-        bordered
-        // @ts-ignore
-        formOptions={formOptions}
-        formLayout="inline"
-        columns={columns}
-        {...tableProps}
-        // @ts-ignore
-        pagination={{
-          ...tableProps.pagination,
-          showTotal: (total) => `共 ${total} 条`,
-          showSizeChanger: true,
-          size: 'small',
-          defaultPageSize: 20,
-        }}
-        extraNode={
-          <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+
+      <FilterCard>
+        <div>
+          <Form
+            layout="inline"
+            form={clusterForm}
+            onFinish={(values: any) => {
+              getClusterList({
+                ...values,
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
+            onReset={() => {
+              clusterForm.resetFields();
+              getClusterList({
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
+          >
+            <Form.Item label="集群名称" name="name">
+              <Input placeholder="请输入集群名称" style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item label="集群类型" name="clusterType">
+              <Select placeholder="请选择集群类型" options={clusterTypeOption} style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item label="环境Code" name="envCode">
+              <Select
+                placeholder="请选择环境Code"
+                loading={envListLoading}
+                options={envDataSource}
+                allowClear
+                showSearch
+                style={{ width: 200 }}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button type="ghost" htmlType="reset" danger>
+                重置
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </FilterCard>
+      <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
             <h3>集群列表</h3>
+          </div>
+          <div className="caption-right">
             <Button
               type="primary"
               onClick={() => {
                 setMode('ADD');
               }}
             >
+              <PlusOutlined />
               新集群接入
             </Button>
-          </Space>
-        }
-        className="table-form"
-        onSearch={submit}
-        reset={reset}
-        // scroll={tableProps.dataSource.length > 0 ? { x: '100%' } : {}}
-        searchText="查询"
-      />
+          </div>
+        </div>
+        <div>
+          <Table
+            columns={columns}
+            dataSource={clusterTableSource}
+            loading={tableLoading}
+            pagination={{
+              current: clusterTablePageInfo.pageIndex,
+              total: clusterTablePageInfo.total,
+              pageSize: clusterTablePageInfo.pageSize,
+              showSizeChanger: true,
+              showTotal: () => `总共 ${clusterTablePageInfo.total} 条数据`,
+            }}
+            onChange={pageSizeClick}
+          ></Table>
+        </div>
+      </ContentCard>
     </PageContainer>
   );
 }

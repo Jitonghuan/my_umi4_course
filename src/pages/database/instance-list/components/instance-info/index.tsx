@@ -5,7 +5,7 @@ import { history } from 'umi';
 import TableSearch from '@/components/table-search';
 import { ContentCard } from '@/components/vc-page-content';
 import { FilterCard } from '@/components/vc-page-content';
-import { Button, Space, Form, Segmented } from 'antd';
+import { Button, Space, Empty, Form, Segmented } from 'antd';
 import SessionManage from './components/session-manage';
 import { useGetInstanceDetail } from '../../hook';
 import AccountManage from '../../../account-manage';
@@ -38,6 +38,15 @@ export default function DEMO() {
       }
     }
   }, [instanceId]);
+  const empty = (
+    <Empty
+      image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+      imageStyle={{
+        height: 60,
+      }}
+      description={<span>暂未开发...敬请期待...</span>}
+    ></Empty>
+  );
 
   return (
     <PageContainer>
@@ -54,6 +63,30 @@ export default function DEMO() {
       {activeTab === 'schema' && <SchemaManage clusterId={clusterId} />}
       {activeTab === 'account' && <AccountManage clusterId={clusterId} />}
       {activeTab === 'trend' && <Trends instanceId={instanceId} />}
+      {activeTab === 'session' && (
+        <div
+          className="unstart-demo"
+          style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          {empty}
+        </div>
+      )}
+      {activeTab === 'sql' && (
+        <div
+          className="unstart-demo"
+          style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          {empty}
+        </div>
+      )}
+      {activeTab === 'waitting' && (
+        <div
+          className="unstart-demo"
+          style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          {empty}
+        </div>
+      )}
     </PageContainer>
   );
 }

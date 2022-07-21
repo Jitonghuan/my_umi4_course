@@ -16,14 +16,17 @@ export const clusterTypeOption = [
   {
     label: 'operator模式',
     value: 3,
+    key: 3,
   },
   {
     label: '主机部署',
     value: 4,
+    key: 4,
   },
   {
     label: '云数据库',
     value: 5,
+    key: 5,
   },
 ];
 // 列表页-表格

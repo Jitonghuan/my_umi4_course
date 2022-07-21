@@ -24,7 +24,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
     yAxis: {
       label: {
         // 数值格式化为带百分号
-        formatter: (v: any) => `${v}%`,
+        // formatter: (v: any) => `${v}%`,
       },
     },
     width: 550,

@@ -1,18 +1,21 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Button, Space, Form } from 'antd';
+import { Button, Table, Form, Input, Select } from 'antd';
+import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import useTable from '@/utils/useTable';
 import { getInstanceList } from '../service';
 import { createTableColumns, instanceTypeOption, typeOptions } from './schema';
 import CreateInstance from './components/create-instance';
-import { useDeleteInstance, useGetClusterList } from './hook';
+import { useDeleteInstance, useGetClusterList, useInstanceList } from './hook';
 export default function DEMO() {
-  const [form] = Form.useForm();
+  const [instanceForm] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
+  const [listLoading, pageInfo, dataSource, getInstanceList] = useInstanceList();
   const [delLoading, deleteInstance] = useDeleteInstance();
   const formOptions = [
     {
@@ -44,6 +47,10 @@ export default function DEMO() {
   ];
   useEffect(() => {
     getClusterList();
+    getInstanceList({
+      pageIndex: 1,
+      pageSize: 20,
+    });
   }, []);
   const columns = useMemo(() => {
     return createTableColumns({
@@ -75,42 +82,29 @@ export default function DEMO() {
       },
       onDelete: async (id) => {
         deleteInstance({ id }).then(() => {
-          reset();
+          loadListData({
+            pageIndex: 1,
+            pageSize: 20,
+          });
         });
       },
       delLoading: delLoading,
     }) as any;
   }, []);
-  const {
-    tableProps,
-    search: { submit, reset },
-  } = useTable({
-    url: getInstanceList,
-    method: 'GET',
-    form,
-    formatter: (params) => {
-      console.log('params', params);
-      return {
-        ...params,
-      };
-    },
-    formatResult: (result) => {
-      let dataSource = result.data?.dataSource;
-      let dataArry: any = [];
-      dataSource?.map((item: any) => {
-        dataArry.push({
-          ...item?.instance,
-          status: item?.status,
-          clusterName: item?.clusterName,
-          envCode: item?.envCode,
-        });
-      });
-      return {
-        total: result.data?.pageInfo?.total,
-        list: dataArry || [],
-      };
-    },
-  });
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+
+    loadListData(obj);
+  };
+
+  const loadListData = (params: any) => {
+    let value = instanceForm.getFieldsValue();
+    getInstanceList({ ...params, ...value });
+  };
 
   return (
     <PageContainer>
@@ -122,73 +116,87 @@ export default function DEMO() {
         }}
         onSave={() => {
           setMode('HIDE');
-          reset();
+          loadListData({
+            pageIndex: 1,
+            pageSize: 20,
+          });
         }}
       />
-      <TableSearch
-        form={form}
-        bordered
-        // @ts-ignore
-        formOptions={[
-          {
-            key: '1',
-            type: 'input',
-            label: '实例名称',
-            dataIndex: 'name',
-            width: '200px',
-            placeholder: '请输入',
-          },
-          {
-            key: '2',
-            type: 'select',
-            label: '类型',
-            dataIndex: 'type',
-            width: '200px',
-            placeholder: '请选择',
-            option: typeOptions,
-          },
-          {
-            key: '3',
-            type: 'select',
-            label: '所属集群',
-            dataIndex: 'clusterName',
-            width: '200px',
-            placeholder: '请选择',
-            option: clusterOptions,
-          },
-        ]}
-        // formOptions={formOptions}
-        formLayout="inline"
-        columns={columns}
-        {...tableProps}
-        // @ts-ignore
-        pagination={{
-          ...tableProps.pagination,
-          showTotal: (total) => `共 ${total} 条`,
-          showSizeChanger: true,
-          size: 'small',
-          defaultPageSize: 20,
-        }}
-        extraNode={
-          <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+      <FilterCard>
+        <div>
+          <Form
+            layout="inline"
+            form={instanceForm}
+            onFinish={(values: any) => {
+              getInstanceList({
+                ...values,
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
+            onReset={() => {
+              instanceForm.resetFields();
+              getInstanceList({
+                pageIndex: 1,
+                pageSize: 20,
+              });
+            }}
+          >
+            <Form.Item label="实例名称" name="name">
+              <Input placeholder="请输入实例名称" style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item label="类型" name="type">
+              <Select placeholder="请选择实例类型" options={instanceTypeOption} style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item label="所属集群" name="clusterName">
+              <Select placeholder="请选择集群" options={clusterOptions} allowClear showSearch style={{ width: 200 }} />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button type="ghost" htmlType="reset" danger>
+                重置
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </FilterCard>
+      <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
             <h3>实例列表</h3>
+          </div>
+          <div className="caption-right">
             <Button
               type="primary"
-              ghost
               onClick={() => {
                 setMode('ADD');
               }}
             >
-              新增实例接入
+              <PlusOutlined />
+              新实例接入
             </Button>
-          </Space>
-        }
-        className="table-form"
-        onSearch={submit}
-        reset={reset}
-        // scroll={tableProps.dataSource.length > 0 ? { x: '100%' } : {}}
-        searchText="查询"
-      />
+          </div>
+        </div>
+        <div>
+          <Table
+            columns={columns}
+            dataSource={dataSource}
+            loading={listLoading}
+            pagination={{
+              current: pageInfo.pageIndex,
+              total: pageInfo.total,
+              pageSize: pageInfo.pageSize,
+              showSizeChanger: true,
+              showTotal: () => `总共 ${pageInfo.total} 条数据`,
+            }}
+            onChange={pageSizeClick}
+          ></Table>
+        </div>
+      </ContentCard>
     </PageContainer>
   );
 }

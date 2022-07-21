@@ -2,6 +2,43 @@ import { useState, useEffect } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
+//列表查询
+export function useClusterList() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [source, setSource] = useState<any>([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
+
+  const getClusterList = async (paramObj: {
+    name?: string;
+    clusterType?: number;
+    envCode?: string;
+    pageIndex?: number;
+    pageSize?: number;
+  }) => {
+    setLoading(true);
+    await getRequest(APIS.getClusterList, { data: paramObj })
+      .then((result) => {
+        if (result?.success) {
+          const dataSource = result.data.dataSource || [];
+          const pageInfo = result.data.pageInfo;
+          setSource(dataSource);
+          setPageInfo(pageInfo);
+        }
+        if (!result?.success) {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, pageInfo, source, getClusterList];
+}
 //新建账号
 export function useAddCluster(): [
   boolean,
@@ -122,6 +159,7 @@ export function useQueryEnvList() {
           const options = dataSource?.map((item: any) => ({
             label: item.envCode,
             value: item.envCode,
+            key: item.envCode,
           }));
           setEnvDataSource(options);
         } else {

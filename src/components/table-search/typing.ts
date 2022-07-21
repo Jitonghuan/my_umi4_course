@@ -7,6 +7,7 @@ export interface OptionProps {
   value: any;
   label: any;
   key: any;
+  renderLabel?: boolean;
 }
 
 export interface CheckboxOptionProps {

@@ -2,6 +2,52 @@ import { useState, useEffect } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
+//列表查询
+export function useInstanceList() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [source, setSource] = useState<any>([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
+
+  const getInstanceList = async (paramObj: {
+    name?: string;
+    type?: number | string;
+    clusterName?: string;
+    pageIndex?: number;
+    pageSize?: number;
+  }) => {
+    setLoading(true);
+    await getRequest(APIS.getInstanceList, { data: paramObj })
+      .then((result) => {
+        if (result?.success) {
+          let dataSource = result.data?.dataSource;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({
+              ...item?.instance,
+              status: item?.status,
+              clusterName: item?.clusterName,
+              envCode: item?.envCode,
+            });
+          });
+          const pageInfo = result.data.pageInfo;
+          setSource(dataArry);
+          setPageInfo(pageInfo);
+        }
+        if (!result?.success) {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, pageInfo, source, getInstanceList];
+}
 
 //新建账号
 export function useAddInstance(): [
