@@ -14,10 +14,12 @@ import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { envTypeData } from '../schema';
 import { useEnvListOptions, useGetListMonitor, useEnableMonitor, useDisableMonitor, useDelMonitor } from './hooks';
 import './index.less';
+import { useAppOptions } from "@/pages/monitor/business/hooks";
 const { Panel } = Collapse;
 
 export default function DpMonitor() {
   const [form] = Form.useForm();
+  const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [listSource, total, getListMonitor] = useGetListMonitor();
   const [enableMonitor] = useEnableMonitor();
@@ -141,6 +143,11 @@ export default function DpMonitor() {
                   title: 'sql',
                   dataIndex: 'querySql',
                 },
+                {
+                  title: '指标描述',
+                  width: 200,
+                  dataIndex: 'metricDescription',
+                },
               ]}
               pagination={false}
               scroll={{ y: window.innerHeight - 1010, x: '100%' }}
@@ -174,6 +181,7 @@ export default function DpMonitor() {
               style={{ width: '100px' }}
               options={envTypeData}
               value={currentEnvType}
+              placeholder="分类"
               onChange={(value) => {
                 setCurrentEnvType(value);
                 getEnvCodeList(value);
@@ -183,6 +191,7 @@ export default function DpMonitor() {
             <Select
               style={{ width: '140px', marginLeft: '5px' }}
               options={envCodeOption}
+              placeholder="环境名称"
               onChange={(value) => {
                 setCurrentEnvCode(value);
               }}
@@ -190,11 +199,19 @@ export default function DpMonitor() {
               allowClear
             />
           </Form.Item>
-          <Form.Item label="应用Code" name="appCode">
-            <Input placeholder="请输入" style={{ width: 140 }} />
+          <Form.Item label="关联应用" name="appCode">
+            <Select
+              options={appOptions}
+              style={{ width: '200px'}}
+              showSearch
+              allowClear
+            />
           </Form.Item>
           <Form.Item label="监控名称" name="monitorName">
-            <Input placeholder="请输入" style={{ width: 140 }} />
+            <Input placeholder="请输入" style={{ width: 180 }} />
+          </Form.Item>
+          <Form.Item label="指标名称" name="metricName">
+            <Input placeholder="请输入" style={{ width: 180 }} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" ghost>
