@@ -7,7 +7,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import useTable from '@/utils/useTable';
 import { getInstanceList } from '../service';
-import { createTableColumns, instanceTypeOption, typeOptions } from './schema';
+import { createTableColumns, instanceTypeOption, roleTypeOption } from './schema';
 import CreateInstance from './components/create-instance';
 import { useDeleteInstance, useGetClusterList, useInstanceList } from './hook';
 export default function DEMO() {
@@ -146,7 +146,7 @@ export default function DEMO() {
               <Input placeholder="请输入实例名称" style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="类型" name="type">
-              <Select placeholder="请选择实例类型" options={instanceTypeOption} style={{ width: 200 }} />
+              <Select placeholder="请选择实例类型" options={roleTypeOption} style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="所属集群" name="clusterName">
               <Select placeholder="请选择集群" options={clusterOptions} allowClear showSearch style={{ width: 200 }} />
