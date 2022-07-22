@@ -31,7 +31,7 @@ export const cancelDeploy = `${appConfig.apiPrefix}/releaseManage/deploy/cancel`
 export const withdrawFeatures = `${appConfig.apiPrefix}/releaseManage/npmDeploy/withdrawFeatures`;
 
 // 指定环境大类下的版本列表
-export const queryRecordApi = `${appConfig.apiPrefix}/appManage/npmVersion/list`;
+export const queryRecordApi = `${appConfig.apiPrefix}/releaseManage/deploy/recordList`;
 
 // 版本回滚
 export const rollback = `${appConfig.apiPrefix}/releaseManage/npmDeploy/rollback`;
