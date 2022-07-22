@@ -20,6 +20,7 @@ export default function NodeList() {
     const [dataSource, setDataSource] = useState([]);
     const [pageSize, setPageSize] = useState<number>(10);
     const [pageIndex, setPageIndex] = useState<number>(1);
+    const [initData, setInitData] = useState<any>({});
     const [data, total, loading, loadData] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
 
     const tableColumns = useMemo(() => {
@@ -33,6 +34,7 @@ export default function NodeList() {
                     taints: record.taints || [],
                     labels: Object.keys(record.labels || {}).map(k => ({ key: k, value: record.labels[k] }))
                 };
+                setInitData(record);
                 setCluster(c);
                 setTagVisible(true);
             },
@@ -46,11 +48,11 @@ export default function NodeList() {
             },
             // 排空
             drain: async (record: any, index: any) => {
-                const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode || '' })
-                if (res?.success) {
-                    message.success('操作成功');
-                    loadData();
-                }
+                // const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode || '' })
+                // if (res?.success) {
+                //     message.success('操作成功');
+                //     loadData();
+                // }
             },
             // 删除
             handleDelete: async (record: any, index: any) => {
@@ -73,6 +75,7 @@ export default function NodeList() {
                 onCancel={() => { setTagVisible(false) }}
                 dirtyTags={cluster.taints}
                 baseTags={cluster.labels}
+                initData={initData}
             ></SetTag>
             <div className="table-caption" >
                 <div className="caption-left">
@@ -87,21 +90,22 @@ export default function NodeList() {
                 loading={loading}
                 bordered
                 rowKey="id"
-                pagination={{
-                    pageSize: pageSize,
-                    total: total,
-                    current: pageIndex,
-                    showSizeChanger: true,
-                    onShowSizeChange: (_, next) => {
-                        setPageIndex(1);
-                        setPageSize(next);
-                    },
-                    onChange: (next) => {
-                        setPageIndex(next)
-                    }
-                }}
+                // pagination={{
+                //     pageSize: pageSize,
+                //     total: total,
+                //     current: pageIndex,
+                //     showSizeChanger: true,
+                //     onShowSizeChange: (_, next) => {
+                //         setPageIndex(1);
+                //         setPageSize(next);
+                //     },
+                //     onChange: (next) => {
+                //         setPageIndex(next)
+                //     }
+                // }}
+                pagination={false}
                 columns={tableColumns}
-                scroll={{ x: 1800 }}
+                scroll={{ x: '100vw' }}
             ></Table>
 
         </div>

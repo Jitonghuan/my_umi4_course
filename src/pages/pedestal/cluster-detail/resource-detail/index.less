@@ -1,11 +1,20 @@
 .cluster-resource-detail{
-    // position: relative;
-    .ant-table-wrapper{
-        position: relative;
+    display: flex;
+    flex-direction: column;
+    .table-wrapper{
+        display: flex;
+        flex-direction: column;
+        flex:1;
+        overflow: hidden;
+        .ant-table-wrapper{
+            // position: relative;
+            overflow: auto;
+        }
     }
+   
     .batch-deletes{
-        position: absolute;
-        margin-top: -45px;
+        // position: absolute;
+        // margin-top: -45px;
         // bottom: 0;
         // left: 0;
         // margin-bottom: 16px;

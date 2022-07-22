@@ -20,30 +20,30 @@ const TabList = [
 
 const path = '/matrix/pedestal/cluster-detail'
 const temp = [{ label: '集群1', value: 'code1' }, { label: '集群2', value: 'code2' },]
-export default function Main(props: any) {
+export default function ClusterDetail(props: any) {
     const { location, children } = props;
     const { clusterCode, clusterName } = location.query || {};
     const [visible, setVisble] = useState(false);
-    const [clusterOption, setClusterOption] = useState(temp);
-    const [selectCluster, setSelectCluster] = useState<any>({ value: '', label: '' });
+    const [clusterOption, setClusterOption] = useState<any>([]);
+    const [selectCluster, setSelectCluster] = useState<any>({ value: clusterCode || '', label: clusterName || '' });
     const [activeTab, setActiveTab] = useState<string>(location?.query?.key || 'node-list')
     const [data, total] = useClusterListData({ pageSize: -1, pageIndex: -1 });
     useEffect(() => {
         if (data.length) {
+            const res = data.map((item: any) => ({ value: item.clusterCode, label: item.clusterName }))
+            setClusterOption(res)
         }
     }, [data])
 
     useEffect(() => {
-        if (location.query) {
-            const { clusterCode, clusterName } = location.query || {};
-            if (clusterCode) {
-                setSelectCluster({ label: clusterName, value: clusterCode })
-            } else {
-                setSelectCluster(clusterOption && clusterOption[0])
-                history.push({ query: { ...props.location.query, clusterCode: clusterOption[0].value, clusterName: clusterOption[0].label } });
-            }
+        if (!clusterCode) {
+            setSelectCluster(clusterOption && clusterOption[0])
         }
-    }, [location.query, clusterOption])
+    }, [clusterOption])
+
+    useEffect(() => {
+        history.push({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
+    }, [selectCluster])
 
     if (!clusterCode) {
     }
@@ -51,7 +51,6 @@ export default function Main(props: any) {
 
     const selectChange = (v: any) => {
         setSelectCluster({ label: v.label, value: v.value });
-        history.push({ query: { ...props.location.query, clusterCode: v.value, clusterName: v.label } });
     }
 
     return (

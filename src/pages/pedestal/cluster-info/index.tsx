@@ -12,80 +12,56 @@ import { getMetric } from './service';
 import { getNode } from '../cluster-detail/service'
 import './index.less'
 
-export default function Test() {
+export default function clusterInfo() {
     const [visible, setVisble] = useState(false);
-    const [searchValue, setSearchValue] = useState<string>('');
+    const [searchCode, setSearchCode] = useState<string>('');
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [clusterDatas, total, loading, loadData] = useClusterListData({ searchValue, pageIndex, pageSize })
+    const [searchParams, setSearchParams] = useState<any>('');
+    const [clusterDatas, total, loading, loadData] = useClusterListData({ pageIndex, pageSize })
     const [data, setData] = useState([]);//数据合集
     useEffect(() => {
         if (clusterDatas.length !== 0) {
+            setData(clusterDatas);
             const codeLists = clusterDatas.map((item: any) => item.clusterCode);
-            getMetric({ clusterCodes: codeLists }).then((res) => {
-                if (res?.success) {
-                    clusterDatas.forEach((item: any) => {
-                        const current = res.data.find((e: any) => e.clusterCode === item.clusterCode);
-                        item.metricInfo = current;
-                    })
-                    setData([...clusterDatas] as any)
-                }
-            })
             clusterDatas.forEach((item: any) => {
-                getNode({ clusterCode: item.code }).then((res) => {
+                getNode({ clusterCode: item.clusterCode }).then((res) => {
                     if (res?.success) {
-                        item.nodeInfo = res.data;
+                        item.nodeInfo = res?.data?.items || [];
                         setData([...clusterDatas] as any)
                     }
                 })
             });
+        } else {
+            setData([])
         }
     }, [clusterDatas])
-    const mockData = [
-        {
-            clusterName: '集群测试1',
-            count: '23',
-            clusterCode: 'last-cluster1',
-            cup: '102/203',
-            version: '版本',
-            neicun: '200G/256G',
-            status: 'health',
-            type: 'ower',
-            disk: '1.2TB/5TB',
-            nodeItems: [{ status: 'risk' }, { status: 'risk' }, { status: 'risk' }, { status: 'health' }, { status: 'health' }, { status: 'offline' }, { status: 'offline' }]
-        }, {
-            clusterName: '集群测试2',
-            count: '23',
-            clusterCode: 'last-cluster2',
-            cup: '102/203',
-            version: '版本',
-            neicun: '200G/256G',
-            status: '',
-            type: 'ower',
-            disk: '1.2TB/5TB',
-            nodeItems: [{ status: 'warning' }, { status: 'warning' }, { status: 'health' }, { status: 'health' }, { status: 'health' }, { status: 'health' }, { status: 'health' }]
-        }]
+
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
     const valueChange = (e: any) => {
-        setSearchValue(e.target.value)
+        setSearchCode(e.target.value)
     }
     const pageChange = (page: number, pageSize: number) => {
         setPageIndex(page);
         setPageSize(pageSize);
     }
+    const handleSearch = () => {
+        loadData({ clusterCode: searchCode })
+    }
     return (
         <PageContainer className='cluster-info'>
             <ContentCard>
                 <div className='search-wrapper'>
-                    查询：<Input placeholder="请输入" allowClear value={searchValue} onChange={valueChange} style={{ width: 240 }} />
+                    <Input placeholder="请输入" allowClear value={searchCode} onChange={valueChange} style={{ width: 240 }} />
+                    <Button type='primary' style={{ marginLeft: '10px' }} onClick={handleSearch}>查询</Button>
                 </div>
                 <div className="flex-space-between" style={{ margin: '5px 0px' }}>
                     <h3>集群概览</h3>
                     <Button type="primary" disabled>新增集群</Button>
                 </div>
-                {(mockData.length > 0 || loading) ?
+                {(data.length > 0 || loading) ?
                     <Spin spinning={loading}>
-                        {mockData.map((item: any) => (
+                        {data.map((item: any) => (
                             <div className='list-wrapper'>
                                 {/* 第一个单元格 */}
                                 <div className='list-wrapper-item'>
@@ -103,22 +79,30 @@ export default function Test() {
                                                 }
                                             });
                                         }}>{item.clusterName || '----'}</a>
-                                    <div className="display-item" style={{ justifyContent: 'flex-start' }}>主机数：{item?.nodeItems?.length || 0}<Count data={item.nodeItems || []}></Count></div>
+                                    <div className="display-item" style={{ justifyContent: 'flex-start' }}>主机数：{item?.nodeInfo?.length || 0}<Count data={item.nodeInfo || []}></Count></div>
                                 </div>
                                 {/* 第二个单元格 */}
                                 <div className='list-wrapper-item'>
                                     <div className='item-top'>CODE:{item.clusterCode}</div>
                                     <div className="display-item">
-                                        <div>CPU:{item.cpu}</div>
-                                        <ProgessComponent percent={30} />
+                                        <div>
+                                            CPU:{item?.metricInfo?.cpuInfo?.usage || '-'}/{item?.metricInfo?.cpuInfo?.total || ''}
+                                            <span style={{ marginLeft: '3px' }}>{item?.metricInfo?.cpuInfo?.unit}</span>
+                                            <span style={{ marginLeft: '5px' }}> {((item?.metricInfo?.cpuInfo?.percentage) * 100).toFixed(2)}%</span>
+                                        </div>
+                                        <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
                                     </div>
                                 </div>
                                 {/* 第三个单元格 */}
                                 <div className='list-wrapper-item'>
                                     <div className='item-top'>版本:{item.clusterVersion}</div>
-                                    <div className="display-item">内存:
-                                <span>{item.neicun}</span>
-                                        <ProgessComponent percent={30} />
+                                    <div className="display-item">
+                                        <div>
+                                            内存:{item?.metricInfo?.memoryInfo?.usage}/{item?.metricInfo?.memoryInfo?.total}
+                                            <span style={{ marginLeft: '3px' }}> {item?.metricInfo?.memoryInfo?.unit}</span>
+                                            <span style={{ marginLeft: '5px' }}> {(item?.metricInfo?.memoryInfo?.percentage) * 100}%</span>
+                                        </div>
+                                        <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
                                     </div>
                                 </div>
                                 {/* 第四个单元格 */}
@@ -126,21 +110,27 @@ export default function Test() {
                                     <div className='last-item' style={{ flex: '1' }}>集群状态：<span style={{ color: `${STATUS_COLOR[item.status] || '#857878'}` }}>{STATUS_TEXT[item.status] || '---'}</span></div>
                                     <div className='last-item ' style={{ flex: '1' }}>集群类型：{item.clusterType}</div>
                                     <div className='last-item display-item' style={{ flex: '1' }}>
-                                        <span> 磁盘：</span>
-                                        <ProgessComponent percent={30} />
+                                        <span>
+                                            磁盘：{item?.metricInfo?.diskInfo?.usage}/{item?.metricInfo?.diskInfo?.total}
+                                            <span style={{ marginLeft: '3px' }}> {item?.metricInfo?.diskInfo?.unit}</span>
+                                            <span style={{ marginLeft: '5px' }}> {(item?.metricInfo?.diskInfo?.percentage || 0) * 100}%</span>
+                                        </span>
+                                        <ProgessComponent percent={(item?.metricInfo?.diskInfo?.percentage) * 100 || 0} />
                                     </div>
                                 </div>
                             </div>
                         ))}
                         <div className='page-wrapper'>
-                            <Pagination
-                                size="small"
-                                total={total}
-                                showTotal={showTotal}
-                                pageSize={pageSize}
-                                current={pageIndex}
-                                onChange={pageChange}
-                            />
+                            {data.length > 0 && (
+                                <Pagination
+                                    size="small"
+                                    total={total}
+                                    showTotal={showTotal}
+                                    pageSize={pageSize}
+                                    current={pageIndex}
+                                    onChange={pageChange}
+                                />
+                            )}
                         </div>
                     </Spin>
                     : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>}

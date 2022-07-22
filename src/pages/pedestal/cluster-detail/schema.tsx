@@ -19,51 +19,65 @@ export const nodeListTableSchema = ({
 }) =>
     [
         {
-            title: '主机名',
+            title: '节点名',
             dataIndex: 'nodeName',
-            width: 150,
+            width: 120,
+            // fixed: 'left',
         },
         {
             title: 'IP',
             dataIndex: 'nodeIp',
             width: 120,
+            // fixed: 'left',
         },
         {
             title: 'CPU',
             dataIndex: 'cpu',
-            width: 80,
-            ellipsis: {
-                showTitle: false,
-            },
-            render: (value) => (
-                <Tooltip placement="topLeft" title={value}>
-                    {value}
-                </Tooltip>
-            ),
+            width: 120,
+            // fixed: 'left',
+            render: (value: string, record: any) => (
+                <div>
+                    {record?.metricInfo?.cpuInfo?.usage}/{record?.metricInfo?.cpuInfo?.total}
+                    <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.cpuInfo?.unit}</span>
+                </div>
+            )
         },
 
         {
             title: '内存',
-            dataIndex: 'neicun',
-            width: 80,
-            ellipsis: {
-                showTitle: false,
-            },
+            dataIndex: ['metricInfo', 'memoryInfo', 'total'],
+            width: 120,
+            // fixed: 'left',
+            render: (value: string, record: any) => (
+                <div>
+                    {record?.metricInfo?.memoryInfo?.usage}/{record?.metricInfo?.memoryInfo?.total}
+                    <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.memoryInfo?.unit}</span>
+                </div>
+            )
         },
         {
             title: '磁盘',
-            dataIndex: ['memoryInfo', 'total'],
-            width: 80,
+            dataIndex: ['metricInfo', 'diskInfo', 'total'],
+            width: 120,
+            // fixed: 'left',
+            render: (value: string, record: any) => (
+                <div>
+                    {record?.metricInfo?.diskInfo?.usage}/{record?.metricInfo?.diskInfo?.total}
+                    <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.diskInfo?.unit}</span>
+                </div>
+            )
         },
         {
-            title: '负载',
+            title: '负载(M)',
             dataIndex: 'load',
             width: 80,
+            // fixed: 'left',
         },
         {
             title: '状态',
             dataIndex: 'status',
             width: 80,
+            // fixed: 'left',
             render: (value: any, record: any) => (
                 <div>
                     {value && value.includes('unschedulable') && <span style={{ color: 'red' }}>不可调度</span>}
@@ -74,12 +88,13 @@ export const nodeListTableSchema = ({
         {
             title: '标签',
             dataIndex: 'tags',
+            width: 300,
+            className: 'my-ant-table-cell',
             render: (value: any, record: any) => (
-                // <div>{value.map((item: string) => <Tag color="green">{item}</Tag>)}</div>
-                <div>{Object.keys(record.labels).map((k) =>
+                <div style={{ whiteSpace: 'nowrap' }}>{Object.keys(record.labels || {}).map((k) =>
                     <Tag color="green">{`${k}=${record.labels[k]}`}</Tag>
                 )}
-                    {record.taints.map((e: any) => <Tag color="green">{`${e.key}=${e.value}`}</Tag>)}
+                    {(record?.taints || []).map((e: any) => <Tag color="green">{`${e.key}=${e.value}`}</Tag>)}
                 </div>
             )
         },
@@ -109,94 +124,6 @@ export const nodeListTableSchema = ({
         },
     ] as ColumnProps[];
 
-
-// 资源详情列表
-export const resourceDetailTableSchema = ({
-    handleDetail,
-    rePublic,
-    stop,
-    handleYaml,
-    handleDelete
-}: {
-    handleDetail: (record: any, index: number) => void;
-    rePublic: (record: any, index: number) => void;
-    stop: (record: any, index: number) => void;
-    handleYaml: (record: any, index: number) => void;
-    handleDelete: (record: any, index: number) => void;
-}) =>
-    [
-        {
-            title: '资源名称',
-            dataIndex: 'id',
-            width: 100,
-        },
-        {
-            title: '资源类型',
-            dataIndex: 'ip',
-            width: 230,
-        },
-        {
-            title: '命名空间',
-            dataIndex: 'cpu',
-            width: 180,
-            ellipsis: {
-                showTitle: false,
-            },
-            render: (value) => (
-                <Tooltip placement="topLeft" title={value}>
-                    {value}
-                </Tooltip>
-            ),
-        },
-
-        {
-            title: '主机',
-            dataIndex: 'neicun',
-            width: 200,
-            ellipsis: {
-                showTitle: false,
-            },
-        },
-        {
-            title: '概述',
-            dataIndex: 'disk',
-            width: 200,
-        },
-        {
-            title: '负载',
-            dataIndex: 'createUser',
-            width: 200,
-        },
-        {
-            title: '状态',
-            dataIndex: 'state',
-            width: 200,
-        },
-        {
-            title: '操作',
-            fixed: 'right',
-            width: 320,
-            dataIndex: 'operate',
-            render: (_: any, record: any, index: number) => (
-                <div className="action-cell">
-                    <a onClick={() => handleDetail(record, index)}>详情</a>
-                    <a onClick={() => rePublic(record, index)}>重新部署</a>
-                    <a onClick={() => stop(record, index)}>停止编排</a>
-                    <a onClick={() => handleYaml(record, index)}>查看YAML</a>
-                    <Popconfirm
-                        title="确定要删除该资源吗？"
-                        onConfirm={() => {
-                            handleDelete(record, index)
-                        }}
-                    >
-                        <a style={{ color: 'red' }}>
-                            删除
-                        </a>
-                    </Popconfirm>
-                </div>
-            ),
-        },
-    ] as ColumnProps[];
 
 // 资源详情-负载-Pods列表
 export const podsTableSchema = ({

@@ -27,7 +27,6 @@ export function useClusterListData(props: any) {
         loadData({});
     },
         Object.values(props)
-
     );
 
     return [data, total, loading, loadData];

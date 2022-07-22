@@ -22,7 +22,7 @@ export default function CreateYaml(props: any) {
 
     const handleSubmit = async () => {
         const value = form.getFieldsValue();
-        console.log(value, 'value')
+
     };
     return (
         <Drawer
@@ -46,7 +46,7 @@ export default function CreateYaml(props: any) {
                     labelCol={{ flex: '120px' }}
                     onFinish={handleSubmit}
                 >
-                    <Form.Item label="" name="value" className="form-ace" style={{ flexDirection: 'column' }}>
+                    <Form.Item label="" name="yaml" className="form-ace" style={{ flexDirection: 'column' }}>
                         <AceEditor mode="yaml" height={800} />
                     </Form.Item>
                 </Form>

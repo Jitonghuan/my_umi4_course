@@ -1158,6 +1158,7 @@ export default [
             component: '@/pages/pedestal/cluster-detail/load-detail/login-shell',
             hideInMenu: true,
           },
+          { redirect: 'node-list' },
         ]
       },
 

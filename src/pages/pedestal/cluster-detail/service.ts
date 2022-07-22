@@ -31,3 +31,21 @@ export const getResourceList = (data: any) => {
     const url = addAPIPrefix('/infraManage/resource/list');
     return getRequest(url, { data: data });
 };
+
+// 资源详情-删除接口
+export const resourceDel = (data: any) => {
+    const url = addAPIPrefix('/infraManage/resource/delete');
+    return getRequest(url, { data: data });
+};
+
+// 资源详情-新增
+export const resourceCreate = (data: any) => {
+    const url = addAPIPrefix('/infraManage/resource/create');
+    return postRequest(url, { data: data });
+};
+
+// 资源类型查询接口
+export const getResourceType = (data: any) => {
+    const url = addAPIPrefix('/infraManage/resource/type/list');
+    return getRequest(url, { data: data });
+};

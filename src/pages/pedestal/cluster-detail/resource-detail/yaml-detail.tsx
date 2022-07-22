@@ -3,7 +3,7 @@ import { Modal, Button, Form, message } from 'antd';
 import AceEditor from '@/components/ace-editor';
 import { putRequest } from '@/utils/request';
 export default function YamlDetail(props: any) {
-    const { visible, templateContext, onClose, code, id, onSave } = props;
+    const { visible, onClose, initData } = props;
     const [form] = Form.useForm();
     const [readOnly, setReadOnly] = useState<boolean>(true);
     const handleOk = () => {
@@ -28,21 +28,11 @@ export default function YamlDetail(props: any) {
         setReadOnly((value) => !value);
     };
     useEffect(() => {
-        if (templateContext) {
-            form.setFieldsValue({
-                value: templateContext,
-            });
-        } else {
-            form.setFieldsValue({
-                value: '',
-            });
+        if (visible) {
+            form.setFieldsValue({ value: initData?.yaml, });
         }
-    }, [templateContext, visible]);
-    // useEffect(() => {
-    //     if (visible) {
-    //         setReadOnly(true);
-    //     }
-    // }, [visible]);
+    }, [initData, visible]);
+
     return (
         <Modal
             title="YAML详情"
@@ -56,7 +46,7 @@ export default function YamlDetail(props: any) {
             ]}
         >
             <div className="code-title">
-                资源名称：<span>hbos - dtc</span>
+                {/* 资源名称：<span>hbos - dtc</span> */}
             </div>
             <div>
                 <Form form={form}>

@@ -11,8 +11,9 @@ const behaviorOptions = [
     { lable: 'NoExecute', value: 'NoExecute' },
 ]
 export default function SetTag(props: any) {
-    const { visible, onCancel, initTags, onSubmit, baseTags, dirtyTags } = props;
-    const { selectCluster } = useContext(clusterContext);
+    const { visible, onCancel, initTags, onSubmit, baseTags, dirtyTags, initData } = props;
+    console.log(initData, 'inittDa')
+    const { clusterCode } = useContext(clusterContext);
     const [removeTags, setRemoveTags] = useState([]) as any;
     const tags = useMemo(() =>
         (baseTags || []).concat((dirtyTags || []))
@@ -42,7 +43,7 @@ export default function SetTag(props: any) {
             } else {
                 taints = taints.concat(value)
             }
-            const res = await nodeUpdate({ labels, taints, clusterCode: selectCluster });
+            const res = await nodeUpdate({ labels, taints, clusterCode, nodeName: initData.nodeName });
             if (res?.success) {
                 message.success('操作成功！')
                 onSubmit();
