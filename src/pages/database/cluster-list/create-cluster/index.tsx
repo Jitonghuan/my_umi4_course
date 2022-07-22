@@ -75,7 +75,7 @@ export default function MemberEditor(props: MemberEditorProps) {
           <Form.Item label="集群名称" name="name" rules={[{ required: true, message: '请输入' }]}>
             <Input disabled={mode === 'VIEW'} style={{ width: 360 }} />
           </Form.Item>
-          <Form.Item label="所属环境" name="instanceType">
+          <Form.Item label="所属环境" name="envCode">
             <Select
               options={envDataSource}
               disabled={mode !== 'ADD'}
@@ -85,21 +85,21 @@ export default function MemberEditor(props: MemberEditorProps) {
               style={{ width: 300 }}
             />
           </Form.Item>
-          <Form.Item label="部署类型" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item label="部署类型" name="clusterType" rules={[{ required: true, message: '请输入' }]}>
             <Select disabled={mode !== 'ADD'} style={{ width: 360 }} options={clusterTypeOption} />
           </Form.Item>
 
-          <Form.Item label="读写地址" name="clusterId" rules={[{ required: true, message: '请选择' }]}>
+          <Form.Item label="读写地址" name="masterVipHost" rules={[{ required: true, message: '请选择' }]}>
             <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="如：10.21.4.10" />
           </Form.Item>
 
-          <Form.Item label="读写地址端口" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item label="读写地址端口" name="masterVipPort" rules={[{ required: true, message: '请输入' }]}>
             <Input disabled={mode === 'VIEW'} style={{ width: 300 }} />
           </Form.Item>
-          <Form.Item label="只读地址" name="instancePort" rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item label="只读地址" name="slaveVipHost" rules={[{ required: true, message: '请输入' }]}>
             <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="如：10.21.4.90" />
           </Form.Item>
-          <Form.Item label="只读地址端口" name="manageUser" rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item label="只读地址端口" name="slaveVipPort" rules={[{ required: true, message: '请输入' }]}>
             <Input disabled={mode === 'VIEW'} style={{ width: 300 }} />
           </Form.Item>
 
