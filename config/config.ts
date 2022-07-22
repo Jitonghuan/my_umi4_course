@@ -107,8 +107,10 @@ export default defineConfig({
 
   // 配置 external 资源外部依赖, react, react-dom
   externals: NODE_ENV === 'development' ? {} : {
-    react: 'window.React',
-    'react-dom': 'window.ReactDOM'
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    ReactDOM: 'ReactDOM',
+    reactDom: 'window.ReactDOM'
   },
 
   // HTML 中以 <script> 方式引用的资源
@@ -117,6 +119,7 @@ export default defineConfig({
     { src: `${publicPathPrefix}react-dom.min.js` },
     `window.BUILD_ENV = "${BUILD_ENV}"`
   ],
+
   extraBabelPlugins: [
     [
       require.resolve('babel-plugin-import'),
