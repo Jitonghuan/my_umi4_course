@@ -28,6 +28,9 @@ import {
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
+import { parse } from 'querystring';
+import { Outlet, useLocation, history } from 'umi';
+import routelist, { baseRoutePath } from '@/routes.config'
 
 // 屏蔽掉 React Development 模式下红色的警告
 if (appConfig.isLocal) {
@@ -40,8 +43,10 @@ if (appConfig.isLocal) {
   };
 }
 export default function Layout(props: any) {
+  const location = useLocation()
+
   // 初始化 doc title hook
-  useDocumentTitle('', props?.location?.pathname);
+  useDocumentTitle('', location?.pathname);
   // 权限数据
   const [permissionData] = usePermissionData();
   // 所属数据
@@ -50,7 +55,7 @@ export default function Layout(props: any) {
   const [businessData] = useBusinessData();
 
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
-  const { fromThird } = props.location.query;
+  const { fromThird } = parse(location.search);
 
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
@@ -71,6 +76,7 @@ export default function Layout(props: any) {
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
+
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
       loadUnreadNum();
@@ -91,6 +97,16 @@ export default function Layout(props: any) {
       };
     });
   }, []);
+
+  const route = [
+    {
+      path: baseRoutePath,
+      component: '../layouts/index',
+      exact: false,
+      routes: [...routelist],
+    },
+  ]
+
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -186,6 +202,9 @@ export default function Layout(props: any) {
               {...(props as any)}
               isOpenLogin={true}
               pagePrefix={appConfig.pagePrefix}
+              routes={route}
+              history={history}
+              location={location}
               siderMenuProps={{
                 isOpenPermission: appConfig.isOpenPermission,
                 permissionData,
@@ -255,7 +274,9 @@ export default function Layout(props: any) {
                   props.history.push('/matrix/index');
                 },
               }}
-            />
+            >
+              <Outlet />
+            </BasicLayout>
           </ChartsContext.Provider>
         </FeContext.Provider>
       </WaterMark>
