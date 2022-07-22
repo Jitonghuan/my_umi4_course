@@ -77,20 +77,25 @@ export default function CreateDataBase(props: CreateDataBaseProps) {
       >
         <Form form={editForm} labelCol={{ flex: '120px' }}>
           <Form.Item label="数据库(DB)名称" name="name" rules={[{ required: true, message: '请输入' }]}>
-            <Input style={{ width: 300 }} />
+            <Input style={{ width: 355 }} />
           </Form.Item>
           <Form.Item label="支持字符集" name="characterset">
-            <Select options={CharacterSetListOptions} loading={loading} allowClear showSearch style={{ width: 300 }} />
+            <Select options={CharacterSetListOptions} loading={loading} allowClear showSearch style={{ width: 200 }} />
           </Form.Item>
           <Form.Item label="owner" name="owner" rules={[{ required: true, message: '请选择' }]}>
-            <Select options={userOptions} allowClear showSearch style={{ width: 300 }} />
+            <Select options={userOptions} allowClear showSearch style={{ width: 200 }} />
           </Form.Item>
           <Row>
-            <Form.Item label="所属账号" name="accountId" rules={[{ required: true, message: '请选择' }]}>
+            <Form.Item
+              style={{ width: '60%' }}
+              label="所属账号"
+              name="accountId"
+              rules={[{ required: true, message: '请选择' }]}
+            >
               <Select
                 options={accountData}
                 loading={accountListLoading}
-                style={{ width: 300 }}
+                // style={{ width: 300 }}
                 placeholder="默认可以先不授权"
               />
             </Form.Item>

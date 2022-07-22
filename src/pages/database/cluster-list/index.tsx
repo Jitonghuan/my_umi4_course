@@ -1,15 +1,12 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
-import TableSearch from '@/components/table-search';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { Button, Space, Form, Table, Input, Select } from 'antd';
-import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
-import useTable from '@/utils/useTable';
-import { getClusterList } from '../service';
+import { Button, Form, Table, Input, Select } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { createTableColumns, clusterTypeOption } from './schema';
 import CreateCluster from './create-cluster';
 import { useDeleteCluster, useQueryEnvList, useClusterList } from './hook';
-export default function DEMO() {
+export default function ClusterList() {
   const [clusterForm] = Form.useForm();
   const [tableLoading, clusterTablePageInfo, clusterTableSource, getClusterList] = useClusterList();
   const [mode, setMode] = useState<EditorMode>('HIDE');

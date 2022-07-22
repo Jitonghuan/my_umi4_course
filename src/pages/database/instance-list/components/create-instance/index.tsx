@@ -95,7 +95,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
               <Input disabled={mode !== 'ADD'} style={{ width: 360 }} />
             </Form.Item>
 
-            <Row>
+            <Row className="row-layout" style={{ width: '100%' }}>
               <Form.Item
                 style={{ width: '60%' }}
                 label="所属集群"
@@ -108,7 +108,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
                   showSearch
                   options={clusterOptions}
                   disabled={mode !== 'ADD'}
-                  style={{ width: 360 }}
+                  // style={{ width: 360 }}
                   placeholder="请选择"
                 />
               </Form.Item>

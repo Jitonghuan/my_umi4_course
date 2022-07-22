@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Modal, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Select, Input, Modal } from 'antd';
 import { clusterTypeOption } from '../schema';
 import { useQueryEnvList, useAddCluster, useUpdateCluster } from '../hook';
 
-export interface MemberEditorProps {
+export interface ClusterEditorProps {
   mode?: EditorMode;
   curRecord?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
-export default function MemberEditor(props: MemberEditorProps) {
+export default function ClusterEditor(props: ClusterEditorProps) {
   const { mode, onClose, onSave, curRecord } = props;
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
   const [addLoading, addCluster] = useAddCluster();
@@ -18,9 +18,6 @@ export default function MemberEditor(props: MemberEditorProps) {
 
   const [editForm] = Form.useForm<Record<string, string>>();
   const [viewDisabled, seViewDisabled] = useState<boolean>(false);
-  const [accountMode, setAccountMode] = useState<EditorMode>('HIDE');
-  //   const [addLoading, addInstance] = useAddInstance();
-
   useEffect(() => {
     if (mode === 'HIDE') return;
     // getClusterList()

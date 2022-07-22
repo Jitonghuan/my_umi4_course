@@ -106,6 +106,8 @@ export default function InstanceInfo(props: instanceInfoProps) {
           labelData.push({
             label: `延迟${item?.delay}s`,
             value: item?.delay,
+            IORunning: item?.IORunning,
+            SQLRunning: item?.SQLRunning,
           });
         }
       });
@@ -113,6 +115,7 @@ export default function InstanceInfo(props: instanceInfoProps) {
       const treeData = {
         name: masterName,
         children: childrenArry,
+        labelData: labelData,
       };
 
       const container: any = document.getElementById('container');
@@ -133,8 +136,18 @@ export default function InstanceInfo(props: instanceInfoProps) {
                   i++;
                   return {
                     type: 'line',
-                    color: labelData[i - 1]?.value === 0 ? '#A3B1BF' : 'red',
+
                     label: labelData[i - 1]?.label,
+                    style: {
+                      stroke:
+                        labelData[i - 1]?.value !== '0'
+                          ? 'red'
+                          : labelData[i - 1]?.IORunning === 'No'
+                          ? 'red'
+                          : labelData[i - 1]?.SQLRunning === 'No'
+                          ? 'red'
+                          : '#A3B1BF',
+                    },
                     // style: {
                     //   fill: 'steelblue',
                     // },
@@ -195,11 +208,17 @@ export default function InstanceInfo(props: instanceInfoProps) {
         i++;
         return {
           type: 'line',
-          color: labelData[i - 1]?.value === 0 ? '#A3B1BF' : 'red',
           label: labelData[i - 1]?.label,
-          // style: {
-          //   fill: 'steelblue',
-          // },
+          style: {
+            stroke:
+              labelData[i - 1]?.value !== '0'
+                ? 'red'
+                : labelData[i - 1]?.IORunning === 'No'
+                ? 'red'
+                : labelData[i - 1]?.SQLRunning === 'No'
+                ? 'red'
+                : '#A3B1BF',
+          },
         };
       });
 
