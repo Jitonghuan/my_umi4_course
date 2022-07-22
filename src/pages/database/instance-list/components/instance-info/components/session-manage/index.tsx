@@ -192,6 +192,12 @@ export default function DEMO(props: instanceInfoProps) {
           },
         },
       });
+      // graph.getMaxZoom();
+      // graph.setMinZoom(0.4)
+      // graph.setMaxZoom(5);
+      // graph.zoomTo(, { x: 100, y: 100 });
+      console.log('graph.getMaxZoom();', graph.getMaxZoom(), graph.getMinZoom());
+
       let i = 0;
       graph.edge((edge) => {
         i++;
@@ -220,7 +226,8 @@ export default function DEMO(props: instanceInfoProps) {
 
       graph.data(treeData);
       graph.render();
-      graph.fitView();
+      // graph.fitView();
+      graph.fitView([40, 200]);
 
       if (typeof window !== 'undefined')
         window.onresize = () => {
