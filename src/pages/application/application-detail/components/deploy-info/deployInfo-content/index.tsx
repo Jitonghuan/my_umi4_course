@@ -29,6 +29,7 @@ const rootCls = 'deploy-content-compo';
 
 export default function DeployContent(props: DeployContentProps) {
   const { viewLogEnv, type, viewLogEnvType } = props;
+  const { fromThird } = history.location?.query || {};
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
@@ -473,6 +474,7 @@ export default function DeployContent(props: DeployContentProps) {
                           appCode: appCode,
                           envCode: currentEnvData,
                           viewLogEnvType: envTypeCode,
+                          fromThird,
                           // initRecord:JSON.stringify(record)
                         },
                         state: {
@@ -559,6 +561,7 @@ export default function DeployContent(props: DeployContentProps) {
                                 viewLogEnvType: envTypeCode,
                                 optType: 'deployInfo',
                                 deploymentName: appData?.deploymentName,
+                                fromThird
                               },
                               state: {
                                 infoRecord: record,
@@ -575,7 +578,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
+                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}&fromThird=${fromThird}`,
                           );
                         }}
                       >
