@@ -1,5 +1,3 @@
-import { identity } from "_@types_lodash@4.14.182@@types/lodash";
-
 export interface Node {
     id: string;
     x?: number;
