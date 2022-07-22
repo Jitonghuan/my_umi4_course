@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {Button, Form, Input, message, Modal, Select, Table, Tag, Tooltip} from 'antd';
+import { Button, Form, Input, message, Modal, Select, Table } from 'antd';
 import DebounceSelect from '@/components/debounce-select';
 import SelectVersion from './select-version';
 import DetailContext from "@/pages/npm-manage/detail/context";
@@ -15,7 +15,7 @@ import './index.less';
 import { useMasterBranchList } from "@/pages/npm-manage/detail/hooks";
 import { PlusOutlined } from "@ant-design/icons";
 import { FilterCard } from "@/components/vc-page-content";
-import { queryActiveDeployInfo, retry } from "@/pages/application/service";
+import { queryActiveDeployInfo } from "@/pages/application/service";
 import useInterval from "../../useInterval";
 import PublishRecord from "../publish-record";
 
@@ -297,36 +297,21 @@ export default function HotFix(props: IProps) {
               width: 100
             },
             {
-              width: 140,
+              width: 160,
               title: '操作',
               fixed: 'right',
               dataIndex: 'operate',
               align: 'left',
               render: (_: any, record: any) => (
                 <div className="action-cell">
-                  {
-                    judgeActiveDeploy(record)?.deployStatus === 'error' ? (
-                      <a
-                        onClick={() => {
-                          void retry({
-                            id: deployInfo?.metadata?.id,
-                            envCode: envTypeCode
-                          })
-                        }}
-                      >
-                        重试
-                      </a>
-                    ) : (
-                      <a
-                        onClick={() => {
-                          setVersionVisible(true);
-                          setCurRecord(record);
-                        }}
-                      >
-                        发布
-                      </a>
-                    )
-                  }
+                  <a
+                    onClick={() => {
+                      setVersionVisible(true);
+                      setCurRecord(record);
+                    }}
+                  >
+                    发布
+                  </a>
                   {
                     judgeActiveDeploy(record)?.jenkinsUrl && (
                       <a

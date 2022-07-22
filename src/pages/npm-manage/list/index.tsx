@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, message, Table, Drawer, Tooltip, Radio } from 'antd';
+import {Button, Form, Input, message, Table, Drawer, Tooltip, Radio, Popconfirm} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import UserSelector, { stringToList } from "@/components/user-selector";
 import DebounceSelect from "@/components/debounce-select";
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import { getRequest, postRequest, putRequest } from "@/utils/request";
-import { npmCreate, searchGitAddress, npmUpdate, npmList } from './server';
+import {delRequest, getRequest, postRequest, putRequest} from "@/utils/request";
+import {npmCreate, searchGitAddress, npmUpdate, npmList, npmDelete} from './server';
 import { history } from 'umi';
 import './index.less';
 
@@ -42,6 +42,14 @@ export default function NpmList() {
     const { dataSource, pageInfo } = res?.data || {};
     setDataList(dataSource || []);
     setTotal(pageInfo?.total || 0);
+  }
+
+  async function onDel(id: number | string) {
+    const res = await delRequest(`${npmDelete}/${id}`);
+    if (res?.success) {
+      message.success('删除成功');
+      resetPage(1);
+    }
   }
 
   function resetPage (page: number) {
@@ -236,6 +244,11 @@ export default function NpmList() {
                   >
                     详情
                   </a>
+                  <Popconfirm title="确定要删除吗？" onConfirm={() => onDel(record.id)}>
+                    <Button type="link" danger size="small">
+                      删除
+                    </Button>
+                  </Popconfirm>
                 </div>
               ),
             }
