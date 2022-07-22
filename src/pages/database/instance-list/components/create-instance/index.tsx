@@ -111,7 +111,7 @@ export default function MemberEditor(props: MemberEditorProps) {
                   options={clusterOptions}
                   disabled={mode !== 'ADD'}
                   style={{ width: 360 }}
-                  placeholder="默认可以先不授权"
+                  placeholder="请选择"
                 />
               </Form.Item>
               {mode === 'ADD' && (

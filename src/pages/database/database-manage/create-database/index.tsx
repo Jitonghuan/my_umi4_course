@@ -78,7 +78,7 @@ export default function MemberEditor(props: MemberEditorProps) {
       >
         <Form form={editForm} labelCol={{ flex: '120px' }}>
           <Form.Item label="数据库(DB)名称" name="name" rules={[{ required: true, message: '请输入' }]}>
-            <Input style={{ width: 360 }} />
+            <Input style={{ width: 300 }} />
           </Form.Item>
           <Form.Item label="支持字符集" name="characterset">
             <Select options={CharacterSetListOptions} loading={loading} allowClear showSearch style={{ width: 300 }} />

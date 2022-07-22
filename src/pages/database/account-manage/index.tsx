@@ -144,6 +144,7 @@ export default function AccountList(props: AccountProps) {
         }}
         onSave={() => {
           setGrantMode('HIDE');
+          reset();
         }}
       />
       <TableSearch

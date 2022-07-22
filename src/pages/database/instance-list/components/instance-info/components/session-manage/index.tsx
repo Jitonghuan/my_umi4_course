@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import G6 from '@antv/g6';
 import TableSearch from '@/components/table-search';
@@ -26,8 +26,9 @@ export default function DEMO(props: instanceInfoProps) {
       drawShape: function drawShape(cfg: any, group: any) {
         const rect = group.addShape('rect', {
           attrs: {
-            fill: '#ADD8E6',
-            stroke: '#666',
+            fill: cfg?.name?.includes('当前实例') ? '#40E0D0' : '#ADD8E6',
+            stroke: cfg?.name?.includes('当前实例') ? '#B0C4DE' : '#778899',
+            radius: 4,
             x: 0,
             y: 0,
             width: 1,
@@ -43,6 +44,7 @@ export default function DEMO(props: instanceInfoProps) {
             y: 0,
             textAlign: 'left',
             textBaseline: 'middle',
+            fontSize: 10,
             fill: '#666',
           },
           name: 'text-shape',
@@ -52,10 +54,11 @@ export default function DEMO(props: instanceInfoProps) {
         rect.attr({
           x: -bbox.width / 2 - 4,
           y: -bbox.height / 2 - 6,
-          width: bbox.width + (hasChildren ? 26 : 12),
-          height: bbox.height + 12,
+          width: bbox.width + (hasChildren ? 16 : 8),
+          height: bbox.height + 8,
         });
         text.attr({
+          fontSize: 10,
           x: -bbox.width / 2,
           y: 0,
         });
@@ -64,10 +67,10 @@ export default function DEMO(props: instanceInfoProps) {
             attrs: {
               x: bbox.width / 2 + 12,
               y: 0,
-              r: 6,
+              r: 5,
               symbol: cfg.collapsed ? G6.Marker.expand : G6.Marker.collapse,
               stroke: '#666',
-              lineWidth: 2,
+              lineWidth: 1,
             },
             name: 'collapse-icon',
           });
@@ -82,7 +85,6 @@ export default function DEMO(props: instanceInfoProps) {
     },
     'single-node',
   );
-
   useEffect(() => {
     if (topoData.length > 0) {
       let childrenArry: any = [];
@@ -91,21 +93,19 @@ export default function DEMO(props: instanceInfoProps) {
 
       topoData?.map((item: any, index: number) => {
         if (item?.role === 'master') {
-          if (item?.current) {
-            masterName = '当前' + item?.instanceName;
+          if (item?.current === 'true') {
+            masterName = '当前实例：' + item?.instanceName;
           } else {
             masterName = item?.instanceName;
           }
-        } else {
-          if (item?.current) {
+        } else if (item?.role !== 'master') {
+          if (item?.current === 'true') {
             childrenArry.push({
-              name: '当前' + item?.instanceName,
-              // current:item?.current
+              name: '当前实例：' + item?.instanceName,
             });
           } else {
             childrenArry.push({
               name: item?.instanceName,
-              // current:item?.current
             });
           }
 
@@ -121,9 +121,10 @@ export default function DEMO(props: instanceInfoProps) {
         children: childrenArry,
       };
 
-      const container = document.getElementById('container');
-      const width = container?.scrollWidth;
-      const height = container?.scrollHeight || 100;
+      const container: any = document.getElementById('container');
+      const width = container.scrollWidth || 1160;
+      const height = container.scrollHeight || 160;
+      console.log('width', width, ',---,', height);
       const graph = new G6.TreeGraph({
         container: 'container',
         width,
@@ -146,7 +147,6 @@ export default function DEMO(props: instanceInfoProps) {
                     // },
                   };
                 });
-
                 graph.updateItem(item, {
                   collapsed,
                 });
@@ -160,23 +160,13 @@ export default function DEMO(props: instanceInfoProps) {
         },
         defaultNode: {
           type: 'tree-node',
-          // size: 18,
           anchorPoints: [
             [0, 0.5],
             [1, 0.5],
           ],
-          // //节点样式----todo
-          // style: {
-          //   radius: 10,
-          //   stroke: '#69c0ff',
-          //   fill: '#fff899',
-          //   lineWidth: 1,
-          //   fillOpacity: 1,
-          // },
         },
         defaultEdge: {
           type: 'line',
-          label: '',
           style: {
             stroke: '#A3B1BF',
           },
@@ -202,7 +192,6 @@ export default function DEMO(props: instanceInfoProps) {
           },
         },
       });
-
       let i = 0;
       graph.edge((edge) => {
         i++;
@@ -215,41 +204,30 @@ export default function DEMO(props: instanceInfoProps) {
           // },
         };
       });
-      graph.node(function (node: any) {
-        console.log('node--->', node);
-        console.log('node?.name?.includes("当前")', node?.name?.includes('当前'));
-        return {
-          // labelCfg: {
-          //   position: node.children && node.children.length > 0 ? 'left' : 'right',
-          //   offset: 5,
-          // },
-          size: 10,
-          //节点样式----todo
-          style: {
-            radius: 10,
-            stroke: node?.name?.includes('当前') ? '#DC143C' : '#69c0ff',
-            // fill: '#fff899',
-            lineWidth: 1,
-            fillOpacity: 0.7,
-          },
-        };
-      });
+      // graph.node(function (node: any) {
+      //   return {
+      //     size: 18,
+      //     // anchorPoints: [
+      //     //   [0, 0.5],
+      //     //   [1, 0.5],
+      //     // ],
+      //     labelCfg: {
+      //       position: node.children && node.children.length > 0 ? 'left' : 'right',
+      //       offset: 5,
+      //     },
+      //   };
+      // });
 
       graph.data(treeData);
       graph.render();
       graph.fitView();
-      if (typeof window !== 'undefined') {
+
+      if (typeof window !== 'undefined')
         window.onresize = () => {
-          if (graph) {
-            // @ts-ignore
-            if (!graph || graph.get('destroyed')) return;
-            // @ts-ignore
-            if (!container || !container.scrollWidth || !container.scrollHeight) return;
-            // @ts-ignore
-            graph.changeSize(container.scrollWidth, container.scrollHeight);
-          }
+          if (!graph || graph.get('destroyed')) return;
+          if (!container || !container.scrollWidth || !container.scrollHeight) return;
+          graph.changeSize(container.scrollWidth, container.scrollHeight);
         };
-      }
     }
   }, [topoData]);
 

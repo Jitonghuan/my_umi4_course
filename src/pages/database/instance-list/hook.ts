@@ -81,7 +81,12 @@ export function useAddInstance(): [
     setLoading(true);
     await postRequest(`${APIS.addInstance}`, { data: paramsObj })
       .then((result) => {
+        // console.log('result',result)
+        if (result.code === 1001) {
+          return;
+        }
         if (result.success) {
+          // console.log('result',result)
           message.success(result.data);
         } else {
           return;

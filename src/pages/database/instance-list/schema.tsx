@@ -131,23 +131,23 @@ export const typeOptions = [
 export const instanceTypeOption = [
   {
     label: 'mysql',
-    value: '3',
-    key: '3',
+    value: 3,
+    key: 3,
   },
   {
     label: 'postgresql',
-    value: '4',
-    key: '4',
+    value: 4,
+    key: 4,
   },
   {
     label: 'redis',
-    value: '5',
-    key: '5',
+    value: 5,
+    key: 5,
   },
   {
     label: 'mongdb',
-    value: '6',
-    key: '6',
+    value: 6,
+    key: 6,
   },
 ];
 
