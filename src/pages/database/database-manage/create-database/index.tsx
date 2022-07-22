@@ -6,27 +6,26 @@
  * @FilePath: /fe-matrix/src/pages/database/database-manage/create-database/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Row, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Drawer, Form, Button, Select, Input, Row, Tag } from 'antd';
 import CreateAccount from '../../account-manage/components/create-account';
 import { useCreateSchema, useGetAccountList, useUserOptions, useGetCharacterSetList } from '../hook';
 import './index.less';
 
-export interface MemberEditorProps {
+export interface CreateDataBaseProps {
   mode?: EditorMode;
   clusterId: number;
   onClose: () => any;
   onSave: () => any;
 }
 
-export default function MemberEditor(props: MemberEditorProps) {
+export default function CreateDataBase(props: CreateDataBaseProps) {
   const { mode, onClose, onSave, clusterId } = props;
   const [createLoading, createSchema] = useCreateSchema();
   const [accountListLoading, accountData, getAccountList] = useGetAccountList();
   const [loading, CharacterSetListOptions, getCharacterSetList] = useGetCharacterSetList();
   const [userOptions] = useUserOptions();
   const [editForm] = Form.useForm();
-
   const [accountMode, setAccountMode] = useState<EditorMode>('HIDE');
 
   useEffect(() => {
@@ -67,7 +66,7 @@ export default function MemberEditor(props: MemberEditorProps) {
         maskClosable={false}
         footer={
           <div className="drawer-footer">
-            <Button type="primary" loading={false} onClick={handleSubmit}>
+            <Button type="primary" loading={createLoading} onClick={handleSubmit}>
               保存
             </Button>
             <Button type="default" onClick={onClose}>

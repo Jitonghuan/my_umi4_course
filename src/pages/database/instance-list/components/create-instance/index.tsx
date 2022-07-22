@@ -1,21 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, message, Form, Button, Select, Input, Row, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Drawer, Form, Button, Select, Input, Row, Tag } from 'antd';
 import { useAddInstance, useUpdateInstance } from '../../hook';
 import { instanceTypeOption, roleTypeOption } from '../../schema';
 import { useGetClusterList } from '../../hook';
-import { INSTANCE_TYPE } from '../../schema';
 import CreateCluster from '../../../cluster-list/create-cluster';
-
 import './index.less';
 
-export interface MemberEditorProps {
+export interface CreateInstanceProps {
   mode?: EditorMode;
   curRecord?: any;
   onClose: () => any;
   onSave: () => any;
 }
 
-export default function MemberEditor(props: MemberEditorProps) {
+export default function CreateInstance(props: CreateInstanceProps) {
   const { mode, onClose, onSave, curRecord } = props;
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [editForm] = Form.useForm<Record<string, string>>();

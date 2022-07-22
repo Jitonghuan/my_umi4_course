@@ -1,5 +1,4 @@
-import { AppstoreOutlined, BarsOutlined, ControlOutlined, RocketOutlined } from '@ant-design/icons';
-import { Button, Space, Form, Card, Segmented, Spin, Table } from 'antd';
+import { Button, Space } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 //3:mysql 4:postgresql 5:redis 6:mongdb 7:rds
 export const options = [

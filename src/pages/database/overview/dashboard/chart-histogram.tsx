@@ -1,14 +1,10 @@
-import React, { useMemo, useEffect, useState } from 'react';
-// import { Column } from '@ant-design/charts';
 import { Column } from '@ant-design/plots';
-import { Button, Space, Form } from 'antd';
 export interface ChartHistorgramIProps {
   dataSource: any;
 }
 
 export default function ChartHistogram(props: ChartHistorgramIProps) {
   const { dataSource } = props;
-  console.log('dataSource', dataSource);
 
   const data = [
     {

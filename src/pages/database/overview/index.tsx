@@ -1,11 +1,9 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
-import TableSearch from '@/components/table-search';
 import { ContentCard } from '@/components/vc-page-content';
 import { FilterCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import { Button, Space, Form, Card, Segmented, Spin, Table } from 'antd';
-import useTable from '@/utils/useTable';
+import { Card, Segmented, Table } from 'antd';
 import { tableSchema } from './schema';
 import { useQueryOverviewDashboards, useQueryOverviewInstances } from './hook';
 import { options } from './schema';
@@ -15,7 +13,6 @@ export default function DatabaseOverView() {
   const [loading, infodata, getOverviewDashboards] = useQueryOverviewDashboards();
   const [tableLoading, tableData, getOverviewInstances] = useQueryOverviewInstances();
   const [activeValue, setActiveValue] = useState<number>(3);
-  const [curRecord, setCurRecord] = useState<any>();
 
   useEffect(() => {
     getOverviewInstances({ instanceType: activeValue });
@@ -28,7 +25,6 @@ export default function DatabaseOverView() {
   const tableColumns = useMemo(() => {
     return tableSchema({
       onPerformanceTrendsClick: (record, index) => {
-        setCurRecord(record);
         history.push({
           pathname: 'info',
           state: {

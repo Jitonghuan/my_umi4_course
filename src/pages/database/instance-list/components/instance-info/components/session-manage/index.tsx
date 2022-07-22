@@ -1,11 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
-import PageContainer from '@/components/page-container';
+import React, { useEffect } from 'react';
 import G6 from '@antv/g6';
-import TableSearch from '@/components/table-search';
 import { ContentCard } from '@/components/vc-page-content';
-import { FilterCard } from '@/components/vc-page-content';
-import { Button, Space, Form, Card, Descriptions, Spin } from 'antd';
-import useTable from '@/utils/useTable';
+import { Button, Card, Descriptions, Spin } from 'antd';
 import { INSTANCE_TYPE } from '../../../../schema';
 import { useSyncMetaData } from '../../../../hook';
 export interface instanceInfoProps {
@@ -15,10 +11,8 @@ export interface instanceInfoProps {
   clusterId: number;
   getInstanceDetail: (paramsObj: { id: number }) => Promise<void>;
 }
-export default function DEMO(props: instanceInfoProps) {
-  const [form] = Form.useForm();
+export default function InstanceInfo(props: instanceInfoProps) {
   const { loading, infoData, topoData, clusterId, getInstanceDetail } = props;
-  const [mode, setMode] = useState<EditorMode>('HIDE');
   const [syncLoading, syncMetaData] = useSyncMetaData();
   G6.registerNode(
     'tree-node',
@@ -124,7 +118,6 @@ export default function DEMO(props: instanceInfoProps) {
       const container: any = document.getElementById('container');
       const width = container.scrollWidth || 1160;
       const height = container.scrollHeight || 160;
-      console.log('width', width, ',---,', height);
       const graph = new G6.TreeGraph({
         container: 'container',
         width,
@@ -196,7 +189,6 @@ export default function DEMO(props: instanceInfoProps) {
       // graph.setMinZoom(0.4)
       // graph.setMaxZoom(5);
       // graph.zoomTo(, { x: 100, y: 100 });
-      console.log('graph.getMaxZoom();', graph.getMaxZoom(), graph.getMinZoom());
 
       let i = 0;
       graph.edge((edge) => {
@@ -210,19 +202,6 @@ export default function DEMO(props: instanceInfoProps) {
           // },
         };
       });
-      // graph.node(function (node: any) {
-      //   return {
-      //     size: 18,
-      //     // anchorPoints: [
-      //     //   [0, 0.5],
-      //     //   [1, 0.5],
-      //     // ],
-      //     labelCfg: {
-      //       position: node.children && node.children.length > 0 ? 'left' : 'right',
-      //       offset: 5,
-      //     },
-      //   };
-      // });
 
       graph.data(treeData);
       graph.render();
@@ -239,7 +218,6 @@ export default function DEMO(props: instanceInfoProps) {
   }, [topoData]);
 
   return (
-    // <div style={{padding:12}}>
     <ContentCard>
       <Card title="集群拓扑">
         <div id="container"></div>

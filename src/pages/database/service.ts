@@ -44,8 +44,6 @@ export const getPerformanceTrends = `${appConfig.apiPrefix}/databaseManage/insta
 /**14、 GET 实例列表 */
 export const getInstanceList = `${appConfig.apiPrefix}/databaseManage/instance/list`;
 
-//● databaseManage/instance/add
-
 /**15、 POST 新增实例 */
 export const addInstance = `${appConfig.apiPrefix}/databaseManage/instance/add`;
 /**16、 PUT 新增实例 */
@@ -55,24 +53,23 @@ export const deleteInstance = `${appConfig.apiPrefix}/databaseManage/instance/de
 /**18、 GET 实例详情 */
 export const getInstanceDetail = `${appConfig.apiPrefix}/databaseManage/instance/detail`;
 
-/**18、 GET 集群列表 */
+/**19、 GET 集群列表 */
 export const getClusterList = `${appConfig.apiPrefix}/databaseManage/cluster/list`;
-/**19、 POST 新增集群 */
+/**20、 POST 新增集群 */
 export const addCluster = `${appConfig.apiPrefix}/databaseManage/cluster/add`;
 
 export const updateCluster = `${appConfig.apiPrefix}/databaseManage/cluster/update`;
 
 export const deleteCluster = `${appConfig.apiPrefix}/databaseManage/cluster/delete`;
 
-/**19、 GET 同步元数据 */
+/**23、 GET 同步元数据 */
 export const syncMetaData = `${appConfig.apiPrefix}/databaseManage/syncMetaData`;
 
-/** 获取应用环境 */
+/**24、 获取应用环境 */
 export const envList = `${appConfig.apiPrefix}/appManage/env/list`;
 
-// /databaseManage/schema/getCharacterSetList
-/**获取schema字符集和排序规则 */
+/**25、获取schema字符集和排序规则 */
 export const getCharacterSetList = `${appConfig.apiPrefix}/databaseManage/schema/getCharacterSetList`;
 
-/** GET 实例性能趋势 */
+/**26、 GET 实例性能趋势 */
 export const performanceTrends = `${appConfig.apiPrefix}/databaseManage/instance/performanceTrends`;

@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Select } from 'antd';
-import { history } from 'umi';
+import { Select } from 'antd';
 import CpuUtilization from './cpu-utilization-line';
-import LoadUtilization from './load-utilization-line';
+import TpsQps from './tps-qps-line';
 import MemroyUtilization from './memory-utilization-line';
-import DiskUtilization from './disk-utilization-line';
-import FileOpen from './file-charts';
-import SocketCharts from './socket-charts';
+import SessionConnection from './ session-connection-line';
+import ExecutionsCount from './executions-count';
+import TrafficThroughput from './traffic-throughput';
 import { useQueryPerformanceTrends } from './hooks';
 import './index.less';
 
-export interface minitorDashboardProps {
+export interface DashboardProps {
   instanceId: any;
 }
 export const START_TIME_ENUMS = [
@@ -52,7 +51,7 @@ export const START_TIME_ENUMS = [
   },
 ];
 
-export default function DashboardsModal(props: minitorDashboardProps) {
+export default function DashboardsInfo(props: DashboardProps) {
   const { instanceId } = props;
 
   const [lineData, loading, queryPerformanceTrends] = useQueryPerformanceTrends();
@@ -115,24 +114,24 @@ export default function DashboardsModal(props: minitorDashboardProps) {
         </div>
         <div className="block">
           <section data-loading={loading}>
-            <LoadUtilization data={lineData?.tpsQps || []} loading={loading} />
+            <TpsQps data={lineData?.tpsQps || []} loading={loading} />
           </section>
         </div>
 
         <div className="block">
           <section data-loading={loading}>
-            <DiskUtilization data={lineData?.connection || []} loading={loading} />
+            <SessionConnection data={lineData?.connection || []} loading={loading} />
           </section>
         </div>
         <div className="block">
           <section data-loading={loading}>
-            <SocketCharts data={lineData?.transmit || []} loading={loading} />
+            <TrafficThroughput data={lineData?.transmit || []} loading={loading} />
           </section>
         </div>
 
         <div className="block">
           <section data-loading={loading}>
-            <FileOpen data={lineData?.rowsOpsData || []} loading={loading} />
+            <ExecutionsCount data={lineData?.rowsOpsData || []} loading={loading} />
           </section>
         </div>
       </div>

@@ -1,25 +1,18 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { infoOptions } from '../../schema';
 import { history } from 'umi';
-import TableSearch from '@/components/table-search';
-import { ContentCard } from '@/components/vc-page-content';
-import { FilterCard } from '@/components/vc-page-content';
-import { Button, Space, Empty, Form, Segmented } from 'antd';
+import { Empty, Segmented } from 'antd';
 import SessionManage from './components/session-manage';
 import { useGetInstanceDetail } from '../../hook';
 import AccountManage from '../../../account-manage';
 import SchemaManage from '../../../database-manage';
 import Trends from '../../../overview/trends';
-
-import useTable from '@/utils/useTable';
-export default function DEMO() {
-  const [form] = Form.useForm();
+export default function InstanceInfo() {
   const curRecordData: any = history.location?.state;
   const instanceId = curRecordData?.instanceId;
   const clusterId = curRecordData?.clusterId;
   const optType = curRecordData?.optType;
-  const [mode, setMode] = useState<EditorMode>('HIDE');
   const [activeTab, setActiveTab] = useState<string | number>('info');
   const [infoLoading, infoData, topoData, getInstanceDetail] = useGetInstanceDetail();
   const changeInfoOption = (value: string | number) => {

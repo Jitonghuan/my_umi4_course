@@ -1,50 +1,19 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
-import TableSearch from '@/components/table-search';
 import { Button, Table, Form, Input, Select } from 'antd';
-import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import useTable from '@/utils/useTable';
-import { getInstanceList } from '../service';
-import { createTableColumns, instanceTypeOption, roleTypeOption } from './schema';
+import { createTableColumns, instanceTypeOption } from './schema';
 import CreateInstance from './components/create-instance';
 import { useDeleteInstance, useGetClusterList, useInstanceList } from './hook';
-export default function DEMO() {
+export default function InstanceList() {
   const [instanceForm] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [listLoading, pageInfo, dataSource, getInstanceList] = useInstanceList();
   const [delLoading, deleteInstance] = useDeleteInstance();
-  const formOptions = [
-    {
-      key: '1',
-      type: 'input',
-      label: '实例名称',
-      dataIndex: 'name',
-      width: '200px',
-      placeholder: '请输入',
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '类型',
-      dataIndex: 'type',
-      width: '200px',
-      placeholder: '请选择',
-      option: instanceTypeOption,
-    },
-    {
-      key: '4',
-      type: 'select',
-      label: '所属集群',
-      dataIndex: 'clusterName',
-      width: '200px',
-      placeholder: '请选择',
-      option: clusterOptions,
-    },
-  ];
   useEffect(() => {
     getClusterList();
     getInstanceList({

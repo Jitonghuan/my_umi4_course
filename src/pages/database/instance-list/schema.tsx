@@ -6,10 +6,9 @@
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Avatar, Popconfirm, Tooltip, Tag, Spin } from 'antd';
+import { Space, Avatar, Popconfirm, Tag, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
-  UserOutlined,
   HomeOutlined,
   StockOutlined,
   TeamOutlined,
