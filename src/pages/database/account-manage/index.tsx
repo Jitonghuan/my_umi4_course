@@ -79,7 +79,7 @@ export default function AccountList(props: AccountProps) {
     },
   });
   const ensureModal = (record: any) => {
-    ensureForm.resetFields();
+    // ensureForm.resetFields();
     Modal.confirm({
       title: '确定删除该数据库账号吗？',
       icon: <ExclamationCircleOutlined />,
@@ -89,7 +89,7 @@ export default function AccountList(props: AccountProps) {
             您确定要删除此数据库账号吗？如果是这样，<b>请在此输入数据库账号</b>(
             <span style={{ color: 'red' }}>{record?.user}</span>)并点击确认删除数据库账号按钮
           </p>
-          <Form form={ensureForm}>
+          <Form form={ensureForm} preserve={false}>
             <Form.Item name="account">
               <Input />
             </Form.Item>

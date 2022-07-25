@@ -11,7 +11,7 @@ export function useQueryOverviewDashboards(): [boolean, any, () => Promise<void>
     setLoading(true);
     await getRequest(`${APIS.getOverviewDashboards}`)
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           setData(
             result?.data || {
               sumCloud: 0,
