@@ -31,6 +31,7 @@ export default function DEMO(props: SchemaProps) {
   }, []);
 
   const ensureModal = (record: any) => {
+    ensureForm.resetFields();
     Modal.confirm({
       title: '确定删除该数据库吗？',
       icon: <ExclamationCircleOutlined />,

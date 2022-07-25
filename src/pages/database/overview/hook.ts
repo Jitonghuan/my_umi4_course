@@ -45,7 +45,7 @@ export function useQueryOverviewInstances(): [boolean, any, (paramsObj: { instan
     setLoading(true);
     await getRequest(`${APIS.getOverviewInstances}`, { data: { ...paramsObj } })
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           setData(result?.data);
         } else {
           return;

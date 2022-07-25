@@ -136,7 +136,7 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
     setLoading(true);
     await getRequest(`${APIS.getClusterList}`, { data: { pageIndex: -1, pageSize: -1 } })
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           let dataSource = result?.data?.dataSource;
           const dataArry = dataSource?.map((item: any) => ({
             label: item?.name,

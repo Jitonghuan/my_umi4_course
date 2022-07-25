@@ -79,6 +79,7 @@ export default function AccountList(props: AccountProps) {
     },
   });
   const ensureModal = (record: any) => {
+    ensureForm.resetFields();
     Modal.confirm({
       title: '确定删除该数据库账号吗？',
       icon: <ExclamationCircleOutlined />,
