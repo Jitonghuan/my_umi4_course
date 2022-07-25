@@ -1,5 +1,5 @@
 import appConfig from '@/app.config';
-import { getRequest } from '@/utils/request';
+
 /* 1、POST 新增业务监控 */
 export const addMonitor = `${appConfig.apiPrefix}/monitorManage/biz/addMonitor`;
 /* 2、PUT 修改业务监控 */
@@ -63,3 +63,33 @@ export const deleteDbMonitor = `${appConfig.apiPrefix}/monitorManage/biz/sql/del
 
 // 数据库监控项预览
 export const metricPreview = `${appConfig.apiPrefix}/monitorManage/biz/sql/metricPreview`;
+
+// 创建业务报警规则
+export const rulesCreate = `${appConfig.apiPrefix}/monitorManage/rules/create`;
+
+// 查询业务报警规则
+export const rulesList = `${appConfig.apiPrefix}/monitorManage/rules/list`;
+
+// 查询业务报警规则
+export const rulesUpdate = `${appConfig.apiPrefix}/monitorManage/rules/update`;
+
+// 报警分类
+export const queryGroupList = `${appConfig.apiPrefix}/monitorManage/rules/group/list`;
+
+// 删除报警
+export const deleteRules = `${appConfig.apiPrefix}/monitorManage/rules/delete`;
+
+// 启用禁用报警
+export const ruleSwitch = `${appConfig.apiPrefix}/monitorManage/rules/switch`;
+
+// 获取Prometheus监控列表
+export const queryPrometheusList = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/list`;
+
+// 删除Prometheus
+export const deletePrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/delete`;
+
+// 创建Prometheus
+export const createPrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/create`;
+
+// 编辑Prometheus
+export const updatePrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/update`;

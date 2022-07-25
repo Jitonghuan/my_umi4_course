@@ -1,40 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Form,
-  Select,
-  Input,
-  Button,
-  InputNumber,
-  Spin,
-  Divider,
-  message,
-  Space,
-  Modal,
-  Collapse,
-  Row,
-  Col, Table, Tag, Tooltip, Popconfirm
+  Form, Select, Input, Button, InputNumber, Spin, Divider,
+  message, Space, Modal, Collapse, Row, Table, Tag, Tooltip, Popconfirm
 } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import {
-  ExclamationOutlined,
-  CheckOutlined,
   PlusOutlined,
   DeleteOutlined,
   MinusCircleOutlined,
   EyeFilled
 } from '@ant-design/icons';
-import { postRequest, getRequest } from '@/utils/request';
+import {postRequest, getRequest, delRequest} from '@/utils/request';
 import { ContentCard } from '@/components/vc-page-content';
-import RulesEdit from './components/rules-edit';
+import RulesEdit from '../rules-edit';
 
-import { envTypeData } from './schema';
+import { envTypeData } from '../schema';
 import { useEnvListOptions, useAppOptions } from '../hooks';
 import {
   useQueryLogSample,
   useDbType,
 } from './hooks';
-import { addDbMonitor, updateDbMonitor} from '../service';
+import {addDbMonitor, deleteRules, rulesList, ruleSwitch, updateDbMonitor} from '../service';
 import './index.less';
 import * as APIS from "@/pages/monitor/business/service";
 import {Item} from "@/pages/monitor/basic/typing";
@@ -62,7 +49,8 @@ const STATUS_TYPE: Record<number, StatusTypeItem> = {
 
 export default function DpMonitorEdit(props: any) {
   let type = props.location.state?.type || props.location.query?.type;
-  let recordData = props.location.state?.recordData;
+  let bizMonitorType = props.location.state?.bizMonitorType || props.location.query?.bizMonitorType;
+  const [recordData, setRecordData] = useState<any>(props.location.state?.recordData || {});
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions(); // 环境code列表
   const [dbTypeOptions] = useDbType(); // 数据库类型列表
@@ -77,9 +65,12 @@ export default function DpMonitorEdit(props: any) {
   const [visible, setVisible] = useState(false);
   const [logSample, loading, getLogSample] = useQueryLogSample();
 
-  const [rulesList, setRulesList] = useState<any[]>([]);
+  const [rulesData, setRulesData] = useState<any[]>([]);
   const [rulesVisible, setRulesVisible] = useState<boolean>(false);
   const [rulesType, setRulesType] = useState('add');
+  const [rulesRecord, setRulesRecord] = useState({});
+  const [rulesTotal, setRulesTotal] = useState(0);
+  const [sqlRes, setSqlRes] = useState<any>({});
 
   const [tagrgetForm] = Form.useForm();
   const [logForm] = Form.useForm();
@@ -150,8 +141,15 @@ export default function DpMonitorEdit(props: any) {
   function resetValidate(name: number) {
     let metricsQuery = tagrgetForm.getFieldValue('metricsQuery');
     Object.assign(metricsQuery[name], {
-      validate: false
+      valueColumn: '',
+      labelColumn: []
     })
+    const obj = JSON.parse(JSON.stringify(sqlRes));
+    obj[name] = {
+      labels: [],
+      values: []
+    }
+    setSqlRes(obj);
     tagrgetForm.setFieldsValue({
       metricsQuery
     })
@@ -169,14 +167,14 @@ export default function DpMonitorEdit(props: any) {
         ...param
       }
     })
-    Object.assign(list[key], {
-      validate: res?.success || false
-    })
-    tagrgetForm.setFieldsValue({
-      metricsQuery:list
-    });
+    let obj = JSON.parse(JSON.stringify(sqlRes));
+    obj[key] = {
+      labels: res?.data?.labels || [],
+      values: res?.data?.values || []
+    }
+    setSqlRes(obj);
     if (res?.success) {
-      message.success('校验通过')
+      message.success('解析成功')
     }
   }
 
@@ -191,13 +189,6 @@ export default function DpMonitorEdit(props: any) {
   const onSubmit = async () => {
     const data: any = await getParam();
     if (data) {
-      if (data.metricsQuery) {
-        for (const item of data.metricsQuery) {
-          if (!item.validate) {
-            return message.warning('有sql还未查询测试');
-          }
-        }
-      }
       if (type === 'edit') {
         postRequest(updateDbMonitor, {
           data: { ...data, id: recordData.id },
@@ -205,7 +196,6 @@ export default function DpMonitorEdit(props: any) {
           .then((resp) => {
             if (resp?.success) {
               message.info('编辑成功！');
-              history.push('/matrix/monitor/business');
             }
           })
       } else {
@@ -213,7 +203,7 @@ export default function DpMonitorEdit(props: any) {
           .then((resp) => {
             if (resp?.success) {
               message.info('新增成功！');
-              history.push('/matrix/monitor/business');
+              setRecordData(resp?.data);
             }
           })
       }
@@ -248,38 +238,56 @@ export default function DpMonitorEdit(props: any) {
     }
 
     let metricsQuery =  recordData?.metricsQuery || [];
-    for (const item of metricsQuery) {
-      Object.assign(item, {
-        validate: true
-      })
-    }
     setDbAddr(recordData?.dbAddr);
     setDbType(recordData?.dbType);
     setCurrentEnvCode(recordData?.envCode);
     tagrgetForm.setFieldsValue({
       metricsQuery,
     });
+    void getRuleList();
   }, [type]);
 
-  // 编辑告警
-  function onEditRule (record: any) {
-
-  }
-
   // 删除告警
-  function onDelRule (record: any) {
-
+  async function onDelRule (record: any) {
+    const res = await delRequest(`${deleteRules}/${record.id}`);
+    if (res?.success) {
+      message.success('删除成功');
+      void getRuleList({
+        pageIndex: 1,
+        pageSize: 20
+      })
+    }
   }
 
-  // 启用告警
-  function onEnableRule (record: any) {
-
+  // 启用， 禁用告警
+  async function onEnableRule (data: any) {
+    const res = await postRequest(ruleSwitch, {
+      data
+    })
+    if (res?.success) {
+      message.success('操作成功');
+      void getRuleList({
+        pageIndex: 1,
+        pageSize: 20
+      })
+    }
   }
 
-  // 禁用告警
-  function onDisableRule (record: any) {
-
+  // 告警列表
+  async function getRuleList (page?: any) {
+    const res = await getRequest(rulesList, {
+      data: {
+        bizMonitorId: recordData?.id,
+        bizMonitorType,
+        pageIndex: page?.pageIndex || 1,
+        pageSize: page?.pageSize || 20
+      }
+    })
+    const { dataSource, pageInfo } = res?.data || {};
+    setRulesData(dataSource || []);
+    setRulesTotal(pageInfo?.total || 0);
   }
+
 
   return (
     <PageContainer className="monitor-log">
@@ -407,7 +415,10 @@ export default function DpMonitorEdit(props: any) {
                     <Button
                       type="primary"
                       ghost
-                      onClick={onPreview}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void onPreview()
+                      }}
                     >
                       <EyeFilled />
                       指标抓取预览
@@ -451,40 +462,20 @@ export default function DpMonitorEdit(props: any) {
                                       <Input />
                                     </Form.Item>
                                     <Row>
-                                      <Col span={11}>
-                                        <Form.Item
-                                          label="查询sql"
-                                          name={[name, 'querySql']}
-                                          rules={[{ required: true, message: '输入查询sql' }]}
-                                          {...restField}
-                                        >
-                                          <TextArea
-                                            rows={2}
-                                            onChange={() => resetValidate(name)}
-                                          />
-                                        </Form.Item>
-                                      </Col>
-                                      <Col span={12}>
-                                        <Form.Item noStyle>
-                                          <Button style={{ margin: "0 30px" }} type="primary" ghost onClick={() => {onSqlTest(name)}}>解析sql</Button>
-                                          {
-                                            <Form.Item
-                                              noStyle
-                                              shouldUpdate={(prevValues, curValues) => {
-                                                return prevValues?.metricsQuery[name]?.validate !== curValues?.metricsQuery[name]?.validate
-                                              }}
-                                            >
-                                              {({ getFieldValue }) =>
-                                                getFieldValue(['metricsQuery', name, 'validate']) ? (
-                                                  <span style={{ color: '#389e0d', fontSize: '16px' }} ><CheckOutlined />校验通过</span>
-                                                ) : (
-                                                  <span style={{ color: '#ff4d4f', fontSize: '16px' }}><ExclamationOutlined  />未校验</span>
-                                                )
-                                              }
-                                            </Form.Item>
-                                          }
-                                        </Form.Item>
-                                      </Col>
+                                      <Form.Item
+                                        label="查询sql"
+                                        name={[name, 'querySql']}
+                                        rules={[{ required: true, message: '输入查询sql' }]}
+                                        {...restField}
+                                      >
+                                        <TextArea
+                                          rows={2}
+                                          onChange={() => resetValidate(name)}
+                                        />
+                                      </Form.Item>
+                                      <Form.Item noStyle>
+                                        <Button style={{ margin: "2px 30px" }} type="primary" ghost onClick={() => {onSqlTest(name)}}>解析sql</Button>
+                                      </Form.Item>
                                     </Row>
                                     <Form.Item
                                       label="结果列"
@@ -492,7 +483,13 @@ export default function DpMonitorEdit(props: any) {
                                       rules={[{ required: true, message: '输入结果列' }]}
                                       {...restField}
                                     >
-                                      <Input onChange={() => resetValidate(name)} />
+                                      <Select>
+                                        {
+                                          (sqlRes[key]?.values || []).map((item: string) => (
+                                            <Select.Option key={item} value={item}>{item}</Select.Option>
+                                          ))
+                                        }
+                                      </Select>
                                     </Form.Item>
                                   </Form.Item>
                                   <Form.List name={[name, 'labelColumn']}>
@@ -504,7 +501,6 @@ export default function DpMonitorEdit(props: any) {
                                               type="dashed"
                                               onClick={() => {
                                                 add();
-                                                resetValidate(name);
                                               }}
                                               block
                                               icon={<PlusOutlined />}
@@ -521,15 +517,16 @@ export default function DpMonitorEdit(props: any) {
                                               name={[labelName]}
                                               rules={[{ required: true, message: '请输入!' }]}
                                             >
-                                              <Input
-                                                style={{ width: 210, marginLeft: 5 }}
-                                                onChange={() => resetValidate(name)}
-                                                placeholder="输入"
-                                              />
+                                              <Select style={{ width: 210, marginLeft: 5 }}>
+                                                {
+                                                  (sqlRes[key]?.labels || []).map((item: string) => (
+                                                    <Select.Option key={item} value={item}>{item}</Select.Option>
+                                                  ))
+                                                }
+                                              </Select>
                                             </Form.Item>
                                             <MinusCircleOutlined
                                               onClick={() => {
-                                                resetValidate(name);
                                                 remove(labelName);
                                               }}
                                             />
@@ -573,7 +570,9 @@ export default function DpMonitorEdit(props: any) {
                     <Button
                       type="primary"
                       ghost
-                      onClick={() => {
+                      disabled={!recordData?.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setRulesType('add');
                         setRulesVisible(true);
                       }}
@@ -643,6 +642,8 @@ export default function DpMonitorEdit(props: any) {
                           <a
                             onClick={() => {
                               setRulesType('edit');
+                              setRulesRecord(record);
+                              setRulesVisible(true);
                             }}
                           >
                             编辑
@@ -674,9 +675,19 @@ export default function DpMonitorEdit(props: any) {
                       ),
                     }
                   ]}
-                  pagination={false}
-                  scroll={{ y: window.innerHeight - 1010, x: '100%' }}
-                  dataSource={rulesList}
+                  pagination={{
+                    total: rulesTotal,
+                    pageSize: 20,
+                    current: 1,
+                    onChange: (page, pageSize) => {
+                      void getRuleList({
+                        pageIndex: page,
+                        pageSize
+                      })
+                    }
+                  }}
+                  scroll={{ x: '100%' }}
+                  dataSource={rulesData}
                   rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
                 />
               </Panel>
@@ -700,8 +711,18 @@ export default function DpMonitorEdit(props: any) {
         </Modal>
         <RulesEdit
           visible={rulesVisible}
+          record={rulesRecord}
+          bizMonitorId={recordData?.id}
+          bizMonitorType={bizMonitorType}
+          envCode={currentEnvCode}
           onCancel={() => setRulesVisible(false)}
-          onConfirm={() => setRulesVisible(false)}
+          onConfirm={() => {
+            setRulesVisible(false);
+            void getRuleList({
+              pageIndex: 1,
+              pageSize: 20
+            })
+          }}
           type={rulesType}
           />
       </ContentCard>

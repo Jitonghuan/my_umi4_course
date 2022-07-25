@@ -9,7 +9,7 @@ import PrometheusCom from './prometheus';
 const { TabPane } = Tabs;
 
 export default function Dashboard() {
-  const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
+  const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || 'db');
 
   return (
     <PageContainer className="monitor-business-wrapper">
@@ -25,10 +25,10 @@ export default function Dashboard() {
           });
         }}
       >
-        <TabPane tab="数据库接入" key="1">
-          <DpMonitor />
+        <TabPane tab="数据库接入" key="db">
+          <DpMonitor  />
         </TabPane>
-        <TabPane tab="应用接入" key="3">
+        <TabPane tab="应用接入" key="interface">
           <PrometheusCom/>
         </TabPane>
       </Tabs>

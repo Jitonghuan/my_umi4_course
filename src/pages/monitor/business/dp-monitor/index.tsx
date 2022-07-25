@@ -35,6 +35,7 @@ export default function DpMonitor() {
       state: {
         type: 'edit',
         recordData: item,
+        bizMonitorType: 'db'
       },
     });
   };
@@ -167,13 +168,13 @@ export default function DpMonitor() {
           layout="inline"
           form={form}
           onFinish={(values: any) => {
-            getListMonitor(1, 5, values?.monitorName, values?.metricName, values?.appCode, currentEnvCode);
+            getListMonitor(1, 10, values?.monitorName, values?.metricName, values?.appCode, currentEnvCode);
           }}
           onReset={() => {
             form.resetFields();
             setCurrentEnvCode('');
             setCurrentEnvType('');
-            getListMonitor(1, 5);
+            getListMonitor(1, 10);
           }}
         >
           <Form.Item label="环境" name="envCode">
@@ -227,7 +228,7 @@ export default function DpMonitor() {
             <Button
               type="primary"
               onClick={() => {
-                history.push({ pathname: '/matrix/monitor/dp-monitor-edit', state: { type: 'add' } });
+                history.push({ pathname: '/matrix/monitor/dp-monitor-edit', state: { type: 'add', bizMonitorType: 'db' } });
               }}
               icon={<PlusOutlined />}
             >
