@@ -5,13 +5,13 @@ import PageContainer from '@/components/page-container';
 import Graph from './components/konva';
 import { RelatedData } from './components/konva/shape';
 import DetailDraw from './components/draw';
-import { columns, tableData, detailColumns, detailTableData, commonColumns, commonTableData } from './columns';
+// import { columns, tableData, detailColumns, detailTableData, commonColumns, commonTableData } from './columns';
 import './index.less';
 
 export default function DomainConfigs() {
-  const [dataSource, setDataSource] = useState<any>(tableData);
+  const [dataSource, setDataSource] = useState<any>([]);
   const [visible, setVisible] = useState(false);
-  const [column, setColumn] = useState(columns);
+  const [column, setColumn] = useState([]);
   const [tableTitle, setTableTitle] = useState('医保上传检验单表数据');
   const graphRef = useRef<any>();
   const onSubmit = (related: RelatedData) => {
@@ -20,8 +20,8 @@ export default function DomainConfigs() {
       graphRef.current.treeView(related);
     }
     setTableTitle('医保上传检验单表-校验明细表交集数据');
-    setColumn(commonColumns);
-    setDataSource(commonTableData.slice(0, 205));
+    // setColumn(commonColumns);
+    // setDataSource(commonTableData.slice(0, 205));
   };
   const onJoin = (l: any, right: any) => {};
 
@@ -32,11 +32,11 @@ export default function DomainConfigs() {
   const changeData = (type: string) => {
     if (type === '校验明细') {
       setTableTitle('校验明细表数据');
-      setColumn(detailColumns);
-      setDataSource(detailTableData);
+      // setColumn(detailColumns);
+      // setDataSource(detailTableData);
     } else {
       setColumn(column);
-      setDataSource(tableData);
+      // setDataSource(tableData);
       setTableTitle('医保上传检验单表数据');
     }
   };

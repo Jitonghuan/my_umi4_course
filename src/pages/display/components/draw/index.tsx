@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { Graph } from '../konva/shape';
 import ETable from './editTable';
 import './index.less';
-import { columns, tableData, detailColumns, detailTableData, commonColumns, commonTableData } from '../../columns';
+// import { columns, tableData, detailColumns, detailTableData, commonColumns, commonTableData } from '../../columns';
 // import type { EditableFormInstance, ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import { EditableProTable } from '@ant-design/pro-table';
 import { colunms } from '@/pages/monitor/business/schema';
@@ -26,8 +26,8 @@ const r = {
 };
 export default function DetailDraw(props: any) {
   const { visible, setVisible, onSubmit } = props;
-  const [dataSource, setDataSource] = useState<any>(commonTableData);
-  const [column, setColumn] = useState(commonColumns);
+  const [dataSource, setDataSource] = useState<any>([]);
+  const [column, setColumn] = useState([]);
   const [data, setData] = useState(r);
   const [showTable, setShowTable] = useState(true);
   const [isShowGraph, setIsShowGraph] = useState(false);
@@ -42,14 +42,14 @@ export default function DetailDraw(props: any) {
 
   const changeData = (type: string) => {
     if (type === 'left') {
-      setColumn(columns);
-      setDataSource(tableData);
+      // setColumn(columns);
+      // setDataSource(tableData);
     } else if (type === 'right') {
-      setColumn(detailColumns);
-      setDataSource(detailTableData);
+      // setColumn(detailColumns);
+      // setDataSource(detailTableData);
     } else {
-      setColumn(commonColumns);
-      setDataSource(commonTableData);
+      // setColumn(commonColumns);
+      // setDataSource(commonTableData);
     }
   };
 

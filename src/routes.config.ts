@@ -411,7 +411,7 @@ export default [
             hideInMenu: true,
             component: '@/pages/npm-manage/detail/components/versions-manage',
           },
-        ]
+        ],
       },
     ],
   },
@@ -484,37 +484,46 @@ export default [
     ],
   },
   {
-    path: 'ticket',
-    name: '工单管理',
-    icon: 'icon-report',
+    path: 'pedestal',
+    name: '基座管理',
+    icon: 'icon-dataset',
     routes: [
       {
-        path: 'list',
-        name: '运维工单',
-        key: 'ticketList',
-        component: '@/pages/ticket/ticket-list',
+        path: 'storage-manage',
+        name: '存储管理',
+        key: 'storage-manage',
+        component: '@/pages/pedestal/storage-manage',
+
+        routes: [
+          {
+            path: 'storage-dashboard',
+            name: '存储大盘',
+            key: 'storage-manage',
+            component: '@/pages/pedestal/storage-manage/storage-dashboard',
+            hideInMenu: true,
+          },
+          {
+            path: 'node-manage',
+            name: '节点管理',
+            key: 'storage-manage',
+            hideInMenu: true,
+            component: '@/pages/pedestal/storage-manage/node-manage',
+          },
+          {
+            path: 'volume-manage',
+            name: '卷管理',
+            key: 'storage-manage',
+            component: '@/pages/pedestal/storage-manage/volume-manage',
+            hideInMenu: true,
+          },
+        ],
       },
       {
-        path: 'alarm',
-        name: '告警工单',
-        key: 'ticketAlarm',
-        component: '@/pages/ticket/ticket-alarm',
-      },
-      {
-        path: 'addTicket',
-        name: '新建工单',
-        key: 'addTicket',
-        component: '@/pages/ticket/addTicket',
-        //测试环境和正式环境暂不展示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
-      },
-      {
-        path: 'resourceApply',
-        name: '资源申请',
-        key: 'resourceApply',
-        component: '@/pages/ticket/resource-apply',
-        //测试环境和正式环境暂不展示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
+        path: 'volume-detail',
+        name: '卷详情',
+        key: 'storage-manage',
+        component: '@/pages/pedestal/storage-manage/volume-detail',
+        hideInMenu: true,
       },
     ],
   },
@@ -835,6 +844,42 @@ export default [
       },
     ],
   },
+
+  {
+    path: 'ticket',
+    name: '工单管理',
+    icon: 'icon-report',
+    routes: [
+      {
+        path: 'list',
+        name: '运维工单',
+        key: 'ticketList',
+        component: '@/pages/ticket/ticket-list',
+      },
+      {
+        path: 'alarm',
+        name: '告警工单',
+        key: 'ticketAlarm',
+        component: '@/pages/ticket/ticket-alarm',
+      },
+      {
+        path: 'addTicket',
+        name: '新建工单',
+        key: 'addTicket',
+        component: '@/pages/ticket/addTicket',
+        //测试环境和正式环境暂不展示
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+      },
+      {
+        path: 'resourceApply',
+        name: '资源申请',
+        key: 'resourceApply',
+        component: '@/pages/ticket/resource-apply',
+        //测试环境和正式环境暂不展示
+        hideInMenu: process.env.BUILD_ENV === 'prod',
+      },
+    ],
+  },
   {
     path: 'station',
     name: '建站管理',
@@ -1069,49 +1114,59 @@ export default [
     ],
   },
   {
-    path: 'pedestal',
-    name: '基座管理',
-    icon: 'icon-dataset',
+    path: 'database',
+    name: '数据库管理',
+    icon: 'icon-TableSettings',
     routes: [
       {
-        path: 'storage-manage',
-        name: '存储管理',
-        key: 'storage-manage',
-        component: '@/pages/pedestal/storage-manage',
-
-        routes: [
-          {
-            path: 'storage-dashboard',
-            name: '存储大盘',
-            key: 'storage-manage',
-            component: '@/pages/pedestal/storage-manage/storage-dashboard',
-            hideInMenu: true,
-          },
-          {
-            path: 'node-manage',
-            name: '节点管理',
-            key: 'storage-manage',
-            hideInMenu: true,
-            component: '@/pages/pedestal/storage-manage/node-manage',
-          },
-          {
-            path: 'volume-manage',
-            name: '卷管理',
-            key: 'storage-manage',
-            component: '@/pages/pedestal/storage-manage/volume-manage',
-            hideInMenu: true,
-          },
-        ],
+        path: 'overview',
+        name: '概览',
+        key: 'overview',
+        component: '@/pages/database/overview',
       },
       {
-        path: 'volume-detail',
-        name: '卷详情',
-        key: 'storage-manage',
-        component: '@/pages/pedestal/storage-manage/volume-detail',
+        path: 'info',
+        name: '实例详情',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list/components/instance-info',
         hideInMenu: true,
       },
+      // {
+      //   path: 'trends',
+      //   name: '性能趋势',
+      //   key: 'overview',
+      //   component: '@/pages/database/overview/trends',
+      //   hideInMenu: true,
+      // },
+      {
+        path: 'instance-list',
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
+      },
+      {
+        path: 'cluster-list',
+        name: '集群列表',
+        key: 'cluster-list',
+        component: '@/pages/database/cluster-list',
+      },
+      // {
+      //   path: 'database-manage',
+      //   name: '数据库管理',
+      //   key: 'database-manage',
+      //   component: '@/pages/database/database-manage',
+      //   hideInMenu: true,
+      // },
+      // {
+      //   path: 'account-manage',
+      //   name: '账号管理',
+      //   key: 'account-manage',
+      //   component: '@/pages/database/account-manage',
+      //   hideInMenu: true,
+      // },
     ],
   },
+
   {
     path: 'display',
     name: '数据分析',

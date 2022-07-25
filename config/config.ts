@@ -33,7 +33,7 @@ export default defineConfig({
       target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
-      // target: 'http://10.10.129.47:8080/',//青枫本地
+      // target: 'http://10.10.129.38:8081',//青枫本地
       // target: 'http://10.10.129.128:8080/', // 羁绊本地
       // target: 'http://10.10.130.108:8000', // 可乐本地
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
@@ -41,7 +41,8 @@ export default defineConfig({
       // target: 'http://10.10.129.165:8080',//木南本地
       // target: 'http://10.10.129.159:8080',//时雨本地
       // target: 'http://10.10.129.55:8080',//习习本地
-      // target: 'http://10.10.129.226:8080',//不辣本地
+      // target: 'http://10.10.128.250:8080',//不辣本地
+      // target: 'http://10.10.129.56:80',//小庄本地
 
 
       changeOrigin: true,

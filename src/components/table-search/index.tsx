@@ -25,7 +25,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
   if (splitLayout === false) {
     return (
       <ContentCard>
-        <FormList form={form} {...rest} />
+        {form ? <FormList form={form} {...rest} /> : null}
         <div className="extra-node-box" style={{ marginTop: 20 }}>
           {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
           <>{extraNode}</>
