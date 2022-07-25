@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Select, Input, Modal } from 'antd';
+import { Form, Button, Select, Input, Modal, message } from 'antd';
 import { clusterTypeOption } from '../schema';
-import { useQueryEnvList, useAddCluster, useUpdateCluster } from '../hook';
+import { useQueryEnvList, addCluster, updateCluster } from '../hook';
 
 export interface ClusterEditorProps {
   mode?: EditorMode;
@@ -13,8 +13,9 @@ export interface ClusterEditorProps {
 export default function ClusterEditor(props: ClusterEditorProps) {
   const { mode, onClose, onSave, curRecord } = props;
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
-  const [addLoading, addCluster] = useAddCluster();
-  const [updateLoading, updateCluster] = useUpdateCluster();
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+  // const [addLoading, addCluster] = useAddCluster();
+  // const [updateLoading, updateCluster] = useUpdateCluster();
 
   const [editForm] = Form.useForm<Record<string, string>>();
   const [viewDisabled, seViewDisabled] = useState<boolean>(false);
@@ -34,16 +35,32 @@ export default function ClusterEditor(props: ClusterEditorProps) {
     };
   }, [mode]);
   const handleSubmit = async () => {
+    setAddLoading(true);
     const params: any = await editForm.validateFields();
     if (mode === 'ADD') {
-      addCluster({ ...params }).then(() => {
-        onSave();
-      });
+      addCluster({ ...params })
+        .then((res: any) => {
+          if (res?.code === 1000) {
+            message.success(res.data);
+            onSave();
+          }
+        })
+        .finally(() => {
+          setAddLoading(false);
+        });
     }
+
     if (mode === 'EDIT') {
-      updateCluster({ ...params, id: curRecord?.id }).then(() => {
-        onSave();
-      });
+      updateCluster({ ...params, id: curRecord?.id })
+        .then((res: any) => {
+          if (res?.code === 1000) {
+            message.success(res.data);
+            onSave();
+          }
+        })
+        .finally(() => {
+          setAddLoading(false);
+        });
     }
   };
 
@@ -59,7 +76,7 @@ export default function ClusterEditor(props: ClusterEditorProps) {
         maskClosable={false}
         footer={
           <div className="drawer-footer">
-            <Button type="primary" loading={updateLoading || addLoading} onClick={handleSubmit} disabled={viewDisabled}>
+            <Button type="primary" loading={addLoading} onClick={handleSubmit} disabled={viewDisabled}>
               保存
             </Button>
             <Button type="default" onClick={onClose}>

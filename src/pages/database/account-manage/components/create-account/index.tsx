@@ -8,8 +8,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Input, Modal, Divider } from 'antd';
-import { useCreateAccount } from '../../hook';
+import { Form, Button, Input, Modal, Divider, message } from 'antd';
+import { createAccount } from '../../hook';
 import './index.less';
 export interface AccountEditorProps {
   mode: EditorMode;
@@ -21,7 +21,8 @@ export interface AccountEditorProps {
 export default function AccountEditor(props: AccountEditorProps) {
   const { mode, onClose, onSave, clusterId } = props;
   const [editForm] = Form.useForm();
-  const [createLoading, createAccount] = useCreateAccount();
+  // const [createLoading, createAccount] = useCreateAccount();
+  const [createLoading, setCreateLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -31,10 +32,18 @@ export default function AccountEditor(props: AccountEditorProps) {
     };
   }, [mode]);
   const handleSubmit = async () => {
+    setCreateLoading(true);
     const params = await editForm.validateFields();
-    createAccount({ ...params, clusterId }).then(() => {
-      onSave();
-    });
+    createAccount({ ...params, clusterId })
+      .then((res) => {
+        if (res?.code === 1000) {
+          message.success(res.data);
+          onSave();
+        }
+      })
+      .finally(() => {
+        setCreateLoading(false);
+      });
   };
 
   return (

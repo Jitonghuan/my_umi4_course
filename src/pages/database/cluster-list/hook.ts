@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
+import { CreateClusterItem, UpdateClusterItem } from '../interfaces';
 //列表查询
 export function useClusterList() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,31 +40,18 @@ export function useClusterList() {
 
   return [loading, pageInfo, source, getClusterList];
 }
-//新建账号
-export function useAddCluster(): [
-  boolean,
-  (paramsObj: {
-    name: string;
-    envCode: string;
-    clusterType: number;
-    slaveVipHost: string;
-    slaveVipPort: string;
-    masterVipHost: string;
-    masterVipPort: string;
-    description: string;
-  }) => Promise<void>,
-] {
+
+export const addCluster = async (paramsObj: CreateClusterItem) => {
+  return await postRequest(`${APIS.addCluster}`, { data: paramsObj });
+};
+
+export const updateCluster = async (paramsObj: UpdateClusterItem) => {
+  return await postRequest(`${APIS.updateCluster}`, { data: paramsObj });
+};
+//新建集群
+export function useAddCluster(): [boolean, (paramsObj: CreateClusterItem) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const addCluster = async (paramsObj: {
-    name: string;
-    envCode: string;
-    clusterType: number;
-    slaveVipHost: string;
-    slaveVipPort: string;
-    masterVipHost: string;
-    masterVipPort: string;
-    description: string;
-  }) => {
+  const addCluster = async (paramsObj: CreateClusterItem) => {
     setLoading(true);
     await postRequest(`${APIS.addCluster}`, { data: paramsObj })
       .then((result) => {
@@ -82,32 +70,9 @@ export function useAddCluster(): [
 }
 
 //updateInstance
-export function useUpdateCluster(): [
-  boolean,
-  (paramsObj: {
-    id: number;
-    name: string;
-    envCode: string;
-    clusterType: number;
-    slaveVipHost: string;
-    slaveVipPort: string;
-    masterVipHost: string;
-    masterVipPort: string;
-    description: string;
-  }) => Promise<void>,
-] {
+export function useUpdateCluster(): [boolean, (paramsObj: UpdateClusterItem) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const updateCluster = async (paramsObj: {
-    id: number;
-    name: string;
-    envCode: string;
-    clusterType: number;
-    slaveVipHost: string;
-    slaveVipPort: string;
-    masterVipHost: string;
-    masterVipPort: string;
-    description: string;
-  }) => {
+  const updateCluster = async (paramsObj: UpdateClusterItem) => {
     setLoading(true);
     await putRequest(`${APIS.updateCluster}`, { data: paramsObj })
       .then((result) => {

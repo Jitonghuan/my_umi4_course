@@ -1,3 +1,5 @@
+//数据库管理接口
+//https://come-future.yuque.com/sekh46/bbgc7f/zphmwi/edit#KjKDb
 import appConfig from '@/app.config';
 
 /**1、POST 新建数据库 */
@@ -65,10 +67,10 @@ export const deleteCluster = `${appConfig.apiPrefix}/databaseManage/cluster/dele
 /**23、 GET 同步元数据 */
 export const syncMetaData = `${appConfig.apiPrefix}/databaseManage/syncMetaData`;
 
-/**24、 获取应用环境 */
+/**24、GET 获取应用环境 */
 export const envList = `${appConfig.apiPrefix}/appManage/env/list`;
 
-/**25、获取schema字符集和排序规则 */
+/**25、GET获取schema字符集和排序规则 */
 export const getCharacterSetList = `${appConfig.apiPrefix}/databaseManage/schema/getCharacterSetList`;
 
 /**26、 GET 实例性能趋势 */

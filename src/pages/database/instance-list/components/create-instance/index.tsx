@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, Form, Button, Select, Input, Row, Tag } from 'antd';
-import { useAddInstance, useUpdateInstance } from '../../hook';
+import { Drawer, Form, Button, Select, Input, Row, Tag, message } from 'antd';
+import { addInstance, updateInstance } from '../../hook';
 import { instanceTypeOption, roleTypeOption } from '../../schema';
 import { useGetClusterList } from '../../hook';
 import CreateCluster from '../../../cluster-list/create-cluster';
@@ -17,8 +17,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
   const { mode, onClose, onSave, curRecord } = props;
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [editForm] = Form.useForm<Record<string, string>>();
-  const [addLoading, addInstance] = useAddInstance();
-  const [updateLoading, updateInstance] = useUpdateInstance();
+  const [addLoading, setAddLoading] = useState<boolean>(false);
   const [clusterMode, setClusterMode] = useState<EditorMode>('HIDE');
 
   useEffect(() => {
@@ -35,16 +34,31 @@ export default function CreateInstance(props: CreateInstanceProps) {
     };
   }, [mode]);
   const handleSubmit = async () => {
+    setAddLoading(true);
     const params: any = await editForm.validateFields();
     if (mode === 'ADD') {
-      addInstance({ ...params }).then(() => {
-        onSave();
-      });
+      addInstance({ ...params })
+        .then((res) => {
+          if (res?.code === 1000) {
+            message.success(res.data);
+            onSave();
+          }
+        })
+        .finally(() => {
+          setAddLoading(false);
+        });
     }
     if (mode === 'EDIT') {
-      updateInstance({ ...params, id: curRecord.id }).then(() => {
-        onSave();
-      });
+      updateInstance({ ...params, id: curRecord.id })
+        .then((res) => {
+          if (res?.code === 1000) {
+            message.success(res.data);
+            onSave();
+          }
+        })
+        .finally(() => {
+          setAddLoading(false);
+        });
     }
   };
 
@@ -69,12 +83,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
         maskClosable={false}
         footer={
           <div className="drawer-footer">
-            <Button
-              type="primary"
-              loading={updateLoading || addLoading}
-              onClick={handleSubmit}
-              disabled={mode === 'VIEW'}
-            >
+            <Button type="primary" loading={addLoading} onClick={handleSubmit} disabled={mode === 'VIEW'}>
               保存
             </Button>
             <Button type="default" onClick={onClose}>

@@ -23,7 +23,7 @@ export const options = [
     // icon: <RocketOutlined />,
   },
   {
-    label: 'Rds',
+    label: 'Cloud',
     value: 7,
     // icon: <RocketOutlined />,
   },

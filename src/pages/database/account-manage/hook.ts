@@ -2,26 +2,15 @@ import { useState, useEffect } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
+import { CreateAccountItem } from '../interfaces';
+export const createAccount = async (paramsObj: CreateAccountItem) => {
+  return await postRequest(`${APIS.createAccount}`, { data: paramsObj });
+};
 
 //新建账号
-export function useCreateAccount(): [
-  boolean,
-  (paramsObj: {
-    clusterId: number;
-    user: string;
-    host: string;
-    password: string;
-    description: string;
-  }) => Promise<void>,
-] {
+export function useCreateAccount(): [boolean, (paramsObj: CreateAccountItem) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const createAccount = async (paramsObj: {
-    clusterId: number;
-    user: string;
-    host: string;
-    password: string;
-    description: string;
-  }) => {
+  const createAccount = async (paramsObj: CreateAccountItem) => {
     setLoading(true);
     await postRequest(`${APIS.createAccount}`, { data: paramsObj })
       .then((result) => {

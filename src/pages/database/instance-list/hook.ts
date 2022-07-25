@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
+import { CreateInstanceItem, UpdateInstanceItem } from '../interfaces';
 //列表查询
 export function useInstanceList() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -48,6 +49,13 @@ export function useInstanceList() {
 
   return [loading, pageInfo, source, getInstanceList];
 }
+
+export const addInstance = async (paramsObj: CreateInstanceItem) => {
+  return await postRequest(`${APIS.addInstance}`, { data: paramsObj });
+};
+export const updateInstance = async (paramsObj: UpdateInstanceItem) => {
+  return await postRequest(`${APIS.updateInstance}`, { data: paramsObj });
+};
 
 //新建账号
 export function useAddInstance(): [
@@ -100,36 +108,9 @@ export function useAddInstance(): [
   return [loading, addInstance];
 }
 //updateInstance
-export function useUpdateInstance(): [
-  boolean,
-  (paramsObj: {
-    id: number;
-    name: string;
-    instanceType: number;
-    instanceVersion: string;
-    clusterId: number;
-    clusterRole: number;
-    instanceHost: string;
-    instancePort: string;
-    manageUser: string;
-    managePassword: string;
-    description: string;
-  }) => Promise<void>,
-] {
+export function useUpdateInstance(): [boolean, (paramsObj: UpdateInstanceItem) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const updateInstance = async (paramsObj: {
-    name: string;
-    id: number;
-    instanceType: number;
-    instanceVersion: string;
-    clusterId: number;
-    clusterRole: number;
-    instanceHost: string;
-    instancePort: string;
-    manageUser: string;
-    managePassword: string;
-    description: string;
-  }) => {
+  const updateInstance = async (paramsObj: UpdateInstanceItem) => {
     setLoading(true);
     await putRequest(`${APIS.updateInstance}`, { data: paramsObj })
       .then((result) => {

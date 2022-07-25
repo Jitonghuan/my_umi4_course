@@ -26,6 +26,8 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
     xField: 'type',
     yField: 'value',
     seriesField: '',
+    minColumnWidth: 20,
+    maxColumnWidth: 30,
     label: {
       content: (originData: any) => {
         // const val = parseFloat(originData.value);
@@ -36,12 +38,14 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
       offset: 10,
     },
     legend: true,
-
     xAxis: {
       label: {
         autoHide: true,
         autoRotate: false,
       },
+    },
+    yAxis: {
+      cat: 1,
     },
   };
 

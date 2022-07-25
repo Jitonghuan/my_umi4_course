@@ -2,44 +2,34 @@ import { useState, useEffect } from 'react';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { message } from 'antd';
+import { CreateDataBaseItem } from '../interfaces';
 
 //数据库管理-新建数据库
-export function useCreateSchema(): [
-  boolean,
-  (paramsObj: {
-    clusterId: number;
-    name: string;
-    characterset: string;
-    owner: string;
-    accountId: number;
-    description: string;
-  }) => Promise<void>,
-] {
-  const [loading, setLoading] = useState<boolean>(false);
-  const createSchema = async (paramsObj: {
-    clusterId: number;
-    name: string;
-    characterset: string;
-    owner: string;
-    accountId: number;
-    description: string;
-  }) => {
-    setLoading(true);
-    await postRequest(`${APIS.createSchema}`, { data: paramsObj })
-      .then((result) => {
-        if (result.success) {
-          message.success(result.data);
-        } else {
-          return;
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+export const createSchema = async (paramsObj: CreateDataBaseItem) => {
+  return await postRequest(`${APIS.createSchema}`, { data: paramsObj });
+};
+// export function useCreateSchema(): [
+//   boolean,
+//   (paramsObj: CreateDataBaseItem) => Promise<void>,
+// ] {
+//   const [loading, setLoading] = useState<boolean>(false);
+//   const createSchema = async (paramsObj: CreateDataBaseItem) => {
+//     setLoading(true);
+//     await postRequest(`${APIS.createSchema}`, { data: paramsObj })
+//       .then((result) => {
+//         if (result.success) {
+//           message.success(result.data);
+//         } else {
+//           return;
+//         }
+//       })
+//       .finally(() => {
+//         setLoading(false);
+//       });
+//   };
 
-  return [loading, createSchema];
-}
+//   return [loading, createSchema];
+// }
 //数据库管理-删除数据库
 export function useDeleteSchema(): [boolean, (paramsObj: { clusterId: number; id: number }) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
