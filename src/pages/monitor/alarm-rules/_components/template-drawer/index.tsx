@@ -14,7 +14,6 @@ import { useAppOptions } from '../../hooks';
 import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../basic/services';
 import { useUserOptions } from './hooks';
 import './index.less';
-import {ruleCheckName} from "@/pages/monitor/alarm-rules/service";
 
 interface IRef {
   setTreeData: (data: any) => void;
@@ -55,7 +54,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
   const [getSilenceValue, setGetSilenceValue] = useState(0);
-  const [name, setName] = useState('');
   const envTypeData = [
     {
       key: 'dev',
@@ -190,8 +188,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       level: ALERT_LEVEL[record.level as number]?.value,
     };
 
-    setName(record?.name || '');
-
     //规则情况
     if (drawerType === 'rules') {
       //回显时间
@@ -276,7 +272,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         labels: stepTableMap(labelTableData),
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,
-        name,
       };
 
       if (value?.silence) {
@@ -299,22 +294,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     form.resetFields();
     onClose();
   };
-
-  const checkName = async () => {
-    if (name && name !== record?.name) {
-      const res = await getRequest(ruleCheckName, {
-        data: {
-          name
-        }
-      })
-      if (!res?.success) {
-        form.setFieldsValue({
-          name: ''
-        })
-        setName('');
-      }
-    }
-  }
 
   return (
     <Drawer
@@ -363,14 +342,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             },
           ]}
         >
-          <Input
-            placeholder="请输入"
-            style={{ width: '400px' }}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onBlur={() => checkName()}
-            onMouseEnter={() => checkName()}
-          />
+          <Input placeholder="请输入" style={{ width: '400px' }} />
         </Form.Item>
         <Form.Item label="报警分类" name="group" required={true}>
           <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear />

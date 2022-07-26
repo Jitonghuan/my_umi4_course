@@ -115,7 +115,7 @@ const RulesEdit = (props: IPros) => {
       duration: `${params.duration}${unit}`,
       bizMonitorId,
       bizMonitorType,
-      envCode: 'hbos-dev'
+      envCode
     }
     if (params?.silence) {
       data.silenceStart = moment(params.silenceStart).format('HH:mm');

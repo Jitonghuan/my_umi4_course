@@ -592,13 +592,6 @@ export default function DpMonitorEdit(props: any) {
                       width: 140,
                     },
                     {
-                      title: '报警级别',
-                      dataIndex: 'level',
-                      key: 'level',
-                      render: (text: number) => <Tag color={ALERT_LEVEL[text]?.color}>{ALERT_LEVEL[text]?.text}</Tag>,
-                      width: 120,
-                    },
-                    {
                       title: '告警表达式',
                       dataIndex: 'expression',
                       key: 'expression',
@@ -624,6 +617,13 @@ export default function DpMonitorEdit(props: any) {
                       dataIndex: 'message',
                       key: 'message',
                       width: 200,
+                    },
+                    {
+                      title: '报警级别',
+                      dataIndex: 'level',
+                      key: 'level',
+                      render: (text: number) => <Tag color={ALERT_LEVEL[text]?.color}>{ALERT_LEVEL[text]?.text}</Tag>,
+                      width: 120,
                     },
                     {
                       title: '状态',
@@ -686,6 +686,7 @@ export default function DpMonitorEdit(props: any) {
                       })
                     }
                   }}
+                  rowKey="id"
                   scroll={{ x: '100%' }}
                   dataSource={rulesData}
                   rowClassName={(record) => (record?.status === 1 ? 'rowClassName' : '')}
