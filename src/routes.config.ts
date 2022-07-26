@@ -10,101 +10,104 @@ type IRouteItem = {
 export const baseRoutePath = '/matrix';
 export default [
   {
-    "path": `${baseRoutePath}/matrix`,
-    "redirect": `matrix/application`
+    path: 'index',
+    // name: '首页',
+    icon: 'icon-poc_index',
+    // component: '@/pages/index',
+    component: '@/pages/dashboard/workplace',
   },
   {
-    "path": `${baseRoutePath}/index`,
-    "icon": "icon-poc_index",
-    "component": "@/pages/dashboard/workplace"
+    path: `${baseRoutePath}/application`,
+    redirect: `${baseRoutePath}/application/all`,
   },
   {
-    "path": `${baseRoutePath}/matrix/application`,
-    "redirect": `matrix/application/all`
+    path: `${baseRoutePath}/pedestal`,
+    redirect: `${baseRoutePath}/pedestal/storage-manage/storage-dashboard`,
   },
   {
-    "path": `${baseRoutePath}/matrix/pedestal`,
-    "redirect": `matrix/pedestal/storage-manage/storage-dashboard`
+    path: `${baseRoutePath}/publish`,
+    redirect: `${baseRoutePath}/publish/function`,
   },
   {
-    "path": `${baseRoutePath}/matrix/publish`,
-    "redirect": `matrix/publish/function`
+    path: `${baseRoutePath}/test`,
+    redirect: `${baseRoutePath}/test/data-factory/template`,
   },
   {
-    "path": `${baseRoutePath}/matrix/test`,
-    "redirect": `matrix/test/data-factory/template`
+    path: `${baseRoutePath}/monitor`,
+    redirect: `${baseRoutePath}/monitor/board`,
   },
   {
-    "path": `${baseRoutePath}/matrix/monitor`,
-    "redirect": `matrix/monitor/board`
+    path: `${baseRoutePath}/ticket`,
+    redirect: `${baseRoutePath}/ticket/list`,
   },
   {
-    "path": `${baseRoutePath}/matrix/ticket`,
-    "redirect": `matrix/ticket/list`
+    path: `${baseRoutePath}/order`,
+    redirect: `${baseRoutePath}/order/list`,
   },
   {
-    "path": `${baseRoutePath}/matrix/order`,
-    "redirect": `matrix/order/list`
+    path: `${baseRoutePath}/code`,
+    redirect: `${baseRoutePath}/code/rank`,
   },
   {
-    "path": `${baseRoutePath}/matrix/code`,
-    "redirect": `matrix/code/rank`
+    path: `${baseRoutePath}/test/scripts`,
+    redirect: `${baseRoutePath}/test/scripts/functions`,
   },
   {
-    "path": `${baseRoutePath}/matrix/test/scripts`,
-    "redirect": `matrix/test/scripts/functions`
+    path: `${baseRoutePath}/test/autotest`,
+    redirect: `${baseRoutePath}/test/autotest/dashboard`,
+  },
+  // {
+  //   path: `${baseRoutePath}/monitor`,
+  //   redirect: `${baseRoutePath}/monitor/business`,
+
+  // },
+  {
+    path: `${baseRoutePath}/monitor/basic`,
+    redirect: `${baseRoutePath}/monitor/basic/prometheus`,
   },
   {
-    "path": `${baseRoutePath}/matrix/test/autotest`,
-    "redirect": `matrix/test/autotest/dashboard`
+    path: `${baseRoutePath}/cluster/cluster-zy`,
+    redirect: `${baseRoutePath}/cluster/cluster-zy/dashboards`,
   },
   {
-    "path": `${baseRoutePath}/matrix/monitor/basic`,
-    "redirect": `matrix/monitor/basic/prometheus`
+    path: `${baseRoutePath}/cluster/cluster-tt`,
+    redirect: `${baseRoutePath}/cluster/cluster-tt/dashboards`,
   },
   {
-    "path": `${baseRoutePath}/matrix/cluster/cluster-zy`,
-    "redirect": `matrix/cluster/cluster-zy/dashboards`
+    path: `${baseRoutePath}/cluster/cluster-zs`,
+    redirect: `${baseRoutePath}/cluster/cluster-zs/dashboards`,
   },
   {
-    "path": `${baseRoutePath}/matrix/cluster/cluster-tt`,
-    "redirect": `matrix/cluster/cluster-tt/dashboards`
+    path: `${baseRoutePath}/operation/app-tmpl`,
+    redirect: `${baseRoutePath}/operation/app-tmpl/tmpl-list`,
   },
   {
-    "path": `${baseRoutePath}/matrix/cluster/cluster-zs`,
-    "redirect": `matrix/cluster/cluster-zs/dashboards`
+    path: `${baseRoutePath}/operation/env-manage`,
+    redirect: `${baseRoutePath}/operation/env-manage/env-list`,
   },
   {
-    "path": `${baseRoutePath}/matrix/operation/app-tmpl`,
-    "redirect": `matrix/operation/app-tmpl/tmpl-list`
+    path: `${baseRoutePath}/operation/ng-manage`,
+    redirect: `${baseRoutePath}/operation/ng-manage/ng-list`,
   },
   {
-    "path": `${baseRoutePath}/matrix/operation/env-manage`,
-    "redirect": `matrix/operation/env-manage/env-list`
+    path: `${baseRoutePath}/operation/helm-manage`,
+    redirect: `${baseRoutePath}/operation/helm-manage/helm-list`,
   },
   {
-    "path": `${baseRoutePath}/matrix/operation/ng-manage`,
-    "redirect": `matrix/operation/ng-manage/ng-list`
+    path: `${baseRoutePath}/operation/label-manage`,
+    redirect: `${baseRoutePath}/operation/label-manage/label-list`,
   },
   {
-    "path": `${baseRoutePath}/matrix/operation/helm-manage`,
-    "redirect": `matrix/operation/helm-manage/helm-list`
+    path: `${baseRoutePath}/test/data-factory`,
+    redirect: `${baseRoutePath}/test/data-factory/template`,
   },
   {
-    "path": `${baseRoutePath}/matrix/operation/label-manage`,
-    "redirect": `matrix/operation/label-manage/label-list`
+    path: `${baseRoutePath}/test/workspace`,
+    redirect: `${baseRoutePath}/test/workspace/test-case-library`,
   },
   {
-    "path": `${baseRoutePath}/matrix/test/data-factory`,
-    "redirect": `matrix/test/data-factory/template`
-  },
-  {
-    "path": `${baseRoutePath}/matrix/test/workspace`,
-    "redirect": `matrix/test/workspace/test-case-library`
-  },
-  {
-    "path": `${baseRoutePath}/matrix/test/quality-control-new`,
-    "redirect": `matrix/test/quality-control-new/overview`
+    path: `${baseRoutePath}/test/quality-control-new`,
+    redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
   {
     "path": `${baseRoutePath}/application`,
