@@ -54,7 +54,7 @@ export const addInstance = async (paramsObj: CreateInstanceItem) => {
   return await postRequest(`${APIS.addInstance}`, { data: paramsObj });
 };
 export const updateInstance = async (paramsObj: UpdateInstanceItem) => {
-  return await postRequest(`${APIS.updateInstance}`, { data: paramsObj });
+  return await putRequest(`${APIS.updateInstance}`, { data: paramsObj });
 };
 
 //新建账号

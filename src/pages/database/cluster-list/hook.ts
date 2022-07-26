@@ -46,7 +46,7 @@ export const addCluster = async (paramsObj: CreateClusterItem) => {
 };
 
 export const updateCluster = async (paramsObj: UpdateClusterItem) => {
-  return await postRequest(`${APIS.updateCluster}`, { data: paramsObj });
+  return await putRequest(`${APIS.updateCluster}`, { data: paramsObj });
 };
 //新建集群
 export function useAddCluster(): [boolean, (paramsObj: CreateClusterItem) => Promise<void>] {
