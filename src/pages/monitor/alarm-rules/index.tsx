@@ -18,7 +18,8 @@ export default function AlarmRules() {
   const [appCode, setAppCode] = useState<string>();
   const [clusterEnvOptions, queryEnvCodeList] = useEnvListOptions();
 
-  const { Search } = Input;
+  const [currentEnvType, setCurrentEnvType] = useState('');
+  const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
 
   const envTypeData = [
     {
@@ -38,6 +39,7 @@ export default function AlarmRules() {
       value: 'prod',
     },
   ]; //环境大类
+
   //列表
   const {
     tableProps,
@@ -46,12 +48,11 @@ export default function AlarmRules() {
     url: queryRulesList,
     method: 'GET',
     form: searchRulesForm,
-    // formatter: () => {
-    //   return {
-    //     serviceId,
-    //     pageIndex: -1,
-    //   };
-    // },
+    formatter: () => {
+      return {
+        envCode: currentEnvCode
+      };
+    },
   });
   // 应用Code 联动 envCode
   const handleAppCodeChange = (next: string) => {
@@ -69,30 +70,38 @@ export default function AlarmRules() {
           }}
           onReset={() => {
             searchRulesForm.resetFields();
-            reset;
-
             queryList();
           }}
         >
-          <Form.Item label="报警名称" name="name">
-            <Input style={{ width: 200 }} />
-          </Form.Item>
-          <Form.Item label="环境大类" name="envTypeCode">
+          <Form.Item label="环境" name="envCode">
             <Select
-              showSearch
-              style={{ width: 100 }}
+              style={{ width: '100px' }}
               options={envTypeData}
-              allowClear
-              onChange={(n) => {
-                queryEnvCodeList(n);
+              value={currentEnvType}
+              placeholder="分类"
+              onChange={(value) => {
+                setCurrentEnvType(value);
+                setCurrentEnvCode('');
+                void queryEnvCodeList(value);
               }}
+              allowClear
+            />
+            <Select
+              style={{ width: '140px', marginLeft: '5px' }}
+              options={clusterEnvOptions}
+              placeholder="环境名称"
+              onChange={(value) => {
+                setCurrentEnvCode(value);
+              }}
+              value={currentEnvCode}
+              allowClear
             />
           </Form.Item>
-          <Form.Item label="环境" name="envCode">
-            <Select options={clusterEnvOptions} allowClear showSearch style={{ width: 120 }} />
-          </Form.Item>
-          <Form.Item label="应用" name="appCode">
+          <Form.Item label="关联应用" name="appCode">
             <Select showSearch allowClear style={{ width: 120 }} options={appOptions} onChange={handleAppCodeChange} />
+          </Form.Item>
+          <Form.Item label="报警名称" name="name">
+            <Input style={{ width: 200 }} />
           </Form.Item>
           <Form.Item label="状态" name="status">
             <Select showSearch allowClear style={{ width: 120 }} options={statusOptions} />

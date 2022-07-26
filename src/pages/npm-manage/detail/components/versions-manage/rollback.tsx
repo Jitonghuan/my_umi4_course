@@ -15,6 +15,25 @@ export interface RollbackVersionProps {
   onSubmit: () => any;
 }
 
+const envTypeData = [
+  {
+    label: 'DEV',
+    value: 'dev'
+  },
+  {
+    label: 'TEST',
+    value: 'test'
+  },
+  {
+    label: 'PRE',
+    value: 'pre'
+  },
+  {
+    label: 'LATEST',
+    value: 'prod'
+  }
+];
+
 export default function RollbackVersion(props: RollbackVersionProps) {
   const { npmData, tag, visible, activeVersion, onClose, onSubmit } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -33,12 +52,21 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     }
   }, [visible]);
 
+  function getEnvType() {
+    if (!tag || tag === 'latest') {
+      return 'prod';
+    }
+    const item = envTypeData.find(item => tag.includes(item.value));
+    return item?.value || 'prod'
+  }
+
   async function handleSearch (pagination?: any) {
     setSelectedRowKeys([]);
     const res = await getRequest(getVersionList, {
       data: {
         npmName: npmData?.npmName,
-        npmEnvType: tag === 'latest' ? 'prod' : tag,
+        npmTag: tag === 'latest' ? '' : tag,
+        npmEnvType: getEnvType(),
         pageIndex: page,
         pageSize,
         ...pagination || {}
@@ -52,7 +80,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
   const handleOk = async () => {
     let param = {
       npmName: npmData?.npmName,
-      npmEnvType: tag === 'latest' ? 'prod' : tag,
+      npmEnvType: getEnvType(),
       tag,
       version: selectedRowKeys[0],
     }
