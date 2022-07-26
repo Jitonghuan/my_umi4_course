@@ -561,7 +561,7 @@ export default function DeployContent(props: DeployContentProps) {
                                 viewLogEnvType: envTypeCode,
                                 optType: 'deployInfo',
                                 deploymentName: appData?.deploymentName,
-                                fromThird
+                                fromThird,
                               },
                               state: {
                                 infoRecord: record,

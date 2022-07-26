@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../service';
 import moment from 'moment';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -328,15 +328,23 @@ export default function ProductConfig() {
                     {STATUS_TYPE[curIndentPackageStatus].text || '--'}
                   </Tag>
                   {curIndentPackageStatus === '已出包' && (
-                    <Button
-                      type="primary"
-                      size="small"
-                      onClick={() => {
-                        window.open(configInfoData?.indentPackageUrl);
-                      }}
-                    >
-                      下载部署包
-                    </Button>
+                    <>
+                      <Button
+                        type="primary"
+                        size="small"
+                        onClick={() => {
+                          window.open(configInfoData?.indentPackageUrl);
+                        }}
+                      >
+                        下载部署包
+                      </Button>
+                      <CopyToClipboard
+                        text={configInfoData?.indentPackageUrl}
+                        onCopy={() => message.success('复制下载链接成功！')}
+                      >
+                        <CopyOutlined />
+                      </CopyToClipboard>
+                    </>
                   )}
                   {curIndentPackageStatus !== '已出包' && (
                     <Button type="primary" size="small" onClick={downLoadIndent} loading={downloading}>
@@ -345,15 +353,20 @@ export default function ProductConfig() {
                   )}
                   {/* </Button> */}
                   {curIndentPackageStatus === '已出包' && (
-                    <Button
-                      type="primary"
-                      size="small"
-                      style={{ marginLeft: 10 }}
-                      onClick={downLoadIndent}
-                      loading={curIndentPackageStatus !== '已出包' && curIndentPackageStatus !== '出包失败'}
-                    >
-                      重新出包
-                    </Button>
+                    <>
+                      <Button
+                        type="primary"
+                        size="small"
+                        style={{ marginLeft: 10 }}
+                        onClick={downLoadIndent}
+                        loading={curIndentPackageStatus !== '已出包' && curIndentPackageStatus !== '出包失败'}
+                      >
+                        重新出包
+                      </Button>
+                      {/* <CopyToClipboard text={configInfoData?.indentPackageUrl} onCopy={() => message.success('复制下载链接成功！')}>
+                     <CopyOutlined />
+                 </CopyToClipboard> */}
+                    </>
                   )}
                 </p>
               </div>
