@@ -185,6 +185,7 @@ export default function DpMonitor() {
               placeholder="分类"
               onChange={(value) => {
                 setCurrentEnvType(value);
+                setCurrentEnvCode('');
                 getEnvCodeList(value);
               }}
               allowClear

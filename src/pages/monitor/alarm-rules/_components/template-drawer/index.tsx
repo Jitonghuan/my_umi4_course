@@ -14,6 +14,7 @@ import { useAppOptions } from '../../hooks';
 import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../basic/services';
 import { useUserOptions } from './hooks';
 import './index.less';
+import {ruleCheckName} from "@/pages/monitor/alarm-rules/service";
 
 interface IRef {
   setTreeData: (data: any) => void;
@@ -54,6 +55,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
   const [getSilenceValue, setGetSilenceValue] = useState(0);
+  const [name, setName] = useState('');
   const envTypeData = [
     {
       key: 'dev',
@@ -171,9 +173,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const editDataDetail = (record: Item = {}) => {
     if (Object.keys(record).length === 0) return;
     const list = record?.duration?.split('') ?? [];
-    // let receiver: string[] | undefined = [];
-    // let receiverType: string[] | undefined = [];
-    let silenceTime: Moment[] = [];
     let silenceStart: any;
     let silenceEnd: any;
     let currentReceiver: any = [];
@@ -190,6 +189,8 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
     };
+
+    setName(record?.name || '');
 
     //规则情况
     if (drawerType === 'rules') {
@@ -265,20 +266,6 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     },
   ];
 
-  // formOptions.forEach((v) => {
-  //   v.labelCol = { span: 6 };
-  //   v.wrapperCol = { span: 17 };
-  // });
-
-  // const formList = useMemo(() => {
-  //   //模板
-  //   if (drawerType === 'template') {
-  //     return formOptions.slice(1, 8);
-  //   }
-
-  //   return formOptions;
-  // }, [drawerType, groupData, labelTableData, annotationsTableData]);
-
   //收集数据
   const onFinish = () => {
     form.validateFields().then((value) => {
@@ -289,6 +276,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         labels: stepTableMap(labelTableData),
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,
+        name,
       };
 
       if (value?.silence) {
@@ -311,6 +299,22 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     form.resetFields();
     onClose();
   };
+
+  const checkName = async () => {
+    if (name && name !== record?.name) {
+      const res = await getRequest(ruleCheckName, {
+        data: {
+          name
+        }
+      })
+      if (!res?.success) {
+        form.setFieldsValue({
+          name: ''
+        })
+        setName('');
+      }
+    }
+  }
 
   return (
     <Drawer
@@ -344,7 +348,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
               setRuleTemplate(e);
             }}
             placeholder="选择告警模版，根据模版自动填充以下内容"
-          ></Select>
+          />
         </Form.Item>
         <Form.Item
           label={drawerType === 'rules' ? '规则名称' : '模板名称'}
@@ -354,17 +358,22 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
               whitespace: true,
               required: true,
               message: '请输入正确的名称',
-              // message: "请输入正确的名称(字母数字开头、结尾，支持 '-' , '.')",
-              // pattern: /^[\d|a-z]+$|^[\d|a-z][(a-z\d\-\.)]*[\d|a-z]$|^[\d|a-z]+$/,
               type: 'string',
               max: 200,
             },
           ]}
         >
-          <Input placeholder="请输入" style={{ width: '400px' }}></Input>
+          <Input
+            placeholder="请输入"
+            style={{ width: '400px' }}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={() => checkName()}
+            onMouseEnter={() => checkName()}
+          />
         </Form.Item>
         <Form.Item label="报警分类" name="group" required={true}>
-          <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear></Select>
+          <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
         <Form.Item label="环境分类" name="envTypeCode" required={true}>
           <Select
@@ -376,7 +385,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
               setEnvTypeCode(e);
               queryEnvCodeList(e);
             }}
-          ></Select>
+          />
         </Form.Item>
         <Form.Item label="选择环境" name="envCode" rules={[{ required: true, message: '请选择集群环境！' }]}>
           <Select
@@ -385,10 +394,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             placeholder="选择监控的集群环境"
             showSearch
             allowClear
-          ></Select>
+          />
         </Form.Item>
         <Form.Item label="Namespace" name="namespace">
-          <Input style={{ width: '400px' }} placeholder="输入Namespace名称"></Input>
+          <Input style={{ width: '400px' }} placeholder="输入Namespace名称" />
         </Form.Item>
 
         <Form.Item label="关联应用" name="appCode">
@@ -398,14 +407,14 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             placeholder="选择关联应用"
             showSearch
             allowClear
-          ></Select>
+          />
         </Form.Item>
         <Form.Item
           label="告警表达式(PromQL)"
           name="expression"
           rules={[{ required: true, message: '请输入告警表达式!' }]}
         >
-          <Input.TextArea placeholder="请输入" style={{ width: '400px' }}></Input.TextArea>
+          <Input.TextArea placeholder="请输入" style={{ width: '400px' }} />
         </Form.Item>
         <Row>
           <Form.Item label="报警持续时间" name="duration" rules={[{ required: true, message: '请输入报警持续时间!' }]}>
@@ -421,13 +430,13 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         </Row>
 
         <Form.Item label="告警级别" name="level" rules={[{ required: true, message: '请选择告警级别!' }]}>
-          <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }} allowClear></Select>
+          <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
         <Form.Item label="报警消息" name="message" required={true}>
           <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }}></Input>
         </Form.Item>
         <Form.Item label="通知对象" name="receiver">
-          <Select mode="multiple" options={userOptions} showSearch style={{ width: '400px' }} allowClear></Select>
+          <Select mode="multiple" options={userOptions} showSearch style={{ width: '400px' }} allowClear />
         </Form.Item>
         <Form.Item
           label="是否静默"
@@ -441,7 +450,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             onChange={(e) => {
               setGetSilenceValue(e.target.value);
             }}
-          ></Radio.Group>
+          />
         </Form.Item>
         <Row>
           <Col span={5}></Col>
@@ -469,14 +478,14 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
               onChange={labelFun}
               value={labelTableData}
               style={{ width: '90%' }}
-            ></EditorTable>
+            />
             <span>注释（Annotations):</span>
             <EditorTable
               columns={editColumns}
               onChange={annotationsFun}
               value={annotationsTableData}
               style={{ width: '90%' }}
-            ></EditorTable>
+            />
           </Form.Item>
         </Form.Item>
       </Form>

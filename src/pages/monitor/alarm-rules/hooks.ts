@@ -44,7 +44,7 @@ export function useEnvOptions(appCode?: string) {
     }
 
     getRequest(APIS.getEnvListByAppCode, {
-      data: { pageIndex: 1, pageSize: 100, appCode },
+      data: { pageIndex: 1, pageSize: 100, appCode, origin: true },
     }).then((result) => {
       const { dataSource } = result?.data || {};
       const next = (dataSource || []).map((item: any) => ({
@@ -62,9 +62,9 @@ export function useEnvOptions(appCode?: string) {
 
 //集群环境 下拉选择数据
 export function useEnvListOptions() {
+  const [envCodeOption, setEnvCodeOption] = useState<any>([]);
   let envOptions: any = [];
-  const [clusterEnvOptions, setClusterEnvOptions] = useState<any[]>([]);
-  const queryEnvCodeList = async (envTypeCode: string) => {
+  const getEnvCodeList = async (envTypeCode: string) => {
     await getRequest(APIS.getEnvCodeList, {
       data: { envTypeCode },
     }).then((resp) => {
@@ -76,12 +76,12 @@ export function useEnvListOptions() {
             value: item.envCode,
           });
         });
-        setClusterEnvOptions(envOptions);
+        setEnvCodeOption(envOptions);
       }
     });
   };
 
-  return [clusterEnvOptions, queryEnvCodeList];
+  return [envCodeOption, getEnvCodeList];
 }
 
 export function useStatusOptions() {

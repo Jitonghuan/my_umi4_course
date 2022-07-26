@@ -195,14 +195,14 @@ export default function DpMonitorEdit(props: any) {
         })
           .then((resp) => {
             if (resp?.success) {
-              message.info('编辑成功！');
+              message.success('编辑成功！');
             }
           })
       } else {
         postRequest(addDbMonitor, { data })
           .then((resp) => {
             if (resp?.success) {
-              message.info('新增成功！');
+              message.success('新增成功！');
               setRecordData(resp?.data);
             }
           })
