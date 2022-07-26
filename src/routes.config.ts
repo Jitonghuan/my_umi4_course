@@ -526,8 +526,13 @@ export default [
     routes: [
       {
         path: 'board',
-        name: '监控面板',
+        name: '监控大盘',
         component: '@/pages/monitor/board',
+      },
+      {
+        path: 'cluster',
+        name: '集群监控',
+        component: '@/pages/monitor/cluster',
       },
       {
         path: 'application',
