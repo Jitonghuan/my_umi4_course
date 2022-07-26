@@ -41,17 +41,17 @@ export default function DpMonitor() {
   };
   const enableMonitorClick = (id: string) => {
     enableMonitor(id, () => {
-      getListMonitor(1, 5);
+      getListMonitor(1, 10);
     });
   };
   const delMonitorClick = (id: string) => {
     delMonitor(id, () => {
-      getListMonitor(1, 5);
+      getListMonitor(1, 10);
     });
   };
   const disableMonitorClick = (id: string) => {
     disableMonitor(id, () => {
-      getListMonitor(1, 5);
+      getListMonitor(1, 10);
     });
   };
 
@@ -245,10 +245,10 @@ export default function DpMonitor() {
             size="large"
             pagination={{
               onChange: (page) => {
-                getListMonitor(page, 5);
+                getListMonitor(page, 10);
               },
               total: total,
-              pageSize: 5,
+              pageSize: 10,
             }}
             dataSource={listData}
             renderItem={(item: any) => <List.Item>{item}</List.Item>}
