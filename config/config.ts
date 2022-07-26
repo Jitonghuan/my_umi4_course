@@ -114,7 +114,7 @@ export default defineConfig({
   },
 
   // HTML 中以 <script> 方式引用的资源
-  scripts: NODE_ENV === 'development' ? [] : [
+  headScripts: NODE_ENV === 'development' ? [] : [
     { src: `${publicPathPrefix}react.min.js` },
     { src: `${publicPathPrefix}react-dom.min.js` },
     `window.BUILD_ENV = "${BUILD_ENV}"`
