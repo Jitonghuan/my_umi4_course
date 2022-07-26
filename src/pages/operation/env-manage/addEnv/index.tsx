@@ -26,7 +26,7 @@ export default function addEnvData(props: EnvEditorProps) {
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [editEnvCode, setEditEnvCode] = useState<boolean>(false);
-
+  const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     selectCategory();
   }, [mode]);
@@ -136,6 +136,7 @@ export default function addEnvData(props: EnvEditorProps) {
     });
   };
   const handleSubmit = () => {
+    setLoading(true);
     if (mode === 'ADD') {
       //新增环境
       createEnvForm.validateFields().then((params) => {
@@ -156,14 +157,18 @@ export default function addEnvData(props: EnvEditorProps) {
             mark: params?.mark,
             ngInstCode: params?.ngInstCode,
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('新增环境成功！');
-            onSave?.();
-          } else {
-            message.error(result.errorMsg);
-          }
-        });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('新增环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     } else if (mode === 'EDIT') {
       //编辑环境
@@ -176,14 +181,18 @@ export default function addEnvData(props: EnvEditorProps) {
             needApply: needApplyOption,
             proEnvType: 'benchmark',
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('编辑环境成功！');
-            onSave?.();
-          } else {
-            message.error(result.errorMsg);
-          }
-        });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('编辑环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     }
   };
@@ -307,7 +316,7 @@ export default function addEnvData(props: EnvEditorProps) {
                 <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                   取消
                 </Button>
-                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>
+                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }} loading={loading}>
                   保存
                 </Button>
               </Form.Item>

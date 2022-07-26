@@ -24,6 +24,7 @@ import {
 } from './common';
 import { AppItemVO } from '../../interfaces';
 import { useFeMicroMainProjectOptions } from './hooks';
+import appConfig from '@/app.config';
 
 const { Item: FormItem } = Form;
 
@@ -73,7 +74,7 @@ export default function ApplicationEditor(props: IProps) {
       const deploymentName = form.getFieldValue('deploymentName');
       if (!deploymentName) {
         form.setFieldsValue({ deploymentName: gitProject });
-      } else {
+      } else if (gitProject !== deploymentName && appConfig.IS_Matrix === 'public') {
         Modal.confirm({
           title: '操作提示',
           content: 'Git 地址已修改，是否要同步到应用部署名？',

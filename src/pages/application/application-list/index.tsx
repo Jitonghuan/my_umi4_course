@@ -3,8 +3,8 @@
 // @create 2021/08/25 09:23
 
 import React, { useMemo, useState, useCallback, useContext } from 'react';
-import { Button, message, Table } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, message, Table, Modal } from 'antd';
+import { PlusOutlined, ExclamationOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';
 import { FeContext } from '@/common/hooks';
@@ -26,6 +26,8 @@ export default function ApplicationList() {
   const [appListData, total, isLoading, loadAppListData] = useAppListData(searchParams, pageIndex, pageSize);
   const [createAppVisible, setCreateAppVisible] = useState(false);
   const [curRecord, setCurRecord] = useState<AppItemVO>();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
@@ -41,14 +43,31 @@ export default function ApplicationList() {
         setCreateAppVisible(true);
       },
       onDelClick: async (record, index) => {
-        await deleteApp({ appCode: record.appCode, id: record.id });
-        message.success('删除成功');
-        loadAppListData();
+        setCurRecord(record);
+        setVisible(true);
+        // await deleteApp({ appCode: record.appCode, id: record.id });
+        // message.success('删除成功');
+        // loadAppListData();
       },
       categoryData,
       businessDataList,
     }) as any;
   }, [categoryData, businessDataList, appListData]);
+
+  const handleOk = () => {
+    setLoading(true);
+    deleteApp({ appCode: curRecord?.appCode || '', id: curRecord?.id || '' })
+      .then((res) => {
+        if (res?.success) {
+          setVisible(false);
+          message.success('删除成功');
+          loadAppListData();
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <PageContainer className="application-list-page">
@@ -99,6 +118,35 @@ export default function ApplicationList() {
           setCreateAppVisible(false);
         }}
       />
+      <Modal
+        title="删除应用"
+        visible={visible}
+        width={550}
+        onCancel={() => {
+          setVisible(false);
+        }}
+        footer={
+          <div className="drawer-footer">
+            <Button
+              onClick={() => {
+                setVisible(false);
+              }}
+              size="small"
+            >
+              取消
+            </Button>
+            <Button danger type="primary" onClick={handleOk} loading={loading} size="small">
+              确认删除
+            </Button>
+          </div>
+        }
+      >
+        <div style={{ fontSize: '13px', color: '#4f4848', lineHeight: '25px' }}>
+          {/* <ExclamationOutlined color='red' /><ExclamationOutlined /> */}
+          删除应用将导致<span style={{ color: 'red' }}>该应用在相关环境下运行中的服务全部清除</span>，
+          确定要删除该应用吗？
+        </div>
+      </Modal>
     </PageContainer>
   );
 }

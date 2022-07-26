@@ -1,30 +1,30 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {Button, Form, Input, message, Modal, Select, Table, Tag, Tooltip} from 'antd';
+import { Button, Form, Input, message, Modal, Select, Table } from 'antd';
 import DebounceSelect from '@/components/debounce-select';
 import SelectVersion from './select-version';
-import DetailContext from "@/pages/npm-manage/detail/context";
+import DetailContext from '@/pages/npm-manage/detail/context';
 import { getRequest, postRequest } from '@/utils/request';
-import { datetimeCellRender } from "@/utils";
+import { datetimeCellRender } from '@/utils';
 import {
   searchHotFixVersion,
   hotFixList,
   createHotfixBranch,
-  createHotfixDeploy
-} from "@/pages/npm-manage/detail/server";
+  createHotfixDeploy,
+} from '@/pages/npm-manage/detail/server';
 import './index.less';
-import { useMasterBranchList } from "@/pages/npm-manage/detail/hooks";
-import { PlusOutlined } from "@ant-design/icons";
-import { FilterCard } from "@/components/vc-page-content";
-import { queryActiveDeployInfo, queryFeatureDeployed } from "@/pages/application/service";
-import useInterval from "../../useInterval";
-import PublishRecord from "../publish-record";
+import { useMasterBranchList } from '@/pages/npm-manage/detail/hooks';
+import { PlusOutlined } from '@ant-design/icons';
+import { FilterCard } from '@/components/vc-page-content';
+import { queryActiveDeployInfo } from '@/pages/application/service';
+import useInterval from '../../useInterval';
+import PublishRecord from '../publish-record';
 
 const { Item: FormItem } = Form;
 
 interface IProps {
-  isActive: boolean,
-  pipelineCode: string,
-  envTypeCode: string,
+  isActive: boolean;
+  pipelineCode: string;
+  envTypeCode: string;
 }
 
 const recordDisplayMap: any = {
@@ -35,7 +35,7 @@ const recordDisplayMap: any = {
 };
 
 export default function HotFix(props: IProps) {
-  const { isActive, pipelineCode, envTypeCode } = props
+  const { isActive, pipelineCode, envTypeCode } = props;
   const { npmData } = useContext(DetailContext);
   const { npmName } = npmData || {};
   const [dataList, setDataList] = useState([]);
@@ -76,16 +76,16 @@ export default function HotFix(props: IProps) {
   };
 
   // 查询
-  async function handleSearch(param?: any ) {
+  async function handleSearch(param?: any) {
     const res = await getRequest(hotFixList, {
       data: {
         appCode: npmData?.npmName,
         branchType: 'hotfix',
         pageIndex: page,
         pageSize,
-        ...param || {}
-      }
-    })
+        ...(param || {}),
+      },
+    });
     const { dataSource, pageInfo } = res?.data || {};
     setDataList(dataSource || []);
     setTotal(pageInfo?.total || 0);
@@ -97,8 +97,7 @@ export default function HotFix(props: IProps) {
         masterBranch: 'master',
       });
     }
-  }, [isActive])
-
+  }, [isActive]);
 
   // 新增HotFix
   async function onOk() {
@@ -109,9 +108,9 @@ export default function HotFix(props: IProps) {
         npmName: npmData?.npmName,
         newBranch: `hotFix_${values.gitTag}`,
         pipelineCode,
-        ...values
-      }
-    })
+        ...values,
+      },
+    });
     setLoading(false);
     if (res?.success) {
       message.success('新增成功!');
@@ -132,9 +131,9 @@ export default function HotFix(props: IProps) {
         masterBranch: curRecord?.masterBranch,
         features: [curRecord?.branchName],
         needHotfixVersion: curRecord?.branchName.split('hotFix_')[1],
-        ...params
-      }
-    })
+        ...params,
+      },
+    });
     setDeployLoading(false);
     if (res?.success) {
       setVersionVisible(false);
@@ -171,32 +170,40 @@ export default function HotFix(props: IProps) {
     }
   }, [npmName, isActive, pipelineCode]);
 
-  function judgeActiveDeploy(record) {
+  function judgeActiveDeploy(record: any) {
     if (record.branchName === deployInfo?.branchInfo?.features[0]) {
-      console.log(deployInfo?.status?.deployStatus)
+      let errorInfo: string[] = [];
+      if (deployInfo?.status?.deployErrInfo) {
+        Object.keys(deployInfo?.status?.deployErrInfo).forEach((item) => {
+          if (deployInfo?.status?.deployErrInfo[item]) {
+            errorInfo.push(deployInfo?.status?.deployErrInfo[item]);
+          }
+        });
+      }
       return {
         deployStatus: deployInfo?.status?.deployStatus,
-        jenkinsUrl: deployInfo?.buildInfo?.buildUrl?.singleBuild
-      }
+        errorMessage: errorInfo.join(';'),
+        jenkinsUrl: deployInfo?.buildInfo?.buildUrl?.singleBuild,
+      };
     }
-    return {}
+    return {};
   }
 
   return (
-    <div className='publish-content-compo hot-fix-wrapper'>
+    <div className="publish-content-compo hot-fix-wrapper">
       <div className="hotfix-content-body">
         <FilterCard>
-          <Form
-            layout="inline"
-            form={searchField}
-            onFinish={(params) => handleSearch(params)}
-          >
+          <Form layout="inline" form={searchField} onFinish={(params) => handleSearch(params)}>
             <FormItem label="主干分支" name="masterBranch" initialValue="master">
               <Select
                 options={masterBranchOptions}
                 style={{ width: '200px', marginRight: '20px' }}
                 showSearch
                 optionFilterProp="label"
+                onChange={async () => {
+                  const param = await searchField.getFieldsValue();
+                  handleSearch(param);
+                }}
                 filterOption={(input, option) => {
                   // @ts-ignore
                   return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -213,11 +220,9 @@ export default function HotFix(props: IProps) {
             </FormItem>
             <FormItem noStyle>
               <div className="list-btn-wrapper">
-                <Button
-                  type="primary"
-                  onClick={() => setVisible(true)}
-                  icon={<PlusOutlined />}
-                >新增HotFix</Button>
+                <Button type="primary" onClick={() => setVisible(true)} icon={<PlusOutlined />}>
+                  新增HotFix
+                </Button>
               </div>
             </FormItem>
           </Form>
@@ -234,9 +239,9 @@ export default function HotFix(props: IProps) {
               setPageSize(pageSize);
               void handleSearch({
                 pageIndex: page,
-                pageSize
-              })
-            }
+                pageSize,
+              });
+            },
           }}
           bordered
           scroll={{ x: '100%' }}
@@ -245,51 +250,52 @@ export default function HotFix(props: IProps) {
               dataIndex: 'branchName',
               title: '分支名',
               fixed: 'left',
-              width: 220
+              width: 220,
             },
             {
               dataIndex: 'desc',
               title: '分支描述',
-              width: 120
+              width: 120,
             },
             {
               title: '发布状态',
               width: 120,
               render: (value, record) => (
-                <span style={{ color:  recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.color || '#000'}}>
-                  {recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.text || '---'}
-                </span>
-              )
+                <div style={{ color: recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.color || '#000' }}>
+                  <div>{recordDisplayMap[judgeActiveDeploy(record)?.deployStatus]?.text || '---'}</div>
+                  <div>{judgeActiveDeploy(record)?.errorMessage}</div>
+                </div>
+              ),
             },
             {
               dataIndex: 'gmtCreate',
               title: '创建时间',
-              width: 160,
-              render: datetimeCellRender
+              width: 180,
+              render: datetimeCellRender,
             },
             {
               dataIndex: 'createUser',
               title: '创建人',
-              width: 100
+              width: 100,
             },
             {
               dataIndex: 'gmtModify',
               title: '更新时间',
-              width: 160,
-              render: datetimeCellRender
+              width: 180,
+              render: datetimeCellRender,
             },
             {
               dataIndex: 'modifyUser',
               title: '更新人',
-              width: 100
+              width: 100,
             },
             {
-              width: 140,
+              width: 160,
               title: '操作',
               fixed: 'right',
               dataIndex: 'operate',
               align: 'left',
-              render: (_: any, record: any, index: number) => (
+              render: (_: any, record: any) => (
                 <div className="action-cell">
                   <a
                     onClick={() => {
@@ -299,25 +305,20 @@ export default function HotFix(props: IProps) {
                   >
                     发布
                   </a>
-                  {
-                    judgeActiveDeploy(record)?.jenkinsUrl && (
-                      <a
-                        target="_blank"
-                        href={judgeActiveDeploy(record)?.jenkinsUrl}
-                      >
-                        构建详情
-                      </a>
-                    )
-                  }
+                  {judgeActiveDeploy(record)?.jenkinsUrl && (
+                    <a target="_blank" href={judgeActiveDeploy(record)?.jenkinsUrl}>
+                      构建详情
+                    </a>
+                  )}
                 </div>
               ),
-            }
+            },
           ]}
         />
       </div>
 
       <div className="hotfix-content-sider">
-        <PublishRecord env='hotfix' npmName={npmName} />
+        <PublishRecord env="hotfix" npmName={npmName} />
       </div>
 
       <Modal
@@ -325,16 +326,14 @@ export default function HotFix(props: IProps) {
         visible={visible}
         confirmLoading={loading}
         onOk={onOk}
-        onCancel={() => { setVisible(false) }}
+        onCancel={() => {
+          setVisible(false);
+        }}
         maskClosable={false}
       >
         <Form form={form}>
           <Form.Item label="版本号(输入x.y)" name="gitTag" rules={[{ required: true, message: '请选择版本' }]}>
-            <DebounceSelect
-              fetchOptions={searchVersion}
-              labelInValue={false}
-              placeholder="输入x.y搜索"
-            />
+            <DebounceSelect fetchOptions={searchVersion} labelInValue={false} placeholder="输入x.y搜索" />
           </Form.Item>
         </Form>
       </Modal>
@@ -346,5 +345,5 @@ export default function HotFix(props: IProps) {
         onConfirm={onDeploy}
       />
     </div>
-  )
+  );
 }
