@@ -64,7 +64,9 @@ export default function ViewLog(props: any) {
         }
 
         ws.current = new WebSocket(
-          `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,
+          window.location.href?.includes('gushangke')
+            ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`
+            : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=watchContainerLog&tailLine=200`,
         ); //建立通道
         let dom: any = document?.getElementById('result-log');
         ws.current.onmessage = (evt: any) => {
@@ -102,7 +104,9 @@ export default function ViewLog(props: any) {
       setLog(logData.current);
       scrollBegin.current = true;
       ws.current = new WebSocket(
-        `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&action=watchContainerLog&tailLine=200`,
+        window.location.href?.includes('gushangke')
+          ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&action=watchContainerLog&tailLine=200`
+          : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&action=watchContainerLog&tailLine=200`,
       ); //建立通道
       ws.current.onopen = () => {
         message.success('更换容器成功!');
@@ -140,7 +144,9 @@ export default function ViewLog(props: any) {
       setLog(logData.current);
       scrollBegin.current = true;
       ws.current = new WebSocket(
-        `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
+        window.location.href?.includes('gushangke')
+          ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`
+          : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
       ); //建立通道
       if (e.target.checked) {
         ws.current.onopen = () => {
