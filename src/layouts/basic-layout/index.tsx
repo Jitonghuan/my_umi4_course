@@ -79,7 +79,24 @@ export default function Layout(props: any) {
   };
   useEffect(() => {
     getMatrixEnvConfig().then((res) => {
-      setMatrixConfigInfo(res);
+      let infoSource = window.location.href?.includes('gushangke')
+        ? {
+            curEnvType: 'gushangke',
+            locationHref: 'gushangke',
+            domainName: 'http://c2f.apex.gushangke.com',
+            wsPrefixName: 'ws://matrix-api.gushangke.com',
+            LogoName: '--骨伤科',
+            waterMarkName: '骨伤科',
+          }
+        : {
+            curEnvType: res?.curEnvType,
+            locationHref: res?.locationHref,
+            domainName: res?.domainName,
+            wsPrefixName: res?.wsPrefixName,
+            LogoName: res?.LogoName,
+            waterMarkName: res?.waterMarkName,
+          };
+      setMatrixConfigInfo(infoSource);
       // @ts-ignore
       window.matrixConfigData = res || {
         curEnvType: 'dev',
