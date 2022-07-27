@@ -2,6 +2,7 @@
   &__card {
     padding: 12px;
     width: 100%;
+    height: 150px;
     background-color: #fff;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
     border-radius: 2px;
@@ -18,6 +19,15 @@
       line-height: 24px;
       margin-bottom: 5px;
       padding-right: 15px;
+
+
+      &-delete:hover{
+        color:red;
+      }
+
+      &-edit:hover {
+        color:rgb(25, 115, 204);
+      }
     }
 
     &-sub-header {
@@ -42,20 +52,24 @@
       display: flex;
       justify-content: space-between;
       white-space: nowrap;
+      flex-direction: column;
       overflow: hidden;
-      margin-top: 12px;
+      margin-top: 20px;
       font-size: 14px;
       font-weight: 400;
       color: #5f677a;
       line-height: 22px;
-
-      > div + div {
-        margin-left: 8px;
-      }
+      // margin-left: 8px;
 
       > div:last-child {
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+
+      &-description{
+        &-label::after{
+          content: ": ";
+        }
       }
     }
   }
