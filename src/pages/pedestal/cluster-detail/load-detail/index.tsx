@@ -58,14 +58,14 @@ export default function LoadDetail(props: any) {
                 history.push({ pathname: '/matrix/pedestal/cluster-detail/pods', query: { ...location.query }, state: { pods: record?.info?.containers || [], containersEnv: data?.info?.container } })
             },
             viewLog: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/view-log' })
+                history.push({ pathname: '/matrix/pedestal/cluster-detail/view-log' })
             },
             shell: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/cluster-detail/login-shell', state: { record: record } })
+                history.push({ pathname: '/matrix/pedestal/cluster-detail/login-shell', query: { type: 'pods', key: 'resource-detail', name: record?.name, namespace: record?.namespace }, state: { record: record } })
             },
-            download: (record: any, index: any) => {
-                setVisible(true)
-            },
+            // download: (record: any, index: any) => {
+            //     setVisible(true)
+            // },
             handleDelete: (record: any, index: any) => {
 
             },
@@ -257,6 +257,7 @@ export default function LoadDetail(props: any) {
             rowKey="id"
             pagination={false}
             columns={tableColumns}
+            scroll={{ x: '900' }}
         ></Table>
         {/* 事件 */}
         <p className='title'>事件：</p>

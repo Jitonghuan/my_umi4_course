@@ -81,7 +81,7 @@ export default function ClusterDetail(props: any) {
                 </Tabs>
                 <clusterContext.Provider value={{ clusterCode: selectCluster?.value || '', clusterName: selectCluster?.label || '' }}>
                     <VCPermission code={window.location.pathname} isShowErrorPage>
-                        {children}
+                        {selectCluster?.value ? children : <div className='tip-wrapper'>请先选择集群</div>}
                     </VCPermission>
                 </clusterContext.Provider>
             </ContentCard>

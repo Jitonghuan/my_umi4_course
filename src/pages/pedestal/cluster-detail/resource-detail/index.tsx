@@ -72,7 +72,8 @@ export default function ResourceDetail(props: any) {
             setContinueList([''])
         }
         queryList();
-    }, [pageIndex])
+    }, [pageIndex]);
+
 
     useEffect(() => {
         if (typeData.length !== 0) {
@@ -82,11 +83,11 @@ export default function ResourceDetail(props: any) {
     }, [typeData])
 
     useEffect(() => {
-        if (nameSpaceData.length !== 0) {
+        if (nameSpaceData.length !== 0 && clusterCode) {
             form.setFieldsValue({ namespace: nameSpaceData[0].value });
             queryList();
         }
-    }, [nameSpaceData])
+    }, [nameSpaceData, clusterCode])
 
     const queryList = (index = pageIndex) => {
         const values = form.getFieldsValue();
@@ -207,9 +208,9 @@ export default function ResourceDetail(props: any) {
                             }}>
                         </Select>
                     </Form.Item>
-                    <Form.Item label="节点名称" name="nodeNames" >
+                    {/* <Form.Item label="节点名称" name="nodeNames" >
                         <Select style={{ width: 200 }} allowClear options={[]}>  </Select>
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item>
                         <Button type="primary" htmlType="submit">查询</Button>
                     </Form.Item>

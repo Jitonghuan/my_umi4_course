@@ -26,7 +26,7 @@ export default function NodeList() {
     const tableColumns = useMemo(() => {
         return nodeListTableSchema({
             shell: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/login-shell' })
+                history.push({ pathname: '/matrix/pedestal/cluster-detail/login-shell', query: { key: 'node-list', type: 'node', name: record.nodeName } })
             },
             // 设置标签
             clickTag: (record: any, index: any) => {
@@ -40,7 +40,7 @@ export default function NodeList() {
             },
             // 调度
             updateNode: async (record: any, index: any) => {
-                const res = await nodeUpdate({ unschedulable: !record.unschedulable })
+                const res = await nodeUpdate({ unschedulable: !record.unschedulable, clusterCode, nodeName: record.nodeName, })
                 if (res?.success) {
                     message.success('操作成功');
                     loadData();
@@ -48,19 +48,19 @@ export default function NodeList() {
             },
             // 排空
             drain: async (record: any, index: any) => {
-                // const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode || '' })
-                // if (res?.success) {
-                //     message.success('操作成功');
-                //     loadData();
-                // }
-            },
-            // 删除
-            handleDelete: async (record: any, index: any) => {
-                const res = await delRequest(`${appConfig.apiPrefix}/infraManage/node/delete/${record?.nodeName}`);
+                const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode })
                 if (res?.success) {
+                    message.success('操作成功');
                     loadData();
                 }
             },
+            // 删除
+            // handleDelete: async (record: any, index: any) => {
+            //     const res = await delRequest(`${appConfig.apiPrefix}/infraManage/node/delete/${record?.nodeName}`);
+            //     if (res?.success) {
+            //         loadData();
+            //     }
+            // },
         }) as any;
     }, [data]);
 

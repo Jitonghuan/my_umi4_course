@@ -2,32 +2,29 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/11/12	17:04
 
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { Select, Form, Button, Tag, message } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
-import DetailContext from '@/pages/application/application-detail/context';
-import appConfig from '@/app.config';
 import { history } from 'umi';
-import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FeContext } from '@/common/hooks';
 import clusterContext from '../../context'
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
 export default function ClusteLoginShell(props: any) {
     const [viewLogform] = Form.useForm();
-    // const { appCode, envCode, optType, containerName, deploymentName } = props.location.query;
-    const { record } = props.location.state || {};
+    const { record } = props.location.state || {};//从资源详情的pods跳转过来的container数据
+    const { type, name, namespace } = props.location.query || {};
+    console.log(type, name, namespace, 11)
     const { clusterCode, cluseterName } = useContext(clusterContext);
     const { matrixConfigData } = useContext(FeContext);
-    console.log(record, record?.info?.containers, 22222)
     const [container, setContainer] = useState<any>([]);
-    const [previous, setPrevious] = useState<boolean>(false);
-    const [selectContainer, setSelectContainer] = useState<any>('')
-    let currentContainerName = '';
+    const [selectContainer, setSelectContainer] = useState<any>('');
+    const baseUrl = `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?action=shell&clusterCode=${clusterCode}`
+    // const nodeUrl = `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&action=shell&clusterCode=${clusterCode}&name=${record?.namespace}`;
+    // const resourceUrl = `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${value}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`
     const ws = useRef<WebSocket>();
     const term = useRef<any>();
     useEffect(() => {
@@ -46,51 +43,20 @@ export default function ClusteLoginShell(props: any) {
             setSelectContainer(container[0].value)
             viewLogform.setFieldsValue({ containerName: container[0].value })
             initWS(container[0].value)
-
         }
-    }, [container])
-    // useEffect(() => {
-    //     if (!instName) return;
-    // }, []);
+    }, [container]);
 
-    // useEffect(() => {
-    //     if (appCode && envCode) {
-    //         getRequest(APIS.listContainer, { data: { appCode, envCode, instName } })
-    //             .then((result) => {
-    //                 let data = result.data;
-    //                 if (result.success) {
-    //                     const listContainer = data.map((item: any) => ({
-    //                         value: item?.containerName,
-    //                         label: item?.containerName,
-    //                     }));
-    //                     if (optType && optType === 'containerInfo') {
-    //                         currentContainerName = containerName || '';
-    //                         viewLogform.setFieldsValue({ containerName: containerName });
-    //                         setQueryListContainer([
-    //                             {
-    //                                 label: containerName,
-    //                                 value: containerName,
-    //                             },
-    //                         ]);
-    //                     } else {
-    //                         currentContainerName = deploymentName || '';
-    //                         viewLogform.setFieldsValue({ containerName: currentContainerName });
-    //                         setQueryListContainer(listContainer);
-    //                     }
-    //                 }
-    //             })
-    //             .then(() => {
-    //                 initWS(false);
-    //             });
-    //     }
-    // }, [envCode]);
+    const getUrl = useCallback((v: string) => {
+        if (type === 'node') {
+            return `${baseUrl}&instName=${name}`
+        } else {
+            return `${baseUrl}&instName=${name}&namespace=${namespace}&containerName=${v}`
+        }
+    }, [type])
 
     const initWS = (value: string) => {
         let dom: any = document?.getElementById('terminal');
-        ws.current = new WebSocket(
-            `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${value}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
-        ); //建立通道
-
+        ws.current = new WebSocket(getUrl(value)); //建立通道
         //初始化terminal
         term.current = new Terminal({
             altClickMovesCursor: true,
@@ -112,7 +78,6 @@ export default function ClusteLoginShell(props: any) {
         const fitAddon = new FitAddon();
         term.current.loadAddon(fitAddon);
         fitAddon.fit();
-        console.log(term.current, 11)
         ws.current.onopen = () => {
             if (ws.current) {
                 const attachAddon = new AttachAddon(ws.current);
@@ -169,15 +134,13 @@ export default function ClusteLoginShell(props: any) {
         }
     };
     //选择容器
-    const selectListContainer = (getContainer: string) => {
+    const selectListContainer = (c: string) => {
         if (ws.current) {
             ws.current.close();
         }
         // currentContainerName = getContainer;
-        setSelectContainer(getContainer)
-        ws.current = new WebSocket(
-            `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${getContainer}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
-        ); //建立通道
+        setSelectContainer(c)
+        ws.current = new WebSocket(getUrl(c)); //建立通道
 
         ws.current.onopen = () => {
             message.success('已切换容器!');
@@ -206,11 +169,12 @@ export default function ClusteLoginShell(props: any) {
     };
 
     return (
-        <ContentCard noPadding className="viewLog">
-            <div className="loginShell">
-                <div style={{ paddingBottom: '6px', paddingTop: '6px', display: 'flex' }}>
-                    <div className="shell-caption">
-                        <div className="caption-left">
+        // <ContentCard noPadding className="viewLog">
+        <div className="loginShell">
+            <div style={{ paddingBottom: '6px', paddingTop: '6px', display: 'flex' }}>
+                <div className="shell-caption">
+                    <div className="caption-left">
+                        {type !== 'node' && (
                             <Form form={viewLogform} layout="inline">
                                 <span style={{ paddingLeft: 12 }}>选择容器： </span>
                                 <Form.Item name="containerName">
@@ -222,23 +186,24 @@ export default function ClusteLoginShell(props: any) {
                                     ></Select>
                                 </Form.Item>
                             </Form>
-                        </div>
-                        <div className="caption-right">
-                            <span>
-                                {/* 当前集群：<Tag color="geekblue">{envCode}</Tag> */}
-                            </span>
-                        </div>
+                        )}
+                    </div>
+                    <div className="caption-right">
+                        <span>
+                            {/* 当前集群：<Tag color="geekblue">{envCode}</Tag> */}
+                        </span>
                     </div>
                 </div>
-                <div id="terminal" className="xterm" style={{ width: '100%', backgroundColor: '#060101' }}></div>
-                <div style={{ height: 28, width: '100%', textAlign: 'center', marginTop: 4 }}>
-                    <span className="eventButton">
-                        <Button type="primary" onClick={closeSocket}>
-                            关闭
-            </Button>
-                    </span>
-                </div>
             </div>
-        </ContentCard>
+            <div id="terminal" className="xterm" style={{ width: '100%', maxHeight: "calc(100vh - 251px)", backgroundColor: '#060101' }}></div>
+            <div style={{ height: 28, width: '100%', textAlign: 'center', marginTop: 4 }}>
+                <span className="eventButton">
+                    <Button type="primary" onClick={closeSocket}>
+                        关闭
+            </Button>
+                </span>
+            </div>
+        </div>
+        // </ContentCard>
     );
 }

@@ -2,20 +2,21 @@ import { history } from 'umi';
 import { Tooltip, Popconfirm, Button, Tag } from 'antd';
 import { Html5Outlined, CodeOutlined, MinusCircleFilled } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
-import { LIST_STATUS_TYPE } from './load-detail/schema'
+import { LIST_STATUS_TYPE } from './load-detail/schema';
+import { STATUS_TEXT, STATUS_COLOR } from '@/pages/pedestal/cluster-info/type'
 
 // 节点列表
 export const nodeListTableSchema = ({
     clickTag,
     updateNode,
     drain,
-    handleDelete,
+    // handleDelete,
     shell
 }: {
     clickTag: (record: any, index: number) => void;
     updateNode: (record: any, index: number) => void;
     drain: (record: any, index: number) => void;
-    handleDelete: (record: any, index: number) => void;
+    // handleDelete: (record: any, index: number) => void;
     shell: (record: any, index: number) => void;
 }) =>
     [
@@ -69,7 +70,7 @@ export const nodeListTableSchema = ({
             )
         },
         {
-            title: '负载(M)',
+            title: '负载(5M)',
             dataIndex: 'load',
             width: 80,
             // fixed: 'left',
@@ -81,6 +82,7 @@ export const nodeListTableSchema = ({
             // fixed: 'left',
             render: (value: any, record: any) => (
                 <div>
+                    {value && value[0] && <span style={{ color: `${value && value[0] ? STATUS_COLOR[value[0]] : '#65ca75'}` }}>{STATUS_TEXT[value[0]] || value[0]}</span>}
                     {value && value.includes('unschedulable') && <span style={{ color: 'red' }}>不可调度</span>}
                     {value && value.includes('drain') && <span style={{ color: 'red' }}>排空</span>}
                 </div>
@@ -110,7 +112,7 @@ export const nodeListTableSchema = ({
                     <a onClick={() => clickTag(record, index)}>设置标签</a>
                     <a onClick={() => updateNode(record, index)}>{record.unschedulable ? '可调度' : '不可调度'}</a>
                     <a onClick={() => drain(record, index)}>排空</a>
-                    <Popconfirm
+                    {/* <Popconfirm
                         title="确定要删除该节点吗？"
                         onConfirm={() => {
                             handleDelete(record, index)
@@ -119,7 +121,7 @@ export const nodeListTableSchema = ({
                         <a style={{ color: 'red' }}>
                             删除
                         </a>
-                    </Popconfirm>
+                    </Popconfirm> */}
                 </div>
             ),
         },
@@ -131,13 +133,13 @@ export const podsTableSchema = ({
     toPodsDetail,
     viewLog,
     shell,
-    download,
+    // download,
     handleDelete
 }: {
     toPodsDetail: (record: any, index: number) => void;
     viewLog: (record: any, index: number) => void;
     shell: (record: any, index: number) => void;
-    download: (record: any, index: number) => void;
+    // download: (record: any, index: number) => void;
     handleDelete: (record: any, index: number) => void;
 }) =>
     [
@@ -224,7 +226,7 @@ export const podsTableSchema = ({
                 <div className="action-cell">
                     <Button size="small" type="primary" onClick={() => viewLog(record, index)}>查看日志</Button>
                     <Button size="small" type="primary" onClick={() => shell(record, index)}>登陆shell</Button>
-                    <Button size="small" type="primary" onClick={() => download(record, index)}>下载文件</Button>
+                    {/* <Button size="small" type="primary" onClick={() => download(record, index)}>下载文件</Button> */}
                     <Popconfirm
                         title="确定要删除该信息吗？"
                         onConfirm={() => {
@@ -402,7 +404,7 @@ export const eventSchema = () =>
         },
     ] as any;
 
-// 资源详情列表
+// 任务管理列表
 export const taskTableSchema = ({
     handleDetail,
     edit,

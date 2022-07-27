@@ -91,10 +91,10 @@ export default function clusterInfo() {
                                 <div className='list-wrapper-item'>
                                     <div className='item-top'>CODE:{item.clusterCode}</div>
                                     <div className="display-item">
-                                        <div>
+                                        <div className='bottom'>
                                             CPU:{item?.metricInfo?.cpuInfo?.usage || '-'}/{item?.metricInfo?.cpuInfo?.total || ''}
                                             <span style={{ marginLeft: '2px' }}>{item?.metricInfo?.cpuInfo?.unit}</span>
-                                            <span style={{ marginLeft: '5px' }}> {((item?.metricInfo?.cpuInfo?.percentage) * 100).toFixed(2)}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {((item?.metricInfo?.cpuInfo?.percentage) * 100).toFixed(2)}%</span>
                                         </div>
                                         <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
                                     </div>
@@ -103,10 +103,10 @@ export default function clusterInfo() {
                                 <div className='list-wrapper-item'>
                                     <div className='item-top'>版本:{item.clusterVersion}</div>
                                     <div className="display-item">
-                                        <div>
+                                        <div className='bottom'>
                                             内存:{item?.metricInfo?.memoryInfo?.usage}/{item?.metricInfo?.memoryInfo?.total}
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.memoryInfo?.unit}</span>
-                                            <span style={{ marginLeft: '5px' }}> {((item?.metricInfo?.memoryInfo?.percentage) * 100).toFixed(2)}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {((item?.metricInfo?.memoryInfo?.percentage) * 100).toFixed(2)}%</span>
                                         </div>
                                         <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
                                     </div>
@@ -116,10 +116,10 @@ export default function clusterInfo() {
                                     <div className='last-item' style={{ flex: '1' }}>集群状态：<span style={{ color: `${STATUS_COLOR[item.status] || '#857878'}` }}>{STATUS_TEXT[item.status] || '---'}</span></div>
                                     <div className='last-item ' style={{ flex: '1' }}>集群类型：{item.clusterType}</div>
                                     <div className='last-item display-item' style={{ flex: '1' }}>
-                                        <span>
+                                        <span className='bottom'>
                                             磁盘：{item?.metricInfo?.diskInfo?.usage}/{item?.metricInfo?.diskInfo?.total}
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.diskInfo?.unit}</span>
-                                            <span style={{ marginLeft: '5px' }}> {((item?.metricInfo?.diskInfo?.percentage || 0) * 100).toFixed(2)}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {((item?.metricInfo?.diskInfo?.percentage || 0) * 100).toFixed(2)}%</span>
                                         </span>
                                         <ProgessComponent percent={(item?.metricInfo?.diskInfo?.percentage) * 100 || 0} />
                                     </div>
