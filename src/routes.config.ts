@@ -530,6 +530,12 @@ export default [
         component: '@/pages/monitor/board',
       },
       {
+        path: 'detail',
+        name: '监控大盘详情',
+        hideInMenu: true,
+        component: '@/pages/monitor/board/board-detail',
+      },
+      {
         path: 'cluster',
         name: '集群监控',
         component: '@/pages/monitor/cluster',

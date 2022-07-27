@@ -8,23 +8,14 @@
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Tag, Tooltip, Popconfirm } from 'antd';
-import { StarFilled, StarTwoTone, Html5Outlined, CodeOutlined, UserOutlined, RestFilled, RestTwoTone } from '@ant-design/icons';
-import { collectRequst } from '../service';
+import { StarFilled, StarTwoTone, Html5Outlined, CodeOutlined, UserOutlined, RestFilled, RestTwoTone, EditFilled } from '@ant-design/icons';
+import { collectRequst } from '../../service';
 import CardLayout from '@cffe/vc-b-card-layout';
-import { AppItemVO } from '../interfaces';
+import { AppItemVO } from '../../interfaces';
 import './index.less';
 
 const cardCls = 'monitor-board-page__card';
 
-const APP_TYPE_MAP: { [index: string]: any } = {
-  frontend: '前端',
-  backend: '后端',
-};
-
-const APP_TYPE_TAG: Record<string, [string, React.ReactNode]> = {
-  frontend: ['geekblue', <Html5Outlined />],
-  backend: ['cyan', <CodeOutlined />],
-};
 export function isValidKey(key: string | number | symbol, object: object): key is keyof typeof object {
   return key in object;
 }
@@ -53,38 +44,23 @@ export default function ApplicationCardList(props: IProps) {
           key={item.id}
           className={cardCls}
           onClick={() =>
-            history.push({
-              pathname: 'detail',
-              query: {
-                id: `${item.id}`,
-                appCode: item.appCode,
-              },
-            })
+            history.push('detail')
           }
         >
           <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
             {item.appName}
-            {type !== 'mine' && (
-              <span onClick={(e) => e.stopPropagation()}>
-                <Popconfirm
-                  title={`确定${item.isCollection ? '取消该收藏' : '收藏该应用'}吗？`}
-                  onConfirm={(e) => switchStar(item, e)}
-                  okText="确定"
-                  cancelText="取消"
-                >
-                  <span
-                    style={{
-                      top: 0,
-                      right: 0,
-                      position: 'absolute',
-                      color: 'black',
-                    }}
-                  >
-                    {item.isCollection ? <RestFilled /> : <RestTwoTone twoToneColor="#ff8419" />}
-                  </span>
-                </Popconfirm>
-              </span>
-            )}
+            <span onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: 0, right: 0 }}>
+              <Popconfirm
+                title={`确定删除大盘吗？`}
+                onConfirm={(e) => switchStar(item, e)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <RestFilled className={`${cardCls}-header-delete`} />
+              </Popconfirm>
+
+              <EditFilled className={`${cardCls}-header-edit`}/>
+            </span>
           </div>
           {item.appType === 'frontend' && type === 'mine' ? (
             <>
@@ -100,16 +76,18 @@ export default function ApplicationCardList(props: IProps) {
           ) : null}
 
           <div className={`${cardCls}-content`}>
-            <div>
-              <Tag color={APP_TYPE_TAG[item.appType]?.[0]} icon={APP_TYPE_TAG[item.appType]?.[1]}>
-                {APP_TYPE_MAP[item.appType]}
-              </Tag>
+            <div className={`${cardCls}-content-description`}>
+              <span className={`${cardCls}-content-description-label`}>分类</span>
+              <span className={`${cardCls}-content-description-value`}>集群监控大盘</span>
             </div>
-            <Tooltip title={item.owner}>
-              <div>
-                <UserOutlined /> {item.owner}
-              </div>
-            </Tooltip>
+            <div className={`${cardCls}-content-description`}>
+              <span className={`${cardCls}-content-description-label`}>数据源类型</span>
+              <span className={`${cardCls}-content-description-value`}>集群监控大盘</span>
+            </div>
+            <div className={`${cardCls}-content-description`}>
+              <span className={`${cardCls}-content-description-label`}>数据源名称</span>
+              <span className={`${cardCls}-content-description-value`}>集群监控大盘</span>
+            </div>
           </div>
         </div>
       ))}
