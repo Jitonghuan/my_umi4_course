@@ -46,9 +46,7 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
     },
     yAxis: {
       nice: true,
-    },
-    meta: {
-      value: 'cat',
+      tickInterval: 1,
     },
   };
 
