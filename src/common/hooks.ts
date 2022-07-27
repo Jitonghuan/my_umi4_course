@@ -183,7 +183,6 @@ export function useStaffOrgData(): [any, () => Promise<void>] {
   const loadData = useCallback(async () => {
     // @ts-ignore
     let getStaffOrgListApi = window.matrixConfigData?.domainName;
-    console.log('getStaffOrgListApi', getStaffOrgListApi);
     await postRequest(`${getStaffOrgListApi}/kapi/apex-osc/org/getStaffOrgList`).then((result) => {
       if (result.success) {
         const next = (result?.data || []).map((el: any) => ({
