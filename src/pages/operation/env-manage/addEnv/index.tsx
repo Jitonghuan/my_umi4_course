@@ -136,7 +136,7 @@ export default function addEnvData(props: EnvEditorProps) {
     });
   };
   const handleSubmit = () => {
-    setLoading(true)
+    setLoading(true);
     if (mode === 'ADD') {
       //新增环境
       createEnvForm.validateFields().then((params) => {
@@ -157,14 +157,18 @@ export default function addEnvData(props: EnvEditorProps) {
             mark: params?.mark,
             ngInstCode: params?.ngInstCode,
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('新增环境成功！');
-            onSave?.();
-          } else {
-            // message.error(result.errorMsg);
-          }
-        }).finally(() => { setLoading(false) });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('新增环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     } else if (mode === 'EDIT') {
       //编辑环境
@@ -177,14 +181,18 @@ export default function addEnvData(props: EnvEditorProps) {
             needApply: needApplyOption,
             proEnvType: 'benchmark',
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('编辑环境成功！');
-            onSave?.();
-          } else {
-            // message.error(result.errorMsg);
-          }
-        }).finally(() => { setLoading(false) });;
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('编辑环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     }
   };

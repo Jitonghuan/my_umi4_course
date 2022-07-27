@@ -1,5 +1,5 @@
 import appConfig from '@/app.config';
-import { getRequest } from "@/utils/request";
+import { getRequest } from '@/utils/request';
 
 // 创建npm包
 export const npmCreate = `${appConfig.apiPrefix}/appManage/npm/create`;

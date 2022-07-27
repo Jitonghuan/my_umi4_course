@@ -54,7 +54,6 @@ export default function PublishRecord(props: IProps) {
     };
   }, []);
 
-
   const renderLoadMore = () => {
     const { pageSize = 0, total = 0, current = 0 } = tableProps?.pagination || {};
     return (
@@ -85,7 +84,7 @@ export default function PublishRecord(props: IProps) {
   const getJenkinsUrl = (record: any) => {
     let jenkinsUrl = record?.jenkinsUrl ? JSON.parse(record.jenkinsUrl) : {};
     return jenkinsUrl?.singleBuild || '';
-  }
+  };
 
   return (
     <div className={rootCls}>
@@ -101,14 +100,16 @@ export default function PublishRecord(props: IProps) {
             renderItem={(item) => (
               <List.Item>
                 <div>
-                  <label>发布人: </label>{item['modifyUser']}
+                  <label>发布人: </label>
+                  {item['modifyUser']}
                 </div>
                 <div>
                   <label>发布时间:</label>
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
                 <div>
-                  <label>版本号: </label>{item.version}
+                  <label>版本号: </label>
+                  {item.version}
                 </div>
                 <div>
                   <label>发布状态: </label>
@@ -118,7 +119,9 @@ export default function PublishRecord(props: IProps) {
                     </Tag>
                   }
                 </div>
-                <a style={{ marginTop: '5px' }} onClick={() => handleShowDetail(item)}>详情</a>
+                <a style={{ marginTop: '5px' }} onClick={() => handleShowDetail(item)}>
+                  详情
+                </a>
               </List.Item>
             )}
           />
@@ -126,10 +129,7 @@ export default function PublishRecord(props: IProps) {
       ) : null}
 
       <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
-        <Descriptions
-          labelStyle={{ width: 100, justifyContent: 'flex-end' }}
-          column={1}
-        >
+        <Descriptions labelStyle={{ width: 100, justifyContent: 'flex-end' }} column={1}>
           <Descriptions.Item label="包名">{curRecord?.appCode}</Descriptions.Item>
           <Descriptions.Item label="版本号">{curRecord?.version}</Descriptions.Item>
           <Descriptions.Item label="发布人">{curRecord?.modifyUser}</Descriptions.Item>
@@ -139,17 +139,13 @@ export default function PublishRecord(props: IProps) {
           <Descriptions.Item label="发布完成时间">
             {curRecord?.deployFinishTime ? moment(curRecord?.deployFinishTime).format('YYYY-MM-DD HH:mm:ss') : '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="发布描述">
-            {curRecord?.deployDesc}
-          </Descriptions.Item>
+          <Descriptions.Item label="发布描述">{curRecord?.deployDesc}</Descriptions.Item>
           <Descriptions.Item label="jenkins">
-            {
-              getJenkinsUrl(curRecord) && (
-                <a href={getJenkinsUrl(curRecord)} target="_blank">
-                  {getJenkinsUrl(curRecord)}
-                </a>
-              )
-            }
+            {getJenkinsUrl(curRecord) && (
+              <a href={getJenkinsUrl(curRecord)} target="_blank">
+                {getJenkinsUrl(curRecord)}
+              </a>
+            )}
           </Descriptions.Item>
           <Descriptions.Item label="发布状态">
             {
