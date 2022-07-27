@@ -14,7 +14,7 @@ import BindAppEditor from './_components/bindApp-editor';
 import { useGetVersionList } from './hooks';
 import './index.less';
 
-export default function ApplicationList() {
+export default function VersionList() {
   const [dataSource, pageInfo, setPageInfo, listLoading, loadVersionListData] = useGetVersionList();
   const [createVersionVisible, setCreateVersionVisible] = useState<boolean>(false);
   const [bindAppVisiable, setBindAppVisiable] = useState<boolean>(false);
@@ -29,13 +29,6 @@ export default function ApplicationList() {
     },
     [],
   );
-  // const data = [
-  //   {
-  //     versionCode: 'test',
-  //     versionName: '测试',
-  //     desc: '测试描述',
-  //   },
-  // ];
 
   // 表格列配置
   const tableColumns = useMemo(() => {
@@ -59,7 +52,7 @@ export default function ApplicationList() {
   }, [dataSource]);
 
   return (
-    <PageContainer className="application-list-page">
+    <PageContainer className="version-list-page">
       <FilterHeader onSearch={handleFilterSearch} />
 
       <ContentCard>
@@ -79,7 +72,6 @@ export default function ApplicationList() {
         </div>
         <Table
           dataSource={dataSource}
-          // dataSource={data}
           loading={listLoading}
           bordered
           rowKey="id"
@@ -98,6 +90,7 @@ export default function ApplicationList() {
               setPageInfo({
                 pageIndex: next,
               }),
+            showTotal: () => `总共 ${pageInfo.total} 条数据`,
           }}
           columns={tableColumns}
         ></Table>

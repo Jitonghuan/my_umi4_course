@@ -38,7 +38,8 @@ export default function BranchEditor(props: IProps) {
   const [demandId, setDemandId] = useState<any>([]);
   const [demandDescription, setDemandDescription] = useState<any>([]);
 
-  const handleSubmit = useCallback(async () => {
+  // const handleSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     const values = await form.validateFields();
     let demandArry: any = [];
     values.demandId?.map((item: any) => {
@@ -61,7 +62,8 @@ export default function BranchEditor(props: IProps) {
     } finally {
       setLoading(false);
     }
-  }, [form, appCode]);
+  }
+  // }, [form, appCode]);
   const selectplatform = (e: any) => {
     setPlatformValue(e.target.value);
     form.setFieldsValue({
@@ -262,9 +264,9 @@ export default function BranchEditor(props: IProps) {
             // onSearch={onSearch}
             optionFilterProp="label"
             loading={demandLoading}
-            // filterOption={(input, option) =>
-            //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            // }
+          // filterOption={(input, option) =>
+          //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          // }
           ></Select>
         </Form.Item>
         <Form.Item label="描述" name="desc">

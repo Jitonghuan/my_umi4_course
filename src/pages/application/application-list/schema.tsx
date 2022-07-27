@@ -68,7 +68,7 @@ export const createTableSchema = ({
       ),
     },
     {
-      title: 'git仓库名',
+      title: 'Git仓库地址',
       width: 320,
       ellipsis: true,
       dataIndex: 'gitAddress',
@@ -143,15 +143,22 @@ export const createTableSchema = ({
           >
             详情
           </a>
-          <Popconfirm
+          {/* <Popconfirm
             title="确定要删除该应用吗？"
             onConfirm={() => onDelClick(record, index)}
             okText="确定"
             cancelText="取消"
             placement="topLeft"
+          > */}
+          <a
+            style={{ color: 'rgb(255, 48, 3)' }}
+            onClick={() => {
+              onDelClick(record, index);
+            }}
           >
-            <a>删除</a>
-          </Popconfirm>
+            删除
+          </a>
+          {/* </Popconfirm> */}
         </div>
       ),
     },

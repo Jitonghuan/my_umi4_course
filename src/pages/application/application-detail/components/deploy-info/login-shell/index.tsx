@@ -13,6 +13,7 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import { FeContext } from '@/common/hooks';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
@@ -23,8 +24,10 @@ export default function AppDeployInfo(props: any) {
   const instName = props.location.query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [previous, setPrevious] = useState<boolean>(false);
+  const { matrixConfigData } = useContext(FeContext);
   let currentContainerName = '';
   const ws = useRef<WebSocket>();
+
   const term = useRef<any>();
   useEffect(() => {
     if (!instName) return;
@@ -64,8 +67,11 @@ export default function AppDeployInfo(props: any) {
 
   const initWS = (previous?: boolean) => {
     let dom: any = document?.getElementById('terminal');
+    // window.location.href?.includes('gushangke')
     ws.current = new WebSocket(
-      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+      window.location.href?.includes('gushangke')
+        ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`
+        : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -150,7 +156,9 @@ export default function AppDeployInfo(props: any) {
     }
     currentContainerName = getContainer;
     ws.current = new WebSocket(
-      `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+      window.location.href?.includes('gushangke')
+        ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`
+        : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     ws.current.onopen = () => {

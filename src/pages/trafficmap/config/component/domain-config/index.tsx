@@ -116,7 +116,7 @@ const DomainConfig: React.FC = () => {
                 handleDeleteRegion(record.id);
               }}
             >
-              <Button type="link">删除</Button>
+              <Button type="link" danger>删除</Button>
             </Popconfirm>
           </>
         );
@@ -151,7 +151,7 @@ const DomainConfig: React.FC = () => {
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button type="ghost" htmlType="reset">
+          <Button type="ghost" htmlType="reset" danger>
             重置
           </Button>
         </Form.Item>

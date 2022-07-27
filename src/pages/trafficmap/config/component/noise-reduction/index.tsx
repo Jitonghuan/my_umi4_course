@@ -80,7 +80,7 @@ export default function NoiseReduction() {
                 handleDeleteNoise(record.id);
               }}
             >
-              <Button type="link">删除</Button>
+              <Button type="link" danger>删除</Button>
             </Popconfirm>
           </>
         );
@@ -175,7 +175,7 @@ export default function NoiseReduction() {
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button type="ghost" htmlType="reset">
+          <Button type="ghost" htmlType="reset" danger>
             重置
           </Button>
         </Form.Item>

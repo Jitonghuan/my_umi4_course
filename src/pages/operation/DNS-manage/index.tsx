@@ -108,7 +108,6 @@ export default function DNSManageList(props: any) {
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    console.log('pagination', pagination);
     setPageInfo({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -220,6 +219,7 @@ export default function DNSManageList(props: any) {
                 </Button>
                 <Button
                   type="default"
+                  danger
                   style={{ marginLeft: 10 }}
                   onClick={() => {
                     RecordForm.resetFields();
@@ -304,7 +304,7 @@ export default function DNSManageList(props: any) {
                     </Button>
                   </Popconfirm>
                   <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelRecord(record)}>
-                    <Button size="small" style={{ color: 'red' }} loading={delLoading}>
+                    <Button size="small" style={{ color: 'red' }} danger loading={delLoading}>
                       删除
                     </Button>
                   </Popconfirm>

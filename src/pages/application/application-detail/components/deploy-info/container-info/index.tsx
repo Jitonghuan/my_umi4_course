@@ -9,7 +9,12 @@ import { history } from 'umi';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
-  const { infoRecord, appCode, envCode, viewLogEnvType, id } = props.location.state;
+  // const {   envCode, viewLogEnvType, id } = props.location.state;
+  const infoRecord = props.location.state?.infoRecord || {};
+  const appCode = props.location.state?.appCode || '';
+  const envCode = props.location.state?.envCode || '';
+  const viewLogEnvType = props.location.state?.viewLogEnvType || '';
+  const id = props.location.state?.id || '';
   // const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
   // const [queryContainer, queryContainerData, loading] = useListContainer();
   const [queryContainerData, setQueryContainerData] = useState<any>([]);

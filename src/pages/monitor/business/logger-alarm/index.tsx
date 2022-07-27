@@ -157,7 +157,7 @@ export default function LoggerAlarm() {
           <Button type="primary" ghost onClick={handleSearch}>
             查询
           </Button>
-          <Button type="default" htmlType="reset" style={{ marginLeft: 12 }}>
+          <Button type="default" htmlType="reset" danger style={{ marginLeft: 12 }}>
             重置
           </Button>
         </Form.Item>
@@ -180,6 +180,7 @@ export default function LoggerAlarm() {
           defaultPageSize: 20,
           onChange: (next) => setPageIndex(next),
           onShowSizeChange: (_, next) => setPageSize(next),
+          showTotal: () => `总共 ${total} 条数据`,
         }}
       >
         <Table.Column dataIndex="id" title="ID" width={70} />

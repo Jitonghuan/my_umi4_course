@@ -372,7 +372,7 @@ export default function ApplicationParams(props: any) {
             {/* <Button type="primary" onClick={queryTmpl}>
               查询
             </Button> */}
-            <Button type="default" onClick={inintData}>
+            <Button danger onClick={inintData}>
               重置
             </Button>
           </div>
@@ -439,7 +439,7 @@ export default function ApplicationParams(props: any) {
         </Row>
         <Form.Item>
           <Space size="small" style={{ float: 'right' }}>
-            <Button type="ghost" onClick={inintData}>
+            <Button danger onClick={inintData}>
               重置
             </Button>
             <Button type="primary" htmlType="submit" disabled={ensureDisable}>
@@ -478,7 +478,7 @@ export default function ApplicationParams(props: any) {
               value={value}
             >
               {/* <Radio value={3}>定时生效</Radio> */}
-              <Radio value={1}>不生效</Radio>
+              <Radio value={1}>下次发布生效</Radio>
               <Radio value={2}>立即生效</Radio>
             </Radio.Group>
           </Form.Item>

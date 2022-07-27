@@ -184,7 +184,9 @@ export default (props: VersionDetailProps) => {
             });
           }}
         >
-          <a key="delete">删除</a>
+          <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>
+            删除
+          </a>
         </Popconfirm>,
       ],
     },
@@ -213,7 +215,7 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          <Button
+          {/* <Button
             type="primary"
             onClick={() => {
               actionRef.current?.addEditRecord?.({
@@ -224,14 +226,20 @@ export default (props: VersionDetailProps) => {
             icon={<PlusOutlined />}
           >
             添加组件参数
-          </Button>
+          </Button> */}
         </div>
       </div>
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
         loading={tableLoading}
-        recordCreatorProps={false}
+        // recordCreatorProps={false}
+        recordCreatorProps={{
+          position: 'top',
+          // newRecordType: 'dataSource',
+          creatorButtonText: '新增参数',
+          record: { id: (Math.random() * 1000000).toFixed(0) },
+        }}
         pagination={false}
         scroll={{ y: window.innerHeight - 340 }}
         headerTitle="可编辑表格"
@@ -249,7 +257,7 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-            if (type === 'add') {
+            if (type !== 'edit') {
               await saveParam({ ...params, versionId }).then(() => {
                 queryDeliveryParamList(versionId);
               });

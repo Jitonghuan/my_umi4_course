@@ -11,7 +11,7 @@ import {
   FormOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
-  PlusOutlined
+  PlusOutlined,
 } from '@ant-design/icons';
 import { history } from 'umi';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
@@ -93,16 +93,15 @@ export default function LogAccess() {
                     <Tag color="geekblue">{item.monitorName}</Tag>
                   </span>
                   <span style={{ marginLeft: '20px', display: 'inline-flex', alignItems: 'center' }}>
-                    <i className="status" style={{ backgroundColor: STATUS_TYPE[item.status].color, marginRight: '5px' }}  />
+                    <i
+                      className="status"
+                      style={{ backgroundColor: STATUS_TYPE[item.status].color, marginRight: '5px' }}
+                    />
                     {STATUS_TYPE[item.status].text}
-                </span>
+                  </span>
                 </div>
                 <Space>
-                  <Button
-                    type="link"
-                    icon={<BarChartOutlined />}
-                    style={{ color: '#5468ff' }}
-                  >
+                  <Button type="link" icon={<BarChartOutlined />} style={{ color: '#5468ff' }}>
                     看板
                   </Button>
                   <Button
@@ -115,33 +114,31 @@ export default function LogAccess() {
                   >
                     编辑
                   </Button>
-                  {
-                    item.status === 0 ? (
-                      <Button
-                        type="link"
-                        style={{ color: '#52c41a' }}
-                        icon={<PlayCircleOutlined />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          enableMonitorClick(item.monitorName);
-                        }}
-                      >
-                        启动
-                      </Button>
-                    ) : (
-                      <Button
-                        type="link"
-                        style={{ color: '#FF7B15' }}
-                        icon={<PauseCircleOutlined />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          disableMonitorClick(item.monitorName);
-                        }}
-                      >
-                        停止
-                      </Button>
-                    )
-                  }
+                  {item.status === 0 ? (
+                    <Button
+                      type="link"
+                      style={{ color: '#52c41a' }}
+                      icon={<PlayCircleOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        enableMonitorClick(item.monitorName);
+                      }}
+                    >
+                      启动
+                    </Button>
+                  ) : (
+                    <Button
+                      type="link"
+                      style={{ color: '#FF7B15' }}
+                      icon={<PauseCircleOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        disableMonitorClick(item.monitorName);
+                      }}
+                    >
+                      停止
+                    </Button>
+                  )}
                   <Button
                     danger
                     type="link"
@@ -210,9 +207,9 @@ export default function LogAccess() {
             <Select
               style={{ width: '140px', marginLeft: '5px' }}
               options={envCodeOption}
-              onChange={(value => {
+              onChange={(value) => {
                 setCurrentEnvCode(value);
-              })}
+              }}
               value={currentEnvCode}
               allowClear
             />
@@ -232,7 +229,7 @@ export default function LogAccess() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset">
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
@@ -259,7 +256,7 @@ export default function LogAccess() {
             dataSource={listData}
             renderItem={(item: any) => (
               <List.Item
-                // key={item.title}
+              // key={item.title}
               >
                 {item}
               </List.Item>

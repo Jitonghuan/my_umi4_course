@@ -1,22 +1,6 @@
-import React from 'react';
-import { history } from 'umi';
 import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { JOB_STATUS } from './type';
-
-export type AppType = 'frontend' | 'backend';
-
-const APP_TYPE_MAP = {
-  frontend: '前端',
-  backend: '后端',
-};
-
-const APP_TYPE_ICON = {
-  frontend: <Html5Outlined />,
-  backend: <CodeOutlined />,
-};
-
 // 表格 schema
 export const taskTableSchema = ({
   onEditClick,
@@ -24,14 +8,12 @@ export const taskTableSchema = ({
   onDelClick,
   onGetExecutionDetailClick,
   onSwitchEnableClick,
-
 }: {
   onEditClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
   onGetExecutionDetailClick: (record: any, index: number) => void;
   onSwitchEnableClick: (record: any, index: number) => void;
-
 }) =>
   [
     {
@@ -43,6 +25,7 @@ export const taskTableSchema = ({
       title: '任务名称',
       dataIndex: 'jobName',
       width: 230,
+      render: (value, record, index) => <a onClick={() => onViewClick(record, index)}>{value}</a>,
     },
     {
       title: '任务code',
@@ -84,11 +67,8 @@ export const taskTableSchema = ({
       render: (enable: number, record: any, index: number) => (
         <>
           <Switch
-            checked={
-              enable === 1 ? true : false
-            }
+            checked={enable === 1 ? true : false}
             onClick={() => {
-
               onSwitchEnableClick(record, index);
             }}
           />
@@ -119,7 +99,7 @@ export const taskTableSchema = ({
             cancelText="取消"
             placement="topLeft"
           >
-            <a>删除</a>
+            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
           </Popconfirm>
         </div>
       ),

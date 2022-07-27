@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import {
   Form,
   Select,
@@ -14,9 +14,6 @@ import {
   Skeleton,
   Divider,
   Tabs,
-  Dropdown,
-  Space,
-  Menu,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
@@ -66,7 +63,6 @@ export default function LoggerSearch(props: any) {
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
   const [stowCondition, setStowCondition] = useState<boolean>(false);
-  // const [showMore, setShowMore] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
   const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
@@ -84,15 +80,13 @@ export default function LoggerSearch(props: any) {
   const [srollLoading, setScrollLoading] = useState(false); //无限下拉loading
   const [infoLoading, setInfoLoading] = useState(false); //日志检索信息loading
   const [editScreenVisible, setEditScreenVisible] = useState<boolean>(false); //是否展示lucene语法输入框
-  const [editConditionType, setEditConditionType] = useState<boolean>(false); //使用高级搜索时禁用筛选条件输入
   const [envOptions] = useEnvOptions(); //环境下拉框选项数据
-  const defaultSelectValue = receiveInfo.startTime ? 'rangePicker' : 'lastTime'
+  const defaultSelectValue = receiveInfo.startTime ? 'rangePicker' : 'lastTime';
   const [selectOptionType, setSelectOptionType] = useState<string>(defaultSelectValue);
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
   var iframe = document.createElement('iframe');
   useLayoutEffect(() => {
-    // receiveInfo
     if (Object.keys(receiveInfo).length !== 0) {
       setStartTime(30 * 60 * 1000);
       const now = new Date().getTime();
@@ -101,8 +95,6 @@ export default function LoggerSearch(props: any) {
       let end = Number(now / 1000).toString();
       setEnvCode(receiveInfo.envCode);
       setLogStore(receiveInfo.indexMode);
-      // let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
-      // window.atob(receiveInfo.message);
       let appCodeArry = [];
       if (receiveInfo.envCode) {
         setEnvCode(receiveInfo.envCode);
@@ -120,7 +112,6 @@ export default function LoggerSearch(props: any) {
         subInfoForm.setFieldsValue({ traceId: receiveInfo.traceId });
         appCodeArry.push('traceId:' + receiveInfo.traceId);
       }
-      // window.atob(receiveInfo.message);
       if (receiveInfo.appCode) {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
         setAppCodeValue(appCodeArry);
@@ -231,7 +222,7 @@ export default function LoggerSearch(props: any) {
     setViewlogSeaechTabInfo([]);
   };
 
-  const callback = (key: any) => { };
+  const callback = (key: any) => {};
 
   function range(start: any, end: any) {
     const result = [];
@@ -415,6 +406,8 @@ export default function LoggerSearch(props: any) {
                   options={envOptions}
                   style={{ width: 140 }}
                   placeholder="请选择环境"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
               <Form.Item label="日志库">
@@ -424,6 +417,8 @@ export default function LoggerSearch(props: any) {
                   options={logStoreOptions}
                   style={{ width: 140 }}
                   placeholder="请选择日志库"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
             </Form>
@@ -516,7 +511,7 @@ export default function LoggerSearch(props: any) {
                           <Input
                             placeholder="搜索"
                             allowClear
-                            // onSearch={onSearch}
+                            // onPressEnter={submitEditScreen}
                             style={{ width: 758 }}
                           />
                         </Form.Item>
@@ -529,7 +524,7 @@ export default function LoggerSearch(props: any) {
                       查询
                     </Button>
                   </Form.Item>
-                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
+                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo} danger>
                     重置
                   </Button>
                   {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
@@ -563,10 +558,6 @@ export default function LoggerSearch(props: any) {
                   </Button>
                 </Form>
               </div>
-
-              {/* <div style={{ marginTop: 4, width: '100%' }}>
-              
-              </div> */}
             </div>
             <div className="close-button">
               <a
@@ -625,7 +616,6 @@ export default function LoggerSearch(props: any) {
                                     <div style={{ width: '14%', color: '#6495ED' }}>
                                       {moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss')}
                                     </div>
-                                    {/* <div style={{ width: '85%' }}>{JSON.stringify(item?._source)}</div> */}
                                     <div
                                       style={{ width: '86%', fontSize: 10 }}
                                       dangerouslySetInnerHTML={{ __html: `${JSON.stringify(item)}` }}

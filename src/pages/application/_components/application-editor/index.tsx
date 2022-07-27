@@ -20,9 +20,11 @@ import {
   feTypeOptions,
   singleFeTypeOptions,
   microFeTypeOptions,
+  deployModelOptions,
 } from './common';
 import { AppItemVO } from '../../interfaces';
 import { useFeMicroMainProjectOptions } from './hooks';
+import appConfig from '@/app.config';
 
 const { Item: FormItem } = Form;
 
@@ -72,7 +74,7 @@ export default function ApplicationEditor(props: IProps) {
       const deploymentName = form.getFieldValue('deploymentName');
       if (!deploymentName) {
         form.setFieldsValue({ deploymentName: gitProject });
-      } else {
+      } else if (gitProject !== deploymentName && appConfig.IS_Matrix === 'public') {
         Modal.confirm({
           title: '操作提示',
           content: 'Git 地址已修改，是否要同步到应用部署名？',
@@ -283,6 +285,14 @@ export default function ApplicationEditor(props: IProps) {
         </FormItem> */}
 
         <Divider />
+        <FormItem
+          label="发布模式"
+          name="deployModel"
+          initialValue={deployModelOptions[0].value}
+          rules={[{ required: true, message: '请选择发布模式' }]}
+        >
+          <Radio.Group options={deployModelOptions} />
+        </FormItem>
 
         <FormItem noStyle shouldUpdate={shouldUpdate(['appType'])}>
           {({ getFieldValue }) =>
@@ -313,12 +323,12 @@ export default function ApplicationEditor(props: IProps) {
                         >
                           <Input placeholder="请输入应用的 pom 文件的相对路径" />
                         </FormItem>
+                        <FormItem label="自定义maven构建" name="customMaven">
+                          <Input />
+                        </FormItem>
                       </>
                     )
                   }
-                </FormItem>
-                <FormItem label="自定义maven构建" name="customMaven">
-                  <Input />
                 </FormItem>
               </>
             ) : (

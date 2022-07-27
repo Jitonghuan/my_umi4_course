@@ -29,6 +29,7 @@ const rootCls = 'deploy-content-compo';
 
 export default function DeployContent(props: DeployContentProps) {
   const { viewLogEnv, type, viewLogEnvType } = props;
+  const { fromThird } = history.location?.query || {};
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
@@ -256,15 +257,16 @@ export default function DeployContent(props: DeployContentProps) {
 
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
-    if (appConfig.PRIVATE_METHODS === 'public') {
-      return getRequest(listAppEnv, {
-        data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
-      });
-    } else {
-      return getRequest(listAppEnv, {
-        data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
-      });
-    }
+    return getRequest(listAppEnv, {
+      data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
+    });
+    // if (appConfig.PRIVATE_METHODS === 'public') {
+
+    // } else {
+    // return getRequest(listAppEnv, {
+    //   data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
+    // });
+    // }
   };
   const loadInfoData = async (envCode: any, operateType?: boolean) => {
     await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
@@ -472,6 +474,7 @@ export default function DeployContent(props: DeployContentProps) {
                           appCode: appCode,
                           envCode: currentEnvData,
                           viewLogEnvType: envTypeCode,
+                          fromThird,
                           // initRecord:JSON.stringify(record)
                         },
                         state: {
@@ -558,6 +561,7 @@ export default function DeployContent(props: DeployContentProps) {
                                 viewLogEnvType: envTypeCode,
                                 optType: 'deployInfo',
                                 deploymentName: appData?.deploymentName,
+                                fromThird,
                               },
                               state: {
                                 infoRecord: record,
@@ -574,7 +578,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
+                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}&fromThird=${fromThird}`,
                           );
                         }}
                       >
@@ -645,12 +649,12 @@ export default function DeployContent(props: DeployContentProps) {
                         {item.operateEvent === 'PodFileDownload'
                           ? '文件下载'
                           : item.operateEvent === 'restartApp'
-                            ? '重启应用'
-                            : item.operateEvent === 'rollback'
-                              ? '回滚应用'
-                              : item.operateEvent === 'DeletePod'
-                                ? '删除Pod'
-                                : null}
+                          ? '重启应用'
+                          : item.operateEvent === 'rollback'
+                          ? '回滚应用'
+                          : item.operateEvent === 'DeletePod'
+                          ? '删除Pod'
+                          : null}
                       </Tag>
                     </b>
                   </p>

@@ -4,8 +4,8 @@
  * @LastEditors: Please set LastEditors
  * @Description: 执行详情Modal
  */
-import React, { useState, useEffect } from 'react';
-import { CheckCircleOutlined,RedoOutlined } from '@ant-design/icons';
+import React, { useEffect } from 'react';
+import { CheckCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { Spin, Form, Modal, Table } from 'antd';
 import { useTaskImplementList } from '../hooks';
 import './index.less';
@@ -18,7 +18,6 @@ export interface NGInfo extends Record<string, any> {
 }
 
 export default function NGModalDetail(props: NGInfo) {
-  const [createBlockForm] = Form.useForm();
   const { onClose, mode, curRecord } = props;
   const [loading, pageInfo, source, setSource, setPageInfo, getTaskImplementList] = useTaskImplementList();
 
@@ -29,9 +28,9 @@ export default function NGModalDetail(props: NGInfo) {
       return;
     }
   }, [mode]);
-  const onFresh=()=>{
+  const onFresh = () => {
     getTaskImplementList({ jobCode: curRecord?.jobCode });
-  }
+  };
   //触发分页
   const pageSizeClick = (pagination: any) => {
     setPageInfo({
@@ -44,7 +43,7 @@ export default function NGModalDetail(props: NGInfo) {
       pageSize: pagination.pageSize,
     };
 
-    getTaskImplementList({ jobCode: curRecord?.jobCode,...obj });
+    getTaskImplementList({ jobCode: curRecord?.jobCode, ...obj });
   };
 
   return (
@@ -59,23 +58,24 @@ export default function NGModalDetail(props: NGInfo) {
     >
       <div className="task-data-info">
         <span>
-        <CheckCircleOutlined style={{ color: 'green' }} />
-        <span style={{ marginLeft: 10, fontSize: 14 }}>
-          <b>
-            当前JobCode：
-            <span style={{ marginLeft: 6 }}>{curRecord?.jobCode}</span>
-          </b>
+          <CheckCircleOutlined style={{ color: 'green' }} />
+          <span style={{ marginLeft: 10, fontSize: 14 }}>
+            <b>
+              当前JobCode：
+              <span style={{ marginLeft: 6 }}>{curRecord?.jobCode}</span>
+            </b>
+          </span>
         </span>
 
+        <span>
+          <RedoOutlined onClick={onFresh} />
         </span>
-
-        <span><RedoOutlined   onClick={onFresh} /></span>
       </div>
       <Spin spinning={loading}>
-        <Table 
-          columns={tableColumns} 
-          dataSource={source} 
-          bordered 
+        <Table
+          columns={tableColumns}
+          dataSource={source}
+          bordered
           pagination={{
             current: pageInfo.pageIndex,
             total: pageInfo.total,
@@ -84,7 +84,7 @@ export default function NGModalDetail(props: NGInfo) {
             showTotal: () => `总共 ${pageInfo.total} 条数据`,
           }}
           onChange={pageSizeClick}
-          />
+        />
       </Spin>
     </Modal>
   );
