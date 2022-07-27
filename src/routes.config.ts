@@ -1118,7 +1118,7 @@ export default [
         routes: [
           {
             path: 'node-list',
-            name: '机器列表',
+            name: '节点列表',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/node-list',
             hideInMenu: true,

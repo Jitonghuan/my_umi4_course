@@ -12,6 +12,7 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import { FeContext } from '@/common/hooks';
 import clusterContext from '../../context'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
@@ -21,6 +22,7 @@ export default function ClusteLoginShell(props: any) {
     // const { appCode, envCode, optType, containerName, deploymentName } = props.location.query;
     const { record } = props.location.state || {};
     const { clusterCode, cluseterName } = useContext(clusterContext);
+    const { matrixConfigData } = useContext(FeContext);
     console.log(record, record?.info?.containers, 22222)
     const [container, setContainer] = useState<any>([]);
     const [previous, setPrevious] = useState<boolean>(false);
@@ -86,7 +88,7 @@ export default function ClusteLoginShell(props: any) {
     const initWS = (value: string) => {
         let dom: any = document?.getElementById('terminal');
         ws.current = new WebSocket(
-            `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${value}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
+            `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${value}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
         ); //建立通道
 
         //初始化terminal
@@ -174,7 +176,7 @@ export default function ClusteLoginShell(props: any) {
         // currentContainerName = getContainer;
         setSelectContainer(getContainer)
         ws.current = new WebSocket(
-            `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${getContainer}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
+            `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${getContainer}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
         ); //建立通道
 
         ws.current.onopen = () => {
