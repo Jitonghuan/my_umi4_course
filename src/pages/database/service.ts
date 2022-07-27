@@ -75,3 +75,6 @@ export const getCharacterSetList = `${appConfig.apiPrefix}/databaseManage/schema
 
 /**26、 GET 实例性能趋势 */
 export const performanceTrends = `${appConfig.apiPrefix}/databaseManage/instance/performanceTrends`;
+
+/**26、 GET 枚举数据 */
+export const getEnumerateData = `${appConfig.apiPrefix}/databaseManage/getEnumerateData`;
