@@ -14,6 +14,7 @@ import { useAppOptions } from '../../hooks';
 import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../basic/services';
 import { useUserOptions } from './hooks';
 import './index.less';
+import UserSelector from "@/components/user-selector";
 
 interface IRef {
   setTreeData: (data: any) => void;
@@ -408,7 +409,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }}></Input>
         </Form.Item>
         <Form.Item label="通知对象" name="receiver">
-          <Select mode="multiple" options={userOptions} showSearch style={{ width: '400px' }} allowClear />
+          <UserSelector style={{ width: '400px' }} />
         </Form.Item>
         <Form.Item
           label="是否静默"

@@ -176,28 +176,22 @@ const Coms = (props: any) => {
   };
 
   useEffect(() => {
-    if (currentTab) {
-      queryClustersData({ envTypeCode: currentTab }).then((resp) => {
-        setClusterList(resp);
-        setCurrentCluster(resp[0]?.value);
-        if (resp[0]?.value) {
-          queryResData(resp[0]?.value);
-          queryPodData(resp[0]?.value);
-          queryNodeList({ clusterId: resp[0]?.value });
-          queryNameSpace(resp[0]?.value);
-          queryUseMarket(resp[0]?.value);
-        } else {
-          setUseMarket([]);
-          setPodDataSource([]);
-          queryNodeList({ clusterId: '' });
-        }
-      });
-    }
-  }, [currentTab]);
-
-  const handleTabChange = (activeKey: string) => {
-    setCurrentTab(activeKey);
-  };
+    queryClustersData().then((resp) => {
+      setClusterList(resp);
+      setCurrentCluster(resp[0]?.value);
+      if (resp[0]?.value) {
+        queryResData(resp[0]?.value);
+        queryPodData(resp[0]?.value);
+        queryNodeList({ clusterId: resp[0]?.value });
+        queryNameSpace(resp[0]?.value);
+        queryUseMarket(resp[0]?.value);
+      } else {
+        setUseMarket([]);
+        setPodDataSource([]);
+        queryNodeList({ clusterId: '' });
+      }
+    });
+  }, []);
 
   const [currentIp, setCurrentIp] = useState<string>('');
 
@@ -404,25 +398,20 @@ const Coms = (props: any) => {
           }
           queryCount={queryCount}
         />
-        {/* )
-        } */}
-        {href ? (
-          <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
-            {tabListFygs?.map((el) => (
-              <Tabs.TabPane key={el.value} tab={el.label} />
-            ))}
-          </Tabs>
-        ) : (
-          <Tabs activeKey={currentTab} type="card" className="monitor-tabs" onChange={handleTabChange}>
-            {tabList?.map((el) => (
-              <Tabs.TabPane key={el.value} tab={el.label} />
-            ))}
-          </Tabs>
-        )}
 
         <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
-          <span>选择集群:</span>
-          <Select style={{ width: 140 }} options={clusterList} onChange={selectCluster} value={currentCluster}></Select>
+          <span>选择集群: </span>
+          <Select
+            showSearch
+            filterOption={(input, option) => {
+              // @ts-ignore
+              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+            }}
+            style={{ width: 240, marginLeft: 5 }}
+            options={clusterList}
+            onChange={selectCluster}
+            value={currentCluster}
+          />
           <span style={{ marginRight: '14px', float: 'right' }}>
             <Button type="primary" onClick={handleRefresh}>
               刷新

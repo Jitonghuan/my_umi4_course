@@ -99,9 +99,9 @@ export const queryUseMarketData = (params: { clusterId: string }) =>
 /**
  * 集群查询
  */
-export const queryClustersUrl = `${appConfig.apiPrefix}/monitorManage/clusters`;
-export const queryClustersData = (params: { envTypeCode: string }) =>
-  getRequest(queryClustersUrl, { data: params }).then((resp: any) => {
+export const queryClustersUrl = `${appConfig.apiPrefix}/monitorManage/cluster`;
+export const queryClustersData = () =>
+  getRequest(queryClustersUrl).then((resp: any) => {
     if (resp?.success) {
       let data = resp?.data;
       let clusterData: any = [];
