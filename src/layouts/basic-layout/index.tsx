@@ -85,8 +85,8 @@ export default function Layout(props: any) {
             locationHref: 'gushangke',
             domainName: 'http://c2f.apex.gushangke.com',
             wsPrefixName: 'ws://matrix-api.gushangke.com',
-            LogoName: '--骨伤科',
-            waterMarkName: '骨伤科',
+            LogoName: '--富阳骨伤',
+            waterMarkName: '富阳骨伤',
           }
         : {
             curEnvType: res?.curEnvType,
