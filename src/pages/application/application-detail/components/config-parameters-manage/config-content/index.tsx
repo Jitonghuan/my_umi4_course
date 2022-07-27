@@ -16,7 +16,7 @@ import { queryVersionApi, doRestoreVersionApi, configAdd, configUpdate } from '.
 import { listAppEnv } from '@/pages/application/service';
 import './index.less';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
-const rootCls = 'config-content-compo';
+const rootCls = 'config-content-detail';
 export default function ConfigContent({ env, configType }: IProps) {
   const { appData } = useContext(DetailContext);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
