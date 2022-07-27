@@ -71,6 +71,7 @@ export default function Layout(props: any) {
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
+  const isPageInIFrame = () => window.self !== window.top;
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
       loadUnreadNum();
@@ -208,8 +209,8 @@ export default function Layout(props: any) {
                 permissionData,
                 IconMap,
               }}
-              showHeader={!fromThird}
-              showSiderMenu={!fromThird}
+              showHeader={!fromThird && !isPageInIFrame()}
+              showSiderMenu={!fromThird && !isPageInIFrame()}
               headerProps={{
                 // env: getEnv(),
                 userApi: matrixConfigInfo?.domainName
