@@ -172,6 +172,7 @@ export default function DpMonitorEdit(props: any) {
       labels: res?.data?.labels || [],
       values: res?.data?.values || []
     }
+    console.log(obj)
     setSqlRes(obj);
     if (res?.success) {
       message.success('解析成功')
@@ -510,8 +511,8 @@ export default function DpMonitorEdit(props: any) {
                                             </Button>
                                           </Form.Item>
                                         </div>
-                                        {field.map(({ key, name: labelName, ...restField }) => (
-                                          <div key={key} className="filters-list-wrapper">
+                                        {field.map(({ key: labelKey, name: labelName, ...restField }) => (
+                                          <div key={key + '_' + labelKey} className="filters-list-wrapper">
                                             <Form.Item
                                               {...restField}
                                               name={[labelName]}
