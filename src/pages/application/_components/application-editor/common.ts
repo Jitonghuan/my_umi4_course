@@ -42,6 +42,7 @@ export const feTypeOptions: IOption<any>[] = [
 export const singleFeTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: 'PDA', value: 'pda' },
+  { label: '独立前端', value: 'aloneFe' },
 ];
 export const microFeTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
@@ -66,4 +67,5 @@ export const deployJobUrlOptions: IOption[] = [
   { label: '定制包 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extensions' },
   { label: '定制页面 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extension-pages' },
   { label: 'PDA 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-hbos-pda' },
+  { label: '独立前端 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-alone' },
 ];
