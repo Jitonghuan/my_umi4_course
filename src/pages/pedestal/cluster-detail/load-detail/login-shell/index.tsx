@@ -12,21 +12,44 @@ import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import clusterContext from '../../context'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
-export default function AppDeployInfo(props: any) {
+export default function ClusteLoginShell(props: any) {
     const [viewLogform] = Form.useForm();
     // const { appCode, envCode, optType, containerName, deploymentName } = props.location.query;
-    const instName = props.location.query.instName;
-    const [queryListContainer, setQueryListContainer] = useState<any>();
+    const { record } = props.location.state || {};
+    const { clusterCode, cluseterName } = useContext(clusterContext);
+    console.log(record, record?.info?.containers, 22222)
+    const [container, setContainer] = useState<any>([]);
     const [previous, setPrevious] = useState<boolean>(false);
+    const [selectContainer, setSelectContainer] = useState<any>('')
     let currentContainerName = '';
     const ws = useRef<WebSocket>();
     const term = useRef<any>();
     useEffect(() => {
-        if (!instName) return;
-    }, []);
+        if (record?.info?.containers) {
+            const containerData = record?.info?.containers?.map((item: any) => {
+                if (item?.status === 'Running') {
+                    return { label: item.name, value: item.name }
+                }
+            })
+            setContainer(containerData)
+        }
+    }, [record?.info?.containers])
+
+    useEffect(() => {
+        if (!selectContainer && container.length) {
+            setSelectContainer(container[0].value)
+            viewLogform.setFieldsValue({ containerName: container[0].value })
+            initWS(container[0].value)
+
+        }
+    }, [container])
+    // useEffect(() => {
+    //     if (!instName) return;
+    // }, []);
 
     // useEffect(() => {
     //     if (appCode && envCode) {
@@ -60,11 +83,11 @@ export default function AppDeployInfo(props: any) {
     //     }
     // }, [envCode]);
 
-    const initWS = (previous?: boolean) => {
+    const initWS = (value: string) => {
         let dom: any = document?.getElementById('terminal');
-        // ws.current = new WebSocket(
-        //     `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
-        // ); //建立通道
+        ws.current = new WebSocket(
+            `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${value}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
+        ); //建立通道
 
         //初始化terminal
         term.current = new Terminal({
@@ -87,24 +110,25 @@ export default function AppDeployInfo(props: any) {
         const fitAddon = new FitAddon();
         term.current.loadAddon(fitAddon);
         fitAddon.fit();
-        // ws.current.onopen = () => {
-        //     if (ws.current) {
-        //         const attachAddon = new AttachAddon(ws.current);
-        //         term.current.loadAddon(attachAddon);
-        //         term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
-        //         term.current.writeln('WebSocket链接成功');
-        //         let sendJson = {
-        //             operation: 'resize',
-        //             cols: term.current.cols,
-        //             rows: term.current.rows,
-        //         };
-        //         ws.current.send(JSON.stringify(sendJson));
-        //         term.current.focus();
-        //         ws.current.onerror = () => {
-        //             term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
-        //         };
-        //     }
-        // };
+        console.log(term.current, 11)
+        ws.current.onopen = () => {
+            if (ws.current) {
+                const attachAddon = new AttachAddon(ws.current);
+                term.current.loadAddon(attachAddon);
+                term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+                term.current.writeln('WebSocket链接成功');
+                let sendJson = {
+                    operation: 'resize',
+                    cols: term.current.cols,
+                    rows: term.current.rows,
+                };
+                ws.current.send(JSON.stringify(sendJson));
+                term.current.focus();
+                ws.current.onerror = () => {
+                    term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
+                };
+            }
+        };
 
         window?.addEventListener('resize', function () {
             if (ws.current) {
@@ -147,35 +171,36 @@ export default function AppDeployInfo(props: any) {
         if (ws.current) {
             ws.current.close();
         }
-        currentContainerName = getContainer;
-        // ws.current = new WebSocket(
-        //     `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
-        // ); //建立通道
+        // currentContainerName = getContainer;
+        setSelectContainer(getContainer)
+        ws.current = new WebSocket(
+            `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${getContainer}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`,
+        ); //建立通道
 
-        // ws.current.onopen = () => {
-        //     message.success('已切换容器!');
-        //     term.current.reset();
-        //     if (ws.current) {
-        //         const attachAddon = new AttachAddon(ws.current);
-        //         term.current.loadAddon(attachAddon);
-        //         term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
-        //         term.current.writeln('WebSocket链接成功');
+        ws.current.onopen = () => {
+            message.success('已切换容器!');
+            term.current.reset();
+            if (ws.current) {
+                const attachAddon = new AttachAddon(ws.current);
+                term.current.loadAddon(attachAddon);
+                term.current.write('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+                term.current.writeln('WebSocket链接成功');
 
-        //         let sendJson = {
-        //             operation: 'resize',
-        //             cols: term.current.cols,
-        //             rows: term.current.rows,
-        //         };
-        //         ws.current.send(JSON.stringify(sendJson));
-        //         term.current.focus();
-        //         ws.current.onerror = () => {
-        //             term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
-        //         };
+                let sendJson = {
+                    operation: 'resize',
+                    cols: term.current.cols,
+                    rows: term.current.rows,
+                };
+                ws.current.send(JSON.stringify(sendJson));
+                term.current.focus();
+                ws.current.onerror = () => {
+                    term.current.writeln('\n\x1B[1;3;31m WebSocket连接失败，请刷新页面重试\x1B[0m');
+                };
 
-        //         //  term.current.writeln('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
-        //         //  term.current.write('WebSocket链接成功');
-        //     }
-        // };
+                //  term.current.writeln('欢迎使用 \x1B[1;3;31mMATRIX\x1B[0m: ');
+                //  term.current.write('WebSocket链接成功');
+            }
+        };
     };
 
     return (
@@ -189,9 +214,9 @@ export default function AppDeployInfo(props: any) {
                                 <Form.Item name="containerName">
                                     <Select
                                         style={{ width: 220 }}
-                                        options={queryListContainer}
+                                        options={container}
+                                        value={selectContainer}
                                         onChange={selectListContainer}
-                                        defaultValue={currentContainerName}
                                     ></Select>
                                 </Form.Item>
                             </Form>

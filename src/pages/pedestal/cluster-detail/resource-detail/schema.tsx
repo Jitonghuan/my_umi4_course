@@ -1,5 +1,6 @@
 import { Tooltip, Popconfirm, Button, Tag } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+import { LIST_STATUS_TYPE } from '../load-detail/schema'
 
 export const keyOptions = [
     { label: '资源类型', value: 'resourceType' },
@@ -84,9 +85,9 @@ export const resourceDetailTableSchema = ({
         {
             title: '状态',
             dataIndex: ['info', 'status'],
-            width: 150,
+            width: 120,
             render: (value) => {
-                <Tag color='green'>{value}</Tag>
+                return <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : 'green'}>{value}</Tag>
             }
         },
         {

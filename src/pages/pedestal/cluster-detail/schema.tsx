@@ -2,6 +2,7 @@ import { history } from 'umi';
 import { Tooltip, Popconfirm, Button, Tag } from 'antd';
 import { Html5Outlined, CodeOutlined, MinusCircleFilled } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+import { LIST_STATUS_TYPE } from './load-detail/schema'
 
 // 节点列表
 export const nodeListTableSchema = ({
@@ -167,7 +168,7 @@ export const podsTableSchema = ({
             dataIndex: ['info', 'status'],
             width: 100,
             render: (value) => (
-                <Tag color="green">{value}</Tag>
+                <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : 'green'}>{value}</Tag>
             ),
         },
 
@@ -189,7 +190,7 @@ export const podsTableSchema = ({
             ellipsis: true,
             render: (value) => (
                 <Tooltip placement="topLeft" title={<>{(value || []).map((item: string) => <div>{item}</div>)}</>}>
-                    {value.toString(',')}
+                    {value?.toString(',')}
                 </Tooltip>
             ),
         },
@@ -209,7 +210,7 @@ export const podsTableSchema = ({
             width: 120,
             ellipsis: true,
             render: (value) => (
-                <Tooltip placement="topLeft" title={value} color='green'>
+                <Tooltip placement="topLeft" title={value}>
                     {value}
                 </Tooltip>
             ),

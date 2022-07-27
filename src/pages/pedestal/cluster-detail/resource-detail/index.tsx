@@ -112,8 +112,9 @@ export default function ResourceDetail(props: any) {
 
     const updateResource = async (record: any, updateColumn: string) => {
         const { type, namespace, name, info } = record || {};
-        const params = Object.assign(info, { redeploy: !info[updateColumn] });
-        const res: any = await resourceUpdate({ resourceType: type, namespace, clusterCode, resourceName: name, updateBody: params });
+        const infoData = JSON.parse(JSON.stringify(info || {}))
+        infoData[updateColumn] = !infoData[updateColumn]
+        const res: any = await resourceUpdate({ resourceType: type, namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(infoData) });
         if (res?.success) {
             message.success('操作成功！');
             queryList()

@@ -6,7 +6,7 @@ import DownLoadFile from './download-file';
 import AddModal from './add-modal'
 import './index.less';
 import { getResourceList, resourceUpdate } from '../service';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
 import clusterContext from '../context'
 
 const obj: any = {
@@ -49,7 +49,7 @@ export default function LoadDetail(props: any) {
     }, [clusterCode, data])
 
     const restart = useMemo(() => podData.length ? podData.reduce((pre, cur: any) => pre + cur?.info?.restarts || 0, 0) : 0, [podData]);
-    const containerOption = useMemo(() => data?.info?.containersEnv.map((item: any) => ({ label: item.containerName, value: item.containerName })), [data?.info?.containersEnv])
+    const containerOption = useMemo(() => (data?.info?.containersEnv || []).map((item: any) => ({ label: item?.containerName, value: item?.containerName })), [data?.info?.containersEnv])
 
     // 表格列配置
     const tableColumns = useMemo(() => {
@@ -61,7 +61,7 @@ export default function LoadDetail(props: any) {
                 history.push({ pathname: '/matrix/pedestal/view-log' })
             },
             shell: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/login-shell' })
+                history.push({ pathname: '/matrix/pedestal/cluster-detail/login-shell', state: { record: record } })
             },
             download: (record: any, index: any) => {
                 setVisible(true)
@@ -91,7 +91,9 @@ export default function LoadDetail(props: any) {
                 const info = JSON.parse(JSON.stringify(data?.info))
                 info.containersEnv = info.containersEnv.map((e: any) => {
                     if (e.containerName === item.containerName) {
-                        return { ...e, env: e?.env?.filter((ele: any) => ele.name !== record.name) }
+                        // return { ...e, env: e?.env?.filter((ele: any) => ele != record) }
+                        e.env.splice(index, 1)
+                        return { ...e }
                     } else {
                         return { ...e }
                     }
@@ -132,25 +134,25 @@ export default function LoadDetail(props: any) {
         if (params.container) {
             for (const i of requstParams?.containersEnv) {
                 if (params.container === i.containerName) {
-                    i.env = i.env || []
-                    const nameList = i.env.map((ele: any) => ele.name)
-                    value.forEach((e: any) => {
-                        if (nameList.includes(e.key)) {
-                            message.error('存在重复的name！');
-                            return false
+                    requstParams?.containersEnv?.forEach((item: any) => {
+                        if (params.container === item.containerName) {
+                            item.env = item.env || []
+                            value.forEach((e: any) => { item.env.push({ name: e.key, value: e.value }) })
                         }
-                        i.env.push({
-                            name: e.key, value: e.value
-                        })
                     })
+                    // const nameList = i.env.map((ele: any) => ele.name)
+                    // value.forEach((e: any) => {
+                    //     if (nameList.includes(e.key)) {
+                    //         message.error('存在重复的name！');
+                    //         return false
+                    //     }
+                    //     i.env.push({
+                    //         name: e.key, value: e.value
+                    //     })
+                    // })
                 }
             }
-            // requstParams?.containersEnv?.forEach((item: any) => {
-            //     if (params.container === item.containerName) {
-            //         item.env = item.env || []
-            //         value.forEach((e: any) => { item.env.push({ name: e.key, value: e.value }) })
-            //     }
-            // })
+
         } else {
             // 新增标签
             requstParams.labels = requstParams?.labels || {};
@@ -211,7 +213,12 @@ export default function LoadDetail(props: any) {
         <AddModal visible={addTag} onCancel={() => { setAddTag(false) }} type={mode} onSave={onSave} containerOption={containerOption} loading={buttonLoading}></AddModal>
         <div className='flex-wrapper'>
             <p className="title">工作负载：<span style={{ color: 'green' }}>{data?.name || '---'}</span></p>
-            <Button type="primary" size='small' onClick={() => { history.push({ pathname: `/matrix/pedestal/cluster-detail/resource-detail`, query: { ...props.location.query } }) }}>返回</Button>
+            <div>
+                <Button icon={<RedoOutlined />} onClick={() => { queryData() }} style={{ marginRight: '10px' }} size='small'>
+                    刷新
+              </Button>
+                <Button type="primary" size='small' onClick={() => { history.push({ pathname: `/matrix/pedestal/cluster-detail/resource-detail`, query: { ...props.location.query } }) }}>返回</Button>
+            </div>
         </div>
         <div className='grid-wrapper'>
             {Object.keys(obj).map((item: any) => {
@@ -253,14 +260,16 @@ export default function LoadDetail(props: any) {
         ></Table>
         {/* 事件 */}
         <p className='title'>事件：</p>
-        <Table
-            dataSource={eventData}
-            loading={eventLoading}
-            bordered
-            rowKey="id"
-            pagination={false}
-            columns={eventTableSchema()}
-        ></Table>
+        <div className='event-wrapper'>
+            <Table
+                dataSource={eventData}
+                loading={eventLoading}
+                bordered
+                rowKey="id"
+                pagination={false}
+                columns={eventTableSchema()}
+            ></Table>
+        </div>
         {/* 标签管理 */}
         <div className='flex-wrapper' style={{ marginTop: '10px' }}>
             <span className='title'>标签</span>

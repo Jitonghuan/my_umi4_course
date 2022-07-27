@@ -81,9 +81,9 @@ export default function NodeList() {
                 <div className="caption-left">
                     <h3>节点列表</h3>
                 </div>
-                <div className="caption-right">
+                {/* <div className="caption-right">
                     <Button type="primary" onClick={() => { setVisble(true) }}>新增节点</Button>
-                </div>
+                </div> */}
             </div>
             <Table
                 dataSource={data}
