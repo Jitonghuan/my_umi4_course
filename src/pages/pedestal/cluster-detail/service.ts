@@ -35,13 +35,18 @@ export const getResourceList = (data: any) => {
 // 资源详情-删除接口
 export const resourceDel = (data: any) => {
     const url = addAPIPrefix('/infraManage/resource/delete');
-    return getRequest(url, { data: data });
+    return postRequest(url, { data: data });
 };
 
 // 资源详情-新增
 export const resourceCreate = (data: any) => {
     const url = addAPIPrefix('/infraManage/resource/create');
     return postRequest(url, { data: data });
+};
+// 资源详情-编辑
+export const resourceUpdate = (data: any) => {
+    const url = addAPIPrefix('/infraManage/resource/update');
+    return putRequest(url, { data: data });
 };
 
 // 资源类型查询接口

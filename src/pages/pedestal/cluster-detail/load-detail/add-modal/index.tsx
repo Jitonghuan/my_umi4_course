@@ -2,11 +2,11 @@
 import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { history } from 'umi';
 import { MinusOutlined, PlusCircleOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Table, Modal, Form, Input, Divider, Space } from 'antd';
+import { Button, Table, Modal, Form, Input, Space, Select } from 'antd';
 import './index.less'
 
 export default function AddModal(props: any) {
-    const { visible, onCancel, title } = props;
+    const { visible, onCancel, containerOption, type = 'tag', onSave, loading } = props;
     const [form] = Form.useForm()
     useEffect(() => {
         if (visible) {
@@ -17,18 +17,24 @@ export default function AddModal(props: any) {
     const handleSubmit = async () => {
         const formValue = await form.validateFields();
         if (formValue) {
-            const labels: any = {};
-            const value = formValue['tags'];
-            value.forEach((item: any) => {
-                labels[item.key] = item.value
-            })
-            console.log(labels, 'label')
+            onSave(formValue)
         }
     }
     return (
-        <Modal title={title} width={500} visible={visible} onOk={handleSubmit} onCancel={onCancel}>
+        <Modal
+            title={type === 'tag' ? '新增标签' : '新增环境变量'}
+            width={500}
+            visible={visible}
+            onCancel={onCancel}
+            footer={[
+                <Button onClick={onCancel}>取消</Button>,
+                <Button type='primary' onClick={handleSubmit} loading={loading}>确认</Button>,
+            ]}>
             <div className='form-wrapper'>
-                <Form form={form} name="base" autoComplete="off" colon={false} >
+                <Form form={form} name="base" autoComplete="off" colon={false}>
+                    {type === 'var' && <Form.Item label='请选择容器' name='container' rules={[{ required: true, message: '请选择容器' }]}>
+                        <Select options={containerOption} style={{ width: '240px' }}></Select>
+                    </Form.Item>}
                     <Form.List name="tags">
                         {(fields, { add, remove }) => (
                             <>
@@ -45,6 +51,7 @@ export default function AddModal(props: any) {
                                         >
                                             {() => (
                                                 <Form.Item
+                                                    className="v-item"
                                                     {...field}
                                                     label="KEY"
                                                     name={[field.name, 'key']}
@@ -58,6 +65,7 @@ export default function AddModal(props: any) {
                                         <Form.Item
                                             {...field}
                                             label="VALUE"
+                                            className="v-item"
                                             name={[field.name, 'value']}
                                         >
                                             <Input size='small' />

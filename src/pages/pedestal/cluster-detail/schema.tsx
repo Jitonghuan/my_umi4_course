@@ -127,11 +127,13 @@ export const nodeListTableSchema = ({
 
 // 资源详情-负载-Pods列表
 export const podsTableSchema = ({
+    toPodsDetail,
     viewLog,
     shell,
     download,
     handleDelete
 }: {
+    toPodsDetail: (record: any, index: number) => void;
     viewLog: (record: any, index: number) => void;
     shell: (record: any, index: number) => void;
     download: (record: any, index: number) => void;
@@ -140,13 +142,19 @@ export const podsTableSchema = ({
     [
         {
             title: '名称',
-            dataIndex: 'id',
-            width: 100,
+            dataIndex: 'name',
+            width: 150,
+            ellipsis: true,
+            render: (value, record: any, index: number) => (
+                <Tooltip placement="topLeft" title={value}>
+                    <a onClick={() => { toPodsDetail(record, index) }}>{value}</a>
+                </Tooltip>
+            ),
         },
         {
             title: 'IP',
-            dataIndex: 'ip',
-            width: 230,
+            dataIndex: ['info', 'ip'],
+            width: 150,
             ellipsis: true,
             render: (value) => (
                 <Tooltip placement="topLeft" title={value}>
@@ -156,33 +164,18 @@ export const podsTableSchema = ({
         },
         {
             title: '状态',
-            dataIndex: 'cpu',
-            width: 180,
-            ellipsis: {
-                showTitle: false,
-            },
+            dataIndex: ['info', 'status'],
+            width: 100,
             render: (value) => (
-                <Tooltip placement="topLeft" title={value}>
-                    {value}
-                </Tooltip>
+                <Tag color="green">{value}</Tag>
             ),
         },
 
         {
             title: '重启次数',
-            dataIndex: 'neicun',
-            width: 160,
-            ellipsis: {
-                showTitle: false,
-            },
-        },
-        {
-            title: '镜像',
-            dataIndex: 'disk',
-            width: 200,
-            ellipsis: {
-                showTitle: false,
-            },
+            dataIndex: ['info', 'restarts'],
+            width: 80,
+            ellipsis: true,
             render: (value) => (
                 <Tooltip placement="topLeft" title={value}>
                     {value}
@@ -190,8 +183,19 @@ export const podsTableSchema = ({
             ),
         },
         {
+            title: '镜像',
+            dataIndex: ['info', 'images'],
+            width: 200,
+            ellipsis: true,
+            render: (value) => (
+                <Tooltip placement="topLeft" title={<>{(value || []).map((item: string) => <div>{item}</div>)}</>}>
+                    {value.toString(',')}
+                </Tooltip>
+            ),
+        },
+        {
             title: '节点IP',
-            dataIndex: 'createUser',
+            dataIndex: ['info', 'nodeIp'],
             width: 200,
             render: (value) => (
                 <Tooltip placement="topLeft" title={value}>
@@ -201,8 +205,14 @@ export const podsTableSchema = ({
         },
         {
             title: '创建时间',
-            dataIndex: 'creatTime',
-            width: 200,
+            dataIndex: 'createTime',
+            width: 120,
+            ellipsis: true,
+            render: (value) => (
+                <Tooltip placement="topLeft" title={value} color='green'>
+                    {value}
+                </Tooltip>
+            ),
         },
         {
             title: '操作',
@@ -234,17 +244,17 @@ export const eventTableSchema = () =>
     [
         {
             title: '类型',
-            dataIndex: 'id',
+            dataIndex: 'type',
             width: 100,
         },
         {
             title: '事件原因',
-            dataIndex: 'ip',
+            dataIndex: ['info', 'reason'],
             width: 230,
         },
         {
             title: '事件类型',
-            dataIndex: 'cpu',
+            dataIndex: ['info', 'type'],
             width: 180,
             ellipsis: {
                 showTitle: false,
@@ -257,7 +267,7 @@ export const eventTableSchema = () =>
         },
         {
             title: '时间',
-            dataIndex: 'neicun',
+            dataIndex: 'createTime',
             width: 80,
             ellipsis: {
                 showTitle: false,
@@ -272,7 +282,7 @@ export const envVarTableSchema = ({ handleDelete }: {
     [
         {
             title: 'KEY',
-            dataIndex: 'key',
+            dataIndex: 'name',
             width: 400,
         },
         {

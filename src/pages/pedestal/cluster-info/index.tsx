@@ -14,10 +14,10 @@ import './index.less'
 
 export default function clusterInfo() {
     const [visible, setVisble] = useState(false);
+    const [form] = Form.useForm();
     const [searchCode, setSearchCode] = useState<string>('');
     const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [searchParams, setSearchParams] = useState<any>('');
     const [clusterDatas, total, loading, loadData] = useClusterListData({ pageIndex, pageSize })
     const [data, setData] = useState([]);//数据合集
     useEffect(() => {
@@ -46,14 +46,20 @@ export default function clusterInfo() {
         setPageSize(pageSize);
     }
     const handleSearch = () => {
-        loadData({ clusterCode: searchCode })
+        const value = form.getFieldsValue()
+        console.log(value, 11)
+        loadData({ ...value })
     }
     return (
         <PageContainer className='cluster-info'>
             <ContentCard>
                 <div className='search-wrapper'>
-                    <Input placeholder="请输入" allowClear value={searchCode} onChange={valueChange} style={{ width: 240 }} />
-                    <Button type='primary' style={{ marginLeft: '10px' }} onClick={handleSearch}>查询</Button>
+                    <Form layout='inline' form={form}>
+                        <Form.Item name='clusterCode'>
+                            <Input placeholder="请输入集群code" allowClear style={{ width: 240 }} />
+                        </Form.Item>
+                        <Button type='primary' style={{ marginLeft: '10px' }} onClick={handleSearch}>查询</Button>
+                    </Form>
                 </div>
                 <div className="flex-space-between" style={{ margin: '5px 0px' }}>
                     <h3>集群概览</h3>
@@ -87,7 +93,7 @@ export default function clusterInfo() {
                                     <div className="display-item">
                                         <div>
                                             CPU:{item?.metricInfo?.cpuInfo?.usage || '-'}/{item?.metricInfo?.cpuInfo?.total || ''}
-                                            <span style={{ marginLeft: '3px' }}>{item?.metricInfo?.cpuInfo?.unit}</span>
+                                            <span style={{ marginLeft: '2px' }}>{item?.metricInfo?.cpuInfo?.unit}</span>
                                             <span style={{ marginLeft: '5px' }}> {((item?.metricInfo?.cpuInfo?.percentage) * 100).toFixed(2)}%</span>
                                         </div>
                                         <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
@@ -99,8 +105,8 @@ export default function clusterInfo() {
                                     <div className="display-item">
                                         <div>
                                             内存:{item?.metricInfo?.memoryInfo?.usage}/{item?.metricInfo?.memoryInfo?.total}
-                                            <span style={{ marginLeft: '3px' }}> {item?.metricInfo?.memoryInfo?.unit}</span>
-                                            <span style={{ marginLeft: '5px' }}> {(item?.metricInfo?.memoryInfo?.percentage) * 100}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.memoryInfo?.unit}</span>
+                                            <span style={{ marginLeft: '5px' }}> {((item?.metricInfo?.memoryInfo?.percentage) * 100).toFixed(2)}%</span>
                                         </div>
                                         <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
                                     </div>
@@ -112,8 +118,8 @@ export default function clusterInfo() {
                                     <div className='last-item display-item' style={{ flex: '1' }}>
                                         <span>
                                             磁盘：{item?.metricInfo?.diskInfo?.usage}/{item?.metricInfo?.diskInfo?.total}
-                                            <span style={{ marginLeft: '3px' }}> {item?.metricInfo?.diskInfo?.unit}</span>
-                                            <span style={{ marginLeft: '5px' }}> {(item?.metricInfo?.diskInfo?.percentage || 0) * 100}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.diskInfo?.unit}</span>
+                                            <span style={{ marginLeft: '5px' }}> {((item?.metricInfo?.diskInfo?.percentage || 0) * 100).toFixed(2)}%</span>
                                         </span>
                                         <ProgessComponent percent={(item?.metricInfo?.diskInfo?.percentage) * 100 || 0} />
                                     </div>

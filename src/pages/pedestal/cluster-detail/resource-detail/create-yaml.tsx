@@ -2,17 +2,20 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/10/25 18:30
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { history } from 'umi';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio } from 'antd';
 import AceEditor from '@/components/ace-editor';
+import clusterContext from '../context';
+import { resourceCreate } from '../service'
 import './index.less';
 
 export default function CreateYaml(props: any) {
     const { visible, onClose, onSave, initData } = props;
     const [form] = Form.useForm();
+    const { clusterCode, cluseterName } = useContext(clusterContext);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     useEffect(() => {
         if (visible) {
@@ -22,7 +25,11 @@ export default function CreateYaml(props: any) {
 
     const handleSubmit = async () => {
         const value = form.getFieldsValue();
-
+        const res = await resourceCreate({ ...value, clusterCode });
+        if (res?.success) {
+            message.success('创建成功！')
+            onSave?.();
+        }
     };
     return (
         <Drawer

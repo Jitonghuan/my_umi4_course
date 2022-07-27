@@ -15,9 +15,9 @@ export const resourceDetailTableSchema = ({
     handleYaml,
     handleDelete
 }: {
-    handleDetail: (record: any, index: number) => void;
-    rePublic: (record: any, index: number) => void;
-    stop: (record: any, index: number) => void;
+    handleDetail: (record: any, index: number,) => void;
+    rePublic: (record: any, index: number, updateColumn: string) => void;
+    stop: (record: any, index: number, updateColumn: string) => void;
     handleYaml: (record: any, index: number) => void;
     handleDelete: (record: any, index: number) => void;
 }) =>
@@ -35,8 +35,14 @@ export const resourceDetailTableSchema = ({
         },
         {
             title: '资源类型',
-            dataIndex: 'kind',
+            dataIndex: 'type',
             width: 100,
+            ellipsis: true,
+            render: (value) => (
+                <Tooltip placement="topLeft" title={value}>
+                    {value}
+                </Tooltip>
+            )
         },
         {
             title: '命名空间',
@@ -54,21 +60,34 @@ export const resourceDetailTableSchema = ({
 
         {
             title: '节点',
-            dataIndex: 'nodeName',
+            dataIndex: ['info', 'nodeName'],
             width: 200,
-            ellipsis: {
-                showTitle: false,
-            },
+            ellipsis: true,
+            render: (value) => (
+                <Tooltip placement="topLeft" title={value}>
+                    {value}
+                </Tooltip>
+            ),
+
         },
         {
             title: '概述',
             dataIndex: 'overview',
             width: 200,
+            ellipsis: true,
+            render: (value) => (
+                <Tooltip placement="topLeft" title={value}>
+                    {value}
+                </Tooltip>
+            ),
         },
         {
             title: '状态',
-            dataIndex: 'status',
-            width: 200,
+            dataIndex: ['info', 'status'],
+            width: 150,
+            render: (value) => {
+                <Tag color='green'>{value}</Tag>
+            }
         },
         {
             title: '操作',
@@ -77,9 +96,13 @@ export const resourceDetailTableSchema = ({
             dataIndex: 'operate',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
-                    <a onClick={() => handleDetail(record, index)}>详情</a>
-                    <a onClick={() => rePublic(record, index)}>重新部署</a>
-                    <a onClick={() => stop(record, index)}>停止编排</a>
+                    {record?.type === 'deployments' && <a onClick={() => handleDetail(record, index)}>详情</a>}
+                    <a onClick={() => rePublic(record, index, 'redeploy')}>
+                        重新部署
+                    </a>
+                    <a onClick={() => stop(record, index, 'paused')}>
+                        {record?.info?.paused ? '恢复编排' : '停止编排'}
+                    </a>
                     <a onClick={() => handleYaml(record, index)}>查看YAML</a>
                     <Popconfirm
                         title="确定要删除该资源吗？"

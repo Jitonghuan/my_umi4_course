@@ -10,10 +10,10 @@ import clusterContext from '../context'
 import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import Page from '../component/page';
-import { getResourceList, resourceDel, resourceCreate } from '../service';
+import { getResourceList, resourceDel, resourceCreate, resourceUpdate } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
-import './index.less'
-const mockdata = [{ disk: '11', ip: '12.12.12', id: 1 }]
+import './index.less';
+const mockData = [{ type: 'deployments', kind: 'deployments' }]
 export default function ResourceDetail(props: any) {
     const { location, children } = props;
     const { clusterCode, cluseterName } = useContext(clusterContext);
@@ -33,7 +33,8 @@ export default function ResourceDetail(props: any) {
     const [typeData] = useResourceType({});
     const [typeOptions, setTypeOptions] = useState<any>([]);
     const [nameSpaceData] = useNameSpace({ clusterCode, resourceType: 'namespaces' });
-    const [currentRecord, setCurrentRecord] = useState<any>({})
+    const [currentRecord, setCurrentRecord] = useState<any>({});
+    const [originData, setOriginData] = useState<any>([]);
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
 
     // 表格列配置
@@ -42,22 +43,22 @@ export default function ResourceDetail(props: any) {
             handleDetail: (record: any, index: any) => {
                 history.push({
                     pathname: '/matrix/pedestal/cluster-detail/load-detail',
-                    query: { key: 'resource-detail', ...location.query },
+                    query: { key: 'resource-detail', ...location.query, kind: record?.kind, type: record?.type, namespace: record?.namespace, name: record?.name },
                 })
             },
-            rePublic: (record: any, index: any) => {
-
+            rePublic: async (record: any, index: any, updateColumn: string) => {
+                updateResource(record, updateColumn)
             },
-            stop: (record: any, index: any) => {
-
+            stop: async (record: any, index: any, updateColumn: string) => {
+                updateResource(record, updateColumn)
             },
             handleYaml: (record: any, index: any) => {
                 setCurrentRecord(record);
                 setYamlDetailVisible(true);
             },
             handleDelete: async (record: any, index: any) => {
-                const value = form.getFieldsValue();
-                const res = await resourceDel({ ...value, clusterCode })
+                const { resourceType, resourceName, namespace } = record;
+                const res = await resourceDel({ resourceType, resourceName, namespace, clusterCode })
                 if (res?.success) {
                     message.success('删除成功！');
                     queryList();
@@ -67,6 +68,9 @@ export default function ResourceDetail(props: any) {
     }, [dataSource]);
 
     useEffect(() => {
+        if (pageIndex === 1) {
+            setContinueList([''])
+        }
         queryList();
     }, [pageIndex])
 
@@ -84,24 +88,36 @@ export default function ResourceDetail(props: any) {
         }
     }, [nameSpaceData])
 
-    const queryList = () => {
-        setLoading(true);
+    const queryList = (index = pageIndex) => {
         const values = form.getFieldsValue();
         if (!values.resourceType) {
             return;
         };
-        console.log(pageIndex, continueList, 11)
-        let a = pageIndex === 1 ? '' : continueList[pageIndex - 2]
-        getResourceList({ ...values, pageIndex, limit: pageSize, continue: a, clusterCode }).then((res: any) => {
+        setLoading(true);
+        let a = index === 1 ? '' : continueList[index - 2]
+        getResourceList({ ...values, index, limit: pageSize, continue: a, clusterCode }).then((res: any) => {
             if (res?.success) {
                 setDataSource(res?.data?.items || []);
-                if (pageIndex === 1) {
+                setOriginData(res?.data?.items || []);
+                if (index === 1) {
                     setTotal(res?.data?.total || 0)
                 }
-                continueList[pageIndex - 1] = res?.data?.continue || '';
+                continueList[index - 1] = res?.data?.continue || '';
                 setContinueList([...continueList])
+            } else {
+                setOriginData([])
             }
         }).finally(() => { setLoading(false) })
+    }
+
+    const updateResource = async (record: any, updateColumn: string) => {
+        const { type, namespace, name, info } = record || {};
+        const params = Object.assign(info, { redeploy: !info[updateColumn] });
+        const res: any = await resourceUpdate({ resourceType: type, namespace, clusterCode, resourceName: name, updateBody: params });
+        if (res?.success) {
+            message.success('操作成功！');
+            queryList()
+        }
     }
 
     const addParams = (values: any) => {
@@ -132,31 +148,40 @@ export default function ResourceDetail(props: any) {
         setPageIndex(pageIndex + 1);
     }
 
-    const batchDelete = () => {
-        console.log(selectedRowKeys, 'selectRowKeys')
+    const filterData = (value: string) => {
+        const data = JSON.parse(JSON.stringify(originData))
+        const afterFilter: any = []
+        data.forEach((item: any) => {
+            if (item.name?.indexOf(value) !== -1) {
+                afterFilter.push(item)
+            }
+        })
+        setDataSource(afterFilter)
     }
 
-    const pageChange = (page: number, pageSize: number) => {
-        setPageIndex(page);
+    const onSave = () => {
+        setVisble(false);
+        initialSearch()
+    }
+
+    const initialSearch = () => {
+        setPageIndex(1);
+        setContinueList(['']);
+        queryList(1)
     }
 
     return (
         <div className='cluster-resource-detail'>
-            <CreateYaml visible={createYamlVisible} onClose={() => { setCreateYamlVisbile(false) }} ></CreateYaml>
+            <CreateYaml visible={createYamlVisible} onClose={() => { setCreateYamlVisbile(false) }} onSave={onSave} ></CreateYaml>
             <YamlDetail visible={yamlDetailVisible} onClose={() => { setYamlDetailVisible(false) }} initData={currentRecord}></YamlDetail>
             <div className='search-form'>
                 <Form
                     layout="inline"
-                    onFinish={() => {
-                        setContinueList(['']);
-                        queryList();
-                    }}
+                    onFinish={initialSearch}
                     form={form}
                     onReset={() => {
                         form.setFieldsValue({ resourceType: typeData[0].value, namespace: '' });
-                        setContinueList(['']);
-                        setPageIndex(1)
-                        queryList();
+                        initialSearch()
                     }}
                 >
                     <Form.Item label="资源类型" name="resourceType" rules={[{ required: true, message: '请选择查询关键词' }]}>
@@ -182,7 +207,7 @@ export default function ResourceDetail(props: any) {
                         </Select>
                     </Form.Item>
                     <Form.Item label="节点名称" name="nodeNames" >
-                        <Select style={{ width: 200 }} allowClear options={[{ label: 'test1', value: 'test1s' }]}>  </Select>
+                        <Select style={{ width: 200 }} allowClear options={[]}>  </Select>
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">查询</Button>
@@ -212,13 +237,14 @@ export default function ResourceDetail(props: any) {
                     <h3>资源列表</h3>
                 </div>
                 <div className="caption-right">
-                    搜索：<Input style={{ width: 200 }} size='small'></Input>
+                    搜索：<Input style={{ width: 200 }} size='small' onChange={(e) => { filterData(e.target.value) }}></Input>
                     <Button type="primary" onClick={() => { setCreateYamlVisbile(true) }} size='small' style={{ marginLeft: '10px' }}>创建资源</Button>
                 </div>
             </div>
             <div className='table-wrapper'>
                 <Table
                     dataSource={dataSource}
+                    // dataSource={mockData}
                     loading={loading}
                     bordered
                     rowKey="id"

@@ -1145,6 +1145,13 @@ export default [
             hideInMenu: true,
           },
           {
+            path: 'pods',
+            name: 'pod详情',
+            key: 'cluster-detail',
+            component: '@/pages/pedestal/cluster-detail/load-detail/pods-detail',
+            hideInMenu: true,
+          },
+          {
             path: 'view-log',
             name: '查看日志',
             key: 'cluster-detail',

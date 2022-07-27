@@ -15,10 +15,10 @@
         display: flex;
     }
     .tag-wrapper{
-        border:1px solid #c4bfbf;
+        border:1px solid #d4d1d1;
         padding:10px;
         margin-bottom: 10px;
-        min-height: 80px;
+        min-height: 100px;
     }
     .ant-table-content{
         overflow-x: auto;
@@ -40,6 +40,35 @@
         .sign{
             font-size: 20px;
             margin:0px 5px;
+        }
+    }
+
+    .ant-table-wrapper{
+        max-height: 30%;
+        overflow: auto;
+    }
+    .ant-empty-normal{
+        display: flex;
+        justify-content: center;
+        min-height: 150px;
+        align-items: center;
+        border:1px solid #d4d1d1;
+        margin:0px;
+    }
+    .ant-spin-nested-loading{
+        display: inline-block;
+        .ant-spin-container::after{
+            background:#cdcfd3
+
+        }
+        .ant-spin-blur::after {
+            max-height: 40px;
+            opacity: 1;
+        }
+    }
+    .var-table{
+        .ant-spin-nested-loading{
+            width: 100%;
         }
     }
 }
