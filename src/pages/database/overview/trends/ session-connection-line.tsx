@@ -19,10 +19,6 @@ export default function DiskUsingLine(props: ChartCaseListProps) {
     yField: 'count',
     seriesField: 'category',
     color: ['#1890ff', '#8bc0d6'],
-    // xAxis: {
-    //   type: 'time',
-    //   mask: 'YYYY',
-    // },
     yAxis: {
       label: {
         // 数值格式化为带百分号

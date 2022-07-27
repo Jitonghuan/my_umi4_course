@@ -81,7 +81,7 @@ export function useQueryPerformanceTrends() {
               const key = Object.keys(item)[0];
               item[key]?.map((ele: any) => {
                 pvcUsagDataArry.push({
-                  category: key + '_pvc_usage',
+                  category: key,
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                   count: Number(Number(ele[1]).toFixed(1)),
                 });
