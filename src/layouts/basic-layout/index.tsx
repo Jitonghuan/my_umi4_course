@@ -195,10 +195,21 @@ export default function Layout(props: any) {
               showSiderMenu={!fromThird}
               headerProps={{
                 // env: getEnv(),
-                userApi:
-                  matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
-                logoutApi: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
-                loginUrl: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/login`,
+                userApi: matrixConfigInfo?.domainName
+                  ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
+                  : window.location.href?.includes('gushangke')
+                  ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
+                  : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                logoutApi: matrixConfigInfo?.domainName
+                  ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
+                  : window.location.href?.includes('gushangke')
+                  ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
+                  : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                loginUrl: matrixConfigInfo?.domainName
+                  ? `${matrixConfigInfo?.domainName}/login`
+                  : window.location.href?.includes('gushangke')
+                  ? 'http://c2f.apex.gushangke.com/login'
+                  : `${matrixConfigInfo?.domainName}/login`,
                 onClickPosition: () => {
                   setPosVisible(true);
                   // @ts-ignore
