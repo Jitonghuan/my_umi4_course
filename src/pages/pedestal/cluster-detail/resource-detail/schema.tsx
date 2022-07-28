@@ -86,7 +86,9 @@ export const resourceDetailTableSchema = ({
             title: '状态',
             dataIndex: ['info', 'status'],
             width: 120,
-            render: (value) => { value ? <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : '#929793'}>{value}</Tag> : '' }
+            render: (value) => {
+                return value ? <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : '#929793'}>{value}</Tag> : ''
+            }
 
         },
         {

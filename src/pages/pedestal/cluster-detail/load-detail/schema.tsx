@@ -70,8 +70,7 @@ export const LIST_STATUS_TYPE: Record<string, statusTypeItem> = {
     updating: { text: 'updating', color: 'yellow' },
     pausedUnready: { text: 'pausedUnready', color: 'yellow' },
     pausedReady: { text: 'pausedReady', color: 'yellow' },
-    updateSuccess: { text: 'updateSuccess', color: 'green' },
-    updateFailed: { text: 'updateFailed', color: 'red' },
+    Success: { text: 'Success', color: 'green' },
 
 
 

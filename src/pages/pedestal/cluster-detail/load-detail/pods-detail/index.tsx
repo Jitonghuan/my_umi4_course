@@ -1,30 +1,57 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { Tag, Table, Empty, Button } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { PodsDetailColumn, envVarTable } from '../schema';
+import { eventTableSchema } from '../../schema';
+import { getResourceList } from '../../service';
+import { RedoOutlined } from '@ant-design/icons';
+
+
 import { history } from 'umi';
 import './index.less';
 
 export default function PodsDetail(props: any) {
-    // const { location } = props;
     const { location } = props;
-    const { pods, containersEnv } = location.state || {};
-    console.log(pods, containersEnv, 11)
+    const { name, namespace, kind, clusterCode } = location.query || {};
     const [podsData, setPodsData] = useState([]);
+    const [eventData, setEventData] = useState([]);
+    const [eventLoading, setEventLoading] = useState<boolean>(false);
+    const [podsLoading, setPodsLoading] = useState<boolean>(false);
     const [container, setContainer] = useState<any>([])
     useEffect(() => {
-        if (pods && pods.length) {
-            setPodsData(pods)
-        }
-        if (containersEnv && containersEnv.length) {
-            setContainer(containersEnv)
-        }
-    }, [pods, containersEnv])
+        getContainer();
+        getEvents();
+    }, [])
+
+    // 获取容器
+    const getContainer = () => {
+        setPodsLoading(true)
+        getResourceList({ clusterCode, resourceType: 'pods', namespace, resourceName: name }).then((res) => {
+            if (res?.success) {
+                setPodsData(res?.data?.items[0]?.info?.containers || [])
+                setContainer(res?.data?.items[0]?.info?.containers || [])
+            }
+        }).finally(() => { setPodsLoading(false) })
+    }
+
+    const getEvents = () => {
+        setEventLoading(false)
+        getResourceList({ clusterCode, resourceType: 'events', involvedObjectName: name, involvedObjectKind: kind || '' }).then((res) => {
+            if (res?.success) {
+                setEventData(res?.data?.items || [])
+            }
+        }).finally(() => { setEventLoading(false) })
+    }
+
     return (
         <div className="pods-detail">
             <div className='flex-space-between'>
                 <h3 className="descriptions-title">容器：</h3>
-                <Button type="primary" size='small' onClick={() => { history.goBack() }}>返回</Button>
+                <div>
+                    <Button icon={<RedoOutlined />} onClick={() => { getContainer(); getEvents() }} style={{ marginRight: '10px' }} size='small'>
+                        刷新</Button>
+                    <Button type="primary" size='small' onClick={() => { history.goBack() }}>返回</Button>
+                </div>
             </div>
             <Table
                 columns={PodsDetailColumn()}
@@ -32,10 +59,18 @@ export default function PodsDetail(props: any) {
                 bordered
                 // scroll={{ y: window.innerHeight - 564 }}
                 dataSource={podsData}
-            // loading={podLoading}
-            // locale={{ emptyText: <Empty description="暂无数据" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+                loading={podsLoading}
             />
-            <h3 className="descriptions-title" style={{ marginTop: '10px' }}>环境变量</h3>
+            <h3 className="descriptions-title" style={{ marginTop: '20px' }}>事件</h3>
+            <Table
+                dataSource={eventData}
+                loading={eventLoading}
+                bordered
+                rowKey="id"
+                pagination={false}
+                columns={eventTableSchema()}
+            ></Table>
+            <h3 className="descriptions-title" style={{ marginTop: '20px' }}>环境变量</h3>
             {container && container.length ?
                 <>
                     {container.map((item: any) => (

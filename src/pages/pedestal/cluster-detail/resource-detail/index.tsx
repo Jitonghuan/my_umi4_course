@@ -5,19 +5,18 @@ import { history } from 'umi';
 import PageContainer from '@/components/page-container';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { resourceDetailTableSchema } from './schema';
-import { keyOptions } from './schema'
 import clusterContext from '../context'
 import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import Page from '../component/page';
 import { useNodeListData } from '../hook'
-import { getResourceList, resourceDel, resourceCreate, resourceUpdate } from '../service';
+import { getResourceList, resourceDel, resourceUpdate } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
 import './index.less';
 const mockData = [{ type: 'deployments', kind: 'deployments' }]
 export default function ResourceDetail(props: any) {
     const { location, children } = props;
-    const { clusterCode, cluseterName } = useContext(clusterContext);
+    const { clusterCode } = useContext(clusterContext);
     const [visible, setVisble] = useState(false);
     const [form] = Form.useForm();
     const [dataSource, setDataSource] = useState([]);
@@ -53,10 +52,7 @@ export default function ResourceDetail(props: any) {
                 if (record.type === 'pods') {
                     history.push({
                         pathname: '/matrix/pedestal/cluster-detail/pods',
-                        query: { ...location.query, key: 'resource-detail' },
-                        state: {
-                            pods: record?.info?.containers || [], containersEnv: record?.info?.containers
-                        }
+                        query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind }
                     })
                 } else {
                     history.push({

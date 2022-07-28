@@ -1,12 +1,8 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from "react";
-import { Form, Button, Input, Pagination, Table, message } from "antd";
-import { delRequest } from '@/utils/request';
-import appConfig from '@/app.config';
-import PageContainer from '@/components/page-container';
+import { Form, Button, Table, message } from "antd";
 import clusterContext from '../context'
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { nodeListTableSchema } from '../schema';
-import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
+import { RedoOutlined } from '@ant-design/icons';
 import { useNodeListData } from '../hook'
 import { history } from 'umi'
 import { nodeDrain, nodeUpdate } from '../service'

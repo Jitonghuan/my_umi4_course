@@ -55,7 +55,7 @@ export default function LoadDetail(props: any) {
     const tableColumns = useMemo(() => {
         return podsTableSchema({
             toPodsDetail: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/cluster-detail/pods', query: { ...location.query }, state: { pods: record?.info?.containers || [], containersEnv: data?.info?.containersEnv } })
+                history.push({ pathname: '/matrix/pedestal/cluster-detail/pods', query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind } })
             },
             viewLog: (record: any, index: any) => {
                 history.push({ pathname: '/matrix/pedestal/view-log', query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode } })
