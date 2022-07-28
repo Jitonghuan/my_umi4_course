@@ -2,8 +2,9 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/19 10:57
 
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { Modal, Spin, Tag, Button } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { retry, queryActiveDeployInfo } from '@/pages/application/service';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -31,6 +32,7 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
   const [detail, setDetail] = useState<any>();
   const [visable, setVisable] = useState(false);
   const [retryLoading, setRetryLoading] = useState(false);
+  const [failPass, setFailPass] = useState(false);
   const handleReTry = () => {
     setRetryLoading(true);
     retry({ id: deployInfo?.metadata?.id }).then(() => {
@@ -39,11 +41,26 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
       }, 5000);
     });
   };
+  // const getFailPass=async()=>{
+  //   try {
+  //     const result = await getRequest(APIS.checkResultUrl, {
+  //       data: {
+  //         deployId: deployInfo?.metadata?.id,
+  //       },
+  //     });
+  //   console.log('result.data',result.data)
+  //     if(result.data?.includes("不满足校验规则")){
+  //       setFailPass(true);
+  //     }
+  //     setDetail(result.data || '');
+  //   } catch {
+  //     return;
+  //   }
+
+  // }
 
   const handleVisibleChange = useCallback(async () => {
-    // if (!nextVisible) return;
-
-    setVisable(true);
+    // setVisable(true);
 
     setLoading(true);
     try {
@@ -52,7 +69,10 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
           deployId: deployInfo?.metadata?.id,
         },
       });
-
+      console.log('result.data', result.data);
+      if (result.data?.includes('不满足校验规则')) {
+        setFailPass(true);
+      }
       setDetail(result.data || '');
     } catch {
       return;
@@ -61,6 +81,12 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
     }
   }, [deployInfo, appData]);
 
+  useEffect(() => {
+    handleVisibleChange();
+    return () => {
+      setFailPass(false);
+    };
+  }, [visible]);
   if (!visible) return null;
 
   const result_uc = detail?.result_uc || {};
@@ -95,9 +121,25 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
         </Spin>
       </Modal>
       <p style={{ marginBottom: 2 }}>
-        <a id="J_quality_check_detail_trigger" onClick={handleVisibleChange}>
-          检验结果
-        </a>
+        {failPass ? (
+          <a
+            style={{ color: 'red' }}
+            onClick={() => {
+              setVisable(true);
+            }}
+          >
+            <ExclamationCircleOutlined /> 不满足校验规则
+          </a>
+        ) : (
+          <a
+            id="J_quality_check_detail_trigger"
+            onClick={() => {
+              setVisable(true);
+            }}
+          >
+            检验结果
+          </a>
+        )}
       </p>
       {status === 'error' && (
         <p>
