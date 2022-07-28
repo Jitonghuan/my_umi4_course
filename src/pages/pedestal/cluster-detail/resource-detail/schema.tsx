@@ -86,9 +86,8 @@ export const resourceDetailTableSchema = ({
             title: '状态',
             dataIndex: ['info', 'status'],
             width: 120,
-            render: (value) => {
-                return <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : '#929793'}>{value}</Tag>
-            }
+            render: (value) => { value ? <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : '#929793'}>{value}</Tag> : '' }
+
         },
         {
             title: '操作',
@@ -98,11 +97,11 @@ export const resourceDetailTableSchema = ({
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
                     {['deployments', 'pods'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
-                    {record?.type !== 'pods' && <a onClick={() => rePublic(record, index, 'redeploy')}>
+                    {['deployments'].includes(record?.type) && <a onClick={() => rePublic(record, index, 'redeploy')}>
                         重新部署
                     </a>}
                     {
-                        record?.type !== 'pods' && <a onClick={() => stop(record, index, 'paused')}>
+                        ['deployments'].includes(record?.type) && <a onClick={() => stop(record, index, 'paused')}>
                             {record?.info?.paused ? '恢复编排' : '停止编排'}
                         </a>
                     }

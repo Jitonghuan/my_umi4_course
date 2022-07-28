@@ -10,6 +10,7 @@ import clusterContext from '../context'
 import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import Page from '../component/page';
+import { useNodeListData } from '../hook'
 import { getResourceList, resourceDel, resourceCreate, resourceUpdate } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
 import './index.less';
@@ -22,7 +23,6 @@ export default function ResourceDetail(props: any) {
     const [dataSource, setDataSource] = useState([]);
     const [yamlDetailVisible, setYamlDetailVisible] = useState(false);
     const [createYamlVisible, setCreateYamlVisbile] = useState(false);
-    const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
     const storeParams = JSON.parse(localStorage.getItem('resource_params_list') || '[]');
@@ -36,8 +36,15 @@ export default function ResourceDetail(props: any) {
     const [currentRecord, setCurrentRecord] = useState<any>({});
     const [originData, setOriginData] = useState<any>([]);
     const [nodeList, setNodeList] = useState<any>([]);
-    const [selectType, setSelectType] = useState<string>('')
+    const [selectType, setSelectType] = useState<string>('');
+    const [data] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
+    const [updateLoading, setUpdateLoading] = useState(false);
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
+
+    useEffect(() => {
+        const dataList = data.map((item: any) => ({ label: item.nodeName, value: item.nodeName }))
+        setNodeList(dataList)
+    }, [data])
 
     // 表格列配置
     const tableColumns = useMemo(() => {
@@ -70,8 +77,10 @@ export default function ResourceDetail(props: any) {
                 setYamlDetailVisible(true);
             },
             handleDelete: async (record: any, index: any) => {
-                const { resourceType, resourceName, namespace } = record;
-                const res = await resourceDel({ resourceType, resourceName, namespace, clusterCode })
+                const { type, name, namespace } = record;
+                setUpdateLoading(true)
+                const res = await resourceDel({ resourceType: type, resourceName: name, namespace, clusterCode })
+                setUpdateLoading(false)
                 if (res?.success) {
                     message.success('删除成功！');
                     queryList();
@@ -109,7 +118,7 @@ export default function ResourceDetail(props: any) {
         };
         setLoading(true);
         let a = index === 1 ? '' : continueList[index - 2]
-        getResourceList({ ...values, index, limit: pageSize, continue: a, clusterCode }).then((res: any) => {
+        getResourceList({ ...values, index, nodeName: values.node, limit: pageSize, continue: a, clusterCode }).then((res: any) => {
             if (res?.success) {
                 setDataSource(res?.data?.items || []);
                 setOriginData(res?.data?.items || []);
@@ -175,7 +184,7 @@ export default function ResourceDetail(props: any) {
     }
 
     const onSave = () => {
-        setVisble(false);
+        setCreateYamlVisbile(false);
         initialSearch()
     }
 
@@ -212,20 +221,23 @@ export default function ResourceDetail(props: any) {
                             }}>
                         </Select>
                     </Form.Item>
-                    <Form.Item label="命名空间" name="namespace" >
-                        <Select
-                            style={{ width: 200 }}
-                            allowClear options={nameSpaceData}
-                            showSearch
-                            optionFilterProp="label"
-                            filterOption={(input, option) => {
-                                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                            }}>
-                        </Select>
-                    </Form.Item>
-                    {selectType && <Form.Item label="节点名称" name="nodeNames" >
-                        <Select style={{ width: 200 }} allowClear options={nodeList}>  </Select>
-                    </Form.Item>}
+                    {selectType !== 'namespaces' &&
+                        <Form.Item label="命名空间" name="namespace" >
+                            <Select
+                                style={{ width: 200 }}
+                                allowClear options={nameSpaceData}
+                                showSearch
+                                optionFilterProp="label"
+                                filterOption={(input, option) => {
+                                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                                }}>
+                            </Select>
+                        </Form.Item>}
+                    {selectType === 'pods' &&
+                        <Form.Item label="节点名称" name="node" >
+                            <Select style={{ width: 200 }} allowClear options={nodeList}> </Select>
+                        </Form.Item>
+                    }
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit">查询</Button>
@@ -263,16 +275,9 @@ export default function ResourceDetail(props: any) {
                 <Table
                     dataSource={dataSource}
                     // dataSource={mockData}
-                    loading={loading}
+                    loading={loading || updateLoading}
                     bordered
                     rowKey="id"
-                    rowSelection={{
-                        type: 'checkbox',
-                        selectedRowKeys,
-                        onChange: (selectedRowKeys: React.Key[]) => {
-                            setSelectedRowKeys(selectedRowKeys as string[]);
-                        },
-                    }}
                     pagination={false}
                     columns={tableColumns}
                 // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}

@@ -15,6 +15,7 @@ import './index.less';
 export default function CreateYaml(props: any) {
     const { visible, onClose, onSave, initData } = props;
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState<boolean>(false)
     const { clusterCode, cluseterName } = useContext(clusterContext);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
     useEffect(() => {
@@ -24,8 +25,10 @@ export default function CreateYaml(props: any) {
     }, [visible]);
 
     const handleSubmit = async () => {
+        setLoading(true)
         const value = form.getFieldsValue();
         const res = await resourceCreate({ ...value, clusterCode });
+        setLoading(false)
         if (res?.success) {
             message.success('创建成功！')
             onSave?.();
@@ -42,7 +45,7 @@ export default function CreateYaml(props: any) {
                 // isDisabled !== true && (
                 <div className="drawer-footer">
                     <Button type="default" onClick={onClose}>取消 </Button>
-                    <Button type="primary" onClick={handleSubmit}>保存</Button>
+                    <Button type="primary" onClick={handleSubmit} loading={loading}>保存</Button>
                 </div>
                 // )
             }

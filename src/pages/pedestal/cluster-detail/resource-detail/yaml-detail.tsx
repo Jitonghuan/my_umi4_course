@@ -8,7 +8,6 @@ export default function YamlDetail(props: any) {
     const [readOnly, setReadOnly] = useState<boolean>(true);
     const handleOk = () => {
         const values = form.getFieldValue('value');
-        console.log(values, 'values')
         // putRequest(updateNg, {
         //   data: {
         //     id: id,
@@ -42,7 +41,7 @@ export default function YamlDetail(props: any) {
             width={'60%'}
             footer={[
                 <Button key="submit" type="primary" onClick={onClose}>取消</Button>,
-                <Button type="primary" onClick={handleOk}>提交 </Button>,
+                // <Button type="primary" onClick={handleOk}>提交 </Button>,
             ]}
         >
             <div className="code-title">

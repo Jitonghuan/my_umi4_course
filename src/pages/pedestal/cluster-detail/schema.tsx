@@ -39,7 +39,7 @@ export const nodeListTableSchema = ({
             // fixed: 'left',
             render: (value: any, record: any) => (
                 <div>
-                    <span style={{ marginLeft: '10px' }}>{value ? (value * 100).toFixed(2) : '-'}</span>
+                    <span style={{ marginLeft: '10px' }}>{value ? `${(value * 100).toFixed(2)}%` : '-'}</span>
                 </div>
             )
         },
@@ -250,21 +250,19 @@ export const eventTableSchema = () =>
     [
         {
             title: '类型',
-            dataIndex: 'type',
-            width: 100,
+            dataIndex: ['info', 'type'],
+            width: 80,
         },
         {
             title: '事件原因',
             dataIndex: ['info', 'reason'],
-            width: 230,
+            width: 80,
         },
         {
-            title: '事件类型',
-            dataIndex: ['info', 'type'],
+            title: '事件信息',
+            dataIndex: ['info', 'message'],
             width: 180,
-            ellipsis: {
-                showTitle: false,
-            },
+            ellipsis: true,
             render: (value: any) => (
                 <Tooltip placement="topLeft" title={value}>
                     {value}
@@ -273,7 +271,7 @@ export const eventTableSchema = () =>
         },
         {
             title: '时间',
-            dataIndex: 'createTime',
+            dataIndex: ['info', 'lastUpdateTime'],
             width: 80,
             ellipsis: {
                 showTitle: false,
