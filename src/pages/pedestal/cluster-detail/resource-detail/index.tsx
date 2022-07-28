@@ -35,16 +35,29 @@ export default function ResourceDetail(props: any) {
     const [nameSpaceData] = useNameSpace({ clusterCode, resourceType: 'namespaces' });
     const [currentRecord, setCurrentRecord] = useState<any>({});
     const [originData, setOriginData] = useState<any>([]);
+    const [nodeList, setNodeList] = useState<any>([]);
+    const [selectType, setSelectType] = useState<string>('')
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
 
     // 表格列配置
     const tableColumns = useMemo(() => {
         return resourceDetailTableSchema({
             handleDetail: (record: any, index: any) => {
-                history.push({
-                    pathname: '/matrix/pedestal/cluster-detail/load-detail',
-                    query: { key: 'resource-detail', ...location.query, kind: record?.kind, type: record?.type, namespace: record?.namespace, name: record?.name },
-                })
+                if (record.type === 'pods') {
+                    history.push({
+                        pathname: '/matrix/pedestal/cluster-detail/pods',
+                        query: { ...location.query, key: 'resource-detail' },
+                        state: {
+                            pods: record?.info?.containers || [], containersEnv: record?.info?.containers
+                        }
+                    })
+                } else {
+                    history.push({
+                        pathname: '/matrix/pedestal/cluster-detail/load-detail',
+                        query: { key: 'resource-detail', ...location.query, kind: record?.kind, type: record?.type, namespace: record?.namespace, name: record?.name },
+                    })
+                }
+
             },
             rePublic: async (record: any, index: any, updateColumn: string) => {
                 updateResource(record, updateColumn)
@@ -191,6 +204,8 @@ export default function ResourceDetail(props: any) {
                             style={{ width: 200 }}
                             options={typeOptions}
                             showSearch
+                            value={selectType}
+                            onChange={(value: any) => { setSelectType(value) }}
                             optionFilterProp="label"
                             filterOption={(input, option) => {
                                 return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -208,9 +223,10 @@ export default function ResourceDetail(props: any) {
                             }}>
                         </Select>
                     </Form.Item>
-                    {/* <Form.Item label="节点名称" name="nodeNames" >
-                        <Select style={{ width: 200 }} allowClear options={[]}>  </Select>
-                    </Form.Item> */}
+                    {selectType && <Form.Item label="节点名称" name="nodeNames" >
+                        <Select style={{ width: 200 }} allowClear options={nodeList}>  </Select>
+                    </Form.Item>}
+
                     <Form.Item>
                         <Button type="primary" htmlType="submit">查询</Button>
                     </Form.Item>

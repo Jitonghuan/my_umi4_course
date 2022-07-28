@@ -6,6 +6,7 @@ import PageContainer from '@/components/page-container';
 import clusterContext from '../context'
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { nodeListTableSchema } from '../schema';
+import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
 import { useNodeListData } from '../hook'
 import { history } from 'umi'
 import { nodeDrain, nodeUpdate } from '../service'
@@ -82,10 +83,11 @@ export default function NodeList() {
                 baseTags={cluster.labels}
                 initData={initData}
             ></SetTag>
-            <div className="table-caption" >
-                <div className="caption-left">
-                    <h3>节点列表</h3>
-                </div>
+            <div className='flex-space-between' >
+
+                <h3>节点列表</h3>
+                <Button icon={<RedoOutlined />} onClick={() => { loadData() }} style={{ marginRight: '10px' }} size='small'>
+                    刷新</Button>
                 {/* <div className="caption-right">
                     <Button type="primary" onClick={() => { setVisble(true) }}>新增节点</Button>
                 </div> */}

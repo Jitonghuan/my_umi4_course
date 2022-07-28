@@ -5,7 +5,7 @@ import { history } from 'umi';
 import DownLoadFile from './download-file';
 import AddModal from './add-modal'
 import './index.less';
-import { getResourceList, resourceUpdate } from '../service';
+import { getResourceList, resourceUpdate, resourceDel } from '../service';
 import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
 import clusterContext from '../context'
 
@@ -55,7 +55,7 @@ export default function LoadDetail(props: any) {
     const tableColumns = useMemo(() => {
         return podsTableSchema({
             toPodsDetail: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/cluster-detail/pods', query: { ...location.query }, state: { pods: record?.info?.containers || [], containersEnv: data?.info?.container } })
+                history.push({ pathname: '/matrix/pedestal/cluster-detail/pods', query: { ...location.query }, state: { pods: record?.info?.containers || [], containersEnv: data?.info?.containersEnv } })
             },
             viewLog: (record: any, index: any) => {
                 history.push({ pathname: '/matrix/pedestal/view-log', query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode } })
@@ -66,8 +66,14 @@ export default function LoadDetail(props: any) {
             // download: (record: any, index: any) => {
             //     setVisible(true)
             // },
-            handleDelete: (record: any, index: any) => {
-
+            handleDelete: async (record: any, index: any) => {
+                setPodLoading(true)
+                const res = await resourceDel({ resourceType: record?.type, resourceName: record?.name, namespace: record?.namespace, clusterCode })
+                if (res?.success) {
+                    message.success('删除成功！');
+                    queryPods();
+                }
+                setPodLoading(false)
             },
         }) as any;
     }, [podData]);
@@ -140,16 +146,6 @@ export default function LoadDetail(props: any) {
                             value.forEach((e: any) => { item.env.push({ name: e.key, value: e.value }) })
                         }
                     })
-                    // const nameList = i.env.map((ele: any) => ele.name)
-                    // value.forEach((e: any) => {
-                    //     if (nameList.includes(e.key)) {
-                    //         message.error('存在重复的name！');
-                    //         return false
-                    //     }
-                    //     i.env.push({
-                    //         name: e.key, value: e.value
-                    //     })
-                    // })
                 }
             }
 
@@ -163,13 +159,6 @@ export default function LoadDetail(props: any) {
                 }
                 requstParams.labels[item.key] = item.value
             }
-            // value.forEach((item: any) => {
-            //     if (Object.keys(requstParams.labels).includes(item.key)) {
-            //         message.error('存在重复的key！');
-            //         return false
-            //     }
-            //     requstParams.labels[item.key] = item.value
-            // })
         }
         setButtonLoading(true);
         const res: any = await resourceUpdate({ resourceType: type, namespace: namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(requstParams) });
@@ -224,7 +213,6 @@ export default function LoadDetail(props: any) {
             {Object.keys(obj).map((item: any) => {
                 if (item === 'fuben') {
                     return <div className='grid-wrapper-item'>
-                        {/* // <Spin indicator={antIcon} /> */}
                         <Spin indicator={antIcon} spinning={subLoading}><a className='sign' style={{ color: '#e74848' }} onClick={() => { clickSign('sub') }}>-</a></Spin>
                         {obj[item]}：{data?.info?.availableReplicas || '0'}/{data?.info?.replicas || '0'}
                         <Spin indicator={antIcon} spinning={addLoading}><a className='sign' style={{ color: 'green' }} onClick={() => { clickSign('add') }}>+</a></Spin>

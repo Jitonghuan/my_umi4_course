@@ -87,7 +87,7 @@ export const resourceDetailTableSchema = ({
             dataIndex: ['info', 'status'],
             width: 120,
             render: (value) => {
-                return <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : 'green'}>{value}</Tag>
+                return <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : '#929793'}>{value}</Tag>
             }
         },
         {
@@ -97,13 +97,15 @@ export const resourceDetailTableSchema = ({
             dataIndex: 'operate',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
-                    {record?.type === 'deployments' && <a onClick={() => handleDetail(record, index)}>详情</a>}
-                    <a onClick={() => rePublic(record, index, 'redeploy')}>
+                    {['deployments', 'pods'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
+                    {record?.type !== 'pods' && <a onClick={() => rePublic(record, index, 'redeploy')}>
                         重新部署
-                    </a>
-                    <a onClick={() => stop(record, index, 'paused')}>
-                        {record?.info?.paused ? '恢复编排' : '停止编排'}
-                    </a>
+                    </a>}
+                    {
+                        record?.type !== 'pods' && <a onClick={() => stop(record, index, 'paused')}>
+                            {record?.info?.paused ? '恢复编排' : '停止编排'}
+                        </a>
+                    }
                     <a onClick={() => handleYaml(record, index)}>查看YAML</a>
                     <Popconfirm
                         title="确定要删除该资源吗？"

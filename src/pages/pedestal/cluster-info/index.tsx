@@ -33,7 +33,6 @@ export default function clusterInfo() {
                     }
                 })
             });
-            console.log(clusterDatas, 'data')
         } else {
             setData([])
         }
@@ -83,18 +82,21 @@ export default function clusterInfo() {
                                                 }
                                             });
                                         }}>{item.clusterName || '----'}</a>
-                                    <div className="display-item" style={{ justifyContent: 'flex-start' }}>主机数：{item?.nodeInfo?.length || 0}<Count data={item.nodeInfo || []}></Count></div>
+                                    <div className="display-item" style={{ justifyContent: 'flex-start' }}>节点数：{item?.nodeInfo?.length || 0}<Count data={item.nodeInfo || []}></Count></div>
                                 </div>
                                 {/* 第二个单元格 */}
                                 <div className='list-wrapper-item'>
                                     <div className='item-top'>CODE:{item.clusterCode}</div>
                                     <div className="display-item">
                                         <div className='bottom'>
-                                            CPU:{item?.metricInfo?.cpuInfo?.usage || '-'}/{item?.metricInfo?.cpuInfo?.total || ''}
+                                            CPU:
+                                            {item?.metricInfo?.cpuInfo?.unit ? `${item?.metricInfo?.cpuInfo?.usage}/${item?.metricInfo?.cpuInfo?.total}` : '-'}
                                             <span style={{ marginLeft: '2px' }}>{item?.metricInfo?.cpuInfo?.unit}</span>
-                                            <span style={{ marginLeft: '2px' }}> {((item?.metricInfo?.cpuInfo?.percentage) * 100).toFixed(2)}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.cpuInfo?.percentage ? `${((item?.metricInfo?.cpuInfo?.percentage || 0) * 100).toFixed(2)}%` : ''}</span>
                                         </div>
-                                        <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
+                                        {/* <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} /> */}
+                                        {item?.metricInfo?.cpuInfo?.percentage ? <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} /> : ''}
+
                                     </div>
                                 </div>
                                 {/* 第三个单元格 */}
@@ -102,24 +104,27 @@ export default function clusterInfo() {
                                     <div className='item-top'>版本:{item.clusterVersion}</div>
                                     <div className="display-item">
                                         <div className='bottom'>
-                                            内存:{item?.metricInfo?.memoryInfo?.usage}/{item?.metricInfo?.memoryInfo?.total}
+                                            内存:
+                                            {item?.metricInfo?.memoryInfo?.unit ? `${item?.metricInfo?.memoryInfo?.usage}/${item?.metricInfo?.memoryInfo?.total}` : '-'}
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.memoryInfo?.unit}</span>
-                                            <span style={{ marginLeft: '2px' }}> {((item?.metricInfo?.memoryInfo?.percentage) * 100).toFixed(2)}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.memoryInfo?.percentage ? `${((item?.metricInfo?.memoryInfo?.percentage || 0) * 100).toFixed(2)}%` : ''}</span>
                                         </div>
-                                        <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
+                                        {item?.metricInfo?.memoryInfo?.percentage ? <ProgessComponent percent={(item?.metricInfo?.memoryInfo?.percentage) * 100 || 0} /> : ''}
                                     </div>
                                 </div>
                                 {/* 第四个单元格 */}
                                 <div className='list-wrapper-item-last'>
-                                    <div className='last-item' style={{ flex: '1' }}>集群状态：<span style={{ color: `${STATUS_COLOR[item?.status] || '#857878'}` }}>{STATUS_TEXT[item?.status] || '---'}</span></div>
+                                    <div className='last-item' style={{ flex: '1' }}>集群状态：<span style={{ color: `${STATUS_COLOR[item?.status] || '#857878'}` }}>{STATUS_TEXT[item?.status] || '-'}</span></div>
                                     <div className='last-item ' style={{ flex: '1' }}>集群类型：{item.clusterType}</div>
                                     <div className='last-item display-item' style={{ flex: '1' }}>
                                         <span className='bottom'>
-                                            磁盘：{item?.metricInfo?.diskInfo?.usage}/{item?.metricInfo?.diskInfo?.total}
+                                            磁盘：
+                                            {item?.metricInfo?.diskInfo?.unit ? `${item?.metricInfo?.diskInfo?.usage}/${item?.metricInfo?.diskInfo?.total}` : '-'}
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.diskInfo?.unit}</span>
-                                            <span style={{ marginLeft: '2px' }}> {((item?.metricInfo?.diskInfo?.percentage || 0) * 100).toFixed(2)}%</span>
+                                            <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.diskInfo?.percentage ? `${((item?.metricInfo?.diskInfo?.percentage || 0) * 100).toFixed(2)}%` : ''}</span>
+
                                         </span>
-                                        <ProgessComponent percent={(item?.metricInfo?.diskInfo?.percentage) * 100 || 0} />
+                                        {item?.metricInfo?.diskInfo?.percentage ? <ProgessComponent percent={(item?.metricInfo?.diskInfo?.percentage) * 100 || 0} /> : ''}
                                     </div>
                                 </div>
                             </div>

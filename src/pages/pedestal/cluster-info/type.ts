@@ -7,5 +7,5 @@ export const STATUS_COLOR: statusInterface = {
 };
 
 export const STATUS_TEXT: statusInterface = {
-    risk: '警告', offline: '离线中', health: '健康'
+    risk: '风险', offline: '离线', health: '健康'
 }

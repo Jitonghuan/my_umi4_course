@@ -52,7 +52,7 @@ export default function ClusterDetail(props: any) {
 
     useEffect(() => {
         setActiveTab(location?.query?.key || 'node-list')
-        history.push({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
+        // history.replace({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
     }, [location?.pathname])
 
     useEffect(() => {

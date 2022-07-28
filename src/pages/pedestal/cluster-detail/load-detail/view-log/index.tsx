@@ -24,7 +24,6 @@ export default function ViewLog(props: any) {
     const [queryListContainer, setQueryListContainer] = useState<any>();
     const [container, setContainer] = useState<any>([]);
     const [currentContainer, setCurrentContainer] = useState<string>('');
-    const infoRecord = props?.location?.state?.infoRecord || {};
     const logData = useRef<string>('');
     let ansi_up = new AnsiUp();
     let ws = useRef<WebSocket>();

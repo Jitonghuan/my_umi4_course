@@ -6,14 +6,20 @@ import { history } from 'umi';
 import './index.less';
 
 export default function PodsDetail(props: any) {
-    const { location, children } = props;
+    // const { location } = props;
+    const { location } = props;
     const { pods, containersEnv } = location.state || {};
-    const [podsData, setPodsData] = useState([])
+    console.log(pods, containersEnv, 11)
+    const [podsData, setPodsData] = useState([]);
+    const [container, setContainer] = useState<any>([])
     useEffect(() => {
         if (pods && pods.length) {
             setPodsData(pods)
         }
-    }, [pods])
+        if (containersEnv && containersEnv.length) {
+            setContainer(containersEnv)
+        }
+    }, [pods, containersEnv])
     return (
         <div className="pods-detail">
             <div className='flex-space-between'>
@@ -30,19 +36,17 @@ export default function PodsDetail(props: any) {
             // locale={{ emptyText: <Empty description="暂无数据" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
             />
             <h3 className="descriptions-title" style={{ marginTop: '10px' }}>环境变量</h3>
-            {containersEnv ?
+            {container && container.length ?
                 <>
-                    {containersEnv.map((item: any) => (
+                    {container.map((item: any) => (
                         <div>
-                            <div style={{ marginBottom: '5px', fontSize: '12px' }}>当前容器：<Tag color='blue'>{item.containerName || '--'}</Tag></div>
+                            <div style={{ marginBottom: '5px', fontSize: '12px' }}>当前容器：<Tag color='blue'>{item?.containerName || item?.name || '--'}</Tag></div>
                             <Table
                                 dataSource={item?.env || []}
                                 bordered
                                 pagination={false}
                                 rowKey="id"
                                 columns={envVarTable()}
-                                locale={{ emptyText: <Empty description="暂无数据" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
-
                             ></Table>
                         </div>
                     ))}

@@ -1,7 +1,8 @@
 import { Progress } from 'antd';
-import React from 'react';
+import { useMemo } from 'react'
 
 export default function ProgressComponent(props: any) {
     const { percent } = props;
-    return <Progress percent={percent} size="small" strokeWidth={20} showInfo={false} style={{ width: '30%' }} strokeColor='#36cd50' />
+    const color = useMemo(() => percent > 80 ? '#d0c669' : '#65ca75', [percent])
+    return <Progress percent={percent} size="small" strokeWidth={20} showInfo={false} style={{ width: '30%' }} strokeColor={`${color}`} />
 }

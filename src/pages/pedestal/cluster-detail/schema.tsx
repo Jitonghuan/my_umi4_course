@@ -34,13 +34,12 @@ export const nodeListTableSchema = ({
         },
         {
             title: 'CPU',
-            dataIndex: 'cpu',
+            dataIndex: ['metricInfo', 'cpuInfo', 'percentage'],
             width: 120,
             // fixed: 'left',
-            render: (value: string, record: any) => (
+            render: (value: any, record: any) => (
                 <div>
-                    {record?.metricInfo?.cpuInfo?.usage}/{record?.metricInfo?.cpuInfo?.total}
-                    <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.cpuInfo?.unit}</span>
+                    <span style={{ marginLeft: '10px' }}>{value ? (value * 100).toFixed(2) : '-'}</span>
                 </div>
             )
         },
@@ -52,7 +51,7 @@ export const nodeListTableSchema = ({
             // fixed: 'left',
             render: (value: string, record: any) => (
                 <div>
-                    {record?.metricInfo?.memoryInfo?.usage}/{record?.metricInfo?.memoryInfo?.total}
+                    {record?.metricInfo?.memoryInfo?.unit ? `${record?.metricInfo?.memoryInfo?.usage}/${value}` : '-'}
                     <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.memoryInfo?.unit}</span>
                 </div>
             )
@@ -64,7 +63,7 @@ export const nodeListTableSchema = ({
             // fixed: 'left',
             render: (value: string, record: any) => (
                 <div>
-                    {record?.metricInfo?.diskInfo?.usage}/{record?.metricInfo?.diskInfo?.total}
+                    {record?.metricInfo?.diskInfo?.unit ? `${record?.metricInfo?.diskInfo?.usage}/${value}` : '-'}
                     <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.diskInfo?.unit}</span>
                 </div>
             )
@@ -73,7 +72,11 @@ export const nodeListTableSchema = ({
             title: '负载(5M)',
             dataIndex: 'load',
             width: 80,
-            // fixed: 'left',
+            render: (value: any, record: any) => (
+                <div>
+                    <span style={{ marginLeft: '10px' }}>{value ? value : '-'}</span>
+                </div>
+            )
         },
         {
             title: '状态',
@@ -82,7 +85,7 @@ export const nodeListTableSchema = ({
             // fixed: 'left',
             render: (value: any, record: any) => (
                 <div>
-                    {value && value[0] && <span style={{ color: `${value && value[0] ? STATUS_COLOR[value[0]] : '#65ca75'}` }}>{STATUS_TEXT[value[0]] || value[0]}</span>}
+                    {value && <span style={{ color: `${value && value[0] ? STATUS_COLOR[value[0]] : '#929793'}` }}>{STATUS_TEXT[value[0]] || value[0] || '-'}</span>}
                     {value && value.includes('unschedulable') && <span style={{ color: 'red' }}>不可调度</span>}
                     {value && value.includes('drain') && <span style={{ color: 'red' }}>排空</span>}
                 </div>
