@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
-import { getPageErrorInfo } from '../../../../server';
+import {getImportantErrorList} from '../../../../server';
 import { Drawer } from '@cffe/h2o-design';
 
 interface IProps {
@@ -8,6 +8,7 @@ interface IProps {
   loading: boolean;
   total: number;
   getParam: (data: any) => any;
+  type: string;
 }
 
 interface DataSourceItem {
@@ -21,16 +22,17 @@ interface DataSourceItem {
   i: number;
 }
 
-const ComponentError = ({ dataSource, total, loading, getParam }: IProps) => {
+const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
 
   async function getDetail(record: any) {
-    const res = await getPageErrorInfo(
+    const res = await getImportantErrorList(
       getParam({
-        d1: record.d1,
-        d2: record.url,
+        ...record,
+        searchType: type,
+        queryDetail: true
       }),
     );
     const data = res?.data || [];
@@ -67,12 +69,11 @@ const ComponentError = ({ dataSource, total, loading, getParam }: IProps) => {
           columns={[
             {
               title: '组件名称',
-              // dataIndex: 'd1',
+              dataIndex: 'd5',
               ellipsis: {
                 showTitle: true,
               },
               width: 200,
-              render: () => 'd5',
             },
             {
               title: '错误信息',
@@ -102,7 +103,7 @@ const ComponentError = ({ dataSource, total, loading, getParam }: IProps) => {
         onClose={() => setShowDetail(false)}
         className='fe-error-detail'
       >
-        <Descriptions bordered column={2}>
+        <Descriptions bordered column={2} labelStyle={{ width: 140 }}>
           <Descriptions.Item label="错误信息" span={2}>
             {detail.d1}
           </Descriptions.Item>
@@ -118,7 +119,11 @@ const ComponentError = ({ dataSource, total, loading, getParam }: IProps) => {
           <Descriptions.Item label="UA信息" span={2}>
             {detail.ua}
           </Descriptions.Item>
-          <Descriptions.Item label="用户信息" span={2}>
+          <Descriptions.Item label="用户" span={2}>
+            {detail.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="科室" span={2}>
+            {detail.deptName}
           </Descriptions.Item>
         </Descriptions>
         <div className="sub-title">堆栈信息</div>

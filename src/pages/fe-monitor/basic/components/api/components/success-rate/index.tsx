@@ -42,7 +42,7 @@ const SuccessRate = (props: IProps) => {
       return;
     }
     let params = props.getParam()
-    params = { ...params, searchType: 'successRate', ...sorter };
+    params = { ...sorter, ...params, searchType: 'successRate', ...value };
     if (api) {
       params = { ...params, api };
     }
@@ -73,18 +73,22 @@ const SuccessRate = (props: IProps) => {
           scroll={{ x: '100%' }}
           rowKey="ts"
           loading={loading}
-          onChange={(newPagination,filters, sorter) => {
-            const sorType = orderMap[sorter?.order];
-            const sortField = sorter.field;
-            setSorter({
-              sorType,
-              sortField
-            });
-            onSearchSuccessRate({
-              ...formValue,
-              sorType,
-              sortField
-            })
+          onChange={(newPagination,filters, sorter, {action}) => {
+            console.log(action)
+            console.log(sorter)
+            if (action === 'sort') {
+              const sorType = orderMap[sorter?.order];
+              const sortField = sorter.field;
+              setSorter({
+                sorType,
+                sortField
+              });
+              onSearchSuccessRate({
+                ...formValue,
+                sorType,
+                sortField
+              })
+            }
           }}
           columns={[
             {

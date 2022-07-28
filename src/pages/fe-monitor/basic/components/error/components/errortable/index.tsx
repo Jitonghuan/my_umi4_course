@@ -129,7 +129,7 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
         onClose={() => setShowDetail(false)}
         className='fe-error-detail'
       >
-        <Descriptions bordered column={2}>
+        <Descriptions bordered column={2} labelStyle={{ width: 140 }}>
           <Descriptions.Item label="错误信息" span={2}>
             {detail.d1}
           </Descriptions.Item>
@@ -145,7 +145,11 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
           <Descriptions.Item label="dom路径" span={2}>
             {detail.d5}
           </Descriptions.Item>
-          <Descriptions.Item label="用户信息" span={2}>
+          <Descriptions.Item label="用户" span={2}>
+            {detail.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="科室" span={2}>
+            {detail.deptName}
           </Descriptions.Item>
         </Descriptions>
         <div className="sub-title">堆栈信息</div>
@@ -160,10 +164,11 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
         title='SourceMap还原'
         visible={sourceMapVisible}
         footer={null}
+        width={800}
         destroyOnClose
         onCancel={() => { setSourceMapVisible(false) }}
       >
-        <MonacoEditor value={sourceInfo?.code} height={200} options={{ lineNumbers: (line) => sourceInfo ? (sourceInfo.line + line) : line }} />
+        <MonacoEditor value={sourceInfo?.code} height={400} options={{ lineNumbers: (line) => sourceInfo ? (sourceInfo.line + line) : line }} />
       </Modal>
     </div>
   );

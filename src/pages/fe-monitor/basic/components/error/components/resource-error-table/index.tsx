@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
-import { getPageErrorInfo } from '../../../../server';
+import {getImportantErrorList, getPageErrorInfo} from '../../../../server';
 import { CloseOutlined } from '@ant-design/icons';
 import { Drawer } from '@cffe/h2o-design';
 interface IProps {
@@ -8,6 +8,7 @@ interface IProps {
   loading: boolean;
   total: number;
   getParam: (data: any) => any;
+  type: string;
 }
 
 interface DataSourceItem {
@@ -21,16 +22,18 @@ interface DataSourceItem {
   i: number;
 }
 
-const ResourceErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
+const ResourceErrorTable = ({ dataSource, total, loading, getParam, type }: IProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
 
   async function getDetail(record: any) {
-    const res = await getPageErrorInfo(
+    const res = await getImportantErrorList(
       getParam({
         d1: record.d1,
         d2: record.url,
+        searchType: type,
+        queryDetail: true
       }),
     );
     const data = res?.data || [];
@@ -68,12 +71,10 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam }: IProps) =>
           columns={[
             {
               title: '资源路径',
-              // dataIndex: 'd1',
+              dataIndex: 'd1',
               ellipsis: {
                 showTitle: true,
-              },
-              width: 200,
-              render: () => 'd1',
+              }
             },
             {
               title: '次数',
@@ -96,7 +97,7 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam }: IProps) =>
         onClose={() => setShowDetail(false)}
         className='fe-error-detail'
       >
-        <Descriptions bordered column={2}>
+        <Descriptions bordered column={2} labelStyle={{ width: 140 }}>
           <Descriptions.Item label="错误文件" span={2}>
             {detail.d1}
           </Descriptions.Item>
@@ -106,7 +107,11 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam }: IProps) =>
           <Descriptions.Item label="UA信息" span={2}>
             {detail.ua}
           </Descriptions.Item>
-          <Descriptions.Item label="用户信息" span={2}>
+          <Descriptions.Item label="用户" span={2}>
+            {detail.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="科室" span={2}>
+            {detail.deptName}
           </Descriptions.Item>
         </Descriptions>
       </Drawer>

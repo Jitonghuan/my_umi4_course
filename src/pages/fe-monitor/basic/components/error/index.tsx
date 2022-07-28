@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
-import { getErrorChart, getErrorList } from '../../server';
+import {getErrorChart, getErrorList, getImportantErrorList} from '../../server';
 import ErrorTable from './components/errortable';
 import ResourceErrorTable from './components/resource-error-table';
 import ComponentError from './components/component-error';
 
-import { Button, Form, Input, Tabs } from '@cffe/h2o-design';
+import { Tabs } from '@cffe/h2o-design';
 import './index.less';
 
 interface IProps {
@@ -37,7 +37,7 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [importantErrorLoading, setImportantErrorLoading] = useState<boolean>(false);
   const [importantErrorTotal, setImportantErrorTotal] = useState<number>(0);
 
-  const [activeKey, setActiveKey] = useState<string>("1");
+  const [activeKey, setActiveKey] = useState<string>("componentError");
 
   function getParam(extra = {}) {
     let param: any = {
@@ -124,29 +124,25 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
     setLoading(false);
   }
 
-  // 错误列表
+  // 重点错误列表
   async function onImportantErrorList() {
     if (loading) {
       return;
     }
     setImportantErrorLoading(true);
-    const res = await getErrorList(getParam());
+    const param = getParam();
+    const res = await getImportantErrorList({
+      ...param,
+      queryDetail: false,
+      searchType: activeKey
+    });
     const data = res?.data || [];
     const list: any = [];
     for (const item of data) {
-      for (let i = 0; i < item[1].length; i++) {
-        const suItem = item[1][i];
-        list.push({
-          id: (Math.random() * 1000000).toFixed(0),
-          url: item[0],
-          colSpan: i === 0 ? 1 : 0,
-          i,
-          len: item[1].length,
-          rowSpan: i === 0 ? item[1].length : 1,
-          d1: suItem[0],
-          count: suItem[1],
-        });
-      }
+      list.push({
+        id: (Math.random() * 1000000).toFixed(0),
+        ...item
+      });
     }
     setImportantErrorList(list);
     setImportantErrorTotal(data.length);
@@ -217,28 +213,19 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
               setActiveKey(val);
             }}
           >
-            <Tabs.TabPane tab="组件加载错误" key="1" />
-            {/* <Tabs.TabPane tab="定制包加载错误" key="2" /> */}
-            <Tabs.TabPane tab="页面重点资源加载错误" key="3" />
-            <Tabs.TabPane tab="定制包资源加载错误" key="4" />
+            <Tabs.TabPane tab="组件加载错误" key="componentError" />
+            <Tabs.TabPane tab="页面重点资源加载错误" key="importantResource" />
+            <Tabs.TabPane tab="定制包资源加载错误" key="extensionResource" />
           </Tabs>
           {
-            activeKey == '1' ?
-              <ComponentError dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
+            activeKey == 'componentError' ?
+              <ComponentError type="componentError" dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
               :
-              <ResourceErrorTable dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
+              <ResourceErrorTable type={activeKey} dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
           }
         </div>
         <div className='error-list'>
           <div className="list-title">错误列表</div>
-          <Form layout="inline">
-            <Form.Item>
-              <Input />
-            </Form.Item>
-            <Form.Item>
-              <Button type='primary'>查询</Button>
-            </Form.Item>
-          </Form>
           <ErrorTable dataSource={dataSource} loading={loading} total={total} getParam={getParam} />
         </div>
       </div>
