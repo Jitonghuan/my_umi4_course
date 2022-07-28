@@ -1,19 +1,38 @@
-// 应用卡片列表
-// @author CAIHUAZHI <moyan@come-future.com>
-// @create 2021/08/25 09:26
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, Tabs } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import BoardCardList from './component/board-card';
 import DataSource from './component/datasource';
+import { getCluster, graphTableList } from './service';
 import './index.less';
+import { ConsoleSqlOutlined } from '@ant-design/icons';
 
 const rootCls = 'monitor-board';
 
 export default function Board() {
 
   const [activeKey, setActiveKey] = useState<string>('board')
+  const [clusterList, setClusterList] = useState<any>([])
+  const [curCluster, setCurCluster] = useState<number>(1)
+
+  console.log(curCluster)
+  useEffect(() => {
+    getCluster().then((res) => {
+      if (res.success) {
+        const data = res.data.map((item: any) => {
+          return {
+            label: item.clusterName,
+            value: item.id
+          }
+        })
+        setClusterList(data);
+      }
+    })
+  }, [])
+
+  const onClusterChange = (value: number) => {
+    setCurCluster(value)
+  }
 
   return (
     <PageContainer className={rootCls}>
@@ -23,10 +42,9 @@ export default function Board() {
           <Select
             clearIcon={false}
             style={{ width: '120px' }}
-            options={[
-
-            ]}
-            onChange={()=>{}} />
+            value={curCluster}
+            options={clusterList}
+            onChange={onClusterChange} />
         </div>
       </div>
       <div className="app-group-content-wrapper">
@@ -39,14 +57,12 @@ export default function Board() {
           <Tabs.TabPane tab="监控大盘" key="board" />
           <Tabs.TabPane tab="数据源" key="datasource" />
         </Tabs>
-        {/* <div className="app-group-content"> */}
-          {activeKey === "board" &&
-            <BoardCardList />
-          }
-          {activeKey === "datasource" &&
-            <DataSource />
-          }
-        {/* </div> */}
+        {activeKey === "board" &&
+          <BoardCardList cluster={curCluster} />
+        }
+        {activeKey === "datasource" &&
+          <DataSource cluster={curCluster} />
+        }
       </div>
     </PageContainer>
   );

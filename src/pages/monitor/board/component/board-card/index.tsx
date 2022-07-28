@@ -8,32 +8,30 @@ import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import BoardList from '../card-list';
 import FilterHeader from '../filter-header';
-import { useAppListData } from '@/pages/application/hooks';
 import './index.less';
 import EditorDrawer from '../editor-drawer';
+import { useGrafhTable } from '../../hooks';
+import { delGraphTable } from '../../service';
+import type {TMode} from '../../interfaces';
 
 const rootCls = 'monitor-board';
 
-export default function Board() {
-  const currentType: any = localStorage.getItem('__last_application_type');
-  const [type, setType] = useState<'all' | 'mine' | 'collect'>(currentType || 'collect');
+
+export default function Board(props: any) {
+  const { cluster } = props;
 
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(50);
-  const [searchParams, setSearchParams] = useState<any>(
-    localStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(localStorage.ALL_APPLICATIO_SEARCH) : {},
-  );
+  const [searchParams, setSearchParams] = useState<any>({});
 
-  const hookParams = useMemo(() => ({ ...searchParams, requestType: type }), [type, searchParams]);
-  const [appListData, total, isLoading, loadAppListData] = useAppListData(hookParams, pageIndex, pageSize);
+  const hookParams = useMemo(() => ({ ...searchParams, clusterCode: cluster }), [searchParams]);
+  const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize);
 
   const [editDrawer, setEditDrawer] = useState<boolean>(false)
 
-  const handleTypeChange = useCallback((e: any) => {
-    const next = e.target.value;
-    setType(next);
-    localStorage.setItem('__last_application_type', next);
-  }, []);
+  const [mode, setMode] = useState<TMode>('add')
+  const [boardInfo, setBoardInfo] = useState<any>({})
+
 
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
@@ -44,6 +42,17 @@ export default function Board() {
   const onDrawerClose = () => {
     setEditDrawer(false)
   }
+
+  const handleDelete = async (graphUuId: string) => {
+    const res = await delGraphTable(cluster, graphUuId)
+  }
+
+  const handleEdit = async (record:any) => {
+    setMode('edit')
+    setEditDrawer(true)
+    setBoardInfo(record)
+  }
+
 
   return (
     <>
@@ -58,10 +67,10 @@ export default function Board() {
 
         <Spin spinning={isLoading}>
           <div className={`${rootCls}__card-wrapper`}>
-            {!isLoading && !appListData.length && (
+            {!isLoading && !graphTableList.length && (
               <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
-            <BoardList key={type} type={type} dataSource={appListData} loadAppListData={loadAppListData} />
+            <BoardList cluster={cluster} dataSource={graphTableList} loadGraphTable={loadGraphTable} deleteBoard={handleDelete} handleEdit={handleEdit}/>
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>
                 <Pagination
@@ -79,7 +88,7 @@ export default function Board() {
             )}
           </div>
         </Spin>
-        <EditorDrawer visible={editDrawer} mode='add' onClose={onDrawerClose} />
+        <EditorDrawer boardInfo={boardInfo} cluster={cluster} visible={editDrawer} mode={mode} onClose={onDrawerClose} />
       </ContentCard>
     </>
   );
