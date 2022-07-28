@@ -21,12 +21,13 @@ export default function NodeList() {
     const [pageSize, setPageSize] = useState<number>(10);
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [initData, setInitData] = useState<any>({});
+    const [updateLoading, setUpdateLoading] = useState(false);
     const [data, total, loading, loadData] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
 
     const tableColumns = useMemo(() => {
         return nodeListTableSchema({
             shell: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/cluster-detail/login-shell', query: { key: 'node-list', type: 'node', name: record.nodeName } })
+                history.push({ pathname: '/matrix/pedestal/login-shell', query: { key: 'node-list', type: 'node', name: record.nodeName, clusterCode } })
             },
             // 设置标签
             clickTag: (record: any, index: any) => {
@@ -40,19 +41,23 @@ export default function NodeList() {
             },
             // 调度
             updateNode: async (record: any, index: any) => {
-                const res = await nodeUpdate({ unschedulable: !record.unschedulable, clusterCode, nodeName: record.nodeName, })
+                setUpdateLoading(true)
+                const res = await nodeUpdate({ unschedulable: !record.unschedulable, clusterCode, nodeName: record.nodeName, labels: record.labels, taints: record.taints })
                 if (res?.success) {
                     message.success('操作成功');
                     loadData();
                 }
+                setUpdateLoading(false)
             },
             // 排空
             drain: async (record: any, index: any) => {
+                setUpdateLoading(true)
                 const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode })
                 if (res?.success) {
                     message.success('操作成功');
                     loadData();
                 }
+                setUpdateLoading(false)
             },
             // 删除
             // handleDelete: async (record: any, index: any) => {
@@ -87,7 +92,7 @@ export default function NodeList() {
             </div>
             <Table
                 dataSource={data}
-                loading={loading}
+                loading={loading || updateLoading}
                 bordered
                 rowKey="id"
                 // pagination={{

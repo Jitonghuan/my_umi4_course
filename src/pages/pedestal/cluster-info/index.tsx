@@ -21,33 +21,31 @@ export default function clusterInfo() {
     const [clusterDatas, total, loading, loadData] = useClusterListData({ pageIndex, pageSize })
     const [data, setData] = useState([]);//数据合集
     useEffect(() => {
-        if (clusterDatas.length !== 0) {
+        if (clusterDatas && clusterDatas.length !== 0) {
             setData(clusterDatas);
             const codeLists = clusterDatas.map((item: any) => item.clusterCode);
             clusterDatas.forEach((item: any) => {
                 getNode({ clusterCode: item.clusterCode }).then((res) => {
                     if (res?.success) {
                         item.nodeInfo = res?.data?.items || [];
+                        item.status = res?.data?.status || '';
                         setData([...clusterDatas] as any)
                     }
                 })
             });
+            console.log(clusterDatas, 'data')
         } else {
             setData([])
         }
     }, [clusterDatas])
 
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
-    const valueChange = (e: any) => {
-        setSearchCode(e.target.value)
-    }
     const pageChange = (page: number, pageSize: number) => {
         setPageIndex(page);
         setPageSize(pageSize);
     }
     const handleSearch = () => {
         const value = form.getFieldsValue()
-        console.log(value, 11)
         loadData({ ...value })
     }
     return (
@@ -113,7 +111,7 @@ export default function clusterInfo() {
                                 </div>
                                 {/* 第四个单元格 */}
                                 <div className='list-wrapper-item-last'>
-                                    <div className='last-item' style={{ flex: '1' }}>集群状态：<span style={{ color: `${STATUS_COLOR[item.status] || '#857878'}` }}>{STATUS_TEXT[item.status] || '---'}</span></div>
+                                    <div className='last-item' style={{ flex: '1' }}>集群状态：<span style={{ color: `${STATUS_COLOR[item?.status] || '#857878'}` }}>{STATUS_TEXT[item?.status] || '---'}</span></div>
                                     <div className='last-item ' style={{ flex: '1' }}>集群类型：{item.clusterType}</div>
                                     <div className='last-item display-item' style={{ flex: '1' }}>
                                         <span className='bottom'>

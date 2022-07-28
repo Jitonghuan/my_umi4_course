@@ -78,7 +78,7 @@ export const nodeListTableSchema = ({
         {
             title: '状态',
             dataIndex: 'status',
-            width: 80,
+            width: 130,
             // fixed: 'left',
             render: (value: any, record: any) => (
                 <div>

@@ -58,10 +58,10 @@ export default function LoadDetail(props: any) {
                 history.push({ pathname: '/matrix/pedestal/cluster-detail/pods', query: { ...location.query }, state: { pods: record?.info?.containers || [], containersEnv: data?.info?.container } })
             },
             viewLog: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/cluster-detail/view-log' })
+                history.push({ pathname: '/matrix/pedestal/view-log', query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode } })
             },
             shell: (record: any, index: any) => {
-                history.push({ pathname: '/matrix/pedestal/cluster-detail/login-shell', query: { type: 'pods', key: 'resource-detail', name: record?.name, namespace: record?.namespace }, state: { record: record } })
+                history.push({ pathname: '/matrix/pedestal/login-shell', query: { type: 'pods', key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode } })
             },
             // download: (record: any, index: any) => {
             //     setVisible(true)

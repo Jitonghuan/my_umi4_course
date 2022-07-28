@@ -11,27 +11,75 @@ import { history } from 'umi';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { FeContext } from '@/common/hooks';
+import { getResourceList } from '../../service';
+
 import './index.less';
 
 export default function ViewLog(props: any) {
     const [viewLogform] = Form.useForm();
-    // const { appData } = useContext(DetailContext);
-    const [log, setLog] = useState<string>('1243ffjdsfjdljflsdj');
+    const { name, clusterCode, namespace } = props?.location?.query || {};
+    const [log, setLog] = useState<string>('');
+    const { matrixConfigData } = useContext(FeContext);
     const [queryListContainer, setQueryListContainer] = useState<any>();
+    const [container, setContainer] = useState<any>([]);
     const [currentContainer, setCurrentContainer] = useState<string>('');
-    const [previous, setPrevious] = useState<boolean>(false);
-    // const { infoRecord } = props?.location?.state;
     const infoRecord = props?.location?.state?.infoRecord || {};
     const logData = useRef<string>('');
-    let currentContainerName = '';
     let ansi_up = new AnsiUp();
     let ws = useRef<WebSocket>();
     let scrollBegin = useRef<boolean>(true);
     useEffect(() => {
-        if (Object.getOwnPropertyNames(infoRecord).length == 0) {
-            return;
+        if (!currentContainer && container && container.length) {
+            setCurrentContainer(container[0].value)
+            viewLogform.setFieldsValue({ containerName: container[0].value })
+            ws.current = new WebSocket(
+                `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${name}&containerName=${container[0].value}&clusterCode=${clusterCode}&namespace=${namespace}&action=watchContainerLog&tailLine=200`,
+            ); //建立通道
+            let dom: any = document?.getElementById('result-log');
+            ws.current.onmessage = (evt: any) => {
+                if (dom) {
+                    // 获取滚动条到滚动区域底部的高度
+                    const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+                    let bottom = 0;
+                    if (scrollB) {
+                        // 计算滚动条到日志div底部的距离
+                        bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+                    }
+                    //如果返回结果是字符串，就拼接字符串，或者push到数组，
+                    logData.current += evt.data;
+                    setLog(logData.current);
+                    let html = ansi_up.ansi_to_html(logData.current);
+                    dom.innerHTML = html;
+                    if (bottom <= 20) {
+                        dom.scrollTo(0, dom.scrollHeight);
+                    }
+                }
+            };
+            ws.current.onerror = () => {
+                message.warning('webSocket 链接失败');
+            };
         }
-    }, []);
+
+    }, [container]);
+    useEffect(() => {
+        if (clusterCode && name && namespace) {
+            getResourceList({ clusterCode, resourceName: name, namespace, resourceType: 'pods' }).then((res) => {
+                if (res?.success) {
+                    const { items } = res?.data || {};
+                    if (items && items[0]) {
+                        const containerData = items[0]?.info?.containers?.map((item: any) => {
+                            if (item?.status === 'Running') {
+                                return { label: item.name, value: item.name }
+                            }
+                        })
+                        setContainer(containerData)
+                    }
+                }
+
+            })
+        }
+    }, [clusterCode, name, namespace]);
 
     useLayoutEffect(() => {
 
@@ -45,9 +93,9 @@ export default function ViewLog(props: any) {
             logData.current = '';
             setLog(logData.current);
             scrollBegin.current = true;
-            // ws.current = new WebSocket(
-            //     `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${getContainer}&previous=${previous}&action=watchContainerLog&tailLine=200`,
-            // ); //建立通道
+            ws.current = new WebSocket(
+                `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${name}&namespace=${namespace}&containerName=${getContainer}&clusterCode=${clusterCode}&action=watchContainerLog&tailLine=200`,
+            ); //建立通道
             ws.current.onopen = () => {
                 message.success('更换容器成功!');
             };
@@ -77,7 +125,7 @@ export default function ViewLog(props: any) {
         }
     };
     const onChange = (e: CheckboxChangeEvent) => {
-        setPrevious(e.target.checked);
+        // setPrevious(e.target.checked);
         if (ws.current) {
             ws.current.close();
             logData.current = '';
@@ -168,63 +216,63 @@ export default function ViewLog(props: any) {
     }
 
     return (
-        <ContentCard noPadding className="viewLog">
-            <div className="loginShellContent" style={{ height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 6 }}>
-                <div className="log-caption">
-                    {/* <div className="caption-left">
-                        <Form form={viewLogform} layout="inline">
-                            <pre>选择容器： </pre>
-                            <Form.Item name="containerName">
-                                <Select style={{ width: 220 }} options={queryListContainer} onChange={selectListContainer}></Select>
-                            </Form.Item>
-                        </Form>
-                    </div>
-                    <div className="caption-right">
-                        <span>
+        // <ContentCard noPadding className="viewLog">
+        <div className="loginShellContent" style={{ height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 6 }}>
+            <div className="log-caption">
+                <div className="caption-left">
+                    <Form form={viewLogform} layout="inline">
+                        <pre>选择容器： </pre>
+                        <Form.Item name="containerName">
+                            <Select style={{ width: 220 }} options={container} onChange={selectListContainer}></Select>
+                        </Form.Item>
+                    </Form>
+                </div>
+                <div className="caption-right">
+                    {/* <span>
                             当前环境：<Tag color="geekblue">{envCode}</Tag>
-                        </span>
-                    </div> */}
-                </div>
-                <div
-                    id="result-log"
-                    className="result-log"
-                    style={{
-                        whiteSpace: 'pre-line',
-                        padding: 8,
-                        lineHeight: 2,
-                        fontSize: 16,
-                        color: '#12a182',
-                        wordBreak: 'break-word',
-                    }}
-                >
-                    {log}
-                </div>
-
-                <div style={{ height: 30, textAlign: 'center', position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: 0 }}>
-                        <Checkbox onChange={onChange} />
-                        <b style={{ paddingLeft: 4 }}>以前的容器</b>
-                    </span>
-
-                    <span className="event-button">
-                        <Button type="primary" onClick={downloadLog}>
-                            下载日志
-                        </Button>
-                        <Button type="primary" onClick={scrollTop} style={{ marginLeft: 4 }}>
-                            回到顶部
-                       </Button>
-                        <Button type="primary" onClick={scrollBottom} style={{ marginLeft: 4 }}>
-                            回到底部
-                       </Button>
-                        <Button type="primary" onClick={clearScreen} style={{ marginLeft: 4 }}>
-                            清空屏幕
-                       </Button>
-                        <Button type="primary" onClick={closeSocket} style={{ marginLeft: 4 }}>
-                            关闭
-                       </Button>
-                    </span>
+                        </span> */}
                 </div>
             </div>
-        </ContentCard>
+            <div
+                id="result-log"
+                className="result-log"
+                style={{
+                    whiteSpace: 'pre-line',
+                    padding: 8,
+                    lineHeight: 2,
+                    fontSize: 16,
+                    color: '#12a182',
+                    wordBreak: 'break-word',
+                }}
+            >
+                {log}
+            </div>
+
+            <div style={{ height: 30, textAlign: 'center', position: 'relative' }}>
+                {/* <span style={{ position: 'absolute', left: 0 }}>
+                    <Checkbox onChange={onChange} />
+                    <b style={{ paddingLeft: 4 }}>以前的容器</b>
+                </span> */}
+
+                <span className="event-button">
+                    <Button type="primary" onClick={downloadLog}>
+                        下载日志
+                        </Button>
+                    <Button type="primary" onClick={scrollTop} style={{ marginLeft: 4 }}>
+                        回到顶部
+                       </Button>
+                    <Button type="primary" onClick={scrollBottom} style={{ marginLeft: 4 }}>
+                        回到底部
+                       </Button>
+                    <Button type="primary" onClick={clearScreen} style={{ marginLeft: 4 }}>
+                        清空屏幕
+                       </Button>
+                    <Button type="primary" onClick={closeSocket} style={{ marginLeft: 4 }}>
+                        关闭
+                       </Button>
+                </span>
+            </div>
+        </div>
+        // </ContentCard>
     );
 }

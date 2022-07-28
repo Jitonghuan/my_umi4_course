@@ -10,15 +10,13 @@ import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FeContext } from '@/common/hooks';
-import clusterContext from '../../context'
+import clusterContext from '../../context';
+import { getResourceList } from '../../service';
 import './index.less';
 
 export default function ClusteLoginShell(props: any) {
     const [viewLogform] = Form.useForm();
-    const { record } = props.location.state || {};//从资源详情的pods跳转过来的container数据
-    const { type, name, namespace } = props.location.query || {};
-    console.log(type, name, namespace, 11)
-    const { clusterCode, cluseterName } = useContext(clusterContext);
+    const { type, name, namespace, clusterCode } = props.location.query || {};
     const { matrixConfigData } = useContext(FeContext);
     const [container, setContainer] = useState<any>([]);
     const [selectContainer, setSelectContainer] = useState<any>('');
@@ -27,19 +25,9 @@ export default function ClusteLoginShell(props: any) {
     // const resourceUrl = `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${value}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`
     const ws = useRef<WebSocket>();
     const term = useRef<any>();
-    useEffect(() => {
-        if (record?.info?.containers) {
-            const containerData = record?.info?.containers?.map((item: any) => {
-                if (item?.status === 'Running') {
-                    return { label: item.name, value: item.name }
-                }
-            })
-            setContainer(containerData)
-        }
-    }, [record?.info?.containers])
 
     useEffect(() => {
-        if (!selectContainer && container.length) {
+        if (!selectContainer && container && container.length) {
             setSelectContainer(container[0].value)
             viewLogform.setFieldsValue({ containerName: container[0].value })
             initWS(container[0].value)
@@ -48,11 +36,35 @@ export default function ClusteLoginShell(props: any) {
 
     const getUrl = useCallback((v: string) => {
         if (type === 'node') {
-            return `${baseUrl}&instName=${name}`
+            return `${baseUrl}&nodeName=${name}`
         } else {
             return `${baseUrl}&instName=${name}&namespace=${namespace}&containerName=${v}`
         }
     }, [type])
+
+    useEffect(() => {
+        if (type === 'pods' && name && namespace) {
+            getResourceList({ clusterCode, resourceName: name, namespace, resourceType: 'pods' }).then((res) => {
+                if (res?.success) {
+                    const { items } = res?.data || {};
+                    console.log(items, 'items')
+                    if (items && items[0]) {
+                        const containerData = items[0]?.info?.containers?.map((item: any) => {
+                            if (item?.status === 'Running') {
+                                return { label: item.name, value: item.name }
+                            }
+                        })
+
+                        setContainer(containerData)
+                    }
+                }
+
+            })
+        }
+        if (type === 'node' && name) {
+            initWS(getUrl(''))
+        }
+    }, [type, name, namespace])
 
     const initWS = (value: string) => {
         let dom: any = document?.getElementById('terminal');
@@ -195,7 +207,7 @@ export default function ClusteLoginShell(props: any) {
                     </div>
                 </div>
             </div>
-            <div id="terminal" className="xterm" style={{ width: '100%', maxHeight: "calc(100vh - 251px)", backgroundColor: '#060101' }}></div>
+            <div id="terminal" className="xterm" style={{ width: '100%', maxHeight: "calc(100vh - 120px)", backgroundColor: '#060101' }}></div>
             <div style={{ height: 28, width: '100%', textAlign: 'center', marginTop: 4 }}>
                 <span className="eventButton">
                     <Button type="primary" onClick={closeSocket}>

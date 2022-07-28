@@ -17,7 +17,7 @@ export default function PodsDetail(props: any) {
     return (
         <div className="pods-detail">
             <div className='flex-space-between'>
-                <h3 className="descriptions-title">实例（Pod）事件：</h3>
+                <h3 className="descriptions-title">容器：</h3>
                 <Button type="primary" size='small' onClick={() => { history.goBack() }}>返回</Button>
             </div>
             <Table
@@ -26,8 +26,8 @@ export default function PodsDetail(props: any) {
                 bordered
                 // scroll={{ y: window.innerHeight - 564 }}
                 dataSource={podsData}
-                // loading={podLoading}
-                locale={{ emptyText: <Empty description="暂无数据" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+            // loading={podLoading}
+            // locale={{ emptyText: <Empty description="暂无数据" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
             />
             <h3 className="descriptions-title" style={{ marginTop: '10px' }}>环境变量</h3>
             {containersEnv ?

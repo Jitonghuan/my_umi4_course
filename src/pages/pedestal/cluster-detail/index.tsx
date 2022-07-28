@@ -19,6 +19,7 @@ const TabList = [
 ]
 
 const path = '/matrix/pedestal/cluster-detail'
+// /pedestal/cluster-detail/node-list
 const temp = [{ label: '集群1', value: 'code1' }, { label: '集群2', value: 'code2' },]
 export default function ClusterDetail(props: any) {
     const { location, children } = props;
@@ -28,12 +29,31 @@ export default function ClusterDetail(props: any) {
     const [selectCluster, setSelectCluster] = useState<any>({ value: clusterCode || '', label: clusterName || '' });
     const [activeTab, setActiveTab] = useState<string>(location?.query?.key || 'node-list')
     const [data, total] = useClusterListData({ pageSize: -1, pageIndex: -1 });
+    // // 默认重定向到节点列表路由下
+    // if (location.pathname === path) {
+    //     return (
+    //         history.replace({
+    //             pathname: `${location.pathname}/node-list`,
+    //             query: { key: 'node-list' },
+    //         }),
+    //         null
+    //     );
+    // }
     useEffect(() => {
-        if (data.length) {
+        if (data && data.length) {
             const res = data.map((item: any) => ({ value: item.clusterCode, label: item.clusterName }))
             setClusterOption(res)
         }
     }, [data])
+
+    useEffect(() => {
+        console.log(111)
+    }, [])
+
+    useEffect(() => {
+        setActiveTab(location?.query?.key || 'node-list')
+        history.push({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
+    }, [location?.pathname])
 
     useEffect(() => {
         if (!clusterCode) {
@@ -44,10 +64,6 @@ export default function ClusterDetail(props: any) {
     useEffect(() => {
         history.push({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
     }, [selectCluster])
-
-    if (!clusterCode) {
-    }
-
 
     const selectChange = (v: any) => {
         setSelectCluster({ label: v.label, value: v.value });
