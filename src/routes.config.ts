@@ -525,7 +525,7 @@ export default [
     icon: 'icon-poc_index',
     routes: [
       {
-        path: 'board',
+        path: 'panel',
         name: '监控大盘',
         component: '@/pages/monitor/board',
       },
@@ -536,7 +536,7 @@ export default [
         component: '@/pages/monitor/board/board-detail',
       },
       {
-        path: 'cluster',
+        path: 'board',
         name: '集群监控',
         component: '@/pages/monitor/cluster',
       },
