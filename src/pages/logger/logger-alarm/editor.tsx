@@ -19,6 +19,7 @@ import {
 } from './hooks';
 import {ruleCheckName} from "./service";
 import PromqlEditPreview from "@/pages/monitor/promql-edit-preview";
+import UserSelector from "@/components/user-selector";
 
 const { Item: FormItem } = Form;
 
@@ -121,14 +122,11 @@ export default function AlarmEditor(props: AlarmEditorProps) {
 
   async function checkName () {
     if (name && name !== props.initData?.name) {
-      const res = await getRequest(ruleCheckName, {
+      await getRequest(ruleCheckName, {
         data: {
           name
         }
       })
-      if (!res?.success) {
-        setName('');
-      }
     }
   }
 
@@ -160,13 +158,12 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       {disableEdit ? <Alert type="warning" message="告警规则已停用，无法编辑" style={{ marginBottom: 16 }} /> : null}
 
       <Form form={field} labelCol={{ flex: '132px' }} wrapperCol={{ span: 16 }}>
-        <FormItem label="告警名称" rules={[{ required: true, message: '请输入告警名称' }]}>
+        <FormItem label="告警名称" name="name" rules={[{ required: true, message: '请输入告警名称' }]}>
           <Input
             placeholder="请输入"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onBlur={checkName}
-            onMouseEnter={checkName}
           />
         </FormItem>
         <FormItem label="应用名" name="appCode" rules={[{ required: true, message: '请选择应用' }]}>
@@ -256,18 +253,9 @@ export default function AlarmEditor(props: AlarmEditorProps) {
         <FormItem
           label="通知对象"
           name="receiver"
-          // rules={[{ required: true, message: '通知对象不能为空' }]}
         >
-          <Select placeholder="请选择" options={userOptions} showSearch mode="multiple" />
+          <UserSelector />
         </FormItem>
-        {/* <FormItem
-          label="通知方式"
-          name="receiverType"
-          rules={[{ required: true, message: '请选择通知方式' }]}
-          initialValue={notifyTypeOptions[0]?.value}
-        >
-          <Select placeholder="请选择" options={notifyTypeOptions} />
-        </FormItem> */}
         <FormItem label="是否静默" name="silence" initialValue={'0'}>
           <Radio.Group>
             <Radio value="0">否</Radio>

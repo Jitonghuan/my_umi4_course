@@ -287,7 +287,7 @@ export default function DpMonitorEdit(props: any) {
                                   }}
                                   block
                                   icon={<PlusOutlined />}
-                                  style={{ width: 240, margin: '10px 0 0 110px' }}
+                                  style={{ width: 370, margin: '10px 0 0 110px' }}
                                 >
                                   选取自定义标签(列名)
                                 </Button>
@@ -298,11 +298,13 @@ export default function DpMonitorEdit(props: any) {
                                 <Form.Item
                                   {...restField}
                                   name={[name, 'key']}
+                                  label="name"
                                 >
                                   <Input placeholder="name" />
                                 </Form.Item>
                                 <Form.Item
                                   {...restField}
+                                  label="value"
                                   name={[name, 'value']}
                                 >
                                   <Input placeholder="value" />

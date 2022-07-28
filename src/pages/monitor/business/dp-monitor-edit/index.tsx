@@ -505,7 +505,7 @@ export default function DpMonitorEdit(props: any) {
                                               }}
                                               block
                                               icon={<PlusOutlined />}
-                                              style={{ width: 240, marginLeft: 30 }}
+                                              style={{ width: 370, marginLeft: 110 }}
                                             >
                                               选取自定义标签(列名)
                                             </Button>
@@ -518,7 +518,7 @@ export default function DpMonitorEdit(props: any) {
                                               name={[labelName]}
                                               rules={[{ required: true, message: '请输入!' }]}
                                             >
-                                              <Select style={{ width: 210, marginLeft: 5 }}>
+                                              <Select style={{ width: 370, marginLeft: 86 }}>
                                                 {
                                                   (sqlRes[key]?.labels || []).map((item: string) => (
                                                     <Select.Option key={item} value={item}>{item}</Select.Option>
