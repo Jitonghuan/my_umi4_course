@@ -15,7 +15,6 @@ const DataSource = (props: any) => {
   const [type, setType] = useState<string>('')
   const [categoryCode, setCategoryCode] = useState<string>();
   const [checked, setChecked] = useState<boolean>(false)
-  const [selectedType, setSelectedType] = useState<String>('')
   const [dataSource, setDataSource] = useState<any[]>([])
   const [visible, setVisible] = useState<boolean>(false)
   const [saveLoading, setSaveLoading] = useState<boolean>(false)
@@ -24,7 +23,6 @@ const DataSource = (props: any) => {
 
 
   const handleReset = useCallback(() => {
-    setCategoryCode(undefined);
     searchField.setFieldsValue({
       appType: '',
       appCategoryCode: '',
@@ -39,7 +37,6 @@ const DataSource = (props: any) => {
       searchField.setFieldsValue({
         appGroupCode: '',
       });
-      setCategoryCode(next);
     },
     [searchField],
   );
@@ -53,11 +50,12 @@ const DataSource = (props: any) => {
   }
 
   const getDatasourceList = async (formValue: any = {}) => {
-    const { dsType, keyword } = formValue
-    console.log('111', cluster)
     if (cluster) {
-      console.log('cluster', cluster);
-      const res = await getGraphGraphDatasouceList(cluster, dsType, keyword)
+      const data = {
+        clusterCode: cluster,
+        ...formValue,
+      }
+      const res = await getGraphGraphDatasouceList(data)
       if (res && Array.isArray(res?.data?.dataSource)) {
         setDataSource(res.data.dataSource)
         setTotal(res?.data?.pageInfo?.total || 0)
@@ -70,13 +68,27 @@ const DataSource = (props: any) => {
   }
 
   const onSwitchChange = () => {
-
+    setChecked(!checked)
   }
 
   const handleEdit = (record: any) => {
+    console.log(record)
+    const { name, uuid, url, type, user, password, indexName, esVersion } = record;
+    const formValue = {
+      clusterCode: cluster,
+      dsType: type,
+      dsName: name,
+      dsUrl: url,
+      dsUuid: uuid,
+      user,
+      password,
+      indexName,
+      esVersion,
+    }
+    setType(type)
     setVisible(true);
-    setSourceDetail(record);
-    editForm.setFieldsValue(record);
+    setSourceDetail(formValue);
+    editForm.setFieldsValue(formValue);
   }
 
   const handleDelete = async (id: number) => {
@@ -87,11 +99,12 @@ const DataSource = (props: any) => {
   const handleSubmit = async () => {
     setSaveLoading(true)
     const value = editForm.getFieldsValue()
-    if (sourceDetail?.id) {
-      await updateGraphDatasouce({ ...sourceDetail, ...value })
+    if (sourceDetail?.dsUuid) {
+      await updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster })
     } else {
-      await createGraphDatasouce(value)
+      await createGraphDatasouce({ ...value, clusterCode: cluster })
     }
+    setSaveLoading(false)
   }
 
   const colums = [
@@ -140,42 +153,44 @@ const DataSource = (props: any) => {
   return (
     <>
       <FilterCard>
-        <Form
-          layout="inline"
-          initialValues={searchParams}
-          form={searchField}
-          onFinish={handleSearch}
-          onReset={handleReset}
-        >
-          <Form.Item label="名称" name="keyword">
-            <Input placeholder="请输入数据源名称" style={{ width: 140 }} />
-          </Form.Item>
-          <Form.Item label="数据源类型" name="dsType">
-            <Select
-              options={[
-                { label: 'elasticsearch', value: 'elasticsearch' },
-                { label: 'prometheus', value: 'prometheus' },
-              ]}
-              placeholder="请选择"
-              style={{ width: 120 }}
-              allowClear
-              onChange={handleAppCategoryChange}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
-              查询
-            </Button>
-            <Button type="default" htmlType="reset" danger>
-              重置
-            </Button>
-          </Form.Item>
-        </Form>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Form
+            layout="inline"
+            initialValues={searchParams}
+            form={searchField}
+            onFinish={handleSearch}
+            onReset={handleReset}
+          >
+            <Form.Item label="名称" name="keyword">
+              <Input placeholder="请输入数据源名称" style={{ width: 140 }} />
+            </Form.Item>
+            <Form.Item label="数据源类型" name="dsType">
+              <Select
+                options={[
+                  { label: 'elasticsearch', value: 'elasticsearch' },
+                  { label: 'prometheus', value: 'prometheus' },
+                ]}
+                placeholder="请选择"
+                style={{ width: 120 }}
+                allowClear
+                onChange={handleAppCategoryChange}
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
+                查询
+              </Button>
+              <Button type="default" htmlType="reset" danger>
+                重置
+              </Button>
+            </Form.Item>
+          </Form>
 
-        <Button type="primary" onClick={() => { setVisible(true); setSourceDetail(null) }}>
-          <PlusOutlined />
-          新增应用
-        </Button>
+          <Button type="primary" onClick={() => { setVisible(true); setSourceDetail(null) }}>
+            <PlusOutlined />
+            新增应用
+          </Button>
+        </div>
       </FilterCard>
       <ContentCard>
         <Table columns={colums} dataSource={dataSource} />
@@ -216,23 +231,26 @@ const DataSource = (props: any) => {
             <Input />
           </Form.Item>
           <Divider />
-          <Form.Item label="认证">
+          {/* <Form.Item label="认证">
             <Switch checked={checked} onChange={onSwitchChange} />
-          </Form.Item>
-          <Form.Item label="用户名" name="">
+          </Form.Item> */}
+          <Form.Item label="用户名" name="user">
             <Input />
           </Form.Item>
-          <Form.Item label="密码" name="">
+          <Form.Item label="密码" name="password">
             <Input type='password' />
           </Form.Item>
-          {selectedType === 'elasticsearch' &&
-            <Form.Item label="索引名称" name="">
+          {type === 'elasticsearch' &&
+            <Form.Item label="索引名称" name="indexName">
               <Input />
             </Form.Item>
           }
-          {selectedType === 'elasticsearch' &&
-            <Form.Item label="版本" name="">
-              <Select />
+          {type === 'elasticsearch' &&
+            <Form.Item label="版本" name="esVersion">
+              <Select options={[
+                { label: '6.0+', value: '60' },
+                { label: '7.0+', value: '70' },
+              ]} />
             </Form.Item>
           }
         </Form>

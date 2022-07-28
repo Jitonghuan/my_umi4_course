@@ -5,7 +5,6 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { Form, Input, Select, Button } from 'antd';
 import { FilterCard } from '@/components/vc-page-content';
-import { FeContext } from '@/common/hooks';
 
 const { Item: FormItem } = Form;
 
@@ -16,65 +15,51 @@ export interface FilterHeaderProps {
 }
 
 export default function FilterHeader(props: FilterHeaderProps) {
-  const { onSearch, trggerSearchOnInit = false, searchParams = {} } = props;
+  const { onSearch } = props;
 
   const [searchField] = Form.useForm();
-  const { categoryData } = useContext(FeContext);
-  const [categoryCode, setCategoryCode] = useState<string>();
 
-  const handleSearch = useCallback(() => {
+  const handleSearch = () => {
+    console.log(searchField)
     const values = searchField.getFieldsValue();
     onSearch?.(values);
-  }, [searchField]);
+  };
 
-  const handleReset = useCallback(() => {
-    setCategoryCode(undefined);
-    searchField.setFieldsValue({
-      appType: '',
-      appCategoryCode: '',
-      appGroupCode: '',
-      appName: '',
-      appCode: '',
-    });
+  const handleReset = () => {
+    searchField.resetFields();
     handleSearch();
-  }, [searchField]);
-
-  const handleAppCategoryChange = useCallback(
-    (next: string) => {
-      searchField.setFieldsValue({
-        appGroupCode: '',
-      });
-      setCategoryCode(next);
-      handleSearch();
-    },
-    [searchField],
-  );
+  };
 
   useEffect(() => {
-    if (trggerSearchOnInit) {
-      handleSearch();
-    }
+    handleSearch();
   }, []);
 
   return (
     <FilterCard>
       <Form
         layout="inline"
-        initialValues={searchParams}
         form={searchField}
         onFinish={handleSearch}
         onReset={handleReset}
       >
-        <FormItem label="名称" name="appName">
+        <FormItem label="名称" name="keyword">
           <Input placeholder="请输入" style={{ width: 140 }} />
         </FormItem>
-        <FormItem label="分类" name="appCategoryCode">
+        <FormItem label="分类" name="graphType">
           <Select
-            options={categoryData}
+            options={[
+              {
+                label: "业务监控大盘",
+                value: "业务监控大盘",
+              },
+              {
+                label: "集群监控大盘",
+                value: "集群监控大盘",
+              }
+            ]}
             placeholder="请选择"
             style={{ width: 120 }}
             allowClear
-            onChange={handleAppCategoryChange}
           />
         </FormItem>
         <FormItem>

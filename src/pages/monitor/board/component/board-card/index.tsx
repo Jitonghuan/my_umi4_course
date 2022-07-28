@@ -36,7 +36,6 @@ export default function Board(props: any) {
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams(next);
-    localStorage.ALL_APPLICATIO_SEARCH = JSON.stringify(next || {});
   }, []);
 
   const onDrawerClose = () => {
@@ -45,6 +44,7 @@ export default function Board(props: any) {
 
   const handleDelete = async (graphUuId: string) => {
     const res = await delGraphTable(cluster, graphUuId)
+    loadGraphTable()
   }
 
   const handleEdit = async (record:any) => {
@@ -88,7 +88,7 @@ export default function Board(props: any) {
             )}
           </div>
         </Spin>
-        <EditorDrawer boardInfo={boardInfo} cluster={cluster} visible={editDrawer} mode={mode} onClose={onDrawerClose} />
+        <EditorDrawer boardInfo={boardInfo} cluster={cluster} visible={editDrawer} mode={mode} onClose={onDrawerClose} loadGraphTable={loadGraphTable} />
       </ContentCard>
     </>
   );

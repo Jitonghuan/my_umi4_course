@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Divider, Drawer, Form, Input, Select } from '@cffe/h2o-design'
+import { Button, Divider, Drawer, Form, Input, message, Select } from '@cffe/h2o-design'
 import AceEditor from '@/components/ace-editor';
 import { createGraphTable, getGraphGraphDatasouceList, graphTemplateList, updateGraphTable } from '../../service';
 import type { TMode } from '../../interfaces';
@@ -10,23 +10,24 @@ interface IEditorDrawer {
   mode: TMode;
   cluster: string;
   onClose: () => any;
-  boardInfo: any
+  boardInfo: any;
+  loadGraphTable: () => any
 }
 
 const EditorDrawer = (props: IEditorDrawer) => {
-  const { visible, mode, cluster, boardInfo } = props
+  const { visible, mode, cluster, boardInfo, loadGraphTable } = props
   const [formRef] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false)
   const [detail, setDetail] = useState<any>(null)
   const [dataSourceType, setDataSourceType] = useState<string>('')
   const [dataSourceOptions, setDataSourceOptions] = useState<any[]>([])
+  const [templateOptions, setTemplateOptions] = useState<any[]>([])
 
   useEffect(() => {
     if (visible) {
       if (mode === 'edit') {
-        console.log(boardInfo)
         setDetail(boardInfo)
-        setDataSourceType(boardInfo.GraphType);
+        setDataSourceType(boardInfo.graphType);
         formRef.setFieldsValue(boardInfo);
       } else if (mode === 'add') {
         setDetail(null)
@@ -44,23 +45,47 @@ const EditorDrawer = (props: IEditorDrawer) => {
     if (mode === 'edit') {
       formValue = {
         ...formValue,
-        graphUuid: detail
+        graphUuid: detail.graphUuid,
+        clusterCode: cluster
       }
-      let res = await updateGraphTable(formValue)
-      props.onClose()
+      if (!formValue.graphJson) {
+        delete formValue.graphJson
+      }
+      updateGraphTable(formValue).then((res) => {
+        if (res?.success) {
+          handleClose()
+          loadGraphTable();
+          message.success('修改成功')
+        }
+      })
     } else if (mode === 'add') {
-      let res = await createGraphTable(formValue)
-      props.onClose()
+      formValue = {
+        ...formValue,
+        clusterCode: cluster
+      }
+      await createGraphTable(formValue).then((res) => {
+        if (res?.success) {
+          handleClose()
+          message.success('创建成功')
+          loadGraphTable();
+        }
+      })
     }
+
   }
 
-  const onDataSourceTypeChange = async (value: string) => {
-    const res = await getGraphGraphDatasouceList(cluster, value);
-    if (Array.isArray(res.data) && res.data.length > 0) {
-      const data = res.data.map((item) => {
+  const onDataSourceTypeChange = async (value: any) => {
+    const data = {
+      clusterCode: cluster,
+      pageSize: -1,
+      value,
+    }
+    const res = await getGraphGraphDatasouceList(data);
+    if (Array.isArray(res?.data?.dataSource) && res.data.dataSource.length > 0) {
+      const data = res.data.dataSource.map((item: any) => {
         return {
-          label: item.Name,
-          value: item.Uuid,
+          label: item.name,
+          value: item.uuid,
           ...item
         }
       })
@@ -68,29 +93,35 @@ const EditorDrawer = (props: IEditorDrawer) => {
     }
 
     const res1 = await graphTemplateList(value)
-    if (Array.isArray(res1.data) && res.data.length > 0) {
-      const data = res1.data.map((item) => {
+    if (Array.isArray(res1?.data?.dataSource) && res.data.dataSource.length > 0) {
+      const data = res1.data.dataSource.map((item: any) => {
         return {
           label: item.name,
           value: item.name,
           ...item
         }
       })
-      setDataSourceOptions(data)
+      setTemplateOptions(data)
     }
+  }
+
+  const handleClose = () => {
+    props.onClose();
+    setDetail(null);
+    formRef.resetFields()
   }
 
 
   return (
     <Drawer
       title={mode === 'edit' ? "编辑大盘" : "创建大盘"}
-      onClose={props.onClose}
+      onClose={handleClose}
       footer={
         <div className="drawer-footer">
           <Button type="primary" loading={loading} onClick={handleSubmit}>
             保存
           </Button>
-          <Button type="default" onClick={props.onClose}>
+          <Button type="default" onClick={handleClose}>
             取消
           </Button>
         </div>
@@ -103,10 +134,10 @@ const EditorDrawer = (props: IEditorDrawer) => {
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 16 }}
       >
-        <Form.Item label='名称' name='GraphName' rules={[{ required: true, message: '请输入名称!' }]}>
+        <Form.Item label='名称' name='graphName' rules={[{ required: true, message: '请输入名称!' }]}>
           <Input />
         </Form.Item>
-        <Form.Item label='分类' name='GraphType' rules={[{ required: true, message: '请选择分类!' }]}>
+        <Form.Item label='分类' name='graphType' rules={[{ required: true, message: '请选择分类!' }]}>
           <Select options={[
             {
               label: "业务监控大盘",
@@ -119,7 +150,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
           ]}
           />
         </Form.Item>
-        <Form.Item label='数据源类型' name='DsType' rules={[{ required: true, message: '请选择数据源类型!' }]}>
+        <Form.Item label='数据源类型' name='dsType' rules={[{ required: true, message: '请选择数据源类型!' }]}>
           <Select
             options={[
               {
@@ -139,7 +170,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         </Form.Item>
         <Divider />
         <Form.Item label='模版' name='graphTemplateName'>
-          <Select />
+          <Select options={templateOptions} />
         </Form.Item>
         <Form.Item label='GrafanaID' name='grafanaId'>
           <Input />

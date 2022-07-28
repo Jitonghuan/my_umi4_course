@@ -1,6 +1,18 @@
 import { IGraphTable, IGraphDataSource, IGraphTemplate } from './interfaces';
 import { postRequest, getRequest, putRequest, delRequest } from '@/utils/request';
 import appConfig from '@/app.config';
+import { message } from '@cffe/h2o-design';
+
+const getRequestQuery = (params: any = {}) => {
+  return Object.keys(params).reduce((prev, curr) => {
+    if(params[curr]){
+      prev.append(curr, params[curr])
+    }
+    return prev
+
+  }, new URLSearchParams()).toString()
+
+}
 
 /**
  * GET 查看集群列表
@@ -25,9 +37,23 @@ export const graphTableList = (data: any) => {
  * @param data：IGraphTable
  * @returns
  */
-export const createGraphTable = (data: IGraphTable) => {
-  const url = `${appConfig.apiPrefix}/monitorManage/graphTable/create`;
-  return postRequest(url, { data: data });
+export const createGraphTable = (params: IGraphTable) => {
+  let url = `${appConfig.apiPrefix}/monitorManage/graphTable/create`;
+  let graphJson;
+
+  try {
+    graphJson = params.graphJson && JSON.parse(params?.graphJson)
+  } catch (e) {
+    message.error('JSON格式不正确')
+  }
+
+  try{
+    delete params.graphJson
+  }catch(e){}
+
+  const queryString = getRequestQuery(params)
+  url = queryString ? `${url}?${queryString}` : url
+  return postRequest(url, { data: { graphJson } });
 }
 
 /**
@@ -35,9 +61,16 @@ export const createGraphTable = (data: IGraphTable) => {
  * @param data：IGraphTable
  * @returns
  */
-export const updateGraphTable = (data: IGraphTable) => {
-  const url = `${appConfig.apiPrefix}/monitorManage/graphTable/update`;
-  return putRequest(url, { data: data });
+export const updateGraphTable = (params: IGraphTable) => {
+  let url = `${appConfig.apiPrefix}/monitorManage/graphTable/update`;
+  let graphJson;
+  if (params?.graphJson) {
+    graphJson = JSON.parse(params.graphJson)
+    delete params.graphJson
+  }
+  const queryString = getRequestQuery(params)
+  url = queryString ? `${url}?${queryString}` : url
+  return putRequest(url, { data: { graphJson } });
 }
 
 /**
@@ -63,46 +96,16 @@ export const graphTemplateList = (dsType?: string, keyword?: string) => {
 }
 
 /**
- * POST 创建大盘模版
- * @param data：IGraphTable
- * @returns
- */
-export const createTemplateList = (data: IGraphTemplate) => {
-  const url = `${appConfig.apiPrefix}/monitorManage/graphTemplate/create`;
-  return postRequest(url, { data: data });
-}
-
-/**
- * PUT 更新大盘模版
- * @param data：IGraphTable
- * @returns
- */
-export const updateTemplateList = (data: IGraphTemplate) => {
-  const url = `${appConfig.apiPrefix}/monitorManage/graphTemplate/update`;
-  return putRequest(url, { data: data });
-}
-
-/**
- * DELETE 删除大盘模版
- * @param clusterCode
- * @param graphUuid
- * @returns
- */
-export const delTemplateList = (id: string) => {
-  const url = `${appConfig.apiPrefix}/monitorManage/graphTemplate/delete:${id}`;
-  return delRequest(url, { data: { id } });
-}
-
-/**
  * GET 查看大盘数据源
  * @param clusterCode
  * @param dsType
  * @param keyword
  * @returns
  */
-export const getGraphGraphDatasouceList = (clusterCode: string, dsType?: string, keyword?: string) => {
+export const getGraphGraphDatasouceList = (data: any) => {
+  // const data=
   const url = `${appConfig.apiPrefix}/monitorManage/graphDatasource/list`;
-  return getRequest(url, { data: { clusterCode, dsType, keyword } });
+  return getRequest(url, { data: data });
 }
 
 /**
@@ -122,7 +125,7 @@ export const createGraphDatasouce = (data: IGraphDataSource) => {
  */
 export const updateGraphDatasouce = (data: IGraphDataSource) => {
   const url = `${appConfig.apiPrefix}/monitorManage/graphDatasource/update`;
-  return putRequest(url, { data: data });
+  return postRequest(url, { data: data });
 }
 
 /**
