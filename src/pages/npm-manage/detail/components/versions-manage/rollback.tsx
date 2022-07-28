@@ -78,11 +78,15 @@ export default function RollbackVersion(props: RollbackVersionProps) {
   }
 
   const handleOk = async () => {
+    let item = dataList.find(val => val.id === selectedRowKeys[0]);
+    if (!item) {
+      return message.warning('请选择回滚版本');
+    }
     let param = {
       npmName: npmData?.npmName,
       npmEnvType: getEnvType(),
       tag,
-      version: selectedRowKeys[0],
+      version: item.npmVersion,
     }
     await postRequest(rollback, {
       data: param
@@ -140,10 +144,10 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         onRow={(record) => ({
           onClick: () => {
             if (record.isActive !== 2) return;
-            setSelectedRowKeys([record.npmVersion]);
+            setSelectedRowKeys([record.id]);
           },
         })}
-        rowKey="npmVersion"
+        rowKey="id"
         pagination={{
           total,
           pageSize,
