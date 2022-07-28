@@ -41,23 +41,6 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
       }, 5000);
     });
   };
-  // const getFailPass=async()=>{
-  //   try {
-  //     const result = await getRequest(APIS.checkResultUrl, {
-  //       data: {
-  //         deployId: deployInfo?.metadata?.id,
-  //       },
-  //     });
-  //   console.log('result.data',result.data)
-  //     if(result.data?.includes("不满足校验规则")){
-  //       setFailPass(true);
-  //     }
-  //     setDetail(result.data || '');
-  //   } catch {
-  //     return;
-  //   }
-
-  // }
 
   const handleVisibleChange = useCallback(async () => {
     // setVisable(true);
@@ -120,7 +103,7 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
           </div>
         </Spin>
       </Modal>
-      <p style={{ marginBottom: 2 }}>
+      <p style={{ marginBottom: 2, marginLeft: '-8px' }}>
         {failPass ? (
           <a
             style={{ color: 'red' }}
@@ -128,7 +111,7 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
               setVisable(true);
             }}
           >
-            <ExclamationCircleOutlined /> 不满足校验规则
+            <ExclamationCircleOutlined /> 检验结果
           </a>
         ) : (
           <a
