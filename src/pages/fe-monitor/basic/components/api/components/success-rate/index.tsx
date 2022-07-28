@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, Table } from '@cffe/h2o-design';
-import moment from 'moment';
 import './index.less'
 import { searchApiList } from '@/pages/fe-monitor/basic/server';
 interface IProps {
@@ -10,13 +9,22 @@ interface IProps {
   getParam: () => any;
 }
 
+const orderMap: any = {
+  "descend": "desc",
+  "ascend": "asc"
+}
+
 const SuccessRate = (props: IProps) => {
 
   const [formInstance] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false)
   const [dataSource, setDataSource] = useState<any[]>([])
   const [total, setTotal] = useState<number | undefined>(0)
-  const [formValue, setFormValue] = useState<any>({})
+  const [formValue, setFormValue] = useState<any>({});
+  const [sorter, setSorter] = useState<any>({
+    sorType: 'allCount',
+    sortField: 'desc'
+  });
 
   useEffect(() => {
     onSearchSuccessRate(formValue)
@@ -31,10 +39,10 @@ const SuccessRate = (props: IProps) => {
   const onSearchSuccessRate = async (value?: any) => {
     const { api } = value
     if (loading) {
-      return
-    };
+      return;
+    }
     let params = props.getParam()
-    params = { ...params, searchType: 'successRate' };
+    params = { ...params, searchType: 'successRate', ...sorter };
     if (api) {
       params = { ...params, api };
     }
@@ -65,6 +73,19 @@ const SuccessRate = (props: IProps) => {
           scroll={{ x: '100%' }}
           rowKey="ts"
           loading={loading}
+          onChange={(newPagination,filters, sorter) => {
+            const sorType = orderMap[sorter?.order];
+            const sortField = sorter.field;
+            setSorter({
+              sorType,
+              sortField
+            });
+            onSearchSuccessRate({
+              ...formValue,
+              sorType,
+              sortField
+            })
+          }}
           columns={[
             {
               title: 'API',
@@ -86,8 +107,8 @@ const SuccessRate = (props: IProps) => {
               render: (text) => `${text} %`,
             },
             {
-              title: '请求次数',
-              dataIndex: 'allcount',
+              title: '失败次数',
+              dataIndex: 'errorCount',
               width: '100px',
               sorter:true,
               ellipsis: {
@@ -96,14 +117,25 @@ const SuccessRate = (props: IProps) => {
               render: (text) => <Input bordered={false} disabled value={text}></Input>,
             },
             {
+              title: '请求次数',
+              dataIndex: 'allCount',
+              width: '100px',
+              sorter:true,
+              defaultSortOrder: 'descend',
+              ellipsis: {
+                showTitle: false,
+              },
+              render: (text) => <Input bordered={false} disabled value={text}></Input>,
+            },
+            {
               title: '平均响应时长(ms)',
-              dataIndex: 'avgtime',
+              dataIndex: 'avgTime',
               width: '100px',
               sorter:true,
               ellipsis: {
                 showTitle: false,
               },
-              render: (text, record) => record?.avgtime?.value? record.avgtime.value.toFixed(2)+' ms' : '-',
+              render: (text, record) => record.avgTime ? record.avgTime.toFixed(2)+' ms' : '-',
             },
           ]}
           pagination={{

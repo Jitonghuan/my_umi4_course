@@ -150,6 +150,12 @@ const APIError = (props: IProps) => {
           <Descriptions.Item label="出参" span={2}>
             {detail.d4}
           </Descriptions.Item>
+          <Descriptions.Item label="用户" span={2}>
+            {detail.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="UA" span={2}>
+            {detail.ua}
+          </Descriptions.Item>
         </Descriptions>
       </Drawer>
     </div>
