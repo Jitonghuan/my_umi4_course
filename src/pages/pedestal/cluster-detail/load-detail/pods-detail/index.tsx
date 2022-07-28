@@ -21,7 +21,7 @@ export default function PodsDetail(props: any) {
     useEffect(() => {
         getContainer();
         getEvents();
-    }, [])
+    }, [clusterCode])
 
     // 获取容器
     const getContainer = () => {
@@ -30,6 +30,9 @@ export default function PodsDetail(props: any) {
             if (res?.success) {
                 setPodsData(res?.data?.items[0]?.info?.containers || [])
                 setContainer(res?.data?.items[0]?.info?.containers || [])
+            } else {
+                setPodsData([])
+                setContainer([])
             }
         }).finally(() => { setPodsLoading(false) })
     }
@@ -39,6 +42,8 @@ export default function PodsDetail(props: any) {
         getResourceList({ clusterCode, resourceType: 'events', involvedObjectName: name, involvedObjectKind: kind || '' }).then((res) => {
             if (res?.success) {
                 setEventData(res?.data?.items || [])
+            } else {
+                setEventData([])
             }
         }).finally(() => { setEventLoading(false) })
     }

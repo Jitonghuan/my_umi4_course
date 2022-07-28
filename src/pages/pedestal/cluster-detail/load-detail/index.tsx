@@ -34,12 +34,10 @@ export default function LoadDetail(props: any) {
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
     const [subLoading, setSubLoading] = useState<boolean>(false);//-号loading
     const [addLoading, setAddLoading] = useState<boolean>(false);//+号loading
-    const [count, setCount] = useState<number>(1)
-
     const [data, setData] = useState<any>({})
     useEffect(() => {
         queryData()
-    }, [])
+    }, [clusterCode])
 
     useEffect(() => {
         if (clusterCode && data?.info) {
@@ -66,18 +64,20 @@ export default function LoadDetail(props: any) {
             // download: (record: any, index: any) => {
             //     setVisible(true)
             // },
-            handleDelete: async (record: any, index: any) => {
+            handleDelete: (record: any, index: any) => {
                 setPodLoading(true)
-                const res = await resourceDel({ resourceType: record?.type, resourceName: record?.name, namespace: record?.namespace, clusterCode })
-                if (res?.success) {
-                    message.success('删除成功！');
-                    queryPods();
-                }
-                setPodLoading(false)
+                resourceDel({ resourceType: record?.type, resourceName: record?.name, namespace: record?.namespace, clusterCode }).then((res: any) => {
+                    if (res?.success) {
+                        message.success('删除成功！');
+                        queryPods();
+                    }
+                }).finally(() => { setPodLoading(false) })
             },
         }) as any;
     }, [podData]);
+
     const queryData = () => {
+        setLoading(true)
         getResourceList({ clusterCode, resourceName: name, resourceType: type, namespace: namespace }).then((res: any) => {
             if (res?.success) {
                 const { items } = res?.data || [];
@@ -87,13 +87,13 @@ export default function LoadDetail(props: any) {
             } else {
                 setData({})
             }
-        }).finally(() => { })
+        }).finally(() => { setLoading(false) })
     }
 
     // 环境变量表格列配置
     const envVarColumns = useCallback((item: any) => {
         return envVarTableSchema({
-            handleDelete: async (record: any, index: any) => {
+            handleDelete: (record: any, index: any) => {
                 const info = JSON.parse(JSON.stringify(data?.info))
                 info.containersEnv = info.containersEnv.map((e: any) => {
                     if (e.containerName === item.containerName) {
@@ -104,11 +104,13 @@ export default function LoadDetail(props: any) {
                         return { ...e }
                     }
                 })
-                const res: any = await resourceUpdate({ resourceType: type, namespace: namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(info) });
-                if (res?.success) {
-                    message.success('操作成功！');
-                    queryData();
-                }
+                setLoading(true);
+                resourceUpdate({ resourceType: type, namespace: namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(info) }).then((res: any) => {
+                    if (res?.success) {
+                        message.success('操作成功！');
+                        queryData();
+                    }
+                }).finally(() => { setLoading(false); });
             },
         }) as any;
     }, [data?.info?.containersEnv]);
@@ -116,9 +118,11 @@ export default function LoadDetail(props: any) {
     // 获取pods列表
     const queryPods = () => {
         setPodLoading(true)
-        getResourceList({ clusterCode, resourceType: 'pods', namespace: namespace || '', labelSelector: data?.info?.labelSelector || '' }).then((res) => {
+        getResourceList({ clusterCode, resourceType: 'pods', namespace: namespace || '', labelSelector: data?.info?.labelSelector || '' }).then((res: any) => {
             if (res?.success) {
                 setPodData(res?.data?.items || [])
+            } else {
+                setPodData([])
             }
         }).finally(() => { setPodLoading(false) })
     }
@@ -126,14 +130,16 @@ export default function LoadDetail(props: any) {
     // 获取event列表
     const queryEvent = () => {
         setEventLoading(true)
-        getResourceList({ clusterCode, resourceType: 'events', involvedObjectName: name, namespace: namespace || '', involvedObjectKind: kind || '' }).then((res) => {
+        getResourceList({ clusterCode, resourceType: 'events', involvedObjectName: name, namespace: namespace || '', involvedObjectKind: kind || '' }).then((res: any) => {
             if (res?.success) {
                 setEventData(res?.data?.items || [])
+            } else {
+                setEventData([])
             }
         }).finally(() => { setEventLoading(false) })
     }
     // 新增标签/新增环境变量
-    const onSave = async (params: any) => {
+    const onSave = (params: any) => {
         const requstParams = JSON.parse(JSON.stringify(data?.info));
         const value = params['tags'];
         // 新增环境变量
@@ -161,16 +167,16 @@ export default function LoadDetail(props: any) {
             }
         }
         setButtonLoading(true);
-        const res: any = await resourceUpdate({ resourceType: type, namespace: namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(requstParams) });
-        if (res?.success) {
-            message.success('操作成功！');
-            queryData();
-            setAddTag(false);
-        }
-        setButtonLoading(false)
+        resourceUpdate({ resourceType: type, namespace: namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(requstParams) }).then((res) => {
+            if (res?.success) {
+                message.success('操作成功！');
+                queryData();
+                setAddTag(false);
+            }
+        }).finally(() => { setButtonLoading(false) });
     }
     // 点击+/-号
-    const clickSign = async (sign: string) => {
+    const clickSign = (sign: string) => {
         if (data?.info?.replicas === 0 && sign === 'sub') {
             message.error('该数值无法操作！');
             return;
@@ -179,12 +185,12 @@ export default function LoadDetail(props: any) {
         const infoData = JSON.parse(JSON.stringify(data?.info))
         const { replicas } = infoData;
         infoData.replicas = sign === 'add' ? replicas + 1 : replicas - 1
-        const res: any = await resourceUpdate({ resourceType: type, namespace: namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(infoData) });
-        if (res?.success) {
-            message.success('操作成功！');
-            queryData();
-        }
-        sign === 'add' ? setAddLoading(false) : setSubLoading(false);
+        resourceUpdate({ resourceType: type, namespace: namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(infoData) }).then((res) => {
+            if (res?.success) {
+                message.success('操作成功！');
+                queryData();
+            }
+        }).finally(() => { sign === 'add' ? setAddLoading(false) : setSubLoading(false); });
     }
     // 删除标签
     const handleClose = async (tagName: any) => {

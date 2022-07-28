@@ -20,9 +20,9 @@ export default function ClusteLoginShell(props: any) {
     const { matrixConfigData } = useContext(FeContext);
     const [container, setContainer] = useState<any>([]);
     const [selectContainer, setSelectContainer] = useState<any>('');
-    const baseUrl = `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?action=shell&clusterCode=${clusterCode}`
-    // const nodeUrl = `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&action=shell&clusterCode=${clusterCode}&name=${record?.namespace}`;
-    // const resourceUrl = `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${record?.name}&containerName=${value}&action=shell&clusterCode=${clusterCode}&namespace=${record?.namespace}`
+    const baseUrl = window.location.href?.includes('gushangke')
+        ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?action=shell&clusterCode=${clusterCode}`
+        : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?action=shell&clusterCode=${clusterCode}`;
     const ws = useRef<WebSocket>();
     const term = useRef<any>();
 
@@ -30,9 +30,12 @@ export default function ClusteLoginShell(props: any) {
         if (!selectContainer && container && container.length) {
             setSelectContainer(container[0].value)
             viewLogform.setFieldsValue({ containerName: container[0].value })
+            if (!matrixConfigData?.wsPrefixName) {
+                return;
+            }
             initWS(container[0].value)
         }
-    }, [container]);
+    }, [container, matrixConfigData?.wsPrefixName]);
 
     const getUrl = useCallback((v: string) => {
         if (type === 'node') {
@@ -40,7 +43,7 @@ export default function ClusteLoginShell(props: any) {
         } else {
             return `${baseUrl}&instName=${name}&namespace=${namespace}&containerName=${v}`
         }
-    }, [type])
+    }, [type, baseUrl])
 
     useEffect(() => {
         if (type === 'pods' && name && namespace) {
@@ -49,12 +52,10 @@ export default function ClusteLoginShell(props: any) {
                     const { items } = res?.data || {};
                     console.log(items, 'items')
                     if (items && items[0]) {
-                        const containerData = items[0]?.info?.containers?.map((item: any) => {
-                            if (item?.status === 'Running') {
-                                return { label: item.name, value: item.name }
-                            }
-                        })
-
+                        let containerData = []
+                        containerData = (items[0]?.info?.containers || [])
+                            .filter((item: any) => item?.status === 'Running')
+                            .map((item: any) => ({ label: item.name, value: item.name }))
                         setContainer(containerData)
                     }
                 }
@@ -62,9 +63,12 @@ export default function ClusteLoginShell(props: any) {
             })
         }
         if (type === 'node' && name) {
+            if (!matrixConfigData?.wsPrefixName) {
+                return;
+            }
             initWS(getUrl(''))
         }
-    }, [type, name, namespace])
+    }, [type, name, namespace, matrixConfigData?.wsPrefixName])
 
     const initWS = (value: string) => {
         let dom: any = document?.getElementById('terminal');
@@ -90,6 +94,7 @@ export default function ClusteLoginShell(props: any) {
         const fitAddon = new FitAddon();
         term.current.loadAddon(fitAddon);
         fitAddon.fit();
+
         ws.current.onopen = () => {
             if (ws.current) {
                 const attachAddon = new AttachAddon(ws.current);
@@ -207,7 +212,7 @@ export default function ClusteLoginShell(props: any) {
                     </div>
                 </div>
             </div>
-            <div id="terminal" className="xterm" style={{ width: '100%', maxHeight: "calc(100vh - 120px)", backgroundColor: '#060101' }}></div>
+            <div id="terminal" className="xterm" style={{ width: '100%', maxHeight: "calc(100vh - 135px)", backgroundColor: '#060101' }}></div>
             <div style={{ height: 28, width: '100%', textAlign: 'center', marginTop: 4 }}>
                 <span className="eventButton">
                     <Button type="primary" onClick={closeSocket}>

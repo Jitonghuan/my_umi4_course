@@ -4,7 +4,7 @@ export default function Count(props: any) {
     const { data } = props;
     const getColor = (item: any) => {
         if (item?.nodeRole === 'master' && item.status && item.status[0] === 'health') {
-            return '#7494d6'
+            return '#658bdb'
         } else if (item.status && item.status[0] === 'health') {
             return '#58ce6b'
         } else {

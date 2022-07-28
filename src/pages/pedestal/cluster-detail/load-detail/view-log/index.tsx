@@ -67,7 +67,7 @@ export default function ViewLog(props: any) {
                 if (res?.success) {
                     const { items } = res?.data || {};
                     if (items && items[0]) {
-                        const containerData = items[0]?.info?.containers?.map((item: any) => ({ label: item.name, value: item.name }))
+                        const containerData = (items[0]?.info?.containers || []).map((item: any) => ({ label: item.name, value: item.name }))
                         if (containerData.length) {
                             setContainer(containerData)
                         }

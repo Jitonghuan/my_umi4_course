@@ -35,14 +35,16 @@ export function useNodeListData(props: any) {
     const loadData = useCallback(
         async (extra?: any) => {
             try {
-                if (!props.clusterCode) {
-                    return;
-                }
                 setLoading(true);
                 const result = await getNode({ ...props, ...extra })
-                const { items } = result?.data || {};
-                setData(items || []);
-                setTotal(items?.length)
+                if (result?.success) {
+                    const { items } = result?.data || {};
+                    setData(items || []);
+                    setTotal(items?.length)
+                } else {
+                    setData([]);
+                    setTotal(0)
+                }
             } catch (ex) {
                 setData([]);
             } finally {
@@ -113,8 +115,12 @@ export function useResourceType(props: any) {
         async (extra?: any) => {
             try {
                 const result = await getResourceType({ ...props });
-                const res = result.data.map((item: string) => ({ label: item, value: item }));
-                setData(res || []);
+                if (result?.success) {
+                    const res = result?.data?.map((item: string) => ({ label: item, value: item }));
+                    setData(res);
+                } else {
+                    setData([])
+                }
             } catch (ex) {
                 setData([]);
             } finally {
@@ -138,9 +144,14 @@ export function useNameSpace(props: any) {
         async (extra?: any) => {
             try {
                 const result = await getResourceList({ ...props });
-                const res = result?.data?.items?.map((item: any) => ({ label: item.name, value: item.name }))
-                res.unshift({ label: 'AllNamespaces', value: '' })
-                setData(res || []);
+                if (result?.success) {
+                    console.log(11)
+                    const res = result?.data?.items?.map((item: any) => ({ label: item.name, value: item.name }))
+                    res.unshift({ label: 'AllNamespaces', value: '' })
+                    setData(res);
+                } else {
+                    setData([]);
+                }
             } catch (ex) {
                 setData([]);
             } finally {
@@ -151,7 +162,7 @@ export function useNameSpace(props: any) {
 
     useEffect(() => {
         loadData({});
-    }, []);
+    }, Object.values(props));
 
     return [data];
 }

@@ -29,16 +29,6 @@ export default function ClusterDetail(props: any) {
     const [selectCluster, setSelectCluster] = useState<any>({ value: clusterCode || '', label: clusterName || '' });
     const [activeTab, setActiveTab] = useState<string>(location?.query?.key || 'node-list')
     const [data, total] = useClusterListData({ pageSize: -1, pageIndex: -1 });
-    // // 默认重定向到节点列表路由下
-    // if (location.pathname === path) {
-    //     return (
-    //         history.replace({
-    //             pathname: `${location.pathname}/node-list`,
-    //             query: { key: 'node-list' },
-    //         }),
-    //         null
-    //     );
-    // }
     useEffect(() => {
         if (data && data.length) {
             const res = data.map((item: any) => ({ value: item.clusterCode, label: item.clusterName }))
@@ -47,12 +37,11 @@ export default function ClusterDetail(props: any) {
     }, [data])
 
     useEffect(() => {
-        console.log(111)
     }, [])
 
     useEffect(() => {
         setActiveTab(location?.query?.key || 'node-list')
-        // history.replace({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
+        history.replace({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
     }, [location?.pathname])
 
     useEffect(() => {
@@ -61,12 +50,13 @@ export default function ClusterDetail(props: any) {
         }
     }, [clusterOption])
 
-    useEffect(() => {
-        history.push({ query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
-    }, [selectCluster])
+    // useEffect(() => {
+    //     history.push({ query: { ...location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
+    // }, [selectCluster])
 
     const selectChange = (v: any) => {
         setSelectCluster({ label: v.label, value: v.value });
+        history.push({ pathname: `${path}/${location?.query?.key}`, query: { key: location?.query?.key, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
     }
 
     return (
@@ -89,6 +79,7 @@ export default function ClusterDetail(props: any) {
                             pathname: `/matrix/pedestal/cluster-detail/${key}`,
                             query: { clusterName, clusterCode, key: key, },
                         });
+
                     }}
                 >
                     {TabList.map((item: any) => (

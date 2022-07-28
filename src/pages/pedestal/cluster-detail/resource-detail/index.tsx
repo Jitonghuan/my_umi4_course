@@ -38,6 +38,8 @@ export default function ResourceDetail(props: any) {
     const [selectType, setSelectType] = useState<string>('');
     const [data] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
     const [updateLoading, setUpdateLoading] = useState(false);
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({} as any), []);
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
 
     useEffect(() => {
@@ -52,7 +54,7 @@ export default function ResourceDetail(props: any) {
                 if (record.type === 'pods') {
                     history.push({
                         pathname: '/matrix/pedestal/cluster-detail/pods',
-                        query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind }
+                        query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind, type: '' }
                     })
                 } else {
                     history.push({
@@ -72,15 +74,15 @@ export default function ResourceDetail(props: any) {
                 setCurrentRecord(record);
                 setYamlDetailVisible(true);
             },
-            handleDelete: async (record: any, index: any) => {
+            handleDelete: (record: any, index: any) => {
                 const { type, name, namespace } = record;
                 setUpdateLoading(true)
-                const res = await resourceDel({ resourceType: type, resourceName: name, namespace, clusterCode })
-                setUpdateLoading(false)
-                if (res?.success) {
-                    message.success('删除成功！');
-                    queryList();
-                }
+                resourceDel({ resourceType: type, resourceName: name, namespace, clusterCode }).then((res) => {
+                    if (res?.success) {
+                        message.success('删除成功！');
+                        initialSearch()
+                    }
+                }).finally(() => { setUpdateLoading(false) })
             },
         }) as any;
     }, [dataSource]);
@@ -94,18 +96,19 @@ export default function ResourceDetail(props: any) {
 
 
     useEffect(() => {
-        if (typeData.length !== 0) {
+        if (typeData && typeData.length !== 0) {
             setTypeOptions(typeData);
             form.setFieldsValue({ resourceType: typeData[0].value })
+            setSelectType(typeData[0].value);
         }
     }, [typeData])
 
     useEffect(() => {
-        if (nameSpaceData.length !== 0 && clusterCode) {
+        if (nameSpaceData?.length !== 0 && clusterCode && typeData?.length !== 0) {
             form.setFieldsValue({ namespace: nameSpaceData[0].value });
             queryList();
         }
-    }, [nameSpaceData, clusterCode])
+    }, [nameSpaceData, clusterCode, typeData])
 
     const queryList = (index = pageIndex) => {
         const values = form.getFieldsValue();
@@ -124,20 +127,28 @@ export default function ResourceDetail(props: any) {
                 continueList[index - 1] = res?.data?.continue || '';
                 setContinueList([...continueList])
             } else {
-                setOriginData([])
+                setDataSource([]);
+                setOriginData([]);
+                setTotal(0)
+                setPageIndex(1)
             }
         }).finally(() => { setLoading(false) })
     }
 
-    const updateResource = async (record: any, updateColumn: string) => {
+    const updateResource = (record: any, updateColumn: string) => {
         const { type, namespace, name, info } = record || {};
         const infoData = JSON.parse(JSON.stringify(info || {}))
-        infoData[updateColumn] = !infoData[updateColumn]
-        const res: any = await resourceUpdate({ resourceType: type, namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(infoData) });
-        if (res?.success) {
-            message.success('操作成功！');
-            queryList()
-        }
+        infoData[updateColumn] = !infoData[updateColumn];
+        setUpdateLoading(true)
+        resourceUpdate({ resourceType: type, namespace, clusterCode, resourceName: name, updateBody: JSON.stringify(infoData) }).then((res) => {
+            if (res?.success) {
+                message.success('操作成功！');
+                initialSearch()
+            }
+        }).finally(() => {
+            setUpdateLoading(false)
+        });
+
     }
 
     const addParams = (values: any) => {
@@ -190,6 +201,7 @@ export default function ResourceDetail(props: any) {
         queryList(1)
     }
 
+
     return (
         <div className='cluster-resource-detail'>
             <CreateYaml visible={createYamlVisible} onClose={() => { setCreateYamlVisbile(false) }} onSave={onSave} ></CreateYaml>
@@ -201,6 +213,7 @@ export default function ResourceDetail(props: any) {
                     form={form}
                     onReset={() => {
                         form.setFieldsValue({ resourceType: typeData[0].value, namespace: '' });
+                        setSelectType(typeData[0].value);
                         initialSearch()
                     }}
                 >
@@ -221,7 +234,7 @@ export default function ResourceDetail(props: any) {
                         <Form.Item label="命名空间" name="namespace" >
                             <Select
                                 style={{ width: 200 }}
-                                allowClear options={nameSpaceData}
+                                options={nameSpaceData}
                                 showSearch
                                 optionFilterProp="label"
                                 filterOption={(input, option) => {
@@ -231,7 +244,17 @@ export default function ResourceDetail(props: any) {
                         </Form.Item>}
                     {selectType === 'pods' &&
                         <Form.Item label="节点名称" name="node" >
-                            <Select style={{ width: 200 }} allowClear options={nodeList}> </Select>
+                            <Select
+                                style={{ width: 200 }}
+                                allowClear
+                                showSearch
+                                optionFilterProp="label"
+                                filterOption={(input, option) => {
+                                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                                }}
+                                options={nodeList}
+                            >
+                            </Select>
                         </Form.Item>
                     }
 
@@ -265,6 +288,8 @@ export default function ResourceDetail(props: any) {
                 <div className="caption-right">
                     搜索：<Input style={{ width: 200 }} size='small' onChange={(e) => { filterData(e.target.value) }}></Input>
                     <Button type="primary" onClick={() => { setCreateYamlVisbile(true) }} size='small' style={{ marginLeft: '10px' }}>创建资源</Button>
+                    {/* <Button icon={<RedoOutlined />} onClick={() => { initialSearch() }} style={{ marginRight: '10px' }} size='small'>
+                        刷新</Button> */}
                 </div>
             </div>
             <div className='table-wrapper'>

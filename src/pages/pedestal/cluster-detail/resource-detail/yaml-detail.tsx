@@ -38,11 +38,12 @@ export default function YamlDetail(props: any) {
             visible={visible}
             onOk={handleOk}
             onCancel={onClose}
-            width={'60%'}
-            footer={[
-                <Button key="submit" type="primary" onClick={onClose}>取消</Button>,
-                // <Button type="primary" onClick={handleOk}>提交 </Button>,
-            ]}
+            width={'70%'}
+            footer={false}
+        // footer={[
+        //     <Button key="submit" type="primary" onClick={onClose}>取消</Button>,
+        //     // <Button type="primary" onClick={handleOk}>提交 </Button>,
+        // ]}
         >
             <div className="code-title">
                 {/* 资源名称：<span>hbos - dtc</span> */}
@@ -50,7 +51,7 @@ export default function YamlDetail(props: any) {
             <div>
                 <Form form={form}>
                     <Form.Item name="value">
-                        <AceEditor mode="yaml" height={'65vh'} />
+                        <AceEditor mode="yaml" height={'68vh'} />
                     </Form.Item>
                 </Form>
             </div>

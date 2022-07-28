@@ -37,24 +37,24 @@ export default function NodeList() {
                 setTagVisible(true);
             },
             // 调度
-            updateNode: async (record: any, index: any) => {
+            updateNode: (record: any, index: any) => {
                 setUpdateLoading(true)
-                const res = await nodeUpdate({ unschedulable: !record.unschedulable, clusterCode, nodeName: record.nodeName, labels: record.labels, taints: record.taints })
-                if (res?.success) {
-                    message.success('操作成功');
-                    loadData();
-                }
-                setUpdateLoading(false)
+                nodeUpdate({ unschedulable: !record.unschedulable, clusterCode, nodeName: record.nodeName, labels: record.labels, taints: record.taints }).then((res: any) => {
+                    if (res?.success) {
+                        message.success('操作成功');
+                        loadData();
+                    }
+                }).finally(() => { setUpdateLoading(false) })
             },
             // 排空
-            drain: async (record: any, index: any) => {
+            drain: (record: any, index: any) => {
                 setUpdateLoading(true)
-                const res = await nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode })
-                if (res?.success) {
-                    message.success('操作成功');
-                    loadData();
-                }
-                setUpdateLoading(false)
+                nodeDrain({ nodeName: record.nodeName, clusterCode: clusterCode }).then((res: any) => {
+                    if (res?.success) {
+                        message.success('操作成功');
+                        loadData();
+                    }
+                }).finally(() => { setUpdateLoading(false) })
             },
             // 删除
             // handleDelete: async (record: any, index: any) => {
