@@ -71,6 +71,7 @@ export default function AllApplication() {
                   total={total}
                   current={pageIndex}
                   showSizeChanger
+                  showTotal={(total, range) => `总共 ${total} 条数据`}
                   onShowSizeChange={(_, next) => {
                     setPageIndex(1);
                     setPageSize(next);

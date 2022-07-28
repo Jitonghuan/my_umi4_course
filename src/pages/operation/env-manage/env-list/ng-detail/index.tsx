@@ -6,7 +6,7 @@
  * @Description: 查看NG实例详情Modal
  * @FilePath: /fe-matrix/src/pages/operation/env-manage/env-list/ng-detail/index.tsx
  */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Input, Spin, Form, Button, Modal, message } from 'antd';
 import AceEditor from '@/components/ace-editor';

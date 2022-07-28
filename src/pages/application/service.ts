@@ -155,6 +155,9 @@ export const paramsList = `${appConfig.apiPrefix}/appManage/appTemplate/list`;
 /** PUT 应用模版-编辑应用参数 */
 export const editParams = `${appConfig.apiPrefix}/appManage/appTemplate/update`;
 
+/** DELETE 应用模版-删除 */
+export const deleteTempl = `${appConfig.apiPrefix}/appManage/appTemplate/delete`;
+
 /** POST 新建应用 */
 export const createAppUrl = `${appConfig.apiPrefix}/appManage/create`;
 
@@ -467,6 +470,7 @@ export const queryFeatureDeployed = async (params: {
   branchName?: string;
   pipelineCode?: string;
   masterBranch?: string;
+  isNpm?: boolean;
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,
@@ -490,6 +494,7 @@ export const createDeploy = (params: {
   // isClient: boolean;
   masterBranch?: string;
   buildType?: string;
+  deployModel: string;
 }) =>
   postRequest(createDeployUrl, {
     data: params,
@@ -640,6 +645,7 @@ export const deployMaster = (params: {
   envCodes?: any;
   buildType?: string;
   masterBranch?: string; //主干分支
+  deployModel?: string;
 }) =>
   postRequest(deployMasterUrl, {
     data: params,

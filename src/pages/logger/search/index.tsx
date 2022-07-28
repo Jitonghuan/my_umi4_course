@@ -406,6 +406,8 @@ export default function LoggerSearch(props: any) {
                   options={envOptions}
                   style={{ width: 140 }}
                   placeholder="请选择环境"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
               <Form.Item label="日志库">
@@ -415,6 +417,8 @@ export default function LoggerSearch(props: any) {
                   options={logStoreOptions}
                   style={{ width: 140 }}
                   placeholder="请选择日志库"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
             </Form>
@@ -520,7 +524,7 @@ export default function LoggerSearch(props: any) {
                       查询
                     </Button>
                   </Form.Item>
-                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo}>
+                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo} danger>
                     重置
                   </Button>
                   {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>

@@ -71,6 +71,7 @@ export default function DemoPageList() {
             showSizeChanger: true,
             onChange: (next) => setPageIndex(next),
             onShowSizeChange: (_, next) => setPageSize(next),
+            showTotal: () => `总共 ${total} 条数据`,
           }}
         >
           <Table.Column title="序号" dataIndex="id" width={60} />
@@ -85,7 +86,7 @@ export default function DemoPageList() {
               <div className="action-cell">
                 <a>修改</a>
                 <Popconfirm title="确定要删除该函数吗？" onConfirm={() => console.log(record, index)}>
-                  <a>删除</a>
+                  <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
                 </Popconfirm>
               </div>
             )}

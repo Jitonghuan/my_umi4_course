@@ -155,7 +155,10 @@ export default function ApplicationDetail(props: IProps) {
           tabBarExtraContent={
             <div className="tab-right-extra">
               <h4>{appData?.appCode}</h4>
-              <span>{appData?.appName}</span>
+              <span>{appData?.appName}</span>&nbsp;<span className="deploy-model-division">|</span>&nbsp;
+              <span className="deploy-model-title">
+                {appData?.deployModel === 'online' ? '在线发布应用' : '离线发布应用'}
+              </span>
             </div>
           }
         >

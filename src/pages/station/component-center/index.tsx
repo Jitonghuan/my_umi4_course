@@ -39,16 +39,14 @@ export default function ComponentCenter() {
     setQueryParams(param);
   };
   useEffect(() => {
-    // if (tabActiveKey === 'app') {
-    //   getProductlineList();
-    //   debugger
-    //   queryComponentList({ componentType: tabActiveKey });
-    // }
+    if (tabActiveKey === 'app') {
+      getProductlineList();
+    }
     // return () => {
     //   debugger
     //   setTabActiveKey('app');
     // };
-  }, []);
+  }, [tabActiveKey]);
   useEffect(() => {
     if (identification?.identification) {
       queryComponentList({ componentType: identification?.identification });

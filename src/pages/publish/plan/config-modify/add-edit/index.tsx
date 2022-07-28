@@ -65,6 +65,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
               return (
                 <Button
                   type="link"
+                  danger
                   onClick={() => {
                     tableData.splice(index, 1);
                     setTableData([...tableData]);

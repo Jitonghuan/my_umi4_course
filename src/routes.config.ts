@@ -113,55 +113,6 @@ export default [
     path: `${baseRoutePath}/test/quality-control-new`,
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
-
-  {
-    path: 'demo',
-    name: '示例页面',
-    icon: 'icon-report',
-    hideInMenu: process.env.NODE_ENV !== 'development',
-    routes: [
-      {
-        path: 'layout-normal',
-        name: '普通布局',
-        component: '@/pages/demo/layout-normal',
-      },
-      {
-        path: 'layout-lr',
-        name: '左右布局',
-        component: '@/pages/demo/layout-lr',
-      },
-      {
-        path: 'layout-tb',
-        name: '上下布局',
-        component: '@/pages/demo/layout-tb',
-      },
-      {
-        path: 'layout-box',
-        name: '盒子布局',
-        component: '@/pages/demo/layout-box',
-      },
-      {
-        path: 'list',
-        name: '列表页面',
-        component: '@/pages/demo/list',
-      },
-      {
-        path: 'rich-text',
-        name: '富文本组件',
-        component: '@/pages/demo/rich-text-demo',
-      },
-      {
-        path: 'apitest',
-        name: '接口测试',
-        component: '@/pages/demo/api-test',
-      },
-      {
-        path: 'icon-list',
-        name: '图标列表',
-        component: '@/pages/demo/icon-list',
-      },
-    ],
-  },
   {
     path: 'application',
     name: '应用管理',
@@ -424,6 +375,43 @@ export default [
         name: '依赖管理',
         key: 'dependency-manage',
         component: '@/pages/application/dependency-manage',
+      },
+      {
+        path: 'npm-list',
+        name: 'NPM管理',
+        component: '@/pages/npm-manage/list',
+      },
+      {
+        path: 'npm-detail',
+        name: 'NPM详情',
+        component: '@/pages/npm-manage/detail',
+        hideInMenu: true,
+        routes: [
+          {
+            path: 'overview',
+            name: '概述',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/overview',
+          },
+          {
+            path: 'branch',
+            name: '分支',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/branch-manage',
+          },
+          {
+            path: 'deploy',
+            name: '部署',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/deploy',
+          },
+          {
+            path: 'version',
+            name: '部署',
+            hideInMenu: true,
+            component: '@/pages/npm-manage/detail/components/versions-manage',
+          },
+        ],
       },
     ],
   },
@@ -839,12 +827,6 @@ export default [
           },
         ],
       },
-      {
-        path: 'tmpl-log',
-        name: '操作日志',
-        key: 'tmpl-log',
-        component: '@/pages/operation/tmpl-log',
-      },
     ],
   },
   {
@@ -1167,6 +1149,12 @@ export default [
         name: '消息管理',
         key: 'message',
         component: '@/pages/admin/message-manage',
+      },
+      {
+        path: 'tmpl-log',
+        name: '操作日志',
+        key: 'tmpl-log',
+        component: '@/pages/operation/tmpl-log',
       },
     ],
   },

@@ -1,9 +1,6 @@
 // 新增环境抽屉页
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/10/25 18:30
-
-import React from 'react';
-import { history } from 'umi';
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag } from 'antd';
@@ -24,13 +21,12 @@ export default function addEnvData(props: EnvEditorProps) {
   const [nacosChecked, setNacosChecked] = useState<boolean>(false);
   const [needApplyOption, setNeedApplyOption] = useState<number>(1); //是否启用发布审批
   const [needApplyChecked, setNeedApplyChecked] = useState<boolean>(false);
-  //ngInstCode
   const [isBlockChangeOption, setIsBlockChangeOption] = useState<number>(0); //是否封网
   const [isBlockChecked, setIsBlockChecked] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [editEnvCode, setEditEnvCode] = useState<boolean>(false);
-
+  const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     selectCategory();
   }, [mode]);
@@ -140,8 +136,8 @@ export default function addEnvData(props: EnvEditorProps) {
     });
   };
   const handleSubmit = () => {
+    setLoading(true);
     if (mode === 'ADD') {
-      // const params = createEnvForm.getFieldsValue();
       //新增环境
       createEnvForm.validateFields().then((params) => {
         postRequest(createEnv, {
@@ -161,45 +157,42 @@ export default function addEnvData(props: EnvEditorProps) {
             mark: params?.mark,
             ngInstCode: params?.ngInstCode,
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('新增环境成功！');
-            onSave?.();
-          } else {
-            message.error(result.errorMsg);
-          }
-        });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('新增环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     } else if (mode === 'EDIT') {
       //编辑环境
-      // const initValue = createEnvForm.getFieldsValue();
       createEnvForm.validateFields().then((params) => {
         putRequest(updateEnv, {
           data: {
             ...params,
-            // envCode: initValue?.envCode,
-            // envName: initValue?.envName,
             useNacos: checkedOption,
             isBlock: isBlockChangeOption,
             needApply: needApplyOption,
             proEnvType: 'benchmark',
-            // mark: initValue?.mark,
-            // nacosAddress: initValue?.nacosAddress,
-            // envTypeCode: initValue?.envTypeCode,
-            // categoryCode: initValue?.categoryCode,
-            // clusterName: initValue?.clusterName,
-            // clusterType: initValue?.clusterType,
-            // clusterNetType: initValue?.clusterNetType,
-            // ngInstCode:params?.ngInstCode,
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('编辑环境成功！');
-            onSave?.();
-          } else {
-            message.error(result.errorMsg);
-          }
-        });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('编辑环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     }
   };
@@ -207,8 +200,6 @@ export default function addEnvData(props: EnvEditorProps) {
     <Drawer
       visible={mode !== 'HIDE'}
       title={mode === 'EDIT' ? '编辑环境' : mode === 'VIEW' ? '查看环境' : '新增环境'}
-      // maskClosable={false}
-      // initData={initData}
       onClose={onClose}
       width={'40%'}
     >
@@ -222,7 +213,6 @@ export default function addEnvData(props: EnvEditorProps) {
           }}
         >
           <Form.Item label="环境大类：" name="envTypeCode" rules={[{ required: true, message: '这是必填项' }]}>
-            {/* onChange={onEnvTypeChange} value={envTypeValue} */}
             <Radio.Group disabled={isDisabled}>
               <Radio value={'dev'}>DEV</Radio>
               <Radio value={'test'}>TEST</Radio>
@@ -301,21 +291,19 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
-          <Form.Item name="ngInstCode" label="NG实例" rules={[{ required: true, message: '这是必填项' }]}>
-            <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} />
+          <Form.Item name="ngInstCode" label="NG实例">
+            <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} allowClear />
           </Form.Item>
           <Form.Item name="clusterName" label="集群名称" rules={[{ required: true, message: '这是必填项' }]}>
             <Input placeholder="请输入集群名称" style={{ width: 280 }} disabled={isDisabled}></Input>
           </Form.Item>
           <Form.Item label="集群类型:" name="clusterType" rules={[{ required: true, message: '这是必填项' }]}>
-            {/* onChange={onClusterTypeChange} value={clusterType} */}
             <Radio.Group disabled={isDisabled}>
               <Radio value={'vm'}>虚拟机</Radio>
               <Radio value={'k8s'}>kubernetes</Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item label="集群网络类型:" name="clusterNetType" rules={[{ required: true, message: '这是必填项' }]}>
-            {/* onChange={onClusterNetTypeChange} value={clusterNetType} */}
             <Radio.Group disabled={isDisabled}>
               <Radio value={'vpc'}>私有环境(VPC)</Radio>
               <Radio value={'public'}>公有环境(Public)</Radio>
@@ -328,10 +316,9 @@ export default function addEnvData(props: EnvEditorProps) {
                 <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                   取消
                 </Button>
-                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>
+                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }} loading={loading}>
                   保存
                 </Button>
-                {/* onClick={handleSubmit} */}
               </Form.Item>
             </Space>
           )}

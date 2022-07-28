@@ -196,7 +196,9 @@ export default (props: VersionDetailProps) => {
             }
           }}
         >
-          <a key="delete">删除</a>
+          <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>
+            删除
+          </a>
         </Popconfirm>,
       ],
     },
@@ -246,7 +248,7 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          {/* {currentTabType === 'app' && (
+          {currentTabType === 'app' && (
             <Button
               type="primary"
               disabled={isEditable}
@@ -256,7 +258,7 @@ export default (props: VersionDetailProps) => {
             >
               添加应用
             </Button>
-          )} */}
+          )}
 
           {/* {currentTabType !== 'app' && (
             <Button

@@ -534,7 +534,7 @@ export default function Push(props: any) {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger danger>
+            <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
           </Form.Item>
@@ -731,7 +731,7 @@ export default function Push(props: any) {
                   value={value}
                 >
                   {/* <Radio value={3}>定时生效</Radio> */}
-                  <Radio value={1}>不生效</Radio>
+                  <Radio value={1}>下次发布生效</Radio>
                   <Radio value={2}>立即生效</Radio>
                 </Radio.Group>
               </Form.Item>
