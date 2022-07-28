@@ -406,10 +406,13 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
           <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
         <Form.Item label="报警消息" name="message" required={true}>
-          <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }}></Input>
+          <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }} />
         </Form.Item>
         <Form.Item label="通知对象" name="receiver">
           <UserSelector style={{ width: '400px' }} />
+        </Form.Item>
+        <Form.Item label="DingToken" name="dingToken">
+          <Input />
         </Form.Item>
         <Form.Item
           label="是否静默"
