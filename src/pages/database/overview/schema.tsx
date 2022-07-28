@@ -1,6 +1,20 @@
 import { Button, Space } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+import './index.less';
 //3:mysql 4:postgresql 5:redis 6:mongdb 7:rds
+export const getColorByValue = (value: string) => {
+  if (!value || isNaN(Number(value))) {
+    return '';
+  }
+  const nVal = Number(value);
+  if (nVal < 80) {
+    return '#439D75';
+  } else if (nVal < 90) {
+    return '#D16F0D';
+  } else {
+    return '#CC4631';
+  }
+};
 export const options = [
   {
     label: 'MySQL',
@@ -46,18 +60,27 @@ export const tableSchema = ({
       title: 'CPU',
       dataIndex: 'cpu',
       width: 180,
+      render: (value: any) => {
+        return <span>{value}%</span>;
+      },
     },
     {
       title: 'Memory',
       dataIndex: 'memory',
 
       width: 220,
+      render: (value: any) => {
+        return <span>{value}%</span>;
+      },
     },
     {
       title: 'Disk',
       dataIndex: 'disk',
 
       width: 300,
+      render: (value: any) => {
+        return <span>{value}%</span>;
+      },
     },
     {
       title: 'TPS',

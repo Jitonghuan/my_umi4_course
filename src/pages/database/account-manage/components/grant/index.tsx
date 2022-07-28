@@ -47,6 +47,7 @@ export default function ScriptEditor(props: GrantProps) {
       setSelectedDataKeys([]);
       setSelectedStructKeys([]);
       setSelectedManageKeys([]);
+      setCurPrivType('');
     };
   }, [mode]);
   const onDataCheck = (checkedKeys: React.Key[], info: any) => {

@@ -9,33 +9,19 @@
 import { Pie, measureTextWidth } from '@ant-design/charts';
 export interface OverviewDashboardsIProps {
   dataSource: any;
+  pieTypeData: any;
 }
 
 export default function OverviewDashboards(props: OverviewDashboardsIProps) {
-  const { dataSource } = props;
-  const data = [
-    {
-      type: 'MySQL',
-      value: dataSource?.sumMysql === 0 ? null : dataSource?.sumMysql,
-    },
+  const { dataSource, pieTypeData } = props;
+  let data: any = [];
+  pieTypeData?.map((item: string) => {
+    data.push({
+      type: item + '',
+      value: dataSource[item] === 0 ? null : dataSource[item],
+    });
+  });
 
-    {
-      type: 'PostgreSQL',
-      value: dataSource?.sumPostgre === 0 ? null : dataSource?.sumPostgre,
-    },
-    {
-      type: 'Mongdb',
-      value: dataSource?.sumMongdb === 0 ? null : dataSource?.sumMongdb,
-    },
-    {
-      type: 'Redis',
-      value: dataSource?.sumRedis === 0 ? null : dataSource?.sumRedis,
-    },
-    {
-      type: 'RDS',
-      value: dataSource?.sumRds === 0 ? null : dataSource?.sumRds,
-    },
-  ];
   function renderStatistic(containerWidth: any, text: any, style: any) {
     const { width: textWidth, height: textHeight } = measureTextWidth(text, style);
     const R = containerWidth / 2; // r^2 = (w / 2)^2 + (h - offsetY)^2
@@ -57,10 +43,12 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
     colorField: 'type',
     radius: 1,
     innerRadius: 0.6,
+    // label:false,
     label: {
       type: 'inner',
       offset: '-50%',
       content: '{value}',
+      autoRotate: false,
       style: {
         textAlign: 'center',
         fontSize: 14,
@@ -74,33 +62,6 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
         type: 'element-active',
       },
     ],
-    // statistic: {
-    //   title: {
-    //     offsetY: -4,
-    //     customHtml: (container:any, view:any, datum:any) => {
-    //       const { width, height } = container.getBoundingClientRect();
-    //       const d = Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2));
-    //       console.log('datum.type ',datum?.type, datum)
-    //       const text = datum ? datum.type : '总实例数';
-    //       return renderStatistic(d, text, {
-    //         fontSize: 28,
-    //       });
-    //     },
-    //   },
-    //   content: {
-    //     offsetY: 4,
-    //     style: {
-    //       fontSize: '32px',
-    //     },
-    //     customHtml: (container:any, view:any, datum:any, data:any) => {
-    //       const { width } = container.getBoundingClientRect();
-    //       const text = datum ? ` ${datum.value}` : "";
-    //       return renderStatistic(width, text, {
-    //         fontSize: 32,
-    //       });
-    //     },
-    //   },
-    // },
     statistic: {
       title: false,
       content: {

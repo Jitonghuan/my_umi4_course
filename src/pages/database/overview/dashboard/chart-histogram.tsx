@@ -1,26 +1,19 @@
 import { Column } from '@ant-design/plots';
 export interface ChartHistorgramIProps {
   dataSource: any;
+  columnTypeData: any;
 }
 
 export default function ChartHistogram(props: ChartHistorgramIProps) {
-  const { dataSource } = props;
+  const { dataSource, columnTypeData } = props;
+  let data: any = [];
+  columnTypeData?.map((item: string) => {
+    data.push({
+      type: item,
+      value: dataSource[item],
+    });
+  });
 
-  const data = [
-    {
-      type: 'Mysql operator',
-      value: dataSource?.sumOperator,
-    },
-    {
-      type: 'MHA',
-      value: dataSource?.sumLocal,
-    },
-
-    {
-      type: 'Cloud',
-      value: dataSource?.sumCloud,
-    },
-  ];
   const config = {
     data,
     xField: 'type',
