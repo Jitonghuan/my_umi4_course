@@ -1068,36 +1068,6 @@ export default [
     icon: 'icon-dataset',
     routes: [
       {
-        path: 'storage-manage',
-        name: '存储管理',
-        key: 'storage-manage',
-        component: '@/pages/pedestal/storage-manage',
-
-        routes: [
-          {
-            path: 'storage-dashboard',
-            name: '存储大盘',
-            key: 'storage-manage',
-            component: '@/pages/pedestal/storage-manage/storage-dashboard',
-            hideInMenu: true,
-          },
-          {
-            path: 'node-manage',
-            name: '节点管理',
-            key: 'storage-manage',
-            hideInMenu: true,
-            component: '@/pages/pedestal/storage-manage/node-manage',
-          },
-          {
-            path: 'volume-manage',
-            name: '卷管理',
-            key: 'storage-manage',
-            component: '@/pages/pedestal/storage-manage/volume-manage',
-            hideInMenu: true,
-          },
-        ],
-      },
-      {
         path: 'volume-detail',
         name: '卷详情',
         key: 'storage-manage',
@@ -1182,7 +1152,36 @@ export default [
           { redirect: 'node-list' },
         ]
       },
+      {
+        path: 'storage-manage',
+        name: '存储管理',
+        key: 'storage-manage',
+        component: '@/pages/pedestal/storage-manage',
 
+        routes: [
+          {
+            path: 'storage-dashboard',
+            name: '存储大盘',
+            key: 'storage-manage',
+            component: '@/pages/pedestal/storage-manage/storage-dashboard',
+            hideInMenu: true,
+          },
+          {
+            path: 'node-manage',
+            name: '节点管理',
+            key: 'storage-manage',
+            hideInMenu: true,
+            component: '@/pages/pedestal/storage-manage/node-manage',
+          },
+          {
+            path: 'volume-manage',
+            name: '卷管理',
+            key: 'storage-manage',
+            component: '@/pages/pedestal/storage-manage/volume-manage',
+            hideInMenu: true,
+          },
+        ],
+      },
     ],
   },
   {
