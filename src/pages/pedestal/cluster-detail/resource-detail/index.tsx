@@ -10,7 +10,7 @@ import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import Page from '../component/page';
 import { useNodeListData } from '../hook'
-import { getResourceList, resourceDel, resourceUpdate } from '../service';
+import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
 import './index.less';
 const mockData = [{ type: 'deployments', kind: 'deployments' }]
@@ -71,8 +71,13 @@ export default function ResourceDetail(props: any) {
                 updateResource(record, updateColumn)
             },
             handleYaml: (record: any, index: any) => {
-                setCurrentRecord(record);
-                setYamlDetailVisible(true);
+                setUpdateLoading(true)
+                searchYaml({ clusterCode, resourceType: record?.type, namespace: record?.namespace, resourceName: record?.name }).then((res: any) => {
+                    if (res?.success) {
+                        setCurrentRecord({ yaml: res?.data || '' });
+                        setYamlDetailVisible(true);
+                    }
+                }).finally(() => { setUpdateLoading(false) })
             },
             handleDelete: (record: any, index: any) => {
                 const { type, name, namespace } = record;

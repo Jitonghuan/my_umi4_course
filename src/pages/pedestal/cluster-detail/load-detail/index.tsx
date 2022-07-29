@@ -243,7 +243,7 @@ export default function LoadDetail(props: any) {
             })}
         </div>
         {/* pods */}
-        <p className='title'>Pods</p>
+        <p className='title'>Pods：</p>
         <Table
             dataSource={podData}
             loading={podLoading}
@@ -267,7 +267,7 @@ export default function LoadDetail(props: any) {
         </div>
         {/* 标签管理 */}
         <div className='flex-wrapper' style={{ marginTop: '10px' }}>
-            <span className='title'>标签</span>
+            <span className='title'>标签管理：</span>
             <Button type='primary' size='small' onClick={() => { setMode('tag'); setAddTag(true) }}>新增标签</Button>
         </div>
         <div className='tag-wrapper'>
@@ -276,7 +276,7 @@ export default function LoadDetail(props: any) {
             })}
         </div>
         <div className='flex-wrapper'>
-            <span className='title'>环境变量</span>
+            <span className='title'>环境变量：</span>
             <Button type='primary' size='small' onClick={() => { setMode('var'); setAddTag(true) }}>新增环境变量</Button>
         </div>
         {/* 环境变量 */}

@@ -30,7 +30,7 @@ export default function AddModal(props: any) {
                 <Button onClick={onCancel}>取消</Button>,
                 <Button type='primary' onClick={handleSubmit} loading={loading}>确认</Button>,
             ]}>
-            <div className='form-wrapper'>
+            <div className='load-tag-wrapper'>
                 <Form form={form} name="base" autoComplete="off" colon={false}>
                     {type === 'var' && <Form.Item label='请选择容器' name='container' rules={[{ required: true, message: '请选择容器' }]}>
                         <Select options={containerOption} style={{ width: '240px' }}></Select>
@@ -38,7 +38,7 @@ export default function AddModal(props: any) {
                     <Form.List name="tags">
                         {(fields, { add, remove }) => (
                             <>
-                                {fields.map(field => (
+                                {fields.map((field, index) => (
                                     <Space key={field.key} align="baseline">
                                         <Form.Item>
                                             <MinusCircleOutlined className="tag-icon"
@@ -53,7 +53,8 @@ export default function AddModal(props: any) {
                                                 <Form.Item
                                                     className="v-item"
                                                     {...field}
-                                                    label="KEY"
+                                                    // label="KEY"
+                                                    label={index === 0 ? "KEY" : ""}
                                                     name={[field.name, 'key']}
                                                     rules={[{ required: true, message: '此项为必填项' }]}
                                                 >
@@ -64,8 +65,9 @@ export default function AddModal(props: any) {
                                         <span style={{ verticalAlign: 'text-bottom', lineHeight: '45px' }}>=</span>
                                         <Form.Item
                                             {...field}
-                                            label="VALUE"
+                                            // label="VALUE"
                                             className="v-item"
+                                            label={index === 0 ? "VALUE" : ""}
                                             name={[field.name, 'value']}
                                         >
                                             <Input size='small' />

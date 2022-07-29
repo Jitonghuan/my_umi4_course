@@ -3,7 +3,7 @@
 // @create 2021/11/12	17:04
 
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
-import { Select, Form, Button, Tag, message } from '@cffe/h2o-design';
+import { Select, Form, Button, Tag, message } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { Terminal } from 'xterm';
@@ -50,7 +50,6 @@ export default function ClusteLoginShell(props: any) {
             getResourceList({ clusterCode, resourceName: name, namespace, resourceType: 'pods' }).then((res) => {
                 if (res?.success) {
                     const { items } = res?.data || {};
-                    console.log(items, 'items')
                     if (items && items[0]) {
                         let containerData = []
                         containerData = (items[0]?.info?.containers || [])
