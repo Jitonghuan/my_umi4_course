@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Space, Form } from 'antd';
+import { Space, Form, Button, Modal } from 'antd';
 import { history } from 'umi';
 import { createTableColumns } from './schema';
 import { getUserList } from './service';
@@ -73,6 +73,9 @@ export default function UserManage() {
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <h3>用户列表</h3>
+            <Button type="primary" ghost onClick={() => {}}>
+              新增用户
+            </Button>
           </Space>
         }
         className="table-form"
@@ -80,6 +83,7 @@ export default function UserManage() {
         reset={reset}
         searchText="查询"
       />
+      <Modal title="新增用户"></Modal>
     </PageContainer>
   );
 }
