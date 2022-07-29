@@ -50,7 +50,6 @@ export default function Layout(props: any) {
   const [businessData] = useBusinessData();
 
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
-  const { fromThird } = props.location.query;
 
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
@@ -206,95 +205,92 @@ export default function Layout(props: any) {
           }}
         >
           <ChartsContext.Provider value={{ effectResize }}>
-            {
-              initFlg && (
-                <BasicLayout
-                  {...(props as any)}
-                  isOpenLogin={true}
-                  pagePrefix={appConfig.pagePrefix}
-                  siderMenuProps={{
-                    isOpenPermission: appConfig.isOpenPermission,
-                    permissionData,
-                    IconMap,
-                  }}
-                  showHeader={!fromThird && !isPageInIFrame()}
-                  showSiderMenu={!fromThird && !isPageInIFrame()}
-                  headerProps={{
-                    // env: getEnv(),
-                    userApi: matrixConfigInfo?.domainName
-                      ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
-                      : window.location.href?.includes('gushangke')
-                        ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
-                        : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
-                    logoutApi: matrixConfigInfo?.domainName
-                      ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
-                      : window.location.href?.includes('gushangke')
-                        ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
-                        : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
-                    loginUrl: matrixConfigInfo?.domainName
-                      ? `${matrixConfigInfo?.domainName}/login`
-                      : window.location.href?.includes('gushangke')
-                        ? 'http://c2f.apex.gushangke.com/login'
-                        : `${matrixConfigInfo?.domainName}/login`,
-                    onClickPosition: () => {
-                      setPosVisible(true);
-                      // @ts-ignore
-                      if (window.matrixConfigData?.domainName) {
-                        loadStaffOrgData();
-                      }
-                      setUserPosition({
-                        orgId: userInfo?.orgId,
-                        // campusId: 2000001,
-                        deptId: userInfo.deptInfo.deptId,
-                      });
-                    },
-                    notification: {
-                      count: unreadNum,
-                      data: stemNoticeListData,
-                      onClickMsgEntry: (id: number, msg: any) => {
-                        setAllMessageMode('VIEW');
-                        oneKeyRead([id]);
+            <BasicLayout
+              {...(props as any)}
+              isOpenLogin={true}
+              pagePrefix={appConfig.pagePrefix}
+              siderMenuProps={{
+                isOpenPermission: appConfig.isOpenPermission,
+                permissionData,
+                IconMap,
+              }}
+              showHeader={ initFlg && !isPageInIFrame()}
+              showSiderMenu={ !isPageInIFrame()}
+              headerProps={{
+                // env: getEnv(),
+                defaultTitle: appConfig.title,
+                userApi: matrixConfigInfo?.domainName
+                  ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
+                  : window.location.href?.includes('gushangke')
+                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
+                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                logoutApi: matrixConfigInfo?.domainName
+                  ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
+                  : window.location.href?.includes('gushangke')
+                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
+                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                loginUrl: matrixConfigInfo?.domainName
+                  ? `${matrixConfigInfo?.domainName}/login`
+                  : window.location.href?.includes('gushangke')
+                    ? 'http://c2f.apex.gushangke.com/login'
+                    : `${matrixConfigInfo?.domainName}/login`,
+                onClickPosition: () => {
+                  setPosVisible(true);
+                  // @ts-ignore
+                  if (window.matrixConfigData?.domainName) {
+                    loadStaffOrgData();
+                  }
+                  setUserPosition({
+                    orgId: userInfo?.orgId,
+                    // campusId: 2000001,
+                    deptId: userInfo.deptInfo.deptId,
+                  });
+                },
+                notification: {
+                  count: unreadNum,
+                  data: stemNoticeListData,
+                  onClickMsgEntry: (id: number, msg: any) => {
+                    setAllMessageMode('VIEW');
+                    oneKeyRead([id]);
 
-                        return <a href={`'#'+${msg.systemNoticeId}`}>{msg.title}</a>;
-                      },
-                      onClickAllMsg: () => {
-                        setAllMessageMode('VIEW');
-                      },
-                      render: (active: boolean, setActive: (status: boolean) => void) => {
-                        <h3>一共{unreadNum}条数据</h3>;
-                      },
+                    return <a href={`'#'+${msg.systemNoticeId}`}>{msg.title}</a>;
+                  },
+                  onClickAllMsg: () => {
+                    setAllMessageMode('VIEW');
+                  },
+                  render: (active: boolean, setActive: (status: boolean) => void) => {
+                    <h3>一共{unreadNum}条数据</h3>;
+                  },
+                },
+                extensions: [
+                  {
+                    iconName: 'AlertOutlined',
+                    iconType: 'antd',
+                    type: 'customize',
+                    content: () => {
+                      changeTheme();
                     },
-                    extensions: [
-                      {
-                        iconName: 'AlertOutlined',
-                        iconType: 'antd',
-                        type: 'customize',
-                        content: () => {
-                          changeTheme();
-                        },
-                      },
-                    ],
-                    title: (
-                      <>
-                        <div className="matrix-title">
+                  },
+                ],
+                title: (
+                  <>
+                    <div className="matrix-title">
                       <span>
                         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
 
                         {appConfig.title}
                         {matrixConfigInfo?.LogoName}
                       </span>
-                        </div>
-                      </>
-                    ),
-                    positionText: '部门',
-                    isShowGlobalMenu: false,
-                    onBrandClick: () => {
-                      props.history.push('/matrix/index');
-                    },
-                  }}
-                />
-              )
-            }
+                    </div>
+                  </>
+                ),
+                positionText: '部门',
+                isShowGlobalMenu: false,
+                onBrandClick: () => {
+                  props.history.push('/matrix/index');
+                },
+              }}
+            />
           </ChartsContext.Provider>
         </FeContext.Provider>
       </WaterMark>
