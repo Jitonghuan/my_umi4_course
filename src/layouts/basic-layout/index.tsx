@@ -48,10 +48,7 @@ export default function Layout(props: any) {
   const [categoryData] = useCategoryData();
   // 业务线
   const [businessData] = useBusinessData();
-
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
-  const { fromThird } = props.location.query;
-
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
     // campusId: 2000001,
@@ -209,8 +206,8 @@ export default function Layout(props: any) {
                 permissionData,
                 IconMap,
               }}
-              showHeader={!fromThird && !isPageInIFrame()}
-              showSiderMenu={!fromThird && !isPageInIFrame()}
+              showHeader={!isPageInIFrame()}
+              showSiderMenu={!isPageInIFrame()}
               headerProps={{
                 // env: getEnv(),
                 userApi: matrixConfigInfo?.domainName
