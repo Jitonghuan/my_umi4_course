@@ -49,8 +49,14 @@ const DataSource = (props: any) => {
 
   useEffect(() => {
     getDatasourceList(paging);
-  }, []);
+  }, [cluster]);
 
+  useEffect(() => {
+    getDatasourceList({
+      current: 1,
+      pageSize: 10
+    });
+  }, [cluster])
   const handleSearch = (pagingParams?: any) => {
     getDatasourceList(pagingParams)
   }
@@ -204,7 +210,7 @@ const DataSource = (props: any) => {
             onReset={handleReset}
           >
             <Form.Item label="名称" name="keyword">
-              <Input placeholder="请输入数据源名称" style={{ width: 140 }} />
+              <Input placeholder="请输入" style={{ width: 140 }} />
             </Form.Item>
             <Form.Item label="数据源类型" name="dsType">
               <Select

@@ -15,7 +15,6 @@ export default function Board() {
   const [clusterList, setClusterList] = useState<any>([])
   const [curCluster, setCurCluster] = useState<number>(1)
 
-  console.log(curCluster)
   useEffect(() => {
     getCluster().then((res) => {
       if (res.success) {

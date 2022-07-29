@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/25 09:26
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Button, Spin, Pagination, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
@@ -12,7 +12,7 @@ import './index.less';
 import EditorDrawer from '../editor-drawer';
 import { useGrafhTable } from '../../hooks';
 import { delGraphTable } from '../../service';
-import type {TMode} from '../../interfaces';
+import type { TMode } from '../../interfaces';
 
 const rootCls = 'monitor-board';
 
@@ -24,14 +24,13 @@ export default function Board(props: any) {
   const [pageSize, setPageSize] = useState(50);
   const [searchParams, setSearchParams] = useState<any>({});
 
-  const hookParams = useMemo(() => ({ ...searchParams, clusterCode: cluster }), [searchParams]);
-  const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize);
+  const hookParams = useMemo(() => ({ ...searchParams, clusterCode: cluster }), [cluster,searchParams]);
+  const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize,cluster);
 
   const [editDrawer, setEditDrawer] = useState<boolean>(false)
 
   const [mode, setMode] = useState<TMode>('add')
   const [boardInfo, setBoardInfo] = useState<any>({})
-
 
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
@@ -47,13 +46,15 @@ export default function Board(props: any) {
     loadGraphTable()
   }
 
-  const handleEdit = async (record:any) => {
+
+
+  const handleEdit = async (record: any) => {
     setMode('edit')
     setEditDrawer(true)
     setBoardInfo(record)
   }
 
-  const handleAdd=()=>{
+  const handleAdd = () => {
     setEditDrawer(true)
     setMode('add')
   }
@@ -74,7 +75,7 @@ export default function Board(props: any) {
             {!isLoading && !graphTableList.length && (
               <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
-            <BoardList cluster={cluster} dataSource={graphTableList} loadGraphTable={loadGraphTable} deleteBoard={handleDelete} handleEdit={handleEdit}/>
+            <BoardList cluster={cluster} dataSource={graphTableList} loadGraphTable={loadGraphTable} deleteBoard={handleDelete} handleEdit={handleEdit} />
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>
                 <Pagination

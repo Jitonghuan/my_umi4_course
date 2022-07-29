@@ -12,11 +12,17 @@ export const useGrafhTable = (
 
   const loadData = useCallback(
     async (extra?: any) => {
+      setLoading(true)
       const { ...others } = params || {};
       const requestData = { ...others, ...extra, pageIndex, pageSize };
-      const res = await graphTableList(requestData)
-      setData(res?.data.dataSource || [])
-      setTotal(res?.data?.pageInfo?.total || 0)
+      try {
+        const res = await graphTableList(requestData)
+        setData(res?.data.dataSource || [])
+        setTotal(res?.data?.pageInfo?.total || 0)
+        setLoading(false)
+      } catch (e) {
+        setLoading(false)
+      }
     },
     [params, pageIndex, pageSize],
   );
