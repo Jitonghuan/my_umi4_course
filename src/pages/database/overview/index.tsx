@@ -23,25 +23,24 @@ export default function DatabaseOverView() {
         let clusterDeployType = result?.data?.clusterDeployType;
         let databaseTypeArry: any = [];
         let clusterDeployTypeArry: any = [];
+        let options: any = [];
 
-        let typeArryOption: any = [];
-        for (const key in databaseType) {
-          const element = databaseType[key];
-          typeArryOption.push({
-            label: key,
-            value: element,
+        databaseType?.map((item: any) => {
+          databaseTypeArry.push(item?.label);
+          options.push({
+            label: item?.label,
+            value: item?.values,
           });
-          databaseTypeArry.push(key);
-        }
+        });
+        clusterDeployType?.map((item: any) => {
+          clusterDeployTypeArry.push(item?.label);
+        });
 
-        for (const key in clusterDeployType) {
-          clusterDeployTypeArry.push(key);
-        }
-        setDatabaseType(typeArryOption);
+        setDatabaseType(options);
         setPieTypeData(databaseTypeArry);
         setColumnTypeData(clusterDeployTypeArry);
-        getOverviewInstances({ instanceType: typeArryOption[0].value });
-        setActiveValue(typeArryOption[0].value);
+        getOverviewInstances({ instanceType: options[0].value });
+        setActiveValue(options[0].value);
       }
     });
   }, []);
@@ -70,6 +69,7 @@ export default function DatabaseOverView() {
     height: 280,
     margin: 12,
   };
+  console.log('databaseType', databaseType);
 
   return (
     <PageContainer>
