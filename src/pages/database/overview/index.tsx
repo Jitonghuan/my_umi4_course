@@ -69,7 +69,6 @@ export default function DatabaseOverView() {
     height: 280,
     margin: 12,
   };
-  console.log('databaseType', databaseType);
 
   return (
     <PageContainer>
