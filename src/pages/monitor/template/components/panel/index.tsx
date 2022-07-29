@@ -16,8 +16,8 @@ import {
   queryGroupList,
 } from '../../../service';
 import './index.less';
-import { createGraphTemplateUrl, deleteGraphTemplateUrl, delGraphTemplate, queryGraphTemplateUrl, updateGraphTemplateUrl } from '../../service';
-import { Drawer, Input, Select } from '@cffe/h2o-design';
+import { createGraphTemplate, createGraphTemplateUrl, deleteGraphTemplateUrl, delGraphTemplate, queryGraphTemplateUrl, updateGraphTemplate, updateGraphTemplateUrl } from '../../service';
+import { Drawer, Input, message, Select } from '@cffe/h2o-design';
 import AceEditor from '@/components/ace-editor';
 
 type statusTypeItem = {
@@ -195,11 +195,35 @@ const TemplateCom: React.FC = () => {
   };
 
   const onSubmit = (value: Record<string, string>) => {
+    const params = value;
+    let graphTemplateJson;
+    try {
+      graphTemplateJson = params.graphTemplateJson && JSON.parse(params?.graphTemplateJson)
+    } catch (e) {
+      message.error('JSON格式不正确')
+      return
+    }
+
+    try {
+      delete params.graphTemplateJson
+    } catch (e) { }
+
     if (type === 'add') {
-      createRuleTemplatesFun({ ...value });
+      createGraphTemplate(params, graphTemplateJson).then((res) => {
+        if (res?.success) {
+          message.success('创建成功')
+          onClose()
+          queryList();
+        }
+      });
     } else {
-      console.log(editRecord)
-      updateRuleTemplatesFun({ id: editRecord.id, ...value });
+      updateGraphTemplate({ id: editRecord.id, ...params }, graphTemplateJson).then((res) => {
+        if (res?.success) {
+          message.success('更新成功')
+          onClose();
+          queryList();
+        }
+      });
     }
   };
   const handleSubmit = () => {

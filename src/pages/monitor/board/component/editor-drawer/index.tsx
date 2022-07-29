@@ -27,13 +27,13 @@ const EditorDrawer = (props: IEditorDrawer) => {
     if (visible) {
       if (mode === 'edit') {
         setDetail(boardInfo)
-        setDataSourceType(boardInfo.graphType);
+        setDataSourceType(boardInfo?.graphType);
         formRef.setFieldsValue(boardInfo);
       } else if (mode === 'add') {
         setDetail(null)
       }
     }
-  }, [visible, boardInfo])
+  }, [mode, boardInfo])
 
   useEffect(() => {
     dataSourceType && onDataSourceTypeChange(dataSourceType)
@@ -42,16 +42,26 @@ const EditorDrawer = (props: IEditorDrawer) => {
 
   const handleSubmit = async () => {
     let formValue = formRef.getFieldsValue()
+    let body = {};
+    try {
+      const graphJson = formValue.graphJson && JSON.parse(formValue?.graphJson)
+      body = { graphJson }
+    } catch (e) {
+      message.error('JSON格式不正确')
+      return
+    }
+
+    try {
+      delete formValue.graphJson
+    } catch (e) { }
+
     if (mode === 'edit') {
       formValue = {
         ...formValue,
         graphUuid: detail.graphUuid,
         clusterCode: cluster
       }
-      if (!formValue.graphJson) {
-        delete formValue.graphJson
-      }
-      updateGraphTable(formValue).then((res) => {
+      updateGraphTable(formValue, body).then((res) => {
         if (res?.success) {
           handleClose()
           loadGraphTable();
@@ -63,7 +73,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         ...formValue,
         clusterCode: cluster
       }
-      await createGraphTable(formValue).then((res) => {
+      await createGraphTable(formValue, body).then((res) => {
         if (res?.success) {
           handleClose()
           message.success('创建成功')
@@ -71,7 +81,6 @@ const EditorDrawer = (props: IEditorDrawer) => {
         }
       })
     }
-
   }
 
   const onDataSourceTypeChange = async (value: any) => {
@@ -97,7 +106,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
       const data = res1.data.dataSource.map((item: any) => {
         return {
           label: item.name,
-          value: item.name,
+          value: item.id,
           ...item
         }
       })
@@ -169,7 +178,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
           <Select options={dataSourceOptions} />
         </Form.Item>
         <Divider />
-        <Form.Item label='模版' name='graphTemplateName'>
+        <Form.Item label='模版' name='graphTemplateId'>
           <Select options={templateOptions} />
         </Form.Item>
         <Form.Item label='GrafanaID' name='grafanaId'>

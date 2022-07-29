@@ -5,13 +5,12 @@ import { message } from '@cffe/h2o-design';
 
 const getRequestQuery = (params: any = {}) => {
   return Object.keys(params).reduce((prev, curr) => {
-    if(params[curr]){
+    if (params[curr]) {
       prev.append(curr, params[curr])
     }
     return prev
 
   }, new URLSearchParams()).toString()
-
 }
 
 /**
@@ -37,23 +36,11 @@ export const graphTableList = (data: any) => {
  * @param data：IGraphTable
  * @returns
  */
-export const createGraphTable = (params: IGraphTable) => {
+export const createGraphTable = (params:any, data:any) => {
   let url = `${appConfig.apiPrefix}/monitorManage/graphTable/create`;
-  let graphJson;
-
-  try {
-    graphJson = params.graphJson && JSON.parse(params?.graphJson)
-  } catch (e) {
-    message.error('JSON格式不正确')
-  }
-
-  try{
-    delete params.graphJson
-  }catch(e){}
-
   const queryString = getRequestQuery(params)
   url = queryString ? `${url}?${queryString}` : url
-  return postRequest(url, { data: { graphJson } });
+  return postRequest(url, { data: data });
 }
 
 /**
@@ -61,16 +48,12 @@ export const createGraphTable = (params: IGraphTable) => {
  * @param data：IGraphTable
  * @returns
  */
-export const updateGraphTable = (params: IGraphTable) => {
+export const updateGraphTable = (params: any, data: any) => {
   let url = `${appConfig.apiPrefix}/monitorManage/graphTable/update`;
-  let graphJson;
-  if (params?.graphJson) {
-    graphJson = JSON.parse(params.graphJson)
-    delete params.graphJson
-  }
+
   const queryString = getRequestQuery(params)
   url = queryString ? `${url}?${queryString}` : url
-  return putRequest(url, { data: { graphJson } });
+  return putRequest(url, { data: data });
 }
 
 /**
@@ -134,9 +117,9 @@ export const updateGraphDatasouce = (data: IGraphDataSource) => {
  * @param graphUuid
  * @returns
  */
-export const delGraphDatasouce = (clusterCode: string, graphUuid: string | number) => {
-  const url = `${appConfig.apiPrefix}/monitorManage/graphDatasource/delete/:graphUuid?clusterCode=${clusterCode}&graphUuid=${graphUuid}`;
-  return delRequest(url, { data: { clusterCode, graphUuid } });
+export const delGraphDatasouce = (uuid: string | number) => {
+  const url = `${appConfig.apiPrefix}/monitorManage/graphDatasource/delete/${uuid}`;
+  return delRequest(url);
 }
 
 /**

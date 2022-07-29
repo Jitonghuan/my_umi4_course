@@ -53,15 +53,19 @@ export default function Board(props: any) {
     setBoardInfo(record)
   }
 
+  const handleAdd=()=>{
+    setEditDrawer(true)
+    setMode('add')
+  }
 
   return (
     <>
       <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
       <ContentCard>
         <div className="table-caption">
-          <Button type="primary" onClick={() => setEditDrawer(true)}>
+          <Button type="primary" onClick={handleAdd}>
             <PlusOutlined />
-            新增应用
+            新增大盘
           </Button>
         </div>
 

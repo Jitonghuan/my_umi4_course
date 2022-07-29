@@ -39,12 +39,12 @@ export default function ApplicationCardList(props: IProps) {
           onClick={() =>
             history.push({
               pathname: 'detail',
-              search: `?graphName=${item.GraphName}&url=${encodeURIComponent(item.url)}`
+              search: `?graphName=${item.graphName}&url=${encodeURIComponent(item.url)}`
             })
           }
         >
           <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
-            {item.GraphName}
+            {item.graphName}
             <span onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: 0, right: 0 }}>
               <Popconfirm
                 title={`确定删除大盘吗？`}
@@ -61,15 +61,15 @@ export default function ApplicationCardList(props: IProps) {
           <div className={`${cardCls}-content`}>
             <div className={`${cardCls}-content-description`}>
               <span className={`${cardCls}-content-description-label`}>分类</span>
-              <span className={`${cardCls}-content-description-value`}>{item.GraphType}</span>
+              <span className={`${cardCls}-content-description-value`}>{item.graphType}</span>
             </div>
             <div className={`${cardCls}-content-description`}>
               <span className={`${cardCls}-content-description-label`}>数据源类型</span>
-              <span className={`${cardCls}-content-description-value`}>{item.DsType}</span>
+              <span className={`${cardCls}-content-description-value`}>{item.dsType}</span>
             </div>
             <div className={`${cardCls}-content-description`}>
               <span className={`${cardCls}-content-description-label`}>数据源名称</span>
-              <span className={`${cardCls}-content-description-value`}>{item.DsName}</span>
+              <span className={`${cardCls}-content-description-value`}>{item.dsName}</span>
             </div>
           </div>
         </div>

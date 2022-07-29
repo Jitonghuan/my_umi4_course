@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
-import { Form, Input, Select, Button } from 'antd';
+import { Form, Input, Select, Button, message } from 'antd';
 import { FilterCard } from '@/components/vc-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import { Divider, Drawer, Popconfirm, Switch, Table } from '@cffe/h2o-design';
@@ -20,7 +20,13 @@ const DataSource = (props: any) => {
   const [saveLoading, setSaveLoading] = useState<boolean>(false)
   const [sourceDetail, setSourceDetail] = useState<any>({})
   const [total, setTotal] = useState<number>(0)
-
+  const [paging, setPaging] = useState<{
+    pageSize: number;
+    current: number;
+  }>({
+    current: 1,
+    pageSize: 10
+  })
 
   const handleReset = useCallback(() => {
     searchField.setFieldsValue({
@@ -42,24 +48,30 @@ const DataSource = (props: any) => {
   );
 
   useEffect(() => {
-    getDatasourceList();
+    getDatasourceList(paging);
   }, []);
 
-  const handleSearch = (formValue: any) => {
-    getDatasourceList(formValue)
+  const handleSearch = (pagingParams?: any) => {
+    getDatasourceList(pagingParams)
   }
 
-  const getDatasourceList = async (formValue: any = {}) => {
+  const getDatasourceList = async (pagingParams?: any) => {
     if (cluster) {
       const data = {
         clusterCode: cluster,
-        ...formValue,
+        // pageIndex: pagingParams ? pagingParams.current : paging.current,
+        // pageSize: pagingParams ? pagingParams.pageSize : paging.pageSize,
+        ...searchField.getFieldsValue()
       }
-      const res = await getGraphGraphDatasouceList(data)
-      if (res && Array.isArray(res?.data?.dataSource)) {
-        setDataSource(res.data.dataSource)
-        setTotal(res?.data?.pageInfo?.total || 0)
+      if (pagingParams) {
+        setPaging(pagingParams)
       }
+      getGraphGraphDatasouceList(data).then((res) => {
+        if (res && Array.isArray(res?.data?.dataSource)) {
+          setDataSource(res.data.dataSource)
+          setTotal(res?.data?.pageInfo?.total || 0)
+        }
+      })
     }
   }
 
@@ -93,18 +105,43 @@ const DataSource = (props: any) => {
 
   const handleDelete = async (id: number) => {
     console.log(id)
-    await delGraphDatasouce(cluster, id)
+    await delGraphDatasouce(id)
+    getDatasourceList({
+      pageIndex: 1,
+      pageSize: paging.pageSize
+    })
   }
 
   const handleSubmit = async () => {
     setSaveLoading(true)
     const value = editForm.getFieldsValue()
-    if (sourceDetail?.dsUuid) {
-      await updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster })
-    } else {
-      await createGraphDatasouce({ ...value, clusterCode: cluster })
+    try {
+      if (sourceDetail?.dsUuid) {
+        await updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster })
+        message.success("更新成功")
+        getDatasourceList()
+
+      } else {
+        await createGraphDatasouce({ ...value, clusterCode: cluster })
+        message.success("创建成功")
+        getDatasourceList({
+          current: 1,
+          // pageSize: paging.pageSize
+        })
+      }
+
+      handleClose()
+    } catch (e) {
+      message.error("创建/更新失败")
     }
+
     setSaveLoading(false)
+  }
+
+  const handleClose = () => {
+    setVisible(false)
+    setSourceDetail(null)
+    editForm.resetFields()
   }
 
   const colums = [
@@ -138,7 +175,7 @@ const DataSource = (props: any) => {
             <Button type='link' onClick={() => { handleEdit(record) }}>编辑</Button>
             <Popconfirm
               title='确定要删除吗？'
-              onConfirm={() => { handleDelete(record.id) }}
+              onConfirm={() => { handleDelete(record.uuid) }}
               okText='删除'
               cancelText='取消'
             >
@@ -156,9 +193,14 @@ const DataSource = (props: any) => {
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Form
             layout="inline"
-            initialValues={searchParams}
+            // initialValues={searchParams}
             form={searchField}
-            onFinish={handleSearch}
+            onFinish={() => {
+              handleSearch({
+                current: 1,
+                // pageSize: paging.pageSize
+              })
+            }}
             onReset={handleReset}
           >
             <Form.Item label="名称" name="keyword">
@@ -193,18 +235,32 @@ const DataSource = (props: any) => {
         </div>
       </FilterCard>
       <ContentCard>
-        <Table columns={colums} dataSource={dataSource} />
+        <Table columns={colums} dataSource={dataSource} pagination={false}
+        // pagination={
+        //   {
+        //     total: total,
+        //     ...paging,
+        //     onChange: (current, pageSize) => {
+        //       handleSearch({
+        //         current,
+        //         pageSize
+        //       })
+        //     },
+        //   }
+
+        // }
+        />
       </ContentCard>
       <Drawer
         visible={visible}
         destroyOnClose
-        onClose={() => { setVisible(false) }}
+        onClose={handleClose}
         footer={
           <div className="drawer-footer">
             <Button type="primary" loading={saveLoading} onClick={handleSubmit}>
               保存
             </Button>
-            <Button type="default" onClick={props.onClose}>
+            <Button type="default" onClick={handleClose}>
               取消
             </Button>
           </div>
