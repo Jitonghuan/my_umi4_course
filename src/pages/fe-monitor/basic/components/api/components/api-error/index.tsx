@@ -38,8 +38,8 @@ const APIError = (props: IProps) => {
   const onSearchSuccessRate = async (value?: any) => {
     const { api, traceId } = value
     if (loading) {
-      return
-    };
+      return;
+    }
     let params = getParam()
     params = { ...params, searchType: type };
     if (api) {

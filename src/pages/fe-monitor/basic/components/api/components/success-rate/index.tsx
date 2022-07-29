@@ -22,7 +22,7 @@ const SuccessRate = (props: IProps) => {
   const [total, setTotal] = useState<number | undefined>(0)
   const [formValue, setFormValue] = useState<any>({});
   const [sorter, setSorter] = useState<any>({
-    sorType: 'allCount',
+    sortType: 'allCount',
     sortField: 'desc'
   });
 
@@ -77,15 +77,15 @@ const SuccessRate = (props: IProps) => {
             console.log(action)
             console.log(sorter)
             if (action === 'sort') {
-              const sorType = orderMap[sorter?.order];
+              const sortType = orderMap[sorter?.order];
               const sortField = sorter.field;
               setSorter({
-                sorType,
+                sortType,
                 sortField
               });
               onSearchSuccessRate({
                 ...formValue,
-                sorType,
+                sortType,
                 sortField
               })
             }
