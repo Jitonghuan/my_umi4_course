@@ -156,6 +156,7 @@ export default function addEnvData(props: EnvEditorProps) {
             clusterNetType: params?.clusterNetType,
             mark: params?.mark,
             ngInstCode: params?.ngInstCode,
+            bucketName: params?.bucketName,
           },
         })
           .then((result) => {
@@ -291,6 +292,9 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
+          <Form.Item name="bucketName" label="Minio Bucket名称">
+            <Input style={{ width: 280 }} disabled={isDisabled} />
+          </Form.Item>
           <Form.Item name="ngInstCode" label="NG实例">
             <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} allowClear />
           </Form.Item>
