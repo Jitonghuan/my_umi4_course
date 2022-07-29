@@ -3,7 +3,7 @@
 // @create 2021/09/05 11:34
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import {Modal, message, Table, Empty, Radio} from 'antd';
+import { Modal, message, Table, Empty, Radio } from 'antd';
 import { EnvDataVO, AppItemVO } from '@/pages/application/interfaces';
 import { datetimeCellRender } from '@/utils';
 import { rollbackFeApp } from '@/pages/application/service';
@@ -14,12 +14,13 @@ export interface RollbackVersionProps {
   appData?: AppItemVO;
   envItem?: EnvDataVO;
   versionList?: FeVersionItemVO[];
+  loading: boolean;
   onClose: () => any;
   onSubmit: () => any;
 }
 
 export default function RollbackVersion(props: RollbackVersionProps) {
-  const { appData, envItem, versionList, onClose, onSubmit } = props;
+  const { appData, envItem, versionList, onClose, onSubmit, loading } = props;
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
@@ -34,7 +35,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     setSelectedRowKeys([]);
   }
 
-  function getList () {
+  function getList() {
     if (appData?.feType === 'pda') {
       return versionList?.filter((val) => val.pdaDeployType === pdaDeployType);
     }
@@ -42,16 +43,15 @@ export default function RollbackVersion(props: RollbackVersionProps) {
   }
 
   const handleOk = useCallback(async () => {
-
     let param = {
       appCode: appData?.appCode,
       envCode: envItem?.envCode,
       version: selectedRowKeys[0],
-    }
+    };
     if (appData?.feType === 'pda') {
       Object.assign(param, {
-        pdaDeployType
-      })
+        pdaDeployType,
+      });
     }
     await rollbackFeApp(param);
 
@@ -87,19 +87,18 @@ export default function RollbackVersion(props: RollbackVersionProps) {
       maskClosable={false}
       onCancel={onClose}
       onOk={handleOk}
+      confirmLoading={loading}
       okButtonProps={{ disabled: !selectedRowKeys.length }}
     >
-      {
-        appData?.feType === 'pda' && (
-          <div style={{marginBottom: '10px'}}>
-            <span>打包类型：</span>
-            <Radio.Group onChange={(e) => deployTypeChange(e.target.value)} value={pdaDeployType}>
-              <Radio value='bundles'>bundles</Radio>
-              <Radio value='apk'>apk</Radio>
-            </Radio.Group>
-          </div>
-        )
-      }
+      {appData?.feType === 'pda' && (
+        <div style={{ marginBottom: '10px' }}>
+          <span>打包类型：</span>
+          <Radio.Group onChange={(e) => deployTypeChange(e.target.value)} value={pdaDeployType}>
+            <Radio value="bundles">bundles</Radio>
+            <Radio value="apk">apk</Radio>
+          </Radio.Group>
+        </div>
+      )}
       <Table
         dataSource={getList() || []}
         rowClassName={(record) => {

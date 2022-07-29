@@ -120,6 +120,7 @@ export default function FEVersions() {
         versionList={feVersionData[rollbackEnv?.envCode!]}
         onClose={() => setRollbackEnv(undefined)}
         onSubmit={handleRollbackSubmit}
+        loading={isVersionLoading}
       />
     </ContentCard>
   );
