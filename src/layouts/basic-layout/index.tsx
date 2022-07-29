@@ -78,25 +78,25 @@ export default function Layout(props: any) {
     });
   };
 
-  async function getConfig () {
+  async function getConfig() {
     const res = await getMatrixEnvConfig();
     let infoSource = window.location.href?.includes('gushangke')
       ? {
-        curEnvType: 'gushangke',
-        locationHref: 'gushangke',
-        domainName: 'http://c2f.apex.gushangke.com',
-        wsPrefixName: 'ws://matrix-api.gushangke.com',
-        LogoName: '--富阳骨伤',
-        waterMarkName: '富阳骨伤',
-      }
+          curEnvType: 'gushangke',
+          locationHref: 'gushangke',
+          domainName: 'http://c2f.apex.gushangke.com',
+          wsPrefixName: 'ws://matrix-api.gushangke.com',
+          LogoName: '--富阳骨伤',
+          waterMarkName: '富阳骨伤',
+        }
       : {
-        curEnvType: res?.curEnvType,
-        locationHref: res?.locationHref,
-        domainName: res?.domainName,
-        wsPrefixName: res?.wsPrefixName,
-        LogoName: res?.LogoName,
-        waterMarkName: res?.waterMarkName,
-      };
+          curEnvType: res?.curEnvType,
+          locationHref: res?.locationHref,
+          domainName: res?.domainName,
+          wsPrefixName: res?.wsPrefixName,
+          LogoName: res?.LogoName,
+          waterMarkName: res?.waterMarkName,
+        };
     setMatrixConfigInfo(infoSource);
     // @ts-ignore
     window.matrixConfigData = res || {
@@ -204,92 +204,94 @@ export default function Layout(props: any) {
           }}
         >
           <ChartsContext.Provider value={{ effectResize }}>
-            <BasicLayout
-              {...(props as any)}
-              isOpenLogin={true}
-              pagePrefix={appConfig.pagePrefix}
-              siderMenuProps={{
-                isOpenPermission: appConfig.isOpenPermission,
-                permissionData,
-                IconMap,
-              }}
-              showHeader={!isPageInIFrame()}
-              showSiderMenu={!isPageInIFrame()}
-              headerProps={{
-                // env: getEnv(),
-                defaultTitle: appConfig.title,
-                userApi: matrixConfigInfo?.domainName
-                  ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
-                  : window.location.href?.includes('gushangke')
+            {initFlg && (
+              <BasicLayout
+                {...(props as any)}
+                isOpenLogin={true}
+                pagePrefix={appConfig.pagePrefix}
+                siderMenuProps={{
+                  isOpenPermission: appConfig.isOpenPermission,
+                  permissionData,
+                  IconMap,
+                }}
+                showHeader={!isPageInIFrame()}
+                showSiderMenu={!isPageInIFrame()}
+                headerProps={{
+                  // env: getEnv(),
+                  defaultTitle: appConfig.title,
+                  userApi: matrixConfigInfo?.domainName
+                    ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
+                    : window.location.href?.includes('gushangke')
                     ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
                     : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
-                logoutApi: matrixConfigInfo?.domainName
-                  ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
-                  : window.location.href?.includes('gushangke')
+                  logoutApi: matrixConfigInfo?.domainName
+                    ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
+                    : window.location.href?.includes('gushangke')
                     ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
                     : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
-                loginUrl: matrixConfigInfo?.domainName
-                  ? `${matrixConfigInfo?.domainName}/login`
-                  : window.location.href?.includes('gushangke')
+                  loginUrl: matrixConfigInfo?.domainName
+                    ? `${matrixConfigInfo?.domainName}/login`
+                    : window.location.href?.includes('gushangke')
                     ? 'http://c2f.apex.gushangke.com/login'
                     : `${matrixConfigInfo?.domainName}/login`,
-                onClickPosition: () => {
-                  setPosVisible(true);
-                  // @ts-ignore
-                  if (window.matrixConfigData?.domainName) {
-                    loadStaffOrgData();
-                  }
-                  setUserPosition({
-                    orgId: userInfo?.orgId,
-                    // campusId: 2000001,
-                    deptId: userInfo.deptInfo.deptId,
-                  });
-                },
-                notification: {
-                  count: unreadNum,
-                  data: stemNoticeListData,
-                  onClickMsgEntry: (id: number, msg: any) => {
-                    setAllMessageMode('VIEW');
-                    oneKeyRead([id]);
+                  onClickPosition: () => {
+                    setPosVisible(true);
+                    // @ts-ignore
+                    if (window.matrixConfigData?.domainName) {
+                      loadStaffOrgData();
+                    }
+                    setUserPosition({
+                      orgId: userInfo?.orgId,
+                      // campusId: 2000001,
+                      deptId: userInfo.deptInfo.deptId,
+                    });
+                  },
+                  notification: {
+                    count: unreadNum,
+                    data: stemNoticeListData,
+                    onClickMsgEntry: (id: number, msg: any) => {
+                      setAllMessageMode('VIEW');
+                      oneKeyRead([id]);
 
-                    return <a href={`'#'+${msg.systemNoticeId}`}>{msg.title}</a>;
-                  },
-                  onClickAllMsg: () => {
-                    setAllMessageMode('VIEW');
-                  },
-                  render: (active: boolean, setActive: (status: boolean) => void) => {
-                    <h3>一共{unreadNum}条数据</h3>;
-                  },
-                },
-                extensions: [
-                  {
-                    iconName: 'AlertOutlined',
-                    iconType: 'antd',
-                    type: 'customize',
-                    content: () => {
-                      changeTheme();
+                      return <a href={`'#'+${msg.systemNoticeId}`}>{msg.title}</a>;
+                    },
+                    onClickAllMsg: () => {
+                      setAllMessageMode('VIEW');
+                    },
+                    render: (active: boolean, setActive: (status: boolean) => void) => {
+                      <h3>一共{unreadNum}条数据</h3>;
                     },
                   },
-                ],
-                title: (
-                  <>
-                    <div className="matrix-title">
-                      <span>
-                        <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
+                  extensions: [
+                    {
+                      iconName: 'AlertOutlined',
+                      iconType: 'antd',
+                      type: 'customize',
+                      content: () => {
+                        changeTheme();
+                      },
+                    },
+                  ],
+                  title: (
+                    <>
+                      <div className="matrix-title">
+                        <span>
+                          <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
 
-                        {appConfig.title}
-                        {matrixConfigInfo?.LogoName}
-                      </span>
-                    </div>
-                  </>
-                ),
-                positionText: '部门',
-                isShowGlobalMenu: false,
-                onBrandClick: () => {
-                  props.history.push('/matrix/index');
-                },
-              }}
-            />
+                          {appConfig.title}
+                          {matrixConfigInfo?.LogoName}
+                        </span>
+                      </div>
+                    </>
+                  ),
+                  positionText: '部门',
+                  isShowGlobalMenu: false,
+                  onBrandClick: () => {
+                    props.history.push('/matrix/index');
+                  },
+                }}
+              />
+            )}
           </ChartsContext.Provider>
         </FeContext.Provider>
       </WaterMark>
