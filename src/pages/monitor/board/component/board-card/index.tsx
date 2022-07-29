@@ -24,8 +24,8 @@ export default function Board(props: any) {
   const [pageSize, setPageSize] = useState(50);
   const [searchParams, setSearchParams] = useState<any>({});
 
-  const hookParams = useMemo(() => ({ ...searchParams, clusterCode: cluster }), [cluster,searchParams]);
-  const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize,cluster);
+  const hookParams = useMemo(() => ({ ...searchParams, clusterCode: cluster }), [cluster, searchParams]);
+  const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize, cluster);
 
   const [editDrawer, setEditDrawer] = useState<boolean>(false)
 
@@ -42,11 +42,12 @@ export default function Board(props: any) {
   }
 
   const handleDelete = async (graphUuId: string) => {
-    const res = await delGraphTable(cluster, graphUuId)
-    loadGraphTable()
+    delGraphTable(cluster, graphUuId).then((res) => {
+      if (res.success) {
+        loadGraphTable()
+      }
+    })
   }
-
-
 
   const handleEdit = async (record: any) => {
     setMode('edit')

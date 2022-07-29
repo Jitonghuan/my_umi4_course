@@ -120,23 +120,34 @@ const DataSource = (props: any) => {
 
   const handleSubmit = async () => {
     setSaveLoading(true)
-    const value = editForm.getFieldsValue()
+    const value = await editForm.validateFields()
     try {
       if (sourceDetail?.dsUuid) {
-        await updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster })
-        message.success("更新成功")
-        getDatasourceList()
+        updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster }).then((res)=>{
+          if(res?.success){
+            message.success("创建成功")
+            getDatasourceList({
+              current: 1,
+              // pageSize: paging.pageSize
+            })
+            handleClose()
+          }else{
+            message.error("创建失败")
+          }
+        })
+
 
       } else {
-        await createGraphDatasouce({ ...value, clusterCode: cluster })
-        message.success("创建成功")
-        getDatasourceList({
-          current: 1,
-          // pageSize: paging.pageSize
+        createGraphDatasouce({ ...value, clusterCode: cluster }).then((res)=>{
+          if(res?.success){
+            message.success("更新成功")
+            getDatasourceList()
+            handleClose()
+          }else{
+            message.error("更新失败")
+          }
         })
       }
-
-      handleClose()
     } catch (e) {
       message.error("创建/更新失败")
     }
@@ -277,10 +288,10 @@ const DataSource = (props: any) => {
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
         >
-          <Form.Item label="名称" name="dsName">
+          <Form.Item label="名称" name="dsName" rules={[{ required: true, message: '请输入名称' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="类型" name="dsType">
+          <Form.Item label="类型" name="dsType" rules={[{ required: true, message: '请选择类型!' }]}>
             <Select
               options={[
                 { label: 'elasticsearch', value: 'elasticsearch' },
@@ -289,7 +300,7 @@ const DataSource = (props: any) => {
               onChange={onTypeChange}
             />
           </Form.Item>
-          <Form.Item label="URL" name="dsUrl">
+          <Form.Item label="URL" name="dsUrl" rules={[{ required: true, message: '请输入URL' }]}>
             <Input />
           </Form.Item>
           <Divider />

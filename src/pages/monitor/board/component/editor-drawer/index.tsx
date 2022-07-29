@@ -41,8 +41,9 @@ const EditorDrawer = (props: IEditorDrawer) => {
 
 
   const handleSubmit = async () => {
-    let formValue = formRef.getFieldsValue()
+    let formValue = await formRef.validateFields()
     let body = {};
+    // graphJson通过body传参数。
     try {
       const graphJson = formValue.graphJson && JSON.parse(formValue?.graphJson)
       body = { graphJson }
@@ -50,7 +51,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
       message.error('JSON格式不正确')
       return
     }
-
+    // 删除query params中的graphJson
     try {
       delete formValue.graphJson
     } catch (e) { }
@@ -73,7 +74,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         ...formValue,
         clusterCode: cluster
       }
-      await createGraphTable(formValue, body).then((res) => {
+      createGraphTable(formValue, body).then((res) => {
         if (res?.success) {
           handleClose()
           message.success('创建成功')
