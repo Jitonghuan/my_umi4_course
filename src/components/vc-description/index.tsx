@@ -111,6 +111,7 @@ const funcName = (props: any) => {
     >
       <Descriptions.Item label="发布单Id">{dataSource?.deployId}</Descriptions.Item>
       <Descriptions.Item label="发布人">{dataSource?.modifyUser}</Descriptions.Item>
+      <Descriptions.Item label="版本号">{dataSource?.version}</Descriptions.Item>
       <Descriptions.Item label="发布时间">
         {moment(dataSource?.deployedTime).format('YYYY-MM-DD HH:mm:ss')}
       </Descriptions.Item>

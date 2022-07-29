@@ -178,6 +178,13 @@ export default function PublishRecord(props: IProps) {
                   <label>{recordFieldMapOut['deployedTime']}</label>:
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
+                {
+                  item.version && (
+                    <div>
+                      <label>版本号</label>:{item['version']}
+                    </div>
+                  )
+                }
                 {item.deployStatus === 'multiEnvDeploying' && item.deploySubStates ? (
                   <div>
                     <label>{recordFieldMapOut['deployStatus']}</label>:

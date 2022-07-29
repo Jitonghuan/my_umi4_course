@@ -83,7 +83,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     <Modal
       visible={!!envItem}
       title="选择回滚版本"
-      width={800}
+      width={950}
       maskClosable={false}
       onCancel={onClose}
       onOk={handleOk}
@@ -139,8 +139,10 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         )}
       >
         <Table.Column dataIndex="version" title="版本号" />
-        <Table.Column dataIndex="gmtModify" title="发布时间" render={datetimeCellRender} width={200} />
-        <Table.Column dataIndex="modifyUser" title="发布人" />
+        <Table.Column dataIndex="gmtCreate" title="发布时间" render={datetimeCellRender} width={200} />
+        <Table.Column dataIndex="gmtModify" title="修改时间" render={datetimeCellRender} width={200} />
+        <Table.Column dataIndex="createUser" title="发布人" />
+        <Table.Column dataIndex="modifyUser" title="更新人" />
         <Table.Column
           dataIndex="isActive"
           title="状态"

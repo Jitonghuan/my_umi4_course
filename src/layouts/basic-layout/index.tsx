@@ -49,6 +49,7 @@ export default function Layout(props: any) {
   // 业务线
   const [businessData] = useBusinessData();
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
+
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
     // campusId: 2000001,
@@ -68,6 +69,7 @@ export default function Layout(props: any) {
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
+  const [initFlg, setInitFlg] = useState(false);
   const isPageInIFrame = () => window.self !== window.top;
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
@@ -75,36 +77,41 @@ export default function Layout(props: any) {
       loadStemNoticeList();
     });
   };
-  useEffect(() => {
-    getMatrixEnvConfig().then((res) => {
-      let infoSource = window.location.href?.includes('gushangke')
-        ? {
-            curEnvType: 'gushangke',
-            locationHref: 'gushangke',
-            domainName: 'http://c2f.apex.gushangke.com',
-            wsPrefixName: 'ws://matrix-api.gushangke.com',
-            LogoName: '--富阳骨伤',
-            waterMarkName: '富阳骨伤',
-          }
-        : {
-            curEnvType: res?.curEnvType,
-            locationHref: res?.locationHref,
-            domainName: res?.domainName,
-            wsPrefixName: res?.wsPrefixName,
-            LogoName: res?.LogoName,
-            waterMarkName: res?.waterMarkName,
-          };
-      setMatrixConfigInfo(infoSource);
-      // @ts-ignore
-      window.matrixConfigData = res || {
-        curEnvType: 'dev',
-        locationHref: '',
-        domainName: 'http://c2f.apex-dev.cfuture.shop',
-        wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
-        LogoName: '',
-        waterMarkName: '',
+
+  async function getConfig () {
+    const res = await getMatrixEnvConfig();
+    let infoSource = window.location.href?.includes('gushangke')
+      ? {
+        curEnvType: 'gushangke',
+        locationHref: 'gushangke',
+        domainName: 'http://c2f.apex.gushangke.com',
+        wsPrefixName: 'ws://matrix-api.gushangke.com',
+        LogoName: '--富阳骨伤',
+        waterMarkName: '富阳骨伤',
+      }
+      : {
+        curEnvType: res?.curEnvType,
+        locationHref: res?.locationHref,
+        domainName: res?.domainName,
+        wsPrefixName: res?.wsPrefixName,
+        LogoName: res?.LogoName,
+        waterMarkName: res?.waterMarkName,
       };
-    });
+    setMatrixConfigInfo(infoSource);
+    // @ts-ignore
+    window.matrixConfigData = res || {
+      curEnvType: 'dev',
+      locationHref: '',
+      domainName: 'http://c2f.apex-dev.cfuture.shop',
+      wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
+      LogoName: '',
+      waterMarkName: '',
+    };
+    setInitFlg(true);
+  }
+
+  useEffect(() => {
+    getConfig();
   }, []);
 
   // 处理 breadcrumb, 平铺所有的路由
@@ -210,21 +217,22 @@ export default function Layout(props: any) {
               showSiderMenu={!isPageInIFrame()}
               headerProps={{
                 // env: getEnv(),
+                defaultTitle: appConfig.title,
                 userApi: matrixConfigInfo?.domainName
                   ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
                   : window.location.href?.includes('gushangke')
-                  ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
-                  : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
+                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
                 logoutApi: matrixConfigInfo?.domainName
                   ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
                   : window.location.href?.includes('gushangke')
-                  ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
-                  : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
+                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
                 loginUrl: matrixConfigInfo?.domainName
                   ? `${matrixConfigInfo?.domainName}/login`
                   : window.location.href?.includes('gushangke')
-                  ? 'http://c2f.apex.gushangke.com/login'
-                  : `${matrixConfigInfo?.domainName}/login`,
+                    ? 'http://c2f.apex.gushangke.com/login'
+                    : `${matrixConfigInfo?.domainName}/login`,
                 onClickPosition: () => {
                   setPosVisible(true);
                   // @ts-ignore
