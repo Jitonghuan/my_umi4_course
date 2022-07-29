@@ -15,7 +15,6 @@ export function useClusterListData(props: propsInterface) {
         async (extra?: any) => {
             try {
                 setLoading(true);
-                console.log(props, extra, 'props')
 
                 const result = await getCluster({ ...props, ...extra })
                 const { dataSource, pageInfo } = result?.data || {};

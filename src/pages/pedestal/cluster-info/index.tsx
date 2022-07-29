@@ -8,7 +8,7 @@ import ProgessComponent from './component/progress';
 import { history } from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
 import { useClusterListData } from './hook';
-import { getMetric } from './service';
+import { getMetric, getCluster } from './service';
 import { getNode } from '../cluster-detail/service'
 import './index.less'
 
@@ -24,15 +24,24 @@ export default function clusterInfo() {
         if (clusterDatas && clusterDatas.length !== 0) {
             setData(clusterDatas);
             const codeLists = clusterDatas.map((item: any) => item.clusterCode);
-            clusterDatas.forEach((item: any) => {
-                getNode({ clusterCode: item.clusterCode }).then((res) => {
-                    if (res?.success) {
-                        item.nodeInfo = res?.data?.items || [];
-                        item.status = res?.data?.status || '';
-                        setData([...clusterDatas] as any)
-                    }
-                })
-            });
+            // 先请求节点数
+            // clusterDatas.forEach((item: any) => {
+            //     getNode({ clusterCode: item.clusterCode }).then((res: any) => {
+            //         if (res?.success) {
+            //             item.node = res?.data?.items || [];
+            //             console.log(item.node, 11)
+            //             item.status = res?.data?.status || '';
+            //             setData([...clusterDatas] as any)
+            //         }
+            //     })
+            // });
+            // 再请求全部数据
+            getCluster({ needMetric: true, pageIndex, pageSize }).then((res: any) => {
+                if (res?.success) {
+                    const data = res?.data?.dataSource || [];
+                    setData(data)
+                }
+            })
         } else {
             setData([])
         }
@@ -44,8 +53,9 @@ export default function clusterInfo() {
         setPageSize(pageSize);
     }
     const handleSearch = () => {
+        setPageIndex(1)
         const value = form.getFieldsValue()
-        loadData({ ...value })
+        loadData({ ...value, pageIndex: 1 })
     }
     return (
         <PageContainer className='cluster-info'>
@@ -82,7 +92,7 @@ export default function clusterInfo() {
                                                 }
                                             });
                                         }}>{item.clusterName || '----'}</a>
-                                    <div className="display-item" style={{ justifyContent: 'flex-start' }}>节点数：{item?.nodeInfo?.length || 0}<Count data={item.nodeInfo || []}></Count></div>
+                                    <div className="display-item" style={{ justifyContent: 'flex-start' }}>节点数：{item?.items?.length || 0}<Count data={item?.items || []}></Count></div>
                                 </div>
                                 {/* 第二个单元格 */}
                                 <div className='list-wrapper-item'>

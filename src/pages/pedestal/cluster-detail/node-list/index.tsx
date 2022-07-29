@@ -5,7 +5,7 @@ import { nodeListTableSchema } from '../schema';
 import { RedoOutlined } from '@ant-design/icons';
 import { useNodeListData } from '../hook'
 import { history } from 'umi'
-import { nodeDrain, nodeUpdate } from '../service'
+import { nodeDrain, nodeUpdate, getNode } from '../service';
 import AddNode from './add-node'
 import SetTag from './set-tag'
 import './index.less'
@@ -19,7 +19,20 @@ export default function NodeList() {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [initData, setInitData] = useState<any>({});
     const [updateLoading, setUpdateLoading] = useState(false);
-    const [data, total, loading, loadData] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
+    const [baseData, total, loading, loadData] = useNodeListData({ clusterCode: clusterCode || '' });//表格的基础数据
+    const [data, setData] = useState<any>([]);//表格的完整数据
+
+    useEffect(() => {
+        if (baseData && baseData.length) {
+            setData(baseData);
+            getNode({ clusterCode: clusterCode || '', needMetric: true }).then((res: any) => {
+                if (res?.success) {
+                    const { items } = res?.data || {};
+                    setData(items || []);
+                }
+            })
+        }
+    }, [baseData])
 
     const tableColumns = useMemo(() => {
         return nodeListTableSchema({

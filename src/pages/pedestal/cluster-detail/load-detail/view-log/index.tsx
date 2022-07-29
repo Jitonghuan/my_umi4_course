@@ -33,7 +33,10 @@ export default function ViewLog(props: any) {
             setCurrentContainer(container[0].value)
             viewLogform.setFieldsValue({ containerName: container[0].value })
             ws.current = new WebSocket(
-                `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${name}&containerName=${container[0].value}&clusterCode=${clusterCode}&namespace=${namespace}&action=watchContainerLog&tailLine=200`,
+                // `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${name}&containerName=${container[0].value}&clusterCode=${clusterCode}&namespace=${namespace}&action=watchContainerLog&tailLine=200`,
+                window.location.href?.includes('gushangke')
+                    ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?instName=${name}&containerName=${container[0].value}&clusterCode=${clusterCode}&namespace=${namespace}&action=watchContainerLog&tailLine=200`
+                    : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${name}&containerName=${container[0].value}&clusterCode=${clusterCode}&namespace=${namespace}&action=watchContainerLog&tailLine=200`
             ); //建立通道
             let dom: any = document?.getElementById('result-log');
             ws.current.onmessage = (evt: any) => {
