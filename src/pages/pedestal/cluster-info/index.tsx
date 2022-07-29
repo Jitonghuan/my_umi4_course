@@ -23,7 +23,6 @@ export default function clusterInfo() {
     useEffect(() => {
         if (clusterDatas && clusterDatas.length !== 0) {
             setData(clusterDatas);
-            const codeLists = clusterDatas.map((item: any) => item.clusterCode);
             // 先请求节点数
             // clusterDatas.forEach((item: any) => {
             //     getNode({ clusterCode: item.clusterCode }).then((res: any) => {

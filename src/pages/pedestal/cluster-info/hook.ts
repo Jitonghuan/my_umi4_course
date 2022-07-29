@@ -15,11 +15,10 @@ export function useClusterListData(props: propsInterface) {
         async (extra?: any) => {
             try {
                 setLoading(true);
-
                 const result = await getCluster({ ...props, ...extra })
                 const { dataSource, pageInfo } = result?.data || {};
                 setData(dataSource || []);
-                setTotal(pageInfo.total)
+                setTotal(pageInfo?.total || 0)
             } catch (ex) {
                 setData([]);
                 setTotal(0);
