@@ -75,7 +75,7 @@ export default function RollbackModal(props: RollbackModalProps) {
         },
       }).then((res) => {
         if (res.success) {
-          message.success('应用回滚完成！');
+          message.success('操作完成！');
           setRollbackVersions([]);
           props.onSave?.();
         }
