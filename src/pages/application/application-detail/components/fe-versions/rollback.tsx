@@ -83,7 +83,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     <Modal
       visible={!!envItem}
       title="选择回滚版本"
-      width={800}
+      width={950}
       maskClosable={false}
       onCancel={onClose}
       onOk={handleOk}
