@@ -13,6 +13,8 @@ export const createUserRole = addAPIPrefix('/adminManage/user/role/create');
 export const updateUserRole = addAPIPrefix('/adminManage/user/role/update');
 /* DELETE 5、 删除用户角色 */
 export const deleteUserRole = addAPIPrefix('/adminManage/user/role/delete');
+/* POST 6、 新增用户信息 */
+export const createUser = addAPIPrefix('/adminManage/user/create');
 
 /** 获取应用组数据 */
 export const queryBizData = `${appConfig.apiPrefix}/appManage/group/list`;
