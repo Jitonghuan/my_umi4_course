@@ -34,7 +34,7 @@ const BoardDetail = () => {
         </div>
       </div >
       <div style={{ width: '100%', height: '100%', display: 'block' }}>
-        <iframe className='grafana-iframe' src={'https://grafana.seenew.info/d/232HBsRVz/test1'} />
+        <iframe className='grafana-iframe' src={info?.url||''} />
       </div>
     </PageContainer>
   )
