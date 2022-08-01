@@ -36,11 +36,12 @@ export const graphTableList = (data: any) => {
  * @param data：IGraphTable
  * @returns
  */
-export const createGraphTable = (params:any, data:any) => {
+export const createGraphTable = (params: any, data: any) => {
+  const { graphJson = {} } = data
   let url = `${appConfig.apiPrefix}/monitorManage/graphTable/create`;
   const queryString = getRequestQuery(params)
   url = queryString ? `${url}?${queryString}` : url
-  return postRequest(url, { data: data });
+  return postRequest(url, { data: { ...graphJson } });
 }
 
 /**
@@ -49,11 +50,12 @@ export const createGraphTable = (params:any, data:any) => {
  * @returns
  */
 export const updateGraphTable = (params: any, data: any) => {
+  const { graphJson = {} } = data
   let url = `${appConfig.apiPrefix}/monitorManage/graphTable/update`;
 
   const queryString = getRequestQuery(params)
   url = queryString ? `${url}?${queryString}` : url
-  return putRequest(url, { data: data });
+  return putRequest(url, { data: { ...graphJson } });
 }
 
 /**

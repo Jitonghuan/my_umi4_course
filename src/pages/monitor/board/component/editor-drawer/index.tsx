@@ -28,7 +28,8 @@ const EditorDrawer = (props: IEditorDrawer) => {
       if (mode === 'edit') {
         setDetail(boardInfo)
         setDataSourceType(boardInfo?.dsType);
-        formRef.setFieldsValue(boardInfo);
+        const graphJson = JSON.stringify(JSON.parse(boardInfo?.graphJson || "{}"), null, 2);
+        formRef.setFieldsValue({ ...boardInfo, graphJson });
       } else if (mode === 'add') {
         setDetail(null)
       }
@@ -41,6 +42,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
 
 
   const handleSubmit = async () => {
+    setLoading(true)
     let formValue = await formRef.validateFields()
     let body = {};
     // graphJson通过body传参数。
@@ -68,6 +70,8 @@ const EditorDrawer = (props: IEditorDrawer) => {
           loadGraphTable();
           message.success('修改成功')
         }
+      }).finally(() => {
+        setLoading(false)
       })
     } else if (mode === 'add') {
       formValue = {
@@ -80,6 +84,8 @@ const EditorDrawer = (props: IEditorDrawer) => {
           message.success('创建成功')
           loadGraphTable();
         }
+      }).finally(() => {
+        setLoading(false)
       })
     }
   }
@@ -88,7 +94,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
     const data = {
       clusterCode: cluster,
       pageSize: -1,
-      dsType:value,
+      dsType: value,
     }
     const res = await getGraphGraphDatasouceList(data);
     if (Array.isArray(res?.data?.dataSource) && res.data.dataSource.length > 0) {
@@ -96,7 +102,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         return {
           label: item.name,
           value: item.uuid,
-          key:item.uuid,
+          key: item.uuid,
           ...item
         }
       })
@@ -109,7 +115,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         return {
           label: item.name,
           value: item.id,
-          key:item.id,
+          key: item.id,
           ...item
         }
       })

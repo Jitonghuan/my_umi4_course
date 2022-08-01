@@ -106,31 +106,29 @@ const DataSource = (props: any) => {
       if (sourceDetail?.dsUuid) {
         updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster }).then((res) => {
           if (res?.success) {
-            message.success("创建成功")
+            message.success("更新成功")
             getDatasourceList({
               current: 1,
               // pageSize: paging.pageSize
             })
             handleClose()
           } else {
-            message.error("创建失败")
+            message.error("更新失败")
           }
         })
-
-
       } else {
         createGraphDatasouce({ ...value, clusterCode: cluster }).then((res) => {
           if (res?.success) {
-            message.success("更新成功")
+            message.success("创建成功")
             getDatasourceList()
             handleClose()
           } else {
-            message.error("更新失败")
+            message.error("创建失败")
           }
         })
       }
     } catch (e) {
-      message.error("创建/更新失败")
+      throw e
     }
 
     setSaveLoading(false)

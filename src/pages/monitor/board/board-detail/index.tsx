@@ -26,7 +26,7 @@ const BoardDetail = () => {
   return (
     <PageContainer>
       <div style={{ backgroundColor: 'white', padding: '10px 10px 10px 10px', display: 'flex', alignItems: 'center' }}>
-        <Button type='link' onClick={() => { }}>
+        <Button type='link' onClick={() => { history.push('/matrix/monitor/panel') }}>
           <LeftOutlined /> 返回
         </Button>
         <div>

@@ -44,7 +44,7 @@ export const createGraphTemplate = (params: any, graphTemplateJson:any) => {
   const queryString = getRequestQuery(params)
   url = queryString ? `${url}?${queryString}` : url
 
-  return postRequest(url, { data: { graphTemplateJson } });
+  return postRequest(url, { data: { ...graphTemplateJson } });
 }
 
 /**
@@ -56,7 +56,7 @@ export const updateGraphTemplateUrl = `${appConfig.apiPrefix}/monitorManage/grap
 export const updateGraphTemplate = (params: any, graphTemplateJson:any) => {
   const queryString = getRequestQuery(params)
   const url = queryString ? `${updateGraphTemplateUrl}?${queryString}` : updateGraphTemplateUrl
-  return putRequest(url, { data: { graphTemplateJson } });
+  return putRequest(url, { data: { ...graphTemplateJson } });
 }
 
 /**

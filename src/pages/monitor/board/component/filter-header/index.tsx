@@ -20,7 +20,6 @@ export default function FilterHeader(props: FilterHeaderProps) {
   const [searchField] = Form.useForm();
 
   const handleSearch = () => {
-    console.log(searchField)
     const values = searchField.getFieldsValue();
     onSearch?.(values);
   };
