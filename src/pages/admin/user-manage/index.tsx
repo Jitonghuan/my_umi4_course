@@ -87,6 +87,7 @@ export default function UserManage() {
             <Button
               type="primary"
               onClick={() => {
+                createUserForm.resetFields();
                 setVisible(true);
               }}
             >
