@@ -103,8 +103,8 @@ export default function ResourceDetail(props: any) {
     useEffect(() => {
         if (typeData && typeData.length !== 0) {
             setTypeOptions(typeData);
-            form.setFieldsValue({ resourceType: typeData[0].value })
-            setSelectType(typeData[0].value);
+            form.setFieldsValue({ resourceType: 'deployments' })
+            setSelectType('deployments');
         }
     }, [typeData])
 
@@ -217,8 +217,8 @@ export default function ResourceDetail(props: any) {
                     onFinish={initialSearch}
                     form={form}
                     onReset={() => {
-                        form.setFieldsValue({ resourceType: typeData[0].value, namespace: '' });
-                        setSelectType(typeData[0].value);
+                        form.setFieldsValue({ resourceType: 'deployments', namespace: '' });
+                        setSelectType('deployments');
                         initialSearch()
                     }}
                 >

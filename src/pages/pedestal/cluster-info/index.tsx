@@ -104,7 +104,7 @@ export default function clusterInfo() {
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.cpuInfo?.percentage ? `${((item?.metricInfo?.cpuInfo?.percentage || 0) * 100).toFixed(2)}%` : ''}</span>
                                         </div>
                                         {/* <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} /> */}
-                                        {item?.metricInfo?.cpuInfo?.percentage ? <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} /> : ''}
+                                        <ProgessComponent percent={(item?.metricInfo?.cpuInfo?.percentage) * 100 || 0} />
 
                                     </div>
                                 </div>
@@ -118,7 +118,7 @@ export default function clusterInfo() {
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.memoryInfo?.unit}</span>
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.memoryInfo?.percentage ? `${((item?.metricInfo?.memoryInfo?.percentage || 0) * 100).toFixed(2)}%` : ''}</span>
                                         </div>
-                                        {item?.metricInfo?.memoryInfo?.percentage ? <ProgessComponent percent={(item?.metricInfo?.memoryInfo?.percentage) * 100 || 0} /> : ''}
+                                        <ProgessComponent percent={(item?.metricInfo?.memoryInfo?.percentage) * 100 || 0} />
                                     </div>
                                 </div>
                                 {/* 第四个单元格 */}
@@ -133,7 +133,7 @@ export default function clusterInfo() {
                                             <span style={{ marginLeft: '2px' }}> {item?.metricInfo?.diskInfo?.percentage ? `${((item?.metricInfo?.diskInfo?.percentage || 0) * 100).toFixed(2)}%` : ''}</span>
 
                                         </span>
-                                        {item?.metricInfo?.diskInfo?.percentage ? <ProgessComponent percent={(item?.metricInfo?.diskInfo?.percentage) * 100 || 0} /> : ''}
+                                        <ProgessComponent percent={(item?.metricInfo?.diskInfo?.percentage) * 100 || 0} />
                                     </div>
                                 </div>
                             </div>
