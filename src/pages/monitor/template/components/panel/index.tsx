@@ -283,8 +283,8 @@ const TemplateCom: React.FC = () => {
             type="primary"
             onClick={() => {
               setVisible(true);
-              // setType('add');
-              // setDrawerTitle('新增大盘模版');
+              setType('add');
+              setDrawerTitle('新增大盘模版');
             }}
             icon={<PlusOutlined />}
           >

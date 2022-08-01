@@ -27,7 +27,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
     if (visible) {
       if (mode === 'edit') {
         setDetail(boardInfo)
-        setDataSourceType(boardInfo?.graphType);
+        setDataSourceType(boardInfo?.dsType);
         formRef.setFieldsValue(boardInfo);
       } else if (mode === 'add') {
         setDetail(null)
@@ -88,7 +88,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
     const data = {
       clusterCode: cluster,
       pageSize: -1,
-      value,
+      dsType:value,
     }
     const res = await getGraphGraphDatasouceList(data);
     if (Array.isArray(res?.data?.dataSource) && res.data.dataSource.length > 0) {
@@ -96,6 +96,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         return {
           label: item.name,
           value: item.uuid,
+          key:item.uuid,
           ...item
         }
       })
@@ -108,6 +109,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         return {
           label: item.name,
           value: item.id,
+          key:item.id,
           ...item
         }
       })
@@ -120,7 +122,6 @@ const EditorDrawer = (props: IEditorDrawer) => {
     setDetail(null);
     formRef.resetFields()
   }
-
 
   return (
     <Drawer

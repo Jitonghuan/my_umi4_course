@@ -5,7 +5,6 @@ import { ContentCard } from '@/components/vc-page-content';
 import { Divider, Drawer, Popconfirm, Switch, Table } from '@cffe/h2o-design';
 import { createGraphDatasouce, delGraphDatasouce, getGraphGraphDatasouceList, updateGraphDatasouce } from '../../service';
 import { PlusOutlined } from '@ant-design/icons';
-import { Detail } from '@cffe/internal-icon';
 
 
 const DataSource = (props: any) => {
@@ -13,13 +12,11 @@ const DataSource = (props: any) => {
   const [searchField] = Form.useForm();
   const [editForm] = Form.useForm();
   const [type, setType] = useState<string>('')
-  const [categoryCode, setCategoryCode] = useState<string>();
-  const [checked, setChecked] = useState<boolean>(false)
   const [dataSource, setDataSource] = useState<any[]>([])
   const [visible, setVisible] = useState<boolean>(false)
   const [saveLoading, setSaveLoading] = useState<boolean>(false)
   const [sourceDetail, setSourceDetail] = useState<any>({})
-  const [total, setTotal] = useState<number>(0)
+  const [drawerTitle, setDrawerTitle] = useState<any>('')
   const [paging, setPaging] = useState<{
     pageSize: number;
     current: number;
@@ -28,24 +25,13 @@ const DataSource = (props: any) => {
     pageSize: 10
   })
 
-  const handleReset = useCallback(() => {
-    searchField.setFieldsValue({
-      appType: '',
-      appCategoryCode: '',
-      appGroupCode: '',
-      appName: '',
-      appCode: '',
+  const handleReset = () => {
+    searchField.resetFields();
+    getDatasourceList({
+      current: 1,
+      // pageSize: 10
     });
-  }, [searchField]);
-
-  const handleAppCategoryChange = useCallback(
-    (next: string) => {
-      searchField.setFieldsValue({
-        appGroupCode: '',
-      });
-    },
-    [searchField],
-  );
+  };
 
   useEffect(() => {
     getDatasourceList(paging);
@@ -75,7 +61,6 @@ const DataSource = (props: any) => {
       getGraphGraphDatasouceList(data).then((res) => {
         if (res && Array.isArray(res?.data?.dataSource)) {
           setDataSource(res.data.dataSource)
-          setTotal(res?.data?.pageInfo?.total || 0)
         }
       })
     }
@@ -85,12 +70,8 @@ const DataSource = (props: any) => {
     setType(value);
   }
 
-  const onSwitchChange = () => {
-    setChecked(!checked)
-  }
 
   const handleEdit = (record: any) => {
-    console.log(record)
     const { name, uuid, url, type, user, password, indexName, esVersion } = record;
     const formValue = {
       clusterCode: cluster,
@@ -103,6 +84,7 @@ const DataSource = (props: any) => {
       indexName,
       esVersion,
     }
+    setDrawerTitle('编辑数据源')
     setType(type)
     setVisible(true);
     setSourceDetail(formValue);
@@ -110,7 +92,6 @@ const DataSource = (props: any) => {
   }
 
   const handleDelete = async (id: number) => {
-    console.log(id)
     await delGraphDatasouce(id)
     getDatasourceList({
       pageIndex: 1,
@@ -123,27 +104,27 @@ const DataSource = (props: any) => {
     const value = await editForm.validateFields()
     try {
       if (sourceDetail?.dsUuid) {
-        updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster }).then((res)=>{
-          if(res?.success){
+        updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster }).then((res) => {
+          if (res?.success) {
             message.success("创建成功")
             getDatasourceList({
               current: 1,
               // pageSize: paging.pageSize
             })
             handleClose()
-          }else{
+          } else {
             message.error("创建失败")
           }
         })
 
 
       } else {
-        createGraphDatasouce({ ...value, clusterCode: cluster }).then((res)=>{
-          if(res?.success){
+        createGraphDatasouce({ ...value, clusterCode: cluster }).then((res) => {
+          if (res?.success) {
             message.success("更新成功")
             getDatasourceList()
             handleClose()
-          }else{
+          } else {
             message.error("更新失败")
           }
         })
@@ -220,7 +201,7 @@ const DataSource = (props: any) => {
             }}
             onReset={handleReset}
           >
-            <Form.Item label="名称" name="keyword">
+            <Form.Item label="名称" name="name">
               <Input placeholder="请输入" style={{ width: 140 }} />
             </Form.Item>
             <Form.Item label="数据源类型" name="dsType">
@@ -232,7 +213,6 @@ const DataSource = (props: any) => {
                 placeholder="请选择"
                 style={{ width: 120 }}
                 allowClear
-                onChange={handleAppCategoryChange}
               />
             </Form.Item>
             <Form.Item>
@@ -245,9 +225,9 @@ const DataSource = (props: any) => {
             </Form.Item>
           </Form>
 
-          <Button type="primary" onClick={() => { setVisible(true); setSourceDetail(null) }}>
+          <Button type="primary" onClick={() => { setVisible(true); setSourceDetail(null); setDrawerTitle('新增数据源') }}>
             <PlusOutlined />
-            新增应用
+            新增数据源
           </Button>
         </div>
       </FilterCard>
@@ -270,6 +250,7 @@ const DataSource = (props: any) => {
       </ContentCard>
       <Drawer
         visible={visible}
+        title={drawerTitle}
         destroyOnClose
         onClose={handleClose}
         footer={
