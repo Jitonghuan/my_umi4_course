@@ -18,7 +18,8 @@ import './index.less';
 
 export default function ViewLog(props: any) {
     const [viewLogform] = Form.useForm();
-    const { name, clusterCode, namespace } = props?.location?.query || {};
+    const { name, clusterCode, namespace, containerName } = props?.location?.query || {};
+    console.log(name, clusterCode, namespace, containerName, 111)
     const [log, setLog] = useState<string>('');
     const { matrixConfigData } = useContext(FeContext);
     const [queryListContainer, setQueryListContainer] = useState<any>();
@@ -77,6 +78,9 @@ export default function ViewLog(props: any) {
                     }
                 }
             })
+        }
+        if (containerName) {
+            setContainer([{ value: containerName, label: containerName }])
         }
     }, [clusterCode, name, namespace]);
 

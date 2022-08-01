@@ -16,7 +16,7 @@ import './index.less';
 
 export default function ClusteLoginShell(props: any) {
     const [viewLogform] = Form.useForm();
-    const { type, name, namespace, clusterCode } = props.location.query || {};
+    const { type, name, namespace, clusterCode, containerName } = props.location.query || {};
     const { matrixConfigData } = useContext(FeContext);
     const [container, setContainer] = useState<any>([]);
     const [selectContainer, setSelectContainer] = useState<any>('');
@@ -46,7 +46,8 @@ export default function ClusteLoginShell(props: any) {
     }, [type, baseUrl])
 
     useEffect(() => {
-        if (type === 'pods' && name && namespace) {
+        // 从pos跳转
+        if (type === 'pods' && name && namespace && !containerName) {
             getResourceList({ clusterCode, resourceName: name, namespace, resourceType: 'pods' }).then((res) => {
                 if (res?.success) {
                     const { items } = res?.data || {};
@@ -61,11 +62,16 @@ export default function ClusteLoginShell(props: any) {
 
             })
         }
+        // 从节点列表跳转
         if (type === 'node' && name) {
             if (!matrixConfigData?.wsPrefixName) {
                 return;
             }
             initWS(getUrl(''))
+        }
+        // 从容器列表直接跳转过来
+        if (type === 'pods' && containerName) {
+            setContainer([{ value: containerName, label: containerName }])
         }
     }, [type, name, namespace, matrixConfigData?.wsPrefixName])
 
