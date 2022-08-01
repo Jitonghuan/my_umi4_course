@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Table, Descriptions, message } from 'antd';
-import { getPageErrorInfo } from '../../../../server';
+import {getPageErrorInfo, sourcemapDownload} from '../../../../server';
 import { Drawer, Modal } from '@cffe/h2o-design';
 import MonacoEditor from 'react-monaco-editor';
+import SourceMapModal from '../source-map';
 
 interface IProps {
   dataSource: DataSourceItem[];
@@ -45,24 +46,12 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
   }
 
 
-  const handleSourceMap = () => {
-    const rowCol = detail.d3?.split(":")
-    if (rowCol.length > 0) {
-      const params = {
-        row: rowCol[1],
-        col: rowCol[2],
-        url: detail.d2
-      }
-      setSourceInfo({
-        code: 'sdads\ndasdasda\ndasdasda\n',
-        line: 10
-      })
-      setSourceMapVisible(true)
-    } else {
-      message.info({
-        content: '未获取到错误堆栈信息！'
-      })
-    }
+  const handleSourceMap = async (item: any) => {
+    setSourceInfo(getParam({
+      ...item,
+      filePath: item.d2,
+    }))
+    setSourceMapVisible(true);
   }
 
   return (
@@ -157,19 +146,14 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
         <div className="sub-title">SourceMap还原</div>
         <div style={{ wordBreak: 'break-all' }}>
           无法定位报错位置？
-          <Button type='link' onClick={handleSourceMap}>SourceMap还原</Button>
+          <Button type='link' onClick={() => handleSourceMap(detail)}>SourceMap还原</Button>
         </div>
       </Drawer>
-      <Modal
-        title='SourceMap还原'
+      <SourceMapModal
         visible={sourceMapVisible}
-        footer={null}
-        width={800}
-        destroyOnClose
-        onCancel={() => { setSourceMapVisible(false) }}
-      >
-        <MonacoEditor value={sourceInfo?.code} height={400} options={{ lineNumbers: (line) => sourceInfo ? (sourceInfo.line + line) : line }} />
-      </Modal>
+        onClose={() => setSourceMapVisible(false)}
+        param={sourceInfo}
+        />
     </div>
   );
 };

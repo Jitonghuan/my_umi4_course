@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
 import {getImportantErrorList} from '../../../../server';
 import { Drawer } from '@cffe/h2o-design';
+import SourceMapModal from "..//source-map";
 
 interface IProps {
   dataSource: DataSourceItem[];
@@ -26,6 +27,8 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
+  const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false)
+  const [sourceInfo, setSourceInfo] = useState<any>({})
 
   async function getDetail(record: any) {
     const res = await getImportantErrorList(
@@ -37,6 +40,14 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
     );
     const data = res?.data || [];
     setDetail(data[0]?._source || {});
+  }
+
+  const handleSourceMap = async (item: any) => {
+    setSourceInfo(getParam({
+      ...item,
+      filePath: item.d2,
+    }))
+    setSourceMapVisible(true);
   }
 
   const handleClose = () => {
@@ -130,7 +141,16 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
         <div style={{ wordBreak: 'break-all' }}>{detail.d4}</div>
         <div className="sub-title">组件堆栈</div>
         <div style={{ wordBreak: 'break-all' }}>{detail?.d6 || '-'}</div>
+        <div style={{ wordBreak: 'break-all' }}>
+          无法定位报错位置？
+          <Button type='link' onClick={() => handleSourceMap(detail)}>SourceMap还原</Button>
+        </div>
       </Drawer>
+      <SourceMapModal
+        visible={sourceMapVisible}
+        onClose={() => setSourceMapVisible(false)}
+        param={sourceInfo}
+      />
     </div>
   );
 };
