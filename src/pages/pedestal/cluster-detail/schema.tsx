@@ -24,13 +24,13 @@ export const nodeListTableSchema = ({
             title: '节点名',
             dataIndex: 'nodeName',
             width: 120,
-            // fixed: 'left',
+            fixed: 'left',
         },
         {
             title: 'IP',
             dataIndex: 'nodeIp',
             width: 120,
-            // fixed: 'left',
+            fixed: 'left',
         },
         {
             title: 'CPU',
@@ -113,8 +113,22 @@ export const nodeListTableSchema = ({
                 <div className="action-cell">
                     <a onClick={() => shell(record, index)}>登陆shell</a>
                     <a onClick={() => clickTag(record, index)}>设置标签</a>
-                    <a onClick={() => updateNode(record, index)}>{record.unschedulable ? '可调度' : '不可调度'}</a>
-                    <a onClick={() => drain(record, index)}>排空</a>
+                    <Popconfirm
+                        title={`确定要设置为${record.unschedulable ? '可调度' : '不可调度'}吗？`}
+                        onConfirm={() => {
+                            updateNode(record, index)
+                        }}
+                    >
+                        <a >{record.unschedulable ? '可调度' : '不可调度'}</a>
+                    </Popconfirm>
+                    <Popconfirm
+                        title="确定要排空吗？"
+                        onConfirm={() => {
+                            drain(record, index)
+                        }}
+                    >
+                        <a >排空</a>
+                    </Popconfirm>
                     {/* <Popconfirm
                         title="确定要删除该节点吗？"
                         onConfirm={() => {

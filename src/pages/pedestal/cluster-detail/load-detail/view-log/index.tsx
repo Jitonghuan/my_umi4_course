@@ -18,10 +18,9 @@ import './index.less';
 
 export default function ViewLog(props: any) {
     const [viewLogform] = Form.useForm();
-    const { name, clusterCode, namespace } = props?.location?.query || {};
+    const { name, clusterCode, namespace, containerName } = props?.location?.query || {};
     const [log, setLog] = useState<string>('');
     const { matrixConfigData } = useContext(FeContext);
-    const [queryListContainer, setQueryListContainer] = useState<any>();
     const [container, setContainer] = useState<any>([]);
     const [currentContainer, setCurrentContainer] = useState<string>('');
     const logData = useRef<string>('');
@@ -65,7 +64,7 @@ export default function ViewLog(props: any) {
 
     }, [container]);
     useEffect(() => {
-        if (clusterCode && name && namespace) {
+        if (clusterCode && name && namespace && !containerName) {
             getResourceList({ clusterCode, resourceName: name, namespace, resourceType: 'pods' }).then((res) => {
                 if (res?.success) {
                     const { items } = res?.data || {};
@@ -77,6 +76,9 @@ export default function ViewLog(props: any) {
                     }
                 }
             })
+        }
+        if (containerName) {
+            setContainer([{ value: containerName, label: containerName }])
         }
     }, [clusterCode, name, namespace]);
 
@@ -93,7 +95,9 @@ export default function ViewLog(props: any) {
             setLog(logData.current);
             scrollBegin.current = true;
             ws.current = new WebSocket(
-                `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${name}&namespace=${namespace}&containerName=${getContainer}&clusterCode=${clusterCode}&action=watchContainerLog&tailLine=200`,
+                window.location.href?.includes('gushangke')
+                    ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?instName=${name}&containerName=${getContainer}&clusterCode=${clusterCode}&namespace=${namespace}&action=watchContainerLog&tailLine=200`
+                    : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?instName=${name}&containerName=${getContainer}&clusterCode=${clusterCode}&namespace=${namespace}&action=watchContainerLog&tailLine=200`
             ); //建立通道
             ws.current.onopen = () => {
                 message.success('更换容器成功!');
@@ -123,51 +127,7 @@ export default function ViewLog(props: any) {
             };
         }
     };
-    const onChange = (e: CheckboxChangeEvent) => {
-        // setPrevious(e.target.checked);
-        if (ws.current) {
-            ws.current.close();
-            logData.current = '';
-            setLog(logData.current);
-            scrollBegin.current = true;
-            // ws.current = new WebSocket(
-            //     `${appConfig.wsPrefix}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainer}&previous=${e.target.checked}&action=watchContainerLog&tailLine=200`,
-            // ); //建立通道
-            if (e.target.checked) {
-                ws.current.onopen = () => {
-                    message.success('已切换至以前的容器!');
-                };
-            } else {
-                ws.current.onopen = () => {
-                    message.success('切换至当前容器!');
-                };
-            }
 
-            let dom: any = document?.getElementById('result-log');
-            ws.current.onmessage = (evt: any) => {
-                if (dom) {
-                    // 获取滚动条到滚动区域底部的高度
-                    const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
-                    let bottom = 0;
-                    if (scrollB) {
-                        // 计算滚动条到日志div底部的距离
-                        bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
-                    }
-                    //如果返回结果是字符串，就拼接字符串，或者push到数组，
-                    logData.current += evt.data;
-                    setLog(logData.current);
-                    let html = ansi_up.ansi_to_html(logData.current);
-                    dom.innerHTML = html;
-                    if (bottom <= 20) {
-                        dom.scrollTo(0, dom.scrollHeight);
-                    }
-                }
-            };
-            ws.current.onerror = () => {
-                message.warning('webSocket 链接失败');
-            };
-        }
-    };
 
     // 下载日志
     const downloadLog = () => {
@@ -203,14 +163,9 @@ export default function ViewLog(props: any) {
     };
     //关闭页面
     const closeSocket = () => {
-        // history.push(
-        //     {
-        //         pathname: '/matrix/pedestal/cluster-detail/resource-detail',
-        //         query: { key: 'resource-detail' }
-        //     })
-        history.goBack()
         if (ws.current) {
-
+            ws.current.close();
+            history.goBack()
         };
     }
 
@@ -248,11 +203,6 @@ export default function ViewLog(props: any) {
             </div>
 
             <div style={{ height: 30, textAlign: 'center', position: 'relative' }}>
-                {/* <span style={{ position: 'absolute', left: 0 }}>
-                    <Checkbox onChange={onChange} />
-                    <b style={{ paddingLeft: 4 }}>以前的容器</b>
-                </span> */}
-
                 <span className="event-button">
                     <Button type="primary" onClick={downloadLog}>
                         下载日志

@@ -1,6 +1,9 @@
 import { Tag, Table, Empty, Tooltip, Divider, Button } from 'antd';
 // 资源详情-负载-pods详情
-export const PodsDetailColumn = () =>
+export const PodsDetailColumn = ({ viewLog, shell }: {
+    viewLog: (record: any, index: number) => void;
+    shell: (record: any, index: number) => void;
+}) =>
     [
         {
             title: '名称',
@@ -29,6 +32,18 @@ export const PodsDetailColumn = () =>
             width: 80,
             render: (value: string) => (
                 <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : 'green'}>{value}</Tag>
+            ),
+        },
+        {
+            title: '操作',
+            fixed: 'right',
+            width: 330,
+            dataIndex: 'operate',
+            render: (_: any, record: any, index: number) => (
+                <div className="action-cell">
+                    <Button size="small" type="primary" onClick={() => viewLog(record, index)}>查看日志</Button>
+                    {record?.status === 'Running' && <Button size="small" type="primary" onClick={() => shell(record, index)}>登陆shell</Button>}
+                </div>
             ),
         },
     ] as any;

@@ -13,6 +13,7 @@ import { useNodeListData } from '../hook'
 import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
 import './index.less';
+import { json } from "_@types_d3-fetch@3.0.1@@types/d3-fetch";
 const mockData = [{ type: 'deployments', kind: 'deployments' }]
 export default function ResourceDetail(props: any) {
     const { location, children } = props;
@@ -24,8 +25,9 @@ export default function ResourceDetail(props: any) {
     const [createYamlVisible, setCreateYamlVisbile] = useState(false);
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
-    const storeParams = JSON.parse(localStorage.getItem('resource_params_list') || '[]');
-    const [selectParams, setSelectParams] = useState<any>(storeParams || []);
+    const [storeParams, setStoreParams] = useState<any>(
+        localStorage.getItem('cluster_resource_params') ? JSON.parse(localStorage.getItem('cluster_resource_params') || '{}') : {}
+    );
     const [loading, setLoading] = useState<boolean>(false);
     const [continueList, setContinueList] = useState<string[]>(['']);
     const [total, setTotal] = useState<number>(0);
@@ -38,8 +40,6 @@ export default function ResourceDetail(props: any) {
     const [selectType, setSelectType] = useState<string>('');
     const [data] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
     const [updateLoading, setUpdateLoading] = useState(false);
-    const [, updateState] = React.useState();
-    const forceUpdate = React.useCallback(() => updateState({} as any), []);
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
 
     useEffect(() => {
@@ -103,17 +103,21 @@ export default function ResourceDetail(props: any) {
     useEffect(() => {
         if (typeData && typeData.length !== 0) {
             setTypeOptions(typeData);
-            form.setFieldsValue({ resourceType: typeData[0].value })
-            setSelectType(typeData[0].value);
         }
     }, [typeData])
 
     useEffect(() => {
         if (nameSpaceData?.length !== 0 && clusterCode && typeData?.length !== 0) {
-            form.setFieldsValue({ namespace: nameSpaceData[0].value });
+            form.setFieldsValue({
+                namespace: storeParams?.namespace || nameSpaceData[0].value,
+                resourceType: storeParams?.resourceType || 'deployments',
+                node: storeParams?.node || ''
+            });
+            setSelectType(storeParams?.resourceType || 'deployments');
             queryList();
         }
     }, [nameSpaceData, clusterCode, typeData])
+
 
     const queryList = (index = pageIndex) => {
         const values = form.getFieldsValue();
@@ -156,25 +160,6 @@ export default function ResourceDetail(props: any) {
 
     }
 
-    const addParams = (values: any) => {
-        const { resourceType, namespace } = values;
-        const res = `${resourceType}：${namespace}`
-        if (selectParams.includes(res)) {
-            message.info('此参数和参数值已存在！');
-        } else {
-            const newArray = selectParams.concat(res)
-            setSelectParams(newArray)
-            localStorage.setItem('resource_params_list', JSON.stringify(newArray));
-        }
-    }
-
-    const deleteParams = (e: any, item: any) => {
-        if (selectParams.includes(item)) {
-            const res = selectParams.filter((e: string) => e !== item);
-            setSelectParams(res)
-            localStorage.setItem('resource_params_list', JSON.stringify(res));
-        }
-    }
 
     const clickLeft = () => {
         setPageIndex(pageIndex - 1);
@@ -214,11 +199,16 @@ export default function ResourceDetail(props: any) {
             <div className='search-form'>
                 <Form
                     layout="inline"
-                    onFinish={initialSearch}
+                    onFinish={(value) => {
+                        localStorage.setItem('cluster_resource_params', JSON.stringify(value || {}));
+                        setStoreParams(value);
+                        initialSearch()
+                    }}
                     form={form}
                     onReset={() => {
-                        form.setFieldsValue({ resourceType: typeData[0].value, namespace: '' });
-                        setSelectType(typeData[0].value);
+                        form.setFieldsValue({ resourceType: 'deployments', namespace: '' });
+                        localStorage.setItem('cluster_resource_params', JSON.stringify(form.getFieldsValue() || {}));
+                        setSelectType('deployments');
                         initialSearch()
                     }}
                 >
@@ -270,21 +260,6 @@ export default function ResourceDetail(props: any) {
                         <Button danger htmlType="reset">重置</Button>
                     </Form.Item>
                 </Form>
-                {/* <div style={{ marginTop: '10px' }}>
-                    {selectParams.length > 0 ? selectParams.map((item: any) => {
-                        return (
-                            <Tag
-                                closable
-                                color='blue'
-                                onClose={(e: any) => {
-                                    deleteParams(e, item);
-                                }}
-                            >
-                                {item}
-                            </Tag>
-                        )
-                    }) : null}
-                </div> */}
             </div>
             <div className="table-caption" >
                 <div className="caption-left">
@@ -293,8 +268,6 @@ export default function ResourceDetail(props: any) {
                 <div className="caption-right">
                     搜索：<Input style={{ width: 200 }} size='small' onChange={(e) => { filterData(e.target.value) }}></Input>
                     <Button type="primary" onClick={() => { setCreateYamlVisbile(true) }} size='small' style={{ marginLeft: '10px' }}>创建资源</Button>
-                    {/* <Button icon={<RedoOutlined />} onClick={() => { initialSearch() }} style={{ marginRight: '10px' }} size='small'>
-                        刷新</Button> */}
                 </div>
             </div>
             <div className='table-wrapper'>

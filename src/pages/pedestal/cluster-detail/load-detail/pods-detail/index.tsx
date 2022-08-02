@@ -23,13 +23,26 @@ export default function PodsDetail(props: any) {
         getEvents();
     }, [clusterCode])
 
+    // 表格列配置
+    const PodsColumn = useMemo(() => {
+        return PodsDetailColumn({
+            viewLog: (record: any, index: any) => {
+                history.push({ pathname: '/matrix/pedestal/view-log', query: { key: 'resource-detail', name, namespace: record?.namespace, clusterCode, containerName: record?.name } })
+            },
+            shell: (record: any, index: any) => {
+                history.push({ pathname: '/matrix/pedestal/login-shell', query: { type: 'pods', key: 'resource-detail', name, namespace: record?.namespace, clusterCode, containerName: record?.name } })
+            },
+        }) as any;
+    }, [podsData]);
+
     // 获取容器
     const getContainer = () => {
         setPodsLoading(true)
         getResourceList({ clusterCode, resourceType: 'pods', namespace, resourceName: name }).then((res) => {
             if (res?.success) {
-                setPodsData(res?.data?.items[0]?.info?.containers || [])
-                setContainer(res?.data?.items[0]?.info?.containers || [])
+                const data = (res?.data?.items[0]?.info?.containers || []).map((item: any) => ({ ...item, namespace: res?.data?.items[0]?.namespace || '' }))
+                setPodsData(data)
+                setContainer(data)
             } else {
                 setPodsData([])
                 setContainer([])
@@ -59,7 +72,7 @@ export default function PodsDetail(props: any) {
                 </div>
             </div>
             <Table
-                columns={PodsDetailColumn()}
+                columns={PodsColumn}
                 pagination={false}
                 bordered
                 // scroll={{ y: window.innerHeight - 564 }}
