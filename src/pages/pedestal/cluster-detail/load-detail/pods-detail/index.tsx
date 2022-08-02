@@ -92,7 +92,7 @@ export default function PodsDetail(props: any) {
             {container && container.length ?
                 <>
                     {container.map((item: any) => (
-                        <div>
+                        <div style={{ marginBottom: '10px' }}>
                             <div style={{ marginBottom: '5px', fontSize: '12px' }}>当前容器：<Tag color='blue'>{item?.containerName || item?.name || '--'}</Tag></div>
                             <Table
                                 dataSource={item?.env || []}
