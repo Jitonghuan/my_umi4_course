@@ -8,7 +8,13 @@ export const PodsDetailColumn = ({ viewLog, shell }: {
         {
             title: '名称',
             dataIndex: 'name',
-            width: 100,
+            width: 120,
+            ellipsis: true,
+            render: (value: any) => (
+                <Tooltip placement="top" title={value}>
+                    {value}
+                </Tooltip>
+            ),
         },
         {
             title: '镜像',
@@ -16,7 +22,7 @@ export const PodsDetailColumn = ({ viewLog, shell }: {
             width: 230,
             ellipsis: true,
             render: (value: any) => (
-                <Tooltip placement="topLeft" title={value}>
+                <Tooltip placement="top" title={value}>
                     {value}
                 </Tooltip>
             ),
@@ -37,7 +43,7 @@ export const PodsDetailColumn = ({ viewLog, shell }: {
         {
             title: '操作',
             fixed: 'right',
-            width: 330,
+            width: 300,
             dataIndex: 'operate',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
@@ -54,11 +60,23 @@ export const envVarTable = () =>
             title: 'KEY',
             dataIndex: 'name',
             width: 400,
+            ellipsis: true,
+            render: (value: any) => (
+                <Tooltip placement="top" title={value}>
+                    {value}
+                </Tooltip>
+            ),
         },
         {
             title: 'VALUE',
             dataIndex: 'value',
             width: 400,
+            ellipsis: true,
+            render: (value: any) => (
+                <Tooltip placement="top" title={value}>
+                    {value}
+                </Tooltip>
+            ),
         },
     ] as any;
 

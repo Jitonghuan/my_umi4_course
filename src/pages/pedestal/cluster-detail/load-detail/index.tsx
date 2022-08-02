@@ -284,7 +284,7 @@ export default function LoadDetail(props: any) {
             <>
                 {data?.info?.containersEnv.map((item: any) => (
                     <div className='var-table'>
-                        <div style={{ marginBottom: '5px', fontSize: '12px' }}>当前容器：<Tag color='blue'>{item.containerName || '--'}</Tag></div>
+                        <div style={{ marginBottom: '5px', fontSize: '12px' }}>容器名：<Tag color='blue'>{item.containerName || '--'}</Tag></div>
                         <Table
                             dataSource={item?.env || []}
                             loading={loading}
