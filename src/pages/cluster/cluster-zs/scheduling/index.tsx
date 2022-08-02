@@ -139,7 +139,7 @@ export default function TrafficScheduling(props: any) {
 
   return (
     <ContentCard className="page-scheduling">
-      <h3>请选择调度类型：</h3>
+      <h3>请选择调度：</h3>
       <Form form={editField}>
         <div className="zone-card-group">
           {sourceData.map((group, index) => (
