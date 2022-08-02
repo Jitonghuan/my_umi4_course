@@ -59,10 +59,12 @@ export const envVarTable = () =>
         {
             title: 'KEY',
             dataIndex: 'name',
-            width: 400,
-            ellipsis: true,
+            width: '40%',
+            ellipsis: {
+                showTitle: false,
+            },
             render: (value: any) => (
-                <Tooltip placement="top" title={value}>
+                <Tooltip placement="top" title={value} overlayStyle={{ maxWidth: '1000px' }}>
                     {value}
                 </Tooltip>
             ),
@@ -70,10 +72,12 @@ export const envVarTable = () =>
         {
             title: 'VALUE',
             dataIndex: 'value',
-            width: 400,
-            ellipsis: true,
+            width: '50%',
+            ellipsis: {
+                showTitle: false,
+            },
             render: (value: any) => (
-                <Tooltip placement="top" title={value}>
+                <Tooltip placement="top" title={value} overlayStyle={{ maxWidth: '1000px' }}>
                     {value}
                 </Tooltip>
             ),
