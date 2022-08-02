@@ -147,7 +147,7 @@ export default function AddEnv(props: EnvEditorProps) {
     if (mode === 'ADD') {
       //新增环境
       createEnvForm.validateFields().then((params) => {
-        const minioInfo = { useMinio: params.useMinio, bucketName: params.bucketName, sourceMapBkt: params.sourceMapBkt }
+        const minioInfo = { useMinio: isUseMinio, bucketName: params?.bucketName || '', sourceMapBkt: params.sourceMapBkt || '' }
         postRequest(createEnv, {
           data: {
             envTypeCode: params?.envTypeCode,
@@ -183,7 +183,7 @@ export default function AddEnv(props: EnvEditorProps) {
     } else if (mode === 'EDIT') {
       //编辑环境
       createEnvForm.validateFields().then((params) => {
-        const minioInfo = { useMinio: params.useMinio, bucketName: params.bucketName, sourceMapBkt: params.sourceMapBkt }
+        const minioInfo = { useMinio: isUseMinio, bucketName: params?.bucketName || '', sourceMapBkt: params?.sourceMapBkt || '' }
         putRequest(updateEnv, {
           data: {
             ...params,
