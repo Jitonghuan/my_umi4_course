@@ -46,7 +46,7 @@ export default function ClusteLoginShell(props: any) {
     }, [type, baseUrl])
 
     useEffect(() => {
-        // 从pos跳转
+        // 从pods跳转
         if (type === 'pods' && name && namespace && !containerName) {
             getResourceList({ clusterCode, resourceName: name, namespace, resourceType: 'pods' }).then((res) => {
                 if (res?.success) {
@@ -149,10 +149,9 @@ export default function ClusteLoginShell(props: any) {
         };
     }, []);
     const closeSocket = () => {
-        history.goBack();
-
         if (ws.current) {
             ws.current.close();
+            history.goBack();
         }
     };
     //选择容器

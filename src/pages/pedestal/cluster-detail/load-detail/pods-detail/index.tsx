@@ -30,7 +30,6 @@ export default function PodsDetail(props: any) {
                 history.push({ pathname: '/matrix/pedestal/view-log', query: { key: 'resource-detail', name, namespace: record?.namespace, clusterCode, containerName: record?.name } })
             },
             shell: (record: any, index: any) => {
-                console.log(record, 11)
                 history.push({ pathname: '/matrix/pedestal/login-shell', query: { type: 'pods', key: 'resource-detail', name, namespace: record?.namespace, clusterCode, containerName: record?.name } })
             },
         }) as any;

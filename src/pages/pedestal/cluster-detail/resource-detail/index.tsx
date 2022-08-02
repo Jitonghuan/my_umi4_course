@@ -26,7 +26,7 @@ export default function ResourceDetail(props: any) {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
     const [storeParams, setStoreParams] = useState<any>(
-        localStorage.getItem('cluster_resource_params') ? JSON.parse(localStorage.getItem('cluster_resource_params')) : {}
+        localStorage.getItem('cluster_resource_params') ? JSON.parse(localStorage.getItem('cluster_resource_params') || '{}') : {}
     );
     const [loading, setLoading] = useState<boolean>(false);
     const [continueList, setContinueList] = useState<string[]>(['']);
@@ -260,21 +260,6 @@ export default function ResourceDetail(props: any) {
                         <Button danger htmlType="reset">重置</Button>
                     </Form.Item>
                 </Form>
-                {/* <div style={{ marginTop: '10px' }}>
-                    {selectParams.length > 0 ? selectParams.map((item: any) => {
-                        return (
-                            <Tag
-                                closable
-                                color='blue'
-                                onClose={(e: any) => {
-                                    deleteParams(e, item);
-                                }}
-                            >
-                                {item}
-                            </Tag>
-                        )
-                    }) : null}
-                </div> */}
             </div>
             <div className="table-caption" >
                 <div className="caption-left">
@@ -283,8 +268,6 @@ export default function ResourceDetail(props: any) {
                 <div className="caption-right">
                     搜索：<Input style={{ width: 200 }} size='small' onChange={(e) => { filterData(e.target.value) }}></Input>
                     <Button type="primary" onClick={() => { setCreateYamlVisbile(true) }} size='small' style={{ marginLeft: '10px' }}>创建资源</Button>
-                    {/* <Button icon={<RedoOutlined />} onClick={() => { initialSearch() }} style={{ marginRight: '10px' }} size='small'>
-                        刷新</Button> */}
                 </div>
             </div>
             <div className='table-wrapper'>
