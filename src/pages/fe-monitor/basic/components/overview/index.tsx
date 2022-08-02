@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../header';
+import { history } from 'umi';
 import { Line } from '@cffe/hulk-wave-chart';
-import { now } from '../../const';
 import moment from 'moment';
 import { pvAndUvChart, queryOverview } from '../../server';
 import './index.less';
 
 interface IProps {
+  timeList: any;
   appGroup: string;
   envCode: string;
   feEnv: string;
 }
 
-const BasicOverview = ({ appGroup, envCode, feEnv }: IProps) => {
-  const [timeList, setTimeList] = useState<any>(now);
+const BasicOverview = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [overviewList, setOverviewList] = useState<any[]>([]);
   const [chart, setChart] = useState<any>(null);
 
@@ -114,14 +113,17 @@ const BasicOverview = ({ appGroup, envCode, feEnv }: IProps) => {
 
   return (
     <div className="basic-overview-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} />
       <div className="performance-wrapper">
         <div className="overview-wrapper">
           <div className="l">
             {overviewList.map(
               (item, i) =>
                 i < 2 && (
-                  <div key={i}>
+                  <div key={i} onClick={() => {
+                    history.push({
+                      search: '?appGroup=&tab=4'
+                    })
+                  }}>
                     <b>{item[1]}</b>
                     <span>{item[0]}</span>
                   </div>

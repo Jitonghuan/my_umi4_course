@@ -280,7 +280,7 @@ export default function NpmList() {
           <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
             <DebounceSelect
               fetchOptions={searchGitAddress}
-              disabled={type !== 'add'}
+              // disabled={type !== 'add'}
               labelInValue={false}
               placeholder="输入仓库名搜索"
             />

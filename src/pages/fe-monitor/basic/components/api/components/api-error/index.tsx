@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Input, Table } from '@cffe/h2o-design';
+import { Button, Descriptions, Drawer, Form, Input, Popover, Table } from '@cffe/h2o-design';
 import moment from 'moment';
 import { searchApiList } from '@/pages/fe-monitor/basic/server';
 import './index.less';
@@ -20,6 +20,9 @@ const APIError = (props: IProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const [searchValue, setSearchValue] = useState<any>({})
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [detail, setDetail] = useState<any>({});
 
   const { type, getParam } = props
 
@@ -35,8 +38,8 @@ const APIError = (props: IProps) => {
   const onSearchSuccessRate = async (value?: any) => {
     const { api, traceId } = value
     if (loading) {
-      return
-    };
+      return;
+    }
     let params = getParam()
     params = { ...params, searchType: type };
     if (api) {
@@ -51,6 +54,10 @@ const APIError = (props: IProps) => {
     setDataSource(res?.data || []);
     setTotal(res?.data?.length || 0);
     setLoading(false);
+  }
+
+  const getDetail = (record: any) => {
+    setDetail(record);
   }
 
   return (
@@ -72,54 +79,37 @@ const APIError = (props: IProps) => {
         <Table
           dataSource={dataSource}
           bordered
-          rowKey="ts"
-          scroll={{ x: '100%' }}
+          rowKey="d3"
+          // scroll={{ x: '100%' }}
           loading={loading}
+          rowClassName={(record) => (record.d3 === selectedRowKeys[0] ? 'row-active' : '')}
+          onRow={(record) => {
+            return {
+              onClick: (event) => {
+                setSelectedRowKeys([record.d3]);
+                setShowDetail(true);
+                getDetail(record);
+              }, // 点击行
+            };
+          }}
           columns={[
             {
               title: 'API',
               dataIndex: 'd1',
-              width: '300px',
-              ellipsis: {
-                showTitle: false,
-              },
-              render: (text) => <Input bordered={false} disabled value={text}></Input>,
-            },
-            {
-              title: 'TraceId',
               width: '350px',
-              render: (value, record) => <span>{record.d3?.split('-')[1] || '-'}</span>,
+              ellipsis: true,
+              render: (text) => (
+                <Popover content={text}>
+                  <div>{text}</div>
+                </Popover>
+              ),
             },
-            {
-              title: '入参',
-              dataIndex: 'd5',
-              width: '400px',
-              ellipsis: {
-                showTitle: false,
-              },
-              render: (text) => <Input bordered={false} disabled value={text}></Input>,
-            },
-            {
-              title: '出参',
-              dataIndex: 'd4',
-              width: '350px',
-              ellipsis: {
-                showTitle: false,
-              },
-              render: (text) => <Input bordered={false} disabled value={text}></Input>,
-            },
-            {
-              title: '耗时(秒)',
-              width: '100px',
-              align: 'right',
-              render: (value, record) => <span>{(record.timing / 1000).toFixed(2) || 0}</span>,
-            },
-            {
-              title: '页面名称',
-              dataIndex: 'url',
-              width: '250px',
-              render: (text) => <Input bordered={false} disabled value={text}></Input>,
-            },
+            // {
+            //   title: '页面名称',
+            //   dataIndex: 'url',
+            //   width: '250px',
+            //   render: (text) => <Input bordered={false} disabled value={text}></Input>,
+            // },
             {
               title: '上报时间',
               width: '180px',
@@ -127,12 +117,47 @@ const APIError = (props: IProps) => {
                 <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
               ),
             },
+            {
+              title: '操作',
+              width: '90px',
+              align: 'center',
+              render: () => <Button type="link">详情</Button>,
+            },
           ]}
           pagination={{
             total: total,
           }}
         />
       </div>
+      <Drawer
+        title='API详情'
+        visible={showDetail}
+        onClose={() => { setShowDetail(false) }}
+      >
+        <Descriptions bordered column={2}>
+          <Descriptions.Item label="api" span={2}>
+            {detail.d1}
+          </Descriptions.Item>
+          <Descriptions.Item label="traceId" span={2}>
+            {detail.d3?.split('-')[1] || '-'}
+          </Descriptions.Item>
+          <Descriptions.Item label="页面" span={2}>
+            {detail.url}
+          </Descriptions.Item>
+          <Descriptions.Item label="入参" span={2}>
+            {detail.d5}
+          </Descriptions.Item>
+          <Descriptions.Item label="出参" span={2}>
+            {detail.d4}
+          </Descriptions.Item>
+          <Descriptions.Item label="用户" span={2}>
+            {detail.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="UA" span={2}>
+            {detail.ua}
+          </Descriptions.Item>
+        </Descriptions>
+      </Drawer>
     </div>
   )
 }
