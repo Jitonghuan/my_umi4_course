@@ -217,6 +217,7 @@ export const podsTableSchema = ({
             title: '节点IP',
             dataIndex: ['info', 'nodeIp'],
             width: 200,
+            ellipsis: true,
             render: (value) => (
                 <Tooltip placement="topLeft" title={value}>
                     {value}
@@ -302,6 +303,7 @@ export const envVarTableSchema = ({ handleDelete }: {
             title: 'KEY',
             dataIndex: 'name',
             width: 400,
+            ellipsis: true,
             render: (value: any) => (
                 <Tooltip placement="top" title={value}>
                     {value}
@@ -312,6 +314,7 @@ export const envVarTableSchema = ({ handleDelete }: {
             title: 'VALUE',
             dataIndex: 'value',
             width: 400,
+            ellipsis: true,
             render: (value: any) => (
                 <Tooltip placement="top" title={value}>
                     {value}
@@ -456,9 +459,8 @@ export const taskTableSchema = ({
             title: '任务CODE',
             dataIndex: 'code',
             width: 180,
-            ellipsis: {
-                showTitle: false,
-            },
+            ellipsis: true,
+
             render: (value) => (
                 <Tooltip placement="topLeft" title={value}>
                     {value}
