@@ -86,6 +86,7 @@ export default function AceEditor(props: AceEditorProps) {
         onChange={handleChange}
         readOnly={props.readOnly}
         placeholder={props.placeholder}
+        showPrintMargin={false}
         wrapEnabled={wrap}
         scrollMargin={[0, 32]}
         setOptions={{

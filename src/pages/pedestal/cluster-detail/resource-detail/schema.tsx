@@ -66,7 +66,7 @@ export const resourceDetailTableSchema = ({
             ellipsis: true,
             render: (value) => (
                 <Tooltip placement="topLeft" title={value}>
-                    {value}
+                    {value ? value : '-'}
                 </Tooltip>
             ),
 
@@ -87,7 +87,7 @@ export const resourceDetailTableSchema = ({
             dataIndex: ['info', 'status'],
             width: 120,
             render: (value) => {
-                return value ? <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : '#929793'}>{value}</Tag> : ''
+                return value ? <Tag color={LIST_STATUS_TYPE[value] && LIST_STATUS_TYPE[value].color ? LIST_STATUS_TYPE[value].color : '#929793'}>{value}</Tag> : <Tag color="processing">Active</Tag>
             }
 
         },

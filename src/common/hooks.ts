@@ -84,7 +84,6 @@ export function usePermissionData(): [IPermission[], boolean, () => Promise<any>
           permissionName: item.menuName,
           permissionUrl: item.menuUrl,
         })) || [];
-
       setData(next);
     } finally {
       setLoading(false);
