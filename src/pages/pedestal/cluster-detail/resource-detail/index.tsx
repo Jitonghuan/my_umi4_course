@@ -26,7 +26,7 @@ export default function ResourceDetail(props: any) {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
     const [storeParams, setStoreParams] = useState<any>(
-        localStorage.getItem('cluster_resource_params') ? JSON.parse(localStorage.getItem('cluster_resource_params') || '{}') : {}
+        sessionStorage.getItem('cluster_resource_params') ? JSON.parse(sessionStorage.getItem('cluster_resource_params') || '{}') : {}
     );
     const [loading, setLoading] = useState<boolean>(false);
     const [continueList, setContinueList] = useState<string[]>(['']);
@@ -200,14 +200,14 @@ export default function ResourceDetail(props: any) {
                 <Form
                     layout="inline"
                     onFinish={(value) => {
-                        localStorage.setItem('cluster_resource_params', JSON.stringify(value || {}));
+                        sessionStorage.setItem('cluster_resource_params', JSON.stringify(value || {}));
                         setStoreParams(value);
                         initialSearch()
                     }}
                     form={form}
                     onReset={() => {
                         form.setFieldsValue({ resourceType: 'deployments', namespace: '' });
-                        localStorage.setItem('cluster_resource_params', JSON.stringify(form.getFieldsValue() || {}));
+                        sessionStorage.setItem('cluster_resource_params', JSON.stringify(form.getFieldsValue() || {}));
                         setSelectType('deployments');
                         initialSearch()
                     }}

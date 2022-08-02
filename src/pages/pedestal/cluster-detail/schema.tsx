@@ -302,11 +302,21 @@ export const envVarTableSchema = ({ handleDelete }: {
             title: 'KEY',
             dataIndex: 'name',
             width: 400,
+            render: (value: any) => (
+                <Tooltip placement="top" title={value}>
+                    {value}
+                </Tooltip>
+            ),
         },
         {
             title: 'VALUE',
             dataIndex: 'value',
             width: 400,
+            render: (value: any) => (
+                <Tooltip placement="top" title={value}>
+                    {value}
+                </Tooltip>
+            ),
         },
         {
             title: '',
