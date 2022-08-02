@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from "react";
-import MonacoEditor from "react-monaco-editor";
-import { Modal, Spin } from "@cffe/h2o-design";
+import AceEditor from '@/components/ace-editor';
+import { Modal, Spin, message } from "@cffe/h2o-design";
 import { sourcemapDownload } from "@/pages/fe-monitor/basic/server";
 import SourceMap from "source-map";
-import {getRequest} from "@/utils/request";
-import {message} from "antd";
+import { getRequest } from "@/utils/request";
 
 interface IProps {
   visible: boolean;
@@ -24,7 +23,8 @@ const SourceMapModal = (props: IProps) => {
 
   const getErrorCode = async (file: any, errorPos: IErrorPos) => {
     console.log(errorPos)
-    const consumer = await new SourceMap.SourceMapConsumer(file); // 获取sourceMap consumer，我们可以通过传入打包后的代码位置来查询源代码的位置
+    console.log(file)
+    const consumer: any = await new SourceMap.SourceMapConsumer(file); // 获取sourceMap consumer，我们可以通过传入打包后的代码位置来查询源代码的位置
 
     const originalPosition = consumer.originalPositionFor({ // 获取 出错代码 在 哪一个源文件及其对应位置
       line: errorPos.line,
@@ -108,7 +108,12 @@ const SourceMapModal = (props: IProps) => {
             <div>错误文件：{sourceInfo?.source || '-'}</div>
             <div style={{ marginTop: '10px' }}>错误行列：{sourceInfo?.line || '-'}:{sourceInfo?.column || '-'}</div>
             <div style={{ marginTop: '10px' }}>错误代码：</div>
-            <MonacoEditor value={sourceInfo?.code} height={400} options={{ lineNumbers: (line) => sourceInfo ? sourceInfo.line : line }} />
+            <AceEditor
+              mode="javascript"
+              value={sourceInfo?.code}
+              firstLineNumber={sourceInfo?.line || 1}
+              height={400}
+            />
           </>
         )
       }

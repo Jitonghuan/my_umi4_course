@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Table, Descriptions, message } from 'antd';
-import {getPageErrorInfo, sourcemapDownload} from '../../../../server';
-import { Drawer, Modal } from '@cffe/h2o-design';
-import MonacoEditor from 'react-monaco-editor';
+import { Button, Table, Descriptions } from 'antd';
+import {getPageErrorInfo} from '../../../../server';
+import { Drawer } from '@cffe/h2o-design';
 import SourceMapModal from '../source-map';
 
 interface IProps {
