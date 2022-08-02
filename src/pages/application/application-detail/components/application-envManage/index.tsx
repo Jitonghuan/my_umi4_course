@@ -413,7 +413,7 @@ export default function appEnvPageList() {
           />
           <Table.Column
             title="启用发布审批"
-            dataIndex="isNeedApply"
+            dataIndex="isAppNeedApply"
             width={110}
             render={(value, record, index) => (
               <>
