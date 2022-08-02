@@ -14,6 +14,21 @@ interface IEditorDrawer {
   loadGraphTable: () => any
 }
 
+const createTypeOptions = [
+  {
+    label: "graphJson",
+    value: "graphJson"
+  },
+  {
+    label: "模版选择",
+    value: "graphTemplate"
+  },
+  {
+    label: "grafanaId",
+    value: "grafanaId"
+  }
+]
+
 const EditorDrawer = (props: IEditorDrawer) => {
   const { visible, mode, cluster, boardInfo, loadGraphTable } = props
   const [formRef] = Form.useForm()
@@ -23,6 +38,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
   const [dataSourceOptions, setDataSourceOptions] = useState<any[]>([])
   const [templateOptions, setTemplateOptions] = useState<any[]>([])
 
+  const createType = Form.useWatch("createType", formRef)
   useEffect(() => {
     if (visible) {
       if (mode === 'edit') {
@@ -185,16 +201,29 @@ const EditorDrawer = (props: IEditorDrawer) => {
         <Form.Item label='数据源' name='dsUuid' rules={[{ required: true, message: '请选择数据源!' }]}>
           <Select options={dataSourceOptions} />
         </Form.Item>
+        <Form.Item label='大盘创建方式' name='createType' initialValue={"graphJson"}>
+          <Select options={createTypeOptions} />
+        </Form.Item>
         <Divider />
-        <Form.Item label='模版' name='graphTemplateId'>
-          <Select options={templateOptions} />
-        </Form.Item>
-        <Form.Item label='GrafanaID' name='grafanaId'>
-          <Input />
-        </Form.Item>
-        <Form.Item label='JSON' name='graphJson'>
-          <AceEditor height={window.innerHeight - 170} mode="json" />
-        </Form.Item>
+        {
+          createType === "graphTemplate" &&
+          <Form.Item label='模版' name='graphTemplateId'>
+            <Select options={templateOptions} />
+          </Form.Item>
+        }
+        {
+          createType === "grafanaId" &&
+          <Form.Item label='GrafanaID' name='grafanaId'>
+            <Input />
+          </Form.Item>
+        }
+        {
+          createType === "graphJson" &&
+          <Form.Item label='JSON' name='graphJson'>
+            <AceEditor height={window.innerHeight - 170} mode="json" />
+          </Form.Item>
+        }
+
       </Form>
     </Drawer>
   )

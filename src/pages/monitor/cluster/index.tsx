@@ -591,7 +591,7 @@ const Coms = (props: any) => {
             />
           </div>
 
-          <h3 className="monitor-tabs-content-title">已安装大盘</h3>
+          {/* <h3 className="monitor-tabs-content-title">已安装大盘</h3>
           <div className="monitor-tabs-content-sec">
             {useMarket.map((el) => (
               <span
@@ -603,7 +603,7 @@ const Coms = (props: any) => {
                 {el.name}
               </span>
             ))}
-          </div>
+          </div> */}
         </div>
       </Card>
       {/* <Drawer

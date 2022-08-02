@@ -7,7 +7,7 @@ import './index.less'
 
 interface BoardInfo {
   graphName: string;
-  url: string;
+  graphUrl: string;
 }
 
 const BoardDetail = () => {
@@ -17,9 +17,12 @@ const BoardDetail = () => {
     const { query } = location;
     const { graphName, url } = query as any;
 
-    console.log(query);
+    let graphUrl = '';
+    if (url) {
+      graphUrl = `${url}?kiosk=tv`
+    }
     setInfo({
-      graphName, url
+      graphName, graphUrl
     })
   }, [])
 
@@ -29,12 +32,12 @@ const BoardDetail = () => {
         <Button type='link' onClick={() => { history.push('/matrix/monitor/panel') }}>
           <LeftOutlined /> 返回
         </Button>
-        <div>
+        {/* <div>
           {info?.graphName}
-        </div>
+        </div> */}
       </div >
       <div style={{ width: '100%', height: '100%', display: 'block' }}>
-        <iframe className='grafana-iframe' src={info?.url||''} />
+        <iframe className='grafana-iframe' src={info?.graphUrl || ''} />
       </div>
     </PageContainer>
   )

@@ -161,7 +161,7 @@ const TemplateCom: React.FC = () => {
               const { name, describe, configuration, dsType, id } = record
               const value = {
                 graphTemplateName: name,
-                graphTemplateJson: configuration,
+                graphTemplateJson: JSON.stringify(JSON.parse(configuration || "{}"), null, 2),
                 graphTemplateDescribe: describe,
                 dsType: dsType,
                 id: id
@@ -319,7 +319,7 @@ const TemplateCom: React.FC = () => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
         >
-          <Form.Item label="模版名称" name="graphTemplateName">
+          <Form.Item label="模版名称" name="graphTemplateName" required>
             <Input />
           </Form.Item>
           <Form.Item label="数据源类型" name="dsType">
