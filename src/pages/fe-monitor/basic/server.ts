@@ -26,9 +26,21 @@ export const getErrorList = async (data: any) => {
   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/basic/pageError`, { data });
 };
 
+/** 重点错误 */
+export const getImportantErrorList = async (data: any) => {
+  return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/basic/keyError`, { data });
+};
+
+
 /** 错误详情 */
 export const getPageErrorInfo = async (data: any) => {
   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/basic/pageErrorInfo`, { data });
+};
+
+
+/** 错误sourceMap 文件 */
+export const sourcemapDownload = async (data: any) => {
+  return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/basic/sourcemapDownloadUrl`, { data });
 };
 
 /** 页面汇总性能趋势图 */
