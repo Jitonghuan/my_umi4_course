@@ -119,11 +119,14 @@ const BasicOverview = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
             {overviewList.map(
               (item, i) =>
                 i < 2 && (
-                  <div key={i} onClick={() => {
-                    history.push({
-                      search: '?appGroup=&tab=4'
-                    })
-                  }}>
+                  <div
+                    key={i}
+                    onClick={() => {
+                      history.push({
+                        search: '?appGroup=&tab=4',
+                      });
+                    }}
+                  >
                     <b>{item[1]}</b>
                     <span>{item[0]}</span>
                   </div>

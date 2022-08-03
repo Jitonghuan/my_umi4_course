@@ -500,22 +500,6 @@ export default [
         key: 'ticketAlarm',
         component: '@/pages/ticket/ticket-alarm',
       },
-      {
-        path: 'addTicket',
-        name: '新建工单',
-        key: 'addTicket',
-        component: '@/pages/ticket/addTicket',
-        //测试环境和正式环境暂不展示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
-      },
-      {
-        path: 'resourceApply',
-        name: '资源申请',
-        key: 'resourceApply',
-        component: '@/pages/ticket/resource-apply',
-        //测试环境和正式环境暂不展示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
-      },
     ],
   },
 
@@ -1150,7 +1134,7 @@ export default [
             hideInMenu: true,
           },
           { redirect: 'node-list' },
-        ]
+        ],
       },
       {
         path: 'storage-manage',
@@ -1195,6 +1179,39 @@ export default [
         key: 'display',
         component: '@/pages/display',
         // hideInMenu: true,
+      },
+    ],
+  },
+  {
+    path: 'database',
+    name: '数据库管理',
+    icon: 'icon-TableSettings',
+    routes: [
+      {
+        path: 'overview',
+        name: '概览',
+        key: 'overview',
+        component: '@/pages/database/overview',
+      },
+      {
+        path: 'info',
+        name: '实例详情',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list/components/instance-info',
+        hideInMenu: true,
+      },
+
+      {
+        path: 'instance-list',
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
+      },
+      {
+        path: 'cluster-list',
+        name: '集群列表',
+        key: 'cluster-list',
+        component: '@/pages/database/cluster-list',
       },
     ],
   },

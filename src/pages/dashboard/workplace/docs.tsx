@@ -4,15 +4,7 @@ import { BorderBox13 } from '@jiaminghi/data-view-react';
 import { CarryOutOutlined } from '@ant-design/icons';
 import styles from './style/docs.module.less';
 import { useGetInfoList } from '../workplace/hook';
-
-const links = {
-  react: 'https://arco.design/react/docs/start',
-  vue: 'https://arco.design/vue/docs/start',
-  designLab: 'https://arco.design/themes',
-  materialMarket: 'https://arco.design/material/',
-};
 function QuickOperation() {
-  // const t = useLocale(locale);
   const [loading, total, data, getInfoList] = useGetInfoList();
   const [visible, setVisible] = useState(false);
   useEffect(() => {

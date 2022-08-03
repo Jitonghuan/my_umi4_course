@@ -9,7 +9,6 @@ interface IProps {
 }
 
 const SlowApiRequest = (props: IProps) => {
-
   const { dataSource, loading, pageTotal } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -17,7 +16,7 @@ const SlowApiRequest = (props: IProps) => {
 
   const getDetail = (record: any) => {
     setDetail(record);
-  }
+  };
 
   return (
     <>
@@ -66,9 +65,7 @@ const SlowApiRequest = (props: IProps) => {
           {
             title: '上报时间',
             width: '180px',
-            render: (value, record) => (
-              <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
-            ),
+            render: (value, record) => <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>,
           },
           {
             title: '操作',
@@ -82,9 +79,11 @@ const SlowApiRequest = (props: IProps) => {
         }}
       />
       <Drawer
-        title='API详情'
+        title="API详情"
         visible={showDetail}
-        onClose={() => { setShowDetail(false) }}
+        onClose={() => {
+          setShowDetail(false);
+        }}
       >
         <Descriptions bordered column={2}>
           <Descriptions.Item label="api" span={2}>
@@ -105,7 +104,7 @@ const SlowApiRequest = (props: IProps) => {
         </Descriptions>
       </Drawer>
     </>
-  )
-}
+  );
+};
 
-export default SlowApiRequest
+export default SlowApiRequest;

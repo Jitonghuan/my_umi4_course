@@ -12,7 +12,7 @@ import SuccessRate from './components/success-rate';
 const { TabPane } = Tabs;
 
 interface IProps {
-  timeList:any;
+  timeList: any;
   appGroup: string;
   envCode: string;
   feEnv: string;
@@ -71,19 +71,18 @@ const BasicApi = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   }
 
   useEffect(() => {
-    changeTabs()
+    changeTabs();
   }, [timeList, appGroup, feEnv]);
 
-
   const changeTabs = (tabKey?: string) => {
-    const key = tabKey || active
+    const key = tabKey || active;
     switch (key) {
       case '2':
         void onSearchTimeOut();
       default:
-        return
+        return;
     }
-  }
+  };
 
   return (
     <div className="basic-api-wrapper">
@@ -97,12 +96,12 @@ const BasicApi = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
       >
         <TabPane tab="API失败接口" key="1">
           <div>
-            <div className='api-type-title'>异常列表</div>
-            <APIError type='serverError' getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
+            <div className="api-type-title">异常列表</div>
+            <APIError type="serverError" getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
           </div>
           <div>
-            <div className='api-type-title'>业务报错</div>
-            <APIError type='bizError' getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
+            <div className="api-type-title">业务报错</div>
+            <APIError type="bizError" getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
           </div>
         </TabPane>
         <TabPane tab="慢接口列表" key="2">
@@ -112,7 +111,7 @@ const BasicApi = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
           <SuccessRate getParam={getParam} timeList={timeList} appGroup={appGroup} feEnv={feEnv} />
         </TabPane>
       </Tabs>
-    </div >
+    </div>
   );
 };
 

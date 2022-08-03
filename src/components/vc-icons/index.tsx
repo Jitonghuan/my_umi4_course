@@ -16,6 +16,7 @@ import {
   Exit,
   Activity,
   UserRecent,
+  TableSettings,
 } from '@cffe/internal-icon';
 
 /** Icon映射 */
@@ -36,4 +37,5 @@ export const IconMap = {
   'icon-exit': <Exit />,
   'icon-activity': <Activity />,
   'icon-userRecent': <UserRecent />,
+  'icon-TableSettings': <TableSettings />,
 };

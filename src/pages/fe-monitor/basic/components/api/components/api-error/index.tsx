@@ -4,43 +4,42 @@ import moment from 'moment';
 import { searchApiList } from '@/pages/fe-monitor/basic/server';
 import './index.less';
 
-type type = 'serverError' | 'bizError'
+type type = 'serverError' | 'bizError';
 interface IProps {
-  type: type
-  timeList: any
+  type: type;
+  timeList: any;
   appGroup: string;
   feEnv: string;
   getParam: () => any;
 }
 
 const APIError = (props: IProps) => {
-
-  const [formInstance] = Form.useForm()
-  const [dataSource, setDataSource] = useState<any>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [total, setTotal] = useState<number>(0)
-  const [searchValue, setSearchValue] = useState<any>({})
+  const [formInstance] = Form.useForm();
+  const [dataSource, setDataSource] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
+  const [searchValue, setSearchValue] = useState<any>({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
 
-  const { type, getParam } = props
+  const { type, getParam } = props;
 
   useEffect(() => {
-    onSearchSuccessRate(searchValue)
-  }, [props.timeList, props.appGroup, props.feEnv])
+    onSearchSuccessRate(searchValue);
+  }, [props.timeList, props.appGroup, props.feEnv]);
 
   const handleSearch = async (value: any) => {
-    setSearchValue(value)
-    await onSearchSuccessRate(value)
-  }
+    setSearchValue(value);
+    await onSearchSuccessRate(value);
+  };
 
   const onSearchSuccessRate = async (value?: any) => {
-    const { api, traceId } = value
+    const { api, traceId } = value;
     if (loading) {
       return;
     }
-    let params = getParam()
+    let params = getParam();
     params = { ...params, searchType: type };
     if (api) {
       params = { ...params, api };
@@ -54,15 +53,15 @@ const APIError = (props: IProps) => {
     setDataSource(res?.data || []);
     setTotal(res?.data?.length || 0);
     setLoading(false);
-  }
+  };
 
   const getDetail = (record: any) => {
     setDetail(record);
-  }
+  };
 
   return (
-    <div className='api-error-table'>
-      <div className='search'>
+    <div className="api-error-table">
+      <div className="search">
         <Form form={formInstance} layout="inline" onFinish={handleSearch}>
           <Form.Item label="关键字" name="api">
             <Input />
@@ -71,11 +70,13 @@ const APIError = (props: IProps) => {
             <Input />
           </Form.Item>
           <Form.Item>
-            <Button type='primary' htmlType='submit'>查询</Button>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
           </Form.Item>
         </Form>
       </div>
-      <div className='table'>
+      <div className="table">
         <Table
           dataSource={dataSource}
           bordered
@@ -113,9 +114,7 @@ const APIError = (props: IProps) => {
             {
               title: '上报时间',
               width: '180px',
-              render: (value, record) => (
-                <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
-              ),
+              render: (value, record) => <span>{moment(Number(record.ts)).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>,
             },
             {
               title: '操作',
@@ -130,9 +129,11 @@ const APIError = (props: IProps) => {
         />
       </div>
       <Drawer
-        title='API详情'
+        title="API详情"
         visible={showDetail}
-        onClose={() => { setShowDetail(false) }}
+        onClose={() => {
+          setShowDetail(false);
+        }}
       >
         <Descriptions bordered column={2}>
           <Descriptions.Item label="api" span={2}>
@@ -159,7 +160,7 @@ const APIError = (props: IProps) => {
         </Descriptions>
       </Drawer>
     </div>
-  )
-}
+  );
+};
 
-export default APIError
+export default APIError;

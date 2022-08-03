@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Decoration11, BorderBox13 } from '@jiaminghi/data-view-react';
-import { Link, Card, Skeleton, Tag, Typography, Spin, Drawer, Modal, List } from '@arco-design/web-react';
-import ReactMarkdown from 'react-markdown';
+import { BorderBox13 } from '@jiaminghi/data-view-react';
+import { Link, Card, Typography, Spin, Drawer, Modal, List } from '@arco-design/web-react';
 import { useGetInfoList } from '../workplace/hook';
-import { QuestionCircleOutlined, DownOutlined, UpOutlined, SendOutlined } from '@ant-design/icons';
+import { SendOutlined } from '@ant-design/icons';
 
 function Announcement() {
   const [loading, total, data, getInfoList] = useGetInfoList();
@@ -55,35 +53,13 @@ function Announcement() {
                         {item?.title}
                       </a>
                     </p>
-                    {/* <p  dangerouslySetInnerHTML={{ __html: item?.content}}></p> */}
                   </li>
                 );
               })}
             </div>
           </Spin>
-
-          {/* <Link>查看更多</Link> */}
         </BorderBox13>
-
-        {/* <Typography.Title heading={6}>
-          <Decoration11 style={{width: '300px', height: '60px'}}>  Matrix公告</Decoration11>
-
-        </Typography.Title>
-        <Link>查看更多</Link> */}
       </div>
-      {/* <Skeleton loading={loading} text={{ rows: 5, width: '100%' }} animation> */}
-      {/* <div>
-          {data||[]?.map((d) => (
-            <div key={d.key} className={styles.item}>
-              <Tag color={getTagColor(d.type)} size="small">
-                {t[`workplace.${d.type}`]}
-              </Tag>
-              <span className={styles.link}>{d.content}</span>
-            </div>
-          ))}
-        </div> */}
-      {/* 00000000
-      </Skeleton> */}
       <Modal
         title="公告详情"
         style={{ width: '50%' }}
@@ -95,14 +71,6 @@ function Announcement() {
         footer={null}
       >
         <p dangerouslySetInnerHTML={{ __html: curContent }}></p>
-        {/* <p>
-        <ReactMarkdown
-                        children={curContent}
-                        className="markdown-html"
-                        escapeHtml={false}  //不进行HTML标签的转化
-                      />
-          
-        </p> */}
       </Modal>
       <Drawer
         width={400}
@@ -123,10 +91,9 @@ function Announcement() {
           dataSource={data}
           render={(item, index) => (
             <List.Item key={index}>
-              {' '}
               <Card title={item.title} style={{ width: '100%' }} bodyStyle={{ padding: 6 }}>
                 <p id={item.id}>{item.content}</p>
-              </Card>{' '}
+              </Card>
             </List.Item>
           )}
         />
