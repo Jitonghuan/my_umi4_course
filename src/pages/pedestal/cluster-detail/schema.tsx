@@ -301,11 +301,13 @@ export const envVarTableSchema = ({ handleDelete }: {
     [
         {
             title: 'KEY',
+            ellipsis: {
+                showTitle: false,
+            },
             dataIndex: 'name',
-            width: 400,
-            ellipsis: true,
+            width: '40%',
             render: (value: any) => (
-                <Tooltip placement="top" title={value}>
+                <Tooltip placement="top" title={value} overlayStyle={{ maxWidth: '1000px' }}>
                     {value}
                 </Tooltip>
             ),
@@ -313,10 +315,12 @@ export const envVarTableSchema = ({ handleDelete }: {
         {
             title: 'VALUE',
             dataIndex: 'value',
-            width: 400,
-            ellipsis: true,
+            ellipsis: {
+                showTitle: false,
+            },
+            width: '50%',
             render: (value: any) => (
-                <Tooltip placement="top" title={value}>
+                <Tooltip placement="top" title={value} overlayStyle={{ maxWidth: '1000px' }}>
                     {value}
                 </Tooltip>
             ),
