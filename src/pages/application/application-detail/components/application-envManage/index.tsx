@@ -208,9 +208,8 @@ export default function appEnvPageList() {
     }).then((result) => {
       if (result.success) {
         message.success('更改成功！');
-        loadListData({
-          pageIndex: 1,
-          pageSize: 20,
+        queryAppEnvData({
+          appCode,
         });
       }
     });
