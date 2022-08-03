@@ -28,3 +28,18 @@ export const stepTableMap = (data: Item[]) => {
   });
   return obj;
 };
+
+// 数组转map
+export const formatTableDataMap = (value: Record<string, string> = {}) => {
+  const item = value ?? {};
+
+  const labels = Object.keys(item).map((v, i) => {
+    return {
+      id: i,
+      key: v,
+      value: item[v],
+    };
+  });
+
+  return labels;
+};

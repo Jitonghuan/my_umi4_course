@@ -1,307 +1,200 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Space, Popconfirm, Table, Tooltip, Modal, Form } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
-import { PlusOutlined } from '@ant-design/icons';
-import { Link, history } from 'umi';
-import TableSearch from '@/components/table-search';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
-import useTable from '@/utils/useTable';
-import useRequest from '@/utils/useRequest';
-import { Item, AlertNameProps } from '../../typing';
-import RulesTable from '../../component/rules-table';
-import usePublicData from './usePublicData';
-import { queryPrometheusList, deletePrometheus } from '../../service';
+import React, { useState } from 'react';
+import { Table, Form, Select, Input, Button, Space, Empty } from 'antd';
+import PageContainer from '@/components/page-container';
+import {
+  PlusOutlined,
+  FormOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
+import { history } from 'umi';
+import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { envTypeData } from '../schema';
+import { useEnvListOptions, useGetListMonitor, useDelMonitor } from './hooks';
 import './index.less';
+import { useAppOptions } from "@/pages/monitor/business/hooks";
 
-const PrometheusCom: React.FC = () => {
-  const [labelVisible, setLabelVisible] = useState(false);
-  const [rulesVisible, setRulesVisible] = useState(false);
-  const [labelRecord, setLabelRecord] = useState<Record<string, string>>({});
-  const [rulesId, setRulesId] = useState('');
-  const [modalType, setModalType] = useState<'label' | 'rules'>('label');
-  const [appCode, setAppCode] = useState('');
-
+export default function DpMonitor() {
   const [form] = Form.useForm();
+  const [appOptions] = useAppOptions(); // 应用code列表
+  const [envCodeOption, getEnvCodeList] = useEnvListOptions();
+  const [listSource, total, getListMonitor] = useGetListMonitor();
+  const [currentEnvType, setCurrentEnvType] = useState('');
+  const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
 
-  const {
-    tableProps,
-    search: { submit, reset },
-  } = useTable({
-    url: queryPrometheusList,
-    method: 'GET',
-    form,
-  });
+  const [delMonitor] = useDelMonitor();
 
-  const { appManageEnvData, appManageListData } = usePublicData({
-    appCode,
-  });
-
-  const { run } = useRequest({
-    api: deletePrometheus,
-    method: 'GET',
-    successText: '删除成功',
-    isSuccessModal: true,
-    onSuccess: () => {
-      submit();
-    },
-  });
-
-  // const confirm = (id: React.Key) => {
-  //   run({ id });
-  // };
-
-  const editLabelRecord = (record: Record<string, string>) => {
-    return Object.keys(record).map((v) => {
-      return {
-        key: v,
-        value: record[v],
-      };
+  const editMonitor = (item: any) => {
+    history.push({
+      pathname: '/matrix/monitor/prometheus-edit',
+      query: {
+        name: item.name
+      },
+      state: {
+        type: 'edit',
+        recordData: item,
+        bizMonitorType: 'interface'
+      },
     });
   };
 
-  const columns: ColumnsType<Item> = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 70,
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
-    },
-    {
-      title: '监控名称',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '应用code',
-      dataIndex: 'appCode',
-      key: 'appCode',
-    },
-    {
-      title: '环境code',
-      dataIndex: 'envCode',
-      key: 'envCode',
-    },
-    {
-      title: 'URL',
-      dataIndex: 'metricsUrl',
-      key: 'metricsUrl',
-    },
-    {
-      title: 'Matchlabels',
-      dataIndex: 'labels',
-      key: 'labels',
-      render: (text: Record<string, string>) => {
-        if (Object.keys(text).length === 0) return '';
-        return (
-          <a
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-            onClick={() => {
-              setLabelVisible(true);
-              setLabelRecord(text);
-              setModalType('label');
-            }}
-          >
-            {JSON.stringify(text)}
-          </a>
-        );
-      },
-    },
-    {
-      title: '报警规则',
-      dataIndex: 'alertRules',
-      key: 'alertRules',
-      render: (text: AlertNameProps[], record) => {
-        if (!text) return '';
-        if (Array.isArray(text) && text.length === 0) return '';
-        return (
-          <a
-            style={{
-              display: 'inline-block',
-              width: 100,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
-            onClick={() => {
-              setRulesVisible(true);
-              setRulesId(record.id as string);
-              setModalType('rules');
-            }}
-          >
-            {JSON.stringify(text[0])}
-          </a>
-        );
-      },
-    },
-    {
-      title: '操作',
-      dataIndex: 'option',
-      key: 'option',
-      width: 100,
-      render: (_: string, record: Item) => (
-        <Space>
-          <Link to={`./prometheus-edit?name=${record.name}`}>编辑</Link>
-          <Popconfirm
-            title="确认删除？"
-            onConfirm={() => run({ id: record.id })}
-            // onCancel={cancel}
-            okText="是"
-            cancelText="否"
-            placement="topLeft"
-          >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
-  const expandedRowRender = (expandData: AlertNameProps[] | { key: string; value: string }[]) => {
-    const labelColumns = [
-      {
-        title: 'key',
-        dataIndex: 'key',
-        key: 'key',
-      },
-      {
-        title: 'value',
-        dataIndex: 'value',
-        key: 'value',
-      },
-    ];
-
-    return (
-      <Table
-        dataSource={[...expandData]}
-        columns={labelColumns}
-        pagination={false}
-        // rowKey={record => record.key}
-      />
-    );
+  const delMonitorClick = (id: string) => {
+    delMonitor(id, () => {
+      getListMonitor(1, 5);
+    });
   };
-
-  const formOptions: FormProps[] = [
-    {
-      key: '1',
-      type: 'input',
-      label: '监控名称',
-      dataIndex: 'name',
-      width: '160px',
-      placeholder: '请输入',
-    },
-    {
-      key: '2',
-      type: 'select',
-      label: '应用code',
-      dataIndex: 'appCode',
-      width: '160px',
-      placeholder: '请选择',
-      showSelectSearch: true,
-      option: appManageListData as OptionProps[],
-      onChange: (e: string) => {
-        setAppCode(e);
-        if (!form?.getFieldValue('envCode')) return;
-        form.resetFields(['envCode']);
-      },
-    },
-    {
-      key: '3',
-      type: 'select',
-      label: '环境code',
-      dataIndex: 'envCode',
-      width: '160px',
-      showSelectSearch: true,
-      option: appManageEnvData as OptionProps[],
-    },
-    {
-      key: '4',
-      type: 'input',
-      label: 'URL',
-      dataIndex: 'metricsUrl',
-      width: '160px',
-      placeholder: '请输入',
-    },
-  ];
-
-  const isLabel = modalType === 'label';
-
-  const onCancel = () => {
-    setLabelRecord({});
-    setLabelVisible(false);
-    setRulesId('');
-    setRulesVisible(false);
-  };
-
-  const onReset = () => {
-    setAppCode('');
-    reset();
-  };
-  // useEffect(() => {
-  //   setDataSource([]);
-  // }, []);
 
   return (
-    <>
-      <TableSearch
-        splitLayout={true}
-        form={form}
-        formOptions={formOptions}
-        formLayout="inline"
-        columns={columns}
-        {...tableProps}
-        // {...pagination}
-        pagination={{
-          ...tableProps.pagination,
-          showTotal: (total) => `共 ${total} 条`,
-          showSizeChanger: true,
-          size: 'small',
-        }}
-        showTableTitle
-        tableTitle="Prometheus监控列表"
-        extraNode={
-          <Button
-            type="primary"
-            onClick={() => {
-              history.push('./prometheus-edit');
+    <PageContainer className="dp-monitor-wrapper">
+      <FilterCard>
+        <Form
+          layout="inline"
+          form={form}
+          onFinish={(values: any) => {
+            getListMonitor(1, 10, values?.monitorName, values?.metricName, values?.appCode, currentEnvCode);
+          }}
+          onReset={() => {
+            form.resetFields();
+            setCurrentEnvCode('');
+            setCurrentEnvType('');
+            getListMonitor(1, 10);
+          }}
+        >
+          <Form.Item label="环境" name="envCode">
+            <Select
+              style={{ width: '100px' }}
+              options={envTypeData}
+              value={currentEnvType}
+              placeholder="分类"
+              onChange={(value) => {
+                setCurrentEnvType(value);
+                setCurrentEnvCode('');
+                getEnvCodeList(value);
+              }}
+              allowClear
+            />
+            <Select
+              style={{ width: '140px', marginLeft: '5px' }}
+              options={envCodeOption}
+              placeholder="环境名称"
+              onChange={(value) => {
+                setCurrentEnvCode(value);
+              }}
+              value={currentEnvCode}
+              allowClear
+            />
+          </Form.Item>
+          <Form.Item label="关联应用" name="appCode">
+            <Select
+              options={appOptions}
+              style={{ width: '200px'}}
+              showSearch
+              allowClear
+            />
+          </Form.Item>
+          <Form.Item label="监控名称" name="name">
+            <Input placeholder="请输入" style={{ width: 180 }} />
+          </Form.Item>
+          <Form.Item label="URL" name="metricsUrl">
+            <Input placeholder="请输入" style={{ width: 180 }} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" ghost>
+              查询
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="ghost" htmlType="reset" danger>
+              重置
+            </Button>
+          </Form.Item>
+          <Form.Item className="btn-r">
+            <Button
+              type="primary"
+              onClick={() => {
+                history.push({ pathname: '/matrix/monitor/prometheus-edit', state: { type: 'add', bizMonitorType: 'interface' } });
+              }}
+              icon={<PlusOutlined />}
+            >
+              新增
+            </Button>
+          </Form.Item>
+        </Form>
+      </FilterCard>
+      <ContentCard>
+        {listSource.length !== 0 ? (
+          <Table
+            pagination={{
+              onChange: (page) => {
+                getListMonitor(page, 5);
+              },
+              total: total,
+              pageSize: 5,
             }}
-            icon={<PlusOutlined />}
-          >
-            接入Prometheus
-          </Button>
-        }
-        // className="table-form"
-        onSearch={submit}
-        reset={onReset}
-        // scroll={{ x: 'max-content' }}
-        rowKey="id"
-        className="expand-table"
-      />
-      <Modal
-        visible={isLabel ? labelVisible : rulesVisible}
-        title={isLabel ? '查看Matchlabels' : '查看报警规则'}
-        onCancel={onCancel}
-        width={800}
-        bodyStyle={{ minHeight: 500 }}
-        footer={null}
-        destroyOnClose
-      >
-        {isLabel ? (
-          expandedRowRender(editLabelRecord(labelRecord))
+            dataSource={listSource}
+            bordered
+            columns={[
+              {
+                title: 'ID',
+                dataIndex: 'id',
+                width: 70,
+              },
+              {
+                title: '监控名称',
+                dataIndex: 'name',
+                key: 'name',
+              },
+              {
+                title: '关联环境',
+                dataIndex: 'envCode',
+                key: 'envCode',
+              },
+              {
+                title: '关联应用',
+                dataIndex: 'appCode',
+                key: 'appCode',
+              },
+              {
+                title: 'URL',
+                dataIndex: 'metricsUrl',
+                key: 'metricsUrl',
+              },
+              {
+                title: '操作',
+                dataIndex: 'option',
+                key: 'option',
+                align: 'center',
+                width: 80,
+                render: (_: string, record: any) => (
+                  <Space>
+                    <Button
+                      type="link"
+                      icon={<FormOutlined />}
+                      onClick={() => {
+                        editMonitor(record);
+                      }}
+                    >
+                      编辑
+                    </Button>
+                    <Button
+                      danger
+                      type="link"
+                      icon={<DeleteOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        delMonitorClick(record.id);
+                      }}
+                    >
+                      删除
+                    </Button>
+                  </Space>
+                ),
+              },
+            ]}
+          />
         ) : (
-          <RulesTable serviceId={rulesId} isShowAddButton={false} />
+          <Empty />
         )}
-      </Modal>
-    </>
+      </ContentCard>
+    </PageContainer>
   );
-};
-
-export default PrometheusCom;
+}
