@@ -30,6 +30,7 @@ export default function Operation() {
             setPageIndex(1);
             setPageSize(next);
           },
+          showTotal: () => `总共 ${total} 条数据`,
         }}
       >
         <Table.Column title="操作人" dataIndex="createUser" />

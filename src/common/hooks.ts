@@ -84,7 +84,6 @@ export function usePermissionData(): [IPermission[], boolean, () => Promise<any>
           permissionName: item.menuName,
           permissionUrl: item.menuUrl,
         })) || [];
-
       setData(next);
     } finally {
       setLoading(false);
@@ -183,7 +182,6 @@ export function useStaffOrgData(): [any, () => Promise<void>] {
   const loadData = useCallback(async () => {
     // @ts-ignore
     let getStaffOrgListApi = window.matrixConfigData?.domainName;
-    console.log('getStaffOrgListApi', getStaffOrgListApi);
     await postRequest(`${getStaffOrgListApi}/kapi/apex-osc/org/getStaffOrgList`).then((result) => {
       if (result.success) {
         const next = (result?.data || []).map((el: any) => ({
@@ -223,7 +221,6 @@ export function useChooseDept(): [(deptId: any) => Promise<void>] {
   const chooseDept = useCallback(async (deptId: any) => {
     // @ts-ignore
     let chooseDeptApi = window.matrixConfigData?.domainName;
-    console.log('chooseDeptApi', chooseDeptApi);
     await postRequest(`${chooseDeptApi}/kapi/apex-sso/chooseDept`, { data: { deptId } });
   }, []);
 

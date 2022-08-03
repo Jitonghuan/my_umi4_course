@@ -9,6 +9,8 @@ import { getCommonEnvCode } from './server';
 import { envList, menuList } from './const';
 import './index.less';
 import appConfig from '@/app.config';
+import Header from './components/header';
+import { now } from './const';
 
 const { TabPane } = Tabs;
 
@@ -22,6 +24,7 @@ const BasicFeMonitor = () => {
   const [feEnv, setFeEnv] = useState<string>('*');
   const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
   const [envCode, setEnvCode] = useState(defaultEnvCode);
+  const [timeList, setTimeList] = useState<any>(now);
 
   useEffect(() => {
     if (appConfig.IS_Matrix !== 'public') {
@@ -44,13 +47,13 @@ const BasicFeMonitor = () => {
     }
     switch (tabKey) {
       case '1':
-        return <BasicOverview {...param} />;
+        return <BasicOverview {...param} timeList={timeList} />;
       case '2':
-        return <BasicError {...param} />;
+        return <BasicError {...param} timeList={timeList} />;
       case '3':
-        return <BasicPerformance {...param} />;
+        return <BasicPerformance {...param} timeList={timeList} />;
       case '4':
-        return <BasicApi {...param} />;
+        return <BasicApi {...param} timeList={timeList} />;
     }
   };
 
@@ -114,7 +117,10 @@ const BasicFeMonitor = () => {
           <TabPane tab="性能分析" key="3" />
           <TabPane tab="API分析" key="4" />
         </Tabs>
-        <div className="app-group-content">{renderActiveCon()}</div>
+        <div className="app-group-content">
+          <Header defaultTime={timeList} onChange={setTimeList} />
+          {renderActiveCon()}
+        </div>
       </div>
     </div>
   );

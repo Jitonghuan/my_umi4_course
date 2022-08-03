@@ -260,13 +260,6 @@ export default function DeployContent(props: DeployContentProps) {
     return getRequest(listAppEnv, {
       data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
     });
-    // if (appConfig.PRIVATE_METHODS === 'public') {
-
-    // } else {
-    // return getRequest(listAppEnv, {
-    //   data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
-    // });
-    // }
   };
   const loadInfoData = async (envCode: any, operateType?: boolean) => {
     await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
@@ -474,7 +467,7 @@ export default function DeployContent(props: DeployContentProps) {
                           appCode: appCode,
                           envCode: currentEnvData,
                           viewLogEnvType: envTypeCode,
-                          fromThird,
+
                           // initRecord:JSON.stringify(record)
                         },
                         state: {
@@ -561,7 +554,6 @@ export default function DeployContent(props: DeployContentProps) {
                                 viewLogEnvType: envTypeCode,
                                 optType: 'deployInfo',
                                 deploymentName: appData?.deploymentName,
-                                fromThird
                               },
                               state: {
                                 infoRecord: record,
@@ -578,7 +570,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}&fromThird=${fromThird}`,
+                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
                           );
                         }}
                       >

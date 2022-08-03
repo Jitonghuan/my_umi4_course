@@ -1,4 +1,3 @@
-import React from 'react';
 import { Grid, Space } from '@arco-design/web-react';
 import Overview from './overview';
 import ContentPercentage from './content-percentage';
@@ -7,10 +6,6 @@ import Shortcuts from './shortcuts';
 import Announcement from './announcement';
 import Docs from './docs';
 import styles from './style/index.module.less';
-
-const { Row, Col } = Grid;
-
-const gutter = 16;
 
 function Workplace() {
   return (

@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Card, Typography, Space, Spin, Empty } from '@arco-design/web-react';
 import {
   IconFile,
@@ -15,14 +15,13 @@ import {
   IconMindMapping,
   IconTool,
 } from '@arco-design/web-react/icon';
-import { Modal, Form, Input, Select, Popconfirm } from 'antd';
+import { Modal } from 'antd';
 import styles from './style/shortcuts.module.less';
 import { useMyEntryMenuList, useAddMyEntryMenu, useDeleteMyEntryMenu } from './hook';
 import './index.less';
 
 function Shortcuts() {
   const [visible, setVisible] = useState<boolean>(false);
-  const [editForm] = Form.useForm();
   const [loading, myEntrySource, getMyEntryMenuList] = useMyEntryMenuList();
   const [delloading, deleteMyEntryMenu] = useDeleteMyEntryMenu();
   const [addLoading, createMyEntryMenu] = useAddMyEntryMenu();
@@ -30,7 +29,7 @@ function Shortcuts() {
   useEffect(() => {
     getMyEntryMenuList();
   }, []);
-  const IconMap = {
+  const IconMap: any = {
     IconFile: <IconFile style={{ fontSize: 28 }} />,
     IconStorage: <IconStorage style={{ fontSize: 28 }} />,
     IconSettings: <IconSettings style={{ fontSize: 28 }} />,
@@ -43,41 +42,6 @@ function Shortcuts() {
     IconMindMapping: <IconMindMapping style={{ fontSize: 28 }} />,
     IconTool: <IconTool style={{ fontSize: 28 }} />,
   };
-  const shortcuts = [
-    {
-      title: '应用列表',
-      key: 'application/list',
-      icon: <IconFile />,
-    },
-    {
-      title: '项目环境',
-      key: 'application/project-environment',
-      icon: <IconStorage />,
-    },
-    {
-      title: '发布功能',
-      key: 'publish/function',
-      icon: <IconSettings />,
-    },
-  ];
-
-  const recentShortcuts = [
-    {
-      title: '日志检索',
-      key: 'Content Statistic',
-      icon: <IconStorage />,
-    },
-    {
-      title: '新建分支',
-      key: 'Content Management',
-      icon: <IconFile />,
-    },
-    {
-      title: '环境管理',
-      key: 'Advanced Management',
-      icon: <IconSettings />,
-    },
-  ];
 
   function onClickShortcut(key: any) {
     window.open(`/matrix/${key}`, '_blank');
@@ -168,18 +132,6 @@ function Shortcuts() {
             ))}
           </Spin>
         </div>
-
-        {/* <Form form={editForm} labelCol={{ flex: '80px' }}>
-          <Form.Item label="快捷入口名称" name="title" rules={[{ required: true, message: '请输入' }]}>
-            <Input style={{ width: 440 }} />
-          </Form.Item>
-          <Form.Item label="类型" name="type" rules={[{ required: true, message: '请输入' }]}>
-            <Input style={{ width: 440 }} />
-          </Form.Item>
-          <Form.Item label="URL" name="content" rules={[{ required: true, message: '请输入' }]}>
-            <Input.TextArea style={{ width: 440 }} placeholder="请输入完整的url链接，页面如带有参数请拼接路由参数" />
-          </Form.Item>
-        </Form> */}
       </Modal>
 
       <Card style={{ height: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
