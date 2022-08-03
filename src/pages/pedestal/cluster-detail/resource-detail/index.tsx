@@ -24,7 +24,7 @@ export default function ResourceDetail(props: any) {
     const [yamlDetailVisible, setYamlDetailVisible] = useState(false);
     const [createYamlVisible, setCreateYamlVisbile] = useState(false);
     const [pageIndex, setPageIndex] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(20);
+    const [limit, setLimit] = useState<number>(20);
     const [storeParams, setStoreParams] = useState<any>(
         sessionStorage.getItem('cluster_resource_params') ? JSON.parse(sessionStorage.getItem('cluster_resource_params') || '{}') : {}
     );
@@ -38,7 +38,7 @@ export default function ResourceDetail(props: any) {
     const [originData, setOriginData] = useState<any>([]);
     const [nodeList, setNodeList] = useState<any>([]);
     const [selectType, setSelectType] = useState<string>('');
-    const [data] = useNodeListData({ pageSize, pageIndex, clusterCode: clusterCode || '' });
+    const [data] = useNodeListData({ clusterCode: clusterCode || '' });
     const [updateLoading, setUpdateLoading] = useState(false);
     const showTotal: PaginationProps['showTotal'] = total => `总共 ${total}条`;
 
@@ -97,7 +97,7 @@ export default function ResourceDetail(props: any) {
             setContinueList([''])
         }
         queryList();
-    }, [pageIndex]);
+    }, [pageIndex, limit]);
 
 
     useEffect(() => {
@@ -118,6 +118,11 @@ export default function ResourceDetail(props: any) {
         }
     }, [nameSpaceData, clusterCode, typeData])
 
+    // useEffect(() => {
+    //     const interVal = setInterval(() => { initialSearch() }, 1000 * 60)
+    //     return () => { clearInterval(interVal) }
+    // }, [])
+
 
     const queryList = (index = pageIndex) => {
         const values = form.getFieldsValue();
@@ -126,7 +131,7 @@ export default function ResourceDetail(props: any) {
         };
         setLoading(true);
         let a = index === 1 ? '' : continueList[index - 2]
-        getResourceList({ ...values, index, nodeName: values.node, limit: pageSize, continue: a, clusterCode }).then((res: any) => {
+        getResourceList({ ...values, index, nodeName: values.node, limit: limit, continue: a, clusterCode }).then((res: any) => {
             if (res?.success) {
                 setDataSource(res?.data?.items || []);
                 setOriginData(res?.data?.items || []);
@@ -189,6 +194,10 @@ export default function ResourceDetail(props: any) {
         setPageIndex(1);
         setContinueList(['']);
         queryList(1)
+    }
+
+    const pageChange = (v: any) => {
+        setLimit(v)
     }
 
 
@@ -282,7 +291,16 @@ export default function ResourceDetail(props: any) {
                 // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}
                 ></Table>
                 <div className='flex-end' style={{ marginTop: '10px' }}>
-                    <Page continueList={continueList} clickLeft={clickLeft} total={total} pageIndex={pageIndex} totalPage={Math.ceil(total / pageSize)} clickRright={clickRright} />
+                    <Page
+                        continueList={continueList}
+                        clickLeft={clickLeft}
+                        total={total}
+                        pageIndex={pageIndex}
+                        totalPage={limit ? Math.ceil(total / limit) : 1}
+                        clickRright={clickRright}
+                        pageChange={pageChange}
+                        defaultValue={20}
+                    />
                 </div>
             </div>
         </div >
