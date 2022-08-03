@@ -8,7 +8,7 @@ import type { TMode } from '../../interfaces';
 interface IEditorDrawer {
   visible: boolean;
   mode: TMode;
-  cluster: string;
+  cluster: number | null | undefined;
   onClose: () => any;
   boardInfo: any;
   loadGraphTable: () => any

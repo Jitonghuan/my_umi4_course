@@ -22,7 +22,6 @@ export function isValidKey(key: string | number | symbol, object: object): key i
 export interface IProps {
   dataSource: any[];
   loadGraphTable: any;
-  cluster: string;
   deleteBoard: (graphUuid: string) => any;
   handleEdit: (data: any) => any;
 }

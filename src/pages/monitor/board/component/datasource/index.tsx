@@ -3,12 +3,11 @@ import { Form, Input, Select, Button, message } from 'antd';
 import { FilterCard } from '@/components/vc-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import { Divider, Drawer, Popconfirm, Switch, Table } from '@cffe/h2o-design';
-import { createGraphDatasouce, delGraphDatasouce, getGraphGraphDatasouceList, updateGraphDatasouce } from '../../service';
+import { createGraphDatasouce, delGraphDatasouce, getCluster, getGraphGraphDatasouceList, updateGraphDatasouce } from '../../service';
 import { PlusOutlined } from '@ant-design/icons';
 
 
 const DataSource = (props: any) => {
-  const { onSearch, searchParams = {}, cluster } = props;
   const [searchField] = Form.useForm();
   const [editForm] = Form.useForm();
   const [type, setType] = useState<string>('')
@@ -17,6 +16,10 @@ const DataSource = (props: any) => {
   const [saveLoading, setSaveLoading] = useState<boolean>(false)
   const [sourceDetail, setSourceDetail] = useState<any>({})
   const [drawerTitle, setDrawerTitle] = useState<any>('')
+
+  const [clusterCode, setClusterCode] = useState<number | null>(null)
+  const [clusterList, setClusterList] = useState<any>([])
+
   const [paging, setPaging] = useState<{
     pageSize: number;
     current: number;
@@ -33,24 +36,25 @@ const DataSource = (props: any) => {
     });
   };
 
-  useEffect(() => {
-    getDatasourceList(paging);
-  }, [cluster]);
+  // useEffect(() => {
+  //   getDatasourceList(paging);
+  // }, [clusterCode]);
 
   useEffect(() => {
     getDatasourceList({
       current: 1,
-      pageSize: 10
+      pageSize: 20
     });
-  }, [cluster])
+  }, [clusterCode])
+
   const handleSearch = (pagingParams?: any) => {
     getDatasourceList(pagingParams)
   }
 
   const getDatasourceList = async (pagingParams?: any) => {
-    if (cluster) {
+    if (clusterCode) {
       const data = {
-        clusterCode: cluster,
+        clusterCode: clusterCode,
         // pageIndex: pagingParams ? pagingParams.current : paging.current,
         // pageSize: pagingParams ? pagingParams.pageSize : paging.pageSize,
         ...searchField.getFieldsValue()
@@ -74,7 +78,7 @@ const DataSource = (props: any) => {
   const handleEdit = (record: any) => {
     const { name, uuid, url, type, user, password, indexName, esVersion } = record;
     const formValue = {
-      clusterCode: cluster,
+      clusterCode: clusterCode,
       dsType: type,
       dsName: name,
       dsUrl: url,
@@ -104,7 +108,7 @@ const DataSource = (props: any) => {
     const value = await editForm.validateFields()
     try {
       if (sourceDetail?.dsUuid) {
-        updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode: cluster }).then((res) => {
+        updateGraphDatasouce({ ...sourceDetail, ...value, clusterCode }).then((res) => {
           if (res?.success) {
             message.success("更新成功")
             getDatasourceList({
@@ -117,7 +121,7 @@ const DataSource = (props: any) => {
           }
         })
       } else {
-        createGraphDatasouce({ ...value, clusterCode: cluster }).then((res) => {
+        createGraphDatasouce({ ...value, clusterCode }).then((res) => {
           if (res?.success) {
             message.success("创建成功")
             getDatasourceList()
@@ -183,6 +187,36 @@ const DataSource = (props: any) => {
     },
   ]
 
+  useEffect(() => {
+    getCluster().then((res) => {
+      if (res.success) {
+        const data = res.data.map((item: any) => {
+          return {
+            label: item.clusterName,
+            value: item.id
+          }
+        })
+        setClusterList(data);
+        const localstorageData = JSON.parse(localStorage.getItem('__monitor_board_cluster_selected') || '{}')
+        if (localstorageData?.clusterCode) {
+          onClusterChange(localstorageData.clusterCode)
+        } else {
+          if (data?.[0]?.value) {
+            onClusterChange(data?.[0]?.value)
+          } else {
+            setClusterCode(null)
+          }
+        }
+      }
+    })
+  }, [])
+
+  const onClusterChange = (value: number) => {
+    setClusterCode(value)
+    const localstorageData = { clusterCode: value }
+    localStorage.setItem('__monitor_board_cluster_selected', JSON.stringify(localstorageData))
+  }
+
   return (
     <>
       <FilterCard>
@@ -199,6 +233,15 @@ const DataSource = (props: any) => {
             }}
             onReset={handleReset}
           >
+            <Form.Item label="集群选择">
+              <Select
+                clearIcon={false}
+                style={{ width: '250px' }}
+                options={clusterList}
+                value={clusterCode}
+                onChange={(value) => { onClusterChange(value) }}
+              />
+            </Form.Item>
             <Form.Item label="名称" name="name">
               <Input placeholder="请输入" style={{ width: 140 }} />
             </Form.Item>

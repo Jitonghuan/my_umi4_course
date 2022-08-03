@@ -64,7 +64,7 @@ export const updateGraphTable = (params: any, data: any) => {
  * @param graphUuid
  * @returns
  */
-export const delGraphTable = (clusterCode: string, graphUuid: string) => {
+export const delGraphTable = (clusterCode: number, graphUuid: string) => {
   const url = `${appConfig.apiPrefix}/monitorManage/graphTable/delete/:graphUuid?clusterCode=${clusterCode}&graphUuid=${graphUuid}`;
   return delRequest(url);
 }
