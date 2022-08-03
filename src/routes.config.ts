@@ -500,22 +500,6 @@ export default [
         key: 'ticketAlarm',
         component: '@/pages/ticket/ticket-alarm',
       },
-      {
-        path: 'addTicket',
-        name: '新建工单',
-        key: 'addTicket',
-        component: '@/pages/ticket/addTicket',
-        //测试环境和正式环境暂不展示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
-      },
-      {
-        path: 'resourceApply',
-        name: '资源申请',
-        key: 'resourceApply',
-        component: '@/pages/ticket/resource-apply',
-        //测试环境和正式环境暂不展示
-        hideInMenu: process.env.BUILD_ENV === 'prod',
-      },
     ],
   },
 
@@ -1150,7 +1134,7 @@ export default [
             hideInMenu: true,
           },
           { redirect: 'node-list' },
-        ]
+        ],
       },
       {
         path: 'storage-manage',
