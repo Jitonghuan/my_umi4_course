@@ -107,7 +107,6 @@ const EditorDrawer = (props: IEditorDrawer) => {
   }
 
   const onDataSourceTypeChange = async (value: any) => {
-    formRef.setFieldValue('graphTemplateId', undefined)
     const data = {
       clusterCode: cluster,
       pageSize: -1,
@@ -196,7 +195,11 @@ const EditorDrawer = (props: IEditorDrawer) => {
                 value: 'elasticsearch'
               }
             ]}
-            onChange={onDataSourceTypeChange}
+            onChange={(value) => {
+              formRef.setFieldValue('graphTemplateId', undefined)
+              onDataSourceTypeChange(value)
+              }
+            }
           />
         </Form.Item>
         <Form.Item label='数据源' name='dsUuid' rules={[{ required: true, message: '请选择数据源!' }]}>
