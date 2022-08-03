@@ -24,10 +24,11 @@ export interface IProps {
   loadGraphTable: any;
   deleteBoard: (graphUuid: string) => any;
   handleEdit: (data: any) => any;
+  toDetail:(data:any)=>any;
 }
 
 export default function ApplicationCardList(props: IProps) {
-  const { dataSource, deleteBoard, handleEdit } = props;
+  const { dataSource, deleteBoard, handleEdit,toDetail } = props;
 
   return (
     <CardLayout>
@@ -36,10 +37,7 @@ export default function ApplicationCardList(props: IProps) {
           key={item.graphUuid}
           className={cardCls}
           onClick={() =>
-            history.push({
-              pathname: 'detail',
-              search: `?graphName=${item.graphName}&url=${encodeURIComponent(item.url)}`
-            })
+            toDetail(item)
           }
         >
           <div className={`${cardCls}-header`} style={{ position: 'relative' }}>

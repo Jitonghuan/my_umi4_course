@@ -14,7 +14,7 @@ import { useGrafhTable } from '../../hooks';
 import { delGraphTable, getCluster } from '../../service';
 import type { TMode } from '../../interfaces';
 import { Form, Select } from '@cffe/h2o-design';
-
+import { history } from 'umi'
 const rootCls = 'monitor-board';
 
 
@@ -75,9 +75,9 @@ export default function Board(props: any) {
         if (localstorageData?.clusterCode) {
           onClusterChange(localstorageData.clusterCode)
         } else {
-          if(data?.[0]?.value){
+          if (data?.[0]?.value) {
             onClusterChange(data?.[0]?.value)
-          }else{
+          } else {
             setClusterCode(null)
           }
         }
@@ -89,6 +89,18 @@ export default function Board(props: any) {
     setClusterCode(value)
     const localstorageData = { clusterCode: value }
     localStorage.setItem('__monitor_board_cluster_selected', JSON.stringify(localstorageData))
+  }
+  const toDetail = (data: any) => {
+    let clusterName
+    clusterList.forEach((item: any) => {
+      if (item.value == clusterCode) {
+        clusterName = item.label
+      }
+    })
+    history.push({
+      pathname: 'detail',
+      search: `?graphName=${data.graphName}&url=${encodeURIComponent(data.url)}&clusterName=${clusterName}`
+    })
   }
 
   return (
@@ -121,7 +133,13 @@ export default function Board(props: any) {
             {!isLoading && !graphTableList.length && (
               <Empty style={{ paddingTop: 100 }} image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
-            <BoardList dataSource={graphTableList} loadGraphTable={loadGraphTable} deleteBoard={handleDelete} handleEdit={handleEdit} />
+            <BoardList
+              dataSource={graphTableList}
+              loadGraphTable={loadGraphTable}
+              deleteBoard={handleDelete}
+              handleEdit={handleEdit}
+              toDetail={toDetail}
+            />
             {total > 10 && (
               <div className={`${rootCls}-pagination-wrap`}>
                 <Pagination
