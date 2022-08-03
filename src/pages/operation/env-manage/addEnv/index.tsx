@@ -136,7 +136,7 @@ export default function addEnvData(props: EnvEditorProps) {
     });
   };
   const handleSubmit = () => {
-    setLoading(true)
+    setLoading(true);
     if (mode === 'ADD') {
       //新增环境
       createEnvForm.validateFields().then((params) => {
@@ -156,15 +156,20 @@ export default function addEnvData(props: EnvEditorProps) {
             clusterNetType: params?.clusterNetType,
             mark: params?.mark,
             ngInstCode: params?.ngInstCode,
+            bucketName: params?.bucketName,
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('新增环境成功！');
-            onSave?.();
-          } else {
-            // message.error(result.errorMsg);
-          }
-        }).finally(() => { setLoading(false) });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('新增环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     } else if (mode === 'EDIT') {
       //编辑环境
@@ -177,14 +182,18 @@ export default function addEnvData(props: EnvEditorProps) {
             needApply: needApplyOption,
             proEnvType: 'benchmark',
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('编辑环境成功！');
-            onSave?.();
-          } else {
-            // message.error(result.errorMsg);
-          }
-        }).finally(() => { setLoading(false) });;
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('编辑环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     }
   };
@@ -283,6 +292,9 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
+          <Form.Item name="bucketName" label="Minio Bucket名称">
+            <Input style={{ width: 280 }} disabled={isDisabled} />
+          </Form.Item>
           <Form.Item name="ngInstCode" label="NG实例">
             <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} allowClear />
           </Form.Item>

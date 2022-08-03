@@ -84,7 +84,6 @@ export function usePermissionData(): [IPermission[], boolean, () => Promise<any>
           permissionName: item.menuName,
           permissionUrl: item.menuUrl,
         })) || [];
-
       setData(next);
     } finally {
       setLoading(false);
@@ -222,7 +221,6 @@ export function useChooseDept(): [(deptId: any) => Promise<void>] {
   const chooseDept = useCallback(async (deptId: any) => {
     // @ts-ignore
     let chooseDeptApi = window.matrixConfigData?.domainName;
-    console.log('chooseDeptApi', chooseDeptApi);
     await postRequest(`${chooseDeptApi}/kapi/apex-sso/chooseDept`, { data: { deptId } });
   }, []);
 

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Descriptions } from 'antd';
-import Header from '../header';
-import { now } from '../../const';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
-import { getErrorChart, getErrorList, getPageErrorInfo } from '../../server';
-import { CloseOutlined } from '@ant-design/icons';
+import { getErrorChart, getErrorList, getImportantErrorList } from '../../server';
+import ErrorTable from './components/errortable';
+import ResourceErrorTable from './components/resource-error-table';
+import ComponentError from './components/component-error';
+
+import { Tabs } from '@cffe/h2o-design';
 import './index.less';
 
 interface IProps {
+  timeList: any;
   appGroup: string;
   envCode: string;
   feEnv: string;
@@ -25,15 +27,17 @@ interface DataSourceItem {
   i: number;
 }
 
-const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
-  const [timeList, setTimeList] = useState<any>(now);
+const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [showDetail, setShowDetail] = useState<boolean>(false);
-  const [detail, setDetail] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [importantErrorList, setImportantErrorList] = useState<DataSourceItem[]>([]);
+  const [importantErrorLoading, setImportantErrorLoading] = useState<boolean>(false);
+  const [importantErrorTotal, setImportantErrorTotal] = useState<number>(0);
+
+  const [activeKey, setActiveKey] = useState<string>('componentError');
 
   function getParam(extra = {}) {
     let param: any = {
@@ -118,31 +122,41 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
     setDataSource(list);
     setTotal(data.length);
     setLoading(false);
-    if (list.length && showDetail) {
-      setSelectedRowKeys([list[0].id]);
-      void getDetail(list[0]);
-    } else {
-      setShowDetail(false);
-      setSelectedRowKeys([]);
-      setDetail({});
-    }
   }
 
-  async function getDetail(record: any) {
-    const res = await getPageErrorInfo(
-      getParam({
-        d1: record.d1,
-        d2: record.url,
-      }),
-    );
+  // 重点错误列表
+  async function onImportantErrorList() {
+    if (loading) {
+      return;
+    }
+    setImportantErrorLoading(true);
+    const param = getParam();
+    const res = await getImportantErrorList({
+      ...param,
+      queryDetail: false,
+      searchType: activeKey,
+    });
     const data = res?.data || [];
-    setDetail(data[0]?._source || {});
+    const list: any = [];
+    for (const item of data) {
+      list.push({
+        id: (Math.random() * 1000000).toFixed(0),
+        ...item,
+      });
+    }
+    setImportantErrorList(list);
+    setImportantErrorTotal(data.length);
+    setImportantErrorLoading(false);
   }
 
   useEffect(() => {
     void onErrorList();
     void onErrorChart();
   }, [timeList, appGroup, feEnv]);
+
+  useEffect(() => {
+    void onImportantErrorList();
+  }, [timeList, appGroup, feEnv, activeKey]);
 
   useEffect(() => {
     setChart(
@@ -181,98 +195,48 @@ const BasicError = ({ appGroup, envCode, feEnv }: IProps) => {
 
   return (
     <div className="basic-error-wrapper">
-      <Header defaultTime={timeList} onChange={setTimeList} />
       <div className="performance-wrapper">
-        <div className="list-title chart-title">错误情况</div>
-        <div className="line-chart-wrapper">
-          <div className="error-chart"></div>
-        </div>
-        <div className="error-list-wrapper">
-          <div className="list-title">错误列表</div>
-          <div className="list-content">
-            <div className="l">
-              <Table
-                dataSource={dataSource}
-                bordered
-                loading={loading}
-                rowKey="id"
-                pagination={{
-                  total,
-                }}
-                onRow={(record) => {
-                  return {
-                    onClick: (event) => {
-                      setSelectedRowKeys([record.id]);
-                      setShowDetail(true);
-                      void getDetail(record);
-                    }, // 点击行
-                  };
-                }}
-                rowClassName={(record) => (record.id === selectedRowKeys[0] ? 'row-active' : '')}
-                columns={[
-                  {
-                    title: '错误文件',
-                    dataIndex: 'url',
-                    onCell: (record, index) => {
-                      return {
-                        rowSpan: index === 0 ? record.len - record.i : record.rowSpan,
-                        colSpan: index === 0 ? 1 : record.colSpan,
-                      };
-                    },
-                    ellipsis: {
-                      showTitle: true,
-                    },
-                  },
-                  {
-                    title: '错误信息',
-                    dataIndex: 'd1',
-                    ellipsis: {
-                      showTitle: true,
-                    },
-                  },
-                  {
-                    title: '次数',
-                    dataIndex: 'count',
-                    width: '80px',
-                    align: 'right',
-                  },
-                  {
-                    title: '操作',
-                    width: '90px',
-                    align: 'center',
-                    render: () => <Button type="link">详情</Button>,
-                  },
-                ]}
-              />
-            </div>
-            {showDetail && (
-              <div className="r">
-                <div className="close-btn" onClick={() => setShowDetail(false)}>
-                  <CloseOutlined />
-                </div>
-                <div className="sub-title">错误信息</div>
-                <Descriptions bordered column={2}>
-                  <Descriptions.Item label="URL" span={2}>
-                    {detail.url}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="错误信息" span={2}>
-                    {detail.d1}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="错误文件" span={2}>
-                    {detail.d2}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="UA信息" span={2}>
-                    {detail.ua}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="dom路径" span={2}>
-                    {detail.d5}
-                  </Descriptions.Item>
-                </Descriptions>
-                <div className="sub-title">堆栈信息</div>
-                <div style={{ wordBreak: 'break-all' }}>{detail.d4}</div>
-              </div>
-            )}
+        <div>
+          <div className="list-title chart-title">错误情况</div>
+          <div className="line-chart-wrapper">
+            <div className="error-chart"></div>
           </div>
+        </div>
+        <div className="important-error">
+          <div className="list-title">重点关注的错误</div>
+          <Tabs
+            className="error-tabs"
+            activeKey={activeKey}
+            destroyInactiveTabPane
+            onChange={(val) => {
+              setActiveKey(val);
+            }}
+          >
+            <Tabs.TabPane tab="组件加载错误" key="componentError" />
+            <Tabs.TabPane tab="页面重点资源加载错误" key="importantResource" />
+            <Tabs.TabPane tab="定制包资源加载错误" key="extensionResource" />
+          </Tabs>
+          {activeKey == 'componentError' ? (
+            <ComponentError
+              type="componentError"
+              dataSource={importantErrorList}
+              loading={importantErrorLoading}
+              total={importantErrorTotal}
+              getParam={getParam}
+            />
+          ) : (
+            <ResourceErrorTable
+              type={activeKey}
+              dataSource={importantErrorList}
+              loading={importantErrorLoading}
+              total={importantErrorTotal}
+              getParam={getParam}
+            />
+          )}
+        </div>
+        <div className="error-list">
+          <div className="list-title">错误列表</div>
+          <ErrorTable dataSource={dataSource} loading={loading} total={total} getParam={getParam} />
         </div>
       </div>
     </div>

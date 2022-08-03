@@ -10,6 +10,7 @@ import moment from 'moment';
 import './index.less';
 
 interface IProps {
+  timeList: any;
   appGroup: string;
   envCode: string;
   feEnv: string;
@@ -26,8 +27,7 @@ const pageItem = [
   },
 ];
 
-const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
-  const [timeList, setTimeList] = useState<any>(now);
+const BasicPerformance = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [chart, setChart] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<string>('tti'); // 趋势图tab
   const [pageGroupTab, setPageGroupTab] = useState<string>('highFrequency'); // 页面排行tab
@@ -168,8 +168,6 @@ const BasicPerformance = ({ appGroup, envCode, feEnv }: IProps) => {
 
   return (
     <div className="basic-performance-wrapper">
-      <Header onChange={setTimeList} defaultTime={timeList} />
-
       {/*页面汇总趋势图*/}
       <div className="performance-wrapper">
         <div className="group-performance">

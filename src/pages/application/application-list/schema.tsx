@@ -150,7 +150,14 @@ export const createTableSchema = ({
             cancelText="取消"
             placement="topLeft"
           > */}
-          <a style={{ color: 'rgb(255, 48, 3)' }} onClick={() => { onDelClick(record, index) }}>删除</a>
+          <a
+            style={{ color: 'rgb(255, 48, 3)' }}
+            onClick={() => {
+              onDelClick(record, index);
+            }}
+          >
+            删除
+          </a>
           {/* </Popconfirm> */}
         </div>
       ),

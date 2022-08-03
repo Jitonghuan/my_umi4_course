@@ -44,7 +44,7 @@ export default function ApplicationList() {
       },
       onDelClick: async (record, index) => {
         setCurRecord(record);
-        setVisible(true)
+        setVisible(true);
         // await deleteApp({ appCode: record.appCode, id: record.id });
         // message.success('删除成功');
         // loadAppListData();
@@ -55,15 +55,19 @@ export default function ApplicationList() {
   }, [categoryData, businessDataList, appListData]);
 
   const handleOk = () => {
-    setLoading(true)
-    deleteApp({ appCode: curRecord?.appCode || '', id: curRecord?.id || '' }).then((res) => {
-      if (res?.success) {
-        setVisible(false)
-        message.success('删除成功');
-        loadAppListData();
-      }
-    }).finally(() => { setLoading(false) });
-  }
+    setLoading(true);
+    deleteApp({ appCode: curRecord?.appCode || '', id: curRecord?.id || '' })
+      .then((res) => {
+        if (res?.success) {
+          setVisible(false);
+          message.success('删除成功');
+          loadAppListData();
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <PageContainer className="application-list-page">
@@ -99,6 +103,7 @@ export default function ApplicationList() {
               setPageSize(next);
             },
             onChange: (next) => setPageIndex(next),
+            showTotal: () => `总共 ${total} 条数据`,
           }}
           columns={tableColumns}
         ></Table>
@@ -113,25 +118,33 @@ export default function ApplicationList() {
           setCreateAppVisible(false);
         }}
       />
-      <Modal title="删除应用"
+      <Modal
+        title="删除应用"
         visible={visible}
         width={550}
-        onCancel={() => { setVisible(false) }}
+        onCancel={() => {
+          setVisible(false);
+        }}
         footer={
           <div className="drawer-footer">
-            <Button onClick={() => { setVisible(false) }} size='small'>
+            <Button
+              onClick={() => {
+                setVisible(false);
+              }}
+              size="small"
+            >
               取消
-          </Button>
-            <Button danger type='primary' onClick={handleOk} loading={loading} size='small'>
+            </Button>
+            <Button danger type="primary" onClick={handleOk} loading={loading} size="small">
               确认删除
-          </Button>
+            </Button>
           </div>
         }
       >
         <div style={{ fontSize: '13px', color: '#4f4848', lineHeight: '25px' }}>
           {/* <ExclamationOutlined color='red' /><ExclamationOutlined /> */}
-         删除应用将导致<span style={{ color: 'red' }}>该应用在相关环境下运行中的服务全部清除</span>，
-         确定要删除该应用吗？
+          删除应用将导致<span style={{ color: 'red' }}>该应用在相关环境下运行中的服务全部清除</span>，
+          确定要删除该应用吗？
         </div>
       </Modal>
     </PageContainer>

@@ -33,7 +33,7 @@ export function useFeVersions(appData: AppItemVO): [Record<string, FeVersionItem
         data: {
           appCode: appData.appCode,
           appCategoryCode: appData.appCategoryCode,
-          pageSize: 50,
+          pageSize: 500,
           pageIndex: 1,
         },
       });

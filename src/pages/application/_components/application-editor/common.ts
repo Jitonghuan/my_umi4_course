@@ -37,16 +37,17 @@ export const appMicroFeTypeOptions: IOption<AppMicroFeType>[] = [
 export const feTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: '定制包', value: 'customPack' },
-  { label: '定制页面', value: 'customPage' }
+  { label: '定制页面', value: 'customPage' },
 ];
 export const singleFeTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: 'PDA', value: 'pda' },
+  { label: '独立前端', value: 'aloneFe' },
 ];
 export const microFeTypeOptions: IOption<any>[] = [
   { label: 'web', value: 'web' },
   { label: '定制包', value: 'customPack' },
-  { label: '定制页面', value: 'customPage' }
+  { label: '定制页面', value: 'customPage' },
 ];
 // export const relationMainAppCodeOptions: IOption[] = [
 //   'g3a_future-his-portal-web',
@@ -66,4 +67,5 @@ export const deployJobUrlOptions: IOption[] = [
   { label: '定制包 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extensions' },
   { label: '定制页面 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/matrix-hbos-extension-pages' },
   { label: 'PDA 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-hbos-pda' },
+  { label: '独立前端 构建任务', value: 'http://jenkins-fe.cfuture.shop/job/fe-alone' },
 ];

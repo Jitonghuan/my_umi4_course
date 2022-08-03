@@ -90,6 +90,7 @@ export default function VersionList() {
               setPageInfo({
                 pageIndex: next,
               }),
+            showTotal: () => `总共 ${pageInfo.total} 条数据`,
           }}
           columns={tableColumns}
         ></Table>

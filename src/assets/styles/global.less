@@ -225,6 +225,42 @@ ul {
   margin-left: 10px;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.flex-row {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flex-end {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+}
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+.descriptions-title {
+  display: flex;
+  height: 24px;
+  align-items: center;
+  margin-bottom: 12px;
+
+  &::before {
+    display: inline-block;
+    content: '';
+    margin-right: 8px;
+    width: 4px;
+    height: 20px;
+    background: #1973cc;
+  }
+}
 .ant-input-search-button {
   height: 32px;
 }

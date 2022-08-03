@@ -18,20 +18,20 @@ export interface RollbackVersionProps {
 const envTypeData = [
   {
     label: 'DEV',
-    value: 'dev'
+    value: 'dev',
   },
   {
     label: 'TEST',
-    value: 'test'
+    value: 'test',
   },
   {
     label: 'PRE',
-    value: 'pre'
+    value: 'pre',
   },
   {
     label: 'LATEST',
-    value: 'prod'
-  }
+    value: 'prod',
+  },
 ];
 
 export default function RollbackVersion(props: RollbackVersionProps) {
@@ -56,11 +56,11 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     if (!tag || tag === 'latest') {
       return 'prod';
     }
-    const item = envTypeData.find(item => tag.includes(item.value));
-    return item?.value || 'prod'
+    const item = envTypeData.find((item) => tag.includes(item.value));
+    return item?.value || 'prod';
   }
 
-  async function handleSearch (pagination?: any) {
+  async function handleSearch(pagination?: any) {
     setSelectedRowKeys([]);
     const res = await getRequest(getVersionList, {
       data: {
@@ -69,28 +69,32 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         npmEnvType: getEnvType(),
         pageIndex: page,
         pageSize,
-        ...pagination || {}
-      }
-    })
+        ...(pagination || {}),
+      },
+    });
     const { dataSource, pageInfo } = res?.data || {};
     setDataList(dataSource || []);
     setTotal(pageInfo?.total || 0);
   }
 
   const handleOk = async () => {
+    let item = dataList.find((val) => val.id === selectedRowKeys[0]);
+    if (!item) {
+      return message.warning('请选择回滚版本');
+    }
     let param = {
       npmName: npmData?.npmName,
       npmEnvType: getEnvType(),
       tag,
-      version: selectedRowKeys[0],
-    }
+      version: item.npmVersion,
+    };
     await postRequest(rollback, {
-      data: param
+      data: param,
     });
 
     message.success('操作成功！');
     onSubmit();
-  }
+  };
 
   function getStatusName(status: number) {
     switch (status) {
@@ -140,10 +144,10 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         onRow={(record) => ({
           onClick: () => {
             if (record.isActive !== 2) return;
-            setSelectedRowKeys([record.npmVersion]);
+            setSelectedRowKeys([record.id]);
           },
         })}
-        rowKey="npmVersion"
+        rowKey="id"
         pagination={{
           total,
           pageSize,
@@ -153,9 +157,9 @@ export default function RollbackVersion(props: RollbackVersionProps) {
             setPageSize(pageSize);
             void handleSearch({
               pageIndex: page,
-              pageSize
-            })
-          }
+              pageSize,
+            });
+          },
         }}
         bordered
         locale={{ emptyText: <Empty description="没有可回滚的版本" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
@@ -170,11 +174,7 @@ export default function RollbackVersion(props: RollbackVersionProps) {
         <Table.Column dataIndex="deployDesc" title="发布描述" />
         <Table.Column dataIndex="gmtCreate" title="发布时间" render={datetimeCellRender} width={200} />
         <Table.Column dataIndex="npmDeployer" title="发布人" />
-        <Table.Column
-          dataIndex="isActive"
-          title="状态"
-          render={(value: number) => getStatusName(value)}
-        />
+        <Table.Column dataIndex="isActive" title="状态" render={(value: number) => getStatusName(value)} />
       </Table>
     </Modal>
   );

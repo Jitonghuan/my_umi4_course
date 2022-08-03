@@ -91,10 +91,10 @@ export default function DetailDraw(props: any) {
             <p className="table-title">表关联条件</p>
             <ETable
               deleteSuccess={() => {
-                setDataSource(dataSource.slice(11));
+                // setDataSource(dataSource.slice(11));
               }}
               addSuccess={() => {
-                setDataSource(dataSource.slice(21));
+                // setDataSource(dataSource.slice(21));
               }}
             ></ETable>
           </div>
@@ -102,7 +102,7 @@ export default function DetailDraw(props: any) {
       )}
       <div className="table-wrapper">
         <p className="table-title">预览（基于抽样数据计算，不代表最终结果）</p>
-        <Table columns={column} dataSource={dataSource.slice(0, 11)} pagination={false} />
+        <Table columns={column} dataSource={dataSource} pagination={false} />
       </div>
     </Drawer>
   );

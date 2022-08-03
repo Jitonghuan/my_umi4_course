@@ -7,7 +7,6 @@
 
 import React, { useMemo, useContext, useState, useEffect } from 'react';
 import { Tabs } from 'antd';
-import { FeContext } from '@/common/hooks';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import ConfigContent from './config-content';
@@ -28,7 +27,6 @@ export default function ConfigParametersManage(props: IProps) {
   const {
     location: { pathname },
   } = props;
-  // const { envTypeData,categoryData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   useEffect(() => {
     queryData();

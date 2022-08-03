@@ -1,9 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Descriptions, Table } from 'antd';
 import axios from 'axios';
 import DetailContext from '../../context';
 import './index.less';
-import moment from "moment";
+import moment from 'moment';
 
 export default function Overview() {
   const { npmData } = useContext(DetailContext);
@@ -18,18 +18,18 @@ export default function Overview() {
         const list = [];
         for (const tag in res.data['dist-tags']) {
           let version = res.data['dist-tags'][tag];
-          let info =  res.data.versions[version] || {};
+          let info = res.data.versions[version] || {};
           list.push({
             tag,
             version,
             publishUser: info.publishUser || info._npmUser?.name,
-            publishTime: moment(info['publish_time']).format('YYYY-MM-DD HH:mm:ss')
-          })
+            publishTime: moment(info['publish_time']).format('YYYY-MM-DD HH:mm:ss'),
+          });
         }
         setVersionList(list);
       }
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     getDeploy();
@@ -37,13 +37,7 @@ export default function Overview() {
 
   return (
     <div className="npm-detail-overview">
-      <Descriptions
-        title="基础信息"
-        className="fixed"
-        bordered
-        column={1}
-        labelStyle={{ width: 200 }}
-      >
+      <Descriptions title="基础信息" className="fixed" bordered column={1} labelStyle={{ width: 200 }}>
         <Descriptions.Item label="包名">{npmData?.npmName}</Descriptions.Item>
         <Descriptions.Item label="git地址">
           <a href={npmData?.gitAddress} target="_blank">
@@ -58,13 +52,8 @@ export default function Overview() {
           </a>
         </Descriptions.Item>
       </Descriptions>
-      <div style={{marginTop: '25px'}}>
-        <Descriptions
-          title="版本信息"
-          className="fixed"
-          column={1}
-          labelStyle={{ width: 200 }}
-        />
+      <div style={{ marginTop: '25px' }}>
+        <Descriptions title="版本信息" className="fixed" column={1} labelStyle={{ width: 200 }} />
         <Table
           scroll={{ x: '100%' }}
           style={{ width: '100%' }}
@@ -96,5 +85,5 @@ export default function Overview() {
         />
       </div>
     </div>
-  )
+  );
 }

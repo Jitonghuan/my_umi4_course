@@ -1,5 +1,5 @@
 import appConfig from '@/app.config';
-import { getRequest } from "@/utils/request";
+import { getRequest } from '@/utils/request';
 
 // 创建npm包
 export const npmCreate = `${appConfig.apiPrefix}/appManage/npm/create`;
@@ -27,6 +27,6 @@ export const searchGitAddress = async (keyword: string) => {
       pageSize: 60,
     },
   });
-  const { dataSource } = result.data || {};
+  const { dataSource } = result?.data || {};
   return (dataSource || []).map((str: string) => ({ label: str, value: str })) as IOption[];
 };
