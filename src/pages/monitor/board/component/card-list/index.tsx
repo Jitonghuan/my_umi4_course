@@ -8,10 +8,10 @@
 import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import { Popconfirm } from 'antd';
-import { RestFilled, EditFilled } from '@ant-design/icons';
+import { Tag } from '@cffe/h2o-design';
+import { RestFilled, EditFilled, FundOutlined } from '@ant-design/icons';
 import CardLayout from '@cffe/vc-b-card-layout';
 import './index.less';
-import { delGraphTable } from '../../service';
 
 const cardCls = 'monitor-board-page__card';
 
@@ -44,7 +44,7 @@ export default function ApplicationCardList(props: IProps) {
           }
         >
           <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
-            {item.graphName}
+            <div className={`${cardCls}-header-text`}>{item.graphName}</div>
             <span onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: 0, right: 0 }}>
               <Popconfirm
                 title={`确定删除大盘吗？`}
@@ -71,6 +71,9 @@ export default function ApplicationCardList(props: IProps) {
               <span className={`${cardCls}-content-description-label`}>数据源名称</span>
               <span className={`${cardCls}-content-description-value`}>{item.dsName}</span>
             </div>
+            <Tag color={"geekblue"} icon={<FundOutlined />} style={{width:'54px'}}>
+              大盘
+            </Tag>
           </div>
         </div>
       ))}
