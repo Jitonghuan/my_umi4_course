@@ -77,7 +77,11 @@ export default function DpMonitor() {
                     icon={<BarChartOutlined />}
                     onClick={(e) => {
                       e.stopPropagation();
-                      window.open(item.dashboardUrl, '_blank');
+                      history.push({
+                        pathname: 'detail',
+                        search: `?graphName=${item.monitorName}&url=${encodeURIComponent(item.dashboardUrl)}&fromPage=business`
+                      })
+                      // window.open(item.dashboardUrl, '_blank');
                     }}
                   >
                     看板
