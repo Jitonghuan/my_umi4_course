@@ -107,6 +107,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
   }
 
   const onDataSourceTypeChange = async (value: any) => {
+    formRef.setFieldValue('graphTemplateId', undefined)
     const data = {
       clusterCode: cluster,
       pageSize: -1,
@@ -201,7 +202,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         <Form.Item label='数据源' name='dsUuid' rules={[{ required: true, message: '请选择数据源!' }]}>
           <Select options={dataSourceOptions} />
         </Form.Item>
-        <Form.Item label='大盘创建方式' name='createType' initialValue={"graphJson"}>
+        <Form.Item label='大盘创建方式' name='createType' initialValue={"graphTemplate"}>
           <Select options={createTypeOptions} />
         </Form.Item>
         <Divider />
