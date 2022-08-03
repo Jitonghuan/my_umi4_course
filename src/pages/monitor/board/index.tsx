@@ -25,13 +25,24 @@ export default function Board() {
           }
         })
         setClusterList(data);
-        setCurCluster(data?.[0]?.value || null)
+        const localstorageData = JSON.parse(localStorage.getItem('__monitor_board_cluster_selected') || '{}')
+        if (localstorageData?.clusterCode) {
+          onClusterChange(localstorageData.clusterCode)
+        } else {
+          if(data?.[0]?.value){
+            onClusterChange(data?.[0]?.value)
+          }else{
+            setCurCluster(null)
+          }
+        }
       }
     })
   }, [])
 
   const onClusterChange = (value: number) => {
     setCurCluster(value)
+    const localstorageData = { clusterCode: value }
+    localStorage.setItem('__monitor_board_cluster_selected', JSON.stringify(localstorageData))
   }
 
   return (
@@ -41,7 +52,7 @@ export default function Board() {
           <span>集群选择：</span>
           <Select
             clearIcon={false}
-            style={{ width: '120px' }}
+            style={{ width: '250px' }}
             value={curCluster}
             options={clusterList}
             onChange={onClusterChange} />
