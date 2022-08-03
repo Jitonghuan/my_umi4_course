@@ -1183,6 +1183,39 @@ export default [
     ],
   },
   {
+    path: 'database',
+    name: '数据库管理',
+    icon: 'icon-TableSettings',
+    routes: [
+      {
+        path: 'overview',
+        name: '概览',
+        key: 'overview',
+        component: '@/pages/database/overview',
+      },
+      {
+        path: 'info',
+        name: '实例详情',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list/components/instance-info',
+        hideInMenu: true,
+      },
+
+      {
+        path: 'instance-list',
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
+      },
+      {
+        path: 'cluster-list',
+        name: '集群列表',
+        key: 'cluster-list',
+        component: '@/pages/database/cluster-list',
+      },
+    ],
+  },
+  {
     path: 'admin',
     name: '管理员菜单',
     icon: 'icon-userRecent',
