@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Button, Spin, Pagination, Empty } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { ContentCard } from '@/components/vc-page-content';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import BoardList from '../card-list';
 import FilterHeader from '../filter-header';
 import './index.less';
@@ -25,7 +25,7 @@ export default function Board(props: any) {
   const [searchParams, setSearchParams] = useState<any>({});
 
   const hookParams = useMemo(() => ({ ...searchParams, clusterCode: cluster }), [cluster, searchParams]);
-  const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize, cluster);
+  const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize);
 
   const [editDrawer, setEditDrawer] = useState<boolean>(false)
 
@@ -62,15 +62,16 @@ export default function Board(props: any) {
 
   return (
     <>
-      <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
-      <ContentCard>
-        <div className="table-caption">
+      <FilterCard>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
           <Button type="primary" onClick={handleAdd}>
             <PlusOutlined />
             新增大盘
           </Button>
         </div>
-
+      </FilterCard>
+      <ContentCard>
         <Spin spinning={isLoading}>
           <div className={`${rootCls}__card-wrapper`}>
             {!isLoading && !graphTableList.length && (

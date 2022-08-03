@@ -12,16 +12,18 @@ export const useGrafhTable = (
 
   const loadData = useCallback(
     async (extra?: any) => {
-      setLoading(true)
       const { ...others } = params || {};
       const requestData = { ...others, ...extra, pageIndex, pageSize };
-      try {
-        const res = await graphTableList(requestData)
-        setData(res?.data.dataSource || [])
-        setTotal(res?.data?.pageInfo?.total || 0)
-        setLoading(false)
-      } catch (e) {
-        setLoading(false)
+      if (requestData?.clusterCode) {
+        setLoading(true)
+        try {
+          const res = await graphTableList(requestData)
+          setData(res?.data.dataSource || [])
+          setTotal(res?.data?.pageInfo?.total || 0)
+          setLoading(false)
+        } catch (e) {
+          setLoading(false)
+        }
       }
     },
     [params, pageIndex, pageSize],

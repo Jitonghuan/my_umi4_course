@@ -13,7 +13,7 @@ export default function Board() {
 
   const [activeKey, setActiveKey] = useState<string>('board')
   const [clusterList, setClusterList] = useState<any>([])
-  const [curCluster, setCurCluster] = useState<number>(1)
+  const [curCluster, setCurCluster] = useState<number | null>(null)
 
   useEffect(() => {
     getCluster().then((res) => {
@@ -25,6 +25,7 @@ export default function Board() {
           }
         })
         setClusterList(data);
+        setCurCluster(data?.[0]?.value || null)
       }
     })
   }, [])

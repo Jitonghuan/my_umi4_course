@@ -2,9 +2,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/23 15:36
 
-import React, { useState, useCallback, useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Select, Button } from 'antd';
-import { FilterCard } from '@/components/vc-page-content';
 
 const { Item: FormItem } = Form;
 
@@ -34,7 +33,6 @@ export default function FilterHeader(props: FilterHeaderProps) {
   }, []);
 
   return (
-    <FilterCard>
       <Form
         layout="inline"
         form={searchField}
@@ -70,6 +68,5 @@ export default function FilterHeader(props: FilterHeaderProps) {
           </Button>
         </FormItem>
       </Form>
-    </FilterCard>
   );
 }
