@@ -11,12 +11,11 @@ interface BoardInfo {
 }
 
 const BoardDetail = () => {
-  const [info, setInfo] = useState<BoardInfo | undefined>()
+  const [info, setInfo] = useState<BoardInfo | undefined>();
+  const { location } = history;
+  const { query } = location;
+  const { graphName, url, fromPage } = query as any;
   useEffect(() => {
-    const { location } = history;
-    const { query } = location;
-    const { graphName, url } = query as any;
-
     let graphUrl = '';
     if (url) {
       graphUrl = `${url}?kiosk=tv`
@@ -29,7 +28,13 @@ const BoardDetail = () => {
   return (
     <PageContainer>
       <div style={{ backgroundColor: 'white', padding: '10px 10px 10px 10px', display: 'flex', alignItems: 'center' }}>
-        <Button type='link' onClick={() => { history.push('/matrix/monitor/panel') }}>
+        <Button type='link' onClick={() => {
+          if (fromPage === 'business') {
+            history.push('/matrix/monitor/business')
+          } else{
+            history.push('/matrix/monitor/panel')
+          }
+        }}>
           <LeftOutlined /> 返回
         </Button>
         {/* <div>

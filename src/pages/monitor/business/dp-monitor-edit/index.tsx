@@ -18,10 +18,9 @@ import RulesEdit from '../rules-edit';
 import { envTypeData } from '../schema';
 import { useEnvListOptions, useAppOptions } from '../hooks';
 import {
-  useQueryLogSample,
-  useDbType,
+  useQueryLogSample
 } from './hooks';
-import {addDbMonitor, deleteRules, rulesList, ruleSwitch, updateDbMonitor} from '../service';
+import {addDbMonitor, deleteRules, rulesList, ruleSwitch, updateDbMonitor, getDbType} from '../service';
 import './index.less';
 import * as APIS from "@/pages/monitor/business/service";
 import {Item} from "@/pages/monitor/basic/typing";
@@ -53,7 +52,7 @@ export default function DpMonitorEdit(props: any) {
   const [recordData, setRecordData] = useState<any>(props.location.state?.recordData || {});
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions(); // 环境code列表
-  const [dbTypeOptions] = useDbType(); // 数据库类型列表
+  const [dbTypeOptions, setDbTypeOptions] = useState<any>([]); // 数据库类型列表
   const [dbAddressOptions, setDbAddressOptions] = useState<IOption[]>([]); // 数据库地址列表
 
   const [currentEnvType, setCurrentEnvType] = useState<string>(''); // 环境大类
@@ -75,6 +74,21 @@ export default function DpMonitorEdit(props: any) {
   const [tagrgetForm] = Form.useForm();
   const [logForm] = Form.useForm();
 
+  // 获取数据库类型
+  async function getDbTypeData() {
+    const res = await getRequest(getDbType, {});
+    const next = (res?.data || []).map((item: any) => ({
+      label: item,
+      value: item,
+    }));
+    setDbTypeOptions(next);
+    const dbType = next.length ? next[0].value : '';
+    setDbType(dbType);
+    logForm.setFieldsValue({
+      dbType
+    });
+  }
+
   // 获取数据库地址
   function getDbAddress() {
     if (!currentEnvCode || !dbType) {
@@ -92,6 +106,13 @@ export default function DpMonitorEdit(props: any) {
       }));
 
       setDbAddressOptions(next);
+      if (type === 'add') {
+        const dbAddr = next.length ? next[0].value : '';
+        setDbAddr(dbAddr);
+        logForm.setFieldsValue({
+          dbAddr
+        });
+      }
     });
   }
 
@@ -216,6 +237,7 @@ export default function DpMonitorEdit(props: any) {
   //编辑回显数据
   useEffect(() => {
     if (type === 'add') {
+      void getDbTypeData();
       tagrgetForm.setFieldsValue({
         metricsQuery: [{}],
       });
@@ -479,9 +501,9 @@ export default function DpMonitorEdit(props: any) {
                                       </Form.Item>
                                     </Row>
                                     <Form.Item
-                                      label="结果列"
+                                      label="指标值"
                                       name={[name, 'valueColumn']}
-                                      rules={[{ required: true, message: '输入结果列' }]}
+                                      rules={[{ required: true, message: '输入指标值' }]}
                                       {...restField}
                                     >
                                       <Select>
@@ -568,19 +590,33 @@ export default function DpMonitorEdit(props: any) {
                 header={
                   <div className="target-item">
                     <span>报警配置</span>
-                    <Button
-                      type="primary"
-                      ghost
-                      disabled={!recordData?.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setRulesType('add');
-                        setRulesVisible(true);
-                      }}
-                      icon={<PlusOutlined />}
-                    >
-                      新增报警
-                    </Button>
+                    {
+                      !recordData?.id ? (
+                          <Tooltip placement="topLeft" title="请先保存监控配置">
+                            <Button
+                              type="primary"
+                              disabled
+                              ghost
+                              icon={<PlusOutlined />}
+                            >
+                              新增报警
+                            </Button>
+                          </Tooltip>
+                      ) : (
+                        <Button
+                          type="primary"
+                          ghost
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRulesType('add');
+                            setRulesVisible(true);
+                          }}
+                          icon={<PlusOutlined />}
+                        >
+                          新增报警
+                        </Button>
+                      )
+                    }
                   </div>
                 }
               >
