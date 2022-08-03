@@ -290,7 +290,7 @@ const DataSource = (props: any) => {
             <Input />
           </Form.Item>
           <Form.Item label="密码" name="password">
-            <Input type='password' />
+            <Input.Password placeholder="请输入密码" />
           </Form.Item>
           {type === 'elasticsearch' &&
             <Form.Item label="索引名称" name="indexName">
