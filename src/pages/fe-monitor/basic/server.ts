@@ -31,12 +31,10 @@ export const getImportantErrorList = async (data: any) => {
   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/basic/keyError`, { data });
 };
 
-
 /** 错误详情 */
 export const getPageErrorInfo = async (data: any) => {
   return getRequest(`${appConfig.apiPrefix}/monitorManage/fe/basic/pageErrorInfo`, { data });
 };
-
 
 /** 错误sourceMap 文件 */
 export const sourcemapDownload = async (data: any) => {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
-import {getImportantErrorList} from '../../../../server';
+import { getImportantErrorList } from '../../../../server';
 import { Drawer } from '@cffe/h2o-design';
-import SourceMapModal from "..//source-map";
+import SourceMapModal from '..//source-map';
 
 interface IProps {
   dataSource: DataSourceItem[];
@@ -27,15 +27,15 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
-  const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false)
-  const [sourceInfo, setSourceInfo] = useState<any>({})
+  const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false);
+  const [sourceInfo, setSourceInfo] = useState<any>({});
 
   async function getDetail(record: any) {
     const res = await getImportantErrorList(
       getParam({
         ...record,
         searchType: type,
-        queryDetail: true
+        queryDetail: true,
       }),
     );
     const data = res?.data || [];
@@ -43,17 +43,19 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
   }
 
   const handleSourceMap = async (item: any) => {
-    setSourceInfo(getParam({
-      ...item,
-      filePath: item.d2,
-    }))
+    setSourceInfo(
+      getParam({
+        ...item,
+        filePath: item.d2,
+      }),
+    );
     setSourceMapVisible(true);
-  }
+  };
 
   const handleClose = () => {
-    setShowDetail(false)
-    setDetail({})
-  }
+    setShowDetail(false);
+    setDetail({});
+  };
 
   return (
     <div className="error-list-wrapper">
@@ -108,12 +110,7 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
           ]}
         />
       </div>
-      <Drawer
-        visible={showDetail}
-        title='错误信息'
-        onClose={() => setShowDetail(false)}
-        className='fe-error-detail'
-      >
+      <Drawer visible={showDetail} title="错误信息" onClose={() => setShowDetail(false)} className="fe-error-detail">
         <Descriptions bordered column={2} labelStyle={{ width: 140 }}>
           <Descriptions.Item label="错误信息" span={2}>
             {detail.d1}
@@ -143,14 +140,12 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
         <div style={{ wordBreak: 'break-all' }}>{detail?.d6 || '-'}</div>
         <div style={{ wordBreak: 'break-all' }}>
           无法定位报错位置？
-          <Button type='link' onClick={() => handleSourceMap(detail)}>SourceMap还原</Button>
+          <Button type="link" onClick={() => handleSourceMap(detail)}>
+            SourceMap还原
+          </Button>
         </div>
       </Drawer>
-      <SourceMapModal
-        visible={sourceMapVisible}
-        onClose={() => setSourceMapVisible(false)}
-        param={sourceInfo}
-      />
+      <SourceMapModal visible={sourceMapVisible} onClose={() => setSourceMapVisible(false)} param={sourceInfo} />
     </div>
   );
 };

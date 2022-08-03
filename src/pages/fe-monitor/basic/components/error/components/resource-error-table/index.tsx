@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
-import {getImportantErrorList, getPageErrorInfo} from '../../../../server';
+import { getImportantErrorList, getPageErrorInfo } from '../../../../server';
 import { CloseOutlined } from '@ant-design/icons';
 import { Drawer } from '@cffe/h2o-design';
 interface IProps {
@@ -33,7 +33,7 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam, type }: IPro
         d1: record.d1,
         d2: record.url,
         searchType: type,
-        queryDetail: true
+        queryDetail: true,
       }),
     );
     const data = res?.data || [];
@@ -41,10 +41,9 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam, type }: IPro
   }
 
   const handleClose = () => {
-    setShowDetail(false)
-    setDetail({})
-  }
-
+    setShowDetail(false);
+    setDetail({});
+  };
 
   return (
     <div className="error-list-wrapper">
@@ -74,7 +73,7 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam, type }: IPro
               dataIndex: 'd1',
               ellipsis: {
                 showTitle: true,
-              }
+              },
             },
             {
               title: '次数',
@@ -91,12 +90,7 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam, type }: IPro
           ]}
         />
       </div>
-      <Drawer
-        visible={showDetail}
-        title='错误信息'
-        onClose={() => setShowDetail(false)}
-        className='fe-error-detail'
-      >
+      <Drawer visible={showDetail} title="错误信息" onClose={() => setShowDetail(false)} className="fe-error-detail">
         <Descriptions bordered column={2} labelStyle={{ width: 140 }}>
           <Descriptions.Item label="错误文件" span={2}>
             {detail.d1}

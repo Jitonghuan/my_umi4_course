@@ -1,4 +1,4 @@
-import data from './data';
+// import data from './data';
 
 // 医保上传检验单表结构
 export const columns = [
@@ -99,7 +99,7 @@ export const columns = [
   },
 ];
 // 医保上传检验单表数据
-export const tableData = data.医保上传检验单表数据;
+// export const tableData = data.医保上传检验单表数据;
 
 // 校验明细表结构
 export const detailColumns = [
@@ -176,9 +176,9 @@ export const detailColumns = [
 ];
 
 // 校验明细表数据
-export const detailTableData = data.校验明细表数据;
+// export const detailTableData = data.校验明细表数据;
 
 // 两个表的交集
 export const commonColumns = [...columns, ...detailColumns];
 // 两个表交集的数据
-export const commonTableData = data.交集的数据;
+// export const commonTableData = data.交集的数据;

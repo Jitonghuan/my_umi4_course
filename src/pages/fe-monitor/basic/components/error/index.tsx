@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line } from '@cffe/hulk-wave-chart';
 import moment from 'moment';
-import {getErrorChart, getErrorList, getImportantErrorList} from '../../server';
+import { getErrorChart, getErrorList, getImportantErrorList } from '../../server';
 import ErrorTable from './components/errortable';
 import ResourceErrorTable from './components/resource-error-table';
 import ComponentError from './components/component-error';
@@ -37,7 +37,7 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [importantErrorLoading, setImportantErrorLoading] = useState<boolean>(false);
   const [importantErrorTotal, setImportantErrorTotal] = useState<number>(0);
 
-  const [activeKey, setActiveKey] = useState<string>("componentError");
+  const [activeKey, setActiveKey] = useState<string>('componentError');
 
   function getParam(extra = {}) {
     let param: any = {
@@ -134,21 +134,20 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
     const res = await getImportantErrorList({
       ...param,
       queryDetail: false,
-      searchType: activeKey
+      searchType: activeKey,
     });
     const data = res?.data || [];
     const list: any = [];
     for (const item of data) {
       list.push({
         id: (Math.random() * 1000000).toFixed(0),
-        ...item
+        ...item,
       });
     }
     setImportantErrorList(list);
     setImportantErrorTotal(data.length);
     setImportantErrorLoading(false);
   }
-
 
   useEffect(() => {
     void onErrorList();
@@ -203,10 +202,10 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
             <div className="error-chart"></div>
           </div>
         </div>
-        <div className='important-error'>
+        <div className="important-error">
           <div className="list-title">重点关注的错误</div>
           <Tabs
-            className='error-tabs'
+            className="error-tabs"
             activeKey={activeKey}
             destroyInactiveTabPane
             onChange={(val) => {
@@ -217,14 +216,25 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
             <Tabs.TabPane tab="页面重点资源加载错误" key="importantResource" />
             <Tabs.TabPane tab="定制包资源加载错误" key="extensionResource" />
           </Tabs>
-          {
-            activeKey == 'componentError' ?
-              <ComponentError type="componentError" dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
-              :
-              <ResourceErrorTable type={activeKey} dataSource={importantErrorList} loading={importantErrorLoading} total={importantErrorTotal} getParam={getParam} />
-          }
+          {activeKey == 'componentError' ? (
+            <ComponentError
+              type="componentError"
+              dataSource={importantErrorList}
+              loading={importantErrorLoading}
+              total={importantErrorTotal}
+              getParam={getParam}
+            />
+          ) : (
+            <ResourceErrorTable
+              type={activeKey}
+              dataSource={importantErrorList}
+              loading={importantErrorLoading}
+              total={importantErrorTotal}
+              getParam={getParam}
+            />
+          )}
         </div>
-        <div className='error-list'>
+        <div className="error-list">
           <div className="list-title">错误列表</div>
           <ErrorTable dataSource={dataSource} loading={loading} total={total} getParam={getParam} />
         </div>

@@ -1,9 +1,8 @@
 //管理员页面接口文档
 //接口文档地址：https://come-future.yuque.com/sekh46/bbgc7f/qo3mcm
 //2022/06/14 13:50
-import { addAPIPrefix } from '@/utils';
 import { useState } from 'react';
-import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
+import { getRequest, postRequest, delRequest } from '@/utils/request';
 import * as APIS from './service';
 import { message } from 'antd';
 

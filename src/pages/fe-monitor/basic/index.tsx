@@ -49,11 +49,11 @@ const BasicFeMonitor = () => {
       case '1':
         return <BasicOverview {...param} timeList={timeList} />;
       case '2':
-        return <BasicError {...param} timeList={timeList}/>;
+        return <BasicError {...param} timeList={timeList} />;
       case '3':
-        return <BasicPerformance {...param} timeList={timeList}/>;
+        return <BasicPerformance {...param} timeList={timeList} />;
       case '4':
-        return <BasicApi {...param} timeList={timeList}/>;
+        return <BasicApi {...param} timeList={timeList} />;
     }
   };
 
