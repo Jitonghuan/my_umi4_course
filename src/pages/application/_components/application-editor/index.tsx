@@ -453,6 +453,13 @@ export default function ApplicationEditor(props: IProps) {
                         fieldType: 'select',
                         valueOptions: envDataSource,
                         colProps: { width: 120 },
+                        fieldProps: {
+                          showSearch: true,
+                          // @ts-ignore
+                          filterOption: (input, option) => {
+                            return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                          }
+                        }
                       },
                     ]}
                     limit={30}

@@ -37,7 +37,7 @@ export function useEnvOptions(appCode?: string) {
     }
 
     getRequest(APIS.getEnvListByAppCode, {
-      data: { pageIndex: 1, pageSize: 100, appCode },
+      data: { pageIndex: 1, pageSize: 100, appCode, origin: true },
     }).then((result) => {
       const { dataSource } = result.data || {};
       const next = (dataSource || []).map((item: any) => ({
@@ -172,4 +172,28 @@ export function useNotifyTypeOptions() {
   }, []);
 
   return [source];
+}
+
+//集群环境 下拉选择数据
+export function useEnvListOptions() {
+  const [envCodeOption, setEnvCodeOption] = useState<any>([]);
+  let envOptions: any = [];
+  const getEnvCodeList = async (envTypeCode: string) => {
+    await getRequest(APIS.getEnvCodeList, {
+      data: { envTypeCode },
+    }).then((resp) => {
+      if (resp?.success) {
+        let data = resp?.data;
+        data?.map((item: any) => {
+          envOptions.push({
+            label: item.envCode,
+            value: item.envCode,
+          });
+        });
+        setEnvCodeOption(envOptions);
+      }
+    });
+  };
+
+  return [envCodeOption, getEnvCodeList];
 }

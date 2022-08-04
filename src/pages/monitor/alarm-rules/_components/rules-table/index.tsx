@@ -11,7 +11,7 @@ import './index.less';
 
 interface RulesTableProps {
   dataSource?: any;
-  onQuery: () => void;
+  onQuery: (param?: any) => void;
   serviceId?: string;
 }
 const ALERT_LEVEL: Record<number, { text: string; value: number; color: string }> = {
@@ -225,9 +225,10 @@ export default function RulesTable(props: RulesTableProps) {
         columns={columns}
         {...dataSource}
         pagination={{
-          ...dataSource.pagination,
+          ...dataSource.pageInfo,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
+          onChange: (page, pageSize) => onQuery({pageIndex: page, pageSize})
         }}
       />
       <TemplateDrawer

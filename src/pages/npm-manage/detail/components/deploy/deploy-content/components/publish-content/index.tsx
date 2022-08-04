@@ -124,7 +124,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
       <div className={`${rootCls}__right-top-btns`}>
-        { deployStatus === 'buildAndDeploy' && (
+        { deployStatus === 'process' && (
           <Button
             danger
             onClick={() => {

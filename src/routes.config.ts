@@ -509,9 +509,20 @@ export default [
     icon: 'icon-poc_index',
     routes: [
       {
-        path: 'board',
-        name: '监控面板',
+        path: 'panel',
+        name: '监控大盘',
         component: '@/pages/monitor/board',
+      },
+      {
+        path: 'detail',
+        name: '监控大盘详情',
+        hideInMenu: true,
+        component: '@/pages/monitor/board/board-detail',
+      },
+      {
+        path: 'board',
+        name: '集群监控',
+        component: '@/pages/monitor/cluster',
       },
       {
         path: 'application',

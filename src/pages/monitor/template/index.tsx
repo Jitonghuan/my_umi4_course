@@ -18,6 +18,8 @@ import {
   queryGroupList,
 } from '../service';
 import './index.less';
+import { Tabs } from '@cffe/h2o-design';
+import Panel from './components/panel';
 
 type statusTypeItem = {
   color: string;
@@ -37,6 +39,7 @@ const TemplateCom: React.FC = () => {
   const [editRecord, setEditRecord] = useState<Item>({});
   const [type, setType] = useState<'add' | 'edit'>('add');
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
+  const [activeKey, setActiveKey] = useState('alarm-rules')
 
   const [form] = Form.useForm();
   useEffect(() => {
@@ -268,78 +271,94 @@ const TemplateCom: React.FC = () => {
   };
 
   return (
-    <PageContainer>
-      <TableSearch
-        form={form}
-        formOptions={[
-          {
-            key: '1',
-            type: 'input',
-            label: '名称',
-            dataIndex: 'name',
-            width: '144px',
-            placeholder: '请输入',
-          },
-          {
-            key: '2',
-            type: 'select',
-            label: '分类',
-            dataIndex: 'group',
-            width: '144px',
-            placeholder: '请选择报警分类',
-            option: groupData,
-          },
-          {
-            key: '3',
-            type: 'select',
-            label: '状态',
-            dataIndex: 'status',
-            width: '144px',
-            placeholder: '请选择',
-            option: [
-              {
-                key: '0',
-                value: '已启用',
-                label: '已启用',
-              },
-              {
-                key: '1',
-                value: '未启用',
-                label: '未启用',
-              },
-            ],
-          },
-        ]}
-        formLayout="inline"
-        columns={columns}
-        {...tableProps}
-        pagination={{
-          ...tableProps?.pagination,
-          showTotal: (total) => `共 ${total} 条`,
-          showSizeChanger: true,
-          size: 'small',
-          defaultPageSize: 20,
-        }}
-        showTableTitle
-        tableTitle="报警规则模板列表"
-        extraNode={
-          <Button
-            type="primary"
-            onClick={() => {
-              setDrawerVisible(true);
-              setType('add');
-              setDrawerTitle('新增报警规则模版');
-            }}
-            icon={<PlusOutlined />}
-          >
-            新增报警规则模版
-          </Button>
+    <PageContainer className='template-page'>
+      <div className="app-group-content-wrapper">
+        <Tabs
+          activeKey={activeKey}
+          onChange={(val) => {
+            setActiveKey(val);
+          }}
+        >
+          <Tabs.TabPane tab="报警规则模版" key="alarm-rules" />
+          <Tabs.TabPane tab="监控大盘模版" key="panel" />
+        </Tabs>
+        {activeKey === "alarm-rules" &&
+          <TableSearch
+          form={form}
+          formOptions={[
+            {
+              key: '1',
+              type: 'input',
+              label: '名称',
+              dataIndex: 'name',
+              width: '144px',
+              placeholder: '请输入',
+            },
+            {
+              key: '2',
+              type: 'select',
+              label: '分类',
+              dataIndex: 'group',
+              width: '144px',
+              placeholder: '请选择报警分类',
+              option: groupData,
+            },
+            {
+              key: '3',
+              type: 'select',
+              label: '状态',
+              dataIndex: 'status',
+              width: '144px',
+              placeholder: '请选择',
+              option: [
+                {
+                  key: '0',
+                  value: '已启用',
+                  label: '已启用',
+                },
+                {
+                  key: '1',
+                  value: '未启用',
+                  label: '未启用',
+                },
+              ],
+            },
+          ]}
+          formLayout="inline"
+          columns={columns}
+          {...tableProps}
+          pagination={{
+            ...tableProps?.pagination,
+            showTotal: (total) => `共 ${total} 条`,
+            showSizeChanger: true,
+            size: 'small',
+            defaultPageSize: 20,
+          }}
+          showTableTitle
+          tableTitle="报警规则模板列表"
+          extraNode={
+            <Button
+              type="primary"
+              onClick={() => {
+                setDrawerVisible(true);
+                setType('add');
+                setDrawerTitle('新增报警规则模版');
+              }}
+              icon={<PlusOutlined />}
+            >
+              新增报警规则模版
+            </Button>
+          }
+          className="table-form"
+          onSearch={queryList}
+          reset={reset}
+          scroll={{ x: '100%' }}
+        />
         }
-        className="table-form"
-        onSearch={queryList}
-        reset={reset}
-        scroll={{ x: '100%' }}
-      />
+        {activeKey === "panel" &&
+          <Panel/>
+        }
+      </div>
       <TemplateDrawer
         visible={drawerVisible}
         onClose={onClose}

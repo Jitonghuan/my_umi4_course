@@ -25,9 +25,9 @@ export const searchGitAddress = async (keyword: string) => {
     data: {
       key: keyword,
       pageIndex: 1,
-      pageSize: 20,
+      pageSize: 100,
     },
   });
-  const { dataSource } = result.data || {};
+  const { dataSource } = result?.data || {};
   return (dataSource || []).map((str: string) => ({ label: str, value: str })) as IOption[];
 };
