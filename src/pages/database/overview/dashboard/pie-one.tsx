@@ -18,7 +18,7 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
   pieTypeData?.map((item: string) => {
     data.push({
       type: item + '',
-      value: dataSource[item] === 0 ? null : dataSource[item],
+      value: dataSource[item] === 0 ? 0 : dataSource[item],
     });
   });
 
@@ -33,7 +33,12 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
     label: {
       type: 'inner',
       offset: '-50%',
-      content: '{value}',
+      content: (item: any) => {
+        if (item.value !== 0) {
+          return item.value;
+        }
+      },
+
       autoRotate: false,
       style: {
         textAlign: 'center',
