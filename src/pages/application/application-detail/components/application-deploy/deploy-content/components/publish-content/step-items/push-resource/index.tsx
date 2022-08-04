@@ -38,7 +38,8 @@ export default function PushResourceStep(props: StepItemProps) {
         envTypeCode: envTypeCode,
         appCode: appData?.appCode,
         proEnvType: 'benchmark',
-        clusterName: 'private-cluster',
+        envModel: 'offline-pack',
+        // clusterName: 'private-cluster',
       },
     }).then((result) => {
       let downloadImageEnv: any = [];

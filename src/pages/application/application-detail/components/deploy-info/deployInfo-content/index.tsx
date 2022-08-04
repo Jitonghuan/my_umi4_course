@@ -258,7 +258,7 @@ export default function DeployContent(props: DeployContentProps) {
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
     return getRequest(listAppEnv, {
-      data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
+      data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', envModel: 'currency-deploy' },
     });
   };
   const loadInfoData = async (envCode: any, operateType?: boolean) => {
