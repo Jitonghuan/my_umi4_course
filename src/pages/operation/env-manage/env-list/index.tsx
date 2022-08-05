@@ -240,13 +240,11 @@ export default function envManageList(props: any) {
     }).then((result) => {
       if (result.success) {
         message.success('更改成功！');
-      } else {
-        message.error(result.errorMsg);
+        loadListData({
+          pageIndex: 1,
+          pageSize: 20,
+        });
       }
-    });
-    loadListData({
-      pageIndex: 1,
-      pageSize: 20,
     });
   };
 
@@ -368,56 +366,23 @@ export default function envManageList(props: any) {
             <Table.Column title="默认分类" dataIndex="categoryCode" width={130} />
             <Table.Column title="备注" dataIndex="mark" width={200} />
             <Table.Column
-              title="启用发布审批"
+              title="发布白名单"
               dataIndex="needApply"
               width={110}
-              render={(value, record, index) =>
-                value === 1 ? (
-                  <Switch
-                    className="needApply"
-                    onChange={() => handleNeedApplyChange(value, record)}
-                    checked={value === 0 ? true : false}
-                  />
-                ) : (
-                  <>
-                    <Switch
-                      className="needApply"
-                      onChange={() => handleNeedApplyChange(value, record)}
-                      checked={value === 0 ? true : false}
-                    />
-                    <Badge
-                      count={
-                        <ContainerOutlined
-                          title="请点击该图标进行发布审批白名单操作"
-                          style={{ fontSize: 16 }}
-                          onClick={() => {
-                            setBlockModalVisiable(true);
-                            setInitBlockData(record);
-                            setOptType('approval');
-                          }}
-                        />
-                      }
-                    ></Badge>
-
-                    {/* <p>
-                  <Button
-                    size="small"
-                    type="primary"
-                    shape="round"
-                    className="approval-button"
+              render={(value, record, index) => (
+                <>
+                  <span
+                    className="need-apply-button"
                     onClick={() => {
                       setBlockModalVisiable(true);
                       setInitBlockData(record);
                       setOptType('approval');
                     }}
                   >
-                    白名单
-                  </Button>
-
-                  </p> */}
-                  </>
-                )
-              }
+                    发布白名单
+                  </span>
+                </>
+              )}
             />
             <Table.Column
               title="启用配置管理"
@@ -436,30 +401,30 @@ export default function envManageList(props: any) {
               dataIndex="isBlock"
               width={80}
               render={(value, record, index) => (
-                // <Tag color="#108ee9"
-                // onClick={()=>{
-                //   setBlockModalVisiable(true);
-                //   setInitBlockData(record)
-                // }} shape="round"
-                // >封网</Tag>
-                <Button
-                  size="small"
-                  type="primary"
-                  shape="round"
-                  danger
+                <span
+                  className="is-block-button"
                   onClick={() => {
                     setBlockModalVisiable(true);
                     setInitBlockData(record);
                     setOptType('block');
                   }}
                 >
-                  封网
-                </Button>
-                // <Switch
-                //   className="isBlock"
-                //   onChange={() => isBlockChange(value, record)}
-                //   checked={value === 1 ? true : false}
-                // />
+                  封 &nbsp;网
+                </span>
+
+                // <Button
+                //   size="small"
+                //   type="primary"
+                //   shape="round"
+                //   danger
+                //   onClick={() => {
+                //     setBlockModalVisiable(true);
+                //     setInitBlockData(record);
+                //     setOptType('block');
+                //   }}
+                // >
+                //   封网
+                // </Button>
               )}
             />
             <Table.Column
