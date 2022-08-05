@@ -16,7 +16,7 @@ export const queryReleaseInfo = (paramsObj: { releaseName: string; namespace: st
 
       return dataSource;
     }
-    return {};
+    return [];
   });
 };
 
