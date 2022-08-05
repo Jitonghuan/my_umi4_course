@@ -26,3 +26,5 @@ export const queryCategoryData = `${appConfig.apiPrefix}/appManage/category/list
 export const importUserExcel = addAPIPrefix('/adminManage/user/excel/import');
 /* GET 10、 导出用户 */
 export const exportUserExcel = addAPIPrefix('/adminManage/user/excel/export');
+/* GET 11、 下载用户信息表模板 */
+export const exportTemplateExcel = addAPIPrefix('/adminManage/user/excel/template');

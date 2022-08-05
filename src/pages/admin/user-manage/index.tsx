@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Space, Form, Button, Modal, Input } from 'antd';
+import { Space, Form, Button, Modal, Input, message } from 'antd';
 import ImportDataModal from './importData';
 import { history } from 'umi';
 import { createTableColumns } from './schema';
-import { getUserList } from './service';
+import { getUserList, exportTemplateExcel } from './service';
 import useTable from '@/utils/useTable';
 import { useCreateUser } from './hook';
 export default function UserManage() {
@@ -14,6 +14,7 @@ export default function UserManage() {
   const [loading, createUser] = useCreateUser();
   const [visible, setVisible] = useState<boolean>(false);
   const [importDataMode, setImportDataMode] = useState<EditorMode>('HIDE');
+  const [downLoadDisabled, setDownLoadDisabled] = useState<boolean>(false);
   const handleSubmit = () => {
     const values = createUserForm.getFieldsValue();
     createUser({ ...values }).then(() => {
@@ -104,6 +105,24 @@ export default function UserManage() {
                 }}
               >
                 批量导入导出
+              </Button>
+
+              <Button
+                type="primary"
+                target="_blank"
+                href={`${exportTemplateExcel}`}
+                disabled={downLoadDisabled}
+                className="downloadButton"
+                onClick={() => {
+                  message.info('开始导出...');
+                  setDownLoadDisabled(true);
+                  // setTimeout(() => {
+                  //   setDownLoadDisabled(false)
+
+                  // }, 5000);
+                }}
+              >
+                下载用户信息表模板
               </Button>
               <Button
                 type="primary"
