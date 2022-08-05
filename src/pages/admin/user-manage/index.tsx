@@ -115,11 +115,10 @@ export default function UserManage() {
                 className="downloadButton"
                 onClick={() => {
                   message.info('开始导出...');
-                  setDownLoadDisabled(true);
-                  // setTimeout(() => {
-                  //   setDownLoadDisabled(false)
-
-                  // }, 5000);
+                  // setDownLoadDisabled(true);
+                  setTimeout(() => {
+                    setDownLoadDisabled(false);
+                  }, 3000);
                 }}
               >
                 下载用户信息表模板
