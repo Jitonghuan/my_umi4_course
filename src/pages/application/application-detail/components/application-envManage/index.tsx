@@ -8,7 +8,15 @@ import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import './index.less';
-import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList, envAppCR } from '@/pages/application/service';
+import {
+  appTypeList,
+  listAppEnv,
+  addAppEnv,
+  delAppEnv,
+  queryEnvList,
+  envAppCR,
+  updateAppApply,
+} from '@/pages/application/service';
 
 export default function appEnvPageList() {
   const { appData } = useContext(DetailContext);
@@ -188,6 +196,24 @@ export default function appEnvPageList() {
       });
     }
   };
+
+  //启用配置管理选择 启用发布审批为0，不启用为1
+  const handleNeedApplyChange = async (checked: any, record: any) => {
+    await postRequest(updateAppApply, {
+      data: {
+        envCode: record?.envCode,
+        appCode,
+        isAppNeedApply: checked ? false : true,
+      },
+    }).then((result) => {
+      if (result.success) {
+        message.success('更改成功！');
+        queryAppEnvData({
+          appCode,
+        });
+      }
+    });
+  };
   return (
     <ContentCard className="app-env-management">
       <Modal
@@ -288,14 +314,6 @@ export default function appEnvPageList() {
             <Table.Column title="环境CODE" dataIndex="envCode" ellipsis />
             <Table.Column title="环境名" dataIndex="envName" ellipsis />
             <Table.Column title="默认分类" dataIndex="categoryCode" width={120} />
-            {/* <Table.Column
-              title="是否启用配置管理"
-              dataIndex="useNacos"
-              width={180}
-              render={(value, record, index) => (
-                <Switch className="useNacos" checked={value === 1 ? true : false} disabled={true} />
-              )}
-            /> */}
           </Table>
         </div>
       </Modal>
@@ -390,6 +408,16 @@ export default function appEnvPageList() {
                 />
                 {/* </Popconfirm> */}
               </div>
+            )}
+          />
+          <Table.Column
+            title="启用发布审批"
+            dataIndex="isAppNeedApply"
+            width={110}
+            render={(value, record, index) => (
+              <>
+                <Switch className="needApply" onChange={() => handleNeedApplyChange(value, record)} checked={value} />
+              </>
             )}
           />
           <Table.Column title="备注" dataIndex="mark" width={180} />

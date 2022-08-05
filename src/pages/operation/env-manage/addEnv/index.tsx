@@ -299,14 +299,14 @@ export default function AddEnv(props: EnvEditorProps) {
                 disabled={isDisabled}
               ></Switch>
             </Form.Item>
-            <Form.Item name="needApply" label="启用发布审批：">
+            {/* <Form.Item name="needApply" label="启用发布审批：">
               <Switch
                 className="needApply"
                 onChange={handleNeedApplyChange}
                 checked={needApplyChecked}
                 disabled={isDisabled}
               ></Switch>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name="useNacos" label="启用配置管理：">
               <Switch
                 className="useNacos"
