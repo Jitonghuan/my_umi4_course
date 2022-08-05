@@ -137,13 +137,13 @@ export default function CreateUser() {
             <Form.Item label="姓名" name="name" rules={[{ required: true, message: '这是必填项' }]}>
               <Input style={{ width: 420 }} disabled />
             </Form.Item>
-            <Form.Item label="邮箱" name="email" rules={[{ required: true, message: '这是必填项' }]}>
+            <Form.Item label="邮箱" name="email">
               <Input style={{ width: 420 }} disabled={curRecord?.optType === 'VIEW' ? viewDisabled : saveDisabled} />
             </Form.Item>
-            <Form.Item label="手机号" name="mobile" rules={[{ required: true, message: '这是必填项' }]}>
+            <Form.Item label="手机号" name="mobile">
               <Input style={{ width: 420 }} disabled={curRecord?.optType === 'VIEW' ? viewDisabled : saveDisabled} />
             </Form.Item>
-            <Form.Item label="Sso用户名" name="ssoUsername">
+            <Form.Item label="Sso用户名" name="ssoUsername" rules={[{ required: true, message: '这是必填项' }]}>
               <Input style={{ width: 420 }} disabled={curRecord?.optType === 'VIEW' ? viewDisabled : saveDisabled} />
             </Form.Item>
             <Form.Item label="LeaderDingUid" name="leaderDingUid">

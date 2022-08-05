@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Space, Form, Button, Modal, Input } from 'antd';
+import ImportDataModal from './importData';
 import { history } from 'umi';
 import { createTableColumns } from './schema';
 import { getUserList } from './service';
@@ -12,6 +13,7 @@ export default function UserManage() {
   const [createUserForm] = Form.useForm();
   const [loading, createUser] = useCreateUser();
   const [visible, setVisible] = useState<boolean>(false);
+  const [importDataMode, setImportDataMode] = useState<EditorMode>('HIDE');
   const handleSubmit = () => {
     const values = createUserForm.getFieldsValue();
     createUser({ ...values }).then(() => {
@@ -58,6 +60,16 @@ export default function UserManage() {
 
   return (
     <PageContainer>
+      <ImportDataModal
+        mode={importDataMode}
+        onClose={() => setImportDataMode('HIDE')}
+        onSave={() => {
+          setImportDataMode('HIDE');
+          setTimeout(() => {
+            reset();
+          }, 100);
+        }}
+      />
       <TableSearch
         form={form}
         bordered
@@ -84,12 +96,11 @@ export default function UserManage() {
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <h3>用户列表</h3>
-            <p>
+            <Space>
               <Button
                 type="primary"
                 onClick={() => {
-                  createUserForm.resetFields();
-                  setVisible(true);
+                  setImportDataMode('ADD');
                 }}
               >
                 批量导入导出
@@ -103,7 +114,7 @@ export default function UserManage() {
               >
                 新增用户
               </Button>
-            </p>
+            </Space>
           </Space>
         }
         className="table-form"

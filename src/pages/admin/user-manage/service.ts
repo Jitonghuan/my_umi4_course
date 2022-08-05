@@ -21,3 +21,8 @@ export const queryBizData = `${appConfig.apiPrefix}/appManage/group/list`;
 
 /** 查询应用分类数据 */
 export const queryCategoryData = `${appConfig.apiPrefix}/appManage/category/list`;
+
+/* POST 9、  excel批量新增用户 */
+export const importUserExcel = addAPIPrefix('/adminManage/user/excel/import');
+/* GET 10、 导出用户 */
+export const exportUserExcel = addAPIPrefix('/adminManage/user/excel/export');
