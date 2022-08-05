@@ -19,7 +19,7 @@ export const createFeatureBranchUrl = `${appConfig.apiPrefix}/releaseManage/bran
 export const createDeploy = `${appConfig.apiPrefix}/releaseManage/npmDeploy/create`;
 
 // 追加分支
-export const updateFeatures = `${appConfig.apiPrefix}/releaseManage/dependencyManage/npmDeploy/updateFeatures`;
+export const updateFeatures = `${appConfig.apiPrefix}/releaseManage/npmDeploy/updateFeatures`;
 
 // 重新提交
 export const reCommit = `${appConfig.apiPrefix}/releaseManage/npmDeploy/reCommit`;
