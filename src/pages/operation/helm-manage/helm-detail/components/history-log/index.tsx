@@ -119,7 +119,7 @@ export default function HistoryLog(props: PorpsItem) {
       />
       <Table
         rowKey="id"
-        dataSource={releaseData}
+        dataSource={releaseData || []}
         bordered
         columns={columns}
         loading={loading}

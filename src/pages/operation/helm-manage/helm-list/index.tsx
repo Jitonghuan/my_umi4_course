@@ -17,7 +17,7 @@ export default function HelmList() {
   const [curRecord, setCurRecord] = useState<any>();
   const [tableLoading, setTableLoading] = useState<any>(false);
   const [tabledataSource, setDataSource] = useState<any>([]);
-  const [curClusterName, setCurClusterName] = useState<any>('来未来');
+  const [curClusterName, setCurClusterName] = useState<any>('');
   const [clusterInfo, setClusterInfo] = useState<any>();
   const [mode, setMode] = useState<boolean>(false);
   const [delLoading, deleteRelease] = useDeleteRelease();
@@ -97,7 +97,7 @@ export default function HelmList() {
         });
       },
     }) as any;
-  }, []);
+  }, [curClusterName]);
   //查询nameSpace
   const queryNameSpace = (value: any) => {
     queryPodNamespaceData({ clusterId: value }).then((res) => {
