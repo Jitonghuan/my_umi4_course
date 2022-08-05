@@ -84,15 +84,26 @@ export default function UserManage() {
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <h3>用户列表</h3>
-            <Button
-              type="primary"
-              onClick={() => {
-                createUserForm.resetFields();
-                setVisible(true);
-              }}
-            >
-              新增用户
-            </Button>
+            <p>
+              <Button
+                type="primary"
+                onClick={() => {
+                  createUserForm.resetFields();
+                  setVisible(true);
+                }}
+              >
+                批量导入导出
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => {
+                  createUserForm.resetFields();
+                  setVisible(true);
+                }}
+              >
+                新增用户
+              </Button>
+            </p>
           </Space>
         }
         className="table-form"
