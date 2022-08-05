@@ -21,7 +21,7 @@ export default function ParamConfig(props: PorpsItem) {
       namespace: record?.namespace,
       clusterName: curClusterName,
     }).then((res) => {
-      form.setFieldsValue({ values: res });
+      form.setFieldsValue({ values: res || '' });
     });
   }, []);
 
