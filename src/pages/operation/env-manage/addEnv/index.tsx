@@ -82,6 +82,7 @@ export default function AddEnv(props: EnvEditorProps) {
         isBlock: isBlockChecked,
         useNacos: nacosChecked,
         needApply: needApplyChecked,
+        envCode: initData?.envCode.includes('fe-') ? initData?.envCode.slice(3) : initData?.envCode,
       });
       setCurEnvType(initData?.envModel);
     }
@@ -159,23 +160,13 @@ export default function AddEnv(props: EnvEditorProps) {
         postRequest(createEnv, {
           data: {
             ...params,
-            envCode: `fe-${params?.envCode}`,
-            // envTypeCode: params?.envTypeCode,
-            // categoryCode: params?.categoryCode,
+            envCode: curEnvType === 'fe-exclusive' ? `fe-${params?.envCode}` : params?.envCode,
+
             isBlock: isBlockChangeOption,
             useNacos: checkedOption,
             needApply: needApplyOption,
             proEnvType: 'benchmark',
 
-            // nacosAddress: params?.nacosAddress,
-            // envCode: params?.envCode,
-            // envName: params?.envName,
-            // clusterName: params?.clusterName,
-            // clusterType: params?.clusterType,
-            // clusterNetType: params?.clusterNetType,
-            // mark: params?.mark,
-            // ngInstCode: params?.ngInstCode,
-            // bucketName: params?.bucketName,
             minioInfo: JSON.stringify(minioInfo),
           },
         })
@@ -202,7 +193,8 @@ export default function AddEnv(props: EnvEditorProps) {
         putRequest(updateEnv, {
           data: {
             ...params,
-            envCode: `fe-${params?.envCode}`,
+            // envCode: `fe-${params?.envCode}`,
+            envCode: curEnvType === 'fe-exclusive' ? `fe-${params?.envCode}` : params?.envCode,
             useMinio: undefined,
             bucketName: undefined,
             sourceMapBkt: undefined,
@@ -249,7 +241,7 @@ export default function AddEnv(props: EnvEditorProps) {
           </Form.Item>
           <Form.Item label="环境类型：" name="envModel" rules={[{ required: true, message: '这是必填项' }]}>
             <Radio.Group
-              disabled={isDisabled}
+              disabled={mode !== 'EDIT' ? isDisabled : editEnvCode}
               options={envTypeOptions}
               onChange={(e) => setCurEnvType(e.target.value)}
             />
