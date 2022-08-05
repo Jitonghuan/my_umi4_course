@@ -49,7 +49,8 @@ export default function BuildingStep(props: StepItemProps) {
         envTypeCode: envTypeCode,
         appCode: appData?.appCode,
         proEnvType: 'benchmark',
-        clusterName: 'private-cluster',
+        // clusterName: 'private-cluster',
+        envModel: 'offline-pack',
       },
     }).then((result) => {
       let downloadImageEnv: any = [];

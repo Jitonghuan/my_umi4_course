@@ -31,6 +31,7 @@ export interface EnvEditData extends Record<string, any> {
   clusterNetType: string;
   ngInstCode: string;
   proEnvType: string;
+  envModel: string;
 }
 
 export default function envManageList(props: any) {
