@@ -16,7 +16,15 @@ import {
   queryGroupList,
 } from '../../../service';
 import './index.less';
-import { createGraphTemplate, createGraphTemplateUrl, deleteGraphTemplateUrl, delGraphTemplate, queryGraphTemplateUrl, updateGraphTemplate, updateGraphTemplateUrl } from '../../service';
+import {
+  createGraphTemplate,
+  createGraphTemplateUrl,
+  deleteGraphTemplateUrl,
+  delGraphTemplate,
+  queryGraphTemplateUrl,
+  updateGraphTemplate,
+  updateGraphTemplateUrl,
+} from '../../service';
 import { Drawer, Input, message, Select } from '@cffe/h2o-design';
 import AceEditor from '@/components/ace-editor';
 
@@ -40,8 +48,8 @@ const TemplateCom: React.FC = () => {
   const [form] = Form.useForm();
 
   const [editForm] = Form.useForm();
-  const [visible, setVisible] = useState<boolean>(false)
-  const [saveLoading, setSaveLoading] = useState<boolean>(false)
+  const [visible, setVisible] = useState<boolean>(false);
+  const [saveLoading, setSaveLoading] = useState<boolean>(false);
 
   const {
     tableProps = {},
@@ -75,7 +83,6 @@ const TemplateCom: React.FC = () => {
       queryList();
     },
   });
-
 
   //删除
   const { run: deleteRuleTemplatesFun } = useRequest({
@@ -158,16 +165,16 @@ const TemplateCom: React.FC = () => {
             onClick={() => {
               setVisible(true);
               setDrawerTitle('编辑大盘模版');
-              const { name, describe, configuration, dsType, id } = record
+              const { name, describe, configuration, dsType, id } = record;
               const value = {
                 graphTemplateName: name,
-                graphTemplateJson: JSON.stringify(JSON.parse(configuration || "{}"), null, 2),
+                graphTemplateJson: JSON.stringify(JSON.parse(configuration || '{}'), null, 2),
                 graphTemplateDescribe: describe,
                 dsType: dsType,
-                id: id
-              }
+                id: id,
+              };
               setEditRecord(value);
-              editForm.setFieldsValue(value)
+              editForm.setFieldsValue(value);
               setType('edit');
             }}
           >
@@ -190,36 +197,36 @@ const TemplateCom: React.FC = () => {
 
   const onClose = () => {
     setVisible(false);
-    editForm.resetFields()
-    setEditRecord({})
+    editForm.resetFields();
+    setEditRecord({});
   };
 
   const onSubmit = (value: Record<string, string>) => {
     const params = value;
     let graphTemplateJson;
     try {
-      graphTemplateJson = params.graphTemplateJson && JSON.parse(params?.graphTemplateJson)
+      graphTemplateJson = params.graphTemplateJson && JSON.parse(params?.graphTemplateJson);
     } catch (e) {
-      message.error('JSON格式不正确')
-      return
+      message.error('JSON格式不正确');
+      return;
     }
 
     try {
-      delete params.graphTemplateJson
-    } catch (e) { }
+      delete params.graphTemplateJson;
+    } catch (e) {}
 
     if (type === 'add') {
       createGraphTemplate(params, graphTemplateJson).then((res) => {
         if (res?.success) {
-          message.success('创建成功')
-          onClose()
+          message.success('创建成功');
+          onClose();
           queryList();
         }
       });
     } else {
       updateGraphTemplate({ id: editRecord.id, ...params }, graphTemplateJson).then((res) => {
         if (res?.success) {
-          message.success('更新成功')
+          message.success('更新成功');
           onClose();
           queryList();
         }
@@ -227,10 +234,9 @@ const TemplateCom: React.FC = () => {
     }
   };
   const handleSubmit = () => {
-    const value = editForm.getFieldsValue()
-    onSubmit(value)
-  }
-
+    const value = editForm.getFieldsValue();
+    onSubmit(value);
+  };
 
   return (
     <PageContainer>
@@ -256,13 +262,13 @@ const TemplateCom: React.FC = () => {
               {
                 key: 'prometheus',
                 label: 'prometheus',
-                value: 'prometheus'
+                value: 'prometheus',
               },
               {
                 key: 'elasticsearch',
                 label: 'elasticsearch',
-                value: 'elasticsearch'
-              }
+                value: 'elasticsearch',
+              },
             ],
           },
         ]}
@@ -273,7 +279,7 @@ const TemplateCom: React.FC = () => {
           ...tableProps?.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
-          size: 'small',
+          // size: 'small',
           defaultPageSize: 20,
         }}
         showTableTitle
@@ -286,9 +292,8 @@ const TemplateCom: React.FC = () => {
               setType('add');
               setDrawerTitle('新增大盘模版');
             }}
-            icon={<PlusOutlined />}
           >
-            新增大盘模版
+            + 新增大盘模版
           </Button>
         }
         className="table-form"
@@ -296,7 +301,6 @@ const TemplateCom: React.FC = () => {
         reset={reset}
         scroll={{ x: '100%' }}
       />
-
 
       <Drawer
         visible={visible}
@@ -314,11 +318,7 @@ const TemplateCom: React.FC = () => {
           </div>
         }
       >
-        <Form
-          form={editForm}
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 16 }}
-        >
+        <Form form={editForm} labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
           <Form.Item label="模版名称" name="graphTemplateName" required>
             <Input />
           </Form.Item>

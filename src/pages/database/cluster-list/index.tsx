@@ -2,7 +2,6 @@ import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { Button, Form, Table, Input, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import { createTableColumns, clusterTypeOption } from './schema';
 import CreateCluster from './create-cluster';
 import { useDeleteCluster, useQueryEnvList, useClusterList } from './hook';
@@ -130,8 +129,7 @@ export default function ClusterList() {
                 setMode('ADD');
               }}
             >
-              <PlusOutlined />
-              新集群接入
+              + 新集群接入
             </Button>
           </div>
         </div>

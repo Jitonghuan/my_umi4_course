@@ -5,7 +5,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Form, Input, Button, Popconfirm } from 'antd';
 import { history } from 'umi';
-import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import { getRequest, delRequest } from '@/utils/request';
@@ -240,8 +239,7 @@ export default function NgList() {
                 setNgMode('ADD');
               }}
             >
-              <PlusOutlined />
-              新增NG配置
+              + 新增NG配置
             </Button>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Input, message, Table, Drawer, Tooltip, Radio, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import DebounceSelect from '@/components/debounce-select';
@@ -144,8 +143,7 @@ export default function NpmList() {
               setVisible(true);
             }}
           >
-            <PlusOutlined />
-            新增
+            + 新增
           </Button>
         </div>
         <Table

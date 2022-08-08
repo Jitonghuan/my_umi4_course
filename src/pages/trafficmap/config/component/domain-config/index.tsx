@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Select, Input, Button, Table, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import PageContainer from '@/components/page-container';
 import './index.less';
 import { deleteRegion, getRegionList } from '../../../service';
 import CreateRegionDrawer from '../create-region-drawer';
@@ -167,8 +164,8 @@ const DomainConfig: React.FC = () => {
             createRegionRef.current.showDrawer();
           }}
         >
-          <PlusOutlined />
-          新增域
+        
+         + 新增域
         </Button>
       </div>
 

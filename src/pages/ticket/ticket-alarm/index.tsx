@@ -161,6 +161,12 @@ export default function ticketAlarm() {
       </FilterCard>
 
       <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>告警列表</h3>
+          </div>
+          <div className="caption-right"></div>
+        </div>
         <Table
           dataSource={alertData}
           rowKey="id"

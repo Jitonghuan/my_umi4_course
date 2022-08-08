@@ -95,13 +95,13 @@ const FunctionCom: React.FC = () => {
           ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
-          size: 'small',
+          // size: 'small',
           // defaultPageSize: 20,
         }}
         extraNode={
           <>
             <Button type="primary" onClick={() => history.push('./function/addFunction')}>
-              新增发布功能
+              + 新增发布功能
             </Button>
             <Button
               type="primary"
