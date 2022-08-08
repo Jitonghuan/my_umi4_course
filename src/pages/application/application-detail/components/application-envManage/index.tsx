@@ -33,7 +33,7 @@ export default function appEnvPageList() {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [EnvForm] = Form.useForm();
   const [appEnvForm] = Form.useForm();
-  const { appCode } = appData || {};
+  const { appCode, microFeType } = appData || {};
   const envTypeData = [
     {
       label: 'DEV',
@@ -358,22 +358,26 @@ export default function appEnvPageList() {
               重置
             </Button>
           </Form.Item>
-          <div style={{ marginLeft: '18px' }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                EnvForm.resetFields();
-                //  appEnvForm.setFieldsValue(undefined)
-                setIsModalVisible(true);
-                let obj = { pageIndex: 1, pageSize: 10 };
-                queryEnvData(obj);
-                setSelectedRowKeys(['undefined']);
-                setPageIndex(1);
-              }}
-            >
-              绑定环境
-            </Button>
-          </div>
+          {
+            microFeType !== 'subProject' && (
+              <div style={{ marginLeft: '18px' }}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    EnvForm.resetFields();
+                    //  appEnvForm.setFieldsValue(undefined)
+                    setIsModalVisible(true);
+                    let obj = { pageIndex: 1, pageSize: 10 };
+                    queryEnvData(obj);
+                    setSelectedRowKeys(['undefined']);
+                    setPageIndex(1);
+                  }}
+                >
+                  绑定环境
+                </Button>
+              </div>
+            )
+          }
         </Form>
       </div>
       <div style={{ marginTop: '15px' }}>
@@ -400,7 +404,7 @@ export default function appEnvPageList() {
               <div className="action-cell">
                 {/* <Popconfirm title={`确定要${record.isAppNeedCR ? '关闭' : '开启'}CodeReview吗？`} onConfirm={() => handleDelEnv(record)}> */}
                 <Switch
-                  disabled={record?.proEnvType !== 'benchmark'}
+                  disabled={record?.proEnvType !== 'benchmark' || microFeType === 'subProject'}
                   checked={record?.isAppNeedCR}
                   onChange={() => {
                     switchChange(record);
@@ -416,22 +420,26 @@ export default function appEnvPageList() {
             width={110}
             render={(value, record, index) => (
               <>
-                <Switch className="needApply" onChange={() => handleNeedApplyChange(value, record)} checked={value} />
+                <Switch className="needApply" disabled={microFeType === 'subProject'} onChange={() => handleNeedApplyChange(value, record)} checked={value} />
               </>
             )}
           />
           <Table.Column title="备注" dataIndex="mark" width={180} />
-          <Table.Column
-            title="操作"
-            width={120}
-            render={(_, record: Record<string, any>, index) => (
-              <div className="action-cell">
-                <Popconfirm title="确定要解绑该环境吗？" onConfirm={() => handleDelEnv(record)}>
-                  <a style={{ color: 'red' }}>解绑</a>
-                </Popconfirm>
-              </div>
-            )}
-          />
+          {
+            microFeType !== 'subProject' && (
+              <Table.Column
+                title="操作"
+                width={120}
+                render={(_, record: Record<string, any>, index) => (
+                  <div className="action-cell">
+                    <Popconfirm title="确定要解绑该环境吗？" onConfirm={() => handleDelEnv(record)}>
+                      <a style={{ color: 'red' }}>解绑</a>
+                    </Popconfirm>
+                  </div>
+                )}
+              />
+            )
+          }
         </Table>
       </div>
     </ContentCard>
