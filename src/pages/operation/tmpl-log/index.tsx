@@ -59,7 +59,15 @@ export default function Operation() {
       value?.operateTime && value.operateTime[1] ? `${value.operateTime[1].format('YYYY-MM-DD')} 23:59:59` : '';
     let operateTime = startTime + '-' + endTime || '';
     getRequest(APIS.logList, {
-      data: { operator, operateType, startTime, endTime, pageIndex: value.pageIndex, pageSize: value.pageSize },
+      data: {
+        operator,
+        operateType,
+        operateEvent: value?.operateEvent,
+        startTime,
+        endTime,
+        pageIndex: value.pageIndex,
+        pageSize: value.pageSize,
+      },
     })
       .then((res: any) => {
         if (res.success) {
@@ -103,6 +111,9 @@ export default function Operation() {
           }}
         >
           <Form.Item label="操作人:" name="operator">
+            <Input placeholder="请输入"></Input>
+          </Form.Item>
+          <Form.Item label="操作事件:" name="operateEvent">
             <Input placeholder="请输入"></Input>
           </Form.Item>
           <Form.Item label="操作类型:" name="operateType">

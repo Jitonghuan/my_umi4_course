@@ -13,9 +13,18 @@ export const createUserRole = addAPIPrefix('/adminManage/user/role/create');
 export const updateUserRole = addAPIPrefix('/adminManage/user/role/update');
 /* DELETE 5、 删除用户角色 */
 export const deleteUserRole = addAPIPrefix('/adminManage/user/role/delete');
+/* POST 6、 新增用户信息 */
+export const createUser = addAPIPrefix('/adminManage/user/create');
 
 /** 获取应用组数据 */
 export const queryBizData = `${appConfig.apiPrefix}/appManage/group/list`;
 
 /** 查询应用分类数据 */
 export const queryCategoryData = `${appConfig.apiPrefix}/appManage/category/list`;
+
+/* POST 9、  excel批量新增用户 */
+export const importUserExcel = addAPIPrefix('/adminManage/user/excel/import');
+/* GET 10、 导出用户 */
+export const exportUserExcel = addAPIPrefix('/adminManage/user/excel/export');
+/* GET 11、 下载用户信息表模板 */
+export const exportTemplateExcel = addAPIPrefix('/adminManage/user/excel/template');
