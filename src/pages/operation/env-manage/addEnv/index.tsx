@@ -370,7 +370,7 @@ export default function AddEnv(props: EnvEditorProps) {
               <Form.Item
                 label="sourceMapBucket"
                 name="sourceMapBkt"
-                rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
+              // rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
               >
                 <Input style={{ width: 280 }} placeholder="请输入sourceMapBucket" disabled={isDisabled}></Input>
               </Form.Item>
