@@ -100,7 +100,7 @@ export default function AdminList() {
                 setMode('ADD');
               }}
             >
-              新增
+              + 新增
             </Button>
           </Space>
         }

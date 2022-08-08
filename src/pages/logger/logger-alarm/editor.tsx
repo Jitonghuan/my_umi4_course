@@ -4,7 +4,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { Form, Drawer, Input, Select, Button, message, Radio, InputNumber, TimePicker, Alert } from 'antd';
-import {getRequest, postRequest, putRequest} from '@/utils/request';
+import { getRequest, postRequest, putRequest } from '@/utils/request';
+import { FormOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import * as APIS from './service';
 import {
@@ -17,9 +18,9 @@ import {
   useLevelOptions,
   useOperatorOptions,
 } from './hooks';
-import {ruleCheckName} from "./service";
-import PromqlEditPreview from "@/pages/monitor/promql-edit-preview";
-import UserSelector from "@/components/user-selector";
+import { ruleCheckName } from './service';
+import PromqlEditPreview from '@/pages/monitor/promql-edit-preview';
+import UserSelector from '@/components/user-selector';
 
 const { Item: FormItem } = Form;
 
@@ -101,7 +102,6 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       name,
     };
 
-    console.log('> AlarmEditor.handleOk: ', submitData);
     if (props.mode === 'ADD') {
       await postRequest(APIS.createRule, {
         data: submitData,
@@ -120,17 +120,17 @@ export default function AlarmEditor(props: AlarmEditorProps) {
     props.onSave?.();
   };
 
-  async function checkName () {
+  async function checkName() {
     if (name && name !== props.initData?.name) {
       await getRequest(ruleCheckName, {
         data: {
-          name
-        }
-      })
+          name,
+        },
+      });
     }
   }
 
-  async function getParams () {
+  async function getParams() {
     const value = await field.getFieldsValue();
     setInitData(value);
   }
@@ -159,12 +159,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
 
       <Form form={field} labelCol={{ flex: '132px' }} wrapperCol={{ span: 16 }}>
         <FormItem label="告警名称" name="name" rules={[{ required: true, message: '请输入告警名称' }]}>
-          <Input
-            placeholder="请输入"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onBlur={checkName}
-          />
+          <Input placeholder="请输入" value={name} onChange={(e) => setName(e.target.value)} onBlur={checkName} />
         </FormItem>
         <FormItem label="应用名" name="appCode" rules={[{ required: true, message: '请选择应用' }]}>
           <Select
@@ -175,11 +170,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             showSearch
           />
         </FormItem>
-        <FormItem
-          label="应用环境"
-          name="envCode"
-          rules={[{ required: true, message: '请选择应用环境' }]}
-        >
+        <FormItem label="应用环境" name="envCode" rules={[{ required: true, message: '请选择应用环境' }]}>
           <Select
             placeholder="请选择"
             options={envOptions}
@@ -195,20 +186,30 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           <Select placeholder="请选择" options={ruleIndexOptions} />
         </FormItem>
         <FormItem label="告警表达式" required={true}>
-          <FormItem
-            noStyle
-            name="expression"
-            rules={[{ required: true, message: '请输入告警表达式' }]}
-          >
+          <FormItem noStyle name="expression" rules={[{ required: true, message: '请输入告警表达式' }]}>
             <Input.TextArea
-              onMouseDown={() => {
-                void getParams();
-                setVisible(true);
-              }}
+              disabled={true}
+              // onMouseDown={() => {
+              //   void getParams();
+              //   setVisible(true);
+              // }}
+
               placeholder={`例: d1: "abc" AND d2: "xyz"`}
-              style={{ marginBottom: 8 }}
+              style={{ marginBottom: 8, width: 470 }}
             />
           </FormItem>
+          {!disableEdit && (
+            <span style={{ marginBottom: 10, marginLeft: 2 }}>
+              <FormOutlined
+                style={{ fontSize: 20, color: '#6495ED' }}
+                onClick={() => {
+                  void getParams();
+                  setVisible(true);
+                }}
+              />
+            </span>
+          )}
+
           <Input.Group compact>
             <FormItem
               noStyle
@@ -218,11 +219,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             >
               <Select options={operationOptions} style={{ width: 80 }} />
             </FormItem>
-            <FormItem
-              noStyle
-              name="numberEvents"
-              rules={[{ required: true, message: '请输入告警阈值' }]}
-            >
+            <FormItem noStyle name="numberEvents" rules={[{ required: true, message: '请输入告警阈值' }]}>
               <Input placeholder="阈值" style={{ width: 200 }} />
             </FormItem>
           </Input.Group>
@@ -235,11 +232,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             <Input style={{ width: 60 }} value="分钟" disabled />
           </Input.Group>
         </FormItem>
-        <FormItem
-          label="告警消息"
-          name="message"
-          rules={[{ required: true, message: '请输入告警消息' }]}
-        >
+        <FormItem label="告警消息" name="message" rules={[{ required: true, message: '请输入告警消息' }]}>
           <Input.TextArea placeholder="请输入告警消息" />
         </FormItem>
         <FormItem
@@ -250,10 +243,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
         >
           <Select placeholder="请选择" options={levelOptions} />
         </FormItem>
-        <FormItem
-          label="通知对象"
-          name="receiver"
-        >
+        <FormItem label="通知对象" name="receiver">
           <UserSelector />
         </FormItem>
         <FormItem label="是否静默" name="silence" initialValue={'0'}>
@@ -266,18 +256,10 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           {({ getFieldValue }) =>
             getFieldValue('silence') === '1' ? (
               <FormItem label="静默范围">
-                <FormItem
-                  noStyle
-                  name="silenceStart"
-                  rules={[{ required: true, message: '请选择静默开始时间' }]}
-                >
+                <FormItem noStyle name="silenceStart" rules={[{ required: true, message: '请选择静默开始时间' }]}>
                   <TimePicker format="HH:mm" placeholder="开始时间" style={{ marginRight: 8 }} />
                 </FormItem>
-                <FormItem
-                  noStyle
-                  name="silenceEnd"
-                  rules={[{ required: true, message: '请选择静默结束时间' }]}
-                >
+                <FormItem noStyle name="silenceEnd" rules={[{ required: true, message: '请选择静默结束时间' }]}>
                   <TimePicker format="HH:mm" placeholder="结束时间" />
                 </FormItem>
               </FormItem>
@@ -288,21 +270,19 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           <Input />
         </FormItem>
       </Form>
-      {
-        visible && (
-          <PromqlEditPreview
-            visible={visible}
-            initData={initData}
-            onClose={() => setVisible(false)}
-            onConfirm={(str: string) => {
-              setVisible(false);
-              field.setFieldsValue({
-                expression: str
-              })
-            }}
-          />
-        )
-      }
+      {visible && (
+        <PromqlEditPreview
+          visible={visible}
+          initData={initData}
+          onClose={() => setVisible(false)}
+          onConfirm={(str: string) => {
+            setVisible(false);
+            field.setFieldsValue({
+              expression: str,
+            });
+          }}
+        />
+      )}
     </Drawer>
   );
 }

@@ -94,15 +94,15 @@ const FunctionCom: React.FC = () => {
           // defaultPageSize: 20,
         }}
         extraNode={
-          <Space>
+          <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            <h3>发布计划列表</h3>
             <Button
               type="primary"
-              ghost
               onClick={() => {
                 history.push('./plan/addConfigModify');
               }}
             >
-              新增发布计划
+              + 新增发布计划
             </Button>
           </Space>
         }

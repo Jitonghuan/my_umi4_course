@@ -101,7 +101,7 @@ const FunctionCom: React.FC = () => {
         extraNode={
           <>
             <Button type="primary" onClick={() => history.push('./function/addFunction')}>
-              新增发布功能
+              + 新增发布功能
             </Button>
             <Button
               type="primary"
