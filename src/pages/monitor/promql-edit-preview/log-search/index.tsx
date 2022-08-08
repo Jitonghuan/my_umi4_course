@@ -1,18 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Form,
-  Select,
-  Button,
-  Input,
-  Spin,
-  DatePicker,
-  Collapse,
-  Popover,
-  List,
-  Skeleton,
-  Divider,
-  Tabs,
-} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Select, Button, Input, Spin, DatePicker, Collapse, Popover, List, Skeleton, Divider, Tabs } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -57,9 +44,9 @@ export default function LoggerSearch(props: any) {
     loadMoreData({
       envCode: initData.envCode,
       indexMode: initData.index,
-      querySql: initData.expression
+      querySql: initData.expression,
     });
-  }, [initData])
+  }, [initData]);
 
   // 时间改变
   const onTimeChange = (value: any) => {
@@ -93,7 +80,7 @@ export default function LoggerSearch(props: any) {
         querySql,
         indexMode: logStore,
         envCode: envCode || props.envCode,
-        ...param || {},
+        ...(param || {}),
       },
     })
       .then((resp) => {
@@ -136,7 +123,7 @@ export default function LoggerSearch(props: any) {
   const resetQueryInfo = () => {
     setQuerySql('');
     loadMoreData({
-      querySql: ''
+      querySql: '',
     });
   };
   // 无限滚动下拉事件
@@ -247,9 +234,10 @@ export default function LoggerSearch(props: any) {
                   </Button>
                 </Popover>
                 <Form.Item>
-                  <Input
+                  <Input.TextArea
                     placeholder={`例: d1: "abc" AND d2: "xyz"`}
                     allowClear
+                    autoSize
                     value={querySql}
                     onChange={(e) => {
                       setQuerySql(e.target.value);
@@ -359,10 +347,7 @@ export default function LoggerSearch(props: any) {
                                         </p>
                                       ) : (
                                         <p className="tab-header">
-                                          <span
-                                            className="tab-left"
-                                            dangerouslySetInnerHTML={{ __html: `${key}:` }}
-                                          />
+                                          <span className="tab-left" dangerouslySetInnerHTML={{ __html: `${key}:` }} />
                                           <span
                                             className="tab-right"
                                             dangerouslySetInnerHTML={{

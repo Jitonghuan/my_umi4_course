@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Select, Input, Button, Table, Popconfirm, Tag } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import appConfig from '@/app.config';
 import { delRequest } from '@/utils/request';
 import './index.less';
@@ -187,13 +186,14 @@ export default function NoiseReduction() {
         <Button
           type="primary"
           ghost
+         
           onClick={() => {
             setNoiseDrawer('ADD')
             setInitData(undefined);
           }}
         >
-          <PlusOutlined />
-          新增降噪
+        
+         + 新增降噪
         </Button>
       </div>
 

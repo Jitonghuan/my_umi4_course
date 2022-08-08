@@ -4,7 +4,6 @@
 
 import React, { useMemo, useState, useCallback, useContext } from 'react';
 import { Button, message, Table, Modal } from 'antd';
-import { PlusOutlined, ExclamationOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';
 import { FeContext } from '@/common/hooks';
@@ -83,8 +82,7 @@ export default function ApplicationList() {
               setCreateAppVisible(true);
             }}
           >
-            <PlusOutlined />
-            新增应用
+            + 新增应用
           </Button>
         </div>
         <Table

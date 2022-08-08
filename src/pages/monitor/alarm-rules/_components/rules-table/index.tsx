@@ -217,7 +217,7 @@ export default function RulesTable(props: RulesTableProps) {
               setDrawerTitle('新增报警规则');
             }}
           >
-            +新增报警规则
+            + 新增报警规则
           </Button>
         </div>
       </div>
@@ -228,7 +228,7 @@ export default function RulesTable(props: RulesTableProps) {
           ...dataSource.pageInfo,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
-          onChange: (page, pageSize) => onQuery({pageIndex: page, pageSize})
+          onChange: (page, pageSize) => onQuery({ pageIndex: page, pageSize }),
         }}
       />
       <TemplateDrawer
