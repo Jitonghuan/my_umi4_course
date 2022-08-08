@@ -199,9 +199,9 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             />
           </FormItem>
           {!disableEdit && (
-            <span style={{ marginBottom: 10, marginLeft: 2 }}>
+            <span style={{ marginBottom: 40, marginLeft: 2, display: 'inline-block', height: '100%' }}>
               <FormOutlined
-                style={{ fontSize: 20, color: '#6495ED' }}
+                style={{ fontSize: 18, color: '#6495ED' }}
                 onClick={() => {
                   void getParams();
                   setVisible(true);
