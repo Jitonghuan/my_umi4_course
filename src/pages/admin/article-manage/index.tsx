@@ -106,7 +106,6 @@ export default function AdminList() {
             <h3>列表</h3>
             <Button
               type="primary"
-              ghost
               onClick={() => {
                 setMode('ADD');
               }}

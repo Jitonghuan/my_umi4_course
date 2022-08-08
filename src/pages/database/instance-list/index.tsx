@@ -1,7 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { Button, Table, Form, Input, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import { createTableColumns, instanceTypeOption } from './schema';
@@ -145,8 +144,7 @@ export default function InstanceList() {
                 setMode('ADD');
               }}
             >
-              <PlusOutlined />
-              新实例接入
+              + 新实例接入
             </Button>
           </div>
         </div>

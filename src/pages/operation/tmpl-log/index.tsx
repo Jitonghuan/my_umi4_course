@@ -13,7 +13,6 @@ import { getRequest } from '@/utils/request';
 export default function Operation() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [searchParams, setSearchParams] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [detailItem, setDetailItem] = useState<any>();
   const [pageTotal, setPageTotal] = useState<number>();
@@ -124,6 +123,11 @@ export default function Operation() {
         </Form>
       </FilterCard>
       <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>操作记录列表</h3>
+          </div>
+        </div>
         <Table
           rowKey="id"
           bordered

@@ -108,7 +108,7 @@ export default function ComponentTmpl() {
           </div>
           <div className="caption-right">
             <Button type="primary" onClick={() => setTmplEditMode('ADD')}>
-              新增组件模版
+              + 新增组件模版
             </Button>
           </div>
         </div>

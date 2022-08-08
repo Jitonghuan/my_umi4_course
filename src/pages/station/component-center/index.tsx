@@ -28,9 +28,9 @@ export default function ComponentCenter() {
   const [curProductLine, setCurProductLine] = useState<string>('');
   const [queryParams, setQueryParams] = useState<any>({});
   const pageTypes: any = {
-    app: { text: '应用组件接入' },
-    middleware: { text: '中间件组件接入' },
-    sql: { text: '基础数据接入' },
+    app: { text: '+ 应用组件接入' },
+    middleware: { text: '+ 中间件组件接入' },
+    sql: { text: '+ 基础数据接入' },
   };
   const getCurProductLine = (value: string) => {
     setCurProductLine(value);

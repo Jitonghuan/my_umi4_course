@@ -92,10 +92,9 @@ export default function AdminList() {
         }}
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <h3>列表</h3>
+            <h3>消息列表</h3>
             <Button
               type="primary"
-              ghost
               onClick={() => {
                 setMode('ADD');
               }}
