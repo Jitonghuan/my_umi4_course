@@ -8,7 +8,6 @@ import { EnvEditData } from '../env-list/index';
 import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
 import { envTypeCodeOptions, envTypeOptions } from './schema';
 import './index.less';
-import { parseParam } from '@/common/util';
 export interface EnvEditorProps {
   mode?: EditorMode;
   initData?: EnvEditData;
@@ -82,7 +81,7 @@ export default function AddEnv(props: EnvEditorProps) {
         isBlock: isBlockChecked,
         useNacos: nacosChecked,
         needApply: needApplyChecked,
-        envCode: initData?.envCode.includes('fe-') ? initData?.envCode.slice(3) : initData?.envCode,
+        envCode: initData?.envCode,
       });
       setCurEnvType(initData?.envModel);
     }
@@ -160,7 +159,7 @@ export default function AddEnv(props: EnvEditorProps) {
         postRequest(createEnv, {
           data: {
             ...params,
-            envCode: curEnvType === 'fe-exclusive' ? `fe-${params?.envCode}` : params?.envCode,
+            envCode: params?.envCode,
 
             isBlock: isBlockChangeOption,
             useNacos: checkedOption,
@@ -194,7 +193,7 @@ export default function AddEnv(props: EnvEditorProps) {
           data: {
             ...params,
             // envCode: `fe-${params?.envCode}`,
-            envCode: curEnvType === 'fe-exclusive' ? `fe-${params?.envCode}` : params?.envCode,
+            envCode: params?.envCode,
             useMinio: undefined,
             bucketName: undefined,
             sourceMapBkt: undefined,
@@ -251,8 +250,8 @@ export default function AddEnv(props: EnvEditorProps) {
               <Input style={{ width: 220 }} placeholder="请输入环境名" disabled={isDisabled}></Input>
             </Form.Item>
           </div>
-          <div>
-            {curEnvType === 'fe-exclusive' ? (
+          {/* <div> */}
+          {/* {curEnvType === 'fe-exclusive' ? (
               <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
                 <Input
                   addonBefore="fe-"
@@ -262,16 +261,16 @@ export default function AddEnv(props: EnvEditorProps) {
                   disabled={mode !== 'EDIT' ? isDisabled : editEnvCode}
                 ></Input>
               </Form.Item>
-            ) : (
-              <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input
-                  style={{ width: 220 }}
-                  placeholder="请输入环境CODE"
-                  disabled={mode !== 'EDIT' ? isDisabled : editEnvCode}
-                ></Input>
-              </Form.Item>
-            )}
-          </div>
+            ) : ( */}
+          <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input
+              style={{ width: 220 }}
+              placeholder="请输入环境CODE"
+              disabled={mode !== 'EDIT' ? isDisabled : editEnvCode}
+            ></Input>
+          </Form.Item>
+          {/* )} */}
+          {/* </div> */}
           <Form.Item label="当前环境：">
             <Tag color="geekblue">基准环境</Tag>
           </Form.Item>
@@ -370,7 +369,7 @@ export default function AddEnv(props: EnvEditorProps) {
               <Form.Item
                 label="sourceMapBucket"
                 name="sourceMapBkt"
-              // rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
+                // rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
               >
                 <Input style={{ width: 280 }} placeholder="请输入sourceMapBucket" disabled={isDisabled}></Input>
               </Form.Item>
