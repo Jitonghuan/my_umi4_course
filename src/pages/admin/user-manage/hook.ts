@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
 import * as APIS from './service';
-
+import { CreateUserProps, CreateUserRoleProps } from './types';
 import { message } from 'antd';
 
 //删除用户角色
@@ -50,12 +50,9 @@ export function useUpdateUser(): [
 }
 
 //新增用户角色
-export function useCreateUserRole(): [
-  boolean,
-  (paramsObj: { id: number; groupCode: string; categoryCode: string; role: string }) => Promise<void>,
-] {
+export function useCreateUserRole(): [boolean, (paramsObj: CreateUserRoleProps) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
-  const createUserRole = async (paramsObj: { id: number; groupCode: string; categoryCode: string; role: string }) => {
+  const createUserRole = async (paramsObj: CreateUserRoleProps) => {
     setLoading(true);
     await postRequest(`${APIS.createUserRole}`, { data: paramsObj })
       .then((result) => {
@@ -71,6 +68,27 @@ export function useCreateUserRole(): [
   };
 
   return [loading, createUserRole];
+}
+//createUser
+//新增用户
+export function useCreateUser(): [boolean, (paramsObj: CreateUserProps) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const createUser = async (paramsObj: CreateUserProps) => {
+    setLoading(true);
+    await postRequest(`${APIS.createUser}`, { data: paramsObj })
+      .then((result) => {
+        if (result?.success) {
+          message?.success('新增用户成功！');
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, createUser];
 }
 
 //更新用户角色
