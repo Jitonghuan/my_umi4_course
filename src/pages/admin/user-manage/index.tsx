@@ -115,7 +115,7 @@ export default function UserManage() {
                 className="downloadButton"
                 onClick={() => {
                   message.info('开始导出...');
-                  // setDownLoadDisabled(true);
+                  setDownLoadDisabled(true);
                   setTimeout(() => {
                     setDownLoadDisabled(false);
                   }, 3000);
