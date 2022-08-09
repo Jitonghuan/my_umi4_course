@@ -7,6 +7,7 @@ import Announcement from './announcement';
 import Docs from './docs';
 import React, { useState, useEffect } from 'react';
 import { useGetInfoList } from '../workplace/hook';
+import { Tag } from 'antd';
 import { Link, Card, Typography, Spin, Drawer, Modal, List } from '@arco-design/web-react';
 import styles from './style/index.module.less';
 import favicon from '@/assets/imgs/logo6.png';
@@ -65,6 +66,7 @@ function Workplace() {
                           setVisible(true);
                         }}
                       >
+                        {item?.priority === 1 ? <Tag color="orange" style={{ marginRight: '5px' }}>置顶</Tag> : ''}
                         {item?.title}
                       </span>
                     </div>
