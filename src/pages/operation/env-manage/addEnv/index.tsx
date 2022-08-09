@@ -240,7 +240,7 @@ export default function AddEnv(props: EnvEditorProps) {
           </Form.Item>
           <Form.Item label="环境类型：" name="envModel" rules={[{ required: true, message: '这是必填项' }]}>
             <Radio.Group
-              disabled={mode !== 'EDIT' ? isDisabled : editEnvCode}
+              disabled={isDisabled}
               options={envTypeOptions}
               onChange={(e) => setCurEnvType(e.target.value)}
             />
