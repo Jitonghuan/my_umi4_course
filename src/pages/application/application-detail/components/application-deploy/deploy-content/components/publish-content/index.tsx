@@ -72,7 +72,6 @@ export default function PublishContent(props: IProps) {
       title: '确定要重新提交吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        debugger;
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
         return reCommit({
           id: metadata.id,

@@ -3,7 +3,8 @@
 // @create 2021/08/25 09:23
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal } from 'antd';
+import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal, Tag } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import DebounceSelect from '@/components/debounce-select';
 import UserSelector, { stringToList } from '@/components/user-selector';
@@ -139,9 +140,48 @@ export default function ApplicationEditor(props: IProps) {
     setCategoryCode(next);
     form.resetFields(['appGroupCode']);
   }, []);
-
+  const confirm = () => {
+    Modal.confirm({
+      title: '修改应用部署名提示',
+      width: '50%',
+      icon: <ExclamationCircleOutlined />,
+      okButtonProps: { danger: true },
+      content: (
+        <div className="modify-confirm-content">
+          <Divider />
+          <h3>检测到应用部署名称已修改：</h3>
+          <p>
+            旧的应用部署名称：<Tag color="cyan">dubbo-1</Tag>
+          </p>
+          <p>
+            新的应用部署名称：<Tag color="green">dubbo-2</Tag>
+          </p>
+          <p>
+            影响环境：<Tag color="pink">hbos-dev</Tag>&nbsp;<Tag color="pink">hbos-test</Tag>
+          </p>
+          <p>
+            系统会将上述环境中旧应用部署名称
+            <b>
+              <i>（dubbo-1）</i>
+            </b>
+            部署的服务全部下线， 并在上述环境中以新应用部署名称
+            <b>
+              <i>（dubbo-2）</i>
+            </b>
+            重新部署服务,
+            <br />
+            部署期间服务将出现短暂不可用，请注意观察应用的部署信息!
+          </p>
+        </div>
+      ),
+      okText: '确认修改',
+      cancelText: '取消',
+    });
+  };
   // 提交数据
   const handleSubmit = useCallback(async () => {
+    confirm();
+    return;
     const values = await form.validateFields();
     const { ownerList, ...others } = values;
 
@@ -458,8 +498,8 @@ export default function ApplicationEditor(props: IProps) {
                           // @ts-ignore
                           filterOption: (input, option) => {
                             return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                          }
-                        }
+                          },
+                        },
                       },
                     ]}
                     limit={30}
