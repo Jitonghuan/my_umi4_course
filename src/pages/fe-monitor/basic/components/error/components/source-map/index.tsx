@@ -23,9 +23,10 @@ const SourceMapModal = (props: IProps) => {
     let fileList = newFilePath[0].split('//')[1].split('/');
     fileList.shift();
 
-    const d3 = param?.d3.split(':');
+    let d3 = param?.d3?.replace(/^:/,"") || '';
+    d3 = d3.split(':');
 
-    if (!d3[1] || !d3[2]) {
+    if (!d3[0] || !d3[1]) {
       return message.error('没有错误行列号');
     }
     setLoading(true);
@@ -36,8 +37,8 @@ const SourceMapModal = (props: IProps) => {
       // errorLine: 1,
       // errorColumn: 2220
       envCode,
-      errorLine: d3[1],
-      errorColumn: d3[2],
+      errorLine: d3[0],
+      errorColumn: d3[1],
       filePath: '/hbos-A/' + fileList.join('/') + '.map'
     })
     setLoading(false);
