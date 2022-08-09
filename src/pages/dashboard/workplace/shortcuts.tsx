@@ -14,6 +14,7 @@ import {
   IconSearch,
   IconMindMapping,
   IconTool,
+  IconPlus
 } from '@arco-design/web-react/icon';
 import { Modal } from 'antd';
 import styles from './style/shortcuts.module.less';
@@ -30,23 +31,23 @@ function Shortcuts() {
     getMyEntryMenuList();
   }, []);
   const IconMap: any = {
-    IconFile: <IconFile style={{ fontSize: 28 }} />,
-    IconStorage: <IconStorage style={{ fontSize: 28 }} />,
-    IconSettings: <IconSettings style={{ fontSize: 28 }} />,
-    IconMobile: <IconMobile style={{ fontSize: 28 }} />,
-    IconFire: <IconFire style={{ fontSize: 28 }} />,
-    IconSelectAll: <IconSelectAll style={{ fontSize: 28 }} />,
-    IconEmail: <IconEmail style={{ fontSize: 28 }} />,
-    IconCalendar: <IconCalendar style={{ fontSize: 28 }} />,
-    IconSearch: <IconSearch style={{ fontSize: 28 }} />,
-    IconMindMapping: <IconMindMapping style={{ fontSize: 28 }} />,
-    IconTool: <IconTool style={{ fontSize: 28 }} />,
+    IconFile: <IconFile style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconStorage: <IconStorage style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconSettings: <IconSettings style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconMobile: <IconMobile style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconFire: <IconFire style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconSelectAll: <IconSelectAll style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconEmail: <IconEmail style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconCalendar: <IconCalendar style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconSearch: <IconSearch style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconMindMapping: <IconMindMapping style={{ fontSize: 28, color: 'EDA542' }} />,
+    IconTool: <IconTool style={{ fontSize: 40, color: 'c3c9d8' }} />,
   };
 
   function onClickShortcut(key: any) {
     window.open(`/matrix/${key}`, '_blank');
   }
-  const handleSubmit = () => {};
+  const handleSubmit = () => { };
   const handleDelete = (item: any) => {
     Modal.confirm({
       title: '操作提示',
@@ -134,8 +135,7 @@ function Shortcuts() {
         </div>
       </Modal>
 
-      <Card style={{ height: '100%', overflow: 'hidden', boxSizing: 'border-box' }}>
-        <Typography.Title
+      {/* <Typography.Title
           heading={6}
           style={{ marginTop: 0, paddingLeft: 6, display: 'flex', justifyContent: 'space-between' }}
         >
@@ -148,27 +148,31 @@ function Shortcuts() {
           >
             管理快捷入口
           </Link>
-        </Typography.Title>
-        {myEntrySource[1]?.length !== 0 ? (
-          <Space style={{ display: 'flex' }}>
-            {myEntrySource[1]?.map((shortcut: any, index: number) => (
-              <div className={styles.item} key={index}>
-                <div className={styles.icon} onClick={() => onClickShortcut(shortcut.url)}>
+        </Typography.Title> */}
+      {myEntrySource[1]?.length !== 0 ? (
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {myEntrySource[1]?.map((shortcut: any, index: number) => (
+            <div>
+              <div className={`styles.item icon-item`} key={index} style={{}}>
+                <div onClick={() => onClickShortcut(shortcut.url)}>
                   {IconMap[shortcut.icon]}
                 </div>
-                <div className={styles.title}>{shortcut.label}</div>
               </div>
-            ))}
-          </Space>
-        ) : (
-          <div className="empty-toolip">
-            <Empty
-              imgSrc="//p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a0082b7754fbdb2d98a5c18d0b0edd25.png~tplv-uwbnlip3yd-webp.webp"
-              description="您暂无收藏的快捷入口哦～快去收藏吧！"
-            />
+              <div className={styles.title} style={{ marginTop: '10px' }}>{shortcut.label}</div>
+            </div>
+          ))}
+          <div className={styles.item} style={{ backgroundColor: 'white', borderRadius: '10px', height: '48px', width: '48px' }}>
+            <IconPlus onClick={() => { setVisible(true) }} />
           </div>
-        )}
-      </Card>
+        </div>
+      ) : (
+        <div className="empty-toolip">
+          <Empty
+            imgSrc="//p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a0082b7754fbdb2d98a5c18d0b0edd25.png~tplv-uwbnlip3yd-webp.webp"
+            description={<>您暂无收藏的快捷入口哦～快去<a onClick={() => { setVisible(true); }}>收藏</a>吧！</>}
+          />
+        </div>
+      )}
     </>
   );
 }

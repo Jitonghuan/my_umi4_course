@@ -82,21 +82,21 @@ export default function Layout(props: any) {
     const res = await getMatrixEnvConfig();
     let infoSource = window.location.href?.includes('gushangke')
       ? {
-          curEnvType: 'gushangke',
-          locationHref: 'gushangke',
-          domainName: 'http://c2f.apex.gushangke.com',
-          wsPrefixName: 'ws://matrix-api.gushangke.com',
-          LogoName: '--富阳骨伤',
-          waterMarkName: '富阳骨伤',
-        }
+        curEnvType: 'gushangke',
+        locationHref: 'gushangke',
+        domainName: 'http://c2f.apex.gushangke.com',
+        wsPrefixName: 'ws://matrix-api.gushangke.com',
+        LogoName: '--富阳骨伤',
+        waterMarkName: '富阳骨伤',
+      }
       : {
-          curEnvType: res?.curEnvType,
-          locationHref: res?.locationHref,
-          domainName: res?.domainName,
-          wsPrefixName: res?.wsPrefixName,
-          LogoName: res?.LogoName,
-          waterMarkName: res?.waterMarkName,
-        };
+        curEnvType: res?.curEnvType,
+        locationHref: res?.locationHref,
+        domainName: res?.domainName,
+        wsPrefixName: res?.wsPrefixName,
+        LogoName: res?.LogoName,
+        waterMarkName: res?.waterMarkName,
+      };
     setMatrixConfigInfo(infoSource);
     // @ts-ignore
     window.matrixConfigData = res || {
@@ -213,6 +213,15 @@ export default function Layout(props: any) {
                   isOpenPermission: appConfig.isOpenPermission,
                   permissionData,
                   IconMap,
+                  inlineIndent: 22,
+                  platInfo: {
+                    title: 'test',
+                    subTitle: 'test',
+                    // logo: require("../../public/logo.png")
+                  },
+                  width: 172,
+                  // backgroundImage: require("@/assets/side-bg.png")
+
                 }}
                 showHeader={!isPageInIFrame()}
                 showSiderMenu={!isPageInIFrame()}
@@ -222,18 +231,18 @@ export default function Layout(props: any) {
                   userApi: matrixConfigInfo?.domainName
                     ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
                     : window.location.href?.includes('gushangke')
-                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
-                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
+                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
                   logoutApi: matrixConfigInfo?.domainName
                     ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
                     : window.location.href?.includes('gushangke')
-                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
-                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
+                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
                   loginUrl: matrixConfigInfo?.domainName
                     ? `${matrixConfigInfo?.domainName}/login`
                     : window.location.href?.includes('gushangke')
-                    ? 'http://c2f.apex.gushangke.com/login'
-                    : `${matrixConfigInfo?.domainName}/login`,
+                      ? 'http://c2f.apex.gushangke.com/login'
+                      : `${matrixConfigInfo?.domainName}/login`,
                   onClickPosition: () => {
                     setPosVisible(true);
                     // @ts-ignore
