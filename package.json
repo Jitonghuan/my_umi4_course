@@ -88,7 +88,6 @@
     "react-markdown": "^8.0.3",
     "react-resizable": "^3.0.4",
     "react-tsparticles": "^2.0.6",
-    "source-map": "^0.6.0",
     "tsparticles": "^2.0.6",
     "umi": "~3.5.18",
     "wangeditor-for-react": "^1.5.6",
