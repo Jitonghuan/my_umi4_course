@@ -153,7 +153,7 @@ function Shortcuts() {
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {myEntrySource[1]?.map((shortcut: any, index: number) => (
             <div>
-              <div className={`styles.item icon-item`} key={index} style={{}}>
+              <div className={`${styles.item} icon-item`} key={index}>
                 <div onClick={() => onClickShortcut(shortcut.url)}>
                   {IconMap[shortcut.icon]}
                 </div>
@@ -161,15 +161,15 @@ function Shortcuts() {
               <div className={styles.title} style={{ marginTop: '10px' }}>{shortcut.label}</div>
             </div>
           ))}
-          <div className={styles.item} style={{ backgroundColor: 'white', borderRadius: '10px', height: '48px', width: '48px' }}>
-            <IconPlus onClick={() => { setVisible(true) }} />
+          <div className={`${styles.item} icon-item`} >
+            <IconPlus onClick={() => { setVisible(true); console.log(11) }} />
           </div>
         </div>
       ) : (
         <div className="empty-toolip">
           <Empty
             imgSrc="//p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a0082b7754fbdb2d98a5c18d0b0edd25.png~tplv-uwbnlip3yd-webp.webp"
-            description={<>您暂无收藏的快捷入口哦～快去<a onClick={() => { setVisible(true); }}>收藏</a>吧！</>}
+            description={<>暂无收藏的快捷入口～<p>快去<a onClick={() => { setVisible(true); }}>收藏</a>吧！</p></>}
           />
         </div>
       )}

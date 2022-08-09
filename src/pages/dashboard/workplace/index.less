@@ -87,15 +87,15 @@
     .title{
       font-size: 100px;
       color:#2F70F4 ;
+      font-weight: 800;
     }
     .desc{
       font-size: 15px;
       color:#838a9a;
-      font-weight: 800;
       margin-top: -26px;
       margin-bottom: 30px;
       align-items: center;
-      margin-left: 23px;
+      margin-left: 40px;
     }
    }
   .left-bottom{
@@ -112,8 +112,17 @@
       box-shadow: 1px 4px 6px 0px rgba(190,207,231,0.3);
       border-radius: 8px;
       &-item{
-        line-height: 17px;
+        line-height: 22px;
         margin-top:15px;
+      }
+      &-title{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      &-title:hover{
+        cursor: pointer;
+        color:#1890ff;
       }
     }
     .doc{
@@ -125,13 +134,28 @@
       padding:10px;
       box-shadow: 1px 4px 6px 0px rgba(190,207,231,0.3);
       border-radius: 8px;
+      overflow: auto;
       .doc-item{
         display: flex;
         flex-wrap: wrap;
         line-height: 25px;
         margin-top:15px;
+        max-height: 150px;
+        overflow: auto;
+        &>div{
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          flex-basis: 50%;
+        }
       }
     }
+  }
+  .arco-empty .arco-empty-wrapper{
+    text-align: unset;
+  }
+  .arco-empty .arco-empty-description{
+    margin-left: 20px;
   }
  }
  .right-wrapper{
@@ -141,9 +165,6 @@
   display: flex;
   flex-wrap: wrap;
   position: relative;
-
-  // import earthLight from '@/assets/imgs/earthLight.png';
-  // import earthDark from '@/assets/imgs/earthDark.png';
 
   background-image: url(~@/assets/imgs/earthLight.png);
   &>.tip{
@@ -199,11 +220,6 @@
     bottom: 0;
     
     .img{
-//       import cubeLargeDark from '@/assets/imgs/cube-large-dark.svg';
-// import cubeLargeLight from '@/assets/imgs/cube-large-light.svg';
-// import cubeSmallDark from '@/assets/imgs/cube-small-dark.svg';
-// import cubeSmallLight from '@/assets/imgs/cube-small-light.svg';
-    
       animation-name: spin;
       animation-timing-function: linear;
       animation-duration: 18s;
@@ -231,9 +247,14 @@
   }
  }
  .icon-item{
-  background-color: 'white' !important;
-  border-radius: '10px' !important; 
-  margin-right: '20px' !important; 
+    height: 48px;
+    width: 48px;
+    background-color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    margin-top: 10px;
+    margin-right: 20px;
  }
 }
 // 暗黑模式
@@ -241,10 +262,19 @@ body[matrix-theme='matrixDark'] .all-wrapper{
   * {
     background:unset !important;
   }
+  svg *{
+    color: unset !important;
+  }
   background: rgb(29,28,31) !important;
   img{
     background-color :unset !important;
   }
+  .icon-item{
+    background-color: #373739 !important;
+    svg{
+      color:#EDA542 !important
+    }
+ }
   .left-wrapper{
     background-color :unset !important;
     .left-top{
@@ -257,7 +287,7 @@ body[matrix-theme='matrixDark'] .all-wrapper{
     .left-bottom{
       .announce , .doc{
         box-shadow: unset;
-        background-color: rgb(89 89 90) !important
+        background-color: #373739  !important
       }
     }
   }

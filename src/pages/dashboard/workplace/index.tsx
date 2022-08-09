@@ -19,7 +19,6 @@ import cloudNative from '@/assets/imgs/cloud-native.png';
 import clusterManage from '@/assets/imgs/cluster-manage.png';
 import './index.less';
 
-const mockData = [{ title: 'hahhah', content: '' }, { title: 'hahha哈啊哈哈哈h', content: '' }, { title: '特殊合适的哈的', content: '' }, { title: 'hahhah', content: '' }]
 function Workplace() {
   const [docLoading, docTotal, docData, getInfoList] = useGetInfoList();
   const [loading, total, data, getAnnounce] = useGetInfoList();
@@ -39,7 +38,7 @@ function Workplace() {
   }, []);
 
   return (
-    <div className={styles.wrapper} style={{ height: 'calc(100vh - 60px)' }}>
+    <div className={styles.wrapper} style={{ height: '100%' }}>
       <div className='all-wrapper'>
         {/* 左侧部分 */}
         <div className='left-wrapper'>
@@ -59,50 +58,42 @@ function Workplace() {
               <div className='announce-item'>
                 {data && data.length ? data.slice(0, 2)?.map((item: any) => {
                   return (
-                    <div className="announcement-title" style={{ paddingLeft: 9, marginBottom: 5 }}>
-                      <a
+                    <div className="announce-title">
+                      <span
                         onClick={() => {
                           setCurContent(item.content);
                           setVisible(true);
                         }}
                       >
                         {item?.title}
-                      </a>
+                      </span>
                     </div>
                   );
                 }) : null}
               </div>
-              {total && total > 3 ? (
-                <a
-                  style={{ marginLeft: '9px' }}
-                  onClick={() => {
-                    setModalVisible(true);
-                  }}
-                >
-                  查看更多
-                </a>
+              {total && total > 2 ? (
+                <a onClick={() => { setModalVisible(true) }}>查看更多</a>
               ) : null}
-
             </div>
+
             {/* 文档中心 */}
             <div className='doc'>
               <img src={doc} style={{ marginRight: '10px' }} />文档中心
               <div className='doc-item'>
                 {docData?.map((item: any) => {
                   return (
-                    <div style={{ flexBasis: '50%' }}>
+                    <div>
                       <a href={item.content} target="_blank">
-                        {/* <CarryOutOutlined /> */}
                         {item?.title}
                       </a>
                     </div>
                   );
                 })}
               </div>
-
             </div>
           </div>
         </div >
+
         {/* 右侧部分 */}
         <div className='right-wrapper'>
           <div className="tip"><img src={devlop} alt="" /></div>

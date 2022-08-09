@@ -167,7 +167,7 @@ export default function Layout(props: any) {
     }
   };
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider locale={zhCN} >
       <AllMessage
         mode={allMessageMode}
         allData={stemNoticeListData}
@@ -208,18 +208,27 @@ export default function Layout(props: any) {
               <BasicLayout
                 {...(props as any)}
                 isOpenLogin={true}
+                className='test'
+                layout='LTB'
                 pagePrefix={appConfig.pagePrefix}
                 siderMenuProps={{
                   isOpenPermission: appConfig.isOpenPermission,
                   permissionData,
                   IconMap,
-                  inlineIndent: 22,
-                  platInfo: {
-                    title: 'test',
-                    subTitle: 'test',
-                    // logo: require("../../public/logo.png")
-                  },
-                  width: 172,
+                  title: (
+                    <>
+                      <div className="matrix-title">
+                        <img src={appConfig.logo}
+                          style={{ marginRight: '5px', height: 30, width: 30 }}
+                          onClick={() => {
+                            props.history.push('/matrix/index');
+                          }}
+                        />
+                        <div className='matrix-title-matrix'>{appConfig.title}</div>
+                        <div className='matrix-title-env'>{matrixConfigInfo?.LogoName}</div>
+                      </div>
+                    </>
+                  ),
                   // backgroundImage: require("@/assets/side-bg.png")
 
                 }}
@@ -281,23 +290,21 @@ export default function Layout(props: any) {
                       },
                     },
                   ],
-                  title: (
-                    <>
-                      <div className="matrix-title">
-                        <span>
-                          <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
+                  title: (<></>),
+                  // title: (
+                  //   <>
+                  //     <div className="matrix-title">
+                  //       <span>
+                  //         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
 
-                          {appConfig.title}
-                          {matrixConfigInfo?.LogoName}
-                        </span>
-                      </div>
-                    </>
-                  ),
+                  //         {appConfig.title}
+                  //         {matrixConfigInfo?.LogoName}
+                  //       </span>
+                  //     </div>
+                  //   </>
+                  // ),
                   positionText: '部门',
                   isShowGlobalMenu: false,
-                  onBrandClick: () => {
-                    props.history.push('/matrix/index');
-                  },
                 }}
               />
             )}

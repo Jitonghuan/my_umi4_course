@@ -49,8 +49,9 @@
   display: none;
 }
 .h2o_header-wrapper {
-  background: rgba(0, 5, 10, 0.8) !important;
-  height: 46px;
+  background: #FFFFFF  !important;
+  height: 40px;
+  color:#000000;
   // background: #0a0a0a;
 }
 
@@ -60,7 +61,20 @@
 }
 .matrix-title {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  background-color: #000000;
+  color:white;
+  padding-top: 20px;
+  height: 110px;
+  &-matrix{
+    font-size: 20px;
+    font-weight: 800;
+  }
+  &-env{
+    font-size: 12px;
+  }
 }
 
 .separator {
@@ -77,14 +91,46 @@ element.style {
 }
 .v_basic-layout-wrapper .ant-layout-sider-trigger,
 .ant-layout-sider-trigger {
-  color: #444;
-  background: rgb(226, 226, 226);
+  // color: #444;
+  // background: rgb(226, 226, 226);
+  color:white;
+  background-color: #000000;
+
 }
 
 .ant-layout-sider-children {
   .ant-menu {
-    background: rgb(226, 225, 225);
+    background: #000000;
+    background-image:  url(~@/assets/imgs/side-bg.png);
+    /* background: #e2e1e1; */
+    color: white;
+    // background: rgb(226, 225, 225);
+    &-item{
+      a{
+        color:white
+      }
+    }
   }
 }
-
-// }
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected{
+  background-color: #021646;
+  a{
+    color:#478bd6
+  }
+}
+.h2o_header-wrapper .right-area .user-profile .user .username{
+  color: #000000;
+}
+.h2o_header-wrapper .right-area .user-profile .user .department{
+  color: #000000;
+}
+.h2o_header-wrapper .extension-entry{
+  color:#000000
+}
+.h2o_header-wrapper .notification-badge .notice-icon{
+  color:#000000
+}
+.ant-frameset .ant-frameset-content{
+  margin:0px;
+  box-shadow:unset;
+}
