@@ -1,0 +1,29 @@
+{
+  "name": "my_umi4_course",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "umi dev",
+    "build": "umi build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jitonghuan/my_umi4_course.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jitonghuan/my_umi4_course/issues"
+  },
+  "homepage": "https://github.com/Jitonghuan/my_umi4_course#readme",
+  "dependencies": {
+    "@umijs/plugins": "^4.0.0-rc.20",
+    "umi": "^4.0.0-rc.20"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "typescript": "^4"
+  }
+}
