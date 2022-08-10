@@ -3,7 +3,7 @@
 // @create 2021/07/29 16:06
 
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
-import { Button, Steps, Spin, Result, message } from 'antd';
+import { Button, Steps, Spin, Result, Modal } from 'antd';
 import moment from 'moment';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
@@ -66,6 +66,8 @@ export default function ClusterSyncDetail(props: any) {
   const [resultLog, setResultLog] = useState<string>('');
   const [currState, setCurrState] = useState<ICategory>();
   const resultRef = useRef<HTMLPreElement>(null);
+  const [catchError, setCatchError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<any>('');
 
   const [nextDeployApp, setNextDeployApp] = useState<string>();
 
@@ -124,6 +126,8 @@ export default function ClusterSyncDetail(props: any) {
       return result.data;
     } catch (ex) {
       updateResultLog(`<ERROR> ${ex?.message || 'Server Error'}`);
+      setErrorMessage(`<ERROR> ${ex?.message || 'Server Error'}`);
+      setCatchError(true);
       throw ex;
     } finally {
       setPending(false);
@@ -148,6 +152,7 @@ export default function ClusterSyncDetail(props: any) {
     // 离开时清空缓存
     return () => {
       resultLogCache = '';
+      setCatchError(false);
     };
   }, []);
 
@@ -159,34 +164,74 @@ export default function ClusterSyncDetail(props: any) {
   // 1. get nacos 配置比对
   const configDiff = useCallback(async () => {
     await doAction(getRequest(APIS.configDiff, { data: { envCode: commonEnvCode } }));
-    setCurrState('GetDiffClusterConfig');
+    console.log('catchError1111', catchError, errorMessage);
+    if (catchError) {
+      Modal.error({
+        title: '同步出错！',
+        content: errorMessage,
+      });
+    } else {
+      setCurrState('GetDiffClusterConfig');
+    }
   }, []);
   // 2. Nacos同步
   const syncConfig = useCallback(async () => {
     await doAction(postRequest(APIS.syncConfig, { data: { envCode: commonEnvCode } }));
-    setCurrState('syncClusterConfig');
+    console.log('catchError22222', catchError, errorMessage);
+    if (catchError) {
+      Modal.error({
+        title: '同步出错！',
+        content: errorMessage,
+      });
+    } else {
+      setCurrState('syncClusterConfig');
+    }
   }, []);
   // 3. XXL-Job比对
   const xxlJobDiff = useCallback(async () => {
     await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: commonEnvCode } }));
-    setCurrState('GetDiffXxlJob');
+    console.log('catchError3333', catchError, errorMessage);
+    if (catchError) {
+      Modal.error({
+        title: '同步出错！',
+        content: errorMessage,
+      });
+    } else {
+      setCurrState('GetDiffXxlJob');
+    }
   }, []);
   // 4. XXL-Job同步
   const syncXxlJob = useCallback(async () => {
     await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: commonEnvCode } }));
-    setCurrState('syncXxlJob');
+    console.log('catchError4444', catchError, errorMessage);
+    if (catchError) {
+      Modal.error({
+        title: '同步出错！',
+        content: errorMessage,
+      });
+    } else {
+      setCurrState('syncXxlJob');
+    }
   }, []);
   let nextDeploymentName = '';
   // 5. get cluster app
   const getClusterApp = useCallback(async () => {
     const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: commonEnvCode } }));
-    if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
-      setCurrState('GetDiffClusterApp');
-      setNextDeployApp(nextApp?.deploymentName);
+    console.log('catchError555', catchError, errorMessage);
+    if (catchError) {
+      Modal.error({
+        title: '同步出错！',
+        content: errorMessage,
+      });
     } else {
-      setCurrState('SyncClusterApp');
+      if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
+        setCurrState('GetDiffClusterApp');
+        setNextDeployApp(nextApp?.deploymentName);
+      } else {
+        setCurrState('SyncClusterApp');
+      }
+      nextDeploymentName = nextApp?.deploymentName;
     }
-    nextDeploymentName = nextApp?.deploymentName;
   }, []);
   // 6. deploy app
   const deployApp = useCallback(async () => {
@@ -201,12 +246,28 @@ export default function ClusterSyncDetail(props: any) {
   // 7. 前端资源同步
   const syncFrontendSource = useCallback(async () => {
     await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: commonEnvCode } }));
-    setCurrState('SyncClusterWebSource');
+    console.log('catchError6666', catchError, errorMessage);
+    if (catchError) {
+      Modal.error({
+        title: '同步出错！',
+        content: errorMessage,
+      });
+    } else {
+      setCurrState('SyncClusterWebSource');
+    }
   }, []);
   // 8. finish
   const syncClusterOver = useCallback(async () => {
     await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: commonEnvCode } }));
-    setCurrState('ClusterSyncOver');
+    console.log('catchError7777', catchError, errorMessage);
+    if (catchError) {
+      Modal.error({
+        title: '同步出错！',
+        content: errorMessage,
+      });
+    } else {
+      setCurrState('ClusterSyncOver');
+    }
   }, []);
 
   // 不同的状态对应不同的 step
