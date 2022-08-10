@@ -46,7 +46,7 @@ export default function NodeList() {
       clickTag: (record: any, index: any) => {
         const c = {
           taints: record.taints || [],
-          labels: Object.keys(record.labels || {}).map((k) => ({ key: k, value: record.labels[k] })),
+          labels: Object.keys(record?.labels || {}).map((k) => ({ key: k, value: record.labels[k] })),
         };
         setInitData(record);
         setCluster(c);
