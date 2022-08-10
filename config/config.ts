@@ -14,7 +14,19 @@ export default defineConfig({
   plugins: [
     require.resolve("@umijs/plugins/dist/model"),
     require.resolve("@umijs/plugins/dist/antd"),
+    require.resolve("@alita/plugins/dist/request"),
+    // require.resolve("@umijs/max-plugin-openapi/dist/openapi"),
+    
   ],
+  // openAPI: {
+  //   // 这里使用服务端提供的url
+  //   schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json",
+  //   mock: true,
+  // },
+
+
   model: {},
+  request: {},
   antd: {},
+
 });

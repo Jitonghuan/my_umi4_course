@@ -6,7 +6,7 @@
  * @FilePath: /my_umi4_course/layouts/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { PieChartOutlined, UserOutlined } from "@ant-design/icons";
+import { PieChartOutlined, UserOutlined, TableOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, Result, Button } from "antd";
 import React, { useState, useEffect } from "react";
@@ -25,6 +25,10 @@ const menuHash: any = {
     label: "用户",
     icon: <UserOutlined />,
   },
+  listcard: {
+   label: "卡片列表",
+   icon: <TableOutlined />,
+    },
 };
 
 const unaccessible = ["/hooks", "/useEffect", "/usemodel", "/useState"];
@@ -57,6 +61,7 @@ const routesToMenu = (routes: any[]): MenuItem[] => {
 const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  
   const [collapsed, setCollapsed] = useState(false);
   const { clientRoutes } = useAppData();
   const { children } = clientRoutes[0];
@@ -117,7 +122,7 @@ const App: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          Umi@4 实战小册 Created by JITONGHUAN
+          Umi@4 实战 Created by JITONGHUAN
         </Footer>
       </Layout>
     </Layout>

@@ -2,10 +2,11 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-08-09 15:14:09
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-08-09 15:47:20
+ * @LastEditTime: 2022-08-09 17:45:04
  * @FilePath: /my_umi4_course/README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
+Umi 默认将 @ 映射到项目的 src 目录中
 
 //第一步 ：初始化项目
 npm init -y
@@ -53,4 +54,31 @@ export default defineConfig({
   plugins: [require.resolve("@umijs/plugins/dist/model")],
   model: {},
 });
+----------------------------------------
+12、Umi@4 中要获取页面配置非常的简单，只需要使用 useAppData 即可，它返回全局的应用数据。
+declare function useAppData(): {
+  routes: Record<id, Route>;
+  routeComponents: Record<id, Promise<React.ReactComponent>>;
+  clientRoutes: ClientRoute[];
+  pluginManager: any;
+  rootElement: string;
+  basename: string;
+  clientLoaderData: { [routeKey: string]: any };
+  preloadRoute: (to: string) => void;
+};
+routes 和 clientRoutes 这两个数据都是路由数据，前者是对象，以 pathname 为 key，以 parentId 来标记层级和嵌套关系。后者是一个数组，以 children 来表示树形结构。
+------------------------------------------
+在实际项目开发中我们可以用上 layout 和 access 插件的组合来更合理的完成权限和菜单。
+------------------------------------------
+13、在umi中的useNavigate、useLocation、useAppData、Outlet
+
+
+-------------------------------------------
+14、Mock
+Umi 约定 /mock 目录下的所有文件为 Mock 文件，每一个 mock 文件都会返回一个 default 对象
+Mock 文件默认导出一个对象，而对象的每个 Key 对应了一个 Mock 接口，值则是这个接口所对应的返回数据，
+
+
+
+
 

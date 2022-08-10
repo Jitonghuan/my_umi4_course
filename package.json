@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "umi dev",
+    "openapi": "umi openapi",
     "build": "umi build"
   },
   "repository": {
@@ -19,10 +20,15 @@
   },
   "homepage": "https://github.com/Jitonghuan/my_umi4_course#readme",
   "dependencies": {
-    "@umijs/plugins": "^4.0.0-rc.20",
-    "umi": "^4.0.0-rc.20"
+    "@alita/plugins": "^3.0.9",
+    "@umijs/max-plugin-openapi": "^1.0.5",
+    "@umijs/plugins": "4.0.0",
+    "mockjs": "^1.1.0",
+    "swagger-ui-react": "^4.13.2",
+    "umi": "4.0.0"
   },
   "devDependencies": {
+    "@types/mockjs": "^1.0.6",
     "cross-env": "^7.0.3",
     "typescript": "^4"
   }
