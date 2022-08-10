@@ -17,6 +17,7 @@ import {
   IconPlus
 } from '@arco-design/web-react/icon';
 import { Modal } from 'antd';
+import { EditFilled } from '@ant-design/icons';
 import styles from './style/shortcuts.module.less';
 import { useMyEntryMenuList, useAddMyEntryMenu, useDeleteMyEntryMenu } from './hook';
 import './index.less';
@@ -166,10 +167,11 @@ function Shortcuts() {
           </div>
         </div>
       ) : (
-        <div className="empty-toolip">
+        <div className="empty-toolip flex-column">
+          <div><EditFilled style={{ color: '#2f70f4', marginRight: '10px' }} />快捷入口</div>
           <Empty
             imgSrc="//p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a0082b7754fbdb2d98a5c18d0b0edd25.png~tplv-uwbnlip3yd-webp.webp"
-            description={<>暂无收藏的快捷入口～<p>快去<a onClick={() => { setVisible(true); }}>收藏</a>吧！</p></>}
+            description={<>暂无收藏的快捷入口～快去<a onClick={() => { setVisible(true); }}>收藏</a>吧！</>}
           />
         </div>
       )}

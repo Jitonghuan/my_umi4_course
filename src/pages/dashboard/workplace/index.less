@@ -112,7 +112,7 @@
       box-shadow: 1px 4px 6px 0px rgba(190,207,231,0.3);
       border-radius: 8px;
       &-item{
-        line-height: 22px;
+        line-height: 25px;
         margin-top:15px;
       }
       &-title{
@@ -151,11 +151,18 @@
       }
     }
   }
-  .arco-empty .arco-empty-wrapper{
-    text-align: unset;
+  .arco-empty {
+    margin-top: -15px;
+    .arco-empty-description{
+      margin-left: 20px;
+    }
   }
-  .arco-empty .arco-empty-description{
-    margin-left: 20px;
+  
+  .empty-toolip{
+    background-color:#fff;
+    border-radius: 10px;
+    width: 435px;
+    padding:10px;
   }
  }
  .right-wrapper{
@@ -239,7 +246,7 @@
     }
     &.small{
       // left: 60px;
-      left:5vw;
+      left:4vw;
       bottom: 30px;
       .img{
         background-image: url(~@/assets/imgs/cube-small-light.svg);

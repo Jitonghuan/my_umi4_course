@@ -75,6 +75,7 @@ function Workplace() {
                         }}
                       >
                         {item?.priority === 1 ? <Tag color="orange" style={{ marginRight: '5px' }}>置顶</Tag> : ''}
+                        {inThreeDays(item?.gmtCreate) ? <Tag color="orange" style={{ marginRight: '5px' }}>新</Tag> : ''}
                         {item?.title}
                       </span>
                     </div>
