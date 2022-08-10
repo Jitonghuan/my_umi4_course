@@ -1264,6 +1264,18 @@ export default [
       },
     ],
   },
+  // {
+  //   path: 'demo',
+  //   name: 'demo菜单',
+  //   icon: 'icon-userRecent',
+  //   routes: [
+  //     {
+  //       path: 'demo',
+  //       name: '用户管理',
+  //       key: 'user',
+  //       component: '@/pages/demo/layout-normal',
+  //     },
+  //   ]},
   {
     path: '*',
     name: 'NOT FOUND',
