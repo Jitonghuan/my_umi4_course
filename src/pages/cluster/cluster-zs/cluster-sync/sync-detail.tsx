@@ -66,8 +66,6 @@ export default function ClusterSyncDetail(props: any) {
   const [resultLog, setResultLog] = useState<string>('');
   const [currState, setCurrState] = useState<ICategory>();
   const resultRef = useRef<HTMLPreElement>(null);
-  const [catchError, setCatchError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<any>('');
 
   const [nextDeployApp, setNextDeployApp] = useState<string>();
 
@@ -107,12 +105,6 @@ export default function ClusterSyncDetail(props: any) {
       setPending(true);
       const result = await promise;
       let addon = result?.data;
-      let errorCode=result?.code;
-      if(errorCode===1001){
-        setCatchError(true);
-        setErrorMessage(`<ERROR> ${result?.errorMsg || 'Server Error'}`);
-
-      }
       if (typeof addon === 'object' && 'log' in addon) {
         if (addon?.log === 'null') {
           addon = '';
@@ -132,8 +124,6 @@ export default function ClusterSyncDetail(props: any) {
       return result;
     } catch (ex) {
       updateResultLog(`<ERROR> ${ex?.message || 'Server Error'}`);
-      setErrorMessage(`<ERROR> ${ex?.message || 'Server Error'}`);
-      setCatchError(true);
       throw ex;
     } finally {
       setPending(false);
@@ -158,7 +148,6 @@ export default function ClusterSyncDetail(props: any) {
     // 离开时清空缓存
     return () => {
       resultLogCache = '';
-      setCatchError(false);
     };
   }, []);
 
@@ -219,7 +208,7 @@ export default function ClusterSyncDetail(props: any) {
       if (res?.code===1001) {
         Modal.error({
           title: '同步出错！',
-          content: errorMessage,
+          content: res?.errorMsg,
         });
       } else {
         if (res?.data?.deploymentName && res?.data?.deploymentName !== 'Pass') {
