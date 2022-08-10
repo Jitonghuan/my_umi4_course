@@ -19,6 +19,7 @@ import devops from '@/assets/imgs/devops.png';
 import cloudNative from '@/assets/imgs/cloud-native.png';
 import clusterManage from '@/assets/imgs/cluster-manage.png';
 import './index.less';
+import moment from 'moment';
 
 function Workplace() {
   const [docLoading, docTotal, docData, getInfoList] = useGetInfoList();
@@ -37,6 +38,13 @@ function Workplace() {
       setModalVisible(false);
     };
   }, []);
+
+  const inThreeDays = (currntData: string) => {
+    const nowHs = Date.now();
+    const currentHs = new Date(currntData).getTime();
+    const threeDays = nowHs - (1000 * 60 * 60 * 24 * 3)
+    return threeDays < currentHs && currentHs < nowHs
+  }
 
   return (
     <div className={styles.wrapper} style={{ height: '100%' }}>

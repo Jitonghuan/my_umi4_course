@@ -231,19 +231,24 @@
       
       .img{
         background-image: url(~@/assets/imgs/cube-large-light.svg);
-        width: 428px;
-        height: 426px;
+        background-size: cover;
+        width: 30vw;
+        height: 30vw;
+
       }
     }
     &.small{
-      left: 60px;
+      // left: 60px;
+      left:5vw;
       bottom: 30px;
       .img{
         background-image: url(~@/assets/imgs/cube-small-light.svg);
-        // height: 20%;
-        // height: 20%;
-        width: 259px;
-        height: 257px;
+        // width: 259px;
+        // height: 257px;
+        background-size: cover;
+        width: 20vw;
+        height: 20vw;
+
       }
     }
   }
@@ -301,6 +306,11 @@ body[matrix-theme='matrixDark'] .all-wrapper{
       background-color :unset !important;
     }
   }
+
+  .ant-tag{
+    background-color: #EDA542 !important;
+  }
+
   .right-wrapper .cube.large .img{
     background-color :unset !important;
     background-image: url(~@/assets/imgs/cube-large-dark.svg)  !important;
