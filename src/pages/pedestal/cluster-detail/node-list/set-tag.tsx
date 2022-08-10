@@ -45,7 +45,7 @@ export default function SetTag(props: any) {
         taints = taints.concat(value);
       }
       setLoading(true);
-      nodeUpdate({ labels, taints, clusterCode, nodeName: initData.nodeName })
+      nodeUpdate({ labels, taints, clusterCode, nodeName: initData.nodeName, unschedulable: initData.unschedulable })
         .then((res: any) => {
           if (res?.success) {
             message.success('操作成功！');
