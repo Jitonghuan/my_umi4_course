@@ -168,7 +168,7 @@ function Shortcuts() {
         </div>
       ) : (
         <div className="empty-toolip flex-column">
-          <div><EditFilled style={{ color: '#2f70f4', marginRight: '10px' }} />快捷入口</div>
+          <div><EditFilled style={{ color: '#2f70f4', fontSize: '16px', marginRight: '10px' }} />快捷入口</div>
           <Empty
             imgSrc="//p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a0082b7754fbdb2d98a5c18d0b0edd25.png~tplv-uwbnlip3yd-webp.webp"
             description={<>暂无收藏的快捷入口～快去<a onClick={() => { setVisible(true); }}>收藏</a>吧！</>}
