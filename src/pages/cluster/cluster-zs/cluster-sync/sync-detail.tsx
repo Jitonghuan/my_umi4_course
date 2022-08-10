@@ -107,6 +107,12 @@ export default function ClusterSyncDetail(props: any) {
       setPending(true);
       const result = await promise;
       let addon = result?.data;
+      let errorCode=result?.code;
+      if(errorCode===1001){
+        setCatchError(true);
+        setErrorMessage(`<ERROR> ${result?.errorMsg || 'Server Error'}`);
+
+      }
       if (typeof addon === 'object' && 'log' in addon) {
         if (addon?.log === 'null') {
           addon = '';
