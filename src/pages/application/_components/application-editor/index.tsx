@@ -11,6 +11,7 @@ import UserSelector, { stringToList } from '@/components/user-selector';
 import EditorTable from '@cffe/pc-editor-table';
 import { createApp, updateApp, searchGitAddress, fetchEnvList } from './service';
 import { useAppGroupOptions } from '../../hooks';
+import {getBackendAppResourcesEnv} from './service'
 import {
   appTypeOptions,
   appDevelopLanguageOptions,
@@ -49,6 +50,8 @@ export default function ApplicationEditor(props: IProps) {
   const initData = props.initData ? JSON.parse(JSON.stringify(props.initData)) : {};
   const isEdit = !!initData?.id;
   const [loading, setLoading] = useState(false);
+  const [oldAppDeployName,setOldAppDeployName]=useState<string>("");
+  const [influenceEnvCode,setInfluenceEnvCode]=useState<any>([]);
 
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
@@ -87,6 +90,7 @@ export default function ApplicationEditor(props: IProps) {
     },
     [form],
   );
+  
 
   // 数据回填
   useEffect(() => {
@@ -97,6 +101,15 @@ export default function ApplicationEditor(props: IProps) {
     void getEnvData();
 
     if (isEdit) {
+      if(initData?.appType==="backend"){
+        setOldAppDeployName(initData?.deploymentName)
+        getBackendAppResourcesEnv(initData?.appCode).then((res)=>{
+          setInfluenceEnvCode(res)
+  
+        })
+
+      }
+     
       setCategoryCode(initData?.appCategoryCode);
       if (initData?.customParams) {
         let obj = JSON.parse(initData.customParams);
@@ -141,6 +154,7 @@ export default function ApplicationEditor(props: IProps) {
     form.resetFields(['appGroupCode']);
   }, []);
   const confirm = () => {
+    const newDeploymentName=form.getFieldValue("deploymentName")
     Modal.confirm({
       title: '修改应用部署名提示',
       width: '50%',
@@ -151,22 +165,22 @@ export default function ApplicationEditor(props: IProps) {
           <Divider />
           <h3>检测到应用部署名称已修改：</h3>
           <p>
-            旧的应用部署名称：<Tag color="cyan">dubbo-1</Tag>
+            旧的应用部署名称：<Tag color="cyan">{oldAppDeployName}</Tag>
           </p>
           <p>
-            新的应用部署名称：<Tag color="green">dubbo-2</Tag>
+            新的应用部署名称：<Tag color="green">{newDeploymentName}</Tag>
           </p>
           <p>
-            影响环境：<Tag color="pink">hbos-dev</Tag>&nbsp;<Tag color="pink">hbos-test</Tag>
+            影响环境：{influenceEnvCode?.map((item:string)=>{ return<> <Tag color="pink">{item}</Tag>&nbsp; </>})}
           </p>
           <p>
             系统会将上述环境中旧应用部署名称
             <b>
-              <i>（dubbo-1）</i>
+              <i>{oldAppDeployName}</i>
             </b>
-            部署的服务全部下线， 并在上述环境中以新应用部署名称
+            部署的服务全部下线， <br /> 并在上述环境中以新应用部署名称
             <b>
-              <i>（dubbo-2）</i>
+              <i>{newDeploymentName}</i>
             </b>
             重新部署服务,
             <br />
@@ -176,15 +190,13 @@ export default function ApplicationEditor(props: IProps) {
       ),
       okText: '确认修改',
       cancelText: '取消',
+      onOk:()=>{handleSubmit()}
     });
   };
   // 提交数据
   const handleSubmit = useCallback(async () => {
-    confirm();
-    return;
     const values = await form.validateFields();
     const { ownerList, ...others } = values;
-
     const submitData: any = {
       ...others,
       owner: ownerList?.join(',') || '',
@@ -241,7 +253,16 @@ export default function ApplicationEditor(props: IProps) {
       maskClosable={false}
       footer={
         <div className="drawer-footer">
-          <Button type="primary" loading={loading} onClick={handleSubmit}>
+          <Button type="primary" loading={loading} onClick={()=>{
+            const newDeploymentName=form.getFieldValue("deploymentName");
+            if(initData?.appType==="backend"&&newDeploymentName!==oldAppDeployName){
+              confirm();
+            }else{
+              handleSubmit()
+
+            }
+           
+          }}>
             保存
           </Button>
           <Button type="default" onClick={props.onClose}>
