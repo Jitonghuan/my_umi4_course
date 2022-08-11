@@ -105,9 +105,9 @@ export default function Board(props: any) {
   return (
     <>
       <FilterCard>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex' }}>
-            <Form style={{ marginRight: '10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' ,height:30}}>
+          <div style={{ display: 'flex' ,}}>
+            <Form style={{ marginRight: '10px', }}>
               <Form.Item label="集群选择">
                 <Select
                   clearIcon={false}
