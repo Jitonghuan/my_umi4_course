@@ -24,7 +24,10 @@ const BoardDetail = () => {
     setInfo({
       graphName, graphUrl, clusterName
     })
+    
+
   }, [])
+  
 
   return (
     <PageContainer>
@@ -44,8 +47,8 @@ const BoardDetail = () => {
           )}
         </div>
       </div >
-      <div style={{ width: '100%', height: '100%', display: 'block' }}>
-        <iframe className='grafana-iframe' src={info?.graphUrl || ''} />
+      <div style={{ width: '100%', height: '100%', display: 'block' }} className="grafana-iframe-info">
+        <iframe className='grafana-iframe' name="grafana-iframe-detail" src={info?.graphUrl || ''} />
       </div>
     </PageContainer>
   )

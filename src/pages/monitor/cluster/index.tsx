@@ -90,6 +90,7 @@ const Coms = (props: any) => {
     // reset();
     queryNodeList({ clusterId: param });
     queryUseMarket(param);
+    queryNameSpace(param)
   };
 
   // 查询资源使用情况
@@ -566,7 +567,7 @@ const Coms = (props: any) => {
                 Cpu: (value, record) => {
                   return (
                     <Tooltip title={`${value}%`}>
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap", }}>
                       {value}%
                     </span>
                     </Tooltip>
