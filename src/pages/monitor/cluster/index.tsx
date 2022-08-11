@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Tabs, Card, Form, Input, Spin, Select, Divider, Button } from 'antd';
+import { Tabs, Card, Form, Input, Spin, Select, Divider, Button,Tooltip } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
@@ -565,23 +565,29 @@ const Coms = (props: any) => {
                 },
                 Cpu: (value, record) => {
                   return (
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
+                    <Tooltip title={`${value}%`}>
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
                       {value}%
                     </span>
+                    </Tooltip>
                   );
                 },
                 Wss: (value, record) => {
                   return (
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
+                    <Tooltip title={`${value}%`}>
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
                       {value}%
                     </span>
+                    </Tooltip>
                   );
                 },
                 Rss: (value, record) => {
                   return (
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value) }}>
+                    <Tooltip title={`${value}%`}>
+                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
                       {value}%
                     </span>
+                    </Tooltip>
                   );
                 },
                 Disk: (value, record) => {
