@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { Tag, Table, Empty, Button } from 'antd';
-import { ContentCard } from '@/components/vc-page-content';
 import { PodsDetailColumn, envVarTable } from '../schema';
 import { eventTableSchema } from '../../schema';
 import { getResourceList } from '../../service';
 import { RedoOutlined } from '@ant-design/icons';
-
+import clusterContext from '../../context';
 import { history } from 'umi';
 import './index.less';
 
@@ -13,6 +12,7 @@ export default function PodsDetail(props: any) {
   const { location } = props;
   const { name, namespace, kind, clusterCode } = location.query || {};
   const [podsData, setPodsData] = useState([]);
+  const { clusterName } = useContext(clusterContext);
   const [eventData, setEventData] = useState([]);
   const [eventLoading, setEventLoading] = useState<boolean>(false);
   const [podsLoading, setPodsLoading] = useState<boolean>(false);
@@ -33,6 +33,7 @@ export default function PodsDetail(props: any) {
             name,
             namespace: record?.namespace,
             clusterCode,
+            clusterName,
             containerName: record?.name,
           },
         });
@@ -46,6 +47,7 @@ export default function PodsDetail(props: any) {
             name,
             namespace: record?.namespace,
             clusterCode,
+            clusterName,
             containerName: record?.name,
           },
         });
@@ -59,9 +61,12 @@ export default function PodsDetail(props: any) {
     getResourceList({ clusterCode, resourceType: 'pods', namespace, resourceName: name })
       .then((res) => {
         if (res?.success) {
-          const data = (res?.data?.items[0]?.info?.containers || []).map((item: any) => ({
+          const items = res?.data?.items || []
+          const namespace = items.length ? items[0].namespace : "";
+          const dataArray = items.length ? items[0].info?.containers : []
+          const data = (dataArray || []).map((item: any) => ({
             ...item,
-            namespace: res?.data?.items[0]?.namespace || '',
+            namespace: namespace || ''
           }));
           setPodsData(data);
           setContainer(data);

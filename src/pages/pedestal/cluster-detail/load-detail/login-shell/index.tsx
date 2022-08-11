@@ -16,7 +16,7 @@ import './index.less';
 
 export default function ClusteLoginShell(props: any) {
   const [viewLogform] = Form.useForm();
-  const { type, name, namespace, clusterCode, containerName } = props.location.query || {};
+  const { type, name, namespace, clusterCode, containerName, clusterName } = props.location.query || {};
   const { matrixConfigData } = useContext(FeContext);
   const [container, setContainer] = useState<any>([]);
   const [selectContainer, setSelectContainer] = useState<any>('');
@@ -147,7 +147,7 @@ export default function ClusteLoginShell(props: any) {
   // 关闭页面时注销掉监听事件
   useEffect(() => {
     return () => {
-      window.removeEventListener('resize', function () {});
+      window.removeEventListener('resize', function () { });
     };
   }, []);
   const closeSocket = () => {
@@ -194,26 +194,25 @@ export default function ClusteLoginShell(props: any) {
   return (
     // <ContentCard noPadding className="viewLog">
     <div className="loginShell">
-      <div style={{ paddingBottom: '6px', paddingTop: '6px', display: 'flex' }}>
-        <div className="shell-caption">
-          <div className="caption-left">
-            {type !== 'node' && (
-              <Form form={viewLogform} layout="inline">
-                <span style={{ paddingLeft: 12 }}>选择容器： </span>
-                <Form.Item name="containerName">
-                  <Select
-                    style={{ width: 220 }}
-                    options={container}
-                    value={selectContainer}
-                    onChange={selectListContainer}
-                  ></Select>
-                </Form.Item>
-              </Form>
-            )}
+      <div className="flex-space-between" style={{ paddingBottom: '6px', paddingTop: '6px' }}>
+        {type !== 'node' && (
+          <div>
+            <Form form={viewLogform} layout="inline">
+              <span style={{ paddingLeft: 12, lineHeight: '32px' }}>选择容器： </span>
+              <Form.Item name="containerName">
+                <Select
+                  style={{ width: 220 }}
+                  options={container}
+                  value={selectContainer}
+                  onChange={selectListContainer}
+                ></Select>
+              </Form.Item>
+            </Form>
           </div>
-          <div className="caption-right">
-            <span>{/* 当前集群：<Tag color="geekblue">{envCode}</Tag> */}</span>
-          </div>
+        )}
+
+        <div style={{ marginTop: '5px', marginLeft: '10px' }}>
+          当前集群：<Tag color="geekblue">{clusterName}</Tag>
         </div>
       </div>
       <div
