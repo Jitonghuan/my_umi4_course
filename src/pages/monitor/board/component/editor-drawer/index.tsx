@@ -9,6 +9,7 @@ interface IEditorDrawer {
   visible: boolean;
   mode: TMode;
   cluster: number | null | undefined;
+  clusterList:any;
   onClose: () => any;
   boardInfo: any;
   loadGraphTable: () => any
@@ -30,7 +31,7 @@ const createTypeOptions = [
 ]
 
 const EditorDrawer = (props: IEditorDrawer) => {
-  const { visible, mode, cluster, boardInfo, loadGraphTable } = props
+  const { visible, mode, cluster, boardInfo,clusterList, loadGraphTable } = props
   const [formRef] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false)
   const [detail, setDetail] = useState<any>(null)
@@ -78,7 +79,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
       formValue = {
         ...formValue,
         graphUuid: detail.graphUuid,
-        clusterCode: cluster
+        // clusterCode: cluster
       }
       updateGraphTable(formValue, body).then((res) => {
         if (res?.success) {
@@ -92,7 +93,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
     } else if (mode === 'add') {
       formValue = {
         ...formValue,
-        clusterCode: cluster
+        // clusterCode: cluster
       }
       createGraphTable(formValue, body).then((res) => {
         if (res?.success) {
@@ -107,8 +108,9 @@ const EditorDrawer = (props: IEditorDrawer) => {
   }
 
   const onDataSourceTypeChange = async (value: any) => {
+    const clusterCode=formRef.getFieldValue("clusterCode");
     const data = {
-      clusterCode: cluster,
+      clusterCode: clusterCode,
       pageSize: -1,
       dsType: value,
     }
@@ -201,6 +203,14 @@ const EditorDrawer = (props: IEditorDrawer) => {
               }
             }
           />
+        </Form.Item>
+        <Form.Item label="集群选择" name="clusterCode">
+                <Select
+                 showSearch
+                 allowClear
+                 style={{ width: '250px' }}
+                 options={clusterList}
+                />
         </Form.Item>
         <Form.Item label='数据源' name='dsUuid' rules={[{ required: true, message: '请选择数据源!' }]}>
           <Select options={dataSourceOptions} />

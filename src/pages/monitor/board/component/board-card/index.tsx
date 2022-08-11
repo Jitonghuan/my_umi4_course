@@ -159,6 +159,7 @@ export default function Board(props: any) {
           boardInfo={boardInfo}
           cluster={clusterCode}
           visible={editDrawer}
+          clusterList={clusterList}
           mode={mode}
           onClose={onDrawerClose}
           loadGraphTable={loadGraphTable}
