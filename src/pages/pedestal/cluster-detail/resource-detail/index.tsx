@@ -13,10 +13,9 @@ import { useNodeListData } from '../hook';
 import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
 import './index.less';
-import { json } from '_@types_d3-fetch@3.0.1@@types/d3-fetch';
-const mockData = [{ type: 'deployments', kind: 'deployments' }];
 export default function ResourceDetail(props: any) {
   const { location, children } = props;
+  let sessionData = sessionStorage.getItem('cluster_resource_params') || '{}';
   const { clusterCode } = useContext(clusterContext);
   const [visible, setVisble] = useState(false);
   const [form] = Form.useForm();
@@ -26,8 +25,8 @@ export default function ResourceDetail(props: any) {
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [limit, setLimit] = useState<number>(20);
   const [storeParams, setStoreParams] = useState<any>(
-    sessionStorage.getItem('cluster_resource_params')
-      ? JSON.parse(sessionStorage.getItem('cluster_resource_params') || '{}')
+    sessionData && JSON.parse(sessionData)[clusterCode]
+      ? JSON.parse(sessionData)[clusterCode]
       : {},
   );
   const [loading, setLoading] = useState<boolean>(false);
@@ -127,24 +126,27 @@ export default function ResourceDetail(props: any) {
   }, [typeData]);
 
   useEffect(() => {
-    if (nameSpaceData?.length !== 0 && clusterCode && typeData?.length !== 0) {
+    setStoreParams(JSON.parse(sessionData)[clusterCode])
+  }, [clusterCode])
+
+  useEffect(() => {
+    if (nameSpaceData?.length !== 0 && typeData?.length !== 0) {
       form.setFieldsValue({
         namespace: storeParams?.namespace || nameSpaceData[0].value,
         resourceType: storeParams?.resourceType || 'deployments',
         node: storeParams?.node || '',
       });
       setSelectType(storeParams?.resourceType || 'deployments');
-      queryList();
+      queryList(undefined, storeParams);
     }
-  }, [nameSpaceData, clusterCode, typeData]);
+  }, [nameSpaceData, typeData]);
 
   // useEffect(() => {
   //     const interVal = setInterval(() => { initialSearch() }, 1000 * 60)
   //     return () => { clearInterval(interVal) }
   // }, [])
 
-  const queryList = (index = pageIndex) => {
-    const values = form.getFieldsValue();
+  const queryList = (index = pageIndex, values = form.getFieldsValue()) => {
     if (!values.resourceType) {
       return;
     }
@@ -249,14 +251,14 @@ export default function ResourceDetail(props: any) {
         <Form
           layout="inline"
           onFinish={(value) => {
-            sessionStorage.setItem('cluster_resource_params', JSON.stringify(value || {}));
+            sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: value } || {}));
             setStoreParams(value);
             initialSearch();
           }}
           form={form}
           onReset={() => {
             form.setFieldsValue({ resourceType: 'deployments', namespace: '' });
-            sessionStorage.setItem('cluster_resource_params', JSON.stringify(form.getFieldsValue() || {}));
+            sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: form.getFieldsValue() } || {}));
             setSelectType('deployments');
             initialSearch();
           }}
@@ -350,7 +352,7 @@ export default function ResourceDetail(props: any) {
           rowKey="id"
           pagination={false}
           columns={tableColumns}
-          // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}
+        // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}
         ></Table>
         <div className="flex-end" style={{ marginTop: '10px' }}>
           <Page

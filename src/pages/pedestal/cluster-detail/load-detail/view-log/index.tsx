@@ -4,13 +4,9 @@
 
 import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffect } from 'react';
 import { Select, message, Form, Tag, Button, Checkbox } from '@cffe/h2o-design';
-import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
 import appConfig from '@/app.config';
 import { history } from 'umi';
-import { getRequest } from '@/utils/request';
-import DetailContext from '@/pages/application/application-detail/context';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { FeContext } from '@/common/hooks';
 import { getResourceList } from '../../service';
 
@@ -18,7 +14,7 @@ import './index.less';
 
 export default function ViewLog(props: any) {
   const [viewLogform] = Form.useForm();
-  const { name, clusterCode, namespace, containerName } = props?.location?.query || {};
+  const { name, clusterCode, namespace, containerName, clusterName } = props?.location?.query || {};
   const [log, setLog] = useState<string>('');
   const { matrixConfigData } = useContext(FeContext);
   const [container, setContainer] = useState<any>([]);
@@ -84,7 +80,7 @@ export default function ViewLog(props: any) {
     }
   }, [clusterCode, name, namespace]);
 
-  useLayoutEffect(() => {}, []);
+  useLayoutEffect(() => { }, []);
 
   const selectListContainer = (getContainer: string) => {
     // currentContainerName = getContainer;
@@ -169,21 +165,18 @@ export default function ViewLog(props: any) {
   };
 
   return (
-    // <ContentCard noPadding className="viewLog">
     <div className="loginShellContent" style={{ height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 6 }}>
-      <div className="log-caption">
-        <div className="caption-left">
+      <div className="flex-space-between">
+        <div >
           <Form form={viewLogform} layout="inline">
-            <pre>选择容器： </pre>
+            <pre style={{ lineHeight: '32px' }}>选择容器： </pre>
             <Form.Item name="containerName">
               <Select style={{ width: 220 }} options={container} onChange={selectListContainer}></Select>
             </Form.Item>
           </Form>
         </div>
-        <div className="caption-right">
-          {/* <span>
-                            当前环境：<Tag color="geekblue">{envCode}</Tag>
-                        </span> */}
+        <div style={{ marginTop: '5px' }}>
+          当前集群：<Tag color="geekblue">{clusterName}</Tag>
         </div>
       </div>
       <div
@@ -221,6 +214,5 @@ export default function ViewLog(props: any) {
         </span>
       </div>
     </div>
-    // </ContentCard>
   );
 }

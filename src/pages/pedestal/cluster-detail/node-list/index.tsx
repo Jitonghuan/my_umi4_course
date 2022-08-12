@@ -11,7 +11,7 @@ import SetTag from './set-tag';
 import './index.less';
 export default function NodeList() {
   const [visible, setVisble] = useState(false);
-  const { clusterCode, cluseterName } = useContext(clusterContext);
+  const { clusterCode, clusterName } = useContext(clusterContext);
   const [tagVisible, setTagVisible] = useState(false);
   const [cluster, setCluster] = useState({}) as any;
   const [dataSource, setDataSource] = useState([]);
@@ -39,7 +39,7 @@ export default function NodeList() {
       shell: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          query: { key: 'node-list', type: 'node', name: record.nodeName, clusterCode },
+          query: { key: 'node-list', type: 'node', name: record.nodeName, clusterCode, clusterName },
         });
       },
       // 设置标签
