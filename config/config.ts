@@ -5,6 +5,7 @@
 import { defineConfig } from 'umi';
 import routes, { baseRoutePath } from '../src/routes.config';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+import path from 'path';
 
 // 资源引用的根路径，此变量与项目在 nginx 中匹配前缀相关，如果
 const sourceRoot = '/';
@@ -19,10 +20,21 @@ export default defineConfig({
   // ------------------- 可以根据实际情况修改的配置项 -------------------
 
   // 文件依赖路径别名，默认支持 @/ 指向 src/
-  alias: {},
-  chainWebpack(config, { webpack }) {
-    config.plugin('monaco-editor').use(MonacoWebpackPlugin);
+  alias: {
+    '@/': path.resolve(__dirname, 'src/'),
   },
+
+  // lessLoader: {
+  //   modifyVars: { '@primary-color': '#1973CC' },
+  //   javascriptEnabled: true,
+  //   relativeUrls: true,
+  // },
+
+  chainWebpack(memo: any) {
+    memo.plugin('monaco-editor').use(MonacoWebpackPlugin, []);
+    return memo;
+  },
+  mfsu: false,
   // 本地开发请求代理规则
   proxy: {
     '/user_backend': {
@@ -47,21 +59,22 @@ export default defineConfig({
       changeOrigin: true,
     },
   },
+  plugins: [
+    require.resolve("@hbos/umi-plugin-theme-hbos")
+  ],
 
-  devServer: {
-    port: 9091, // 本地开发代理的端口号
-  },
 
   // 路由配置
   routes: [
     {
       path: baseRoutePath,
-      component: '../layouts/basic-layout/index',
+      component: '@/layouts/basic-layout/index',
+      exact: false,
       routes: [...routes],
     },
     {
-      path: '/*',
-      redirect: `${baseRoutePath}/index`,
+      path: `/*`,
+      redirect: '/matrix/index',
     },
   ],
 
@@ -73,7 +86,6 @@ export default defineConfig({
   // ------------------------------------------------------------
   // ------------------- 以下配置项请勿随意修改 -------------------
   // ------------------------------------------------------------
-  nodeModulesTransform: { type: 'none' },
 
   // 默认是 browser 路由
   history: { type: 'browser' },
@@ -88,27 +100,25 @@ export default defineConfig({
   },
 
   // 面向浏览器对象，开发环境默认支持 chrome
-  targets: { chrome: 65, firefox: false, safari: false, edge: false, ios: false },
+  targets: { chrome: 65 },
 
   publicPath: publicPathPrefix,
 
   // 配置 external 资源外部依赖, react, react-dom
   externals: NODE_ENV === 'development' ? {} : {
-    react: 'window.React',
-    'react-dom': 'window.ReactDOM'
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    ReactDOM: 'ReactDOM',
+    reactDom: 'window.ReactDOM'
   },
 
   // HTML 中以 <script> 方式引用的资源
-  scripts: NODE_ENV === 'development' ? [] : [
+  headScripts: NODE_ENV === 'development' ? [] : [
     { src: `${publicPathPrefix}react.min.js` },
     { src: `${publicPathPrefix}react-dom.min.js` },
     `window.BUILD_ENV = "${BUILD_ENV}"`
   ],
 
-  // 开启动态资源加载
-  dynamicImport: {
-    loading: '@/components/source-loading',
-  },
   extraBabelPlugins: [
     [
       require.resolve('babel-plugin-import'),
@@ -118,5 +128,5 @@ export default defineConfig({
       },
       '@cffe/h2o-design',
     ]
-  ],
+  ]
 });

@@ -28,6 +28,9 @@ import {
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
+import { parse } from 'querystring';
+import { Outlet, useLocation, history } from 'umi';
+import routelist, { baseRoutePath } from '@/routes.config'
 
 // 屏蔽掉 React Development 模式下红色的警告
 if (appConfig.isLocal) {
@@ -40,8 +43,10 @@ if (appConfig.isLocal) {
   };
 }
 export default function Layout(props: any) {
+  const location = useLocation()
+
   // 初始化 doc title hook
-  useDocumentTitle('', props?.location?.pathname);
+  useDocumentTitle('', location?.pathname);
   // 权限数据
   const [permissionData] = usePermissionData();
   // 所属数据
@@ -49,6 +54,7 @@ export default function Layout(props: any) {
   // 业务线
   const [businessData] = useBusinessData();
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
+  const { fromThird } = parse(location.search);
 
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
@@ -113,6 +119,16 @@ export default function Layout(props: any) {
   useEffect(() => {
     getConfig();
   }, []);
+
+  const route = [
+    {
+      path: baseRoutePath,
+      component: '../layouts/index',
+      exact: false,
+      routes: [...routelist],
+    },
+  ]
+
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -290,7 +306,9 @@ export default function Layout(props: any) {
                     props.history.push('/matrix/index');
                   },
                 }}
-              />
+              >
+                <Outlet />
+              </BasicLayout>
             )}
           </ChartsContext.Provider>
         </FeContext.Provider>
