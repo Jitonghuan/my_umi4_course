@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Input, Select, Button, Table, Space, Divider, Popconfirm, Modal, Tag } from 'antd';
 import { history } from 'umi';
-import { PlusOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { queryAppsList, queryProjectEnvList } from '../service';
 import { useRemoveApps, useAddAPPS } from '../hook';
@@ -205,8 +204,7 @@ export default function DetailList(props: any) {
               addAppForm.resetFields();
             }}
           >
-            <PlusOutlined />
-            添加应用
+            + 添加应用
           </Button>
         </div>
       </div>

@@ -14,30 +14,30 @@ export default function DemoPageList() {
   const [addIndexForm] = Form.useForm();
   const [envOptions] = useEDitEnvOptions();
   const [addMode, setAddMode] = useState<EditorMode>('HIDE');
-  const [initValue, setInitValue] = useState<any>(); //编辑时候的初始值
   const [createIndexMode] = useCreateIndexMode(); //创建
-  const [deleteIndexTable] = useDeleteIndexMode(); //删除
   const [editIndexTable] = useEditIndexMode(); //编辑
   const [id, setId] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
-  const [dataSource, setDataSource] = useState<Record<string, any>[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [queryIndexModeData, setQueryIndexModeData] = useState<any[]>([]);
 
   //查询表格信息
   const queryIndexTable = (index?: any, size?: any) => {
-    getRequest(APIS.queryIndexMode, { data: { pageIndex: index || pageIndex, pageSize: size || pageSize } }).then(
-      (resp) => {
+    setLoading(true);
+    getRequest(APIS.queryIndexMode, { data: { pageIndex: index || pageIndex, pageSize: size || pageSize } })
+      .then((resp) => {
         if (resp.success) {
           setQueryIndexModeData(resp?.data.dataSource);
           setTotal(resp?.data?.pageInfo?.total);
           setPageSize(resp?.data?.pageInfo?.pageSize);
           setPageIndex(resp?.data?.pageInfo?.pageIndex);
         }
-      },
-    );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -104,17 +104,23 @@ export default function DemoPageList() {
         </Form>
       </Drawer>
       <ContentCard>
-        <div className="test-page-header" style={{ float: 'right', marginBottom: 8 }}>
-          <Button
-            type="primary"
-            onClick={() => {
-              addIndexForm.resetFields();
-              setAddMode('ADD');
-            }}
-          >
-            新增
-          </Button>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>索引列表</h3>
+          </div>
+          <div className="caption-right">
+            <Button
+              type="primary"
+              onClick={() => {
+                addIndexForm.resetFields();
+                setAddMode('ADD');
+              }}
+            >
+              + 新增索引
+            </Button>
+          </div>
         </div>
+
         <Table
           dataSource={queryIndexModeData}
           loading={loading}
@@ -141,7 +147,6 @@ export default function DemoPageList() {
                   onClick={() => {
                     setAddMode('EDIT');
                     setId(current?.id);
-                    setInitValue(record);
                     addIndexForm.setFieldsValue({
                       id: record?.id,
                       envCode: record?.envCode,
@@ -161,7 +166,7 @@ export default function DemoPageList() {
                     }, 200);
                   }}
                 >
-                  <a>删除</a>
+                  <a style={{ color: 'red' }}>删除</a>
                 </Popconfirm>
               </div>
             )}

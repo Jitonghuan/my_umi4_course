@@ -268,7 +268,7 @@ export default function Launch() {
                 })
               }
             >
-              新增模版
+              + 新增模版
             </Button>
           </div>
         </div>

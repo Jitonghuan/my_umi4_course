@@ -5,7 +5,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { history } from 'umi';
 import { Input, Table, Form, Button, Space, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
@@ -221,8 +220,7 @@ export default function HelmList() {
                   });
                 }}
               >
-                <PlusOutlined />
-                创建
+                + 创建
               </Button>
             </Space>
           </div>

@@ -4,7 +4,6 @@
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Button, Spin, Pagination, Empty } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import BoardList from '../card-list';
 import FilterHeader from '../filter-header';
@@ -14,21 +13,20 @@ import { useGrafhTable } from '../../hooks';
 import { delGraphTable, getCluster } from '../../service';
 import type { TMode } from '../../interfaces';
 import { Form, Select } from '@cffe/h2o-design';
-import { history } from 'umi'
+import { history } from 'umi';
 const rootCls = 'monitor-board';
-
 
 export default function Board(props: any) {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [searchParams, setSearchParams] = useState<any>({});
 
-  const [editDrawer, setEditDrawer] = useState<boolean>(false)
+  const [editDrawer, setEditDrawer] = useState<boolean>(false);
 
-  const [mode, setMode] = useState<TMode>('add')
-  const [boardInfo, setBoardInfo] = useState<any>({})
-  const [clusterCode, setClusterCode] = useState<number | null>(null)
-  const [clusterList, setClusterList] = useState<any>([])
+  const [mode, setMode] = useState<TMode>('add');
+  const [boardInfo, setBoardInfo] = useState<any>({});
+  const [clusterCode, setClusterCode] = useState<number | null>(null);
+  const [clusterList, setClusterList] = useState<any>([]);
 
   const hookParams = useMemo(() => ({ ...searchParams, clusterCode }), [clusterCode, searchParams]);
   const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize);
@@ -39,27 +37,28 @@ export default function Board(props: any) {
   }, []);
 
   const onDrawerClose = () => {
-    setEditDrawer(false)
-  }
+    setEditDrawer(false);
+  };
 
   const handleDelete = async (graphUuId: string) => {
-    clusterCode && delGraphTable(clusterCode, graphUuId).then((res) => {
-      if (res.success) {
-        loadGraphTable()
-      }
-    })
-  }
+    clusterCode &&
+      delGraphTable(clusterCode, graphUuId).then((res) => {
+        if (res.success) {
+          loadGraphTable();
+        }
+      });
+  };
 
   const handleEdit = async (record: any) => {
-    setMode('edit')
-    setEditDrawer(true)
-    setBoardInfo(record)
-  }
+    setMode('edit');
+    setEditDrawer(true);
+    setBoardInfo(record);
+  };
 
   const handleAdd = () => {
-    setEditDrawer(true)
-    setMode('add')
-  }
+    setEditDrawer(true);
+    setMode('add');
+  };
 
   useEffect(() => {
     getCluster().then((res) => {
@@ -67,41 +66,41 @@ export default function Board(props: any) {
         const data = res.data.map((item: any) => {
           return {
             label: item.clusterName,
-            value: item.id
-          }
-        })
+            value: item.id,
+          };
+        });
         setClusterList(data);
-        const localstorageData = JSON.parse(localStorage.getItem('__monitor_board_cluster_selected') || '{}')
+        const localstorageData = JSON.parse(localStorage.getItem('__monitor_board_cluster_selected') || '{}');
         if (localstorageData?.clusterCode) {
-          onClusterChange(localstorageData.clusterCode)
+          onClusterChange(localstorageData.clusterCode);
         } else {
           if (data?.[0]?.value) {
-            onClusterChange(data?.[0]?.value)
+            onClusterChange(data?.[0]?.value);
           } else {
-            setClusterCode(null)
+            setClusterCode(null);
           }
         }
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const onClusterChange = (value: number) => {
-    setClusterCode(value)
-    const localstorageData = { clusterCode: value }
-    localStorage.setItem('__monitor_board_cluster_selected', JSON.stringify(localstorageData))
-  }
+    setClusterCode(value);
+    const localstorageData = { clusterCode: value };
+    localStorage.setItem('__monitor_board_cluster_selected', JSON.stringify(localstorageData));
+  };
   const toDetail = (data: any) => {
-    let clusterName
+    let clusterName;
     clusterList.forEach((item: any) => {
       if (item.value == clusterCode) {
-        clusterName = item.label
+        clusterName = item.label;
       }
-    })
+    });
     history.push({
       pathname: 'detail',
-      search: `?graphName=${data.graphName}&url=${encodeURIComponent(data.url)}&clusterName=${clusterName}`
-    })
-  }
+      search: `?graphName=${data.graphName}&url=${encodeURIComponent(data.url)}&clusterName=${clusterName}`,
+    });
+  };
 
   return (
     <>
@@ -122,8 +121,7 @@ export default function Board(props: any) {
             <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
           </div>
           <Button type="primary" onClick={handleAdd}>
-            <PlusOutlined />
-            新增大盘
+            + 新增大盘
           </Button>
         </div>
       </FilterCard>
@@ -157,7 +155,14 @@ export default function Board(props: any) {
             )}
           </div>
         </Spin>
-        <EditorDrawer boardInfo={boardInfo} cluster={clusterCode} visible={editDrawer} mode={mode} onClose={onDrawerClose} loadGraphTable={loadGraphTable} />
+        <EditorDrawer
+          boardInfo={boardInfo}
+          cluster={clusterCode}
+          visible={editDrawer}
+          mode={mode}
+          onClose={onDrawerClose}
+          loadGraphTable={loadGraphTable}
+        />
       </ContentCard>
     </>
   );

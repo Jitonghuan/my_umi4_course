@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Form, message, Alert, Input, Drawer, Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import { InlineForm, BasicForm } from '@/components/schema-form';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
@@ -175,8 +173,7 @@ const Coms = (props: any) => {
         <div className="ticket-table-header">
           <h3>工单列表</h3>
           <Button type="primary" onClick={() => setVisible(true)}>
-            <PlusOutlined />
-            创建工单
+            + 创建工单
           </Button>
         </div>
         <HulkTable columns={tableSchema as any} {...tableProps} />

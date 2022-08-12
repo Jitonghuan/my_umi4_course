@@ -519,7 +519,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                 style={{ marginTop: 16, border: '1px dashed #cacfdb' }}
                 onClick={addTableRow}
               >
-                新增发布功能
+                + 新增发布功能
               </Button>
             )}
           </Form>

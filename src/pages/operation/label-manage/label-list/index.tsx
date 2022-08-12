@@ -6,7 +6,6 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { PlusOutlined } from '@ant-design/icons';
 import LabelEditDrawer from '../label-add';
 import { useDeleteLabel } from '../hook';
 import { getRequest } from '@/utils/request';
@@ -139,8 +138,7 @@ export default function LanbelList() {
                 // setIsDisable(false);
               }}
             >
-              <PlusOutlined />
-              新增标签
+              + 新增标签
             </Button>
           </div>
         </div>

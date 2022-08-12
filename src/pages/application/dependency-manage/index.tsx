@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Table, Form, Input, Button, Popconfirm, Switch, message, Tag, Select } from 'antd';
-import { history } from 'umi';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Table, Form, Input, Button, message, Select } from 'antd';
 import moment from 'moment';
 import { fetchEnvList } from '@/pages/application/_components/application-editor/service';
 import { queryRuleList } from './hook';
 import { dependecyTableSchema } from './schema';
-import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-import { getRequest, delRequest } from '@/utils/request';
+import { delRequest } from '@/utils/request';
 import appConfig from '@/app.config';
-import { addRule, getRuleList, updateRule } from './service';
+import { updateRule } from './service';
 import RuleDrawer from './component/rule-drawer';
 import WhiteListModal from './component/white-list-modal';
 
@@ -183,8 +181,7 @@ export default function RelyMangement() {
                 setDependencyMode('ADD');
               }}
             >
-              <PlusOutlined />
-              新增规则
+              + 新增规则
             </Button>
           </div>
         </div>
