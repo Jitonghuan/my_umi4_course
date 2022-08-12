@@ -4,7 +4,7 @@ import { FeContext } from '@/common/hooks';
 import VCPageContent, { IProps as IPageContentProps } from '@/components/vc-page-content';
 import ErrorBoundary from '../error-boundary';
 
-export interface IProps extends IPageContentProps {}
+export interface IProps extends IPageContentProps { }
 
 export default function PageContainer(props: React.PropsWithChildren<IProps>) {
   const { children, ...rest } = props;
@@ -17,7 +17,7 @@ export default function PageContainer(props: React.PropsWithChildren<IProps>) {
       pathname={location.pathname}
       className="layout-content"
       isFlex
-      height="calc(100vh - 60px)"
+      height="calc(100vh - 35px)"
       {...rest}
     >
       <ErrorBoundary>{children}</ErrorBoundary>
