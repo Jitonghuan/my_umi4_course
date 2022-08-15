@@ -229,8 +229,6 @@ export default function Layout(props: any) {
                       </div>
                     </>
                   ),
-                  // backgroundImage: require("@/assets/side-bg.png")
-
                 }}
                 showHeader={!isPageInIFrame()}
                 showSiderMenu={!isPageInIFrame()}
