@@ -24,9 +24,11 @@ const BoardDetail = () => {
     setInfo({
       graphName, graphUrl, clusterName
     })
-
-
   }, [])
+
+  const hideSlideMenu=()=>{
+    document?.getElementsByTagName("iframe")?.[0]?.contentWindow?.postMessage({showMenu:false},'*')
+  }
 
 
   return (
@@ -48,7 +50,7 @@ const BoardDetail = () => {
         </div>
       </div >
       <div style={{ width: '100%', height: '100%', display: 'block' }} className="grafana-iframe-info">
-        <iframe className='grafana-iframe' name="grafana-iframe-detail" src={info?.graphUrl || ''} />
+        <iframe className='grafana-iframe' id='grafana-iframe' name="grafana-iframe-detail" src={info?.graphUrl || ''} onLoad={hideSlideMenu}/>
       </div>
     </PageContainer>
   )
