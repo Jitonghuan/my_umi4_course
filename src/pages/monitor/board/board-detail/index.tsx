@@ -19,15 +19,15 @@ const BoardDetail = () => {
   useEffect(() => {
     let graphUrl = '';
     if (url) {
-      graphUrl = `${url}?kiosk=tv`
+      graphUrl = `${url}?kiosk=full`
     }
     setInfo({
       graphName, graphUrl, clusterName
     })
-    
+
 
   }, [])
-  
+
 
   return (
     <PageContainer>
