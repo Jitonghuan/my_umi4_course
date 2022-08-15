@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="259px" height="257px" viewBox="0 0 259 257" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>方块-小-light</title>
+    <defs>
+        <filter x="-56.3%" y="-57.4%" width="212.6%" height="214.9%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="6" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="12" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.347552975   0 0 0 0 0.187670557   0 0 0 0 0.440019248  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <rect id="path-2" x="0" y="0" width="103" height="101"></rect>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#F4FEFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-5">
+            <stop stop-color="#E4E9FC" offset="0%"></stop>
+            <stop stop-color="#F6F8FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-6">
+            <stop stop-color="#DBE0F4" offset="0%"></stop>
+            <stop stop-color="#D0D5F3" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="首页" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1440" transform="translate(-758.000000, -471.000000)">
+            <g id="方块-小-light" filter="url(#filter-1)" transform="translate(887.500000, 599.500000) rotate(30.000000) translate(-887.500000, -599.500000) translate(836.000000, 549.000000)">
+                <mask id="mask-3" fill="white">
+                    <use xlink:href="#path-2"></use>
+                </mask>
+                <g id="蒙版"></g>
+                <g id="编组-20" mask="url(#mask-3)">
+                    <g transform="translate(-0.000000, -0.000000)">
+                        <polygon id="矩形" fill="url(#linearGradient-4)" points="5.76614575e-13 17.6399112 51.5 -6.15476727e-14 51.5 65.3243745 5.76614575e-13 82.9642857"></polygon>
+                        <polygon id="矩形备份-9" fill="url(#linearGradient-5)" transform="translate(77.250000, 41.482143) scale(-1, 1) translate(-77.250000, -41.482143) " points="51.5 17.6399112 103 1.62915217e-14 103 65.3243745 51.5 82.9642857"></polygon>
+                        <polygon id="矩形" fill="url(#linearGradient-6)" transform="translate(51.362691, 82.826437) rotate(-315.000000) translate(-51.362691, -82.826437) " points="38.5577459 70.2479589 87.7347222 46.5606542 63.4129777 96.0067591 14.9906597 119.09222"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

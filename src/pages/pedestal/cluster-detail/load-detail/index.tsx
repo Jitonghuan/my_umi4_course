@@ -21,7 +21,7 @@ const obj: any = {
 export default function LoadDetail(props: any) {
   const { location, children } = props;
   const { type, kind, name, namespace } = location.query || {};
-  const { clusterCode, cluseterName } = useContext(clusterContext);
+  const { clusterCode, clusterName } = useContext(clusterContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [podData, setPodData] = useState([]);
@@ -71,7 +71,7 @@ export default function LoadDetail(props: any) {
       viewLog: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/view-log',
-          query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode },
+          query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode, clusterName },
         });
       },
       shell: (record: any, index: any) => {
@@ -83,6 +83,7 @@ export default function LoadDetail(props: any) {
             name: record?.name,
             namespace: record?.namespace,
             clusterCode,
+            clusterName
           },
         });
       },

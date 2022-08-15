@@ -3,7 +3,7 @@
 // @create 2021/07/29 16:06
 
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
-import { Button, Steps, Spin, Result, message } from 'antd';
+import { Button, Steps, Spin, Result, Modal } from 'antd';
 import moment from 'moment';
 import { history } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
@@ -121,7 +121,7 @@ export default function ClusterSyncDetail(props: any) {
       }
 
       updateResultLog(addon);
-      return result.data;
+      return result;
     } catch (ex) {
       updateResultLog(`<ERROR> ${ex?.message || 'Server Error'}`);
       throw ex;
@@ -155,58 +155,96 @@ export default function ClusterSyncDetail(props: any) {
   useLayoutEffect(() => {
     resultRef.current?.scrollTo({ top: 9999, behavior: 'smooth' });
   }, [resultLog]);
+  const resultAction=(resultCode:number,errorMsg:any,doAction:any)=>{
+    if(resultCode===1001){
+      Modal.error({
+        title: '同步出错！',
+        content: errorMsg,
+      });
+
+     
+
+    }else{
+      doAction;
+    }
+
+  }
 
   // 1. get nacos 配置比对
   const configDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.configDiff, { data: { envCode: commonEnvCode } }));
-    setCurrState('GetDiffClusterConfig');
+    await doAction(getRequest(APIS.configDiff, { data: { envCode: commonEnvCode } })).then((res)=>{
+      resultAction(res?.code,res?.errorMsg, setCurrState('GetDiffClusterConfig'))
+
+    });
+   
   }, []);
   // 2. Nacos同步
   const syncConfig = useCallback(async () => {
-    await doAction(postRequest(APIS.syncConfig, { data: { envCode: commonEnvCode } }));
-    setCurrState('syncClusterConfig');
+    await doAction(postRequest(APIS.syncConfig, { data: { envCode: commonEnvCode } })).then((res)=>{
+      resultAction(res?.code,res?.errorMsg,  setCurrState('syncClusterConfig'))
+
+    });
+   
   }, []);
   // 3. XXL-Job比对
   const xxlJobDiff = useCallback(async () => {
-    await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: commonEnvCode } }));
-    setCurrState('GetDiffXxlJob');
+    await doAction(getRequest(APIS.xxlJobDiff, { data: { envCode: commonEnvCode } })).then((res)=>{
+      resultAction(res?.code,res?.errorMsg,   setCurrState('GetDiffXxlJob'))
+    });
+   
   }, []);
   // 4. XXL-Job同步
   const syncXxlJob = useCallback(async () => {
-    await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: commonEnvCode } }));
-    setCurrState('syncXxlJob');
+    await doAction(postRequest(APIS.syncXxlJob, { data: { envCode: commonEnvCode } })).then((res)=>{
+      resultAction(res?.code,res?.errorMsg,  setCurrState('syncXxlJob'))
+    });
+   
   }, []);
   let nextDeploymentName = '';
   // 5. get cluster app
   const getClusterApp = useCallback(async () => {
-    const nextApp = await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: commonEnvCode } }));
-    if (nextApp?.deploymentName && nextApp?.deploymentName !== 'Pass') {
-      setCurrState('GetDiffClusterApp');
-      setNextDeployApp(nextApp?.deploymentName);
-    } else {
-      setCurrState('SyncClusterApp');
-    }
-    nextDeploymentName = nextApp?.deploymentName;
+    await doAction(getRequest(APIS.queryClusterApp, { data: { envCode: commonEnvCode } })).then((res)=>{
+    
+      if (res?.code===1001) {
+        Modal.error({
+          title: '同步出错！',
+          content: res?.errorMsg,
+        });
+      } else {
+        if (res?.data?.deploymentName && res?.data?.deploymentName !== 'Pass') {
+          setCurrState('GetDiffClusterApp');
+          setNextDeployApp(res?.data?.deploymentName);
+        } else {
+          setCurrState('SyncClusterApp');
+        }
+        nextDeploymentName = res?.data?.deploymentName;
+      }
+    });
+   
   }, []);
   // 6. deploy app
   const deployApp = useCallback(async () => {
     await doAction(
       postRequest(APIS.syncClusterApp, {
         data: { deploymentName: nextDeployApp || nextDeploymentName, envCode: commonEnvCode },
-      }),
+      })
     );
     // 成功后再调一次 queryClusterApp 接口
     await getClusterApp();
   }, [nextDeploymentName]);
   // 7. 前端资源同步
   const syncFrontendSource = useCallback(async () => {
-    await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: commonEnvCode } }));
-    setCurrState('SyncClusterWebSource');
+    await doAction(postRequest(APIS.syncFrontendSource, { data: { envCode: commonEnvCode } })).then((res)=>{
+      resultAction(res?.code,res?.errorMsg,  setCurrState('SyncClusterWebSource'))
+    });
+  
   }, []);
   // 8. finish
   const syncClusterOver = useCallback(async () => {
-    await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: commonEnvCode } }));
-    setCurrState('ClusterSyncOver');
+    await doAction(getRequest(APIS.syncClusterOver, { data: { envCode: commonEnvCode } })).then((res)=>{
+      resultAction(res?.code,res?.errorMsg,   setCurrState('ClusterSyncOver'))
+    });
+   
   }, []);
 
   // 不同的状态对应不同的 step
@@ -291,7 +329,7 @@ export default function ClusterSyncDetail(props: any) {
           extra={[
             <Button key="showlist" type="default" onClick={() => history.push('./dashboards')}>
               查看集群看板
-            </Button>,
+            </Button>
           ]}
         />
       ) : null}

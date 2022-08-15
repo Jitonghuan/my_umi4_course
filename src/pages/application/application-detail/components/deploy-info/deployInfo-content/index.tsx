@@ -221,7 +221,7 @@ export default function DeployContent(props: DeployContentProps) {
                   }
                 })
                 .then(() => {
-                  if (initLoadInfoData.length !== 0) {
+                  if (initLoadInfoData?.length !== 0) {
                     queryAppOperateLog(initEnvCode.current);
                     getRequest(queryInstanceListApi, {
                       data: { appCode: appData?.appCode, envCode: initEnvCode.current },
@@ -651,12 +651,12 @@ export default function DeployContent(props: DeployContentProps) {
                         {item.operateEvent === 'PodFileDownload'
                           ? '文件下载'
                           : item.operateEvent === 'restartApp'
-                          ? '重启应用'
-                          : item.operateEvent === 'rollback'
-                          ? '回滚应用'
-                          : item.operateEvent === 'DeletePod'
-                          ? '删除Pod'
-                          : null}
+                            ? '重启应用'
+                            : item.operateEvent === 'rollback'
+                              ? '回滚应用'
+                              : item.operateEvent === 'DeletePod'
+                                ? '删除Pod'
+                                : null}
                       </Tag>
                     </b>
                   </p>
