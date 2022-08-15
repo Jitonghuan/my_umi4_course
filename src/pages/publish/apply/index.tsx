@@ -7,7 +7,6 @@
 
 import React, { useMemo, useEffect, useState, useCallback, useContext, useRef } from 'react';
 import { Form, Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
@@ -155,8 +154,7 @@ export default function ApplyList() {
               setCreateApplyVisible(true);
             }}
           >
-            <PlusOutlined />
-            提交发布申请
+            + 提交发布申请
           </Button>
         </div>
         <HulkTable

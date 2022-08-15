@@ -45,7 +45,7 @@ export default function ProductList() {
                 setCreateProductModalVisable(true);
               }}
             >
-              创建制品
+              + 创建制品
             </Button>
           </div>
         </div>

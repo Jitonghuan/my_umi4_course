@@ -392,6 +392,11 @@ export default function LoggerSearch(props: any) {
     }
   };
 
+  function ClearSubmit(e: any) {
+    if (e.keyCode == 13) {
+      return false;
+    }
+  }
   //实现无限加载滚动
   return (
     <PageContainer className="content">
@@ -406,6 +411,8 @@ export default function LoggerSearch(props: any) {
                   options={envOptions}
                   style={{ width: 140 }}
                   placeholder="请选择环境"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
               <Form.Item label="日志库">
@@ -415,6 +422,8 @@ export default function LoggerSearch(props: any) {
                   options={logStoreOptions}
                   style={{ width: 140 }}
                   placeholder="请选择日志库"
+                  allowClear
+                  showSearch
                 />
               </Form.Item>
             </Form>
@@ -506,10 +515,12 @@ export default function LoggerSearch(props: any) {
                         <Form.Item name="querySql">
                           <Input
                             placeholder="搜索"
-                            allowClear
-                            // onPressEnter={submitEditScreen}
+                            // onPressEnter={()=>{return false}}
                             style={{ width: 758 }}
                           />
+                        </Form.Item>
+                        <Form.Item name="moreInput">
+                          <Input placeholder="搜索" className="moreInput" style={{ width: 0 }} />
                         </Form.Item>
                       </Form>
                     </p>

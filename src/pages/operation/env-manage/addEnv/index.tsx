@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag } from 'antd';
 import { EnvEditData } from '../env-list/index';
 import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
+import { envTypeCodeOptions, envTypeOptions } from './schema';
 import './index.less';
 export interface EnvEditorProps {
   mode?: EditorMode;
@@ -14,7 +15,7 @@ export interface EnvEditorProps {
   onClose: () => any;
 }
 
-export default function addEnvData(props: EnvEditorProps) {
+export default function AddEnv(props: EnvEditorProps) {
   const [createEnvForm] = Form.useForm();
   const { mode, initData, onSave, onClose } = props;
   const [checkedOption, setCheckedOption] = useState<number>(0); //是否启用nacos
@@ -26,7 +27,9 @@ export default function addEnvData(props: EnvEditorProps) {
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [editEnvCode, setEditEnvCode] = useState<boolean>(false);
-
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isUseMinio, setIsUseMinio] = useState<boolean>(false);
+  const [curEnvType, setCurEnvType] = useState<string>('');
   useEffect(() => {
     selectCategory();
   }, [mode]);
@@ -44,6 +47,8 @@ export default function addEnvData(props: EnvEditorProps) {
       setEditEnvCode(true);
     }
     if (initData) {
+      const minio = JSON.parse(initData.minioInfo || '{}');
+      setIsUseMinio(minio?.useMinio || false);
       if (initData?.isBlock === 1) {
         setIsBlockChecked(true);
         setIsBlockChangeOption(1);
@@ -69,10 +74,16 @@ export default function addEnvData(props: EnvEditorProps) {
 
       createEnvForm.setFieldsValue({
         ...initData,
+
+        bucketName: minio.bucketName || '',
+        sourceMapBkt: minio.sourceMapBkt || '',
+        useMinio: minio.useMinio || false,
         isBlock: isBlockChecked,
         useNacos: nacosChecked,
         needApply: needApplyChecked,
+        envCode: initData?.envCode,
       });
+      setCurEnvType(initData?.envModel);
     }
   }, [mode]);
   // 加载应用分类下拉选择
@@ -136,57 +147,78 @@ export default function addEnvData(props: EnvEditorProps) {
     });
   };
   const handleSubmit = () => {
+    setLoading(true);
     if (mode === 'ADD') {
       //新增环境
       createEnvForm.validateFields().then((params) => {
+        const minioInfo = {
+          useMinio: isUseMinio,
+          bucketName: params?.bucketName || '',
+          sourceMapBkt: params.sourceMapBkt || '',
+        };
         postRequest(createEnv, {
           data: {
-            envTypeCode: params?.envTypeCode,
-            categoryCode: params?.categoryCode,
+            ...params,
+            envCode: params?.envCode,
+
             isBlock: isBlockChangeOption,
             useNacos: checkedOption,
             needApply: needApplyOption,
             proEnvType: 'benchmark',
-            nacosAddress: params?.nacosAddress,
-            envCode: params?.envCode,
-            envName: params?.envName,
-            clusterName: params?.clusterName,
-            clusterType: params?.clusterType,
-            clusterNetType: params?.clusterNetType,
-            mark: params?.mark,
-            ngInstCode: params?.ngInstCode,
+
+            minioInfo: JSON.stringify(minioInfo),
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('新增环境成功！');
-            onSave?.();
-          } else {
-            message.error(result.errorMsg);
-          }
-        });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('新增环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     } else if (mode === 'EDIT') {
       //编辑环境
       createEnvForm.validateFields().then((params) => {
+        const minioInfo = {
+          useMinio: isUseMinio,
+          bucketName: params?.bucketName || '',
+          sourceMapBkt: params?.sourceMapBkt || '',
+        };
         putRequest(updateEnv, {
           data: {
             ...params,
+            // envCode: `fe-${params?.envCode}`,
+            envCode: params?.envCode,
+            useMinio: undefined,
+            bucketName: undefined,
+            sourceMapBkt: undefined,
+            minioInfo: JSON.stringify(minioInfo),
             useNacos: checkedOption,
             isBlock: isBlockChangeOption,
             needApply: needApplyOption,
             proEnvType: 'benchmark',
           },
-        }).then((result) => {
-          if (result.success) {
-            message.success('编辑环境成功！');
-            onSave?.();
-          } else {
-            message.error(result.errorMsg);
-          }
-        });
+        })
+          .then((result) => {
+            if (result.success) {
+              message.success('编辑环境成功！');
+              onSave?.();
+            } else {
+              // message.error(result.errorMsg);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
     }
   };
+
   return (
     <Drawer
       visible={mode !== 'HIDE'}
@@ -197,37 +229,48 @@ export default function addEnvData(props: EnvEditorProps) {
       <div className="envAdd">
         <Form
           form={createEnvForm}
-          labelCol={{ flex: '120px' }}
+          labelCol={{ flex: '140px' }}
           onFinish={handleSubmit}
           onReset={() => {
             createEnvForm.resetFields();
           }}
         >
           <Form.Item label="环境大类：" name="envTypeCode" rules={[{ required: true, message: '这是必填项' }]}>
-            <Radio.Group disabled={isDisabled}>
-              <Radio value={'dev'}>DEV</Radio>
-              <Radio value={'test'}>TEST</Radio>
-              <Radio value={'pre'}>PRE</Radio>
-              <Radio value={'prod'}>PROD</Radio>
-            </Radio.Group>
+            <Radio.Group disabled={isDisabled} options={envTypeCodeOptions} />
+          </Form.Item>
+          <Form.Item label="环境类型：" name="envModel" rules={[{ required: true, message: '这是必填项' }]}>
+            <Radio.Group
+              disabled={isDisabled}
+              options={envTypeOptions}
+              onChange={(e) => setCurEnvType(e.target.value)}
+            />
           </Form.Item>
           <div>
             <Form.Item label="环境名：" name="envName" rules={[{ required: true, message: '这是必填项' }]}>
               <Input style={{ width: 220 }} placeholder="请输入环境名" disabled={isDisabled}></Input>
             </Form.Item>
           </div>
-          <div>
-            {mode !== 'EDIT' && (
+          {/* <div> */}
+          {/* {curEnvType === 'fe-exclusive' ? (
               <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input style={{ width: 220 }} placeholder="请输入环境CODE" disabled={isDisabled}></Input>
+                <Input
+                  addonBefore="fe-"
+                  autoFocus
+                  style={{ width: 220 }}
+                  placeholder="请输入环境CODE"
+                  disabled={mode !== 'EDIT' ? isDisabled : editEnvCode}
+                ></Input>
               </Form.Item>
-            )}
-            {mode === 'EDIT' && (
-              <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input style={{ width: 220 }} placeholder="请输入环境CODE" disabled={editEnvCode}></Input>
-              </Form.Item>
-            )}
-          </div>
+            ) : ( */}
+          <Form.Item label="环境CODE：" name="envCode" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input
+              style={{ width: 220 }}
+              placeholder="请输入环境CODE"
+              disabled={mode !== 'EDIT' ? isDisabled : editEnvCode}
+            ></Input>
+          </Form.Item>
+          {/* )} */}
+          {/* </div> */}
           <Form.Item label="当前环境：">
             <Tag color="geekblue">基准环境</Tag>
           </Form.Item>
@@ -255,14 +298,14 @@ export default function addEnvData(props: EnvEditorProps) {
                 disabled={isDisabled}
               ></Switch>
             </Form.Item>
-            <Form.Item name="needApply" label="启用发布审批：">
+            {/* <Form.Item name="needApply" label="启用发布审批：">
               <Switch
                 className="needApply"
                 onChange={handleNeedApplyChange}
                 checked={needApplyChecked}
                 disabled={isDisabled}
               ></Switch>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name="useNacos" label="启用配置管理：">
               <Switch
                 className="useNacos"
@@ -282,6 +325,10 @@ export default function addEnvData(props: EnvEditorProps) {
               </Form.Item>
             )}
           </div>
+          {/* <Form.Item name="bucketName" label="Minio Bucket名称">
+            <Input style={{ width: 280 }} disabled={isDisabled} />
+          </Form.Item> */}
+
           <Form.Item name="ngInstCode" label="NG实例">
             <Select showSearch style={{ width: 280 }} options={ngInstOptions} disabled={isDisabled} allowClear />
           </Form.Item>
@@ -301,13 +348,41 @@ export default function addEnvData(props: EnvEditorProps) {
             </Radio.Group>
           </Form.Item>
           <Divider />
+          <Form.Item label="是否使用Minio" name="useMinio">
+            <Switch
+              disabled={isDisabled}
+              checked={isUseMinio}
+              onChange={(v) => {
+                setIsUseMinio(v);
+              }}
+            ></Switch>
+          </Form.Item>
+          {isUseMinio && (
+            <>
+              <Form.Item
+                label="资源文件Bucket"
+                name="bucketName"
+                rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
+              >
+                <Input style={{ width: 280 }} placeholder="请输入资源文件Bucket" disabled={isDisabled}></Input>
+              </Form.Item>
+              <Form.Item
+                label="sourceMapBucket"
+                name="sourceMapBkt"
+                // rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
+              >
+                <Input style={{ width: 280 }} placeholder="请输入sourceMapBucket" disabled={isDisabled}></Input>
+              </Form.Item>
+            </>
+          )}
+          <Divider />
           {isDisabled !== true && (
             <Space size="small" style={{ marginTop: '50px', float: 'right' }}>
               <Form.Item>
                 <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                   取消
                 </Button>
-                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }}>
+                <Button type="primary" htmlType="submit" style={{ marginLeft: '4px' }} loading={loading}>
                   保存
                 </Button>
               </Form.Item>

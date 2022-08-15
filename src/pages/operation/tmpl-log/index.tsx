@@ -13,7 +13,6 @@ import { getRequest } from '@/utils/request';
 export default function Operation() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [searchParams, setSearchParams] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [detailItem, setDetailItem] = useState<any>();
   const [pageTotal, setPageTotal] = useState<number>();
@@ -59,7 +58,15 @@ export default function Operation() {
       value?.operateTime && value.operateTime[1] ? `${value.operateTime[1].format('YYYY-MM-DD')} 23:59:59` : '';
     let operateTime = startTime + '-' + endTime || '';
     getRequest(APIS.logList, {
-      data: { operator, operateType, startTime, endTime, pageIndex: value.pageIndex, pageSize: value.pageSize },
+      data: {
+        operator,
+        operateType,
+        operateEvent: value?.operateEvent,
+        startTime,
+        endTime,
+        pageIndex: value.pageIndex,
+        pageSize: value.pageSize,
+      },
     })
       .then((res: any) => {
         if (res.success) {
@@ -105,6 +112,9 @@ export default function Operation() {
           <Form.Item label="操作人:" name="operator">
             <Input placeholder="请输入"></Input>
           </Form.Item>
+          <Form.Item label="操作事件:" name="operateEvent">
+            <Input placeholder="请输入"></Input>
+          </Form.Item>
           <Form.Item label="操作类型:" name="operateType">
             <Input placeholder="请输入"></Input>
           </Form.Item>
@@ -124,6 +134,11 @@ export default function Operation() {
         </Form>
       </FilterCard>
       <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>操作记录列表</h3>
+          </div>
+        </div>
         <Table
           rowKey="id"
           bordered

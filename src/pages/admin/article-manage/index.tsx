@@ -98,7 +98,7 @@ export default function AdminList() {
           ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
-          size: 'small',
+          // size: 'small',
           defaultPageSize: 20,
         }}
         extraNode={
@@ -106,12 +106,11 @@ export default function AdminList() {
             <h3>列表</h3>
             <Button
               type="primary"
-              ghost
               onClick={() => {
                 setMode('ADD');
               }}
             >
-              新增
+              + 新增
             </Button>
           </Space>
         }

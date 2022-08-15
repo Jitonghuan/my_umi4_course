@@ -1,7 +1,7 @@
 /*
  * @Author: muxi.jth
  * @Date: 2022-04-14 11:20:17
- * @LastEditors: Please set LastEditors
+ * @LastEditors: muxi.jth 2016670689@qq.com
  * @Description: 操作封网Modal
  * @FilePath: /fe-matrix/src/pages/operation/env-manage/env-list/block/index.tsx
  */
@@ -46,7 +46,7 @@ export default function NGModalDetail(props: NGInfo) {
   };
 
   useEffect(() => {
-    if (initData.envCode) {
+    if (initData.envCode && visible) {
       queryAppsListData(initData.envCode);
     }
 

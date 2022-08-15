@@ -71,6 +71,7 @@ export default function DemoPageList() {
             showSizeChanger: true,
             onChange: (next) => setPageIndex(next),
             onShowSizeChange: (_, next) => setPageSize(next),
+            showTotal: () => `总共 ${total} 条数据`,
           }}
         >
           <Table.Column title="序号" dataIndex="id" width={60} />

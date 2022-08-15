@@ -9,19 +9,25 @@ import { getCommonEnvCode } from './server';
 import { envList, menuList } from './const';
 import './index.less';
 import appConfig from '@/app.config';
+import Header from './components/header';
+import { now } from './const';
 
 const { TabPane } = Tabs;
 
 let defaultEnvCode = appConfig.BUILD_ENV === 'prod' ? 'hbos-test' : 'g3a-test';
 defaultEnvCode = appConfig.IS_Matrix === 'public' ? defaultEnvCode : '';
 
-const ENV_LIST = envList[appConfig.envType] || envList.default;
+// @ts-ignore
+const envType = window.matrixConfigData.curEnvType || appConfig.envType;
+
+const ENV_LIST = envList[envType] || envList.default;
 
 const BasicFeMonitor = () => {
   const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
-  const [feEnv, setFeEnv] = useState<string>('*');
+  const [feEnv, setFeEnv] = useState<string>(ENV_LIST[1].key || '*');
   const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
   const [envCode, setEnvCode] = useState(defaultEnvCode);
+  const [timeList, setTimeList] = useState<any>(now);
 
   useEffect(() => {
     if (appConfig.IS_Matrix !== 'public') {
@@ -44,20 +50,20 @@ const BasicFeMonitor = () => {
     }
     switch (tabKey) {
       case '1':
-        return <BasicOverview {...param} />;
+        return <BasicOverview {...param} timeList={timeList} />;
       case '2':
-        return <BasicError {...param} />;
+        return <BasicError {...param} timeList={timeList} />;
       case '3':
-        return <BasicPerformance {...param} />;
+        return <BasicPerformance {...param} timeList={timeList} />;
       case '4':
-        return <BasicApi {...param} />;
+        return <BasicApi {...param} timeList={timeList} />;
     }
   };
 
   return (
     <div className="basic-fe-monitor-wrapper">
       <div className="app-group-tab-wrapper">
-        {appConfig.IS_Matrix === 'public' || appConfig.envType === 'fygs' ? (
+        {appConfig.IS_Matrix === 'public' || envType === 'fygs' ? (
           <div className="env-select-wrapper">
             <span>域名：</span>
             <Select value={feEnv} clearIcon={false} style={{ width: '120px' }} onChange={setFeEnv}>
@@ -114,7 +120,10 @@ const BasicFeMonitor = () => {
           <TabPane tab="性能分析" key="3" />
           <TabPane tab="API分析" key="4" />
         </Tabs>
-        <div className="app-group-content">{renderActiveCon()}</div>
+        <div className="app-group-content">
+          <Header defaultTime={timeList} onChange={setTimeList} />
+          {renderActiveCon()}
+        </div>
       </div>
     </div>
   );

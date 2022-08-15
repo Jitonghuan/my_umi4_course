@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import {getRequest, putRequest, delRequest, postRequest} from '@/utils/request';
+import {getRequest, postRequest} from '@/utils/request';
 import { message } from 'antd';
 import * as APIS from '../service';
-import {deleteDbMonitor, disableDbMonitor, enableDbMonitor} from "../service";
 
 export function useEnvListOptions() {
   const [envCodeOption, setEnvCodeOption] = useState<any>([]);

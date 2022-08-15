@@ -4,7 +4,6 @@
 
 import React, { useMemo, useState, useCallback } from 'react';
 import { Button, Table } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import VersionEditor from './_components/version-editor';
 import PageContainer from '@/components/page-container';
@@ -66,8 +65,7 @@ export default function VersionList() {
               setType('add');
             }}
           >
-            <PlusOutlined />
-            新增版本
+            + 新增版本
           </Button>
         </div>
         <Table
@@ -90,6 +88,7 @@ export default function VersionList() {
               setPageInfo({
                 pageIndex: next,
               }),
+            showTotal: () => `总共 ${pageInfo.total} 条数据`,
           }}
           columns={tableColumns}
         ></Table>

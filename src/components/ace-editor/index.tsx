@@ -32,10 +32,11 @@ export interface AceEditorProps {
   status?: 'success' | 'error' | 'warning' | 'default';
   placeholder?: string;
   focus?: boolean;
+  firstLineNumber?: number;
 }
 
 export default function AceEditor(props: AceEditorProps) {
-  const { mode = 'text', focus = false } = props;
+  const { mode = 'text', focus = false, firstLineNumber } = props;
   const [stateValue, setStateValue] = useState<string>('value' in props ? props.value! : props.defaultValue ?? '');
   const [wrap, setWrap] = useState(false);
   const errorRef = useRef<any>();
@@ -86,11 +87,13 @@ export default function AceEditor(props: AceEditorProps) {
         onChange={handleChange}
         readOnly={props.readOnly}
         placeholder={props.placeholder}
+        showPrintMargin={false}
         wrapEnabled={wrap}
         scrollMargin={[0, 32]}
         setOptions={{
           tabSize: 2,
           useWorker: false,
+          firstLineNumber: firstLineNumber || 1
         }}
       />
       <span className="ace-editor-type" data-type={mode} onClick={handleFormat}>

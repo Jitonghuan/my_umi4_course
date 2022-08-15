@@ -1,8 +1,11 @@
 import appConfig from '@/app.config';
-import { getRequest } from "@/utils/request";
+import { getRequest } from '@/utils/request';
 
 // 创建npm包
 export const npmCreate = `${appConfig.apiPrefix}/appManage/npm/create`;
+
+// 删除npm包
+export const npmDelete = `${appConfig.apiPrefix}/appManage/npm/delete`;
 
 // 修改npm包
 export const npmUpdate = `${appConfig.apiPrefix}/appManage/npm/update`;
@@ -21,9 +24,9 @@ export const searchGitAddress = async (keyword: string) => {
     data: {
       key: keyword,
       pageIndex: 1,
-      pageSize: 20,
+      pageSize: 60,
     },
   });
-  const { dataSource } = result.data || {};
+  const { dataSource } = result?.data || {};
   return (dataSource || []).map((str: string) => ({ label: str, value: str })) as IOption[];
 };

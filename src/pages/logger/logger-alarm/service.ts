@@ -9,6 +9,8 @@ export const getEnvList = addAPIPrefix('/logManage/logSearch/env');
 
 export const getEnvListByAppCode = addAPIPrefix('/monitorManage/app/env');
 
+export const getEnvCodeList = addAPIPrefix('/monitorManage/rules/envCodeList');
+
 export const getMonitorList = addAPIPrefix('/logManage/alertrule/list');
 
 export const getAppList = addAPIPrefix('/appManage/list');
@@ -31,3 +33,5 @@ export const switchRule = addAPIPrefix('/logManage/alertrule/switch');
 
 /** GET 获取用户名 */
 export const getUserList = addAPIPrefix('/appManage/user/listAll');
+/** GET 校验名字 */
+export const ruleCheckName = addAPIPrefix('/logManage/alertrule/checkName');

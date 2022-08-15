@@ -53,9 +53,7 @@ export default function Layout(props: any) {
   const [categoryData] = useCategoryData();
   // 业务线
   const [businessData] = useBusinessData();
-
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
-  const { fromThird } = parse(location.search);
 
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
@@ -76,26 +74,49 @@ export default function Layout(props: any) {
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
-
+  const [initFlg, setInitFlg] = useState(false);
+  const isPageInIFrame = () => window.self !== window.top;
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
       loadUnreadNum();
       loadStemNoticeList();
     });
   };
-  useEffect(() => {
-    getMatrixEnvConfig().then((res) => {
-      setMatrixConfigInfo(res);
-      // @ts-ignore
-      window.matrixConfigData = res || {
-        curEnvType: 'dev',
-        locationHref: '',
-        domainName: 'http://c2f.apex-dev.cfuture.shop',
-        wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
-        LogoName: '',
-        waterMarkName: '',
+
+  async function getConfig() {
+    const res = await getMatrixEnvConfig();
+    let infoSource = window.location.href?.includes('gushangke')
+      ? {
+        curEnvType: 'gushangke',
+        locationHref: 'gushangke',
+        domainName: 'http://c2f.apex.gushangke.com',
+        wsPrefixName: 'ws://matrix-api.gushangke.com',
+        LogoName: '--富阳骨伤',
+        waterMarkName: '富阳骨伤',
+      }
+      : {
+        curEnvType: res?.curEnvType,
+        locationHref: res?.locationHref,
+        domainName: res?.domainName,
+        wsPrefixName: res?.wsPrefixName,
+        LogoName: res?.LogoName,
+        waterMarkName: res?.waterMarkName,
       };
-    });
+    setMatrixConfigInfo(infoSource);
+    // @ts-ignore
+    window.matrixConfigData = res || {
+      curEnvType: 'dev',
+      locationHref: '',
+      domainName: 'http://c2f.apex-dev.cfuture.shop',
+      wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
+      LogoName: '',
+      waterMarkName: '',
+    };
+    setInitFlg(true);
+  }
+
+  useEffect(() => {
+    getConfig();
   }, []);
 
   const route = [
@@ -161,7 +182,7 @@ export default function Layout(props: any) {
     }
   };
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider locale={zhCN} >
       <AllMessage
         mode={allMessageMode}
         allData={stemNoticeListData}
@@ -198,85 +219,112 @@ export default function Layout(props: any) {
           }}
         >
           <ChartsContext.Provider value={{ effectResize }}>
-            <BasicLayout
-              {...(props as any)}
-              isOpenLogin={true}
-              pagePrefix={appConfig.pagePrefix}
-              routes={route}
-              history={history}
-              location={location}
-              siderMenuProps={{
-                isOpenPermission: appConfig.isOpenPermission,
-                permissionData,
-                IconMap,
-              }}
-              showHeader={!fromThird}
-              showSiderMenu={!fromThird}
-              headerProps={{
-                // env: getEnv(),
-                userApi:
-                  matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
-                logoutApi: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
-                loginUrl: matrixConfigInfo?.domainName && `${matrixConfigInfo?.domainName}/login`,
-                onClickPosition: () => {
-                  setPosVisible(true);
-                  // @ts-ignore
-                  if (window.matrixConfigData?.domainName) {
-                    loadStaffOrgData();
-                  }
-                  setUserPosition({
-                    orgId: userInfo?.orgId,
-                    // campusId: 2000001,
-                    deptId: userInfo.deptInfo.deptId,
-                  });
-                },
-                notification: {
-                  count: unreadNum,
-                  data: stemNoticeListData,
-                  onClickMsgEntry: (id: number, msg: any) => {
-                    setAllMessageMode('VIEW');
-                    oneKeyRead([id]);
+            {initFlg && (
+              <BasicLayout
+                {...(props as any)}
+                isOpenLogin={true}
+                className='test'
+                layout='LTB'
+                pagePrefix={appConfig.pagePrefix}
+                siderMenuProps={{
+                  isOpenPermission: appConfig.isOpenPermission,
+                  permissionData,
+                  IconMap,
+                  title: (
+                    <>
+                      <div className="matrix-title">
+                        <img src={appConfig.logo}
+                          style={{ marginRight: '5px', height: 45, width: 45 }}
+                          onClick={() => {
+                            props.history.push('/matrix/index');
+                          }}
+                        />
+                        <div className='matrix-title-matrix'>{appConfig.title}</div>
+                        <div className='matrix-title-env'>{matrixConfigInfo?.LogoName}</div>
+                      </div>
+                    </>
+                  ),
+                  // backgroundImage: require("@/assets/side-bg.png")
 
-                    return <a href={`'#'+${msg.systemNoticeId}`}>{msg.title}</a>;
+                }}
+                showHeader={!isPageInIFrame()}
+                showSiderMenu={!isPageInIFrame()}
+                headerProps={{
+                  // env: getEnv(),
+                  defaultTitle: appConfig.title,
+                  userApi: matrixConfigInfo?.domainName
+                    ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
+                    : window.location.href?.includes('gushangke')
+                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
+                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                  logoutApi: matrixConfigInfo?.domainName
+                    ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
+                    : window.location.href?.includes('gushangke')
+                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
+                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                  loginUrl: matrixConfigInfo?.domainName
+                    ? `${matrixConfigInfo?.domainName}/login`
+                    : window.location.href?.includes('gushangke')
+                      ? 'http://c2f.apex.gushangke.com/login'
+                      : `${matrixConfigInfo?.domainName}/login`,
+                  onClickPosition: () => {
+                    setPosVisible(true);
+                    // @ts-ignore
+                    if (window.matrixConfigData?.domainName) {
+                      loadStaffOrgData();
+                    }
+                    setUserPosition({
+                      orgId: userInfo?.orgId,
+                      // campusId: 2000001,
+                      deptId: userInfo.deptInfo.deptId,
+                    });
                   },
-                  onClickAllMsg: () => {
-                    setAllMessageMode('VIEW');
-                  },
-                  render: (active: boolean, setActive: (status: boolean) => void) => {
-                    <h3>一共{unreadNum}条数据</h3>;
-                  },
-                },
-                extensions: [
-                  {
-                    iconName: 'AlertOutlined',
-                    iconType: 'antd',
-                    type: 'customize',
-                    content: () => {
-                      changeTheme();
+                  notification: {
+                    count: unreadNum,
+                    data: stemNoticeListData,
+                    onClickMsgEntry: (id: number, msg: any) => {
+                      setAllMessageMode('VIEW');
+                      oneKeyRead([id]);
+
+                      return <a href={`'#'+${msg.systemNoticeId}`}>{msg.title}</a>;
+                    },
+                    onClickAllMsg: () => {
+                      setAllMessageMode('VIEW');
+                    },
+                    render: (active: boolean, setActive: (status: boolean) => void) => {
+                      <h3>一共{unreadNum}条数据</h3>;
                     },
                   },
-                ],
-                title: (
-                  <>
-                    <div className="matrix-title">
-                      <span>
-                        <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
+                  extensions: [
+                    {
+                      iconName: 'AlertOutlined',
+                      iconType: 'antd',
+                      type: 'customize',
+                      content: () => {
+                        changeTheme();
+                      },
+                    },
+                  ],
+                  title: (<></>),
+                  // title: (
+                  //   <>
+                  //     <div className="matrix-title">
+                  //       <span>
+                  //         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
 
-                        {appConfig.title}
-                        {matrixConfigInfo?.LogoName}
-                      </span>
-                    </div>
-                  </>
-                ),
-                positionText: '部门',
-                isShowGlobalMenu: false,
-                onBrandClick: () => {
-                  props.history.push('/matrix/index');
-                },
-              }}
-            >
-              <Outlet />
+                  //         {appConfig.title}
+                  //         {matrixConfigInfo?.LogoName}
+                  //       </span>
+                  //     </div>
+                  //   </>
+                  // ),
+                  positionText: '部门',
+                  isShowGlobalMenu: false,
+                }}
+              >
+                  <Outlet />   
             </BasicLayout>
+            )}
           </ChartsContext.Provider>
         </FeContext.Provider>
       </WaterMark>

@@ -2,11 +2,12 @@ import React, { CSSProperties, ReactNode } from 'react';
 import type { TableProps, FormItemProps, FormInstance } from 'antd/lib';
 
 export type TypeProps = 'select' | 'input' | 'date' | 'range' | 'area' | 'inputNumber' | 'radio' | 'checkbox' | 'other';
-
+//
 export interface OptionProps {
-  value: string;
-  label: string;
-  key: React.Key;
+  value: any;
+  label: any;
+  key: any;
+  renderLabel?: boolean;
 }
 
 export interface CheckboxOptionProps {
@@ -20,9 +21,9 @@ export interface TextAreaProps {
 }
 
 export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
-  key: string;
+  key: any;
   type: TypeProps;
-  dataIndex?: string;
+  dataIndex?: any;
   label?: string;
   option?: OptionProps[];
   checkboxOption?: CheckboxOptionProps[];

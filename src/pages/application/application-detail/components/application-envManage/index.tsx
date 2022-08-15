@@ -8,7 +8,15 @@ import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, postRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
 import './index.less';
-import { appTypeList, listAppEnv, addAppEnv, delAppEnv, queryEnvList, envAppCR } from '@/pages/application/service';
+import {
+  appTypeList,
+  listAppEnv,
+  addAppEnv,
+  delAppEnv,
+  queryEnvList,
+  envAppCR,
+  updateAppApply,
+} from '@/pages/application/service';
 
 export default function appEnvPageList() {
   const { appData } = useContext(DetailContext);
@@ -25,7 +33,7 @@ export default function appEnvPageList() {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [EnvForm] = Form.useForm();
   const [appEnvForm] = Form.useForm();
-  const { appCode } = appData || {};
+  const { appCode, microFeType } = appData || {};
   const envTypeData = [
     {
       label: 'DEV',
@@ -188,6 +196,24 @@ export default function appEnvPageList() {
       });
     }
   };
+
+  //启用配置管理选择 启用发布审批为0，不启用为1
+  const handleNeedApplyChange = async (checked: any, record: any) => {
+    await postRequest(updateAppApply, {
+      data: {
+        envCode: record?.envCode,
+        appCode,
+        isAppNeedApply: checked ? false : true,
+      },
+    }).then((result) => {
+      if (result.success) {
+        message.success('更改成功！');
+        queryAppEnvData({
+          appCode,
+        });
+      }
+    });
+  };
   return (
     <ContentCard className="app-env-management">
       <Modal
@@ -288,14 +314,6 @@ export default function appEnvPageList() {
             <Table.Column title="环境CODE" dataIndex="envCode" ellipsis />
             <Table.Column title="环境名" dataIndex="envName" ellipsis />
             <Table.Column title="默认分类" dataIndex="categoryCode" width={120} />
-            {/* <Table.Column
-              title="是否启用配置管理"
-              dataIndex="useNacos"
-              width={180}
-              render={(value, record, index) => (
-                <Switch className="useNacos" checked={value === 1 ? true : false} disabled={true} />
-              )}
-            /> */}
           </Table>
         </div>
       </Modal>
@@ -340,22 +358,26 @@ export default function appEnvPageList() {
               重置
             </Button>
           </Form.Item>
-          <div style={{ marginLeft: '18px' }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                EnvForm.resetFields();
-                //  appEnvForm.setFieldsValue(undefined)
-                setIsModalVisible(true);
-                let obj = { pageIndex: 1, pageSize: 10 };
-                queryEnvData(obj);
-                setSelectedRowKeys(['undefined']);
-                setPageIndex(1);
-              }}
-            >
-              绑定环境
-            </Button>
-          </div>
+          {
+            microFeType !== 'subProject' && (
+              <div style={{ marginLeft: '18px' }}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    EnvForm.resetFields();
+                    //  appEnvForm.setFieldsValue(undefined)
+                    setIsModalVisible(true);
+                    let obj = { pageIndex: 1, pageSize: 10 };
+                    queryEnvData(obj);
+                    setSelectedRowKeys(['undefined']);
+                    setPageIndex(1);
+                  }}
+                >
+                  绑定环境
+                </Button>
+              </div>
+            )
+          }
         </Form>
       </div>
       <div style={{ marginTop: '15px' }}>
@@ -382,7 +404,7 @@ export default function appEnvPageList() {
               <div className="action-cell">
                 {/* <Popconfirm title={`确定要${record.isAppNeedCR ? '关闭' : '开启'}CodeReview吗？`} onConfirm={() => handleDelEnv(record)}> */}
                 <Switch
-                  disabled={record?.proEnvType !== 'benchmark'}
+                  disabled={record?.proEnvType !== 'benchmark' || microFeType === 'subProject'}
                   checked={record?.isAppNeedCR}
                   onChange={() => {
                     switchChange(record);
@@ -392,18 +414,32 @@ export default function appEnvPageList() {
               </div>
             )}
           />
-          <Table.Column title="备注" dataIndex="mark" width={180} />
           <Table.Column
-            title="操作"
-            width={120}
-            render={(_, record: Record<string, any>, index) => (
-              <div className="action-cell">
-                <Popconfirm title="确定要解绑该环境吗？" onConfirm={() => handleDelEnv(record)}>
-                  <a style={{ color: 'red' }}>解绑</a>
-                </Popconfirm>
-              </div>
+            title="启用发布审批"
+            dataIndex="isAppNeedApply"
+            width={110}
+            render={(value, record, index) => (
+              <>
+                <Switch className="needApply" disabled={microFeType === 'subProject'} onChange={() => handleNeedApplyChange(value, record)} checked={value} />
+              </>
             )}
           />
+          <Table.Column title="备注" dataIndex="mark" width={180} />
+          {
+            microFeType !== 'subProject' && (
+              <Table.Column
+                title="操作"
+                width={120}
+                render={(_, record: Record<string, any>, index) => (
+                  <div className="action-cell">
+                    <Popconfirm title="确定要解绑该环境吗？" onConfirm={() => handleDelEnv(record)}>
+                      <a style={{ color: 'red' }}>解绑</a>
+                    </Popconfirm>
+                  </div>
+                )}
+              />
+            )
+          }
         </Table>
       </div>
     </ContentCard>

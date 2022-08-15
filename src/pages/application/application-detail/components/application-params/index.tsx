@@ -100,15 +100,9 @@ export default function ApplicationParams(props: any) {
 
   //通过appCategoryCode查询环境信息
   const selectAppEnv = () => {
-    if (appConfig.PRIVATE_METHODS === 'public') {
-      return getRequest(APIS.listAppEnv, {
-        data: { appCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
-      });
-    } else {
-      return getRequest(APIS.listAppEnv, {
-        data: { appCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
-      });
-    }
+    return getRequest(APIS.listAppEnv, {
+      data: { appCode, proEnvType: 'benchmark' },
+    });
   };
 
   //查询当前模版信息  一进入页面加载

@@ -4,7 +4,6 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Radio, Button, Spin, Pagination, Empty } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';
@@ -53,8 +52,7 @@ export default function AllApplication() {
           </Radio.Group>
 
           <Button type="primary" onClick={() => setCreateAppVisible(true)}>
-            <PlusOutlined />
-            新增应用
+            + 新增应用
           </Button>
         </div>
 
@@ -71,6 +69,7 @@ export default function AllApplication() {
                   total={total}
                   current={pageIndex}
                   showSizeChanger
+                  showTotal={(total, range) => `总共 ${total} 条数据`}
                   onShowSizeChange={(_, next) => {
                     setPageIndex(1);
                     setPageSize(next);

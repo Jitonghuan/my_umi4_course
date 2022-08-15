@@ -4,8 +4,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { history } from 'umi';
-import { Input, Table, Form, Button, Space, Select, Divider } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Input, Table, Form, Button, Space, Select } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { releaseTableSchema } from './schema';
@@ -17,7 +16,7 @@ export default function HelmList() {
   const [curRecord, setCurRecord] = useState<any>();
   const [tableLoading, setTableLoading] = useState<any>(false);
   const [tabledataSource, setDataSource] = useState<any>([]);
-  const [curClusterName, setCurClusterName] = useState<any>('来未来');
+  const [curClusterName, setCurClusterName] = useState<any>('');
   const [clusterInfo, setClusterInfo] = useState<any>();
   const [mode, setMode] = useState<boolean>(false);
   const [delLoading, deleteRelease] = useDeleteRelease();
@@ -26,29 +25,34 @@ export default function HelmList() {
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(20);
+  const [currentCluster, setCurrentCluster] = useState<any>('');
 
   useEffect(() => {
     getClusterList().then((res) => {
       setClusterOptions(res);
-      const curClusterOption = res?.filter((item: any) => {
-        if (item.value === '来未来') return item?.clusterId;
-      });
+      setCurClusterName(res[0]?.value);
 
-      if (curClusterOption[0]?.clusterId) {
-        queryNameSpace(curClusterOption[0].clusterId);
-        setClusterInfo({
-          curClusterId: curClusterOption[0].clusterId,
-          curClusterName: '来未来',
-        });
-        getReleaseList({ clusterName: '来未来' });
-      } else {
-        queryNameSpace(res[0]?.clusterId);
-        setClusterInfo({
-          curClusterId: res[0]?.clusterId,
-          curClusterName: res[0]?.value,
-        });
-        getReleaseList({ clusterName: clusterOptions[0] });
-      }
+      // const curClusterOption = res?.filter((item: any) => {
+      //   if (item.value === '来未来') return item?.clusterId;
+      // });
+
+      // if (curClusterOption[0]?.clusterId) {
+      //   queryNameSpace(curClusterOption[0].clusterId);
+      //   setClusterInfo({
+      //     curClusterId: curClusterOption[0].clusterId,
+      //     curClusterName: '来未来',
+      //   });
+      //   getReleaseList({ clusterName: '来未来' });
+      // } else {
+      queryNameSpace(res[0]?.clusterId);
+      setCurrentCluster(res[0]?.value);
+      setClusterInfo({
+        curClusterId: res[0]?.clusterId,
+        curClusterName: res[0]?.value,
+      });
+      getReleaseList({ clusterName: res[0]?.value });
+
+      // }
     });
   }, []);
 
@@ -92,7 +96,7 @@ export default function HelmList() {
         });
       },
     }) as any;
-  }, []);
+  }, [curClusterName]);
   //查询nameSpace
   const queryNameSpace = (value: any) => {
     queryPodNamespaceData({ clusterId: value }).then((res) => {
@@ -102,6 +106,7 @@ export default function HelmList() {
 
   const changeClusterName = (cluster: any) => {
     const params = releaseForm.getFieldsValue();
+    setCurrentCluster(cluster);
     setCurClusterName(cluster);
     const curClusterOption = clusterOptions?.filter((item: any) => {
       if (item.value === cluster) return item?.clusterId;
@@ -170,7 +175,7 @@ export default function HelmList() {
               style={{ width: 190 }}
               allowClear
               showSearch
-              defaultValue="来未来"
+              value={currentCluster}
               onChange={changeClusterName}
             />
           </div>
@@ -215,8 +220,7 @@ export default function HelmList() {
                   });
                 }}
               >
-                <PlusOutlined />
-                创建
+                + 创建
               </Button>
             </Space>
           </div>

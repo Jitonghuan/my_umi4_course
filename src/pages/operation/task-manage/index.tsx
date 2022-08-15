@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Input, Table, Form, Button, Space } from 'antd';
-import { PlusOutlined, RedoOutlined } from '@ant-design/icons';
+import { RedoOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import CreateTaskModal from './create-task';
@@ -149,8 +149,7 @@ export default function TaskManageList(props: any) {
                   setAddTaskMode('ADD');
                 }}
               >
-                <PlusOutlined />
-                创建任务
+                + 创建任务
               </Button>
             </Space>
           </div>

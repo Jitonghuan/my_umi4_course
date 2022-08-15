@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { Card, Grid } from '@arco-design/web-react';
-
 import './style/contentpercentag.less';
-import { BorderBox8, Decoration9, Decoration11, FlylineChartEnhanced } from '@jiaminghi/data-view-react';
+import { BorderBox8, Decoration9 } from '@jiaminghi/data-view-react';
 import { loadFull } from 'tsparticles';
 import ReactCanvasNest from 'react-canvas-nest';
-
-import Particles from 'react-tsparticles';
-import ParticlesBg from 'particles-bg';
 
 const { Row, Col } = Grid;
 function PopularContent() {
@@ -158,9 +153,6 @@ function PopularContent() {
   };
 
   const particlesInit = async (main: any) => {
-    // you can initialize the tsParticles instance (main) here, adding custom shapes or presets
-    // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-    // starting from v2 you can add only the features you need reducing the bundle size
     await loadFull(main);
   };
 
@@ -175,23 +167,6 @@ function PopularContent() {
           color={['rgb(29, 193, 245)', 'blue']}
           className="percentage"
         >
-          {/* <Particles  
-            id="tsparticles"
-            init={particlesInit}
-            loaded={particlesLoaded}
-            options={options}
-            width={'100px'}
-            height={'200px'}
-            canvasClassName='tsparticlesCan'
-            style={{
-             position:'absolute',
-              border:'1px red'
-            }
-              
-            }
-          /> */}
-
-          {/* <ParticlesBg  type="random" bg={true} /> */}
           <ReactCanvasNest
             className="canvasNest"
             config={{
@@ -204,25 +179,6 @@ function PopularContent() {
             }}
             style={{ zIndex: 6 }}
           />
-
-          {/* <Typography.Title heading={3} style={{ marginTop: '0px', lineHeight: 1, padding: 14,}}>
-          Matrix云原生平台
-          
-        </Typography.Title> */}
-          {/* <div className="content-bg-mask">
-      
-          <div className="g-polygon g-polygon-1"></div>
-          <div className="g-polygon g-polygon-2"></div>
-          <div className="g-polygon g-polygon-3"></div>
-        </div>
-        <div className='matrix-bg' > 
-        < img src= {logoBg} />
-        </div> */}
-
-          {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}> */}
-          {/* <div style={{ position: 'absolute' }} >
-            <img src={whiteBg} style={{ top: 4, filter: 'opacity(0.3)', height: '50vh', width: '54vw' }}></img>
-          </div> */}
           <div
             style={{
               position: 'relative',

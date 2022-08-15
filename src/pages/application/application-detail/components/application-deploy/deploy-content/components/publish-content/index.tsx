@@ -3,8 +3,9 @@
 // @create 2021/09/05 22:57
 
 import React, { useState, useContext } from 'react';
-import { Modal, Button, Table, Tag, Tooltip, Badge } from 'antd';
-import { ExclamationCircleOutlined, QuestionCircleOutlined, QuestionCircleTwoTone } from '@ant-design/icons';
+import { Modal, Button, Table, Tag, Tooltip, message } from 'antd';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { ExclamationCircleOutlined, QuestionCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
@@ -71,7 +72,6 @@ export default function PublishContent(props: IProps) {
       title: '确定要重新提交吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        debugger;
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
         return reCommit({
           id: metadata.id,
@@ -122,6 +122,11 @@ export default function PublishContent(props: IProps) {
     return (
       <div>
         <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
+        <span style={{ marginLeft: 8, color: 'royalblue' }}>
+          <CopyToClipboard text={branchName} onCopy={() => message.success('复制成功！')}>
+            <CopyOutlined />
+          </CopyToClipboard>
+        </span>
       </div>
     );
   };

@@ -29,6 +29,7 @@ const rootCls = 'deploy-content-compo';
 
 export default function DeployContent(props: DeployContentProps) {
   const { viewLogEnv, type, viewLogEnvType } = props;
+  const { fromThird } = history.location?.query || {};
   const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
@@ -116,7 +117,9 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   const deploymentIntervalFunc = () => {
-    getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+    if (initEnvCode.current) {
+      getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
+    }
   };
 
   //引用定时器
@@ -150,8 +153,11 @@ export default function DeployContent(props: DeployContentProps) {
             formInstance.setFieldsValue({ envCode: viewLogEnv });
             initEnvCode.current = viewLogEnv;
             setCurrentEnvData(viewLogEnv);
+            if (!viewLogEnv) {
+              getDeploymentTimerHandler('stop');
+            }
 
-            if (viewLogEnv !== '') {
+            if (viewLogEnv) {
               loadInfoData(viewLogEnv).then(() => {
                 queryAppOperateLog(viewLogEnv);
                 getRequest(queryInstanceListApi, { data: { appCode: appData?.appCode, envCode: initEnvCode.current } })
@@ -166,6 +172,7 @@ export default function DeployContent(props: DeployContentProps) {
                         timerHandler('do', true);
                       } else {
                         timerHandler('stop');
+
                         getDeploymentTimerHandler('stop');
                       }
                     } else {
@@ -199,7 +206,11 @@ export default function DeployContent(props: DeployContentProps) {
             initEnvCode.current = dataSources[0]?.value;
             setCurrentEnvData(dataSources[0]?.value);
             formInstance.setFieldsValue({ envCode: initEnvCode.current });
-            if (initEnvCode.current !== '') {
+
+            if (!initEnvCode.current) {
+              getDeploymentTimerHandler('stop');
+            }
+            if (initEnvCode.current) {
               let initLoadInfoData: any = [];
               // getDeploymentEventListInfo({ appCode, envCode: initEnvCode.current });
               getRequest(listEnvCluster, { data: { envCode: initEnvCode.current } })
@@ -210,7 +221,7 @@ export default function DeployContent(props: DeployContentProps) {
                   }
                 })
                 .then(() => {
-                  if (initLoadInfoData.length !== 0) {
+                  if (initLoadInfoData?.length !== 0) {
                     queryAppOperateLog(initEnvCode.current);
                     getRequest(queryInstanceListApi, {
                       data: { appCode: appData?.appCode, envCode: initEnvCode.current },
@@ -257,15 +268,8 @@ export default function DeployContent(props: DeployContentProps) {
   //通过appCode和env查询环境信息
   const selectAppEnv = () => {
     return getRequest(listAppEnv, {
-      data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'not-private-cluster' },
+      data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', envModel: 'currency-deploy' },
     });
-    // if (appConfig.PRIVATE_METHODS === 'public') {
-
-    // } else {
-    // return getRequest(listAppEnv, {
-    //   data: { appCode, envTypeCode: envTypeCode, proEnvType: 'benchmark', clusterName: 'private-cluster' },
-    // });
-    // }
   };
   const loadInfoData = async (envCode: any, operateType?: boolean) => {
     await getRequest(listEnvCluster, { data: { envCode: envCode } }).then((result) => {
@@ -473,6 +477,7 @@ export default function DeployContent(props: DeployContentProps) {
                           appCode: appCode,
                           envCode: currentEnvData,
                           viewLogEnvType: envTypeCode,
+
                           // initRecord:JSON.stringify(record)
                         },
                         state: {
@@ -646,12 +651,12 @@ export default function DeployContent(props: DeployContentProps) {
                         {item.operateEvent === 'PodFileDownload'
                           ? '文件下载'
                           : item.operateEvent === 'restartApp'
-                          ? '重启应用'
-                          : item.operateEvent === 'rollback'
-                          ? '回滚应用'
-                          : item.operateEvent === 'DeletePod'
-                          ? '删除Pod'
-                          : null}
+                            ? '重启应用'
+                            : item.operateEvent === 'rollback'
+                              ? '回滚应用'
+                              : item.operateEvent === 'DeletePod'
+                                ? '删除Pod'
+                                : null}
                       </Tag>
                     </b>
                   </p>

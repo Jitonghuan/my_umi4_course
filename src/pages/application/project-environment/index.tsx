@@ -6,7 +6,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Spin, message, Divider, Tooltip } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { PlusOutlined, StarFilled, StarTwoTone, CopyOutlined } from '@ant-design/icons';
+import { StarFilled, StarTwoTone, CopyOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { queryProjectEnvList } from './service';
@@ -250,8 +250,7 @@ export default function EnvironmentList() {
               setEnviroEditMode('ADD');
             }}
           >
-            <PlusOutlined />
-            新增项目环境
+            + 新增项目环境
           </Button>
           {/* )} */}
         </div>

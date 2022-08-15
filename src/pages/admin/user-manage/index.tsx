@@ -1,13 +1,27 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Space, Form } from 'antd';
+import { Space, Form, Button, Modal, Input, message } from 'antd';
+import ImportDataModal from './importData';
 import { history } from 'umi';
 import { createTableColumns } from './schema';
-import { getUserList } from './service';
+import { getUserList, exportTemplateExcel } from './service';
 import useTable from '@/utils/useTable';
+import { useCreateUser } from './hook';
 export default function UserManage() {
   const [form] = Form.useForm();
+  const [createUserForm] = Form.useForm();
+  const [loading, createUser] = useCreateUser();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [importDataMode, setImportDataMode] = useState<EditorMode>('HIDE');
+  const [downLoadDisabled, setDownLoadDisabled] = useState<boolean>(false);
+  const handleSubmit = () => {
+    const values = createUserForm.getFieldsValue();
+    createUser({ ...values }).then(() => {
+      setVisible(false);
+      reset();
+    });
+  };
   const columns = useMemo(() => {
     return createTableColumns({
       onEdit: (record, index) => {
@@ -47,6 +61,16 @@ export default function UserManage() {
 
   return (
     <PageContainer>
+      <ImportDataModal
+        mode={importDataMode}
+        onClose={() => setImportDataMode('HIDE')}
+        onSave={() => {
+          setImportDataMode('HIDE');
+          setTimeout(() => {
+            reset();
+          }, 100);
+        }}
+      />
       <TableSearch
         form={form}
         bordered
@@ -67,12 +91,48 @@ export default function UserManage() {
           ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
-          size: 'small',
+          // size: 'small',
           defaultPageSize: 20,
         }}
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <h3>用户列表</h3>
+            <Space>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setImportDataMode('ADD');
+                }}
+              >
+                批量导入导出
+              </Button>
+
+              <Button
+                type="primary"
+                target="_blank"
+                href={`${exportTemplateExcel}`}
+                disabled={downLoadDisabled}
+                className="downloadButton"
+                onClick={() => {
+                  message.info('开始导出...');
+                  setDownLoadDisabled(true);
+                  setTimeout(() => {
+                    setDownLoadDisabled(false);
+                  }, 3000);
+                }}
+              >
+                下载用户信息表模板
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => {
+                  createUserForm.resetFields();
+                  setVisible(true);
+                }}
+              >
+                新增用户
+              </Button>
+            </Space>
           </Space>
         }
         className="table-form"
@@ -80,6 +140,36 @@ export default function UserManage() {
         reset={reset}
         searchText="查询"
       />
+      <Modal
+        title="新增用户"
+        visible={visible}
+        onCancel={() => {
+          setVisible(false);
+        }}
+        onOk={handleSubmit}
+        confirmLoading={loading}
+      >
+        <Form labelCol={{ flex: '110px' }} form={createUserForm}>
+          <Form.Item label="姓名" name="name" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 320 }} />
+          </Form.Item>
+          <Form.Item label="邮箱" name="email" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 320 }} />
+          </Form.Item>
+          <Form.Item label="手机号" name="mobile" rules={[{ required: true, message: '这是必填项' }]}>
+            <Input style={{ width: 320 }} />
+          </Form.Item>
+          <Form.Item label="Sso用户名" name="ssoUsername">
+            <Input style={{ width: 320 }} />
+          </Form.Item>
+          <Form.Item label="LeaderDingUid" name="leaderDingUid">
+            <Input style={{ width: 320 }} />
+          </Form.Item>
+          <Form.Item label="DingUid" name="dingUid">
+            <Input style={{ width: 320 }} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </PageContainer>
   );
 }

@@ -5,9 +5,8 @@
  * @create 2021-04-25 16:05
  */
 
-import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Modal, Button, List, Tag } from 'antd';
-import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import VCDescription from '@/components/vc-description';
 import _ from 'lodash';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -26,6 +25,7 @@ export default function PublishRecord(props: IProps) {
 
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
+  const [intervalId, setIntervalId] = useState<any>(null);
 
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
@@ -60,59 +60,12 @@ export default function PublishRecord(props: IProps) {
       }
     }, 8000);
 
+    setIntervalId(intervalId);
+
     return () => {
-      clearInterval(intervalId);
+      intervalId && clearInterval(intervalId);
     };
   }, []);
-  // useEffect(() => {
-  //   queryDataSource({
-  //     appCode,
-  //     envTypeCode: env,
-  //     pageIndex: 1,
-  //   });
-  // }, []);
-  // useEffect(() => {
-  //   // let intervalId = setInterval(() => {
-  //   //   if (appCode && env) {
-  //   //     queryDataSource({
-  //   //       appCode,
-  //   //       envTypeCode: env,
-  //   //       pageIndex: 1,
-  //   //     });
-  //   //   }
-  //   // }, 8000);
-  //   timerHandle('do', true);
-
-  //   // return () => {
-  //   //   clearInterval(intervalId);
-  //   // };
-  // }, []);
-
-  let dom: any = document?.getElementById('load-more-list');
-  let scrollTop = useRef<any>(dom?.scrollTop);
-  // let scrollTop = dom?.scrollTop; // 滚动条距离顶部的距离
-  // useEffect(() => {
-  //   if (dom) {
-  //     console.log('00000');
-  //     dom.addEventListener('scroll', getScroll(), true);
-  //   }
-
-  //   // return () => {
-  //   //    dom?.removeEventListener('scroll', getScroll(),true);
-  //   // };
-  // }, [dom, scrollTop.current]);
-  //定义定时器方法
-  // const intervalFunc = () => {
-  //   if (appCode && env) {
-  //     queryDataSource({
-  //       appCode,
-  //       envTypeCode: env,
-  //       pageIndex: 1,
-  //     });
-  //   }
-  // };
-  // // 定时请求发布内容
-  // const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
 
   useEffect(() => {
     if (!appCategoryCode) return;
@@ -163,7 +116,7 @@ export default function PublishRecord(props: IProps) {
             type="primary"
             onClick={() => {
               loadMore && loadMore();
-              // timerHandle('stop');
+              intervalId && clearInterval(intervalId);
             }}
           >
             加载更多
@@ -171,27 +124,6 @@ export default function PublishRecord(props: IProps) {
         </div>
       )
     );
-  };
-  const getScroll = () => {
-    // let dom: any = document?.getElementById('load-more-list');
-    console.log('dom.scrollTop', scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
-    if (dom) {
-      // dom?.scrollTo(0, 0);
-      scrollTop.current = dom?.scrollTop; // 滚动条距离顶部的距离
-      let windowHeight = dom?.clientHeight; // 可视区的高度
-      let scrollHeight = dom?.scrollHeight; //dom元素的高度，包含溢出不可见的内容
-      // const scroll =scrollHeight-scrollTop-windowHeight;
-      console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
-      if (scrollTop.current > 3) {
-        console.log('到达底部开始滑动！');
-        // timerHandle('stop');
-      }
-      if (scrollTop.current <= 20) {
-        // timerHandle('do', true);
-        console.log('到达顶部！');
-        console.log('dom.scroll', dom?.scrollTop, scrollTop.current, dom?.clientHeight, dom?.scrollHeight);
-      }
-    }
   };
 
   // 显示详情
@@ -221,10 +153,15 @@ export default function PublishRecord(props: IProps) {
                   <label>{recordFieldMapOut['deployedTime']}</label>:
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
+                {item.version && (
+                  <div>
+                    <label>版本号</label>:{item['version']}
+                  </div>
+                )}
                 {item.deployStatus === 'multiEnvDeploying' && item.deploySubStates ? (
                   <div>
                     <label>{recordFieldMapOut['deployStatus']}</label>:
-                    {JSON.parse(item.deploySubStates).map((subItem: any) => (
+                    {JSON.parse(item.deploySubStates)?.map((subItem: any) => (
                       <div>
                         <label>{subItem.envCode}</label>:
                         {

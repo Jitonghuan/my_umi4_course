@@ -31,7 +31,6 @@ export default function AppDeployInfo(props: any) {
   const term = useRef<any>();
   useEffect(() => {
     if (!instName) return;
-    console.log('matrixConfigData.wsPrefixName---登陆shell', matrixConfigData.wsPrefixName);
   }, []);
 
   useEffect(() => {
@@ -68,8 +67,11 @@ export default function AppDeployInfo(props: any) {
 
   const initWS = (previous?: boolean) => {
     let dom: any = document?.getElementById('terminal');
+    // window.location.href?.includes('gushangke')
     ws.current = new WebSocket(
-      `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+      window.location.href?.includes('gushangke')
+        ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`
+        : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     //初始化terminal
@@ -154,7 +156,9 @@ export default function AppDeployInfo(props: any) {
     }
     currentContainerName = getContainer;
     ws.current = new WebSocket(
-      `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
+      window.location.href?.includes('gushangke')
+        ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`
+        : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`,
     ); //建立通道
 
     ws.current.onopen = () => {

@@ -180,6 +180,7 @@ export default function LoggerAlarm() {
           defaultPageSize: 20,
           onChange: (next) => setPageIndex(next),
           onShowSizeChange: (_, next) => setPageSize(next),
+          showTotal: () => `总共 ${total} 条数据`,
         }}
       >
         <Table.Column dataIndex="id" title="ID" width={70} />

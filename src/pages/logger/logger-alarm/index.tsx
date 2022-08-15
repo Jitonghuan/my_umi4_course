@@ -8,7 +8,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest, delRequest, putRequest } from '@/utils/request';
 import DetailModal from '@/components/detail-modal';
 import * as APIS from './service';
-import { useAppOptions, useEnvOptions, useStatusOptions } from './hooks';
+import { useAppOptions, useStatusOptions, useEnvListOptions } from './hooks';
 import AlarmEditor from './editor';
 import PageContainer from '@/components/page-container';
 import './index.less';
@@ -16,8 +16,6 @@ import './index.less';
 export default function LoggerAlarm() {
   const [searchField] = Form.useForm();
   const [appOptions] = useAppOptions();
-  const [appCode, setAppCode] = useState<string>();
-  const [envOptions] = useEnvOptions(appCode);
   const [statusOptions] = useStatusOptions();
 
   const [pageIndex, setPageIndex] = useState(1);
@@ -29,12 +27,36 @@ export default function LoggerAlarm() {
   const [editorMode, setEditorMode] = useState<EditorMode>('HIDE');
   const [editData, setEditData] = useState<any>();
 
+  const [clusterEnvOptions, queryEnvCodeList] = useEnvListOptions();
+  const [currentEnvType, setCurrentEnvType] = useState('');
+  const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
+
+  const envTypeData = [
+    {
+      label: 'DEV',
+      value: 'dev',
+    },
+    {
+      label: 'TEST',
+      value: 'test',
+    },
+    {
+      label: 'PRE',
+      value: 'pre',
+    },
+    {
+      label: 'PROD',
+      value: 'prod',
+    },
+  ]; //环境大类
+
   const queryTableData = (page = pageIndex) => {
     const values = searchField.getFieldsValue();
     setLoading(true);
     getRequest(APIS.getMonitorList, {
       data: {
         ...values,
+        envCode: currentEnvCode,
         pageIndex: page,
         pageSize,
       },
@@ -54,14 +76,6 @@ export default function LoggerAlarm() {
   };
 
   const handleReset = () => {
-    setAppCode(undefined);
-    handleSearch();
-  };
-
-  // 应用Code 联动 envCode
-  const handleAppCodeChange = (next: string) => {
-    setAppCode(next);
-    searchField.resetFields(['envCode']);
     handleSearch();
   };
 
@@ -73,14 +87,6 @@ export default function LoggerAlarm() {
   useEffect(() => {
     queryTableData();
   }, [pageIndex, pageSize]);
-
-  // 每次 envCode 选项重置后，默认选中第 0 个（并触发一次列表刷新）
-  // useEffect(() => {
-  //   if (envOptions?.length && !searchField.getFieldValue('envCode')) {
-  //     searchField.setFieldsValue({ envCode: envOptions[0].value });
-  //     handleSearch();
-  //   }
-  // }, [envOptions]);
 
   // 编辑
   const handleEditItem = (item: any, index: number) => {
@@ -126,24 +132,37 @@ export default function LoggerAlarm() {
           <Form.Item label="告警名称" name="name">
             <Input placeholder="请输入" onKeyDown={handleInputKeyDown} />
           </Form.Item>
-          <Form.Item label="应用Code" name="appCode">
+          <Form.Item label="环境" name="envCode">
+            <Select
+              style={{ width: '100px' }}
+              options={envTypeData}
+              value={currentEnvType}
+              placeholder="分类"
+              onChange={(value) => {
+                setCurrentEnvType(value);
+                setCurrentEnvCode('');
+                void queryEnvCodeList(value);
+              }}
+              allowClear
+            />
+            <Select
+              style={{ width: '140px', marginLeft: '5px' }}
+              options={clusterEnvOptions}
+              placeholder="环境名称"
+              onChange={(value) => {
+                setCurrentEnvCode(value);
+              }}
+              value={currentEnvCode}
+              allowClear
+            />
+          </Form.Item>
+          <Form.Item label="关联应用" name="appCode">
             <Select
               placeholder="请选择"
               options={appOptions}
               allowClear
               showSearch
               style={{ width: 168 }}
-              onChange={handleAppCodeChange}
-            />
-          </Form.Item>
-          <Form.Item label="环境Code" name="envCode">
-            <Select
-              placeholder="请选择"
-              options={envOptions}
-              allowClear
-              showSearch
-              style={{ width: 168 }}
-              onChange={handleSearch}
             />
           </Form.Item>
           <Form.Item label="状态" name="status">

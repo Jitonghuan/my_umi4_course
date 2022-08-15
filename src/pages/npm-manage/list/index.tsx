@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {Button, Form, Input, message, Modal, Table, Drawer, Tooltip} from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, message, Table, Drawer, Tooltip, Radio, Popconfirm } from 'antd';
 import PageContainer from '@/components/page-container';
-import UserSelector, { stringToList } from "@/components/user-selector";
-import DebounceSelect from "@/components/debounce-select";
+import UserSelector, { stringToList } from '@/components/user-selector';
+import DebounceSelect from '@/components/debounce-select';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import {getRequest, postRequest, putRequest} from "@/utils/request";
-import { npmCreate, searchGitAddress, npmUpdate, npmList } from './server';
+import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
+import { npmCreate, searchGitAddress, npmUpdate, npmList, npmDelete } from './server';
 import { history } from 'umi';
 import './index.less';
 
@@ -16,6 +15,7 @@ export default function NpmList() {
   const [searchField] = Form.useForm();
   const [dataList, setDataList] = useState([]);
   const [pageSize, setPageSize] = useState(20);
+  const [activeTab, setActiveTab] = useState<any>('mine');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -23,19 +23,39 @@ export default function NpmList() {
   const [type, setType] = useState('add');
   const [form] = Form.useForm();
 
-  async function handleSearch(pagination?: any ) {
-    const param = await searchField.getFieldsValue() || {};
+  async function handleSearch(pagination?: any) {
+    const param = (await searchField.getFieldsValue()) || {};
+    let userInfo: any = localStorage.getItem('USER_INFO');
+    if (userInfo) {
+      userInfo = JSON.parse(userInfo);
+    }
     const res = await getRequest(npmList, {
       data: {
         ...param,
+        npmOwner: activeTab === 'mine' && userInfo ? userInfo.name : '',
         pageIndex: page,
         pageSize,
-        ...pagination || {}
-      }
-    })
+        ...(pagination || {}),
+      },
+    });
     const { dataSource, pageInfo } = res?.data || {};
     setDataList(dataSource || []);
     setTotal(pageInfo?.total || 0);
+  }
+
+  async function onDel(id: number | string) {
+    const res = await delRequest(`${npmDelete}/${id}`);
+    if (res?.success) {
+      message.success('删除成功');
+      resetPage(1);
+    }
+  }
+
+  function resetPage(page: number) {
+    setPage(page);
+    void handleSearch({
+      pageIndex: page,
+    });
   }
 
   async function handleSubmit() {
@@ -51,18 +71,18 @@ export default function NpmList() {
     let res = null;
     if (type === 'add') {
       res = await postRequest(npmCreate, {
-        data: submitData
+        data: submitData,
       });
     } else {
       res = await putRequest(npmUpdate, {
-        data: submitData
+        data: submitData,
       });
     }
     setLoading(false);
     if (res?.success) {
       message.success(type === 'add' ? '新增成功!' : '修改成功');
       void handleClose();
-      void handleSearch();
+      resetPage(1);
     }
   }
 
@@ -72,25 +92,39 @@ export default function NpmList() {
   }
 
   useEffect(() => {
-    handleSearch();
-  }, [])
+    resetPage(1);
+  }, [activeTab]);
+
+  useEffect(() => {
+    void handleSearch();
+  }, []);
 
   return (
     <PageContainer className="npm-list-page">
       <FilterCard>
         <Form
           form={searchField}
-          onFinish={() => handleSearch()}
+          layout="inline"
+          onFinish={() => resetPage(1)}
           onReset={() => {
             searchField.resetFields();
           }}
         >
           <FormItem label="包名" name="npmName">
+            <Input
+              placeholder="请输入"
+              style={{ width: '300px' }}
+              onChange={() => resetPage(1)}
+              onPressEnter={() => resetPage(1)}
+            />
+          </FormItem>
+          <FormItem label="描述" name="desc">
             <Input.Search
               placeholder="请输入"
-              onChange={() => handleSearch()}
-              onPressEnter={() => handleSearch()}
-              onSearch={handleSearch}
+              style={{ width: '300px' }}
+              onChange={() => resetPage(1)}
+              onPressEnter={() => resetPage(1)}
+              onSearch={() => resetPage(1)}
               enterButton
             />
           </FormItem>
@@ -98,7 +132,10 @@ export default function NpmList() {
       </FilterCard>
       <ContentCard>
         <div className="table-caption">
-          <h3>NPM列表</h3>
+          <Radio.Group value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
+            <Radio.Button value="mine">我的</Radio.Button>
+            <Radio.Button value="all">全部</Radio.Button>
+          </Radio.Group>
           <Button
             type="primary"
             onClick={() => {
@@ -106,27 +143,27 @@ export default function NpmList() {
               setVisible(true);
             }}
           >
-            <PlusOutlined />
-            新增
+            + 新增
           </Button>
         </div>
         <Table
           bordered
           dataSource={dataList}
-          rowKey='name'
+          rowKey="name"
           scroll={{ x: '100%' }}
           pagination={{
             total,
             pageSize,
             current: page,
+            showTotal: () => `总共 ${total} 条数据`,
             onChange: (page, pageSize) => {
               setPage(page);
               setPageSize(pageSize);
-              handleSearch({
+              void handleSearch({
                 pageIndex: page,
-                pageSize
-              })
-            }
+                pageSize,
+              });
+            },
           }}
           columns={[
             {
@@ -187,7 +224,7 @@ export default function NpmList() {
                       setVisible(true);
                       form.setFieldsValue({
                         ...record,
-                        ownerList: stringToList(record?.npmOwner)
+                        ownerList: stringToList(record?.npmOwner),
                       });
                     }}
                   >
@@ -206,11 +243,16 @@ export default function NpmList() {
                   >
                     详情
                   </a>
+                  <Popconfirm title="确定要删除吗？" onConfirm={() => onDel(record.id)}>
+                    <Button type="link" danger size="small">
+                      删除
+                    </Button>
+                  </Popconfirm>
                 </div>
               ),
-            }
+            },
           ]}
-          />
+        />
       </ContentCard>
       <Drawer
         width={660}
@@ -236,7 +278,7 @@ export default function NpmList() {
           <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
             <DebounceSelect
               fetchOptions={searchGitAddress}
-              disabled={type !== 'add'}
+              // disabled={type !== 'add'}
               labelInValue={false}
               placeholder="输入仓库名搜索"
             />

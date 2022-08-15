@@ -111,6 +111,7 @@ const funcName = (props: any) => {
     >
       <Descriptions.Item label="发布单Id">{dataSource?.deployId}</Descriptions.Item>
       <Descriptions.Item label="发布人">{dataSource?.modifyUser}</Descriptions.Item>
+      <Descriptions.Item label="版本号">{dataSource?.version}</Descriptions.Item>
       <Descriptions.Item label="发布时间">
         {moment(dataSource?.deployedTime).format('YYYY-MM-DD HH:mm:ss')}
       </Descriptions.Item>
@@ -133,8 +134,8 @@ const funcName = (props: any) => {
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                {jenkinsItem?.JenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.JenkinsUrl} target="_blank">
                   {jenkinsItem?.JenkinsUrl}
                 </a>
               </div>
@@ -143,10 +144,10 @@ const funcName = (props: any) => {
         ) : null}
         {appConfig.IS_Matrix === 'private' && envType === 'base-poc' && dataSource?.deployId < 104 ? (
           <>
-            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+            {getOldJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.subJenkinsUrl} target="_blank">
                   {jenkinsItem?.subJenkinsUrl}
                 </a>
               </div>
@@ -156,8 +157,8 @@ const funcName = (props: any) => {
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                {jenkinsItem?.JenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.JenkinsUrl} target="_blank">
                   {jenkinsItem?.JenkinsUrl}
                 </a>
               </div>
@@ -167,10 +168,10 @@ const funcName = (props: any) => {
 
         {appConfig.IS_Matrix === 'private' && envType === 'fygs' && dataSource?.deployId < 32316 ? (
           <>
-            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+            {getOldJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.subJenkinsUrl} target="_blank">
                   {jenkinsItem?.subJenkinsUrl}
                 </a>
               </div>
@@ -180,8 +181,8 @@ const funcName = (props: any) => {
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                {jenkinsItem?.JenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.JenkinsUrl} target="_blank">
                   {jenkinsItem?.JenkinsUrl}
                 </a>
               </div>
@@ -190,10 +191,10 @@ const funcName = (props: any) => {
         ) : null}
         {appConfig.IS_Matrix === 'private' && envType === 'zslnyy' && dataSource?.deployId < 39455 ? (
           <>
-            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+            {getOldJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.subJenkinsUrl} target="_blank">
                   {jenkinsItem?.subJenkinsUrl}
                 </a>
               </div>
@@ -203,8 +204,8 @@ const funcName = (props: any) => {
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.JenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.JenkinsUrl} target="_blank">
+                {jenkinsItem?.JenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.JenkinsUrl} target="_blank">
                   {jenkinsItem?.JenkinsUrl}
                 </a>
               </div>
@@ -215,10 +216,10 @@ const funcName = (props: any) => {
         dataSource?.jenkinsUrl &&
         (env === 'prod' ? dataSource?.deployId < 43222 : dataSource?.deployId < 1595) ? (
           <>
-            {getOldJenkins(dataSource?.jenkinsUrl).map((jenkinsItem: any) => (
+            {getOldJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
-                {jenkinsItem?.subJenkinsUrl && jenkinsItem.envCode ? `${jenkinsItem.envCode}：` : ''}
-                <a href={jenkinsItem.subJenkinsUrl} target="_blank">
+                {jenkinsItem?.subJenkinsUrl && jenkinsItem?.envCode ? `${jenkinsItem?.envCode}：` : ''}
+                <a href={jenkinsItem?.subJenkinsUrl} target="_blank">
                   {jenkinsItem?.subJenkinsUrl}
                 </a>
               </div>
@@ -234,7 +235,7 @@ const funcName = (props: any) => {
           scroll={{ y: window.innerHeight - 515, x: '100%' }}
           style={{ width: '96%' }}
           columns={columns}
-          dataSource={dataSource.branchInfo || []}
+          dataSource={dataSource?.branchInfo || []}
           pagination={false}
         ></Table>
       </div>
