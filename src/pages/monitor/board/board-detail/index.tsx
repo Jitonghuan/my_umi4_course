@@ -13,6 +13,7 @@ interface BoardInfo {
 
 const BoardDetail = () => {
   const [info, setInfo] = useState<BoardInfo | undefined>();
+  const [iframeLoading, setIframeLoading] = useState<boolean>(false)
   const { location } = history;
   const { query } = location;
   const { graphName, url, fromPage, clusterName } = query as any;
@@ -26,8 +27,9 @@ const BoardDetail = () => {
     })
   }, [])
 
-  const hideSlideMenu=()=>{
-    document?.getElementsByTagName("iframe")?.[0]?.contentWindow?.postMessage({showMenu:false},'*')
+  const hideSlideMenu = () => {
+    document?.getElementsByTagName("iframe")?.[0]?.contentWindow?.postMessage({ showMenu: false }, '*')
+    setIframeLoading(true)
   }
 
 
@@ -50,7 +52,14 @@ const BoardDetail = () => {
         </div>
       </div >
       <div style={{ width: '100%', height: '100%', display: 'block' }} className="grafana-iframe-info">
-        <iframe className='grafana-iframe' id='grafana-iframe' name="grafana-iframe-detail" src={info?.graphUrl || ''} onLoad={hideSlideMenu}/>
+        <iframe
+          style={{ display: iframeLoading ? 'block' : 'none' }}
+          className='grafana-iframe'
+          id='grafana-iframe'
+          name="grafana-iframe-detail"
+          src={info?.graphUrl || ''}
+          onLoad={hideSlideMenu}
+        />
       </div>
     </PageContainer>
   )
