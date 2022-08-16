@@ -43,8 +43,8 @@ if (appConfig.isLocal) {
   };
 }
 export default function Layout(props: any) {
-  const location = useLocation()
-
+  const location = useLocation();
+console.log("location?.pathname",location?.pathname)
   // 初始化 doc title hook
   useDocumentTitle('', location?.pathname);
   // 权限数据
@@ -225,6 +225,9 @@ export default function Layout(props: any) {
                 isOpenLogin={true}
                 className='test'
                 layout='LTB'
+                history={history}
+                location={location}
+                routes={route}
                 pagePrefix={appConfig.pagePrefix}
                 siderMenuProps={{
                   isOpenPermission: appConfig.isOpenPermission,
