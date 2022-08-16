@@ -354,7 +354,7 @@ export default function appEnvPageList() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -433,7 +433,7 @@ export default function appEnvPageList() {
                 render={(_, record: Record<string, any>, index) => (
                   <div className="action-cell">
                     <Popconfirm title="确定要解绑该环境吗？" onConfirm={() => handleDelEnv(record)}>
-                      <a style={{ color: 'red' }}>解绑</a>
+                      <a>解绑</a>
                     </Popconfirm>
                   </div>
                 )}

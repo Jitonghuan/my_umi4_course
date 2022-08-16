@@ -109,10 +109,10 @@ export default function FilterHeader(props: FilterHeaderProps) {
           <Input placeholder="请输入" style={{ width: 140 }} />
         </FormItem>
         <FormItem>
-          <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
+          <Button type="primary" htmlType="submit" style={{ marginRight: 16 }} size='small'>
             查询
           </Button>
-          <Button type="default" htmlType="reset" danger>
+          <Button type="default" htmlType="reset" size='small'>
             重置
           </Button>
         </FormItem>

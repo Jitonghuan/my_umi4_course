@@ -80,7 +80,7 @@ export default function ApplicationCardList(props: IProps) {
                       color: '#ff8419',
                     }}
                   >
-                    {item.isCollection ? <StarFilled /> : <StarTwoTone twoToneColor="#ff8419" />}
+                    {item.isCollection ? <StarFilled /> : <StarTwoTone twoToneColor="#ff84192" />}
                   </span>
                 </Popconfirm>
               </span>

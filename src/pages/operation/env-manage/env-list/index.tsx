@@ -302,7 +302,7 @@ export default function envManageList(props: any) {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button type="ghost" htmlType="reset" danger>
+              <Button type="ghost" htmlType="reset">
                 重置
               </Button>
             </Form.Item>
@@ -391,6 +391,7 @@ export default function envManageList(props: any) {
                   className="useNacos"
                   onChange={() => handleNacosChange(value, record)}
                   checked={value === 1 ? true : false}
+                  size='small'
                 />
               )}
             />
@@ -465,7 +466,7 @@ export default function envManageList(props: any) {
                     推送
                   </a>
                   <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelEnv(record)}>
-                    <a style={{ color: 'red' }}>删除</a>
+                    <a>删除</a>
                   </Popconfirm>
                 </div>
               )}

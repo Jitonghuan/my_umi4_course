@@ -3,7 +3,7 @@
 // @create 2021/07/27 14:35
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Table, Form, Input, Button, Popconfirm } from 'antd';
+import { Table, Form, Input, Button, Popconfirm, Tooltip } from 'antd';
 import { history } from 'umi';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
@@ -181,7 +181,7 @@ export default function NgList() {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button type="ghost" htmlType="reset" danger>
+              <Button type="ghost" htmlType="reset">
                 重置
               </Button>
             </Form.Item>
@@ -261,15 +261,52 @@ export default function NgList() {
               showTotal: () => `总共 ${total} 条数据`,
             }}
             onChange={pageSizeClick}
+            scroll={{ x: 1800 }}
           >
             <Table.Column title="ID" dataIndex="id" width={50} />
-            <Table.Column title="实例名" dataIndex="ngInstName" width={150} />
-            <Table.Column title="实例CODE" dataIndex="ngInstCode" width={130} />
-            <Table.Column title="实例IP" dataIndex="ipAddress" width={90} />
-            <Table.Column title="配置文件路径" dataIndex="confFilePath" width={180} />
-            <Table.Column title="静态资源路径" dataIndex="resourceFilePath" width={180} />
-            <Table.Column title="前端域名" dataIndex="serverName" width={180} />
-            <Table.Column title="后端域名" dataIndex="beDomainName" width={180} />
+            <Table.Column title="实例名" dataIndex="ngInstName" width={150} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )} />
+            <Table.Column title="实例CODE" dataIndex="ngInstCode" width={130} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )}
+            />
+            <Table.Column title="实例IP" dataIndex="ipAddress" width={90} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )} />
+            <Table.Column title="配置文件路径" dataIndex="confFilePath" width={180} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )} />
+            <Table.Column title="静态资源路径" dataIndex="resourceFilePath" width={180} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )} />
+            <Table.Column title="前端域名" dataIndex="serverName" width={180} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )} />
+            <Table.Column title="后端域名" dataIndex="beDomainName" width={180} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )} />
             <Table.Column
               title="配置模版"
               width={80}
@@ -279,10 +316,16 @@ export default function NgList() {
                 </Button>
               )}
             />
-            <Table.Column title="备注" dataIndex="reMark" width={200} />
+            <Table.Column title="备注" dataIndex="reMark" width={200} ellipsis
+              render={(value) => (
+                <Tooltip placement="top" title={value}>
+                  {value}
+                </Tooltip>
+              )} />
             <Table.Column
               title="操作"
               width={180}
+              fixed='right'
               render={(_, record: any, index) => (
                 <div className="action-cell">
                   <a onClick={() => handleEditNg(record, index, 'VIEW')}>查看</a>

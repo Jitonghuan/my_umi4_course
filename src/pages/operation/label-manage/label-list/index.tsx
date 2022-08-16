@@ -119,7 +119,7 @@ export default function LanbelList() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -156,6 +156,7 @@ export default function LanbelList() {
                 setPageSize(size);
                 setPageIndex(1);
               },
+              size: 'small',
               showTotal: () => `总共 ${pageTotal} 条数据`,
             }}
             // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
@@ -167,7 +168,7 @@ export default function LanbelList() {
               dataIndex="tagName"
               width="20%"
               render={(current, record) => {
-                return <Tag color="success">{current}</Tag>;
+                return <Tag color='#e8f8ff'><span style={{ color: '#1890ff' }}>{current}</span></Tag>;
               }}
             />
             <Table.Column title="标签备注" dataIndex="tagMark" width="45%" ellipsis />
@@ -214,7 +215,7 @@ export default function LanbelList() {
                       }, 200);
                     }}
                   >
-                    <a style={{ color: 'red' }}>删除</a>
+                    <a >删除</a>
                   </Popconfirm>
                 </Space>
               )}
