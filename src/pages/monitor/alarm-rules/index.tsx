@@ -2,19 +2,19 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/05/30 10:10
 
-import React, {useEffect, useState} from 'react';
-import {Form, Select, Input, Button, Row} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Select, Input, Button, Row } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import RulesTable from './_components/rules-table';
 import { useAppOptions, useStatusOptions, useEnvListOptions } from './hooks';
 import useTable from '@/utils/useTable';
 import { queryGroupList, queryRulesList } from '../basic/services';
-import { UpOutlined, DownOutlined } from '@ant-design/icons';
+import { UpOutlined, DownOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import useRequest from "@/utils/useRequest";
 import UserSelector from "@/components/user-selector";
 import './index.less';
-import {getRequest} from "@/utils/request";
+import { getRequest } from "@/utils/request";
 
 const rulesOptions = [
   {
@@ -169,16 +169,7 @@ export default function AlarmRules() {
               </>
             )
           }
-          <Form.Item>
-            <a
-              onClick={() => {
-                setExpand(!expand);
-              }}
-              style={{ marginRight: '10px' }}
-            >
-              {expand ? <><UpOutlined />收起</>: <><DownOutlined />更多</>}
-            </a>
-          </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               查询
@@ -188,6 +179,16 @@ export default function AlarmRules() {
             <Button type="ghost" htmlType="reset" danger>
               重置
             </Button>
+          </Form.Item>
+          <Form.Item>
+            <a
+              onClick={() => {
+                setExpand(!expand);
+              }}
+              style={{ marginRight: '10px' }}
+            >
+              {expand ? <><CaretUpOutlined />收起更多</> : <><CaretDownOutlined />更多查询</>}
+            </a>
           </Form.Item>
         </Form>
       </FilterCard>

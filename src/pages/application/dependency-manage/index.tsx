@@ -11,6 +11,7 @@ import appConfig from '@/app.config';
 import { updateRule } from './service';
 import RuleDrawer from './component/rule-drawer';
 import WhiteListModal from './component/white-list-modal';
+import './index.less'
 
 export default function RelyMangement() {
   const [form] = Form.useForm();

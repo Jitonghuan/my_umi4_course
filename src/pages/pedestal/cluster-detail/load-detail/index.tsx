@@ -8,6 +8,7 @@ import './index.less';
 import { getResourceList, resourceUpdate, resourceDel } from '../service';
 import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
 import clusterContext from '../context';
+import { rgb } from '_@types_d3-color@3.1.0@@types/d3-color';
 
 const obj: any = {
   namespace: '命名空间',
@@ -319,195 +320,206 @@ export default function LoadDetail(props: any) {
         containerOption={containerOption}
         loading={buttonLoading}
       ></AddModal>
-      <div className="flex-wrapper">
-        <p className="title">
-          工作负载：<span style={{ color: 'green' }}>{data?.name || '---'}</span>
-        </p>
-        <div>
-          <Button
-            icon={<RedoOutlined />}
-            onClick={() => {
-              queryData();
-            }}
-            style={{ marginRight: '10px' }}
-            size="small"
-          >
-            刷新
+      <div>
+        <div className="flex-wrapper">
+          <p className="title">
+            工作负载：<span style={{ color: 'green' }}>{data?.name || '---'}</span>
+          </p>
+          <div>
+            <Button
+              icon={<RedoOutlined />}
+              onClick={() => {
+                queryData();
+              }}
+              style={{ marginRight: '10px' }}
+              size="small"
+            >
+              刷新
           </Button>
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => {
+                history.push({
+                  pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
+                  query: { ...props.location.query },
+                });
+              }}
+            >
+              返回
+          </Button>
+          </div>
+        </div>
+        <div className="grid-wrapper">
+          {Object.keys(obj).map((item: any) => {
+            if (item === 'fuben') {
+              return (
+                <div className="grid-wrapper-item">
+                  <Spin indicator={antIcon} spinning={subLoading}>
+                    <a
+                      className="sign"
+                      style={{ color: '#e74848' }}
+                      onClick={() => {
+                        clickSign('sub');
+                      }}
+                    >
+                      -
+                  </a>
+                  </Spin>
+                  {obj[item]}：{data?.info?.availableReplicas || '0'}/{data?.info?.replicas || '0'}
+                  <Spin indicator={antIcon} spinning={addLoading}>
+                    <a
+                      className="sign"
+                      style={{ color: 'green' }}
+                      onClick={() => {
+                        clickSign('add');
+                      }}
+                    >
+                      +
+                  </a>
+                  </Spin>
+                </div>
+              );
+            }
+            if (item === 'image') {
+              return (
+                <div className="grid-wrapper-item">
+                  {obj[item]}：
+                  {data?.info?.images?.length ? (
+                    <Tooltip
+                      placement="topLeft"
+                      overlayStyle={{ maxWidth: 'unset' }}
+                      overlayClassName="my-tooltip"
+                      title={
+                        <div style={{ whiteSpace: 'nowrap' }}>
+                          {(data?.info?.images || []).map((item: string) => (
+                            <div>{item}</div>
+                          ))}
+                        </div>
+                      }
+                    >
+                      {data?.info?.images[0]}
+                      {data?.info?.images?.length > 1 ? '...' : ''}
+                    </Tooltip>
+                  ) : (
+                    '---'
+                  )}
+                </div>
+              );
+            }
+            if (item === 'restart') {
+              return (
+                <div className="grid-wrapper-item">
+                  {obj[item]}：{restart}
+                </div>
+              );
+            } else {
+              return (
+                <div className="grid-wrapper-item">
+                  {obj[item]}：{data && data[item] ? data[item] : '---'}
+                </div>
+              );
+            }
+          })}
+        </div>
+      </div>
+      {/* pods */}
+      <div className='pods-container'>
+        <p className="title" style={{ marginTop: "10px" }}>Pods：</p>
+        <Table
+          dataSource={podData}
+          loading={podLoading}
+          bordered
+          rowKey="id"
+          pagination={false}
+          columns={tableColumns}
+          scroll={{ x: '900' }}
+        ></Table>
+      </div>
+      {/* 事件 */}
+      <div className='event-container'>
+        <p className="title">事件：</p>
+        <div className="event-wrapper">
+          <Table
+            dataSource={eventData}
+            loading={eventLoading}
+            bordered
+            rowKey="id"
+            pagination={false}
+            columns={eventTableSchema()}
+          ></Table>
+        </div>
+      </div>
+      {/* 标签管理 */}
+      <div>
+        <div className="flex-wrapper" style={{ marginTop: '10px' }}>
+          <span className="title">标签管理：</span>
           <Button
             type="primary"
             size="small"
             onClick={() => {
-              history.push({
-                pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
-                query: { ...props.location.query },
-              });
+              setMode('tag');
+              setAddTag(true);
             }}
           >
-            返回
-          </Button>
+            新增标签
+        </Button>
+        </div>
+        <div className="tag-wrapper">
+          {Object.keys(data?.info?.labels || {}).map((item: string) => {
+            return (
+              <Tag
+                color="green"
+                closable
+                onClose={(e) => {
+                  e.preventDefault();
+                  handleClose(item);
+                }}
+              >
+                {item}:{data?.info?.labels[item]}
+              </Tag>
+            );
+          })}
         </div>
       </div>
-      <div className="grid-wrapper">
-        {Object.keys(obj).map((item: any) => {
-          if (item === 'fuben') {
-            return (
-              <div className="grid-wrapper-item">
-                <Spin indicator={antIcon} spinning={subLoading}>
-                  <a
-                    className="sign"
-                    style={{ color: '#e74848' }}
-                    onClick={() => {
-                      clickSign('sub');
-                    }}
-                  >
-                    -
-                  </a>
-                </Spin>
-                {obj[item]}：{data?.info?.availableReplicas || '0'}/{data?.info?.replicas || '0'}
-                <Spin indicator={antIcon} spinning={addLoading}>
-                  <a
-                    className="sign"
-                    style={{ color: 'green' }}
-                    onClick={() => {
-                      clickSign('add');
-                    }}
-                  >
-                    +
-                  </a>
-                </Spin>
-              </div>
-            );
-          }
-          if (item === 'image') {
-            return (
-              <div className="grid-wrapper-item">
-                {obj[item]}：
-                {data?.info?.images?.length ? (
-                  <Tooltip
-                    placement="topLeft"
-                    overlayStyle={{ maxWidth: 'unset' }}
-                    overlayClassName="my-tooltip"
-                    title={
-                      <div style={{ whiteSpace: 'nowrap' }}>
-                        {(data?.info?.images || []).map((item: string) => (
-                          <div>{item}</div>
-                        ))}
-                      </div>
-                    }
-                  >
-                    {data?.info?.images[0]}
-                    {data?.info?.images?.length > 1 ? '...' : ''}
-                  </Tooltip>
-                ) : (
-                  '---'
-                )}
-              </div>
-            );
-          }
-          if (item === 'restart') {
-            return (
-              <div className="grid-wrapper-item">
-                {obj[item]}：{restart}
-              </div>
-            );
-          } else {
-            return (
-              <div className="grid-wrapper-item">
-                {obj[item]}：{data && data[item] ? data[item] : '---'}
-              </div>
-            );
-          }
-        })}
-      </div>
-      {/* pods */}
-      <p className="title">Pods：</p>
-      <Table
-        dataSource={podData}
-        loading={podLoading}
-        bordered
-        rowKey="id"
-        pagination={false}
-        columns={tableColumns}
-        scroll={{ x: '900' }}
-      ></Table>
-      {/* 事件 */}
-      <p className="title">事件：</p>
-      <div className="event-wrapper">
-        <Table
-          dataSource={eventData}
-          loading={eventLoading}
-          bordered
-          rowKey="id"
-          pagination={false}
-          columns={eventTableSchema()}
-        ></Table>
-      </div>
-      {/* 标签管理 */}
-      <div className="flex-wrapper" style={{ marginTop: '10px' }}>
-        <span className="title">标签管理：</span>
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => {
-            setMode('tag');
-            setAddTag(true);
-          }}
-        >
-          新增标签
-        </Button>
-      </div>
-      <div className="tag-wrapper">
-        {Object.keys(data?.info?.labels || {}).map((item: string) => {
-          return (
-            <Tag
-              color="green"
-              closable
-              onClose={(e) => {
-                e.preventDefault();
-                handleClose(item);
-              }}
-            >
-              {item}:{data?.info?.labels[item]}
-            </Tag>
-          );
-        })}
-      </div>
-      <div className="flex-wrapper">
-        <span className="title">环境变量：</span>
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => {
-            setMode('var');
-            setAddTag(true);
-          }}
-        >
-          新增环境变量
-        </Button>
-      </div>
       {/* 环境变量 */}
-      {data?.info?.containersEnv && data?.info?.containersEnv.length ? (
-        <>
-          {data?.info?.containersEnv.map((item: any) => (
-            <div className="var-table">
-              <div style={{ marginBottom: '5px', fontSize: '12px' }}>
-                容器名：<Tag color="blue">{item.containerName || '--'}</Tag>
+      <div>
+        <div className="flex-wrapper">
+          <span className="title">环境变量：</span>
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              setMode('var');
+              setAddTag(true);
+            }}
+          >
+            新增环境变量
+        </Button>
+        </div>
+        {/* 环境变量 */}
+        {data?.info?.containersEnv && data?.info?.containersEnv.length ? (
+          <>
+            {data?.info?.containersEnv.map((item: any) => (
+              <div className="var-table">
+                <div style={{ marginBottom: '5px', fontSize: '12px' }}>
+                  容器名：<Tag color="blue">{item.containerName || '--'}</Tag>
+                </div>
+                <Table
+                  dataSource={item?.env || []}
+                  loading={loading}
+                  bordered
+                  pagination={false}
+                  rowKey="id"
+                  columns={envVarColumns(item)}
+                ></Table>
               </div>
-              <Table
-                dataSource={item?.env || []}
-                loading={loading}
-                bordered
-                pagination={false}
-                rowKey="id"
-                columns={envVarColumns(item)}
-              ></Table>
-            </div>
-          ))}
-        </>
-      ) : (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无数据" />
-      )}
+            ))}
+          </>
+        ) : (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无数据" />
+        )}
+      </div>
     </div>
   );
 }
