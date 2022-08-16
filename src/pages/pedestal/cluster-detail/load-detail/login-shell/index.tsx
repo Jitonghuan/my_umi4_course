@@ -193,7 +193,7 @@ export default function ClusteLoginShell(props: any) {
 
   return (
     // <ContentCard noPadding className="viewLog">
-    <div className="loginShell">
+    <div className="loginShell" style={{ padding: '12px' }}>
       <div className="flex-space-between" style={{ paddingBottom: '6px', paddingTop: '6px' }}>
         {type !== 'node' && (
           <div>
