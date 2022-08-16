@@ -39,7 +39,7 @@ export default function ClusterDetail(props: any) {
     }
   }, [data]);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   useEffect(() => {
     setActiveTab(location?.query?.key || 'node-list');
@@ -60,6 +60,7 @@ export default function ClusterDetail(props: any) {
 
   const selectChange = (v: any) => {
     setSelectCluster({ label: v.label, value: v.value });
+    console.log(location?.query?.key, 'key')
     history.push({
       pathname: `${path}/${location?.query?.key}`,
       query: { key: location?.query?.key, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },

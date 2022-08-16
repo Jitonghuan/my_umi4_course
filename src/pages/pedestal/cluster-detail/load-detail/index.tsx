@@ -1,6 +1,6 @@
 import { eventTableSchema, podsTableSchema, envVarTableSchema } from '../schema';
 import React, { useEffect, useCallback, useState, useMemo, useContext } from 'react';
-import { Table, Tag, Tooltip, Button, Empty, message, Spin } from 'antd';
+import { Table, Tag, Tooltip, Button, Empty, message, Spin, Modal } from 'antd';
 import { history } from 'umi';
 import DownLoadFile from './download-file';
 import AddModal from './add-modal';
@@ -35,6 +35,7 @@ export default function LoadDetail(props: any) {
   const [subLoading, setSubLoading] = useState<boolean>(false); //-号loading
   const [addLoading, setAddLoading] = useState<boolean>(false); //+号loading
   const [data, setData] = useState<any>({});
+  const [tagVisible, setTagVisible] = useState(false);
   useEffect(() => {
     queryData();
   }, [clusterCode]);
@@ -319,6 +320,13 @@ export default function LoadDetail(props: any) {
         containerOption={containerOption}
         loading={buttonLoading}
       ></AddModal>
+      <Modal
+        width={400}
+        title="删除标签"
+        visible={tagVisible}
+        onCancel={() => { setTagVisible(false) }}>
+        确定删除该标签吗？
+      </Modal>
       <div className="flex-wrapper">
         <p className="title">
           工作负载：<span style={{ color: 'green' }}>{data?.name || '---'}</span>
@@ -465,7 +473,8 @@ export default function LoadDetail(props: any) {
               closable
               onClose={(e) => {
                 e.preventDefault();
-                handleClose(item);
+                setTagVisible(true)
+                // handleClose(item);
               }}
             >
               {item}:{data?.info?.labels[item]}

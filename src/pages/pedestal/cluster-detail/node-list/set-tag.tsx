@@ -15,17 +15,18 @@ export default function SetTag(props: any) {
   const { clusterCode } = useContext(clusterContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [removeTags, setRemoveTags] = useState([]) as any;
+  const [showForm, setShowForm] = useState<boolean>(false);
   const tags = useMemo(
     () => (baseTags || []).concat(dirtyTags || []).filter((e: any) => !removeTags.includes(e)),
     [removeTags, baseTags, dirtyTags],
   );
-  const [tagType, setTagType] = useState<string>('base');
+  const [tagType, setTagType] = useState<string>('');
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (visible) {
       form.resetFields();
-      setTagType('base');
+      // setTagType('base');
       form.setFieldsValue({ 'base-tags': [undefined] });
     }
   }, [visible]);
@@ -77,93 +78,107 @@ export default function SetTag(props: any) {
       ]}
     >
       <div className="node-tag-modal">
-        <p>已有标签</p>
+        <div className='flex-space-between'>
+          <div>已有标签</div>
+          {!showForm && <Button size='small' onClick={() => { setShowForm(true) }}>新增标签</Button>}
+        </div>
         <div className="tag-wrapper">
           {tags.map((item: any, i: any) => {
             return (
+              // <Popconfirm title="确认删除" onConfirm={() => handleDelete(record.id as React.Key)}>
+              // </Popconfirm>
               <Tag
                 key={i}
                 color="green"
                 onClose={(e: any) => {
                   e.preventDefault();
-                  setRemoveTags([...removeTags, item]);
+                  // setTagVisible(true)
+                  // setRemoveTags([...removeTags, item]);
                 }}
                 closable
-              >{`${item.key}:${item.value}`}</Tag>
+              >
+                {`${item.key}:${item.value}`}
+              </Tag>
             );
           })}
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          标签类型：{' '}
-          <Radio.Group value={tagType} onChange={onTypeChange}>
-            <Radio value="base">基础标签 </Radio>
-            <Radio value="dirty"> 污点标签 </Radio>
-          </Radio.Group>
-        </div>
-        <div className="form-wrapper">
-          <Form form={form} name="base" autoComplete="off" colon={false}>
-            <Form.List name="base-tags">
-              {(fields, { add, remove }) => (
-                <>
-                  {fields.map((field, index) => (
-                    <Space key={field.key} align="baseline">
-                      <Form.Item>
-                        <MinusCircleOutlined className="tag-icon" onClick={() => remove(field.name)} />
-                      </Form.Item>
-                      <Form.Item
-                        noStyle
-                        shouldUpdate={(prevValues, curValues) =>
-                          prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                        }
-                      >
-                        {() => (
+        {showForm &&
+          <>
+            <div style={{ marginBottom: '10px' }}>
+              标签类型：{' '}
+              <Radio.Group value={tagType} onChange={onTypeChange}>
+                <Radio value="base">基础标签 </Radio>
+                <Radio value="dirty"> 污点标签 </Radio>
+              </Radio.Group>
+            </div>
+            <div className="form-wrapper">
+              {tagType !== '' && <Form form={form} name="base" autoComplete="off" colon={false}>
+                <Form.List name="base-tags">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map((field, index) => (
+                        <Space key={field.key} align="baseline">
+                          <Form.Item>
+                            <MinusCircleOutlined className="tag-icon" onClick={() => remove(field.name)} />
+                          </Form.Item>
                           <Form.Item
-                            {...field}
+                            noStyle
+                            shouldUpdate={(prevValues, curValues) =>
+                              prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
+                            }
+                          >
+                            {() => (
+                              <Form.Item
+                                {...field}
+                                className="v-item"
+                                label={index === 0 ? 'KEY' : ''}
+                                name={[field.name, 'key']}
+                                rules={[{ required: true, message: '此项为必填项' }]}
+                              >
+                                <Input size="small" />
+                              </Form.Item>
+                            )}
+                          </Form.Item>
+                          <span style={{ verticalAlign: 'text-bottom', lineHeight: '65px' }}>=</span>
+
+                          <Form.Item
                             className="v-item"
-                            label={index === 0 ? 'KEY' : ''}
-                            name={[field.name, 'key']}
-                            rules={[{ required: true, message: '此项为必填项' }]}
+                            {...field}
+                            label={index === 0 ? 'VALUE' : ''}
+                            name={[field.name, 'value']}
                           >
                             <Input size="small" />
                           </Form.Item>
-                        )}
-                      </Form.Item>
-                      <span style={{ verticalAlign: 'text-bottom', lineHeight: '65px' }}>=</span>
-
-                      <Form.Item
-                        className="v-item"
-                        {...field}
-                        label={index === 0 ? 'VALUE' : ''}
-                        name={[field.name, 'value']}
-                      >
-                        <Input size="small" />
-                      </Form.Item>
-                      {tagType === 'dirty' && (
-                        <Form.Item
-                          {...field}
-                          label={index === 0 ? '行为' : ''}
-                          className="v-item"
-                          name={[field.name, 'effect']}
-                          rules={[{ required: true, message: '此项为必填项' }]}
-                        >
-                          <Select
-                            // size='small'
-                            options={behaviorOptions}
-                            style={{ width: '150px' }}
-                          />
-                        </Form.Item>
-                      )}
-                      <Form.Item>
-                        <PlusCircleOutlined className="tag-icon" onClick={() => add()} />
-                      </Form.Item>
-                    </Space>
-                  ))}
-                </>
-              )}
-            </Form.List>
-          </Form>
-        </div>
+                          {tagType === 'dirty' && (
+                            <Form.Item
+                              {...field}
+                              label={index === 0 ? '行为' : ''}
+                              className="v-item"
+                              name={[field.name, 'effect']}
+                              rules={[{ required: true, message: '此项为必填项' }]}
+                            >
+                              <Select
+                                // size='small'
+                                options={behaviorOptions}
+                                style={{ width: '150px' }}
+                              />
+                            </Form.Item>
+                          )}
+                          <Form.Item>
+                            <PlusCircleOutlined className="tag-icon" onClick={() => add()} />
+                          </Form.Item>
+                        </Space>
+                      ))}
+                    </>
+                  )}
+                </Form.List>
+              </Form>}
+            </div>
+          </>
+        }
       </div>
+
+
     </Modal>
   );
 }
