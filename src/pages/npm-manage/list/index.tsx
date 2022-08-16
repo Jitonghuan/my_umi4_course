@@ -60,11 +60,12 @@ export default function NpmList() {
 
   async function handleSubmit() {
     const params = await form.validateFields();
-    const { ownerList, ...others } = params;
+    const { ownerList, gitDir, ...others } = params;
 
     const submitData: any = {
       ...others,
       npmOwner: ownerList?.join(',') || '',
+      customParams: gitDir ? JSON.stringify({gitDir}) : ''
     };
 
     setLoading(true);
@@ -224,6 +225,7 @@ export default function NpmList() {
                       setVisible(true);
                       form.setFieldsValue({
                         ...record,
+                        gitDir: record.customParams ? JSON.parse(record.customParams).gitDir : '',
                         ownerList: stringToList(record?.npmOwner),
                       });
                     }}
@@ -278,11 +280,13 @@ export default function NpmList() {
           <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
             <DebounceSelect
               fetchOptions={searchGitAddress}
-              // disabled={type !== 'add'}
               labelInValue={false}
               placeholder="输入仓库名搜索"
             />
           </FormItem>
+          <Form.Item label="包目录" name="gitDir">
+            <Input placeholder="适用于一个仓库下多个包的模式，填写packages下的工程名" />
+          </Form.Item>
           <FormItem label="负责人" name="ownerList" rules={[{ required: true, message: '请输入负责人' }]}>
             <UserSelector />
           </FormItem>
