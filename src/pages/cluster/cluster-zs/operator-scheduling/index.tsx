@@ -442,7 +442,7 @@ export default function OperatorScheduling(props: any) {
           </Card>
           <div style={{ float: 'right', marginTop: 8 }}>
             <Button type="primary" onClick={addMultipleCluster} loading={ensureLoading}>
-            {ensureLoading?"提交中...":"提交"}  
+            {ensureLoading?"切流中...":"提交"}  
             </Button>
           </div>
         </div>
