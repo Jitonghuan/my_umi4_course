@@ -39,12 +39,12 @@ export default function ClusterDetail(props: any) {
     }
   }, [data]);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   useEffect(() => {
     setActiveTab(location?.query?.key || 'node-list');
     history.replace({
-      query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
+      query: { ...props.location.query, key: location?.query?.key || 'node-list', clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
     });
   }, [location?.pathname]);
 
