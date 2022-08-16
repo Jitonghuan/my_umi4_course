@@ -28,7 +28,7 @@ export default function SchedulingMode() {
   };
   return (
     <ContentCard>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex',marginBottom:10 }}>
         <h3>调度模式 :</h3>
         <Select
           options={schedulingOptions}
