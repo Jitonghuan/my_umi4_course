@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useCallback, useEffect, useContext } from 'react';
-import { Modal, Tag, Radio, Input, Form, Button, Space, Select, message } from 'antd';
+import { Modal, Tag, Radio, Input, Form, Button, Space, Select, message, Popconfirm } from 'antd';
 import { PlusCircleOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { nodeUpdate } from '../service';
 import clusterContext from '../context';
+import TagConfirm from '@/components/tag-confirm'
 import './index.less';
 
 const behaviorOptions = [
@@ -26,7 +27,8 @@ export default function SetTag(props: any) {
   useEffect(() => {
     if (visible) {
       form.resetFields();
-      // setTagType('base');
+      setShowForm(false);
+      setTagType('');
       form.setFieldsValue({ 'base-tags': [undefined] });
     }
   }, [visible]);
@@ -42,7 +44,8 @@ export default function SetTag(props: any) {
       });
       if (tagType === 'base') {
         value.forEach((item: any) => (labels[item.key] = item.value));
-      } else {
+      }
+      if (tagType === 'dirty') {
         taints = taints.concat(value);
       }
       setLoading(true);
@@ -85,20 +88,27 @@ export default function SetTag(props: any) {
         <div className="tag-wrapper">
           {tags.map((item: any, i: any) => {
             return (
-              // <Popconfirm title="确认删除" onConfirm={() => handleDelete(record.id as React.Key)}>
+              // <Popconfirm title="确认删除该标签吗？" onConfirm={() => { setRemoveTags([...removeTags, item]); }}>
+              // <Tag
+              //   key={i}
+              //   color="green"
+              //   // onClose={(e: any) => {
+              //   //   // e.preventDefault();
+              //   //   // setRemoveTags([...removeTags, item]);
+              //   // }}
+              //   closable
+              // >
+              //   {`${item.key}:${item.value}`}
+              // </Tag>
               // </Popconfirm>
-              <Tag
-                key={i}
-                color="green"
-                onClose={(e: any) => {
-                  e.preventDefault();
-                  // setTagVisible(true)
-                  // setRemoveTags([...removeTags, item]);
-                }}
-                closable
+              <TagConfirm
+                content={`${item.key}:${item.value}`}
+                title="该操作只是暂时移除标签
+                只有点击下方确认按钮才是正式删除标签"
+                onConfirm={() => { setRemoveTags([...removeTags, item]); }}
+                style={{ marginTop: '5px' }}
               >
-                {`${item.key}:${item.value}`}
-              </Tag>
+              </TagConfirm>
             );
           })}
         </div>

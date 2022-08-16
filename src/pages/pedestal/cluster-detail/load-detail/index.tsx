@@ -8,6 +8,7 @@ import './index.less';
 import { getResourceList, resourceUpdate, resourceDel } from '../service';
 import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
 import clusterContext from '../context';
+import TagConfirm from '@/components/tag-confirm'
 
 const obj: any = {
   namespace: '命名空间',
@@ -468,17 +469,24 @@ export default function LoadDetail(props: any) {
       <div className="tag-wrapper">
         {Object.keys(data?.info?.labels || {}).map((item: string) => {
           return (
-            <Tag
-              color="green"
-              closable
-              onClose={(e) => {
-                e.preventDefault();
-                setTagVisible(true)
-                // handleClose(item);
-              }}
+            // <Tag
+            //   color="green"
+            //   closable
+            //   onClose={(e) => {
+            //     e.preventDefault();
+            //     setTagVisible(true)
+            //     // handleClose(item);
+            //   }}
+            // >
+            //   {item}:{data?.info?.labels[item]}
+            // </Tag>
+            <TagConfirm
+              content={`${item}:${data?.info?.labels[item]}`}
+              title='你确定要删除该标签吗？'
+              onConfirm={() => { handleClose(item) }}
+              style={{ marginTop: '5px' }}
             >
-              {item}:{data?.info?.labels[item]}
-            </Tag>
+            </TagConfirm>
           );
         })}
       </div>
