@@ -84,6 +84,7 @@ const Coms = (props: any) => {
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
   // // 查询机构列表
   const selectCluster = (param: any) => {
+    localStorage.setItem('monitor_cluster_select', JSON.stringify(param))
     setCurrentCluster(param);
     queryResData(param);
     queryPodData(param);
@@ -177,21 +178,35 @@ const Coms = (props: any) => {
   };
 
   useEffect(() => {
-    queryClustersData().then((resp) => {
-      setClusterList(resp);
-      setCurrentCluster(resp[0]?.value);
-      if (resp[0]?.value) {
-        queryResData(resp[0]?.value);
-        queryPodData(resp[0]?.value);
-        queryNodeList({ clusterId: resp[0]?.value });
-        queryNameSpace(resp[0]?.value);
-        queryUseMarket(resp[0]?.value);
-      } else {
-        setUseMarket([]);
-        setPodDataSource([]);
-        queryNodeList({ clusterId: '' });
-      }
-    });
+    let curCluster:any;
+    if (localStorage.getItem('monitor_cluster_select')) {
+      curCluster = JSON.parse(localStorage.getItem('monitor_cluster_select') || '')
+      setCurrentCluster(curCluster)
+      queryClustersData().then((resp) => {
+        setClusterList(resp);
+        queryResData(curCluster);
+        queryPodData(curCluster);
+        queryNodeList({ clusterId: curCluster});
+        queryNameSpace(curCluster);
+        queryUseMarket(curCluster);
+      })
+    } else {
+      queryClustersData().then((resp) => {
+        setClusterList(resp);
+        setCurrentCluster(resp[0]?.value);
+        if (resp[0]?.value) {
+          queryResData(resp[0]?.value);
+          queryPodData(resp[0]?.value);
+          queryNodeList({ clusterId: resp[0]?.value });
+          queryNameSpace(resp[0]?.value);
+          queryUseMarket(resp[0]?.value);
+        } else {
+          setUseMarket([]);
+          setPodDataSource([]);
+          queryNodeList({ clusterId: '' });
+        }
+      });
+    }
   }, []);
 
   const [currentIp, setCurrentIp] = useState<string>('');
@@ -329,8 +344,8 @@ const Coms = (props: any) => {
                     el.title === '节点数'
                       ? '#monitor-tabs-content-sec-node'
                       : el.title === 'POD数'
-                      ? '#monitor-tabs-content-sec-pod'
-                      : '#mode-table-card'
+                        ? '#monitor-tabs-content-sec-pod'
+                        : '#mode-table-card'
                   }
                 >
                   {el.value || '-'}
@@ -567,27 +582,27 @@ const Coms = (props: any) => {
                 Cpu: (value, record) => {
                   return (
                     <Tooltip title={`${value}%`}>
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap", }}>
-                      {value}%
-                    </span>
+                      <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap", }}>
+                        {value}%
+                      </span>
                     </Tooltip>
                   );
                 },
                 Wss: (value, record) => {
                   return (
                     <Tooltip title={`${value}%`}>
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
-                      {value}%
-                    </span>
+                      <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
+                        {value}%
+                      </span>
                     </Tooltip>
                   );
                 },
                 Rss: (value, record) => {
                   return (
                     <Tooltip title={`${value}%`}>
-                    <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
-                      {value}%
-                    </span>
+                      <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
+                        {value}%
+                      </span>
                     </Tooltip>
                   );
                 },
