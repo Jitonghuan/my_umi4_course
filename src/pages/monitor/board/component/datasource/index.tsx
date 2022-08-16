@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { Form, Input, Select, Button, message } from 'antd';
-import {history} from 'umi';
 import { FilterCard } from '@/components/vc-page-content';
 import { ContentCard } from '@/components/vc-page-content';
 import { Divider, Drawer, Popconfirm, Switch, Table } from '@cffe/h2o-design';
@@ -109,7 +108,7 @@ const DataSource = (props: any) => {
     const value = await editForm.validateFields()
     try {
       if (sourceDetail?.dsUuid) {
-        updateGraphDatasouce({ ...sourceDetail, ...value,}).then((res) => {
+        updateGraphDatasouce({ ...sourceDetail, ...value, }).then((res) => {
           if (res?.success) {
             message.success("更新成功")
             getDatasourceList({
@@ -122,7 +121,7 @@ const DataSource = (props: any) => {
           }
         })
       } else {
-        createGraphDatasouce({ ...value,}).then((res) => {
+        createGraphDatasouce({ ...value, }).then((res) => {
           if (res?.success) {
             message.success("创建成功")
             getDatasourceList()
@@ -240,13 +239,13 @@ const DataSource = (props: any) => {
                 style={{ width: '250px' }}
                 options={clusterList}
                 value={clusterCode}
-                onChange={(value) => { 
-                  onClusterChange(value) ;
+                onChange={(value) => {
+                  onClusterChange(value);
                   // history.replace({
                   //   pathname: 'detail',
                   //   search: `?currentClusterCode=${clusterCode}`
                   // })
-                 
+
                 }}
               />
             </Form.Item>
@@ -330,14 +329,14 @@ const DataSource = (props: any) => {
               onChange={onTypeChange}
             />
           </Form.Item>
-          <Form.Item label="集群选择" name="clusterCode">
-                <Select
-                 showSearch
-                 allowClear
-                 style={{ width: '250px' }}
-                 options={clusterList}
-                />
-        </Form.Item>
+          <Form.Item label="集群选择" name="clusterCode" rules={[{ required: true, message: '请选择集群' }]}>
+            <Select
+              showSearch
+              allowClear
+              style={{ width: '250px' }}
+              options={clusterList}
+            />
+          </Form.Item>
           <Form.Item label="URL" name="dsUrl" rules={[{ required: true, message: '请输入URL' }]}>
             <Input />
           </Form.Item>
