@@ -12,8 +12,8 @@ import './index.less';
 
 export default function ContainerInfo(props: any) {
   let location = useLocation();
-  const query = parse(location.search);
-  console.log('location.state',location,window.location)
+  const query = parse(location?.hash||"{}");
+  console.log('location---》',location,query)
   const infoRecord = props.location.state?.infoRecord || {};
   const appCode = props.location.state?.appCode || '';
   const envCode = props.location.state?.envCode || '';

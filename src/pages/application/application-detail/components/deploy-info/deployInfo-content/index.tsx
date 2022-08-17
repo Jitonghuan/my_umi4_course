@@ -471,14 +471,13 @@ export default function DeployContent(props: DeployContentProps) {
                       history.push({
                         pathname: 'container-info',
                         search:`appCode=${appCode}&envCode=${currentEnvData}&viewLogEnvType=${envTypeCode}`,
-                         // @ts-ignore
-                        state: {
-                          appCode: appCode,
-                          envCode: currentEnvData,
-                          viewLogEnvType: envTypeCode,
-                          infoRecord: record,
-                          id: appData?.id,
-                        },
+                        // hash: JSON.stringify({
+                        //   appCode: appCode,
+                        //   envCode: currentEnvData,
+                        //   viewLogEnvType: envTypeCode,
+                        //   infoRecord: record,
+                        //   id: appData?.id,
+                        // }),
                       });
                     }}
                   >
