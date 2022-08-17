@@ -3,10 +3,11 @@
 // @create 2021/10/25 18:30
 import { getRequest, postRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag } from 'antd';
+import {QuestionCircleOutlined} from '@ant-design/icons';
+import { Drawer, Input, Button, Form, Select, Space, message, Switch, Divider, Radio, Tag,Tooltip } from 'antd';
 import { EnvEditData } from '../env-list/index';
 import { createEnv, appTypeList, updateEnv, queryNGList } from '../service';
-import { envTypeCodeOptions, envTypeOptions } from './schema';
+import { envTypeCodeOptions, envTypeOptions,bucketTypeOptions } from './schema';
 import './index.less';
 export interface EnvEditorProps {
   mode?: EditorMode;
@@ -76,6 +77,7 @@ export default function AddEnv(props: EnvEditorProps) {
         ...initData,
 
         bucketName: minio.bucketName || '',
+        bucketType:minio.bucketType || '',
         sourceMapBkt: minio.sourceMapBkt || '',
         useMinio: minio.useMinio || false,
         isBlock: isBlockChecked,
@@ -155,6 +157,7 @@ export default function AddEnv(props: EnvEditorProps) {
           useMinio: isUseMinio,
           bucketName: params?.bucketName || '',
           sourceMapBkt: params.sourceMapBkt || '',
+          bucketType:params?.bucketType || '',
         };
         postRequest(createEnv, {
           data: {
@@ -188,6 +191,7 @@ export default function AddEnv(props: EnvEditorProps) {
           useMinio: isUseMinio,
           bucketName: params?.bucketName || '',
           sourceMapBkt: params?.sourceMapBkt || '',
+          bucketType:params?.bucketType || '',
         };
         putRequest(updateEnv, {
           data: {
@@ -196,6 +200,7 @@ export default function AddEnv(props: EnvEditorProps) {
             envCode: params?.envCode,
             useMinio: undefined,
             bucketName: undefined,
+            bucketType:undefined,
             sourceMapBkt: undefined,
             minioInfo: JSON.stringify(minioInfo),
             useNacos: checkedOption,
@@ -365,6 +370,18 @@ export default function AddEnv(props: EnvEditorProps) {
                 rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
               >
                 <Input style={{ width: 280 }} placeholder="请输入资源文件Bucket" disabled={isDisabled}></Input>
+              </Form.Item>
+              <Form.Item
+                label="Bucket类型"
+                name="bucketType"
+                rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
+              >
+                 <Radio.Group disabled={isDisabled}>
+                   <Radio value={'oneself'}>独占<Tooltip title={()=>{return <>资源路径：<br/>/BucketName/AppDeploymentName/dist/</>}}><QuestionCircleOutlined /></Tooltip></Radio>
+                   <Radio value={'share'}>共享<Tooltip title={()=>{return <>资源路径：<br/>/BucketName/EnvCode/AppDeploymentName/dist</>}}><QuestionCircleOutlined /></Tooltip></Radio>
+
+                </Radio.Group>
+                
               </Form.Item>
               <Form.Item
                 label="sourceMapBucket"
