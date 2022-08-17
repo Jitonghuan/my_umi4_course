@@ -17,6 +17,8 @@ export default function SetTag(props: any) {
   const [loading, setLoading] = useState<boolean>(false);
   const [removeTags, setRemoveTags] = useState([]) as any;
   const [showForm, setShowForm] = useState<boolean>(false);
+  const [hasAddTag, setHasAddTag] = useState(false);
+  const hasUpdate = useMemo(() => hasAddTag || (removeTags && removeTags.length), [hasAddTag, removeTags])
   const tags = useMemo(
     () => (baseTags || []).concat(dirtyTags || []).filter((e: any) => !removeTags.includes(e)),
     [removeTags, baseTags, dirtyTags],
@@ -27,6 +29,8 @@ export default function SetTag(props: any) {
   useEffect(() => {
     if (visible) {
       form.resetFields();
+      setRemoveTags([])
+      setHasAddTag(false);
       setShowForm(false);
       setTagType('');
       form.setFieldsValue({ 'base-tags': [undefined] });
@@ -65,16 +69,33 @@ export default function SetTag(props: any) {
     setTagType(e.target.value);
     form.resetFields();
     form.setFieldsValue({ 'base-tags': [undefined] });
+    setHasAddTag(false);
   };
+  const handleRemoveTag = (item: any) => {
+    setRemoveTags([...removeTags, item]);
+  }
+  // 检测form值是否有变化
+  const handleValuesChange = (v: any, allValue: any) => {
+    if ((allValue && Object.values(allValue).every((e: any) => e.length))) {
+      setHasAddTag(true);
+    } else {
+      setHasAddTag(false);
+    }
+  }
 
   return (
     <Modal
       width={650}
       title="显示详情"
       visible={visible}
+      keyboard={false}
+      maskClosable={false}
+      closable={false}
       onCancel={onCancel}
       footer={[
-        <Button onClick={onCancel}>取消</Button>,
+        hasUpdate ? <Popconfirm title={"有修改未保存，确认取消？"} onConfirm={onCancel}>
+          <Button>取消</Button>
+        </Popconfirm> : <Button onClick={onCancel}>取消</Button>,
         <Button type="primary" onClick={handleSubmit} loading={loading}>
           确认
         </Button>,
@@ -103,9 +124,10 @@ export default function SetTag(props: any) {
               // </Popconfirm>
               <TagConfirm
                 content={`${item.key}:${item.value}`}
-                title="该操作只是暂时移除标签
-                只有点击下方确认按钮才是正式删除标签"
-                onConfirm={() => { setRemoveTags([...removeTags, item]); }}
+                title={() => <div>
+                  该操作只是暂时移除标签<br />如要提交修改请点击弹窗确认按钮
+                </div>}
+                onConfirm={() => handleRemoveTag(item)}
                 style={{ marginTop: '5px' }}
               >
               </TagConfirm>
@@ -122,7 +144,7 @@ export default function SetTag(props: any) {
               </Radio.Group>
             </div>
             <div className="form-wrapper">
-              {tagType !== '' && <Form form={form} name="base" autoComplete="off" colon={false}>
+              {tagType !== '' && <Form form={form} name="base" onValuesChange={handleValuesChange} autoComplete="off" colon={false}>
                 <Form.List name="base-tags">
                   {(fields, { add, remove }) => (
                     <>
