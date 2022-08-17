@@ -5,17 +5,16 @@
  * @create 2021-11-11 14:15
  */
 
-import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useContext, useEffect, useRef} from 'react';
 import { history } from 'umi';
 import moment from 'moment';
-import appConfig from '@/app.config';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Button, Table, message, Popconfirm, Spin, Select, Tag, Modal, Form, Input, Divider } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { postRequest } from '@/utils/request';
 import { restartApp, restartApplication, queryAppOperate } from '@/pages/application/service';
-import { useListDeploymentList, getDeploymentEventListMethods } from '../container-info/hook';
-import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi, getListDeploymentEvent } from './service';
+import { getDeploymentEventListMethods } from '../container-info/hook';
+import { listContainer, fileDownload, listEnvCluster, queryInstanceListApi} from './service';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { useDeleteInstance } from './hook';
 import { listAppEnv } from '@/pages/application/service';
@@ -29,14 +28,12 @@ const rootCls = 'deploy-content-compo';
 
 export default function DeployContent(props: DeployContentProps) {
   const { viewLogEnv, type, viewLogEnvType } = props;
-  const { fromThird } = history.location?.query || {};
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, intervalStop, intervalStart } = props;
+  const { envTypeCode, intervalStop, intervalStart } = props;
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
   const [formInstance] = Form.useForm();
   const { appData } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
-  // const [deploymentLoading, deploymentSource, setDeploymentSource, getDeploymentEventList] = useListDeploymentList();
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [deploymentSource, setDeploymentSource] = useState<any[]>([]);
   const [currentEnvData, setCurrentEnvData] = useState<string>(''); //当前选中的环境；
@@ -45,7 +42,6 @@ export default function DeployContent(props: DeployContentProps) {
   const [currentFilePath, setCurrentFilePath] = useState<string>('');
   const [listEnvClusterData, setListEnvClusterData] = useState<any>();
   const [queryListContainer, setQueryListContainer] = useState<any[]>([]);
-  const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const initEnvCode = useRef<string>('');
   const [deleteInstance] = useDeleteInstance();
   const [instanceTableData, setInstanceTableData] = useState<any>();
@@ -221,7 +217,7 @@ export default function DeployContent(props: DeployContentProps) {
                   }
                 })
                 .then(() => {
-                  if (initLoadInfoData.length !== 0) {
+                  if (initLoadInfoData?.length !== 0) {
                     queryAppOperateLog(initEnvCode.current);
                     getRequest(queryInstanceListApi, {
                       data: { appCode: appData?.appCode, envCode: initEnvCode.current },
@@ -471,15 +467,11 @@ export default function DeployContent(props: DeployContentProps) {
                 render={(v, record) => (
                   <a
                     onClick={() => {
-                      history.replace({
+                      debugger
+                      history.push({
                         pathname: 'container-info',
-                        query: {
-                          appCode: appCode,
-                          envCode: currentEnvData,
-                          viewLogEnvType: envTypeCode,
-
-                          // initRecord:JSON.stringify(record)
-                        },
+                        search:`appCode=${appCode}&envCode=${currentEnvData}&viewLogEnvType=${envTypeCode}`,
+                         // @ts-ignore
                         state: {
                           appCode: appCode,
                           envCode: currentEnvData,
@@ -557,14 +549,15 @@ export default function DeployContent(props: DeployContentProps) {
                           history.push(
                             {
                               pathname: '/matrix/application/detail/viewLog',
-                              query: {
-                                appCode: appData?.appCode,
-                                envCode: currentEnvData,
-                                instName: record?.instName,
-                                viewLogEnvType: envTypeCode,
-                                optType: 'deployInfo',
-                                deploymentName: appData?.deploymentName,
-                              },
+                              search:`appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
+                              // query: {
+                              //   appCode: appData?.appCode,
+                              //   envCode: currentEnvData,
+                              //   instName: record?.instName,
+                              //   viewLogEnvType: envTypeCode,
+                              //   optType: 'deployInfo',
+                              //   deploymentName: appData?.deploymentName,
+                              // },
                               state: {
                                 infoRecord: record,
                               },
@@ -651,12 +644,12 @@ export default function DeployContent(props: DeployContentProps) {
                         {item.operateEvent === 'PodFileDownload'
                           ? '文件下载'
                           : item.operateEvent === 'restartApp'
-                          ? '重启应用'
-                          : item.operateEvent === 'rollback'
-                          ? '回滚应用'
-                          : item.operateEvent === 'DeletePod'
-                          ? '删除Pod'
-                          : null}
+                            ? '重启应用'
+                            : item.operateEvent === 'rollback'
+                              ? '回滚应用'
+                              : item.operateEvent === 'DeletePod'
+                                ? '删除Pod'
+                                : null}
                       </Tag>
                     </b>
                   </p>

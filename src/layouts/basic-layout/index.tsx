@@ -43,8 +43,8 @@ if (appConfig.isLocal) {
   };
 }
 export default function Layout(props: any) {
-  const location = useLocation()
-
+  const location = useLocation();
+console.log("location?.pathname",location?.pathname)
   // 初始化 doc title hook
   useDocumentTitle('', location?.pathname);
   // 权限数据
@@ -54,7 +54,6 @@ export default function Layout(props: any) {
   // 业务线
   const [businessData] = useBusinessData();
   let userInfo = JSON.parse(localStorage.getItem('USER_INFO') || '{}');
-  const { fromThird } = parse(location.search);
 
   const [userPosition, setUserPosition] = useState<UserPositionProps>({
     orgId: userInfo?.orgId,
@@ -88,21 +87,21 @@ export default function Layout(props: any) {
     const res = await getMatrixEnvConfig();
     let infoSource = window.location.href?.includes('gushangke')
       ? {
-          curEnvType: 'gushangke',
-          locationHref: 'gushangke',
-          domainName: 'http://c2f.apex.gushangke.com',
-          wsPrefixName: 'ws://matrix-api.gushangke.com',
-          LogoName: '--富阳骨伤',
-          waterMarkName: '富阳骨伤',
-        }
+        curEnvType: 'gushangke',
+        locationHref: 'gushangke',
+        domainName: 'http://c2f.apex.gushangke.com',
+        wsPrefixName: 'ws://matrix-api.gushangke.com',
+        LogoName: '--富阳骨伤',
+        waterMarkName: '富阳骨伤',
+      }
       : {
-          curEnvType: res?.curEnvType,
-          locationHref: res?.locationHref,
-          domainName: res?.domainName,
-          wsPrefixName: res?.wsPrefixName,
-          LogoName: res?.LogoName,
-          waterMarkName: res?.waterMarkName,
-        };
+        curEnvType: res?.curEnvType,
+        locationHref: res?.locationHref,
+        domainName: res?.domainName,
+        wsPrefixName: res?.wsPrefixName,
+        LogoName: res?.LogoName,
+        waterMarkName: res?.waterMarkName,
+      };
     setMatrixConfigInfo(infoSource);
     // @ts-ignore
     window.matrixConfigData = res || {
@@ -183,7 +182,7 @@ export default function Layout(props: any) {
     }
   };
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider locale={zhCN} >
       <AllMessage
         mode={allMessageMode}
         allData={stemNoticeListData}
@@ -224,11 +223,32 @@ export default function Layout(props: any) {
               <BasicLayout
                 {...(props as any)}
                 isOpenLogin={true}
+                className='test'
+                layout='LTB'
+                history={history}
+                location={location}
+                routes={route}
                 pagePrefix={appConfig.pagePrefix}
                 siderMenuProps={{
                   isOpenPermission: appConfig.isOpenPermission,
                   permissionData,
                   IconMap,
+                  title: (
+                    <>
+                      <div className="matrix-title">
+                        <img src={appConfig.logo}
+                          style={{ marginRight: '5px', height: 45, width: 45 }}
+                          onClick={() => {
+                            props.history.push('/matrix/index');
+                          }}
+                        />
+                        <div className='matrix-title-matrix'>{appConfig.title}</div>
+                        <div className='matrix-title-env'>{matrixConfigInfo?.LogoName}</div>
+                      </div>
+                    </>
+                  ),
+                  // backgroundImage: require("@/assets/side-bg.png")
+
                 }}
                 showHeader={!isPageInIFrame()}
                 showSiderMenu={!isPageInIFrame()}
@@ -238,18 +258,18 @@ export default function Layout(props: any) {
                   userApi: matrixConfigInfo?.domainName
                     ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
                     : window.location.href?.includes('gushangke')
-                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
-                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
+                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
                   logoutApi: matrixConfigInfo?.domainName
                     ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
                     : window.location.href?.includes('gushangke')
-                    ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
-                    : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
+                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
                   loginUrl: matrixConfigInfo?.domainName
                     ? `${matrixConfigInfo?.domainName}/login`
                     : window.location.href?.includes('gushangke')
-                    ? 'http://c2f.apex.gushangke.com/login'
-                    : `${matrixConfigInfo?.domainName}/login`,
+                      ? 'http://c2f.apex.gushangke.com/login'
+                      : `${matrixConfigInfo?.domainName}/login`,
                   onClickPosition: () => {
                     setPosVisible(true);
                     // @ts-ignore
@@ -288,27 +308,25 @@ export default function Layout(props: any) {
                       },
                     },
                   ],
-                  title: (
-                    <>
-                      <div className="matrix-title">
-                        <span>
-                          <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
+                  title: (<></>),
+                  // title: (
+                  //   <>
+                  //     <div className="matrix-title">
+                  //       <span>
+                  //         <img src={appConfig.logo} style={{ marginRight: '5px', height: 30, width: 30 }} />
 
-                          {appConfig.title}
-                          {matrixConfigInfo?.LogoName}
-                        </span>
-                      </div>
-                    </>
-                  ),
+                  //         {appConfig.title}
+                  //         {matrixConfigInfo?.LogoName}
+                  //       </span>
+                  //     </div>
+                  //   </>
+                  // ),
                   positionText: '部门',
                   isShowGlobalMenu: false,
-                  onBrandClick: () => {
-                    props.history.push('/matrix/index');
-                  },
                 }}
               >
-                <Outlet />
-              </BasicLayout>
+                  <Outlet />   
+            </BasicLayout>
             )}
           </ChartsContext.Provider>
         </FeContext.Provider>

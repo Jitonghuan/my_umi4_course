@@ -11,6 +11,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
 import ConfigContent from './config-content';
 import { IProps } from './types';
+import { useLocation} from 'umi';
 import { listAppEnvType } from '@/common/apis';
 import { getRequest } from '@/utils/request';
 import './index.less';
@@ -24,9 +25,11 @@ const typeMap = {
 
 export default function ConfigParametersManage(props: IProps) {
   const { appData } = useContext(DetailContext);
-  const {
-    location: { pathname },
-  } = props;
+  let location = useLocation();
+  const pathname= location.pathname
+  // const {
+  //   location: { pathname },
+  // } = props;
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   useEffect(() => {
     queryData();

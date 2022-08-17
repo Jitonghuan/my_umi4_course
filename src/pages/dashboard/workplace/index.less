@@ -1,3 +1,7 @@
+
+
+
+
 .icon-list {
   margin-bottom: 28px;
 }
@@ -66,4 +70,290 @@
   justify-content: center;
   margin-top: 0px;
   height: 100%;
+}
+
+.all-wrapper{
+  display: flex;
+  background-color: #f3f7ff;
+  height: 100%;
+  width: 100%;
+ .left-wrapper{
+   flex: 4;
+   margin-left: 40px;
+   position: relative;
+   .left-top{
+     display: flex;
+     flex-direction: column;
+    .title{
+      font-size: 100px;
+      color:#2F70F4 ;
+      font-weight: 800;
+    }
+    .desc{
+      font-size: 15px;
+      color:#838a9a;
+      margin-top: -26px;
+      margin-bottom: 30px;
+      align-items: center;
+      margin-left: 40px;
+    }
+   }
+  .left-bottom{
+    position: absolute;
+    bottom: 30px;
+    .announce{ 
+      z-index: 1;
+      position: relative;
+      width: 435px;
+      height: 124px;
+      margin-bottom: 20px;
+      background-color: #FFFFFF;
+      padding:10px;    
+      box-shadow: 1px 4px 6px 0px rgba(190,207,231,0.3);
+      border-radius: 8px;
+      &-item{
+        line-height: 25px;
+        margin-top:15px;
+      }
+      &-title{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      &-title:hover{
+        cursor: pointer;
+        color:#1890ff;
+      }
+    }
+    .doc{
+      z-index: 1;
+      position: relative;
+      width: 435px;
+      height: 170px;
+      background-color: #FFFFFF;
+      padding:10px;
+      box-shadow: 1px 4px 6px 0px rgba(190,207,231,0.3);
+      border-radius: 8px;
+      overflow: auto;
+      .doc-item{
+        display: flex;
+        flex-wrap: wrap;
+        line-height: 25px;
+        margin-top:15px;
+        max-height: 150px;
+        overflow: auto;
+        &>div{
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          flex-basis: 50%;
+        }
+      }
+    }
+  }
+  .arco-empty {
+    margin-top: -15px;
+    .arco-empty-description{
+      margin-left: 20px;
+    }
+  }
+  
+  .empty-toolip{
+    background-color:#fff;
+    border-radius: 10px;
+    width: 435px;
+    padding:10px;
+  }
+ }
+ .right-wrapper{
+   flex: 6;
+  background-size: cover;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+
+  background-image: url(~@/assets/imgs/earthLight.png);
+  &>.tip{
+    flex: 1 100%;
+    align-items: flex-end;
+    text-align: end;
+    padding: 30px 0;
+    text-align: center;
+    margin-left: -70px;
+    z-index: 11;
+    img{
+      // animation: bounce 3s ease infinite;
+      animation-name: bounce;
+      animation-timing-function: ease-in-out;
+      animation-duration: 2.4s;
+      animation-iteration-count: infinite;
+      // width: 140px;
+      width: 9vw;
+    }
+  }
+  &>.tip:nth-child(1){
+    img{
+      animation-delay: 0.4s;
+    }
+  }
+  &>.tip:nth-child(2){
+    img{
+      animation-delay: 0.8s;
+    }
+  }
+  &>.tip:nth-child(3){
+    img{
+      animation-delay: 1.2s;
+    }
+  }
+  &>.tip:nth-child(4){
+    img{
+      animation-delay: 1.6s;
+    }
+  }
+  &>.tip:nth-child(5){
+    img{
+      animation-delay: 2s;
+    }
+  }
+  &>.tip:nth-child(2n+1){
+    align-items: flex-start;
+    margin-left: 280px;
+  }
+
+  &>.cube{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    
+    .img{
+      animation-name: spin;
+      animation-timing-function: linear;
+      animation-duration: 18s;
+      animation-iteration-count: infinite;
+    }
+    &.large{
+      bottom: -50px;
+      left: -11vw;
+      
+      .img{
+        background-image: url(~@/assets/imgs/cube-large-light.svg);
+        background-size: cover;
+        width: 30vw;
+        height: 30vw;
+
+      }
+    }
+    &.small{
+      // left: 60px;
+      left:1vw;
+      bottom: 30px;
+      .img{
+        background-image: url(~@/assets/imgs/cube-small-light.svg);
+        // width: 259px;
+        // height: 257px;
+        background-size: cover;
+        width: 20vw;
+        height: 20vw;
+
+      }
+    }
+  }
+ }
+ .icon-item{
+    height: 48px;
+    width: 48px;
+    background-color: white;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    margin-top: 10px;
+    margin-right: 20px;
+ }
+}
+// 暗黑模式
+body[matrix-theme='matrixDark'] .all-wrapper{
+  * {
+    background:unset !important;
+  }
+  svg *{
+    color: unset !important;
+  }
+  background: rgb(29,28,31) !important;
+  img{
+    background-color :unset !important;
+  }
+  .icon-item{
+    background-color: #373739 !important;
+    svg{
+      color:#EDA542 !important
+    }
+ }
+  .left-wrapper{
+    background-color :unset !important;
+    .empty-toolip{
+      background-color: #373739  !important;
+      svg{
+        color:#1962f7 !important;
+      }
+    }
+    .left-top{
+      background-color :unset !important;
+      .title, .desc{
+        box-shadow: unset;
+        background-color :unset !important;
+      }
+    }
+    .left-bottom{
+      .announce , .doc{
+        box-shadow: unset;
+        background-color: #373739  !important
+      }
+    }
+  }
+ 
+  .right-wrapper{
+    background-color :unset !important;
+    background-image: url(~@/assets/imgs/earthDark.png)  !important;
+    background-size: cover !important;
+    .cube, .tip{
+      background-color :unset !important;
+    }
+  }
+
+  .ant-tag{
+    background-color: #EDA542 !important;
+  }
+
+  .right-wrapper .cube.large .img{
+    background-color :unset !important;
+    background-image: url(~@/assets/imgs/cube-large-dark.svg)  !important;
+    background-size: cover !important;
+  }
+  .right-wrapper .cube.small .img{
+    background-color :unset !important;
+    background-image: url(~@/assets/imgs/cube-small-dark.svg) !important;
+    background-size: cover !important;
+  }
+}
+.bounce {
+  animation: bounce 2s ease infinite;
+}
+@keyframes bounce {
+    30% { transform:translateY(0%); }
+    60% { transform:translateY(-15%); }
+    100% { transform:translateY(0%); }
+    // 95% { transform:translateY(-7%); }
+    // 97% { transform:translateY(0%); }
+    // 99% { transform:translateY(-3%); }
+    // 100% { transform:translateY(0); }
+}
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.2); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

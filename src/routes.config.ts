@@ -110,7 +110,7 @@ export default [
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
   {
-    "path": `${baseRoutePath}/application`,
+    "path": `${baseRoutePath}/application`,  
     "name": "应用管理",
     "icon": "icon-poc_maindata",
     "routes": [
@@ -1033,87 +1033,87 @@ export default [
     ]
   },
   {
-    path: 'pedestal',
+    path: `${baseRoutePath}/pedestal`,
     name: '基座管理',
     icon: 'icon-dataset',
     routes: [
       {
-        path: 'volume-detail',
+        path: `${baseRoutePath}/pedestal/volume-detail`,
         name: '卷详情',
         key: 'storage-manage',
         component: '@/pages/pedestal/storage-manage/volume-detail',
         hideInMenu: true,
       },
       {
-        path: 'cluster-info',
+        path: `${baseRoutePath}/pedestal/cluster-info`,
         name: '集群概览',
         key: 'cluster-info',
         component: '@/pages/pedestal/cluster-info',
       },
       {
-        path: 'view-log',
+        path: `${baseRoutePath}/pedestal/view-log`,
         name: '查看日志',
         key: 'cluster-detail',
         component: '@/pages/pedestal/cluster-detail/load-detail/view-log',
         hideInMenu: true,
       },
       {
-        path: 'login-shell',
+        path: `${baseRoutePath}/pedestal/login-shell`,
         name: '登陆shell',
         key: 'cluster-detail',
         component: '@/pages/pedestal/cluster-detail/load-detail/login-shell',
         hideInMenu: true,
       },
       {
-        path: 'cluster-detail',
+        path: `${baseRoutePath}/pedestal/cluster-detail`,
         name: '集群详情',
         key: 'cluster-detail',
         component: '@/pages/pedestal/cluster-detail',
         routes: [
           {
-            path: 'node-list',
+            path: `${baseRoutePath}/pedestal/cluster-detail/node-list`,
             name: '节点列表',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/node-list',
             hideInMenu: true,
           },
           {
-            path: 'resource-detail',
+            path: `${baseRoutePath}/pedestal/cluster-detail/resource-detail`,
             name: '资源详情',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/resource-detail',
             hideInMenu: true,
           },
           {
-            path: 'resource-statistics',
+            path: `${baseRoutePath}/pedestal/cluster-detail/resource-statistics`,
             name: '资源详情',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/resource-statistics',
             hideInMenu: true,
           },
           {
-            path: 'event-warning',
+            path: `${baseRoutePath}/pedestal/cluster-detail/event-warning`,
             name: '资源详情',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/event-warning',
             hideInMenu: true,
           },
           {
-            path: 'task-manage',
+            path: `${baseRoutePath}/pedestal/cluster-detail/task-manage`,
             name: '任务管理',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/task-manage',
             hideInMenu: true,
           },
           {
-            path: 'load-detail',
+            path: `${baseRoutePath}/pedestal/cluster-detail/load-detail`,
             name: '工作负载',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/load-detail',
             hideInMenu: true,
           },
           {
-            path: 'pods',
+            path: `${baseRoutePath}/pedestal/cluster-detail/pods-detail`,
             name: 'pod详情',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/load-detail/pods-detail',
@@ -1123,28 +1123,28 @@ export default [
         ],
       },
       {
-        path: 'storage-manage',
+        path: `${baseRoutePath}/pedestal/storage-manage`,
         name: '存储管理',
         key: 'storage-manage',
         component: '@/pages/pedestal/storage-manage',
 
         routes: [
           {
-            path: 'storage-dashboard',
+            path: `${baseRoutePath}/pedestal/storage-manage/storage-dashboard`,
             name: '存储大盘',
             key: 'storage-manage',
             component: '@/pages/pedestal/storage-manage/storage-dashboard',
             hideInMenu: true,
           },
           {
-            path: 'node-manage',
+            path: `${baseRoutePath}/pedestal/storage-manage/node-manage`,
             name: '节点管理',
             key: 'storage-manage',
             hideInMenu: true,
             component: '@/pages/pedestal/storage-manage/node-manage',
           },
           {
-            path: 'volume-manage',
+            path: `${baseRoutePath}/pedestal/storage-manage/volume-manage`,
             name: '卷管理',
             key: 'storage-manage',
             component: '@/pages/pedestal/storage-manage/volume-manage',
@@ -1168,18 +1168,18 @@ export default [
     ]
   },
   {
-    path: 'database',
+    path: `${baseRoutePath}/database`,
     name: '数据库管理',
     icon: 'icon-TableSettings',
     routes: [
       {
-        path: 'overview',
+        path:  `${baseRoutePath}/database/overview`,
         name: '概览',
         key: 'overview',
         component: '@/pages/database/overview',
       },
       {
-        path: 'info',
+        path:  `${baseRoutePath}/database/instance-info`,
         name: '实例详情',
         key: 'instance-list',
         component: '@/pages/database/instance-list/components/instance-info',
@@ -1187,13 +1187,13 @@ export default [
       },
 
       {
-        path: 'instance-list',
+        path:  `${baseRoutePath}/database/instance-list`,
         name: '实例列表',
         key: 'instance-list',
         component: '@/pages/database/instance-list',
       },
       {
-        path: 'cluster-list',
+        path:  `${baseRoutePath}/database/cluster-list`,
         name: '集群列表',
         key: 'cluster-list',
         component: '@/pages/database/cluster-list',
@@ -1201,16 +1201,10 @@ export default [
     ],
   },
   {
-    path: 'admin',
+    path: `${baseRoutePath}/admin`,
     name: '管理员菜单',
     icon: 'icon-userRecent',
     routes: [
-      {
-        path: 'user',
-        name: '用户管理',
-        key: 'user',
-        component: '@/pages/admin/user-manage',
-      },
       {
         "path": `${baseRoutePath}/admin/user`,
         "name": "用户管理",
@@ -1231,25 +1225,13 @@ export default [
         "component": "@/pages/admin/article-manage"
       },
       {
-        path: 'tmpl-log',
+        path: `${baseRoutePath}/admin/tmpl-log`,
         name: '操作日志',
         key: 'tmpl-log',
         component: '@/pages/operation/tmpl-log',
       },
     ],
   },
-  // {
-  //   path: 'demo',
-  //   name: 'demo菜单',
-  //   icon: 'icon-userRecent',
-  //   routes: [
-  //     {
-  //       path: 'demo',
-  //       name: '用户管理',
-  //       key: 'user',
-  //       component: '@/pages/demo/layout-normal',
-  //     },
-  //   ]},
   {
     path: '*',
     name: 'NOT FOUND',
