@@ -377,7 +377,7 @@ export default function AddEnv(props: EnvEditorProps) {
                 rules={[{ required: isUseMinio ? true : false, message: '这是必填项' }]}
               >
                  <Radio.Group disabled={isDisabled}>
-                   <Radio value={'oneself'}>独占<Tooltip title={()=>{return <>资源路径：<br/>/BucketName/AppDeploymentName/dist/</>}}><QuestionCircleOutlined /></Tooltip></Radio>
+                   <Radio value={'oneself'}>独占<Tooltip title={()=>{return <>资源路径：<br/>/BucketName/AppDeploymentName/dist</>}}><QuestionCircleOutlined /></Tooltip></Radio>
                    <Radio value={'share'}>共享<Tooltip title={()=>{return <>资源路径：<br/>/BucketName/EnvCode/AppDeploymentName/dist</>}}><QuestionCircleOutlined /></Tooltip></Radio>
 
                 </Radio.Group>
