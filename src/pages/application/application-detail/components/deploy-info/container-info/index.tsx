@@ -4,12 +4,16 @@ import { columns, creatContainerColumns } from '../components/deployment-list/co
 import { ContentCard } from '@/components/vc-page-content';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { LIST_STATUS_TYPE } from '../deployInfo-content/schema';
-import { useGetPodEventList, useListContainer, queryContainerMethods, getListPodEventMethods } from './hook';
+import { useLocation } from 'umi';
+import { parse } from 'query-string';
+import {  queryContainerMethods, getListPodEventMethods } from './hook';
 import { history } from 'umi';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
-  // const {   envCode, viewLogEnvType, id } = props.location.state;
+  let location = useLocation();
+  const query = parse(location.search);
+  console.log('location.state',location,window.location)
   const infoRecord = props.location.state?.infoRecord || {};
   const appCode = props.location.state?.appCode || '';
   const envCode = props.location.state?.envCode || '';

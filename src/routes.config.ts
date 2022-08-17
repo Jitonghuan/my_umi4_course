@@ -1123,28 +1123,28 @@ export default [
         ],
       },
       {
-        path: `${baseRoutePath}/storage-manage`,
+        path: `${baseRoutePath}/pedestal/storage-manage`,
         name: '存储管理',
         key: 'storage-manage',
         component: '@/pages/pedestal/storage-manage',
 
         routes: [
           {
-            path: `${baseRoutePath}/storage-manage/storage-dashboard`,
+            path: `${baseRoutePath}/pedestal/storage-manage/storage-dashboard`,
             name: '存储大盘',
             key: 'storage-manage',
             component: '@/pages/pedestal/storage-manage/storage-dashboard',
             hideInMenu: true,
           },
           {
-            path: `${baseRoutePath}/storage-manage/node-manage`,
+            path: `${baseRoutePath}/pedestal/storage-manage/node-manage`,
             name: '节点管理',
             key: 'storage-manage',
             hideInMenu: true,
             component: '@/pages/pedestal/storage-manage/node-manage',
           },
           {
-            path: `${baseRoutePath}/storage-manage/volume-manage`,
+            path: `${baseRoutePath}/pedestal/storage-manage/volume-manage`,
             name: '卷管理',
             key: 'storage-manage',
             component: '@/pages/pedestal/storage-manage/volume-manage',
@@ -1225,7 +1225,7 @@ export default [
         "component": "@/pages/admin/article-manage"
       },
       {
-        path: `${baseRoutePath}/operation/tmpl-log`,
+        path: `${baseRoutePath}/admin/tmpl-log`,
         name: '操作日志',
         key: 'tmpl-log',
         component: '@/pages/operation/tmpl-log',

@@ -40,15 +40,14 @@ export const createTableSchema = ({
       width: 230,
       render: (text, record) => (
         <a
-          onClick={() =>
+          onClick={() =>{
+            
             history.push({
               pathname: 'detail',
-              query: {
-                id: record.id,
-                appCode: record.appCode,
-              },
+              search: `id=${record.id}&appCode=${record.appCode}`,
+              
             })
-          }
+          }}
         >
           {text}
         </a>
@@ -134,10 +133,7 @@ export const createTableSchema = ({
             onClick={() => {
               history.push({
                 pathname: 'detail',
-                query: {
-                  id: record.id,
-                  appCode: record.appCode,
-                },
+                search: `id=${record.id}&appCode=${record.appCode}`,
               });
             }}
           >
