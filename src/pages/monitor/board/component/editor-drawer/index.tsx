@@ -118,9 +118,14 @@ const EditorDrawer = (props: IEditorDrawer) => {
     if (!dsType) {
       dsType = formRef.getFieldValue("dsType");
     }
+
+    if (dsType) {
+      getGraphTemplateList(dsType)
+    }
     if (!clusterCode || !dsType) {
       return
     }
+
     const data = {
       clusterCode: clusterCode,
       pageSize: -1,
@@ -138,9 +143,11 @@ const EditorDrawer = (props: IEditorDrawer) => {
       })
       setDataSourceOptions(data)
     }
+  }
 
+  const getGraphTemplateList = async (value: any) => {
     const res1 = await graphTemplateList(value)
-    if (Array.isArray(res1?.data?.dataSource) && res.data.dataSource.length > 0) {
+    if (Array.isArray(res1?.data?.dataSource) && res1.data.dataSource.length > 0) {
       const data = res1.data.dataSource.map((item: any) => {
         return {
           label: item.name,
