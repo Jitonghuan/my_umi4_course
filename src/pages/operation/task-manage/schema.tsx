@@ -76,9 +76,9 @@ export const taskTableSchema = ({
       ),
     },
     {
-      width: 140,
+      width: 180,
       title: '操作',
-
+      fixed: 'right',
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
@@ -99,7 +99,7 @@ export const taskTableSchema = ({
             cancelText="取消"
             placement="topLeft"
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <a >删除</a>
           </Popconfirm>
         </div>
       ),

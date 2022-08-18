@@ -47,7 +47,7 @@ export const tableColumns = [
       <CopyToClipboard text={result} onCopy={() => message.success('复制成功！')}>
         <Tooltip title={result} placement="topRight">
           <span style={{ width: '80%' }}> {result}</span>
-          <span style={{ position: 'absolute', color: 'royalblue', right: '5px', top: '4px' }}>
+          <span style={{ position: 'absolute', color: '#3591ff', right: '5px', top: '4px' }}>
             <CopyOutlined />
           </span>
         </Tooltip>

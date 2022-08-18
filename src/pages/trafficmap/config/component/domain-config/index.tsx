@@ -113,7 +113,7 @@ const DomainConfig: React.FC = () => {
                 handleDeleteRegion(record.id);
               }}
             >
-              <Button type="link" danger>删除</Button>
+              <Button type="link">删除</Button>
             </Popconfirm>
           </>
         );
@@ -148,7 +148,7 @@ const DomainConfig: React.FC = () => {
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button type="ghost" htmlType="reset" danger>
+          <Button type="ghost" htmlType="reset">
             重置
           </Button>
         </Form.Item>
@@ -164,8 +164,8 @@ const DomainConfig: React.FC = () => {
             createRegionRef.current.showDrawer();
           }}
         >
-        
-         + 新增域
+
+          + 新增域
         </Button>
       </div>
 

@@ -29,7 +29,7 @@ export const releaseTableSchema = ({
       width: '9%',
       render: (value) => (
         <>
-          <Tag color="pink"> {value}</Tag>
+          <Tag color="processing"> {value}</Tag>
         </>
       ),
     },
@@ -88,7 +88,7 @@ export const releaseTableSchema = ({
             cancelText="取消"
             placement="topLeft"
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <a>删除</a>
           </Popconfirm>
         </div>
       ),

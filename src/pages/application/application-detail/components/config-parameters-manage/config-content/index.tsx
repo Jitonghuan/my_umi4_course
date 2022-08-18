@@ -285,7 +285,7 @@ export default function ConfigContent({ env, configType }: IProps) {
             />
           </Form.Item>
           <Form.Item>
-            <Button htmlType="reset" danger>
+            <Button htmlType="reset">
               重置
             </Button>
           </Form.Item>

@@ -79,7 +79,7 @@ export default function NoiseReduction() {
                 handleDeleteNoise(record.id);
               }}
             >
-              <Button type="link" danger>删除</Button>
+              <Button type="link">删除</Button>
             </Popconfirm>
           </>
         );
@@ -174,7 +174,7 @@ export default function NoiseReduction() {
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button type="ghost" htmlType="reset" danger>
+          <Button type="ghost" htmlType="reset">
             重置
           </Button>
         </Form.Item>
@@ -186,14 +186,14 @@ export default function NoiseReduction() {
         <Button
           type="primary"
           ghost
-         
+
           onClick={() => {
             setNoiseDrawer('ADD')
             setInitData(undefined);
           }}
         >
-        
-         + 新增降噪
+
+          + 新增降噪
         </Button>
       </div>
 

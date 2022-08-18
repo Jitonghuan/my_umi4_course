@@ -169,7 +169,7 @@ export default function deliveryDescription() {
             okText="是"
             cancelText="否"
           >
-            <Button danger size="small" loading={delLoading}>
+            <Button size="small" loading={delLoading}>
               删除
             </Button>
           </Popconfirm>

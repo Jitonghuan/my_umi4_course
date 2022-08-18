@@ -244,7 +244,7 @@ export default function NpmList() {
                     详情
                   </a>
                   <Popconfirm title="确定要删除吗？" onConfirm={() => onDel(record.id)}>
-                    <Button type="link" danger size="small">
+                    <Button type="link" size="small">
                       删除
                     </Button>
                   </Popconfirm>

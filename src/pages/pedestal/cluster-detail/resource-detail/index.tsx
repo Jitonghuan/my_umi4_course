@@ -312,7 +312,7 @@ export default function ResourceDetail(props: any) {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button danger htmlType="reset">
+            <Button htmlType="reset">
               重置
             </Button>
           </Form.Item>

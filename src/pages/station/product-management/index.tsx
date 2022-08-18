@@ -110,7 +110,7 @@ export default function ProductList() {
                     }}
                   >
                     <Spin spinning={delLoading}>
-                      <a style={{ color: 'red' }}>删除</a>
+                      <a>删除</a>
                     </Spin>
                   </Popconfirm>
                 </Space>

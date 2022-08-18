@@ -278,7 +278,7 @@ export const podsTableSchema = ({
               handleDelete(record, index);
             }}
           >
-            <a style={{ color: 'red' }}>
+            <a>
               删除
             </a>
           </Popconfirm>
@@ -523,7 +523,7 @@ export const taskTableSchema = ({
               handleDelete(record, index);
             }}
           >
-            <a style={{ color: 'red' }}>删除</a>
+            <a>删除</a>
           </Popconfirm>
         </div>
       ),

@@ -92,7 +92,7 @@ export const createTableColumns = (params: {
               params?.onDelete(record.id);
             }}
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <a>删除</a>
           </Popconfirm>
         </Space>
       ),

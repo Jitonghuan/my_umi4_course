@@ -332,7 +332,7 @@ export default function NgList() {
 
                   <a onClick={() => handleEditNg(record, index, 'EDIT')}>编辑</a>
                   <Popconfirm title="确定要删除吗？" onConfirm={() => handleDelNg(record)}>
-                    <a style={{ color: 'red' }}>删除</a>
+                    <a >删除</a>
                   </Popconfirm>
                 </div>
               )}

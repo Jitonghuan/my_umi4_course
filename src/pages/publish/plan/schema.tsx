@@ -200,7 +200,7 @@ export const createTableColumns = (params: {
         <Space>
           <Link to={`./plan/editConfigModify?id=${record.id}`}>编辑</Link>
           <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete(record?.planId!)}>
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <a >删除</a>
           </Popconfirm>
         </Space>
       ),

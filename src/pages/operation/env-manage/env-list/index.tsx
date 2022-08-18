@@ -391,7 +391,6 @@ export default function envManageList(props: any) {
                   className="useNacos"
                   onChange={() => handleNacosChange(value, record)}
                   checked={value === 1 ? true : false}
-                  size='small'
                 />
               )}
             />
@@ -447,7 +446,7 @@ export default function envManageList(props: any) {
             />
             <Table.Column
               title="操作"
-              width={180}
+              width={200}
               render={(_, record: EnvEditData, index) => (
                 <div className="action-cell">
                   <a onClick={() => handleEditEnv(record, index, 'VIEW')}>查看</a>

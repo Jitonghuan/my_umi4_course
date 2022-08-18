@@ -366,7 +366,7 @@ export default function ApplicationParams(props: any) {
             {/* <Button type="primary" onClick={queryTmpl}>
               查询
             </Button> */}
-            <Button danger onClick={inintData}>
+            <Button onClick={inintData}>
               重置
             </Button>
           </div>
@@ -433,7 +433,7 @@ export default function ApplicationParams(props: any) {
         </Row>
         <Form.Item>
           <Space size="small" style={{ float: 'right' }}>
-            <Button danger onClick={inintData}>
+            <Button onClick={inintData}>
               重置
             </Button>
             <Button type="primary" htmlType="submit" disabled={ensureDisable}>

@@ -78,7 +78,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
           <Select
             options={appTypeOptions}
             placeholder="请选择"
-            style={{ width: 100 }}
+            style={{ width: 150 }}
             allowClear
             onChange={handleSearch}
           />
@@ -87,7 +87,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
           <Select
             options={categoryData}
             placeholder="请选择"
-            style={{ width: 120 }}
+            style={{ width: 150 }}
             allowClear
             onChange={handleAppCategoryChange}
           />

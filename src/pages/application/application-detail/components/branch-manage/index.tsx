@@ -13,6 +13,7 @@ import { postRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import appConfig from '@/app.config';
+import './index.less'
 
 export default function BranchManage() {
   const { appData } = useContext(DetailContext);
@@ -101,7 +102,7 @@ export default function BranchManage() {
   };
 
   return (
-    <ContentCard>
+    <ContentCard className='branch-manage'>
       <div className="table-caption">
         <Form layout="inline" form={searchForm}>
           <Form.Item label="主干分支" name="masterName">
@@ -147,7 +148,7 @@ export default function BranchManage() {
               <p>
                 <span>{value}</span>
                 <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
-                  <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                  <span style={{ marginLeft: 8, color: '#3591ff' }}>
                     <CopyOutlined />
                   </span>
                 </CopyToClipboard>
@@ -200,15 +201,15 @@ export default function BranchManage() {
           render={(_, record: any, index) => (
             <div className="action-cell">
               {appConfig.envType !== 'base-poc' && (
-                <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
+                <a onClick={() => creatReviewUrl(record)}>
                   创建Review
-                </Button>
+                </a>
               )}
 
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
-                <Button type="primary" danger size="small">
+                <a>
                   作废
-                </Button>
+                </a>
               </Popconfirm>
             </div>
           )}

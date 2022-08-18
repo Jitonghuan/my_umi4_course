@@ -153,7 +153,7 @@ export default function ticketAlarm() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -200,12 +200,12 @@ export default function ticketAlarm() {
                   text == '待审批'
                     ? 'blue'
                     : text == '处理完成'
-                    ? 'green'
-                    : text == '拒绝处理'
-                    ? 'red'
-                    : text == '中断处理'
-                    ? 'default'
-                    : ''
+                      ? 'green'
+                      : text == '拒绝处理'
+                        ? 'red'
+                        : text == '中断处理'
+                          ? 'default'
+                          : ''
                 }
               >
                 {text}

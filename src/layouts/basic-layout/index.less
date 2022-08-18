@@ -20,7 +20,7 @@
 .ant-modal-root .ant-input,
 .ant-drawer .ant-input,
 .ant-tree-select-dropdown .ant-input {
-  padding: 4px 8px;
+  // padding: 4px 8px;
 }
 .ant-pagination .ant-pagination-item-active {
   background-color: @page-color;
@@ -30,9 +30,7 @@
   background-color: @page-color;
   border-color: @page-color;
 }
-.ant-btn{
-  border-radius: 5px;
-}
+
 .ant-pagination .ant-pagination-item-active:hover {
   background-color: @page-color;
   border-color: @page-color;
@@ -45,7 +43,8 @@
 }
 
 .ant-table-cell > a {
-  color: #1973cc;
+  // color: #1973cc;
+  color:#3591ff
 }
 
 .header-app .header-deivider:last-child {
@@ -145,4 +144,85 @@ element.style {
 .ant-frameset .ant-frameset-content{
   margin:0px;
   box-shadow:unset;
+}
+
+.matrix-style-scoped, body {
+
+  .ant-btn{
+    height: 27px;
+    padding: 2px 10px;
+    font-size: 14px;
+    border-radius: 3px;
+  }
+  .ant-form-item-label>label{
+    line-height: 28px;
+    height: 28px;
+  }
+  .ant-table .ant-table-thead > tr > th {
+    background: #fafafa;
+    border-right: 1px solid #f0f0f0;
+  }
+  .ant-select-show-search.ant-select:not(.ant-select-customize-input) .ant-select-selector,
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector{
+    height: 28px;
+    line-height: 28px;
+  }
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector{
+
+  }
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector .ant-select-selection-search-input{
+    height: 28px;
+    line-height: 28px;
+  }
+  .ant-select-single .ant-select-selector .ant-select-selection-item, .ant-select-single .ant-select-selector .ant-select-selection-placeholder{
+    line-height: 26px;
+  }
+  .ant-select-single .ant-select-selector .ant-select-selection-item{
+    line-height: 26px;
+  }
+  .ant-form-item-control-input{
+    min-height: 28px;
+  }
+  .ant-input-affix-wrapper{
+    padding: 2px 11px;
+  }
+  .ant-switch{
+    min-width:38px ;
+  }
+  .ant-switch-small{
+    min-width:28px ;
+  }
+  .env-list-content .ant-table-cell button.ant-switch.useNacos.ant-switch-checked{
+
+  }
+  .ant-switch, .ant-modal-root .ant-switch, .ant-drawer .ant-switch, .ant-tree-select-dropdown .ant-switch{
+    background-image: unset;
+  }
+  
+  .ant-table.ant-table-bordered > .ant-table-container{
+    border-left: 1px solid #f0f0f0;
+  }
+  .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table{
+    border-top: 1px solid #f0f0f0;
+  }
+  .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > thead > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > thead > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-summary > table > thead > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tbody > tr > td, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > tbody > tr > td, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > tbody > tr > td, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-summary > table > tbody > tr > td, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tfoot > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > tfoot > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > tfoot > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-summary > table > tfoot > tr > th, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > tfoot > tr > td, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table > tfoot > tr > td, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-body > table > tfoot > tr > td, .ant-table.ant-table-bordered > .ant-table-container > .ant-table-summary > table > tfoot > tr > td{
+    border-right: 1px solid #f0f0f0;
+  }
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .ant-switch.useNacos.ant-switch-checked, .ant-switch-checked, .ant-modal-root .ant-switch-checked, .ant-drawer .ant-switch-checked, .ant-tree-select-dropdown .ant-switch-checked{
+    background-color: #3591ff !important;
+  }
+  .ant-menu-item:active, .ant-menu-submenu-title:active {
+    background: #011646;
+  }
+  .ant-menu-item:focus-visible, .ant-menu-submenu-title:focus-visible{
+    box-shadow: 0 0 0 2px #011646;
+  }
+  .ant-pagination .ant-pagination-item-active {
+    background-color: #aacff3;
+    border-color: #aacff3;
+}
 }

@@ -79,7 +79,7 @@ export default function deliveryList() {
             cancelText="否"
           >
             <Spin spinning={delLoading}>
-              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+              <a >删除</a>
             </Spin>
           </Popconfirm>
         </Space>
@@ -121,7 +121,7 @@ export default function deliveryList() {
                 </Button>
               </Form.Item>
               <Form.Item>
-                <Button type="ghost" htmlType="reset" danger>
+                <Button type="ghost" htmlType="reset">
                   重置
                 </Button>
               </Form.Item>

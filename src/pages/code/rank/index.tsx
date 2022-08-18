@@ -132,7 +132,7 @@ const Coms = (props: IProps) => {
           <h3>{title}</h3>
           {isShowMore && (
             <Button
-              ghost
+              // ghost
               type="primary"
               onClick={() => {
                 const query = {

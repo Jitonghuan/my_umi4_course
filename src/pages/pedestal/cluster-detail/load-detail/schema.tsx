@@ -52,11 +52,11 @@ export const PodsDetailColumn = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          <Button size="small" type="primary" onClick={() => viewLog(record, index)}>
+          <Button size="small" type="link" onClick={() => viewLog(record, index)}>
             查看日志
           </Button>
           {record?.status === 'Running' && (
-            <Button size="small" type="primary" onClick={() => shell(record, index)}>
+            <Button size="small" type="link" onClick={() => shell(record, index)}>
               登陆shell
             </Button>
           )}

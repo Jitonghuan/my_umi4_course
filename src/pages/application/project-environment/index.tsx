@@ -211,16 +211,16 @@ export default function EnvironmentList() {
             <Select showSearch style={{ width: 150 }} options={categoryData} />
           </Form.Item>
           <Form.Item label="环境大类：" name="envTypeCode">
-            <Select allowClear showSearch style={{ width: 140 }} options={envTypeData} />
+            <Select allowClear showSearch style={{ width: 100 }} options={envTypeData} />
           </Form.Item>
           <Form.Item label="基准环境：" name="benchmarkEnvCode">
             <Select showSearch allowClear style={{ width: 150 }} options={envDataSource} loading={loading} />
           </Form.Item>
           <Form.Item label="环境名：" name="envName">
-            <Input style={{ width: 150 }} />
+            <Input style={{ width: 120 }} />
           </Form.Item>
           <Form.Item label=" 环境CODE" name="envCode">
-            <Input placeholder="请输入环境CODE"></Input>
+            <Input placeholder="请输入环境CODE" size='small'></Input>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -228,7 +228,7 @@ export default function EnvironmentList() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button danger htmlType="reset">
+            <Button htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -328,7 +328,7 @@ export default function EnvironmentList() {
                   <div onClick={(e) => e.stopPropagation()}>
                     <span>{value}</span>
                     <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
-                      <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                      <span style={{ marginLeft: 8, color: '#3591ff' }}>
                         <CopyOutlined />
                       </span>
                     </CopyToClipboard>
@@ -382,7 +382,7 @@ export default function EnvironmentList() {
                         });
                       }}
                     >
-                      <a style={{ color: 'red' }}>删除</a>
+                      <a>删除</a>
                     </Popconfirm>
                   </Space>
                 )}

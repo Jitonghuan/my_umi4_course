@@ -106,7 +106,7 @@ export const createTableColumns = (params: {
             }}
           >
             <Spin spinning={params?.delLoading}>
-              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+              <a >删除</a>
             </Spin>
           </Popconfirm>
         </Space>
