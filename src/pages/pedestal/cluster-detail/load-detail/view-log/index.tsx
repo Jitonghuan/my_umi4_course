@@ -2,11 +2,11 @@
 // @author JITONGHUAN <moyan@come-future.com>
 // @create 2021/11/12 17:35
 
-import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffect } from 'react';
-import { Select, message, Form, Tag, Button, Checkbox } from '@cffe/h2o-design';
+import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
+import { Select, message, Form, Tag, Button, } from '@cffe/h2o-design';
 import { AnsiUp } from 'ansi-up';
-import appConfig from '@/app.config';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { FeContext } from '@/common/hooks';
 import { getResourceList } from '../../service';
 
@@ -14,7 +14,9 @@ import './index.less';
 
 export default function ViewLog(props: any) {
   const [viewLogform] = Form.useForm();
-  const { name, clusterCode, namespace, containerName, clusterName } = props?.location?.query || {};
+  let location:any = useLocation();
+  const query = parse(location.search);
+  const { name, clusterCode, namespace, containerName, clusterName } = query || {};
   const [log, setLog] = useState<string>('');
   const { matrixConfigData } = useContext(FeContext);
   const [container, setContainer] = useState<any>([]);
@@ -160,7 +162,7 @@ export default function ViewLog(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.goBack();
+      history.back();
     }
   };
 

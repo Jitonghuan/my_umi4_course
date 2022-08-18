@@ -2,16 +2,19 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/12/03 14:20
 
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Row, Col, Tag } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Form, Input, Select, Button, Table, Space,  Tag } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
-import { useUnbindLabelList, useAppCategoryOption, useBindAppTag, useBindLabelTag } from '../hook';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
+import { useUnbindLabelList, useAppCategoryOption,  useBindLabelTag } from '../hook';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 export default function LabelBind(props: any) {
   const { Option } = Select;
   const [labelBindForm] = Form.useForm();
-  const { tagName, tagCode } = props.location?.query;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const { tagName, tagCode } = query;
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [unbindLabelsource, getUnBindTagAppList, loading, bindTagNamesArry] = useUnbindLabelList(); //获取未绑定的标签列表

@@ -1,7 +1,8 @@
 import { eventTableSchema, podsTableSchema, envVarTableSchema } from '../schema';
 import React, { useEffect, useCallback, useState, useMemo, useContext } from 'react';
 import { Table, Tag, Tooltip, Button, Empty, message, Spin } from 'antd';
-import { history } from 'umi';
+import { history,useLocation, } from 'umi';
+import { parse } from 'query-string';
 import DownLoadFile from './download-file';
 import AddModal from './add-modal';
 import './index.less';
@@ -19,8 +20,10 @@ const obj: any = {
 };
 
 export default function LoadDetail(props: any) {
-  const { location, children } = props;
-  const { type, kind, name, namespace } = location.query || {};
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  // const { location, children } = props;
+  const { type, kind, name, namespace } =query || {};
   const { clusterCode, clusterName } = useContext(clusterContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -65,26 +68,29 @@ export default function LoadDetail(props: any) {
       toPodsDetail: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/cluster-detail/pods',
-          query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind },
+          search:location.search+`&name=${record.name}&namespace=${record.namespace}&kind=${record.kind}`,
+          // query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind },
         });
       },
       viewLog: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/view-log',
-          query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode, clusterName },
+          search:`clusterCode=${clusterCode}&clusterName=${clusterName}&name=${record.name}&namespace=${record.namespace}&kind=${record.kind}&key=resource-detail`,
+          // query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode, clusterName },
         });
       },
       shell: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          query: {
-            type: 'pods',
-            key: 'resource-detail',
-            name: record?.name,
-            namespace: record?.namespace,
-            clusterCode,
-            clusterName
-          },
+          search:`type=pods&key=resource-detail&name=${record?.name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}`
+          // query: {
+          //   type: 'pods',
+          //   key: 'resource-detail',
+          //   name: record?.name,
+          //   namespace: record?.namespace,
+          //   clusterCode,
+          //   clusterName
+          // },
         });
       },
       // download: (record: any, index: any) => {
@@ -340,7 +346,8 @@ export default function LoadDetail(props: any) {
             onClick={() => {
               history.push({
                 pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
-                query: { ...props.location.query },
+                search:location.search
+                // query: { ...props.location.query },
               });
             }}
           >

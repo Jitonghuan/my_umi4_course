@@ -28,8 +28,8 @@ const activeKeyMap: Record<string, any> = {
 
 export default function ApplicationDetail(props: IProps) {
   // const { location, children } = props;
-  let location = useLocation();
-  const query = parse(location.search);
+  let location:any = useLocation();
+  const query:any = parse(location.search);
   const appId=query?.id||"";
   const appCode=query.appCode;
   const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);

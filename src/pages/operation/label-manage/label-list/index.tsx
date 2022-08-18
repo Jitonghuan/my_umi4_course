@@ -5,11 +5,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import LabelEditDrawer from '../label-add';
 import { useDeleteLabel } from '../hook';
 import { getRequest } from '@/utils/request';
 import { getTagList } from '../service';
+import { parse } from 'query-string';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 
 /** 编辑页回显数据 */
@@ -22,9 +23,10 @@ export interface LabelEdit extends Record<string, any> {
 }
 export default function LanbelList() {
   const { Option } = Select;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const [labelForm] = Form.useForm();
   const [labelEditMode, setLabelEditMode] = useState<EditorMode>('HIDE');
-  const [isDisable, setIsDisable] = useState<boolean>(false);
   const [labelData, setLabelData] = useState<LabelEdit>();
   const [loading, setLoading] = useState(false);
   const [pageIndex, setPageIndex] = useState(1);
@@ -183,10 +185,12 @@ export default function LanbelList() {
                     onClick={() => {
                       history.push({
                         pathname: 'label-bind',
-                        query: {
-                          tagName: record.tagName,
-                          tagCode: record.tagCode,
-                        },
+                        search:`tagName=${record.tagName}&tagCode=${record.tagCode}`
+                        
+                        // query: {
+                        //   tagName: record.tagName,
+                        //   tagCode: record.tagCode,
+                        // },
                       });
                     }}
                   >
@@ -196,10 +200,11 @@ export default function LanbelList() {
                     onClick={() => {
                       history.push({
                         pathname: 'label-unbound',
-                        query: {
-                          tagName: record.tagName,
-                          tagCode: record.tagCode,
-                        },
+                        search:`tagName=${record.tagName}&tagCode=${record.tagCode}`
+                        // query: {
+                        //   tagName: record.tagName,
+                        //   tagCode: record.tagCode,
+                        // },
                       });
                     }}
                   >

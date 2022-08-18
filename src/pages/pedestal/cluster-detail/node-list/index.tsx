@@ -39,7 +39,8 @@ export default function NodeList() {
       shell: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          query: { key: 'node-list', type: 'node', name: record.nodeName, clusterCode, clusterName },
+          search:`key=node-list&type=node&name=${ record.nodeName}&clusterCode=${clusterCode}&clusterName=${clusterName}`
+          // query: { key: 'node-list', type: 'node', name: record.nodeName, clusterCode, clusterName },
         });
       },
       // 设置标签

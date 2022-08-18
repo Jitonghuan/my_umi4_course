@@ -5,12 +5,15 @@ import { eventTableSchema } from '../../schema';
 import { getResourceList } from '../../service';
 import { RedoOutlined } from '@ant-design/icons';
 import clusterContext from '../../context';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import './index.less';
 
-export default function PodsDetail(props: any) {
-  const { location } = props;
-  const { name, namespace, kind, clusterCode } = location.query || {};
+export default function PodsDetail() {
+  // const { location } = props;
+  let location:any = useLocation();
+  const query = parse(location.search);
+  const { name, namespace, kind, clusterCode } = query || {};
   const [podsData, setPodsData] = useState([]);
   const { clusterName } = useContext(clusterContext);
   const [eventData, setEventData] = useState([]);
@@ -28,28 +31,30 @@ export default function PodsDetail(props: any) {
       viewLog: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/view-log',
-          query: {
-            key: 'resource-detail',
-            name,
-            namespace: record?.namespace,
-            clusterCode,
-            clusterName,
-            containerName: record?.name,
-          },
+          search:`key=resource-detail&name=${name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}&containerName=${record?.name}`
+          // query: {
+          //   key: 'resource-detail',
+          //   name,
+          //   namespace: record?.namespace,
+          //   clusterCode,
+          //   clusterName,
+          //   containerName: record?.name,
+          // },
         });
       },
       shell: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          query: {
-            type: 'pods',
-            key: 'resource-detail',
-            name,
-            namespace: record?.namespace,
-            clusterCode,
-            clusterName,
-            containerName: record?.name,
-          },
+          search:`key=resource-detail&name=${name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}&containerName=${record?.name}&type=pods`
+          // query: {
+          //   type: 'pods',
+          //   key: 'resource-detail',
+          //   name,
+          //   namespace: record?.namespace,
+          //   clusterCode,
+          //   clusterName,
+          //   containerName: record?.name,
+          // },
         });
       },
     }) as any;
@@ -115,7 +120,7 @@ export default function PodsDetail(props: any) {
             type="primary"
             size="small"
             onClick={() => {
-              history.goBack();
+              history.back();
             }}
           >
             返回

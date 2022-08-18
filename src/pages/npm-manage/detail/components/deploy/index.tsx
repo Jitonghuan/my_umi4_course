@@ -4,9 +4,10 @@ import { ContentCard } from '@/components/vc-page-content';
 import DeployContent from './deploy-content';
 import HotFix from './deploy-content/components/hot-fix';
 import { getRequest } from "@/utils/request";
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { getPipelineUrl } from "@/pages/application/service";
 import DetailContext from "@/pages/npm-manage/detail/context";
-import { history } from 'umi';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -33,8 +34,10 @@ const envTypeData = [
 export default function Deploy(props: any) {
   const { npmData } = useContext(DetailContext);
   const [currentValue, setCurrentValue] = useState('');
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const [tabActive, setTabActive] = useState(
-    props.location.query.activeTab || 'dev',
+    query.activeTab || 'dev',
   );
 
   useEffect(() => {
@@ -44,7 +47,10 @@ export default function Deploy(props: any) {
   // tab页切换
   const handleTabChange = (v: string) => {
     setTabActive(v);
-    history.push({ query: { ...props.location.query, activeTab: v } });
+    history.push({
+      search:location.search+`&activeTab=${v}`
+      //  query: { ...props.location.query, activeTab: v } 
+      });
     setCurrentValue('');
     if (v) {
       getPipeline(v);

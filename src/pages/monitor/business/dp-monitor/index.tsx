@@ -32,11 +32,11 @@ export default function DpMonitor() {
   const editMonitor = (item: any) => {
     history.push({
       pathname: '/matrix/monitor/dp-monitor-edit',
-      state: {
+    },{
         type: 'edit',
         recordData: item,
         bizMonitorType: 'db'
-      },
+      
     });
   };
   const enableMonitorClick = (id: string) => {

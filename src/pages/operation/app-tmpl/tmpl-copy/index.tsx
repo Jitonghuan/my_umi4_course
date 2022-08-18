@@ -5,7 +5,8 @@
 import React from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
@@ -15,6 +16,8 @@ import { Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
 export default function DemoPageTb(porps: any) {
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const { Option } = Select;
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
@@ -40,7 +43,7 @@ export default function DemoPageTb(porps: any) {
     selectCategory();
     tmplDetialResult(templateCode);
 
-    const flag = porps.history.location.query.type;
+    const flag = query.type;
     if (flag == 'info') {
       setIsdisabled(true);
     } else {
@@ -48,8 +51,8 @@ export default function DemoPageTb(porps: any) {
     }
   }, []);
   //进入页面加载信息
-  const templateCode: string = porps.history.location.query.templateCode;
-  const languageCode = porps.history.location.query.languageCode;
+  const templateCode: string =query.templateCode;
+  const languageCode = query.languageCode;
   const tmplDetialResult = (templateCode: string) => {
     getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
       if (res.success) {

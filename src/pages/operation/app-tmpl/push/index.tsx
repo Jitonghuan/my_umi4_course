@@ -20,7 +20,8 @@ import {
   Radio,
 } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { stringify } from 'qs';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -28,10 +29,10 @@ import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import './index.less';
 import { queryAppGroupReq } from './service';
-import moment from 'moment';
 
 export default function Push(props: any) {
-  const { Option } = Select;
+  const { Option } = Select;let location:any = useLocation();
+  const query :any= parse(location.search);
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -237,8 +238,8 @@ export default function Push(props: any) {
     setEnvCodes(value);
   };
   //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
-  const templateCode = props.history.location.query.templateCode;
-  const languageCode = props.history.location.query.languageCode;
+  const templateCode = query.templateCode;
+  const languageCode = query.languageCode;
   const appCodes = currentData.map((item, index) => {
     return Object.assign(item.appCode);
   });

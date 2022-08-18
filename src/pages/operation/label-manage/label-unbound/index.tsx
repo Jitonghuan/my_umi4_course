@@ -2,31 +2,28 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/12/03 14:20
 
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Row, Col, Tag } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Form, Input, Select, Button, Table, Space,Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import { usebindedLabelList, useAppCategoryOption, useUnBindLabelTag } from '../hook';
-import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { useLocation} from 'umi';
+import { parse } from 'query-string';
 export default function UnBound(props: any) {
   const { Option } = Select;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const [labelBindedForm] = Form.useForm();
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const { tagName, tagCode } = props.location?.query;
+  const { tagName, tagCode } = query;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [bindedLabelsource, getBindedTagAppList, loading] = usebindedLabelList(); //获取未绑定的标签列表
   const [categoryData] = useAppCategoryOption(); //获取应用分类下拉选择
   const [unbindLabelTag] = useUnBindLabelTag(); //解绑标签
 
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any) => {
-      setSelectedRowKeys(selectedRowKeys);
-      setSelectedRows(selectedRows);
-    },
-  };
   useEffect(() => {
     getBindedTagAppList(tagCode, 'backend');
   }, []);

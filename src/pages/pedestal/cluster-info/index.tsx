@@ -87,13 +87,12 @@ export default function clusterInfo() {
                     onClick={() => {
                       history.push({
                         pathname: `/matrix/pedestal/cluster-detail/node-list`,
-                        state: {
-                          clusterInfo: item,
-                        },
-                        query: {
-                          clusterCode: item.clusterCode || '',
-                          clusterName: item.clusterName || '',
-                        },
+                        search:`clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,
+                       
+                      },
+                      {
+                          clusterInfo: item
+                      
                       });
                     }}
                   >

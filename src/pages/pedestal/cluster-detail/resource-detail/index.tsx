@@ -1,23 +1,23 @@
-import React, { useEffect, useRef, useState, useMemo, useContext } from 'react';
-import { Form, Button, Input, Tag, Table, Select, message, Pagination } from 'antd';
+import React, { useEffect, useState, useMemo, useContext } from 'react';
+import { Form, Button, Input,  Table, Select, message } from 'antd';
 import type { PaginationProps } from 'antd';
-import { history } from 'umi';
-import PageContainer from '@/components/page-container';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import { history,useLocation,Outlet  } from 'umi';
 import { resourceDetailTableSchema } from './schema';
 import clusterContext from '../context';
 import CreateYaml from './create-yaml';
 import YamlDetail from './yaml-detail';
 import Page from '../component/page';
+import { parse } from 'query-string';
 import { useNodeListData } from '../hook';
 import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
 import './index.less';
 export default function ResourceDetail(props: any) {
-  const { location, children } = props;
+  let location:any = useLocation();
+  const query = parse(location.search);
+  // const { location, children } = props;
   let sessionData = sessionStorage.getItem('cluster_resource_params') || '{}';
   const { clusterCode } = useContext(clusterContext);
-  const [visible, setVisble] = useState(false);
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
   const [yamlDetailVisible, setYamlDetailVisible] = useState(false);
@@ -55,19 +55,21 @@ export default function ResourceDetail(props: any) {
         if (record.type === 'pods') {
           history.push({
             pathname: '/matrix/pedestal/cluster-detail/pods',
-            query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind, type: '' },
+            search:location.search+`&name=${record.name}&namespace=${record.namespace}&kind=${ record.kind}&type=`
+            // query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind, type: '' },
           });
         } else {
           history.push({
             pathname: '/matrix/pedestal/cluster-detail/load-detail',
-            query: {
-              key: 'resource-detail',
-              ...location.query,
-              kind: record?.kind,
-              type: record?.type,
-              namespace: record?.namespace,
-              name: record?.name,
-            },
+            search:location.search+`&name=${record.name}&namespace=${record.namespace}&kind=${ record.kind}&type=${record?.type}&key=resource-detail`
+            // query: {
+            //   key: 'resource-detail',
+            //   ...location.query,
+            //   kind: record?.kind,
+            //   type: record?.type,
+            //   namespace: record?.namespace,
+            //   name: record?.name,
+            // },
           });
         }
       },

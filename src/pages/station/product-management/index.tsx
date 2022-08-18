@@ -91,10 +91,10 @@ export default function ProductList() {
                     onClick={() => {
                       history.push({
                         pathname: '/matrix/station/product-config',
-                        state: {
+                      },{
                           id: record.id,
                           indentDescription: record.indentDescription,
-                        },
+                      
                       });
                     }}
                   >

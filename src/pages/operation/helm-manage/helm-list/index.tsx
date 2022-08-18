@@ -78,10 +78,10 @@ export default function HelmList() {
       onDetailClick: (record, index) => {
         history.push({
           pathname: 'helm-detail',
-          state: {
+        },{
             record: record,
             curClusterName: curClusterName,
-          },
+        
         });
       },
       onDelClick: async (record, index) => {
@@ -216,7 +216,7 @@ export default function HelmList() {
                   setCurRecord(undefined);
                   history.push({
                     pathname: 'create-chart',
-                    state: clusterInfo,
+                   },{clusterInfo,
                   });
                 }}
               >

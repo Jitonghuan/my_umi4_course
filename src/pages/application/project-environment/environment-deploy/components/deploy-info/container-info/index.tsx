@@ -41,18 +41,20 @@ export default function ContainerInfo(props: any) {
         // );
         history.push({
           pathname: `/matrix/application/environment-deploy/viewLog`,
-          query: {
-            appCode: appCode,
-            projectEnvCode: projectEnvCode,
-            instName: infoRecord?.instName,
-            // viewLogEnvType: viewLogEnvType,
-            projectEnvName: projectEnvName,
-            optType: 'containerInfo',
-            containerName: record?.containerName,
-          },
-          state: {
+          search:`appCode=${appCode}&projectEnvCode=${projectEnvCode}&instName=${infoRecord?.instName}&projectEnvName=${projectEnvName}&optType=containerInfo&containerName=${record?.containerName}`
+          // query: {
+          //   appCode: appCode,
+          //   projectEnvCode: projectEnvCode,
+          //   instName: infoRecord?.instName,
+          //   // viewLogEnvType: viewLogEnvType,
+          //   projectEnvName: projectEnvName,
+          //   optType: 'containerInfo',
+          //   containerName: record?.containerName,
+          // },
+        },
+          {
             infoRecord: infoRecord,
-          },
+        
         });
       },
       onLoginShellClick: (record, index) => {
@@ -76,15 +78,16 @@ export default function ContainerInfo(props: any) {
             onClick={() => {
               history.replace({
                 pathname: `deployInfo`,
-                query: {
-                  viewLogEnv: projectEnvCode || '',
-                  projectEnvCode: projectEnvCode,
-                  projectEnvName: projectEnvName,
-                  // viewLogEnvType: viewLogEnvType,
-                  type: 'viewLog_goBack',
-                  id: id,
-                  appCode: appCode,
-                },
+                search:`viewLogEnv=${projectEnvCode || ''}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}&type=viewLog_goBack&id=${id}&appCode=${appCode}`,
+                // query: {
+                //   viewLogEnv: projectEnvCode || '',
+                //   projectEnvCode: projectEnvCode,
+                //   projectEnvName: projectEnvName,
+                //   // viewLogEnvType: viewLogEnvType,
+                //   type: 'viewLog_goBack',
+                //   id: id,
+                //   appCode: appCode,
+                // },
               });
             }}
           >

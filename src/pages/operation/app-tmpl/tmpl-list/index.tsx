@@ -325,11 +325,12 @@ export default function Launch() {
                     onClick={() =>
                       history.push({
                         pathname: 'tmpl-copy',
-                        query: {
-                          type: 'edit',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
+                        search:`type=edit&templateCode=${record.templateCode}&languageCode=${record?.languageCode}`
+                        // query: {
+                        //   type: 'edit',
+                        //   templateCode: record.templateCode,
+                        //   languageCode: record?.languageCode,
+                        // },
                       })
                     }
                   >
@@ -339,11 +340,12 @@ export default function Launch() {
                     onClick={() =>
                       history.push({
                         pathname: 'tmpl-detail',
-                        query: {
-                          type: 'info',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
+                        search:`type=info&templateCode=${record.templateCode}&languageCode=${record?.languageCode}`
+                        // query: {
+                        //   type: 'info',
+                        //   templateCode: record.templateCode,
+                        //   languageCode: record?.languageCode,
+                        // },
                       })
                     }
                   >
@@ -356,10 +358,11 @@ export default function Launch() {
                       sessionStorage.setItem('tmplDetailData', JSON.stringify(record || ''));
                       history.push({
                         pathname: 'push',
-                        query: {
-                          templateCode: record?.templateCode,
-                          languageCode: record?.languageCode,
-                        },
+                        search:`templateCode=${record?.templateCode}&languageCode=${record?.languageCode}`
+                        // query: {
+                        //   templateCode: record?.templateCode,
+                        //   languageCode: record?.languageCode,
+                        // },
                       });
                     }}
                   >

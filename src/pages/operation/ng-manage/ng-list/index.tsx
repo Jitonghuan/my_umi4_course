@@ -13,9 +13,14 @@ import AddNgDraw from '../add-ng';
 import appConfig from '@/app.config';
 import { record } from '../type';
 import ConfigModal from './config-template';
+import { useLocation} from 'umi';
+import { parse } from 'query-string';
+
 
 export default function NgList() {
-  const editNGInfo: any = history.location.state;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const editNGInfo: any = location.state;
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
   const [loading, setLoading] = useState<boolean>(false);
@@ -197,7 +202,9 @@ export default function NgList() {
             if (editNGInfo?.type === 'editNGInfo') {
               history.replace({
                 pathname: '/matrix/operation/ng-manage/ng-list',
-                state: { type: 'editNGInfoEND' },
+              },{
+                type: 'editNGInfoEND'
+                // state: { type: 'editNGInfoEND' },
               });
             }
             setTimeout(() => {
@@ -208,8 +215,10 @@ export default function NgList() {
             setNgMode('HIDE');
             if (editNGInfo?.type === 'editNGInfo') {
               history.replace({
-                pathname: '/matrix/operation/ng-manage/ng-list',
-                state: { type: 'editNGInfoEND' },
+                pathname: '/matrix/operation/ng-manage/ng-list'},
+                {
+                  type: 'editNGInfoEND'
+                // state: { type: 'editNGInfoEND' },
               });
             }
           }}

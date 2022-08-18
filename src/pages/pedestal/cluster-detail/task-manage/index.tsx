@@ -1,9 +1,14 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { Form, Button, Table, Select, Input } from 'antd';
+import React, { useState, useMemo } from 'react';
+import { Button, Table} from 'antd';
 import { taskTableSchema } from '../schema';
 import AddDrawer from './add-drawer';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 
 export default function TaskManage() {
+  let location:any = useLocation();
+  const query = parse(location.search);
+  const { name, namespace, kind, clusterCode } = query || {};
   const [visible, setVisble] = useState(false);
   const [dataSource, setDataSource] = useState([{ name: 'name1' }]);
   const [pageSize, setPageSize] = useState(20);

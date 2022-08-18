@@ -364,12 +364,13 @@ export default function PublishDetail(props: IProps) {
     envProjectForm.validateFields().then((value) => {
       history.push({
         pathname: `/matrix/application/environment-deploy/appDeploy`,
-        query: {
-          appCode: appData.appCode,
-          id: appData.id + '',
-          projectEnvCode: value.envCode,
-          projectEnvName: projectEnvName,
-        },
+        search:`appCode=${appData?.appCode}&id=${appData?.id + ''}&projectEnvCode=${value.envCode}&projectEnvName=${projectEnvName}`
+        // query: {
+        //   appCode: appData.appCode,
+        //   id: appData.id + '',
+        //   projectEnvCode: value.envCode,
+        //   projectEnvName: projectEnvName,
+        // },
       });
     });
   };

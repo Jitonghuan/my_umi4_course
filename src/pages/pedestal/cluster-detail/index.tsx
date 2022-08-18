@@ -1,36 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Form, Button, Input, Pagination, Select, Tabs, Empty } from 'antd';
-import type { PaginationProps } from 'antd';
+import React, { useEffect, useState } from 'react';
+import {  Select, Tabs} from 'antd';
 import clusterContext from './context';
 import PageContainer from '@/components/page-container';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import {  ContentCard } from '@/components/vc-page-content';
 import './index.less';
-import { history, Link } from 'umi';
 import { useClusterListData } from '../cluster-info/hook';
 import VCPermission from '@/components/vc-permission';
+import { history,useLocation,Outlet } from 'umi';
+import { parse } from 'query-string';
 const { TabPane } = Tabs;
 
 const TabList = [
   { label: '节点列表', key: 'node-list' },
   { label: '资源详情', key: 'resource-detail' },
-  // { label: '资源统计', key: 'resource-statistics' },
-  // { label: '事件告警', key: 'event-warning' },
-  // { label: '任务管理', key: 'task-manage' }
 ];
-
 const path = '/matrix/pedestal/cluster-detail';
-// /pedestal/cluster-detail/node-list
-const temp = [
-  { label: '集群1', value: 'code1' },
-  { label: '集群2', value: 'code2' },
-];
+
 export default function ClusterDetail(props: any) {
-  const { location, children } = props;
-  const { clusterCode, clusterName } = location.query || {};
-  const [visible, setVisble] = useState(false);
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  // const { location, children } = props;
+  const { clusterCode, clusterName } = query || {};
   const [clusterOption, setClusterOption] = useState<any>([]);
   const [selectCluster, setSelectCluster] = useState<any>({ value: clusterCode || '', label: clusterName || '' });
-  const [activeTab, setActiveTab] = useState<string>(location?.query?.key || 'node-list');
+  const [activeTab, setActiveTab] = useState<string>(query?.key || 'node-list');
   const [data, total] = useClusterListData({ pageSize: -1, pageIndex: -1 });
   useEffect(() => {
     if (data && data.length) {
@@ -42,9 +35,10 @@ export default function ClusterDetail(props: any) {
   useEffect(() => {}, []);
 
   useEffect(() => {
-    setActiveTab(location?.query?.key || 'node-list');
+    setActiveTab(query?.key || 'node-list');
     history.replace({
-      query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
+      search:location.search+`&clusterCode=${selectCluster?.value}&clusterName=${selectCluster?.label }`
+      // query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
     });
   }, [location?.pathname]);
 
@@ -61,8 +55,9 @@ export default function ClusterDetail(props: any) {
   const selectChange = (v: any) => {
     setSelectCluster({ label: v.label, value: v.value });
     history.push({
-      pathname: `${path}/${location?.query?.key}`,
-      query: { key: location?.query?.key, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
+      pathname: `${path}/${query?.key}`,
+      search:`key=${query?.key}&clusterCode=${selectCluster?.value}&clusterName=${selectCluster?.label }`
+      // query: { key: location?.query?.key, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
     });
   };
 
@@ -97,7 +92,8 @@ export default function ClusterDetail(props: any) {
             setActiveTab(key);
             history.replace({
               pathname: `/matrix/pedestal/cluster-detail/${key}`,
-              query: { clusterName, clusterCode, key: key },
+              search:`clusterName=${clusterName}&clusterCode=${clusterCode}&key=${key}`
+              // query: { clusterName, clusterCode, key: key },
             });
           }}
         >
@@ -109,7 +105,7 @@ export default function ClusterDetail(props: any) {
           value={{ clusterCode: selectCluster?.value || '', clusterName: selectCluster?.label || '' }}
         >
           <VCPermission code={window.location.pathname} isShowErrorPage>
-            {selectCluster?.value ? children : <div className="tip-wrapper">请先选择集群</div>}
+            {selectCluster?.value ? <Outlet/> : <div className="tip-wrapper">请先选择集群</div>}
           </VCPermission>
         </clusterContext.Provider>
       </ContentCard>

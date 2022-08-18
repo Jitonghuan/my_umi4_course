@@ -305,7 +305,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
     if (type === 'add') {
       addFuncMultiReq(params).then((resp) => {
         if (resp?.success) {
-          history.goBack();
+          history.back();
         }
       });
     } else if (type === 'edit') {
@@ -314,7 +314,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
         id: defaultValueObj.id,
       }).then((resp) => {
         if (resp.success) {
-          history.goBack();
+          history.back();
         }
       });
     }
@@ -530,7 +530,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                 <Button type="primary" onClick={onSubmit}>
                   提交
                 </Button>
-                <Button onClick={() => history.goBack()}>取消</Button>
+                <Button onClick={() => history.back()}>取消</Button>
               </Space>
             </div>
           )}

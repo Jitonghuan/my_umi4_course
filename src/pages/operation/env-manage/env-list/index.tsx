@@ -456,9 +456,10 @@ export default function envManageList(props: any) {
                     onClick={() => {
                       history.push({
                         pathname: '/matrix/operation/env-manage/push-env',
-                        query: {
-                          envCode: record.envCode,
-                        },
+                        search:`envCode=${record.envCode}`
+                        // query: {
+                        //   envCode: record.envCode,
+                        // },
                       });
                     }}
                   >

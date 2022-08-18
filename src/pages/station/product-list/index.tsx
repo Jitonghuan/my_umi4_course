@@ -62,7 +62,7 @@ export default function deliveryList() {
             onClick={() => {
               history.push({
                 pathname: '/matrix/station/product-description',
-                state: record,
+               },{record,
               });
             }}
           >

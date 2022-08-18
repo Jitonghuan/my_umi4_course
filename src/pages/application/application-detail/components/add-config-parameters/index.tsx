@@ -19,8 +19,8 @@ import './index.less';
 const rootCls = 'add-config-parameters-compo';
 
 export default function AddConfigParameters(props: IProps) {
-  let location = useLocation();
-  const query = parse(location.search);
+  let location:any = useLocation();
+  const query:any = parse(location.search);
   // const {
   //   location: {
   //     query: { env, type },

@@ -183,12 +183,12 @@ export default function Storage() {
                   onClick={() =>
                     history.push({
                       pathname: '/matrix/pedestal/volume-detail',
-                      state: {
+                    },{
                         clusterCode: `${currentClusterCode}`,
                         volumeName: `${record.volumeName}`,
                         recordInfo: record,
                         status: `${record.status}`,
-                      },
+                    
                     })
                   }
                 >

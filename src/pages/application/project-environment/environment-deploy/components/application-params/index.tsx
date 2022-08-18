@@ -3,18 +3,18 @@
 // @create 2021/07/23 17:20
 
 import React, { useContext, useRef } from 'react';
-import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, DatePicker } from 'antd';
+import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio} from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
+import { useLocation} from 'umi';
 import { useState, useEffect } from 'react';
-import appConfig from '@/app.config';
 import AceEditor from '@/components/ace-editor';
+import { parse } from 'query-string';
 import DetailContext from '../../context';
 import EditorTable from '@cffe/pc-editor-table';
 import * as APIS from '@/pages/application/service';
 import './index.less';
 import moment from 'moment';
-const { RangePicker } = DatePicker;
 
 export default function ApplicationParams(props: any) {
   const { appData } = useContext(DetailContext);
@@ -35,7 +35,9 @@ export default function ApplicationParams(props: any) {
   const [limit, setLimit] = useState<number>(0);
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
-  const { templateType, envCode } = props?.history.location?.query || {};
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const { templateType, envCode } = query || {};
   let firstEnvChoose = useRef<string>('');
   let firstTmplType = useRef<string>('');
   useEffect(() => {

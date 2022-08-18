@@ -5,6 +5,7 @@
 import React from 'react';
 import { Tabs } from 'antd';
 import PageContainer from '@/components/page-container';
+import {history, useLocation } from 'umi';
 import { FilterCard } from '@/components/vc-page-content';
 import VCPermission from '@/components/vc-permission';
 
@@ -13,13 +14,14 @@ const activeKeyMap: Record<string, any> = {
 };
 
 export default function Dashboard(props: any) {
-  const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
+  let location:any = useLocation();
+  const currRoute = /\/([\w-]+)$/.exec(location.pathname)?.[1];
   const activeKey = activeKeyMap[currRoute!] || currRoute;
 
   return (
     <PageContainer>
       <FilterCard className="layout-compact">
-        <Tabs activeKey={activeKey} onChange={(next) => props.history.push(`/matrix/cluster/cluster-zs/${next}`)}>
+        <Tabs activeKey={activeKey} onChange={(next) => history.push(`/matrix/cluster/cluster-zs/${next}`)}>
           <Tabs.TabPane tab="集群看板" key="dashboards" />
           <Tabs.TabPane tab="流量调度" key="scheduling-mode" />
           {/* <Tabs.TabPane tab="集群调度" key="scheduling" /> */}

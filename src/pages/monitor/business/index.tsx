@@ -1,15 +1,18 @@
 import React, {useState} from 'react';
-import { history } from 'umi';
 import { Tabs } from 'antd';
 import PageContainer from '@/components/page-container';
 import './index.less';
 import DpMonitor from './dp-monitor';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import PrometheusCom from './prometheus';
 
 const { TabPane } = Tabs;
 
 export default function Dashboard() {
-  const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || 'db');
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const [tabKey, setTabKey] = useState<any>(query?.tab || 'db');
 
   return (
     <PageContainer className="monitor-business-wrapper">
@@ -19,9 +22,10 @@ export default function Dashboard() {
           setTabKey(val);
           history.replace({
             pathname: '/matrix/monitor/business',
-            query: {
-              tab: val,
-            },
+            search:`tab=${val}`
+            // query: {
+            //   tab: val,
+            // },
           });
         }}
       >

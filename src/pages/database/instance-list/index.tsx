@@ -29,23 +29,23 @@ export default function InstanceList() {
       onManage: (record, index) => {
         history.push({
           pathname: 'info',
-          state: {
+         }, {
             curRecord: record,
             instanceId: record?.id,
             clusterId: record?.clusterId,
             optType: 'instance-list-manage',
-          },
+          
         });
       },
       onViewPerformance: (record, index) => {
         history.push({
           pathname: 'info',
-          state: {
+         }, {
             curRecord: record,
             instanceId: record?.id,
             usterId: record?.clusterId,
             optType: 'instance-list-trend',
-          },
+          
         });
       },
       onDelete: async (id) => {

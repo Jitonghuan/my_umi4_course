@@ -467,17 +467,15 @@ export default function DeployContent(props: DeployContentProps) {
                 render={(v, record) => (
                   <a
                     onClick={() => {
-                      debugger
                       history.push({
-                        pathname: 'container-info',
-                        search:`appCode=${appCode}&envCode=${currentEnvData}&viewLogEnvType=${envTypeCode}`,
-                        // hash: JSON.stringify({
-                        //   appCode: appCode,
-                        //   envCode: currentEnvData,
-                        //   viewLogEnvType: envTypeCode,
-                        //   infoRecord: record,
-                        //   id: appData?.id,
-                        // }),
+                          pathname: 'container-info',
+                          search:`appCode=${appCode}&envCode=${currentEnvData}&viewLogEnvType=${envTypeCode}`
+                      },{
+                          appCode: appCode,
+                          envCode: currentEnvData,
+                          viewLogEnvType: envTypeCode,
+                          infoRecord: record,
+                          id: appData?.id,
                       });
                     }}
                   >
@@ -548,20 +546,10 @@ export default function DeployContent(props: DeployContentProps) {
                           history.push(
                             {
                               pathname: '/matrix/application/detail/viewLog',
-                              search:`appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
-                              // query: {
-                              //   appCode: appData?.appCode,
-                              //   envCode: currentEnvData,
-                              //   instName: record?.instName,
-                              //   viewLogEnvType: envTypeCode,
-                              //   optType: 'deployInfo',
-                              //   deploymentName: appData?.deploymentName,
-                              // },
-                              state: {
+                              search:`appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}&optType=deployInfo&deploymentName=${appData?.deploymentName}`},
+                              {
                                 infoRecord: record,
-                              },
-                            },
-                            // `/matrix/application/detail/viewLog?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&viewLogEnvType=${envTypeCode}`,
+                              }
                           )
                         }
                       >

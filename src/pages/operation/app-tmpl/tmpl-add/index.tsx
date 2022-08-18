@@ -5,7 +5,8 @@
 import React from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { postRequest, getRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
@@ -22,6 +23,8 @@ export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
   { label: 'PYTHON', value: 'python' },
 ];
 export default function DemoPageTb(porps: any) {
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const children: any = [];
@@ -47,7 +50,7 @@ export default function DemoPageTb(porps: any) {
     selectTmplType();
     selectCategory();
 
-    const flag = porps.history.location.query.type;
+    const flag =query.type;
     if (flag == 'info') {
       setIsdisabled(true);
     } else {

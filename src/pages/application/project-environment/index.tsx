@@ -349,12 +349,12 @@ export default function EnvironmentList() {
                     <a
                       onClick={() => {
                         history.push({
-                          pathname: 'environment-detail',
-                          state: {
+                          pathname: 'environment-detail'},
+                         {
                             envCode: record.envCode,
                             benchmarkEnvCode: record.relEnvs,
                             type: 'projectEnvironment',
-                          },
+                          
                         });
                       }}
                     >

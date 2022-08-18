@@ -26,14 +26,16 @@ export default function DpMonitor() {
   const editMonitor = (item: any) => {
     history.push({
       pathname: '/matrix/monitor/prometheus-edit',
-      query: {
-        name: item.name
-      },
-      state: {
+      search:`name=${item.name}`
+      // query: {
+      //   name: item.name
+      // },
+    },
+       {
         type: 'edit',
         recordData: item,
         bizMonitorType: 'interface'
-      },
+    
     });
   };
 
@@ -111,7 +113,7 @@ export default function DpMonitor() {
             <Button
               type="primary"
               onClick={() => {
-                history.push({ pathname: '/matrix/monitor/prometheus-edit', state: { type: 'add', bizMonitorType: 'interface' } });
+                history.push({ pathname: '/matrix/monitor/prometheus-edit'},{ type: 'add', bizMonitorType: 'interface' });
               }}
               icon={<PlusOutlined />}
             >
