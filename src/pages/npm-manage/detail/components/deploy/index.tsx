@@ -48,6 +48,7 @@ export default function Deploy(props: any) {
   const handleTabChange = (v: string) => {
     setTabActive(v);
     history.push({
+      pathname:location.pathname,
       search:location.search+`&activeTab=${v}`
       //  query: { ...props.location.query, activeTab: v } 
       });

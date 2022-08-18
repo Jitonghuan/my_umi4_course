@@ -47,12 +47,12 @@ export default function ApplicationDeploy(props: any) {
       //  query: 
       //  { ...props.location.query, 
       //   activeTab: tabActive } 
-      // pathname:location.pathname,
+      pathname:location.pathname,
       search: location.search+`&activeTab=${tabActive}`
 
       }
       );
-      console.log("activeTab=${tabActive}",location.search+`&activeTab=${tabActive}`,location.pathname)
+    
     if (tabActive && +appData?.isClient! === 0) {
       getPipeline(tabActive);
     }
