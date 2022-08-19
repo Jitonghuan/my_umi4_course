@@ -495,25 +495,25 @@ export default [
     "icon": "icon-poc_index",
     "routes": [
       {
-        path: 'panel',
-        name: '监控大盘',
-        component: '@/pages/monitor/board',
+        "path": `${baseRoutePath}/monitor/panel`,
+        "name": '监控大盘',
+        "component": '@/pages/monitor/board',
       },
       {
-        path: 'detail',
-        name: '监控大盘详情',
-        hideInMenu: true,
-        component: '@/pages/monitor/board/board-detail',
+        "path": `${baseRoutePath}/monitor/detail`, 
+        "name": '监控大盘详情',
+        "hideInMenu": true,
+        "component": '@/pages/monitor/board/board-detail',
       },
       {
-        path: 'board',
-        name: '集群监控',
-        component: '@/pages/monitor/cluster',
+        "path": `${baseRoutePath}/monitor/board`,
+        "name": '集群监控',
+        "component": '@/pages/monitor/cluster',
       },
       {
-        path: 'application',
-        name: '应用监控',
-        component: '@/pages/monitor/application',
+        "path": `${baseRoutePath}/monitor/application` ,
+        "name": '应用监控',
+        "component": '@/pages/monitor/application',
       },
       {
         "path": `${baseRoutePath}/monitor/fe-monitor`,
