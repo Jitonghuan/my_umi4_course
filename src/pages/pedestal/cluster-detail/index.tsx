@@ -19,6 +19,7 @@ const path = '/matrix/pedestal/cluster-detail';
 export default function ClusterDetail(props: any) {
   let location:any = useLocation();
   const query :any= parse(location.search);
+  console.log(query,'query')
   // const { location, children } = props;
   const { clusterCode, clusterName } = query || {};
   const [clusterOption, setClusterOption] = useState<any>([]);
@@ -32,14 +33,21 @@ export default function ClusterDetail(props: any) {
     }
   }, [data]);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   useEffect(() => {
     setActiveTab(query?.key || 'node-list');
+
+
+    // if(query?.key&&query?.key==="node-list"){
+    //   location.search.substring()
+
+    // }
     history.replace({
       pathname:location?.pathname,
-      search:location.search+`&clusterCode=${selectCluster?.value}&clusterName=${selectCluster?.label }`
+      search:location.search+`&clusterCode=${selectCluster?.value}&clusterName=${selectCluster?.label }&key=${query?.key || 'node-list'}`
       // query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
+      // query: { ...props.location.query, key: location?.query?.key || 'node-list', clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
     });
   }, [location?.pathname]);
 
@@ -91,6 +99,8 @@ export default function ClusterDetail(props: any) {
           // type='card'
           onChange={(key) => {
             setActiveTab(key);
+            console.log("location.search",location.search)
+            // console.log(query,"------------->")
             history.replace({
               pathname: `/matrix/pedestal/cluster-detail/${key}`,
               search:`clusterName=${clusterName}&clusterCode=${clusterCode}&key=${key}`

@@ -118,7 +118,7 @@ const Coms = (props: IProps) => {
         setCurOptions(options);
       })
       .catch((err) => {
-        message.error(err?.errMessage || '');
+        // message.error(err?.errMessage || '');
       })
       .finally(() => {
         setLoading(false);
@@ -153,7 +153,7 @@ const Coms = (props: IProps) => {
         setFullOptions(options);
       })
       .catch((err) => {
-        message.error(err?.errMessage || '');
+        // message.error(err?.errMessage || '');
       })
       .finally(() => {
         setFullLoading(false);

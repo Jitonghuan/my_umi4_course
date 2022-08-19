@@ -17,6 +17,7 @@ export default function OperatorScheduling(props: any) {
   const { visable } = props;
   const [commonEnvCode, setCommonEnvCode] = useState<string>('');
   const [logger, setLogger] = useState<string>();
+  const [ensureLoading,setEnsureLoading]=useState<boolean>(false)
   const [clusterA_patientData, setClusterA_patientData] = useState<any[]>(
     localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : [],
   ); //A集群患者信息
@@ -310,6 +311,7 @@ export default function OperatorScheduling(props: any) {
   });
   let arryParams = clusterAP.concat(clusterBP, clusterAO, clusterBO);
   const addMultipleCluster = () => {
+    setEnsureLoading(true)
     postRequest(`${APIS.addMultipleClusterUser}?envCode=${commonEnvCode}`, { data: [...arryParams] }).then((res) => {
       if (res.success) {
         message.success({
@@ -319,7 +321,6 @@ export default function OperatorScheduling(props: any) {
             marginTop: '20vh',
           },
         });
-        // setLogger(res.data || '');
       } else {
         message.error({
           content: '调度失败！',
@@ -329,6 +330,8 @@ export default function OperatorScheduling(props: any) {
           },
         });
       }
+    }).finally(()=>{
+      setEnsureLoading(false)
     });
   };
 
@@ -438,8 +441,8 @@ export default function OperatorScheduling(props: any) {
             </div>
           </Card>
           <div style={{ float: 'right', marginTop: 8 }}>
-            <Button type="primary" onClick={addMultipleCluster}>
-              提交
+            <Button type="primary" onClick={addMultipleCluster} loading={ensureLoading}>
+            {ensureLoading?"切流中...":"提交"}  
             </Button>
           </div>
         </div>

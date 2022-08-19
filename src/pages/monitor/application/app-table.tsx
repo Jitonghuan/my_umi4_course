@@ -173,14 +173,28 @@ const Coms = (props: IProps) => {
 
   // 查询应用列表
   const queryApps = () => {
-    queryAppList().then((resp) => {
-      setAppData(resp);
-      prevFilter.current = {
-        appCode: appCode || (resp.length ? resp[0].value : undefined),
-      };
+    let filterValue;
+    try {
+      filterValue = JSON.parse(localStorage.getItem('monitor_application_filter') || '')
+    } catch (e) { }
+    const { appCode, envCode } = filterValue||{};
+    if (appCode || envCode) {
+      prevFilter.current = filterValue;
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
-    });
+      queryAppList().then((resp) => {
+        setAppData(resp);
+      })
+    } else {
+      queryAppList().then((resp) => {
+        setAppData(resp);
+        prevFilter.current = {
+          appCode: appCode || (resp.length ? resp[0].value : undefined),
+        };
+        setFilter(prevFilter.current);
+        formInstance.setFieldsValue(prevFilter.current);
+      });
+    }
   };
 
   // 查询环境列表
@@ -360,10 +374,23 @@ const Coms = (props: IProps) => {
           ...vals,
         };
       }
+      localStorage.setItem('monitor_application_filter', JSON.stringify(prevFilter.current || ''))
       setFilter(prevFilter.current);
     },
     [filter],
   );
+  useEffect(() => {
+    try {
+      const filter = JSON.parse(localStorage.getItem('monitor_application_filter') || '');
+      if (filter?.appCode) {
+        prevFilter.current = {
+          appCode: filter?.appCode,
+          ...filter
+        };
+        setFilter(prevFilter.current)
+      }
+    } catch (e) { }
+  }, [])
 
   // 刷新频率改变事件
   const handleTimeRateChange = (value: number) => {

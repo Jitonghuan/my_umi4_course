@@ -16,18 +16,25 @@ const BoardDetail = () => {
   let location:any = useLocation();
   const query :any= parse(location.search);
   const [info, setInfo] = useState<BoardInfo | undefined>();
+  const [iframeLoading, setIframeLoading] = useState<boolean>(false)
   // const { location } = history;
   // const { query } = location;
   const { graphName, url, fromPage, clusterName } = query as any;
   useEffect(() => {
     let graphUrl = '';
     if (url) {
-      graphUrl = `${url}?kiosk=tv`
+      graphUrl = `${url}?kiosk=full`
     }
     setInfo({
       graphName, graphUrl, clusterName
     })
   }, [])
+
+  const hideSlideMenu = () => {
+    document?.getElementsByTagName("iframe")?.[0]?.contentWindow?.postMessage({ showMenu: false }, '*')
+    setIframeLoading(true)
+  }
+
 
   return (
     <PageContainer>
@@ -47,8 +54,15 @@ const BoardDetail = () => {
           )}
         </div>
       </div >
-      <div style={{ width: '100%', height: '100%', display: 'block' }}>
-        <iframe className='grafana-iframe' src={info?.graphUrl || ''} />
+      <div style={{ width: '100%', height: '100%', display: 'block' }} className="grafana-iframe-info">
+        <iframe
+          style={{ display: iframeLoading ? 'block' : 'none' }}
+          className='grafana-iframe'
+          id='grafana-iframe'
+          name="grafana-iframe-detail"
+          src={info?.graphUrl || ''}
+          onLoad={hideSlideMenu}
+        />
       </div>
     </PageContainer>
   )
