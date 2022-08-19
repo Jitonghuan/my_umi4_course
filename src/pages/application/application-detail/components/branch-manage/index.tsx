@@ -207,7 +207,7 @@ export default function BranchManage() {
               )}
 
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
-                <a>
+                <a style={{ color: 'red' }}>
                   作废
                 </a>
               </Popconfirm>

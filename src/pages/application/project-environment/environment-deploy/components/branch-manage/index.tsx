@@ -204,9 +204,9 @@ export default function BranchManage() {
                 创建Review
               </Button>
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
-                <Button type="primary" danger size="small">
+                <a style={{ color: 'red' }}>
                   作废
-                </Button>
+                </a>
               </Popconfirm>
             </div>
           )}

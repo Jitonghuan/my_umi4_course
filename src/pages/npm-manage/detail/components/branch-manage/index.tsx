@@ -180,9 +180,9 @@ export default function BranchManage() {
           render={(_, record: any, index) => (
             <div className="action-cell">
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
-                <Button type="link" size="small">
+                <a style={{ color: 'red' }}>
                   作废
-                </Button>
+                </a>
               </Popconfirm>
             </div>
           )}
