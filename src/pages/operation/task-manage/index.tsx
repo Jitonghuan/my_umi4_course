@@ -125,7 +125,7 @@ export default function TaskManageList(props: any) {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button type="ghost" htmlType="reset" danger>
+              <Button type="ghost" htmlType="reset">
                 重置
               </Button>
             </Form.Item>
@@ -167,6 +167,7 @@ export default function TaskManageList(props: any) {
               showTotal: () => `总共 ${taskTablePageInfo.total} 条数据`,
             }}
             onChange={pageSizeClick}
+            scroll={{ x: 1800 }}
           ></Table>
         </div>
       </ContentCard>

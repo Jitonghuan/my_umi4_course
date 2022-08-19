@@ -95,7 +95,7 @@ export default function ComponentTmpl() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -158,7 +158,7 @@ export default function ComponentTmpl() {
                       });
                     }}
                   >
-                    <a style={{ color: 'red' }}>删除</a>
+                    <a>删除</a>
                   </Popconfirm>
                 </Space>
               )}

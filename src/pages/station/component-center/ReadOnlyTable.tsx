@@ -97,7 +97,7 @@ export default function VersionDetail(props: DetailProps) {
                 });
               }}
             >
-              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+              <a >删除</a>
             </Popconfirm>
           </Space>
         ),
@@ -127,11 +127,11 @@ export default function VersionDetail(props: DetailProps) {
         columns={
           currentTab === 'app'
             ? getColumns(true).filter((item) => {
-                return item.isShow == true;
-              })
+              return item.isShow == true;
+            })
             : getColumns(false).filter((item) => {
-                return item.isShow == false;
-              })
+              return item.isShow == false;
+            })
         }
         showHeader={true}
         dataSource={dataSource}

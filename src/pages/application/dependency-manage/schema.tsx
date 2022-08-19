@@ -213,7 +213,7 @@ export const dependecyTableSchema = ({
                 onDelClick(record, index);
               }}
             >
-              <a style={{ color: 'red' }}>删除</a>
+              <a >删除</a>
             </Popconfirm>
           </Space>
         );

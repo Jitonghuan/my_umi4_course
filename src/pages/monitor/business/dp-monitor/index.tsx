@@ -208,7 +208,7 @@ export default function DpMonitor() {
           <Form.Item label="关联应用" name="appCode">
             <Select
               options={appOptions}
-              style={{ width: '200px'}}
+              style={{ width: '200px' }}
               showSearch
               allowClear
             />
@@ -225,7 +225,7 @@ export default function DpMonitor() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset" >
               重置
             </Button>
           </Form.Item>

@@ -475,7 +475,7 @@ export default function Push(props: any) {
     }
   });
 
-  const pushTmpls = () => {};
+  const pushTmpls = () => { };
 
   const handleVisibleChange = (visible: any) => {
     setPushItemVisible(visible);
@@ -534,7 +534,7 @@ export default function Push(props: any) {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -637,7 +637,7 @@ export default function Push(props: any) {
             onCancel={handleCancel}
             className="push-form"
             width={750}
-            // bodyStyle={{ height: '300px' }}
+          // bodyStyle={{ height: '300px' }}
           >
             <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '150px' }}>
               {/* <div style={{ width: '100%' }}> */}

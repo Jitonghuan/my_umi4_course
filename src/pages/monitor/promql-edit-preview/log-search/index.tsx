@@ -250,7 +250,7 @@ export default function LoggerSearch(props: any) {
                   <Button htmlType="submit" type="primary" onClick={() => loadMoreData()}>
                     预览
                   </Button>
-                  <Button type="default" style={{ margin: '0 2px 0 5px' }} onClick={resetQueryInfo} danger>
+                  <Button type="default" style={{ margin: '0 2px 0 5px' }} onClick={resetQueryInfo}>
                     重置
                   </Button>
                 </Form.Item>

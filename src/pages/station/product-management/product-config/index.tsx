@@ -264,7 +264,7 @@ export default function ProductConfig() {
           </Spin>
 
           <div>
-            <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: 8, height: 20, fontSize: 16, marginTop: 16 }}>
+            <h3 style={{ borderLeft: '4px solid #3591ff', paddingLeft: 8, height: 20, fontSize: 16, marginTop: 16 }}>
               出包管理
               {/* <Button
                 icon={infoFoldOut ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}

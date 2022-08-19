@@ -265,12 +265,12 @@ export const podsTableSchema = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          <Button size="small" type="primary" onClick={() => viewLog(record, index)}>
+          <a onClick={() => viewLog(record, index)}>
             查看日志
-          </Button>
-          <Button size="small" type="primary" onClick={() => shell(record, index)}>
+          </a>
+          <a onClick={() => shell(record, index)}>
             登陆shell
-          </Button>
+          </a>
           {/* <Button size="small" type="primary" onClick={() => download(record, index)}>下载文件</Button> */}
           <Popconfirm
             title="确定要删除该信息吗？"
@@ -278,9 +278,9 @@ export const podsTableSchema = ({
               handleDelete(record, index);
             }}
           >
-            <Button size="small" type="default" danger style={{ color: 'red' }}>
+            <a>
               删除
-            </Button>
+            </a>
           </Popconfirm>
         </div>
       ),
@@ -523,7 +523,7 @@ export const taskTableSchema = ({
               handleDelete(record, index);
             }}
           >
-            <a style={{ color: 'red' }}>删除</a>
+            <a>删除</a>
           </Popconfirm>
         </div>
       ),

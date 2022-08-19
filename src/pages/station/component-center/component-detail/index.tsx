@@ -45,7 +45,7 @@ export default function ComponentDetail() {
     descriptionInfoData,
   }: any = history.location.state;
   const { TabPane } = Tabs;
-  const tabOnclick = (key: any) => {};
+  const tabOnclick = (key: any) => { };
   const [configForm] = Form.useForm();
   const { Paragraph } = Typography;
   const [readOnly, setReadOnly] = useState<boolean>(true);
@@ -336,7 +336,7 @@ export default function ComponentDetail() {
             </Button>
           </div>
         </div>
-        <Tabs defaultActiveKey="1" onChange={tabOnclick} type="card">
+        <Tabs defaultActiveKey="1" onChange={tabOnclick} >
           <TabPane tab="组件信息" key="component-info">
             <div>
               <Spin spinning={infoLoading}>
@@ -369,14 +369,14 @@ export default function ComponentDetail() {
               </Spin>
               <Divider />
               <div>
-                <h3 style={{ borderLeft: '4px solid #1973cc', paddingLeft: 8, height: 20, fontSize: 16 }}>组件说明:</h3>
+                <h3 style={{ borderLeft: '4px solid #3591ff', paddingLeft: 8, height: 20, fontSize: 16 }}>组件说明:</h3>
                 <div className="instruction">
                   <div className="instruction-info">
                     <Spin spinning={infoLoading}>
                       <ReactMarkdown
                         children={componentInfo?.componentExplanation}
                         className="markdown-html"
-                        // escapeHtml={false}  //不进行HTML标签的转化
+                      // escapeHtml={false}  //不进行HTML标签的转化
                       />
                       {/* {componentInfo?.componentExplanation} */}
                     </Spin>

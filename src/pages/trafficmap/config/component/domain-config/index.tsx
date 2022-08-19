@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Select, Input, Button, Table, Popconfirm } from 'antd';
+import { Form, Select, Input, Button, Table, Popconfirm, Space } from 'antd';
 import './index.less';
 import { deleteRegion, getRegionList } from '../../../service';
 import CreateRegionDrawer from '../create-region-drawer';
@@ -98,13 +98,13 @@ const DomainConfig: React.FC = () => {
       key: 'action',
       render: (text: string, record: any) => {
         return (
-          <>
-            <Button type="link" onClick={() => handleView(record)}>
+          <Space>
+            <a onClick={() => handleView(record)}>
               查看
-            </Button>
-            <Button type="link" onClick={() => handleEdit(record)}>
+            </a>
+            <a onClick={() => handleEdit(record)}>
               编辑
-            </Button>
+            </a>
             <Popconfirm
               title="确认删除"
               okText="是"
@@ -113,9 +113,9 @@ const DomainConfig: React.FC = () => {
                 handleDeleteRegion(record.id);
               }}
             >
-              <Button type="link" danger>删除</Button>
+              <a>删除</a>
             </Popconfirm>
-          </>
+          </Space>
         );
       },
     },
@@ -148,7 +148,7 @@ const DomainConfig: React.FC = () => {
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button type="ghost" htmlType="reset" danger>
+          <Button type="ghost" htmlType="reset">
             重置
           </Button>
         </Form.Item>
@@ -159,13 +159,12 @@ const DomainConfig: React.FC = () => {
         {/* <h3>配置域列表</h3> */}
         <Button
           type="primary"
-          ghost
           onClick={() => {
             createRegionRef.current.showDrawer();
           }}
         >
-        
-         + 新增域
+
+          + 新增域
         </Button>
       </div>
 

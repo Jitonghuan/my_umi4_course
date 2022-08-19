@@ -60,24 +60,24 @@ export const creatContainerColumns = ({
       render: (text: string, record: any, index: number) => (
         <>
           <Space size="small">
-            <Button
-              size="small"
-              type="primary"
+            <a
+              // size="small"
+              // type="primary"
               onClick={() => {
                 onViewLogClick(record, index);
               }}
             >
               查看日志
-            </Button>
-            <Button
-              size="small"
-              type="primary"
+            </a>
+            <a
+              // size="small"
+              // type="primary"
               onClick={() => {
                 onLoginShellClick(record, index);
               }}
             >
               登陆shell
-            </Button>
+            </a>
           </Space>
         </>
       ),

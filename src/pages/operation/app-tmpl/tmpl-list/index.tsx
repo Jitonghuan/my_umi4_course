@@ -248,7 +248,7 @@ export default function Launch() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -306,7 +306,7 @@ export default function Launch() {
                   {current?.map((item: any) => {
                     return (
                       <span style={{ marginLeft: 4, marginTop: 2 }}>
-                        <Tag color={'green'}>{item}</Tag>
+                        <Tag color='#e8f8ff'><span style={{ color: '#1890ff' }}>{item}</span></Tag>
                       </span>
                     );
                   })}
@@ -366,7 +366,7 @@ export default function Launch() {
                     推送
                   </a>
                   <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem(record)}>
-                    <a style={{ color: 'red' }}>删除</a>
+                    <a>删除</a>
                   </Popconfirm>
                 </Space>
               )}

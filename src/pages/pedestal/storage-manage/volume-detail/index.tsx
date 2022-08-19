@@ -490,7 +490,7 @@ export default function VolumeDetail() {
                     <CopyToClipboard text={item} onCopy={() => message.success('复制成功！')}>
                       <p>
                         <span>{item}</span>
-                        <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                        <span style={{ marginLeft: 8, color: '#3591ff' }}>
                           <CopyOutlined />
                         </span>
                       </p>
