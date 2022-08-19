@@ -1179,7 +1179,7 @@ export default [
         component: '@/pages/database/overview',
       },
       {
-        path:  `${baseRoutePath}/database/instance-info`,
+        path:  `${baseRoutePath}/database/info`,
         name: '实例详情',
         key: 'instance-list',
         component: '@/pages/database/instance-list/components/instance-info',

@@ -37,6 +37,7 @@ export default function ClusterDetail(props: any) {
   useEffect(() => {
     setActiveTab(query?.key || 'node-list');
     history.replace({
+      pathname:location?.pathname,
       search:location.search+`&clusterCode=${selectCluster?.value}&clusterName=${selectCluster?.label }`
       // query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
     });

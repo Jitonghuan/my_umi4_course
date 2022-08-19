@@ -55,7 +55,7 @@ export default function deliveryDescription() {
   const { Paragraph } = Typography;
   const [createVersionForm] = Form.useForm();
   const { Option } = Select;
-  const descriptionInfoData: any = location.state;
+  const descriptionInfoData: any = location.state?.record;
   const [editableStr, setEditableStr] = useState(descriptionInfoData.productDescription);
   const [editLoading, editProductDescription] = useEditProductDescription();
   const [creatLoading, createProductVersion] = useCreateProductVersion();

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Tabs } from 'antd';
-import {history, useLocation } from 'umi';
+import {history, useLocation,Outlet } from 'umi';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
 import VCPermission from '@/components/vc-permission';
@@ -31,7 +31,8 @@ export default function Dashboard(props: any) {
         </Tabs>
       </FilterCard>
       <VCPermission code={window.location.pathname} isShowErrorPage>
-        {props.children}
+        {/* {props.children} */}
+        <Outlet/>
       </VCPermission>
     </PageContainer>
   );

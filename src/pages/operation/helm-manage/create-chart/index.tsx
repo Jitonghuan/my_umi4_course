@@ -21,7 +21,7 @@ export default function CreateChart() {
   let location:any = useLocation();
   const query :any= parse(location.search);
   const rootCls = 'all-chart-page';
-  const clusterInfo: any = location?.state || {};
+  const clusterInfo: any = location?.state?.clusterInfo || {};
   const [createReleaseForm] = Form.useForm();
   const [createForm] = Form.useForm();
   const [chartNameLoading, chartNameOptions, getChartList] = useGetChartName();
