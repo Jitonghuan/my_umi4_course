@@ -9,6 +9,7 @@ interface IEditorDrawer {
   visible: boolean;
   mode: TMode;
   cluster: number | null | undefined;
+  clusterList: any;
   onClose: () => any;
   boardInfo: any;
   loadGraphTable: () => any
@@ -30,7 +31,7 @@ const createTypeOptions = [
 ]
 
 const EditorDrawer = (props: IEditorDrawer) => {
-  const { visible, mode, cluster, boardInfo, loadGraphTable } = props
+  const { visible, mode, cluster, boardInfo, clusterList, loadGraphTable } = props
   const [formRef] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false)
   const [detail, setDetail] = useState<any>(null)
@@ -45,7 +46,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         setDetail(boardInfo)
         setDataSourceType(boardInfo?.dsType);
         const graphJson = JSON.stringify(JSON.parse(boardInfo?.graphJson || "{}"), null, 2);
-        formRef.setFieldsValue({ ...boardInfo, graphJson });
+        formRef.setFieldsValue({ ...boardInfo, graphJson, clusterCode: cluster });
       } else if (mode === 'add') {
         setDetail(null)
       }
@@ -53,7 +54,10 @@ const EditorDrawer = (props: IEditorDrawer) => {
   }, [mode, boardInfo])
 
   useEffect(() => {
-    dataSourceType && onDataSourceTypeChange(dataSourceType)
+    const clusterCode = formRef.getFieldValue('clusterCode') || cluster;
+    if (dataSourceType && clusterCode) {
+      onDataSourceTypeChange({ dsType: dataSourceType, clusterCode })
+    }
   }, [dataSourceType])
 
 
@@ -78,7 +82,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
       formValue = {
         ...formValue,
         graphUuid: detail.graphUuid,
-        clusterCode: cluster
+        // clusterCode: cluster
       }
       updateGraphTable(formValue, body).then((res) => {
         if (res?.success) {
@@ -92,7 +96,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
     } else if (mode === 'add') {
       formValue = {
         ...formValue,
-        clusterCode: cluster
+        // clusterCode: cluster
       }
       createGraphTable(formValue, body).then((res) => {
         if (res?.success) {
@@ -107,10 +111,25 @@ const EditorDrawer = (props: IEditorDrawer) => {
   }
 
   const onDataSourceTypeChange = async (value: any) => {
+    let { clusterCode, dsType } = value;
+    if (!clusterCode) {
+      clusterCode = formRef.getFieldValue("clusterCode");
+    }
+    if (!dsType) {
+      dsType = formRef.getFieldValue("dsType");
+    }
+
+    if (dsType) {
+      getGraphTemplateList(dsType)
+    }
+    if (!clusterCode || !dsType) {
+      return
+    }
+
     const data = {
-      clusterCode: cluster,
+      clusterCode: clusterCode,
       pageSize: -1,
-      dsType: value,
+      dsType: dsType,
     }
     const res = await getGraphGraphDatasouceList(data);
     if (Array.isArray(res?.data?.dataSource) && res.data.dataSource.length > 0) {
@@ -124,9 +143,11 @@ const EditorDrawer = (props: IEditorDrawer) => {
       })
       setDataSourceOptions(data)
     }
+  }
 
+  const getGraphTemplateList = async (value: any) => {
     const res1 = await graphTemplateList(value)
-    if (Array.isArray(res1?.data?.dataSource) && res.data.dataSource.length > 0) {
+    if (Array.isArray(res1?.data?.dataSource) && res1.data.dataSource.length > 0) {
       const data = res1.data.dataSource.map((item: any) => {
         return {
           label: item.name,
@@ -183,6 +204,17 @@ const EditorDrawer = (props: IEditorDrawer) => {
           ]}
           />
         </Form.Item>
+        <Form.Item label="集群选择" name="clusterCode" rules={[{ required: true, message: '请选择集群!' }]}>
+          <Select
+            showSearch
+            allowClear
+            style={{ width: '250px' }}
+            options={clusterList}
+            onChange={(value) => {
+              onDataSourceTypeChange({ clusterCode: value })
+            }}
+          />
+        </Form.Item>
         <Form.Item label='数据源类型' name='dsType' rules={[{ required: true, message: '请选择数据源类型!' }]}>
           <Select
             options={[
@@ -197,9 +229,8 @@ const EditorDrawer = (props: IEditorDrawer) => {
             ]}
             onChange={(value) => {
               formRef.setFieldValue('graphTemplateId', undefined)
-              onDataSourceTypeChange(value)
-              }
-            }
+              onDataSourceTypeChange({ dsType: value })
+            }}
           />
         </Form.Item>
         <Form.Item label='数据源' name='dsUuid' rules={[{ required: true, message: '请选择数据源!' }]}>

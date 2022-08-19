@@ -40,7 +40,7 @@ export default function ApplicationCardList(props: IProps) {
             toDetail(item)
           }
         >
-          <div className={`${cardCls}-header`} style={{ position: 'relative' }}>
+          <div className={`${cardCls}-header`} style={{ position: 'relative' ,}}>
             <div className={`${cardCls}-header-text`}>{item.graphName}</div>
             <span onClick={(e) => e.stopPropagation()} style={{ position: 'absolute', top: 0, right: 0 }}>
               <Popconfirm
@@ -68,9 +68,9 @@ export default function ApplicationCardList(props: IProps) {
               <span className={`${cardCls}-content-description-label`}>数据源名称</span>
               <span className={`${cardCls}-content-description-value`}>{item.dsName}</span>
             </div>
-            <Tag color={"geekblue"} icon={<FundOutlined />} style={{width:'54px'}}>
+            {/* <Tag color={"geekblue"} icon={<FundOutlined />} style={{width:'54px'}}>
               大盘
-            </Tag>
+            </Tag> */}
           </div>
         </div>
       ))}

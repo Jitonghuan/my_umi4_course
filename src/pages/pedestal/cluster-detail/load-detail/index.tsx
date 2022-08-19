@@ -1,6 +1,6 @@
 import { eventTableSchema, podsTableSchema, envVarTableSchema } from '../schema';
 import React, { useEffect, useCallback, useState, useMemo, useContext } from 'react';
-import { Table, Tag, Tooltip, Button, Empty, message, Spin } from 'antd';
+import { Table, Tag, Tooltip, Button, Empty, message, Spin, Modal } from 'antd';
 import { history } from 'umi';
 import DownLoadFile from './download-file';
 import AddModal from './add-modal';
@@ -8,7 +8,7 @@ import './index.less';
 import { getResourceList, resourceUpdate, resourceDel } from '../service';
 import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
 import clusterContext from '../context';
-import { rgb } from '_@types_d3-color@3.1.0@@types/d3-color';
+import TagConfirm from '@/components/tag-confirm'
 
 const obj: any = {
   namespace: '命名空间',
@@ -461,16 +461,24 @@ export default function LoadDetail(props: any) {
       <div className="tag-wrapper">
         {Object.keys(data?.info?.labels || {}).map((item: string) => {
           return (
-            <Tag
-              color="green"
-              closable
-              onClose={(e) => {
-                e.preventDefault();
-                handleClose(item);
-              }}
+            // <Tag
+            //   color="green"
+            //   closable
+            //   onClose={(e) => {
+            //     e.preventDefault();
+            //     setTagVisible(true)
+            //     // handleClose(item);
+            //   }}
+            // >
+            //   {item}:{data?.info?.labels[item]}
+            // </Tag>
+            <TagConfirm
+              content={`${item}:${data?.info?.labels[item]}`}
+              title='你确定要删除该标签吗？'
+              onConfirm={() => { handleClose(item) }}
+              style={{ marginTop: '5px' }}
             >
-              {item}:{data?.info?.labels[item]}
-            </Tag>
+            </TagConfirm>
           );
         })}
       </div>
