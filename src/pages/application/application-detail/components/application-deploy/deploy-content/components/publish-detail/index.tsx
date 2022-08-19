@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import {Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography} from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { history } from 'umi';
@@ -20,7 +20,7 @@ import {
   queryProjectEnvList,
   checkOfflineDeploy,
 } from '@/pages/application/service';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, CloseOutlined } from '@ant-design/icons';
 import { IProps } from './types';
 import { useEnvList } from '@/pages/application/project-environment/hook';
 import ServerStatus from '../server-status';
@@ -324,7 +324,13 @@ export default function PublishDetail(props: IProps) {
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
       } else if (info.file?.response?.success === false) {
-        message.error(info.file.response?.errorMsg);
+        // message.error(info.file.response?.errorMsg);
+        message.error({
+          content: <>{info.file.response?.errorMsg}<CloseOutlined onClick={() => { message.destroy('upload') }} style={{ marginLeft: '10px', color: '#c6c4c4' }} /></>,
+          duration: 0,
+          key: 'upload',
+        })
+
       } else if (info.file.status === 'removed') {
         message.warning('上传取消！');
       }
@@ -397,7 +403,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
   let envDataOption: any = []; //重启时选择环境option
