@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Select, Input, Button, Table, Popconfirm, Tag } from 'antd';
+import { Form, Select, Input, Button, Table, Popconfirm, Tag, Space } from 'antd';
 import appConfig from '@/app.config';
 import { delRequest } from '@/utils/request';
 import './index.less';
@@ -55,7 +55,7 @@ export default function NoiseReduction() {
       key: 'action',
       render: (text: string, record: any) => {
         return (
-          <>
+          <Space>
             <Popconfirm
               title={`确定${record.isEnable ? '禁用' : '启用'}吗？`}
               okText="是"
@@ -64,13 +64,13 @@ export default function NoiseReduction() {
                 handleUpdateNoise(record);
               }}
             >
-              <Button type="link" >
+              <a >
                 {record.isEnable ? '禁用' : '启用'}
-              </Button>
+              </a>
             </Popconfirm>
-            <Button type="link" onClick={() => { setInitData(record); setNoiseDrawer('EDIT') }}>
+            <a onClick={() => { setInitData(record); setNoiseDrawer('EDIT') }}>
               编辑
-            </Button>
+            </a>
             <Popconfirm
               title="确认删除"
               okText="是"
@@ -79,9 +79,9 @@ export default function NoiseReduction() {
                 handleDeleteNoise(record.id);
               }}
             >
-              <Button type="link">删除</Button>
+              <a>删除</a>
             </Popconfirm>
-          </>
+          </Space>
         );
       },
     },
@@ -185,8 +185,6 @@ export default function NoiseReduction() {
         {/* <h3>配置域列表</h3> */}
         <Button
           type="primary"
-          ghost
-
           onClick={() => {
             setNoiseDrawer('ADD')
             setInitData(undefined);

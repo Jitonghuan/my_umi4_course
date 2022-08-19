@@ -164,7 +164,6 @@ export default function AccountList(props: AccountProps) {
           <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
             <Button
               type="primary"
-              ghost
               onClick={() => {
                 setMode('ADD');
               }}
