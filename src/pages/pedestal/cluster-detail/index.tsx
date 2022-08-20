@@ -62,7 +62,7 @@ export default function ClusterDetail(props: any) {
     setSelectCluster({ label: v.label, value: v.value });
     history.push({
       pathname: `${path}/${location?.query?.key}`,
-      query: { key: location?.query?.key, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
+      query: { key: location?.query?.key, clusterCode: v?.value, clusterName: v?.label },
     });
   };
 
