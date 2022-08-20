@@ -166,7 +166,7 @@ export default function DemoPageList() {
                     }, 200);
                   }}
                 >
-                  <a style={{ color: 'red' }}>删除</a>
+                  <a >删除</a>
                 </Popconfirm>
               </div>
             )}

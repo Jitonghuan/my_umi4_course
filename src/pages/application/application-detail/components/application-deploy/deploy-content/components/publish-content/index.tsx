@@ -122,7 +122,7 @@ export default function PublishContent(props: IProps) {
     return (
       <div>
         <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
-        <span style={{ marginLeft: 8, color: 'royalblue' }}>
+        <span style={{ marginLeft: 8, color: '#3591ff' }}>
           <CopyToClipboard text={branchName} onCopy={() => message.success('复制成功！')}>
             <CopyOutlined />
           </CopyToClipboard>
@@ -139,7 +139,7 @@ export default function PublishContent(props: IProps) {
         return cancelDeploy({
           id: metadata?.id,
           envCode,
-        }).then(() => {});
+        }).then(() => { });
       },
     });
   }

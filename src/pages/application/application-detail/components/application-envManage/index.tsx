@@ -280,7 +280,7 @@ export default function appEnvPageList() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -354,7 +354,7 @@ export default function appEnvPageList() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -380,6 +380,7 @@ export default function appEnvPageList() {
           }
         </Form>
       </div>
+
       <div style={{ marginTop: '15px' }}>
         <Table dataSource={appEnvDataSource} loading={loading} rowKey="id" pagination={false}>
           <Table.Column title="ID" dataIndex="id" width={60} />
@@ -406,6 +407,7 @@ export default function appEnvPageList() {
                 <Switch
                   disabled={record?.proEnvType !== 'benchmark' || microFeType === 'subProject'}
                   checked={record?.isAppNeedCR}
+                  className="switch"
                   onChange={() => {
                     switchChange(record);
                   }}
@@ -420,7 +422,7 @@ export default function appEnvPageList() {
             width={110}
             render={(value, record, index) => (
               <>
-                <Switch className="needApply" disabled={microFeType === 'subProject'} onChange={() => handleNeedApplyChange(value, record)} checked={value} />
+                <Switch className="switch" disabled={microFeType === 'subProject'} onChange={() => handleNeedApplyChange(value, record)} checked={value} />
               </>
             )}
           />
@@ -433,7 +435,7 @@ export default function appEnvPageList() {
                 render={(_, record: Record<string, any>, index) => (
                   <div className="action-cell">
                     <Popconfirm title="确定要解绑该环境吗？" onConfirm={() => handleDelEnv(record)}>
-                      <a style={{ color: 'red' }}>解绑</a>
+                      <a>解绑</a>
                     </Popconfirm>
                   </div>
                 )}

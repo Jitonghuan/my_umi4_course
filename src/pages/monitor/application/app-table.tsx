@@ -561,14 +561,12 @@ const Coms = (props: IProps) => {
               },
             }}
           />
-          <div style={{ marginTop: 14 }}>
-            <Tabs defaultActiveKey="1" type="card">
+          <h3 className="monitor-tabs-content-title">
+            监控图表
+          </h3>
+          <div >
+            <Tabs defaultActiveKey="1" >
               <TabPane tab={<span>进程监控</span>} key="1">
-                <h3 className="monitor-tabs-content-title">
-                  监控图表&nbsp;&nbsp;
-                  {/* <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span> */}
-                </h3>
-
                 <VCCardLayout grid={layoutGrid} className="monitor-app-content">
                   {appConfig.map((el, index) => (
                     <AppCard
@@ -580,10 +578,6 @@ const Coms = (props: IProps) => {
                 </VCCardLayout>
               </TabPane>
               <TabPane tab={<span>基础监控</span>} key="2">
-                <h3 className="monitor-tabs-content-title">
-                  监控图表&nbsp;&nbsp;
-                  {/* <span style={{ fontSize: 12, color: '#1973CC' }}>{curtIP ? `当前IP：${curtIP}` : ''}</span> */}
-                </h3>
                 <Row gutter={[16, 24]}>
                   <Col span={12}>
                     <div className="base-monitor-charts">
@@ -628,7 +622,7 @@ const Coms = (props: IProps) => {
           </div>
         </Card>
       </div>
-    </div>
+    </div >
   );
 };
 

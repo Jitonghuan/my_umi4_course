@@ -259,7 +259,7 @@ const DataSource = (props: any) => {
                   { label: 'prometheus', value: 'prometheus' },
                 ]}
                 placeholder="请选择"
-                style={{ width: 120 }}
+                style={{ width: 150 }}
                 allowClear
               />
             </Form.Item>
@@ -267,7 +267,7 @@ const DataSource = (props: any) => {
               <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
                 查询
               </Button>
-              <Button type="default" htmlType="reset" danger>
+              <Button type="default" htmlType="reset" >
                 重置
               </Button>
             </Form.Item>

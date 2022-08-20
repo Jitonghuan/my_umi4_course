@@ -366,12 +366,12 @@ export default function ApplicationParams(props: any) {
               <Select showSearch style={{ width: 200 }} options={templateTypes} onChange={changeTmplType} />
             </Form.Item>
           </div>
-          <div style={{ marginLeft: 6 }}>
+          <div style={{ marginLeft: 16 }}>
             {/* <Button type="primary" onClick={queryTmpl}>
               查询
             </Button> */}
             <Space>
-              <Button danger onClick={inintData}>
+              <Button onClick={inintData}>
                 重置
               </Button>
               <Popconfirm title="确认删除此模板吗？" onConfirm={delTmpl} disabled={!id}>
@@ -449,7 +449,7 @@ export default function ApplicationParams(props: any) {
         </Row>
         <Form.Item>
           <Space size="small" style={{ float: 'right' }}>
-            <Button danger onClick={inintData}>
+            <Button onClick={inintData}>
               重置
             </Button>
             <Button type="primary" htmlType="submit" disabled={ensureDisable}>

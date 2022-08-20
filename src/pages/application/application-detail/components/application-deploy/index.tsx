@@ -30,10 +30,10 @@ export default function ApplicationDeploy(props: any) {
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
     : window.location.href.includes('matrix-fygs')
-    ? 'prod'
-    : window.location.href.includes('matrix-base-poc')
-    ? 'prod'
-    : '';
+      ? 'prod'
+      : window.location.href.includes('matrix-base-poc')
+        ? 'prod'
+        : '';
   const [tabActive, setTabActive] = useState(
     props.location.query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
   );

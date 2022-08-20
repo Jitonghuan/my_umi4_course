@@ -54,12 +54,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请选择',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请选择',
+                      pattern,
+                    },
+                  ]
               }
             >
               <Select
@@ -95,12 +95,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请输入',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请输入',
+                      pattern,
+                    },
+                  ]
               }
             >
               <Input
@@ -126,12 +126,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请选择日期',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请选择日期',
+                      pattern,
+                    },
+                  ]
               }
             >
               <DatePicker
@@ -156,12 +156,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请选择日期',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请选择日期',
+                      pattern,
+                    },
+                  ]
               }
             >
               <RangePicker
@@ -186,12 +186,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请输入',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请输入',
+                      pattern,
+                    },
+                  ]
               }
             >
               <Input.TextArea
@@ -218,12 +218,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请输入',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请输入',
+                      pattern,
+                    },
+                  ]
               }
             >
               <InputNumber
@@ -250,12 +250,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请选择',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请选择',
+                      pattern,
+                    },
+                  ]
               }
             >
               <Radio.Group onChange={onChange} style={{ width: width, ...styles }} id={id}>
@@ -280,12 +280,12 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 rules || extraForm
                   ? rules
                   : [
-                      {
-                        required: required,
-                        message: validatorMessage ?? '请选择',
-                        pattern,
-                      },
-                    ]
+                    {
+                      required: required,
+                      message: validatorMessage ?? '请选择',
+                      pattern,
+                    },
+                  ]
               }
             >
               <Checkbox.Group options={checkboxOption} onChange={onChange} />
@@ -327,7 +327,7 @@ const FormList: React.FC<TableSearchProps> = ({
             </Button>
           )}
           {showReset && (
-            <Button onClick={reset} danger>
+            <Button onClick={reset}>
               重置
             </Button>
           )}

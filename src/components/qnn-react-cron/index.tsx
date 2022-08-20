@@ -72,7 +72,6 @@ export default function ReactCron(props: ReactCronProps) {
             <Button
               key="cancel"
               style={{ marginRight: 10 }}
-              danger
               onClick={() => {
                 setValue(null);
               }}

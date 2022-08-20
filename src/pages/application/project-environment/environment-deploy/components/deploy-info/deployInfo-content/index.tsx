@@ -363,7 +363,7 @@ export default function DeployContent(props: DeployContentProps) {
                         </Popconfirm> */}
               <div className="caption-right">
                 <Popconfirm title={`确定重启 ${appData?.appName}吗？`} onConfirm={restartEnsure}>
-                  <Button type="primary" ghost>
+                  <Button ghost>
                     重启
                   </Button>
                 </Popconfirm>
@@ -538,7 +538,7 @@ export default function DeployContent(props: DeployContentProps) {
                           }, 200);
                         }}
                       >
-                        <Button size="small" type="default" danger style={{ color: 'red' }}>
+                        <Button size="small" type="default" >
                           删除
                         </Button>
                       </Popconfirm>

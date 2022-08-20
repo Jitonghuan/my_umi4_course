@@ -422,7 +422,7 @@ export default function LoadDetail(props: any) {
         })}
       </div>
       {/* pods */}
-      <p className="title">Pods：</p>
+      <p className="title" style={{ marginTop: "15px" }}>Pods：</p>
       <Table
         dataSource={podData}
         loading={podLoading}
@@ -433,7 +433,7 @@ export default function LoadDetail(props: any) {
         scroll={{ x: '900' }}
       ></Table>
       {/* 事件 */}
-      <p className="title">事件：</p>
+      <p className="title" style={{ marginTop: "15px" }}>事件：</p>
       <div className="event-wrapper">
         <Table
           dataSource={eventData}
@@ -482,6 +482,7 @@ export default function LoadDetail(props: any) {
           );
         })}
       </div>
+      {/* 环境变量 */}
       <div className="flex-wrapper">
         <span className="title">环境变量：</span>
         <Button

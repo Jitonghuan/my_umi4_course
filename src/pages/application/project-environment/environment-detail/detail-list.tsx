@@ -24,7 +24,7 @@ export const appTypeOptions = [
   },
 ];
 export default function DetailList(props: any) {
-  const { dataInfo, onSpin, stopSpin, opt, isUpdata = false, cancelUpdate = () => {} } = props;
+  const { dataInfo, onSpin, stopSpin, opt, isUpdata = false, cancelUpdate = () => { } } = props;
   const [projectEnvInfo, setProjectEnvInfo] = useState<any>(history.location.state);
   const [formList] = Form.useForm();
   const [addAppForm] = Form.useForm();
@@ -244,7 +244,7 @@ export default function DetailList(props: any) {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" danger>
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -309,7 +309,7 @@ export default function DetailList(props: any) {
                     });
                   }}
                 >
-                  <a style={{ color: 'red' }}>删除</a>
+                  <a >删除</a>
                 </Popconfirm>
               </Space>
             )}

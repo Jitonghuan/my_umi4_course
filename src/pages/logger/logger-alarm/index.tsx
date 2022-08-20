@@ -178,7 +178,7 @@ export default function LoggerAlarm() {
             <Button type="primary" ghost onClick={handleSearch}>
               查询
             </Button>
-            <Button type="default" htmlType="reset" danger style={{ marginLeft: 12 }}>
+            <Button type="default" htmlType="reset" style={{ marginLeft: 12 }}>
               重置
             </Button>
           </Form.Item>
@@ -246,7 +246,7 @@ export default function LoggerAlarm() {
                 <div className="action-cell">
                   <a onClick={() => handleEditItem(record, index)}>编辑</a>
                   <Popconfirm title="确定要删除该规则吗？" onConfirm={() => handleDelItem(record, index)}>
-                    <a style={{ color: 'red' }}>删除</a>
+                    <a>删除</a>
                   </Popconfirm>
                   <Popconfirm
                     title={`确定要${isEnable ? '停用' : '启用'}该规则吗？`}

@@ -8,7 +8,7 @@ import BranchEditor from './branch-editor';
 import MasterBranchEditor from './master-editor';
 
 import { queryBranchListUrl, deleteBranch } from '../../server';
-import { delRequest} from '@/utils/request';
+import { delRequest } from '@/utils/request';
 
 import { datetimeCellRender } from '@/utils';
 import DetailContext from '../../context';
@@ -115,7 +115,7 @@ export default function BranchManage() {
             <PlusOutlined />
             新建主干
           </Button>
-          <Button type="primary" onClick={() => setBranchEditMode('ADD')} style={{marginLeft: '10px'}}>
+          <Button type="primary" onClick={() => setBranchEditMode('ADD')} style={{ marginLeft: '10px' }}>
             <PlusOutlined />
             新建分支
           </Button>
@@ -139,7 +139,7 @@ export default function BranchManage() {
               <p>
                 <span>{value}</span>
                 <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
-                  <span style={{ marginLeft: 8, color: 'royalblue' }}>
+                  <span style={{ marginLeft: 8, color: '#3591ff' }}>
                     <CopyOutlined />
                   </span>
                 </CopyToClipboard>
@@ -180,9 +180,9 @@ export default function BranchManage() {
           render={(_, record: any, index) => (
             <div className="action-cell">
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
-                <Button type="primary" danger size="small">
+                <a style={{ color: 'red' }}>
                   作废
-                </Button>
+                </a>
               </Popconfirm>
             </div>
           )}
@@ -212,7 +212,7 @@ export default function BranchManage() {
           setMasterBranchEditMode('HIDE');
         }}
         onClose={() => setMasterBranchEditMode('HIDE')}
-        />
+      />
     </ContentCard>
   );
 }

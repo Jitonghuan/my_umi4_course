@@ -170,7 +170,7 @@ export default function RulesTable(props: RulesTableProps) {
             okText="是"
             cancelText="否"
           >
-            <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+            <a>删除</a>
           </Popconfirm>
           <Popconfirm
             title={`确认${STATUS_TYPE[record.status as number].buttonText}`}

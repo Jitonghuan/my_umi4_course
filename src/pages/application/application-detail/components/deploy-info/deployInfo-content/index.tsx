@@ -436,7 +436,7 @@ export default function DeployContent(props: DeployContentProps) {
                        </Popconfirm> */}
               <div className="caption-right">
                 <Popconfirm title={`确定重启 ${appData?.appName}吗？`} onConfirm={restartEnsure}>
-                  <Button type="primary" ghost>
+                  <Button >
                     重启
                   </Button>
                 </Popconfirm>
@@ -550,9 +550,9 @@ export default function DeployContent(props: DeployContentProps) {
                   fixed="right"
                   render={(_, record: any) => (
                     <div className="action-cell">
-                      <Button
-                        size="small"
-                        type="primary"
+                      <a
+                        // size="small"
+                        // type="primary"
                         onClick={() =>
                           history.push(
                             {
@@ -574,10 +574,10 @@ export default function DeployContent(props: DeployContentProps) {
                         }
                       >
                         查看日志
-                      </Button>
-                      <Button
-                        size="small"
-                        type="primary"
+                      </a>
+                      <a
+                        // size="small"
+                        // type="primary"
                         onClick={() => {
                           history.push(
                             `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
@@ -585,10 +585,8 @@ export default function DeployContent(props: DeployContentProps) {
                         }}
                       >
                         登陆shell
-                      </Button>
-                      <Button
-                        size="small"
-                        type="primary"
+                      </a>
+                      <a
                         onClick={() => {
                           setIsLogModalVisible(true);
                           downloadLogform.setFieldsValue({ containerName: '', filePath: '' });
@@ -597,7 +595,7 @@ export default function DeployContent(props: DeployContentProps) {
                         }}
                       >
                         文件下载
-                      </Button>
+                      </a>
                       <Popconfirm
                         title="确定要删除该信息吗？"
                         onConfirm={() => {
@@ -607,9 +605,9 @@ export default function DeployContent(props: DeployContentProps) {
                           }, 200);
                         }}
                       >
-                        <Button size="small" type="default" danger style={{ color: 'red' }}>
+                        <a>
                           删除
-                        </Button>
+                        </a>
                       </Popconfirm>
                     </div>
                   )}

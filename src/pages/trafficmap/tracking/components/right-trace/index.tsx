@@ -248,7 +248,7 @@ export default function RrightTrace(props: any) {
               style={{ width: 440, marginLeft: '10px' }}
             />
             <CopyToClipboard text={selectTraceId} onCopy={() => message.success('复制成功！')}>
-              <span style={{ marginLeft: 8, color: 'royalblue' }}>
+              <span style={{ marginLeft: 8, color: '#3591ff' }}>
                 <CopyOutlined />
               </span>
             </CopyToClipboard>
@@ -277,7 +277,7 @@ export default function RrightTrace(props: any) {
                 return (
                   <span
                     className="top-trace-btn"
-                    style={{ backgroundColor: item.key === activeBtn ? '#137eec' : '#b0a8a8' }}
+                    style={{ backgroundColor: item.key === activeBtn ? '#3591ff' : '#b0a8a8' }}
                     onClick={() => {
                       setActiveBtn(item.key);
                     }}

@@ -96,7 +96,7 @@ export const roleTableColumns = (params: {
                   params.onDelete(record);
                 }}
               >
-                <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+                <a>删除</a>
               </Popconfirm>
             </>
           )}

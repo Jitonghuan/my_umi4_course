@@ -78,7 +78,7 @@ export default function PageApiTest() {
               <Button htmlType="submit" type="primary">
                 请求
               </Button>
-              <Button htmlType="reset" danger type="default" style={{ marginLeft: 16 }}>
+              <Button htmlType="reset" type="default" style={{ marginLeft: 16 }}>
                 重置
               </Button>
             </FormItem>

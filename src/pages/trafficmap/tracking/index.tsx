@@ -332,7 +332,7 @@ export default function Tracking() {
               }}
               value={[moment(selectTime.start), moment(selectTime.end)]}
               format="YYYY-MM-DD HH:mm:ss"
-              // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
+            // defaultValue={[moment(moment().subtract(15, 'minute')), moment()]}
             />
             <Select value={timeOption} onChange={timeOptionChange} style={{ width: 140 }}>
               {START_TIME_ENUMS.map((time) => (
@@ -418,7 +418,7 @@ export default function Tracking() {
               </Button>
             </Form.Item>
             <Form.Item>
-              <Button type="ghost" htmlType="reset" danger>
+              <Button type="ghost" htmlType="reset">
                 重置
               </Button>
             </Form.Item>
@@ -429,7 +429,7 @@ export default function Tracking() {
               }}
             >
               {btnMessage?.label}
-              <span style={{ marginLeft: '3px' }}>{btnMessage?.icon}</span>
+              <span style={{ marginLeft: '3px', marginTop: 5 }}>{btnMessage?.icon}</span>
             </Button>
           </Form>
         </div>
