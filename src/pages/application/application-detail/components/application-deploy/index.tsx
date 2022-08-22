@@ -12,7 +12,7 @@ import DeployContent from './deploy-content';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
 import { history, useLocation} from 'umi';
-import { parse } from 'query-string';
+import { parse,stringify } from 'query-string';
 import './index.less';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl } from '@/pages/application/service';
@@ -43,14 +43,17 @@ export default function ApplicationDeploy(props: any) {
 
   useEffect(() => {
     sessionStorage.setItem('__init_env_tab__', tabActive+"");
-    history.push({
+    const newQuery={
+      ...query,
+      activeTab: tabActive
+    }
+    history.replace({
       //  query: 
       //  { ...props.location.query, 
       //   activeTab: tabActive } 
       pathname:location.pathname,
-      search: location.search+`&activeTab=${tabActive}`
-
-      }
+      search: stringify(newQuery),
+      }, 
       );
     
     if (tabActive && +appData?.isClient! === 0) {

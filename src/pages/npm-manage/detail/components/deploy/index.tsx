@@ -5,7 +5,7 @@ import DeployContent from './deploy-content';
 import HotFix from './deploy-content/components/hot-fix';
 import { getRequest } from "@/utils/request";
 import { history,useLocation } from 'umi';
-import { parse } from 'query-string';
+import { parse,stringify } from 'query-string';
 import { getPipelineUrl } from "@/pages/application/service";
 import DetailContext from "@/pages/npm-manage/detail/context";
 import './index.less';
@@ -47,9 +47,13 @@ export default function Deploy(props: any) {
   // tab页切换
   const handleTabChange = (v: string) => {
     setTabActive(v);
+    const newQuery={
+      ...query,
+      activeTab: v
+    }
     history.push({
       pathname:location.pathname,
-      search:location.search+`&activeTab=${v}`
+      search: stringify(newQuery),
       //  query: { ...props.location.query, activeTab: v } 
       });
     setCurrentValue('');
