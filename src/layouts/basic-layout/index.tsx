@@ -44,7 +44,6 @@ if (appConfig.isLocal) {
 }
 export default function Layout(props: any) {
   const location = useLocation();
-console.log("location?.pathname",location?.pathname)
   // 初始化 doc title hook
   useDocumentTitle('', location?.pathname);
   // 权限数据
@@ -141,19 +140,19 @@ console.log("location?.pathname",location?.pathname)
       loadStemNoticeList();
     }
   }, [unreadNum]);
-  useEffect(()=>{
+  useEffect(() => {
     const localstorageTheme = JSON.parse(localStorage.getItem('__matrix_theme') || '{}');
-    if(localstorageTheme==="matrixDark"){
+    if (localstorageTheme === "matrixDark") {
       setStyle('matrixDark');
       document.body.setAttribute('matrix-theme', 'matrixDark');
       document.body.setAttribute('arco-theme', 'dark');
-    }else{
+    } else {
       setStyle('globalLight');
       document.body.removeAttribute('matrix-theme');
       document.body.setAttribute('arco-theme', 'light');
     }
 
-  },[])
+  }, [])
 
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
@@ -186,13 +185,13 @@ console.log("location?.pathname",location?.pathname)
   const changeTheme = () => {
     if (style == 'matrixDark') {
       setStyle('globalLight');
-      localStorage.setItem('__matrix_theme', JSON.stringify('globalLight') );
+      localStorage.setItem('__matrix_theme', JSON.stringify('globalLight'));
       document.body.removeAttribute('matrix-theme');
 
       document.body.setAttribute('arco-theme', 'light');
     } else {
       setStyle('matrixDark');
-      localStorage.setItem('__matrix_theme', JSON.stringify('matrixDark') );
+      localStorage.setItem('__matrix_theme', JSON.stringify('matrixDark'));
       document.body.setAttribute('matrix-theme', 'matrixDark');
       document.body.setAttribute('arco-theme', 'dark');
     }
@@ -339,8 +338,8 @@ console.log("location?.pathname",location?.pathname)
                   isShowGlobalMenu: false,
                 }}
               >
-                  <Outlet />   
-            </BasicLayout>
+                <Outlet />
+              </BasicLayout>
             )}
           </ChartsContext.Provider>
         </FeContext.Provider>

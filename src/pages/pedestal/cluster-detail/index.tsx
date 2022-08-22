@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {  Select, Tabs} from 'antd';
+import { Select, Tabs } from 'antd';
 import clusterContext from './context';
 import PageContainer from '@/components/page-container';
-import {  ContentCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import './index.less';
 import { useClusterListData } from '../cluster-info/hook';
 import VCPermission from '@/components/vc-permission';
-import { history,useLocation,Outlet } from 'umi';
-import { parse } from 'query-string';
+import { history, useLocation, Outlet } from 'umi';
+import { parse, stringify } from 'query-string';
 const { TabPane } = Tabs;
 
 const TabList = [
@@ -15,11 +15,14 @@ const TabList = [
   { label: '资源详情', key: 'resource-detail' },
 ];
 const path = '/matrix/pedestal/cluster-detail';
+const temp = [
+  { label: '集群1', value: 'code1' },
+  { label: '集群2', value: 'code2' },
+];
 
 export default function ClusterDetail(props: any) {
-  let location:any = useLocation();
-  const query :any= parse(location.search);
-  console.log(query,'query')
+  let location: any = useLocation();
+  const query: any = parse(location.search);
   // const { location, children } = props;
   const { clusterCode, clusterName } = query || {};
   const [clusterOption, setClusterOption] = useState<any>([]);
@@ -27,48 +30,58 @@ export default function ClusterDetail(props: any) {
   const [activeTab, setActiveTab] = useState<string>(query?.key || 'node-list');
   const [data, total] = useClusterListData({ pageSize: -1, pageIndex: -1 });
   useEffect(() => {
+    const query: any = parse(location.search);
+    if (clusterCode) {
+      const path = location.pathname.substring('/matrix/pedestal/cluster-detail/'.length);
+      const key = query?.key || 'node-list'
+      setActiveTab(key);
+      const r = {
+        pathname: `/matrix/pedestal/cluster-detail/${path || key}`,
+        search: stringify(Object.assign(query, {
+          key,
+        })),
+      }
+      history.replace(r);
+    }
+  }, [clusterCode])
+
+  useEffect(() => {
     if (data && data.length) {
-      const res = data.map((item: any) => ({ value: item.clusterCode, label: item.clusterName }));
+      let res = data.map((item: any) => ({ value: item.clusterCode, label: item.clusterName }));
       setClusterOption(res);
+      if (res[0] && !clusterCode) {
+        selectChange(res[0])
+      }
     }
-  }, [data]);
+  }, [data, clusterCode]);
 
-  useEffect(() => { }, []);
-
-  useEffect(() => {
-    setActiveTab(query?.key || 'node-list');
-
-
-    // if(query?.key&&query?.key==="node-list"){
-    //   location.search.substring()
-
-    // }
-    history.replace({
-      pathname:location?.pathname,
-      search:location.search+`&clusterCode=${selectCluster?.value}&clusterName=${selectCluster?.label }&key=${query?.key || 'node-list'}`
-      // query: { ...props.location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
-      // query: { ...props.location.query, key: location?.query?.key || 'node-list', clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
-    });
-  }, [location?.pathname]);
-
-  useEffect(() => {
-    if (!clusterCode) {
-      setSelectCluster(clusterOption && clusterOption[0]);
-    }
-  }, [clusterOption]);
-
-  // useEffect(() => {
-  //     history.push({ query: { ...location.query, clusterCode: selectCluster?.value, clusterName: selectCluster?.label } });
-  // }, [selectCluster])
-
+  // 集群选择下拉框change
   const selectChange = (v: any) => {
+    const query: any = parse(location.search);
     setSelectCluster({ label: v.label, value: v.value });
-    history.push({
-      pathname: `${path}/${query?.key}`,
-      search:`key=${query?.key}&clusterCode=${selectCluster?.value}&clusterName=${selectCluster?.label }`
-      // query: { key: location?.query?.key, clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
-    });
+    const r = {
+      pathname: location.pathname,
+      search: stringify(Object.assign(query, {
+        clusterCode: v?.value,
+        clusterName: v?.label,
+      })),
+    };
+
+    history.replace(r);
   };
+
+  // tab页切换
+  const keyChange = (key: any) => {
+    setActiveTab(key);
+    const query: any = parse(location.search);
+    const r = {
+      pathname: `/matrix/pedestal/cluster-detail/${key}`,
+      search: stringify(Object.assign(query, {
+        key: key || 'node-list',
+      })),
+    }
+    history.replace(r);
+  }
 
   return (
     <PageContainer className="cluster-main">
@@ -97,16 +110,7 @@ export default function ClusterDetail(props: any) {
         <Tabs
           activeKey={activeTab}
           // type='card'
-          onChange={(key) => {
-            setActiveTab(key);
-            console.log("location.search",location.search)
-            // console.log(query,"------------->")
-            history.replace({
-              pathname: `/matrix/pedestal/cluster-detail/${key}`,
-              search:`clusterName=${clusterName}&clusterCode=${clusterCode}&key=${key}`
-              // query: { clusterName, clusterCode, key: key },
-            });
-          }}
+          onChange={keyChange}
         >
           {TabList.map((item: any) => (
             <TabPane tab={item.label} key={item.key} />
@@ -116,7 +120,7 @@ export default function ClusterDetail(props: any) {
           value={{ clusterCode: selectCluster?.value || '', clusterName: selectCluster?.label || '' }}
         >
           <VCPermission code={window.location.pathname} isShowErrorPage>
-            {selectCluster?.value ? <Outlet/> : <div className="tip-wrapper">请先选择集群</div>}
+            {selectCluster?.value ? <Outlet /> : <div className="tip-wrapper">请先选择集群</div>}
           </VCPermission>
         </clusterContext.Provider>
       </ContentCard>

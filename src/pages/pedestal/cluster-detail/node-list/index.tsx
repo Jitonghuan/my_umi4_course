@@ -31,6 +31,8 @@ export default function NodeList() {
           setData(items || []);
         }
       });
+    } else {
+      setData([])
     }
   }, [baseData]);
 
@@ -39,7 +41,7 @@ export default function NodeList() {
       shell: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          search:`key=node-list&type=node&name=${ record.nodeName}&clusterCode=${clusterCode}&clusterName=${clusterName}`
+          search: `key=node-list&type=node&name=${record.nodeName}&clusterCode=${clusterCode}&clusterName=${clusterName}`
           // query: { key: 'node-list', type: 'node', name: record.nodeName, clusterCode, clusterName },
         });
       },

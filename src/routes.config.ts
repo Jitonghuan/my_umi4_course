@@ -110,7 +110,7 @@ export default [
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
   {
-    "path": `${baseRoutePath}/application`,  
+    "path": `${baseRoutePath}/application`,
     "name": "应用管理",
     "icon": "icon-poc_maindata",
     "routes": [
@@ -500,7 +500,7 @@ export default [
         "component": '@/pages/monitor/board',
       },
       {
-        "path": `${baseRoutePath}/monitor/detail`, 
+        "path": `${baseRoutePath}/monitor/detail`,
         "name": '监控大盘详情',
         "hideInMenu": true,
         "component": '@/pages/monitor/board/board-detail',
@@ -511,7 +511,7 @@ export default [
         "component": '@/pages/monitor/cluster',
       },
       {
-        "path": `${baseRoutePath}/monitor/application` ,
+        "path": `${baseRoutePath}/monitor/application`,
         "name": '应用监控',
         "component": '@/pages/monitor/application',
       },
@@ -1113,7 +1113,7 @@ export default [
             hideInMenu: true,
           },
           {
-            path: `${baseRoutePath}/pedestal/cluster-detail/pods-detail`,
+            path: `${baseRoutePath}/pedestal/cluster-detail/pods`,
             name: 'pod详情',
             key: 'cluster-detail',
             component: '@/pages/pedestal/cluster-detail/load-detail/pods-detail',
@@ -1173,13 +1173,13 @@ export default [
     icon: 'icon-TableSettings',
     routes: [
       {
-        path:  `${baseRoutePath}/database/overview`,
+        path: `${baseRoutePath}/database/overview`,
         name: '概览',
         key: 'overview',
         component: '@/pages/database/overview',
       },
       {
-        path:  `${baseRoutePath}/database/info`,
+        path: `${baseRoutePath}/database/info`,
         name: '实例详情',
         key: 'instance-list',
         component: '@/pages/database/instance-list/components/instance-info',
@@ -1187,13 +1187,13 @@ export default [
       },
 
       {
-        path:  `${baseRoutePath}/database/instance-list`,
+        path: `${baseRoutePath}/database/instance-list`,
         name: '实例列表',
         key: 'instance-list',
         component: '@/pages/database/instance-list',
       },
       {
-        path:  `${baseRoutePath}/database/cluster-list`,
+        path: `${baseRoutePath}/database/cluster-list`,
         name: '集群列表',
         key: 'cluster-list',
         component: '@/pages/database/cluster-list',
