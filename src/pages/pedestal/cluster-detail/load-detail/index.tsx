@@ -38,11 +38,11 @@ export default function LoadDetail(props: any) {
   const [data, setData] = useState<any>({});
   useEffect(() => {
     queryData();
+    queryEvent();
   }, [clusterCode]);
 
   useEffect(() => {
     if (clusterCode && data?.info) {
-      queryEvent();
       queryPods();
     }
   }, [clusterCode, data]);

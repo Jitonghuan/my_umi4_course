@@ -104,8 +104,8 @@ export const resourceDetailTableSchema = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          {['deployments', 'pods'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
-          {['deployments'].includes(record?.type) && (
+          {['deployments', 'pods', 'replicasets', 'statefulsets'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
+          {['deployments', 'replicasets', 'statefulsets'].includes(record?.type) && (
             <a onClick={() => rePublic(record, index, 'redeploy')}>重新部署</a>
           )}
           {['deployments'].includes(record?.type) && (
