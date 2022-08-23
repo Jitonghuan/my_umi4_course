@@ -294,8 +294,6 @@ export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
     });
     nameArry.push(item?.name);
   });
-  console.log('xAxisy', xAxis);
-  console.log('data', arry);
   return {
     tooltip: {
       trigger: 'axis',

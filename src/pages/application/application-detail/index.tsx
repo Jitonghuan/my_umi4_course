@@ -147,10 +147,19 @@ export default function ApplicationDetail(props: IProps) {
         <Tabs
           activeKey={tabActiveKey}
           onChange={(key) => {
-            history.replace({
-              pathname: `${detailPath}/${key}`,
-              query: { ...location.query },
-            });
+            if(key==="monitor"){
+              history.replace({
+                pathname: `${detailPath}/${key}`,
+                query: { ...location.query,entry:"appDetail-monitor" },
+              });
+            }else{
+              history.replace({
+                pathname: `${detailPath}/${key}`,
+                query: { ...location.query },
+              });
+            }
+            // debugger
+           
           }}
           tabBarExtraContent={
             <div className="tab-right-extra">

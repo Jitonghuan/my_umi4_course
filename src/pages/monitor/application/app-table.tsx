@@ -118,6 +118,7 @@ export const RATE_ENUMS = [
 const Coms = (props: IProps) => {
   // 该组件会被作为路由组件使用，接收地址栏传参数
   const appCode = props.location?.query?.appCode;
+  const entry=props.location?.query?.entry;
   const { TabPane } = Tabs;
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
   const prevFilter = useRef<IFilter>({} as IFilter);
@@ -173,8 +174,9 @@ const Coms = (props: IProps) => {
     try {
       filterValue = JSON.parse(localStorage.getItem('monitor_application_filter') || '')
     } catch (e) { }
-    const { appCode, envCode } = filterValue||{};
-    if (appCode || envCode) {
+
+    // const { appCode, envCode } = filterValue||{};
+    if (filterValue?.appCode&&!entry || filterValue?.envCode&&!entry) {
       prevFilter.current = filterValue;
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
@@ -194,9 +196,9 @@ const Coms = (props: IProps) => {
   };
 
   // 查询环境列表
-  const queryEnvs = () => {
+  const queryEnvs = (appCode?:any) => {
     queryEnvList({
-      appCode: prevFilter.current?.appCode as string,
+      appCode: prevFilter.current?.appCode as string ||appCode as string,
     }).then((resp) => {
       let newResp: any = [...new Set(resp)];
       setEnvData(newResp);
@@ -206,17 +208,22 @@ const Coms = (props: IProps) => {
       resp.some((item: any) => {
         if (reg.test(item.envCode)) {
           prevFilter.current = {
-            ...prevFilter.current,
+            // ...prevFilter.current,
             envCode: item.value,
+            appCode:entry?appCode:prevFilter.current?.appCode
           };
           return true;
         } else {
           prevFilter.current = {
-            ...prevFilter.current,
+            // ...prevFilter.current,
             envCode: resp.length ? resp[0].value : undefined,
-          };
+            appCode:entry?appCode:prevFilter.current?.appCode
+          };  
         }
       });
+      // if(entry){
+      //   queryNodeList({...prevFilter.current});
+      // }
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
     });
@@ -224,13 +231,14 @@ const Coms = (props: IProps) => {
 
   // 查询节点使用率
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
-  const queryNodeList = () => {
+  const queryNodeList = (params?:{appCode?:string,envCode?:string}) => {
     getRequest(queryPodInfoApi, {
       data: {
         start: Number((now - startTime) / 1000),
         end: Number(now / 1000),
         pageSize: 1000,
-        ...prevFilter.current,
+        envCode:entry? params?.envCode:prevFilter.current?.envCode,
+        appCode:entry? params?.appCode:prevFilter.current?.appCode,
       },
     })
       .then((resp) => {
@@ -295,18 +303,27 @@ const Coms = (props: IProps) => {
   useEffect(() => {
     queryApps();
   }, []);
+  useEffect(()=>{
+    if(appCode && entry){
+      setEnvData([]);
+      queryEnvs(appCode);
+    }
+  },[]);
 
   useEffect(() => {
-    if (filter.appCode) {
+    if (filter.appCode &&!entry) {
       setEnvData([]);
       queryEnvs();
     }
   }, [filter.appCode]);
 
   useEffect(() => {
-    if (filter?.appCode && filter?.envCode) {
+    if (filter?.appCode  &&filter?.envCode &&!entry) {
       // reset();
       queryNodeList();
+    }
+    if(filter?.appCode  &&filter?.envCode &&entry){
+      queryNodeList({appCode,envCode:prevFilter.current?.envCode});
     }
   }, [filter]);
 
@@ -357,7 +374,7 @@ const Coms = (props: IProps) => {
 
   // 过滤操作
   const handleFilter = useCallback(
-    (vals) => {
+    (vals:any) => {
       setCurtIp('');
       setHostName('');
       if (vals.appCode) {
@@ -378,7 +395,7 @@ const Coms = (props: IProps) => {
   useEffect(() => {
     try {
       const filter = JSON.parse(localStorage.getItem('monitor_application_filter') || '');
-      if (filter?.appCode) {
+      if (filter?.appCode && !entry) {
         prevFilter.current = {
           appCode: filter?.appCode,
           ...filter

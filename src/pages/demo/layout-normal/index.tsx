@@ -32,7 +32,6 @@ export default function DemoPageNormal() {
       let addon = result?.data;
       let errorCode=result?.code;
       if(errorCode===1001){
-        debugger
         setCatchError(true);
         setErrorMessage(`<ERROR> ${result?.errorMsg || 'Server Error'}`);
 
