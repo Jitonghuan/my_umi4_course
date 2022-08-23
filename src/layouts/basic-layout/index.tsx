@@ -254,7 +254,7 @@ export default function Layout(props: any) {
                         <img src={appConfig.logo}
                           style={{ marginRight: '5px', height: 45, width: 45 }}
                           onClick={() => {
-                            props.history.push('/matrix/index');
+                           history.push('/matrix/index');
                           }}
                         />
                         <div className='matrix-title-matrix'>{appConfig.title}</div>
