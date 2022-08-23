@@ -152,7 +152,13 @@ const PublishContent = ({
                         .map((item) => item.branchName),
                       // isClient: true,
                       id: metadata?.id,
-                    }).then(() => {
+                    }).then((res) => {
+                      if(res?.code===1001){
+                        Modal.error({
+                          title: '退出分支出错！',
+                          content: res?.errorMsg,
+                        });
+                      }
                       onOperate('batchExitEnd');
                     });
                   },
