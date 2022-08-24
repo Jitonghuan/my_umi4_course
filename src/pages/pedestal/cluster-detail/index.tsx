@@ -11,8 +11,8 @@ import VCPermission from '@/components/vc-permission';
 const { TabPane } = Tabs;
 
 const TabList = [
-  { label: '节点列表', key: 'node-list' },
   { label: '资源详情', key: 'resource-detail' },
+  { label: '节点列表', key: 'node-list' },
   // { label: '资源统计', key: 'resource-statistics' },
   // { label: '事件告警', key: 'event-warning' },
   // { label: '任务管理', key: 'task-manage' }
@@ -30,7 +30,7 @@ export default function ClusterDetail(props: any) {
   const [visible, setVisble] = useState(false);
   const [clusterOption, setClusterOption] = useState<any>([]);
   const [selectCluster, setSelectCluster] = useState<any>({ value: clusterCode || '', label: clusterName || '' });
-  const [activeTab, setActiveTab] = useState<string>(location?.query?.key || 'node-list');
+  const [activeTab, setActiveTab] = useState<string>(location?.query?.key || 'resource-detail');
   const [data, total] = useClusterListData({ pageSize: -1, pageIndex: -1 });
   useEffect(() => {
     if (data && data.length) {
@@ -42,9 +42,9 @@ export default function ClusterDetail(props: any) {
   useEffect(() => { }, []);
 
   useEffect(() => {
-    setActiveTab(location?.query?.key || 'node-list');
+    setActiveTab(location?.query?.key || 'resource-detail');
     history.replace({
-      query: { ...props.location.query, key: location?.query?.key || 'node-list', clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
+      query: { ...props.location.query, key: location?.query?.key || 'resource-detail', clusterCode: selectCluster?.value, clusterName: selectCluster?.label },
     });
   }, [location?.pathname]);
 

@@ -1144,7 +1144,7 @@ export default [
             component: '@/pages/pedestal/cluster-detail/load-detail/pods-detail',
             hideInMenu: true,
           },
-          { redirect: 'node-list' },
+          { redirect: 'resource-detail' },
         ],
       },
       {

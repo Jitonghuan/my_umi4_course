@@ -120,7 +120,7 @@ export default function ResourceDetail(props: any) {
       setContinueList(['']);
     }
     queryList();
-    queryAll();
+    // queryAll();
   }, [pageIndex, limit]);
 
   useEffect(() => {
@@ -234,9 +234,9 @@ export default function ResourceDetail(props: any) {
       return;
     }
     setShowPage(false)
-    if (value && !allData.length) {
-      setAllLoading(true)
-    }
+    // if (value && !allData.length) {
+    //   setAllLoading(true)
+    // }
     const data = JSON.parse(JSON.stringify(allData));
     const afterFilter: any = [];
     data.forEach((item: any) => {
@@ -368,6 +368,7 @@ export default function ResourceDetail(props: any) {
             onChange={(e) => {
               filter(e.target.value)
             }}
+            disabled={!allData?.length}
           ></input>
           <Button
             type="primary"
