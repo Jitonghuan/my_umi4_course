@@ -242,7 +242,7 @@ export default function DpMonitor() {
           </Form.Item>
         </Form>
       </FilterCard>
-      <ContentCard>
+      <ContentCard style={{width:"100%"}}>
         {listData.length !== 0 ? (
           <List
             itemLayout="vertical"
@@ -253,6 +253,7 @@ export default function DpMonitor() {
               },
               total: total,
               pageSize: 10,
+              position:"bottom"
             }}
             dataSource={listData}
             renderItem={(item: any) => <List.Item>{item}</List.Item>}
