@@ -86,7 +86,7 @@ export default function clusterInfo() {
                     style={{ color: '#5183e7' }}
                     onClick={() => {
                       history.push({
-                        pathname: `/matrix/pedestal/cluster-detail/node-list`,
+                        pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
                         state: {
                           clusterInfo: item,
                         },
