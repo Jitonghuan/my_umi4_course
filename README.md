@@ -2,10 +2,11 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-08-09 15:14:09
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-08-09 17:45:04
+ * @LastEditTime: 2022-08-24 18:39:48
  * @FilePath: /my_umi4_course/README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
+# @my_umi4_course
 本地访问http://127.0.0.1:8000/
 Umi 默认将 @ 映射到项目的 src 目录中
 
