@@ -106,6 +106,12 @@ export default function PublishContent(props: IProps) {
           // isClient: false,
           // pipelineCode,
         }).then((res) => {
+          if(res?.code===1001){
+            Modal.error({
+              title: '退出分支出错！',
+              content: res?.errorMsg,
+            });
+          }
           onOperate('batchExitEnd');
         });
       },
