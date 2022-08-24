@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo, useContext } from 'react';
+import React, { useEffect, useCallback, useRef, useState, useMemo, useContext } from 'react';
 import { Form, Button, Input, Tag, Table, Select, message, Pagination } from 'antd';
 import type { PaginationProps } from 'antd';
 import { history } from 'umi';
@@ -45,12 +45,12 @@ export default function ResourceDetail(props: any) {
   const [allData, setAllData] = useState<any>([]);//全量数据 用于搜索
   const [allLoading, setAllLoading] = useState(false);
   const [showPage, setShowPage] = useState(true);
-
   useEffect(() => {
     const dataList = data.map((item: any) => ({ label: item.nodeName, value: item.nodeName }));
     setNodeList(dataList);
   }, [data]);
 
+  const searchValueInput = useRef(null) as any;
   // 表格列配置
   const tableColumns = useMemo(() => {
     return resourceDetailTableSchema({
@@ -183,6 +183,7 @@ export default function ResourceDetail(props: any) {
     if (!values.resourceType) {
       return;
     }
+    setAllData([]);
     getResourceList({ ...values, nodeName: values.node, limit: '', clusterCode })
       .then((res: any) => {
         if (res?.success) {
@@ -224,13 +225,12 @@ export default function ResourceDetail(props: any) {
     setPageIndex(pageIndex + 1);
   };
 
+  const filter = debounce((value) => filterData(value), 500)
 
-  const filterData = debounce((value: string) => { filter(value) }, 500)
-
-  const filter = (value: string) => {
+  const filterData = (value: string, update = true) => {
     if (!value) {
-      setDataSource(originData);
       setShowPage(true);
+      setDataSource(originData);
       return;
     }
     setShowPage(false)
@@ -254,6 +254,10 @@ export default function ResourceDetail(props: any) {
   };
 
   const initialSearch = () => {
+    if (searchValueInput.current) {
+      searchValueInput.current.value = ('');
+    }
+    setShowPage(true);
     setPageIndex(1);
     setContinueList(['']);
     queryList(1);
@@ -357,13 +361,14 @@ export default function ResourceDetail(props: any) {
         </div>
         <div className="caption-right">
           搜索：
-          <Input
+          <input
+            ref={searchValueInput}
             style={{ width: 200 }}
-            size="small"
+            className="ant-input ant-input-sm"
             onChange={(e) => {
-              filterData(e.target.value);
+              filter(e.target.value)
             }}
-          ></Input>
+          ></input>
           <Button
             type="primary"
             onClick={() => {
