@@ -68,7 +68,7 @@ export default function PublishContent(props: IProps) {
             features,
             id: metadata?.id,
           }
-        }).then(() => {
+        }).then((res) => {
           onOperate('batchExitEnd');
         });
       },

@@ -94,7 +94,13 @@ const PublishContent = React.forwardRef((props: IProps, ref) => {
           features,
           id: metadata?.id,
           // isClient: false,
-        }).then(() => {
+        }).then((res) => {
+          if(res?.code===1001){
+            Modal.error({
+              title: '退出分支出错！',
+              content: res?.errorMsg,
+            });
+          }
           onOperate('batchExitEnd');
         });
       },

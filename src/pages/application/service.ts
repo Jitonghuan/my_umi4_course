@@ -538,6 +538,7 @@ export const retryMerge = (params: {
 export const withdrawFeatures = (params: { id: number; features: any }) =>
   postRequest(withdrawFeaturesUrl, {
     data: params,
+    hideToast: true,
   });
 
 /** 重新构建 */
