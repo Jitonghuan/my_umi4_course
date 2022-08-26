@@ -673,6 +673,20 @@ export default [
             "component": "@/pages/operation/app-tmpl/tmpl-detail",
             "hideInMenu": true
           },
+          //   path: 'tmpl-list',
+          //   name: '应用模版列表',
+          //   key: 'app-tmpl',
+          //   component: '@/pages/operation/app-tmpl/tmpl-list',
+          //   hideInMenu: true,
+          // },
+
+          // {
+          //   path: 'tmpl-detail',
+          //   name: '应用模版详情',
+          //   key: 'app-tmpl',
+          //   component: '@/pages/operation/app-tmpl/tmpl-detail',
+          //   hideInMenu: true,
+          // },
           {
             "path": `${baseRoutePath}/operation/app-tmpl/push`,
             "name": "推送模版",
