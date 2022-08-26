@@ -28,7 +28,6 @@ export default function TaskEditor(props: TmplListProps) {
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [source, setSource] = useState<any[]>([]);
-  const [isDisabled, setIsdisabled] = useState<any>();
   const [isDeployment, setIsDeployment] = useState<string>();
   const templateCode = initData?.templateCode;
   const handleChange = (next: any[]) => {
@@ -41,16 +40,9 @@ export default function TaskEditor(props: TmplListProps) {
     if (mode === 'HIDE') return;
     createTmplForm.resetFields();
     //进入页面加载信息
-    const initValues = {
-      templateCode: initData?.templateCode,
-      templateType: initData?.templateType,
-      templateName: initData?.templateName,
-      tmplConfigurableItem: initData?.tmplConfigurableItem,
-      appCategoryCode: initData?.appCategoryCode || '',
+    const initValues :any= {
+      ...initData,
       envCodes: initData?.envCode || [],
-      templateValue: initData?.templateValue,
-      languageCode: initData?.languageCode,
-      remark: initData?.remark,
     };
 
     let envCodeCurrent: any = [];
@@ -159,10 +151,6 @@ export default function TaskEditor(props: TmplListProps) {
         },
       }).then((resp: any) => {
         if (resp.success) {
-          const datas = resp.data || [];
-          history.push({
-            pathname: 'tmpl-list',
-          });
           message.success('保存成功！');
           onSave?.();
         } else {
@@ -183,10 +171,6 @@ export default function TaskEditor(props: TmplListProps) {
         },
       }).then((resp: any) => {
         if (resp.success) {
-          const datas = resp.data || [];
-          history.push({
-            pathname: 'tmpl-list',
-          });
           message.success('保存成功！');
           onSave?.();
         } else {
@@ -216,7 +200,6 @@ export default function TaskEditor(props: TmplListProps) {
                   showSearch
                   style={{ width: 150 }}
                   options={templateTypes}
-                  disabled={isDisabled}
                   onChange={changeTmplType}
                 />
               </Form.Item>
@@ -229,7 +212,7 @@ export default function TaskEditor(props: TmplListProps) {
             </div>
             <div style={{ marginLeft: 10 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
+                <Input style={{ width: 220 }} placeholder="请输入" ></Input>
               </Form.Item>
             </div>
           </Row>
@@ -261,7 +244,7 @@ export default function TaskEditor(props: TmplListProps) {
               {isDeployment == 'deployment' && initData?.languageCode === 'java' ? <span>JVM参数:</span> : null}
               {isDeployment == 'deployment' && initData?.languageCode === 'java' ? (
                 <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} />
+                  <AceEditor mode="yaml" height={300} readOnly={mode==="VIEW"?true:false} />
                 </Form.Item>
               ) : null}
               <Form.Item
@@ -272,10 +255,11 @@ export default function TaskEditor(props: TmplListProps) {
               >
                 <Select
                   showSearch
+                  mode="multiple"
                   style={{ width: 220 }}
                   options={categoryData}
                   onChange={changeAppCategory}
-                  disabled={isDisabled}
+                  
                 />
               </Form.Item>
 
@@ -288,7 +272,7 @@ export default function TaskEditor(props: TmplListProps) {
                   placeholder="支持通过envCode搜索环境"
                   onChange={clickChange}
                   options={envDatas}
-                  disabled={isDisabled}
+                  
                 >
                   {children}
                 </Select>
@@ -305,7 +289,7 @@ export default function TaskEditor(props: TmplListProps) {
               <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" disabled={mode==="VIEW"}>
                 保存编辑
               </Button>
             </Space>

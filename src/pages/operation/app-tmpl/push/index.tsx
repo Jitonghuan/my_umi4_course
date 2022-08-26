@@ -28,9 +28,9 @@ import * as APIS from '../service';
 import AceEditor from '@/components/ace-editor';
 import './index.less';
 import { queryAppGroupReq } from './service';
-import moment from 'moment';
 
 export default function Push(props: any) {
+  const tmplDetailData:any =  history.location.state;
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -76,8 +76,8 @@ export default function Push(props: any) {
         setLabelLoading(false);
       });
   };
-  //通过session缓存信息
-  let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData') || '');
+  
+  
   // const [tmplName,setTmplName]=useState<string>(tmplDetailData?.templateName)
   let tmplName = tmplDetailData?.templateName;
 

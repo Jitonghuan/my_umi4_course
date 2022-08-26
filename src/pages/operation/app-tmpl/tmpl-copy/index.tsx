@@ -16,24 +16,17 @@ import './index.less';
 
 export default function DemoPageTb(porps: any) {
   const { Option } = Select;
-  const [count, setCount] = useState<any>([0]);
   const [createTmplForm] = Form.useForm();
   const children: any = [];
   const [categoryData, setCategoryData] = useState<any>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [source, setSource] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
   const [isDeployment, setIsDeployment] = useState<string>();
   const handleChange = (next: any[]) => {
     setSource(next);
   };
-
-  const handleAdd = () => {
-    setCount(count + 1);
-  };
-  const clickChange = () => {};
 
   useEffect(() => {
     selectTmplType();
@@ -120,7 +113,6 @@ export default function DemoPageTb(porps: any) {
   const changeAppCategory = (categoryCode: string) => {
     //调用接口 查询env
     setEnvDatas([]);
-    setAppCategoryCode(categoryCode);
     getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
       if (resp.success) {
         const datas =
@@ -267,8 +259,9 @@ export default function DemoPageTb(porps: any) {
                 labelCol={{ span: 8 }}
                 name="appCategoryCode"
                 style={{ marginTop: '50px' }}
+               
               >
-                <Select showSearch style={{ width: 220 }} disabled={isDisabled} options={categoryData} />
+                <Select showSearch  mode="multiple" style={{ width: 220 }} disabled={isDisabled} options={categoryData} />
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
@@ -278,7 +271,6 @@ export default function DemoPageTb(porps: any) {
                   showSearch
                   placeholder="支持通过envCode搜索环境"
                   // defaultValue={['a10', 'c12']}
-                  onChange={clickChange}
                   options={envDatas}
                   disabled={isDisabled}
                 >

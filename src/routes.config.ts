@@ -682,6 +682,13 @@ export default [
         key: 'app-tmpl',
         routes: [
           {
+            path: 'tmpl-create',
+            name: '应用模版编辑',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-create',
+            hideInMenu: true,
+          },
+          {
             path: 'tmpl-list',
             name: '应用模版列表',
             key: 'app-tmpl',

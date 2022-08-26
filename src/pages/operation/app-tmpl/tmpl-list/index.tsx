@@ -2,21 +2,17 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect,useMemo } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
+import {useDeleteTmpl} from "./hook"
 import { getRequest, delRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
-/** 应用开发语言(后端) */
-export type AppDevelopLanguage = 'java' | 'golang' | 'python';
-export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
-  { label: 'GOLANG', value: 'golang' },
-  { label: 'JAVA', value: 'java' },
-  { label: 'PYTHON', value: 'python' },
-];
+import {createTableColumns,appDevelopLanguageOptions} from './schema'
+
 /** 编辑页回显数据 */
 export interface TmplEdit extends Record<string, any> {
   templateCode: string;
@@ -31,6 +27,7 @@ export interface TmplEdit extends Record<string, any> {
 }
 export default function Launch() {
   const { Option } = Select;
+  const [delLoading, deleteTmpl]=useDeleteTmpl()
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -43,17 +40,48 @@ export default function Launch() {
   const [pageSize, setPageSize] = useState(20);
   const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
-  const [tmplDetailData, setTmplDetailData] = useState<any>(' ');
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
   const handleEditTask = useCallback(
-    (record: TmplEdit, index: number) => {
+    (record: TmplEdit, index: number,optType?:any) => {
       setTmplateData(record);
-      setTmplEditMode('EDIT');
-      setDataSource(dataSource);
+      setTmplEditMode(optType);
     },
     [dataSource],
   );
+  const columns = useMemo(() => {
+    return createTableColumns({
+      onCopy: (record, index) => {
+        history.push({
+          pathname: 'tmpl-create',
+          query: {
+            type: 'copy',
+            templateCode: record.templateCode,
+            languageCode: record?.languageCode,
+          },
+        })
+      },
+      onEdit: (record, index) => {
+        handleEditTask(record, index,"EDIT")
+      },
+      onView: (record, index) => {
+        handleEditTask(record, index,"VIEW")
+      },
+      onPush: (record, index) => {
+                  history.push({
+                      pathname: 'push',
+                      query: {
+                          templateCode: record?.templateCode,
+                          languageCode: record?.languageCode,
+                        },
+                      state:record
+                  });
+      },
+      onDelete: (record, index) => {
+        handleDelItem(record)
+      },
+    }) as any;
+  }, []);
 
   //查询编辑参数
   useEffect(() => {
@@ -131,9 +159,7 @@ export default function Launch() {
 
   // 查询数据
   const queryList = (value: any) => {
-    // setDataSource(dataSource);
     setLoading(true);
-
     getRequest(APIS.tmplList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -165,24 +191,18 @@ export default function Launch() {
 
   //删除数据
   const handleDelItem = (record: any) => {
-    let id = record.id;
-    delRequest(`${APIS.deleteTmpl}/${id}`).then((res: any) => {
-      if (res.success) {
-        message.success('删除成功！');
-        loadListData({
-          pageIndex: 1,
-          pageSize: 20,
-        });
-      }
-    });
+    deleteTmpl(record).then(()=>{
+      loadListData({
+        pageIndex: 1,
+        pageSize: 20,
+      });
+    })
   };
   //抽屉保存
   const saveEditData = () => {
     setTmplEditMode('HIDE');
-    setTimeout(() => {
-      loadListData({ pageIndex: 1, pageSize: 20 });
-    }, 100);
-    // window.location.reload();
+    loadListData({ pageIndex: 1, pageSize: 20 });
+   
   };
   return (
     <PageContainer>
@@ -264,7 +284,10 @@ export default function Launch() {
               type="primary"
               onClick={() =>
                 history.push({
-                  pathname: 'tmpl-add',
+                  pathname: 'tmpl-create',
+                  query: {
+                    type: 'add',
+                  },
                 })
               }
             >
@@ -276,6 +299,7 @@ export default function Launch() {
           <Table
             rowKey="id"
             dataSource={dataSource}
+            columns={columns}
             bordered
             loading={loading}
             pagination={{
@@ -289,89 +313,9 @@ export default function Launch() {
               },
               showTotal: () => `总共 ${pageTotal} 条数据`,
             }}
-            // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
-            onChange={pageSizeClick}
-          >
-            <Table.Column title="ID" dataIndex="id" width="4%" />
-            <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
-            <Table.Column title="模版语言" dataIndex="languageCode" width="8%" ellipsis />
-            <Table.Column title="模版类型" dataIndex="templateType" width="8%" ellipsis />
-            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="8%" ellipsis />
-            <Table.Column
-              title="环境"
-              dataIndex="envCode"
-              width="16%"
-              render={(current) => (
-                <span>
-                  {current?.map((item: any) => {
-                    return (
-                      <span style={{ marginLeft: 4, marginTop: 2 }}>
-                        <Tag color='#e8f8ff'><span style={{ color: '#1890ff' }}>{item}</span></Tag>
-                      </span>
-                    );
-                  })}
-                </span>
-              )}
-            />
-            <Table.Column title="备注" dataIndex="remark" width="18%" ellipsis />
-            <Table.Column
-              title="操作"
-              dataIndex="gmtModify"
-              width="18%"
-              key="action"
-              render={(_, record: TmplEdit, index) => (
-                <Space size="small">
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-copy',
-                        query: {
-                          type: 'edit',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      })
-                    }
-                  >
-                    复制
-                  </a>
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-detail',
-                        query: {
-                          type: 'info',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      })
-                    }
-                  >
-                    详情 {record.lastName}
-                  </a>
-
-                  <a onClick={() => handleEditTask(record, index)}>编辑</a>
-                  <a
-                    onClick={() => {
-                      sessionStorage.setItem('tmplDetailData', JSON.stringify(record || ''));
-                      history.push({
-                        pathname: 'push',
-                        query: {
-                          templateCode: record?.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      });
-                    }}
-                  >
-                    推送
-                  </a>
-                  <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem(record)}>
-                    <a>删除</a>
-                  </Popconfirm>
-                </Space>
-              )}
-            />
-          </Table>
+            onChange={pageSizeClick}        
+          />
+           
         </div>
       </ContentCard>
     </PageContainer>
