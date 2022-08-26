@@ -104,12 +104,26 @@ export const resourceDetailTableSchema = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          {['deployments', 'pods'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
-          {['deployments'].includes(record?.type) && (
-            <a onClick={() => rePublic(record, index, 'redeploy')}>重新部署</a>
+          {['deployments', 'pods', 'replicasets', 'statefulsets'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
+          {['deployments', 'replicasets', 'statefulsets'].includes(record?.type) && (
+            <Popconfirm
+              title={`确定要重新部署吗？`}
+              onConfirm={() => {
+                rePublic(record, index, 'redeploy')
+              }}
+            >
+              <a>重新部署</a>
+            </Popconfirm>
           )}
           {['deployments'].includes(record?.type) && (
-            <a onClick={() => stop(record, index, 'paused')}>{record?.info?.paused ? '恢复编排' : '停止编排'}</a>
+            <Popconfirm
+              title={`确定要${record?.info?.paused ? '恢复编排' : '停止编排'}吗？`}
+              onConfirm={() => {
+                stop(record, index, 'paused')
+              }}
+            >
+              <a >{record?.info?.paused ? '恢复编排' : '停止编排'}</a>
+            </Popconfirm>
           )}
           <a onClick={() => handleYaml(record, index)}>查看YAML</a>
           <Popconfirm

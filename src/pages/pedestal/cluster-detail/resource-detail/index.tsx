@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo, useContext } from 'react';
+import React, { useEffect, useCallback, useRef, useState, useMemo, useContext } from 'react';
 import { Form, Button, Input, Tag, Table, Select, message, Pagination } from 'antd';
 import type { PaginationProps } from 'antd';
 import { history } from 'umi';
@@ -12,6 +12,7 @@ import Page from '../component/page';
 import { useNodeListData } from '../hook';
 import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
+import debounce from 'lodash/debounce';
 import './index.less';
 export default function ResourceDetail(props: any) {
   const { location, children } = props;
@@ -41,13 +42,15 @@ export default function ResourceDetail(props: any) {
   const [selectType, setSelectType] = useState<string>('');
   const [data] = useNodeListData({ clusterCode: clusterCode || '' });
   const [updateLoading, setUpdateLoading] = useState(false);
-  const showTotal: PaginationProps['showTotal'] = (total) => `总共 ${total}条`;
-
+  const [allData, setAllData] = useState<any>([]);//全量数据 用于搜索
+  const [allLoading, setAllLoading] = useState(false);
+  const [showPage, setShowPage] = useState(true);
   useEffect(() => {
     const dataList = data.map((item: any) => ({ label: item.nodeName, value: item.nodeName }));
     setNodeList(dataList);
   }, [data]);
 
+  const searchValueInput = useRef(null) as any;
   // 表格列配置
   const tableColumns = useMemo(() => {
     return resourceDetailTableSchema({
@@ -117,6 +120,7 @@ export default function ResourceDetail(props: any) {
       setContinueList(['']);
     }
     queryList();
+    // queryAll();
   }, [pageIndex, limit]);
 
   useEffect(() => {
@@ -138,6 +142,7 @@ export default function ResourceDetail(props: any) {
       });
       setSelectType(storeParams?.resourceType || 'deployments');
       queryList(undefined, storeParams);
+      queryAll(storeParams);
     }
   }, [nameSpaceData, typeData]);
 
@@ -173,6 +178,21 @@ export default function ResourceDetail(props: any) {
         setLoading(false);
       });
   };
+  // 请求全量数据
+  const queryAll = (values = form.getFieldsValue()) => {
+    if (!values.resourceType) {
+      return;
+    }
+    setAllData([]);
+    getResourceList({ ...values, nodeName: values.node, limit: '', clusterCode })
+      .then((res: any) => {
+        if (res?.success) {
+          setAllData(res?.data?.items || []);
+        } else {
+          setAllData([]);
+        }
+      }).finally(() => { setAllLoading(false) })
+  }
 
   const updateResource = (record: any, updateColumn: string) => {
     const { type, namespace, name, info } = record || {};
@@ -205,8 +225,19 @@ export default function ResourceDetail(props: any) {
     setPageIndex(pageIndex + 1);
   };
 
-  const filterData = (value: string) => {
-    const data = JSON.parse(JSON.stringify(originData));
+  const filter = debounce((value) => filterData(value), 500)
+
+  const filterData = (value: string, update = true) => {
+    if (!value) {
+      setShowPage(true);
+      setDataSource(originData);
+      return;
+    }
+    setShowPage(false)
+    // if (value && !allData.length) {
+    //   setAllLoading(true)
+    // }
+    const data = JSON.parse(JSON.stringify(allData));
     const afterFilter: any = [];
     data.forEach((item: any) => {
       if (item.name?.indexOf(value) !== -1) {
@@ -214,7 +245,8 @@ export default function ResourceDetail(props: any) {
       }
     });
     setDataSource(afterFilter);
-  };
+  }
+
 
   const onSave = () => {
     setCreateYamlVisbile(false);
@@ -222,9 +254,14 @@ export default function ResourceDetail(props: any) {
   };
 
   const initialSearch = () => {
+    if (searchValueInput.current) {
+      searchValueInput.current.value = ('');
+    }
+    setShowPage(true);
     setPageIndex(1);
     setContinueList(['']);
     queryList(1);
+    queryAll();
   };
 
   const pageChange = (v: any) => {
@@ -324,13 +361,15 @@ export default function ResourceDetail(props: any) {
         </div>
         <div className="caption-right">
           搜索：
-          <Input
+          <input
+            ref={searchValueInput}
             style={{ width: 200 }}
-            size="small"
+            className="ant-input ant-input-sm"
             onChange={(e) => {
-              filterData(e.target.value);
+              filter(e.target.value)
             }}
-          ></Input>
+            disabled={!allData?.length}
+          ></input>
           <Button
             type="primary"
             onClick={() => {
@@ -347,7 +386,7 @@ export default function ResourceDetail(props: any) {
         <Table
           dataSource={dataSource}
           // dataSource={mockData}
-          loading={loading || updateLoading}
+          loading={loading || updateLoading || allLoading}
           bordered
           rowKey="id"
           pagination={false}
@@ -355,7 +394,7 @@ export default function ResourceDetail(props: any) {
         // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}
         ></Table>
         <div className="flex-end" style={{ marginTop: '10px' }}>
-          <Page
+          {showPage && <Page
             continueList={continueList}
             clickLeft={clickLeft}
             total={total}
@@ -364,7 +403,7 @@ export default function ResourceDetail(props: any) {
             clickRright={clickRright}
             pageChange={pageChange}
             defaultValue={20}
-          />
+          />}
         </div>
       </div>
     </div>
