@@ -319,7 +319,7 @@ export default function Tracking() {
                 setSelectEnv(env);
               }}
               showSearch
-              style={{ width: 140 }}
+              style={{ width: 200 }}
             />
           </div>
           <div>
