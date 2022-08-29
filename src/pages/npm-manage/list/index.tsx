@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Input, message, Table, Drawer, Tooltip, Radio, Popconfirm } from 'antd';
 import PageContainer from '@/components/page-container';
 import UserSelector, { stringToList } from '@/components/user-selector';
+import EditorTable from '@cffe/pc-editor-table';
 import DebounceSelect from '@/components/debounce-select';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
@@ -10,6 +11,12 @@ import { history } from 'umi';
 import './index.less';
 
 const { Item: FormItem } = Form;
+
+const shouldUpdate = (keys: string[]) => {
+  return (prev: any, curr: any) => {
+    return keys.some((key) => prev[key] !== curr[key]);
+  };
+};
 
 export default function NpmList() {
   const [searchField] = Form.useForm();
@@ -60,12 +67,16 @@ export default function NpmList() {
 
   async function handleSubmit() {
     const params = await form.validateFields();
-    const { ownerList, gitDir, ...others } = params;
+    const { ownerList, gitDir, linkage, relationNpm, ...others } = params;
 
     const submitData: any = {
       ...others,
       npmOwner: ownerList?.join(',') || '',
-      customParams: gitDir ? JSON.stringify({gitDir}) : ''
+      customParams: JSON.stringify({
+        gitDir,
+        linkage,
+        relationNpm,
+      })
     };
 
     setLoading(true);
@@ -223,9 +234,10 @@ export default function NpmList() {
                     onClick={() => {
                       setType('edit');
                       setVisible(true);
+                      const customParams = record.customParams ? JSON.parse(record.customParams) : {};
                       form.setFieldsValue({
                         ...record,
-                        gitDir: record.customParams ? JSON.parse(record.customParams).gitDir : '',
+                        ...customParams,
                         ownerList: stringToList(record?.npmOwner),
                       });
                     }}
@@ -285,8 +297,27 @@ export default function NpmList() {
             />
           </FormItem>
           <Form.Item label="包目录" name="gitDir">
-            <Input placeholder="适用于一个仓库下多个包的模式，填写packages下的工程名" />
+            <Input placeholder="适用于一个仓库下多个包的模式，填写包的目录" />
           </Form.Item>
+          <Form.Item label="多包一起发布" name="linkage">
+            <Radio.Group>
+              <Radio value={0}>否</Radio>
+              <Radio value={1}>是</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <FormItem noStyle shouldUpdate={shouldUpdate(['linkage'])}>
+            {({getFieldValue}) =>
+              getFieldValue('linkage') === 1 && (
+                <Form.Item label="关联包信息设置:" name="relationNpm">
+                  <EditorTable
+                    columns={[
+                      {dataIndex: 'npmName', title: '包名'},
+                      {dataIndex: 'gitDir', title: '目录'},
+                    ]}
+                  />
+                </Form.Item>)
+            }
+          </FormItem>
           <FormItem label="负责人" name="ownerList" rules={[{ required: true, message: '请输入负责人' }]}>
             <UserSelector />
           </FormItem>

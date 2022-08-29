@@ -82,6 +82,13 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     if (!item) {
       return message.warning('请选择回滚版本');
     }
+    let extra: any = {};
+    try {
+      extra = npmData?.customParams ? JSON.parse(npmData.customParams) : {};
+    } catch (e) {
+      console.log(e)
+    }
+
     let param = {
       npmName: npmData?.npmName,
       npmEnvType: getEnvType(),
@@ -91,6 +98,20 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     await postRequest(rollback, {
       data: param,
     });
+
+    if (extra?.linkage === 1 && extra?.relationNpm?.length) {
+      for (const npmItem of extra.relationNpm) {
+        let param = {
+          npmName: npmItem?.npmName,
+          npmEnvType: getEnvType(),
+          tag,
+          version: item.npmVersion,
+        };
+        await postRequest(rollback, {
+          data: param,
+        });
+      }
+    }
 
     message.success('操作成功！');
     onSubmit();

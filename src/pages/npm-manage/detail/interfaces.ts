@@ -4,4 +4,5 @@ export interface AppItemVO {
   gitAddress?: string;
   npmOwner?: string;
   desc?: string;
+  customParams?: string;
 }
