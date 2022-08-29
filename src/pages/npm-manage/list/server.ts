@@ -24,7 +24,7 @@ export const searchGitAddress = async (keyword: string) => {
     data: {
       key: keyword,
       pageIndex: 1,
-      pageSize: 60,
+      pageSize: 1000,
     },
   });
   const { dataSource } = result?.data || {};
