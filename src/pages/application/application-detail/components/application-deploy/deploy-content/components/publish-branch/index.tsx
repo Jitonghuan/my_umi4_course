@@ -19,6 +19,7 @@ import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
+import DemandDetail from './demand-detail'
 
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
@@ -71,7 +72,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [loading, setLoading] = useState<boolean>(false);
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
-
+  const [visible, setVisible] = useState(false);//关联需求详情弹窗
+  const [currentData, setCurrentData] = useState<any>([]);
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
     if (appType === 'frontend') {
@@ -265,6 +267,22 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             <Tag color={STATUS_TYPE[text]?.color || 'red'}>{STATUS_TYPE[text]?.text || '---'}</Tag>
           )}
         />
+        <Table.Column
+          dataIndex={['relationStatus', 'statusList']}
+          width={120}
+          align="center"
+          title="关联需求状态"
+          render={(value: any) => (
+            Array.isArray(value) && value.length && (
+              value.map((item: any) => (
+                <div>
+                  <Tooltip title={item.title}><span>{item.title}</span></Tooltip>
+                  <Tag>{item.status}</Tag>
+                </div>
+              ))
+            )
+          )}
+        />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={80} />
         {appData?.appType === 'frontend' ? (
@@ -319,6 +337,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           )}
         </div>
       </Modal>
+      <DemandDetail visible={visible} onClose={() => { setVisible(false) }} dataSource={currentData} ></DemandDetail>
     </div>
   );
 }
