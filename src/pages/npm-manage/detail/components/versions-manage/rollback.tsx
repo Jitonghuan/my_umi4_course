@@ -4,7 +4,10 @@ import { AppItemVO } from '@/pages/npm-manage/detail/interfaces';
 import { datetimeCellRender } from '@/utils';
 import { getVersionList, rollback } from '@/pages/npm-manage/detail/server';
 import { getRequest, postRequest } from '@/utils/request';
+import axios from "axios";
+import moment from "moment";
 import './index.less';
+
 
 export interface RollbackVersionProps {
   npmData?: AppItemVO;
@@ -100,19 +103,28 @@ export default function RollbackVersion(props: RollbackVersionProps) {
     });
 
     if (extra?.linkage === 1 && extra?.relationNpm?.length) {
-      for (const npmItem of extra.relationNpm) {
-        let param = {
-          npmName: npmItem?.npmName,
-          npmEnvType: getEnvType(),
-          tag,
-          version: item.npmVersion,
-        };
-        await postRequest(rollback, {
-          data: param,
-        });
+      const res = await axios.get(`//registry.npm.cfuture.cc/${npmData?.npmName}`);
+      if (res?.status === 200 && res.data?.versions[item.npmVersion]) {
+        let _relationNpm = res.data?.versions[item.npmVersion]?._relationNpm || [];
+        for (const npmName in _relationNpm) {
+          let param: any = {};
+          param[tag] = _relationNpm[npmName];
+          const result = await axios({
+            method: 'POST',
+            url: `//registry.npm.cfuture.cc/-/package/${npmName}/dist-tags`,
+            data: param,
+            headers: {
+              'authorization': 'base d3VtaW5nbWVpOjEyMzQ1Ng=='
+            }
+          })
+          if (result?.status !== 201) {
+            message.error(`${npmName} 回滚失败`);
+          }
+        }
+      } else {
+        message.error('关联包信息获取失败，请手动回滚')
       }
     }
-
     message.success('操作成功！');
     onSubmit();
   };
