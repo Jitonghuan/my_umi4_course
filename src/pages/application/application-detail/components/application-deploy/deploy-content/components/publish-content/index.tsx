@@ -106,7 +106,7 @@ export default function PublishContent(props: IProps) {
           // isClient: false,
           // pipelineCode,
         }).then((res) => {
-          if(res?.code===1001){
+          if (res?.code === 1001) {
             Modal.error({
               title: '退出分支出错！',
               content: res?.errorMsg,
@@ -303,6 +303,22 @@ export default function PublishContent(props: IProps) {
           title="分支review状态"
           render={(text: number) => (
             <Tag color={STATUS_TYPE[text]?.color || 'red'}>{STATUS_TYPE[text]?.text || '---'}</Tag>
+          )}
+        />
+        <Table.Column
+          dataIndex={['relationStatus', 'statusList']}
+          width={220}
+          align="center"
+          title="关联需求状态"
+          render={(value: any) => (
+            Array.isArray(value) && value.length ? (
+              value.map((item: any) => (
+                <div className='demand-cell'>
+                  <Tooltip title={item.title}><a target="_blank" href={item.url}>{item.title}</a></Tooltip>
+                  <Tag color={item.status === '待发布' ? '#87d068' : '#59a6ed'}>{item.status}</Tag>
+                </div>
+              ))
+            ) : null
           )}
         />
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
