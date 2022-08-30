@@ -68,7 +68,7 @@ export default function CreateArticle(props: CreateArticleProps) {
       updateArticle({
         id: initData?.id,
         title: params?.title,
-        content: curType === 'document' ? params?.content : description,
+        content: curType === 'announcement' ? description:params?.content,
         type: params?.type,
         priority: isPriorityChangeOption,
       }).then(() => {
@@ -78,7 +78,7 @@ export default function CreateArticle(props: CreateArticleProps) {
     if (mode === 'ADD') {
       createArticle({
         title: params?.title,
-        content: curType === 'document' ? params?.content : description,
+        content: curType === 'announcement' ? description:params?.content,
         type: params?.type,
         priority: isPriorityChangeOption,
       }).then(() => {
@@ -129,7 +129,7 @@ export default function CreateArticle(props: CreateArticleProps) {
           <Select options={typeOptions} disabled={viewDisabled} onChange={changeType} style={{ width: 200 }} />
         </Form.Item>
 
-        {curType === 'document' ? (
+        {curType !== 'announcement' ? (
           <Form.Item label="内容" name="content" rules={[{ required: true, message: '请输入' }]}>
             <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
           </Form.Item>

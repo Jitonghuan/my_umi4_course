@@ -60,3 +60,9 @@ export const deleteSystemNoticeApi = `${appConfig.apiPrefix}/adminManage/systemN
 
 /** GET 获取Matrix配置信息  */
 export const getMatrixEnvConfig = `${appConfig.apiPrefix}/adminManage/matrixEnvConfig`;
+
+/* GET 获取CHANGE LOG */
+export const getLatestChangelog =`${appConfig.apiPrefix}/adminManage/changelog/latest`;
+/* GET 查询文章  */
+
+export const getInfoList = `${appConfig.apiPrefix}/adminManage/post/list`; 

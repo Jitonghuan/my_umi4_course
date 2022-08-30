@@ -307,7 +307,7 @@ export function useDeleteSystemNotice(): [(id: number) => Promise<void>] {
 
   return [deleteSystemNotice];
 }
-//
+
 
 // 请求matrix配置信息 getMatrixEnvConfig
 export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
@@ -337,9 +337,6 @@ export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
       }
     });
   }, []);
-  // const getMatrixEnvConfig = useCallback(async () => {
-  //   await getRequest(APIS.getMatrixEnvConfig);
-  // }, []);
 
   return [configData, loadData];
 }
@@ -351,3 +348,28 @@ export const getMatrixEnvConfig = () =>
     }
     return {};
   });
+  export const useGetInfoList = (paramsObj: { type: string}) =>
+  getRequest(APIS.getInfoList,{data:{...paramsObj,pageIndex: -1, pageSize: -1 }}).then((res: any) => {
+    if (res?.success) {
+      const dataSource = res?.data?.dataSource || [];
+      return dataSource;
+    }
+    return [];
+  });
+
+
+
+
+export function usegetLatestChangelog(): [any,(version: string) => Promise<void>] {
+  const [changeLog,setChangeLog]=useState<any>("")
+  const getLatestChangelog = useCallback(async (version: string) => {
+    await getRequest(APIS.getLatestChangelog,{data:{version}}).then((result) => {
+      if (result?.success) {
+        setChangeLog(result?.data)
+        
+      }
+    });
+  }, []);
+
+  return [changeLog,getLatestChangelog];
+}

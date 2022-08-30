@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { ConfigProvider } from '@cffe/h2o-design';
+import { ConfigProvider} from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
 import 'antd/dist/antd.variable.min.css';
@@ -25,6 +25,8 @@ import {
   useQueryStemNoticeList,
   useReadList,
   getMatrixEnvConfig,
+  usegetLatestChangelog,
+  useGetInfoList
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
@@ -59,6 +61,8 @@ export default function Layout(props: any) {
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
   const [chooseDept] = useChooseDept();
   const [staffDepData, loadStaffDepData] = useStaffDepData();
+  const [versionData,setVersionData]=useState<any>([])
+  const [changeLog,getLatestChangelog]=usegetLatestChangelog();
   const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
   const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
   const [getReadList] = useReadList();
@@ -113,6 +117,21 @@ export default function Layout(props: any) {
   useEffect(() => {
     getConfig();
   }, []);
+  useEffect(()=>{
+    useGetInfoList({ type: 'versionInfo' }).then((result)=>{
+      setVersionData(result)
+      let version=""
+      result?.map((item:any)=>{
+        if(item?.title?.includes("Matrix")){
+          version=item?.content
+
+        }
+
+      })
+      getLatestChangelog(version)
+
+    })
+  },[])
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -298,6 +317,23 @@ export default function Layout(props: any) {
                   },
                   extensions: [
                     {
+                      iconName: 'FlagOutlined',
+                      iconType: 'antd',
+                      type: 'popup',
+                      content: ()=>{
+                        return <div>
+                          {console.log("data",versionData)}
+                          {versionData?.map((item:any)=>{
+                            return <div>
+                             <li><span>{item?.title}</span>:<span>{item?.content}</span></li>
+                            
+                            </div>
+
+                          })}
+                        </div>
+                      }
+                    },
+                    {
                       iconName: 'AlertOutlined',
                       iconType: 'antd',
                       type: 'customize',
@@ -305,6 +341,7 @@ export default function Layout(props: any) {
                         changeTheme();
                       },
                     },
+
                   ],
                   title: (<></>),
                   // title: (
