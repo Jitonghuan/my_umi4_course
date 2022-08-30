@@ -19,8 +19,6 @@ import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
-import { colorMap } from './util'
-
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
@@ -277,7 +275,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
               value.map((item: any) => (
                 <div className='demand-cell'>
                   <Tooltip title={item.title}><a target="_blank" href={item.url}>{item.title}</a></Tooltip>
-                  <Tag color={item.status && colorMap[item.status] ? colorMap[item.status] : 'default'}>{item.status}</Tag>
+                  <Tag color={item.status === '待发布' ? '#87d068' : '#59a6ed'}>{item.status}</Tag>
                 </div>
               ))
             ) : null
