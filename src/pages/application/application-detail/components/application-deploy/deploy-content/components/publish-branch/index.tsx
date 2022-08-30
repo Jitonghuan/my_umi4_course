@@ -269,7 +269,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         />
         <Table.Column
           dataIndex={['relationStatus', 'statusList']}
-          width={200}
+          width={220}
           align="center"
           title="关联需求状态"
           render={(value: any) => (
@@ -283,7 +283,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             ) : null
           )}
         />
-        <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} ellipsis render={(value) => <Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip>} />
+        <Table.Column dataIndex="gmtCreate" title="创建时间" width={140} ellipsis render={(value) => <Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip>} />
         <Table.Column dataIndex="createUser" title="创建人" width={80} />
         {appData?.appType === 'frontend' ? (
           <Table.Column
