@@ -5,10 +5,10 @@
 import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import { getRequest, putRequest } from '@/utils/request';
+import { getRequest, putRequest,postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
-import { TmplEdit } from '../tmpl-list';
+import { TmplEdit } from '../tmpl-list/schema';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
@@ -29,7 +29,7 @@ export default function TaskEditor(props: TmplListProps) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [source, setSource] = useState<any[]>([]);
   const [isDeployment, setIsDeployment] = useState<string>();
-  const templateCode = initData?.templateCode;
+  const broSource=initData?.broSource
   const handleChange = (next: any[]) => {
     setSource(next);
   };
@@ -65,21 +65,26 @@ export default function TaskEditor(props: TmplListProps) {
         });
       }
     }
+    let appCategoryCodeArry:any=[];
+    if(initValues?.appCategoryCode.length>0){
+      let obj:any=new Set(initValues?.appCategoryCode)
+      for (const iterator of obj) {
+        appCategoryCodeArry.push(iterator);
+       
+      }
+    }
+    
     createTmplForm.setFieldsValue({
-      templateType: initValues.templateType,
-      templateName: initValues.templateName,
-      templateValue: initValues.templateValue,
-      appCategoryCode: initValues.appCategoryCode,
+      ...initValues,
       envCodes: envCodeCurrent,
       jvm: jvm,
       tmplConfigurableItem: arr,
-      languageCode: initValues.languageCode,
-      remark: initValues?.remark,
+      appCategoryCode:initValues?.appCategoryCode[0]===""?undefined:appCategoryCodeArry
     });
-    changeAppCategory(initValues.appCategoryCode);
+    changeAppCategory();
     setIsDeployment(initValues.templateType);
     selectTmplType();
-    selectCategory();
+    selectCategory(initValues?.appCategoryCode);
   }, [mode]);
 
   //加载模版类型下拉选择
@@ -94,19 +99,42 @@ export default function TaskEditor(props: TmplListProps) {
     });
   };
   //加载应用分类下拉选择
-  const selectCategory = () => {
+  const selectCategory = (appCategoryCode?:any) => {
     getRequest(APIS.appTypeList).then((result) => {
       const list = (result.data.dataSource || []).map((n: any) => ({
         label: n.categoryName,
         value: n.categoryCode,
         data: n,
+        disabled:false
       }));
-      setCategoryData(list);
+     
+      if(appCategoryCode?.length>0){
+          let obj:any=new Set(appCategoryCode);
+          let disabledArryData:any=[]
+          for (const iterator of obj) {
+            disabledArryData.push(iterator)
+            
+          }
+           let arryData:any=[];
+           let selectedArry:any=[]
+         
+           list?.filter((item:any,index:number,self:any)=>{
+             if(disabledArryData.indexOf(item?.value)!==-1){
+              selectedArry.push({...item,disabled:true})
+             }else{
+              arryData.push(item)
+             }
+            })
+          setCategoryData(arryData.concat(selectedArry))
+        }else{
+        setCategoryData(list);
+      }
+      
     });
   };
 
   // 查询环境
-  const changeAppCategory = (categoryCode: string) => {
+  const changeAppCategory = () => {
     //调用接口 查询env
     setEnvDatas([]);
     getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
@@ -126,7 +154,7 @@ export default function TaskEditor(props: TmplListProps) {
   //保存编辑模版
 
   const createTmpl = (value: any) => {
-    let envCodesArry = [];
+    let envCodesArry :any= [];
     if (Array.isArray(value?.envCodes)) {
       envCodesArry = value?.envCodes;
     } else {
@@ -136,48 +164,54 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    if (initData?.languageCode === 'java') {
-      putRequest(APIS.update, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          jvm: value?.jvm,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: envCodesArry,
-          tmplConfigurableItem: tmplConfigurableItem || {},
-          templateCode: templateCode,
-          remark: value?.remark,
-        },
-      }).then((resp: any) => {
-        if (resp.success) {
-          message.success('保存成功！');
-          onSave?.();
-        } else {
-          message.error('保存失败');
+    let appCategoryCode=value?.appCategoryCode||[];
+    let length=appCategoryCode?.length;
+    let initLength=initData?.appCategoryCode?.length
+ 
+      let creatCodeArry:any=[];
+      let updateCodeArry:any=[];
+      appCategoryCode?.map((item:any)=>{
+        if(broSource?.appCategoryCode.indexOf(item)===-1){
+          creatCodeArry.push(item)
+
+        }else{
+          updateCodeArry.push(item);
         }
-      });
-    } else {
-      putRequest(APIS.update, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: envCodesArry,
-          tmplConfigurableItem: tmplConfigurableItem || {},
-          templateCode: templateCode,
-          remark: value?.remark,
-        },
-      }).then((resp: any) => {
-        if (resp.success) {
-          message.success('保存成功！');
-          onSave?.();
-        } else {
-          message.error('保存失败');
-        }
-      });
-    }
+      })
+      broSource?.map((item:any,index:number)=>{
+          putRequest(APIS.update, {
+            data: {
+              ...value,
+              appCategoryCode: item?.appCategoryCode|| '',
+              envCodes: envCodesArry,
+              tmplConfigurableItem: tmplConfigurableItem || {},
+              templateCode: item?.templateCode,
+             
+            },
+          }).then((resp: any) => {
+            if (resp.success&&initLength-1===index) {
+              message.success('保存成功！');
+              onSave?.();
+            } 
+          });
+      })
+      creatCodeArry?.map((item:any,index:number)=>{
+          postRequest(APIS.create, {
+            data: {
+             ...value,
+              appCategoryCode: item|| '',
+              envCodes: envCodesArry,
+              tmplConfigurableItem: tmplConfigurableItem || {},
+              
+            },
+          }).then((resp: any) => {
+            if (resp.success&&length-1===index) {
+              message.success('保存成功！');
+              onSave?.();
+            } 
+          });
+        
+      })
   };
 
   const changeTmplType = (value: any) => {
@@ -256,10 +290,17 @@ export default function TaskEditor(props: TmplListProps) {
                 <Select
                   showSearch
                   mode="multiple"
+                  className="multiple-select-appCategoryCode"
                   style={{ width: 220 }}
                   options={categoryData}
-                  onChange={changeAppCategory}
-                  
+                  onSelect={(value:any,option: any)=>{
+                   const sourceArry= categoryData?.filter((item,index:number,self)=>item?.value!==value
+                    )
+                   setCategoryData(sourceArry.concat([{...option,disabled:true}]))
+                  }}
+                  onChange={(values)=>{
+                    console.log('---->',values)
+                  }}
                 />
               </Form.Item>
 
@@ -299,3 +340,6 @@ export default function TaskEditor(props: TmplListProps) {
     </Drawer>
   );
 }
+
+
+

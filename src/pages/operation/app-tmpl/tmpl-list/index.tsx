@@ -3,42 +3,27 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useCallback, useEffect,useMemo } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
+import { Form, Input, Select, Button, Table} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import {useDeleteTmpl} from "./hook"
-import { getRequest, delRequest } from '@/utils/request';
+import { getRequest} from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
-import {createTableColumns,appDevelopLanguageOptions} from './schema'
+import {createTableColumns,appDevelopLanguageOptions,TmplEdit} from './schema';
 
-/** 编辑页回显数据 */
-export interface TmplEdit extends Record<string, any> {
-  templateCode: string;
-  templateType: string;
-  templateName: string;
-  tmplConfigurableItem: object;
-  appCategoryCode: any;
-  envCodes: string;
-  templateValue: string;
-  languageCode: string;
-  remark: string;
-}
 export default function Launch() {
   const { Option } = Select;
+  const [formTmpl] = Form.useForm();
   const [delLoading, deleteTmpl]=useDeleteTmpl()
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
-  const [envCode, setenvCode] = useState<any>(); //环境的值
-  const [templateType, setTemplateType] = useState<any>(); //模版类型
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
@@ -58,7 +43,11 @@ export default function Launch() {
             type: 'copy',
             templateCode: record.templateCode,
             languageCode: record?.languageCode,
+           
           },
+          state:{
+            broSource:record?.broSource
+          }
         })
       },
       onEdit: (record, index) => {
@@ -119,7 +108,6 @@ export default function Launch() {
     //调用接口 查询env 参数就是appCategoryCode
     //setEnvDatas
     setEnvDatas([]);
-    setAppCategoryCode(categoryCode);
     getRequest(APIS.envList, { data: { categoryCode, pageSize: -1 } }).then((resp: any) => {
       if (resp.success) {
         let dataArry: any = [];
@@ -176,11 +164,45 @@ export default function Launch() {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
-          value.appCategoryCode = appCategoryCode;
-          value.envCode = envCode;
-          value.templateType = templateType;
+          let resultMap:any={};
+          let filterResultSource:any=[];
+          let resultArry:any=[];
+          let source:any=[];
+          dataSource?.map((item:any)=>{
+            if(resultMap[item?.templateName]){
+              resultMap[item?.templateName].push(item);
+            }else{
+              resultMap[item?.templateName]=[item]
+            }
+          }); 
+          for (const key in resultMap) {
+            if (Object.prototype.hasOwnProperty.call(resultMap, key)) {
+              const element = resultMap[key]?.sort();
+              let appCategoryCodeArry:any=[];
+              if(element.length>1 ){
+                element?.map((item:any)=>{
+                  appCategoryCodeArry.push(item?.appCategoryCode)
+                })
+              }
+              if(element.length===1){
+                filterResultSource.push({
+                  ...element[0],
+                  appCategoryCode:[element[0]?.appCategoryCode],
+                  broSource:[]
+                })
+              }
+              if(element.length>1 ){
+                resultArry.push({
+                  ...element[0],
+                  appCategoryCode:appCategoryCodeArry,
+                  broSource:[...element]
+                })
+              }   
+            }
+          }
+          source=filterResultSource.concat(resultArry);
           setPageTotal(pageTotal);
-          setDataSource(dataSource);
+          setDataSource(source);
           setPageIndex(pageIndex);
         }
       })
@@ -238,9 +260,6 @@ export default function Launch() {
             <Select
               options={envDatas}
               allowClear
-              onChange={(n) => {
-                setenvCode(n);
-              }}
               showSearch
               style={{ width: 120 }}
             />
@@ -251,9 +270,6 @@ export default function Launch() {
               allowClear
               style={{ width: 120 }}
               options={templateTypes}
-              onChange={(n) => {
-                setTemplateType(n);
-              }}
             />
           </Form.Item>
           <Form.Item label="模版语言：" name="languageCode">

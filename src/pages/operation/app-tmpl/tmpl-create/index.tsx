@@ -18,10 +18,10 @@ import './index.less';
 export default function DemoPageTb(props: any) {
   const { Option } = Select;
   const flag = props.history.location.query.type;
+  const broSource=props.history.location.state?.broSource;
   const templateCode: string = props.history.location.query.templateCode;
   const languageCode = props.history.location.query.languageCode;
   const [createTmplForm] = Form.useForm();
-  const children: any = [];
   const [categoryData, setCategoryData] = useState<any>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -36,14 +36,15 @@ export default function DemoPageTb(props: any) {
   useEffect(() => {
     selectTmplType();
     selectCategory();
+    changeAppCategory();
    
-    if (flag == 'info'&&templateCode) {
+    if (flag == 'copy'&&templateCode) {
       tmplDetialResult(templateCode);
       setIsdisabled(true);
     } else {
       setIsdisabled(false);
     }
-    if(flag==="info"&&languageCode){
+    if(flag==="copy"&&languageCode){
       setLanguageCurrent(languageCode)
     }
     if(flag==="add"){
@@ -70,24 +71,30 @@ export default function DemoPageTb(props: any) {
           }
         }
 
-        let envCode = tmplresult.envCode;
-        if (envCode == '') {
-          envCode = [];
-        }
+        // let envCode = tmplresult.envCode;
+        // if (envCode == '') {
+        //   envCode = [];
+        // }
+        let appCategoryCodeArry:any=[]
+       if(broSource.length>0){
+         broSource?.map((item:any)=>{
+          appCategoryCodeArry.push(item?.appCategoryCode)
+         })
+       
+
+       }else{
+        appCategoryCodeArry=tmplresult?.appCategoryCode
+       }
 
         createTmplForm.setFieldsValue({
-          templateType: tmplresult.templateType,
-          templateName: tmplresult.templateName,
-          templateValue: tmplresult.templateValue,
-          appCategoryCode: tmplresult.appCategoryCode,
-          envCodes: envCode,
+          ...tmplresult,
+          envCodes:tmplresult.envCode==""?[]:tmplresult.envCode,
           tmplConfigurableItem: arr,
           jvm: jvm,
-          languageCode: tmplresult.languageCode,
-          remark: tmplresult.remark,
+          appCategoryCode:tmplresult?.appCategoryCode?appCategoryCodeArry:undefined      
         });
         setIsDeployment(tmplresult.templateType);
-        changeAppCategory(tmplresult.appCategoryCode);
+       
       }
     });
   };
@@ -123,7 +130,7 @@ export default function DemoPageTb(props: any) {
     setLanguageCurrent(values);
   };
   // 查询环境
-  const changeAppCategory = (categoryCode: string) => {
+  const changeAppCategory = () => {
     //调用接口 查询env
     setEnvDatas([]);
     getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
@@ -149,59 +156,24 @@ export default function DemoPageTb(props: any) {
     let appCategoryCode=value?.appCategoryCode||[];
     let length=appCategoryCode?.length;
     appCategoryCode?.map((item:string,index:number)=>{
-      if (value?.languageCode === 'java') {
+   
         postRequest(APIS.create, {
           data: {
-            templateName: value.templateName,
-            templateType: value.templateType,
-            templateValue: value.templateValue,
+           ...value,
             appCategoryCode:item || '',
             envCodes: value.envCodes || [],
             tmplConfigurableItem: tmplConfigurableItem || {},
-            languageCode: value?.languageCode,
-            jvm: value?.jvm,
-            remark: value?.remark,
-          },
-        }).then((resp: any) => {
-          if (resp.success &&length-1===index) {
-            // const datas = resp.data || [];
-            // setEnvDatas(datas.envCodes);
-            message.success("模版新增成功！")
-            history.push({
-              pathname: 'tmpl-list',
-            });
-            
-          }
-        });
-      } else {
-        postRequest(APIS.create, {
-          data: {
-            templateName: value.templateName,
-            templateType: value.templateType,
-            templateValue: value.templateValue,
-            appCategoryCode: item|| '',
-            envCodes: value.envCodes || [],
-            tmplConfigurableItem: tmplConfigurableItem || {},
-            languageCode: value?.languageCode,
-            remark: value?.remark,
-          },
-        }).then((resp: any) => {
-          if (resp.success &&length-1===index) {
-            message.success("模版新增成功！")
-            history.push({
-              pathname: 'tmpl-list',
-            });
-            // const datas = resp.data || [];
-            // setEnvDatas(datas.envCodes);
            
+          },
+        }).then((resp: any) => {
+          if (resp.success &&length-1===index) {
+            message.success("模版新增成功！")
+            history.push({
+              pathname: 'tmpl-list',
+            });   
           }
         });
-      }
-
-    })
-
-
-   
+    }) 
   };
 
   //提交复制模版
@@ -211,65 +183,40 @@ export default function DemoPageTb(props: any) {
       return prev;
     }, {} as any);
 
-    let valArr = [];
+    let valArr:any = [];
     if (Array.isArray(value.envCodes)) {
       valArr = value.envCodes;
     } else {
       valArr.push(value.envCodes);
     }
-    if (languageCode === 'java') {
-      postRequest(APIS.create, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: valArr || [],
-          tmplConfigurableItem: tmplConfigurableItem || {},
-          jvm: value?.jvm,
-          languageCode: value?.languageCode,
-          remark: value?.remark,
-          // templateCode:templateCode
-        },
-      }).then((resp: any) => {
-        if (resp.success) {
-          const datas = resp.data || [];
-          setEnvDatas(datas.envCodes);
-          history.push({
-            pathname: 'tmpl-list',
-          });
-        }
-      });
-    } else {
-      postRequest(APIS.create, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: valArr || [],
-          tmplConfigurableItem: tmplConfigurableItem || {},
-
-          languageCode: value?.languageCode,
-          remark: value?.remark,
-          // templateCode:templateCode
-        },
-      }).then((resp: any) => {
-        if (resp.success) {
-          const datas = resp.data || [];
-          setEnvDatas(datas.envCodes);
-          history.push({
-            pathname: 'tmpl-list',
-          });
-        }
-      });
-    }
+    let appCategoryCode=value?.appCategoryCode||[];
+    let length=appCategoryCode?.length;
+    appCategoryCode?.map((item:string,index:number)=>{
+    
+        postRequest(APIS.create, {
+          data: {
+            ...value,
+            appCategoryCode: item || '',
+            envCodes: valArr || [],
+            tmplConfigurableItem: tmplConfigurableItem || {},
+            
+          },
+        }).then((resp: any) => {
+          if (resp.success &&length-1===index) {
+            message.success("模版复制成功！")
+            history.push({
+              pathname: 'tmpl-list',
+            });
+          }
+        });
+    })
+   
   };
 
   return (
-    <PageContainer className="tmpl-detail">
+    <PageContainer className="tmpl-create">
       <ContentCard>
-        <Form form={createTmplForm} onFinish={createTmpl}>
+        <Form form={createTmplForm} onFinish={flag==="add"?createTmpl:copyCreateTmpl}>
           <Row>
             <div>
               <Form.Item label="模版类型：" name="templateType" rules={[{ required: true, message: '这是必选项' }]}>
@@ -289,13 +236,13 @@ export default function DemoPageTb(props: any) {
                   style={{ width: 150 }}
                   options={appDevelopLanguageOptions}
                   onChange={selectLanguage}
-                  disabled={flag==="add"?true:false}
+                  disabled={flag==="add"?false:true}
                 />
               </Form.Item>
             </div>
             <div style={{ paddingLeft: 12 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
+                <Input style={{ width: 220 }} placeholder="请输入" ></Input>
               </Form.Item>
             </div>
           </Row>
@@ -323,7 +270,7 @@ export default function DemoPageTb(props: any) {
                       colProps: { width: 280 },
                     },
                   ]}
-                  disabled={isDisabled}
+                
                 />
               </Form.Item>
               {isDeployment === 'deployment' && languageCurrent === 'java' ? <span>JVM参数:</span> : ''}
@@ -341,7 +288,7 @@ export default function DemoPageTb(props: any) {
                 style={{ marginTop: '50px' }}
                
               >
-                <Select showSearch  mode="multiple" style={{ width: 220 }} disabled={isDisabled} options={categoryData} />
+                <Select showSearch  mode="multiple" style={{ width: 220 }}  options={categoryData} />
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
@@ -350,9 +297,8 @@ export default function DemoPageTb(props: any) {
                   style={{ width: 220 }}
                   showSearch
                   placeholder="支持通过envCode搜索环境"
-                  // defaultValue={['a10', 'c12']}
                   options={envDatas}
-                  disabled={isDisabled}
+                 
 
                 />
               </Form.Item>
@@ -377,7 +323,7 @@ export default function DemoPageTb(props: any) {
               >
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" >
                 提交
               </Button>
             </Space>

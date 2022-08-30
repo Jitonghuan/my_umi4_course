@@ -1,5 +1,18 @@
 import { Space, Popconfirm, Tooltip,Tag,Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
+/** 编辑页回显数据 */
+export interface TmplEdit extends Record<string, any> {
+  templateCode: string;
+  templateType: string;
+  templateName: string;
+  tmplConfigurableItem: object;
+  appCategoryCode: any;
+  envCodes: string;
+  templateValue: string;
+  languageCode: string;
+  remark: string;
+  broSource:any
+}
 /** 应用开发语言(后端) */
 export type AppDevelopLanguage = 'java' | 'golang' | 'python';
 export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
@@ -21,7 +34,7 @@ export const createTableColumns = (params: {
         title: 'ID',
         dataIndex: 'id',
         key: 'id',
-        width: 120,
+        width: 100,
       },
       {
         title: '模版名称',
@@ -49,9 +62,9 @@ export const createTableColumns = (params: {
         title: '应用分类',
         dataIndex: 'appCategoryCode',
         key: 'appCategoryCode',
-        width: '8%',
+        width: '12%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (appCategoryCode) => <Tooltip placement="topLeft" title={appCategoryCode?.map((item:string)=>{return <span style={{padding:2}}><Tag color="green">{item}</Tag></span>})}>{appCategoryCode?.map((item:string)=>{return <span style={{padding:1}}><Tag color="green">{item}</Tag></span>})}</Tooltip>,
       },
       {
         title: '环境',
@@ -83,7 +96,7 @@ export const createTableColumns = (params: {
         title: '备注',
         dataIndex: 'remark',
         key: 'remark',
-        width: '18%',
+        width: '14%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },

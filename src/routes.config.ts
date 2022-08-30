@@ -695,33 +695,11 @@ export default [
             component: '@/pages/operation/app-tmpl/tmpl-list',
             hideInMenu: true,
           },
-
-          {
-            path: 'tmpl-detail',
-            name: '应用模版详情',
-            key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-detail',
-            hideInMenu: true,
-          },
           {
             path: 'push',
             name: '推送模版',
             key: 'app-tmpl',
             component: '@/pages/operation/app-tmpl/push',
-            hideInMenu: true,
-          },
-          {
-            path: 'tmpl-add',
-            name: '新增应用模版',
-            key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-add',
-            hideInMenu: true,
-          },
-          {
-            path: 'tmpl-copy',
-            name: '复制应用模版',
-            key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-copy',
             hideInMenu: true,
           },
         ],
