@@ -69,11 +69,11 @@ export default function TaskEditor(props: TmplListProps) {
     if(initValues?.appCategoryCode.length>0){
       let obj:any=new Set(initValues?.appCategoryCode)
       for (const iterator of obj) {
-        appCategoryCodeArry.push(iterator);
-       
+        if(iterator!==""){
+          appCategoryCodeArry.push(iterator);
+        }
       }
     }
-    
     createTmplForm.setFieldsValue({
       ...initValues,
       envCodes: envCodeCurrent,
@@ -119,7 +119,7 @@ export default function TaskEditor(props: TmplListProps) {
            let selectedArry:any=[]
          
            list?.filter((item:any,index:number,self:any)=>{
-             if(disabledArryData.indexOf(item?.value)!==-1){
+             if(disabledArryData?.indexOf(item?.value)!==-1){
               selectedArry.push({...item,disabled:true})
              }else{
               arryData.push(item)
@@ -164,18 +164,17 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    let appCategoryCode=value?.appCategoryCode||[];
-    let length=appCategoryCode?.length;
-    let initLength=initData?.appCategoryCode?.length
- 
-      let creatCodeArry:any=[];
-      let updateCodeArry:any=[];
-      appCategoryCode?.map((item:any)=>{
-        if(broSource?.appCategoryCode.indexOf(item)===-1){
+    let appCategoryCodeArry=value?.appCategoryCode||[];
+    let length=appCategoryCodeArry?.length;
+    let initLength=initData?.appCategoryCode?.length;
+    let creatCodeArry:any=[];
+    let broAppCategoryCode:any=[];
+    broSource?.map((item:any)=>{
+      broAppCategoryCode.push(item?.appCategoryCode)
+    })
+    appCategoryCodeArry?.map((item:any)=>{
+        if(broAppCategoryCode?.indexOf(item)===-1){
           creatCodeArry.push(item)
-
-        }else{
-          updateCodeArry.push(item);
         }
       })
       broSource?.map((item:any,index:number)=>{
@@ -189,13 +188,14 @@ export default function TaskEditor(props: TmplListProps) {
              
             },
           }).then((resp: any) => {
-            if (resp.success&&initLength-1===index) {
+            if (resp.success&&initLength-1===index&&creatCodeArry.length<1) {
               message.success('保存成功！');
               onSave?.();
             } 
           });
       })
-      creatCodeArry?.map((item:any,index:number)=>{
+      if(creatCodeArry.length>0){
+        creatCodeArry?.map((item:any,index:number)=>{
           postRequest(APIS.create, {
             data: {
              ...value,
@@ -205,13 +205,16 @@ export default function TaskEditor(props: TmplListProps) {
               
             },
           }).then((resp: any) => {
-            if (resp.success&&length-1===index) {
+            if (resp.success&&creatCodeArry.length-1===index) {
               message.success('保存成功！');
               onSave?.();
             } 
           });
         
       })
+
+      }
+     
   };
 
   const changeTmplType = (value: any) => {
@@ -220,7 +223,7 @@ export default function TaskEditor(props: TmplListProps) {
   return (
     <Drawer
       visible={mode !== 'HIDE'}
-      title={mode === 'EDIT' ? '编辑模版' : ''}
+      title={mode === 'EDIT' ? '编辑模版' : '查看模版'}
       maskClosable={false}
       onClose={onClose}
       width={'70%'}
@@ -278,7 +281,7 @@ export default function TaskEditor(props: TmplListProps) {
               {isDeployment == 'deployment' && initData?.languageCode === 'java' ? <span>JVM参数:</span> : null}
               {isDeployment == 'deployment' && initData?.languageCode === 'java' ? (
                 <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} readOnly={mode==="VIEW"?true:false} />
+                  <AceEditor mode="yaml" height={300} readOnly={mode==="VIEW"} />
                 </Form.Item>
               ) : null}
               <Form.Item
@@ -293,14 +296,13 @@ export default function TaskEditor(props: TmplListProps) {
                   className="multiple-select-appCategoryCode"
                   style={{ width: 220 }}
                   options={categoryData}
+                  disabled={mode==="VIEW"}
                   onSelect={(value:any,option: any)=>{
                    const sourceArry= categoryData?.filter((item,index:number,self)=>item?.value!==value
                     )
                    setCategoryData(sourceArry.concat([{...option,disabled:true}]))
                   }}
-                  onChange={(values)=>{
-                    console.log('---->',values)
-                  }}
+                  
                 />
               </Form.Item>
 
