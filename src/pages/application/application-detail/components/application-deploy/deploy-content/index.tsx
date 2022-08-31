@@ -48,10 +48,12 @@ export default function DeployContent(props: DeployContentProps) {
   const [updating, setUpdating] = useState(false);
   // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
   const [deployInfo, setDeployInfo] = useState<any>({});
-  const [branchInfo, setBranchInfo] = useState<{
-    deployed: any[];
-    unDeployed: any[];
-  }>({ deployed: [], unDeployed: [] });
+  // const [branchInfo, setBranchInfo] = useState<{
+  //   deployed: any[];
+  //   unDeployed: any[];
+  // }>({ deployed: [], unDeployed: [] });
+  const [deployed, setDeployed] = useState<any>([]);
+  const [unDeployed, setUnDeployed] = useState<any>([]);
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
@@ -84,10 +86,10 @@ export default function DeployContent(props: DeployContentProps) {
     } else {
       setDeployInfo({});
     }
-    if (!branchInfo?.deployed?.length) {
+    if (!deployed?.length) {
       setDeployedLoad(true)
     }
-    if (!branchInfo?.unDeployed?.length) {
+    if (!unDeployed?.length) {
       setUnDeployedLoad(true)
     }
     const resp2 = await queryFeatureDeployed({
@@ -98,6 +100,7 @@ export default function DeployContent(props: DeployContentProps) {
       masterBranch: masterBranchName.current,
       needRelationInfo: 1
     });
+    setDeployed(resp2?.data || [])
     setDeployedLoad(false);
 
     const resp3 = await queryFeatureDeployed({
@@ -109,7 +112,7 @@ export default function DeployContent(props: DeployContentProps) {
       masterBranch: masterBranchName.current,
       needRelationInfo: 1
     });
-
+    setUnDeployed(resp3?.data || [])
     setUnDeployedLoad(false);
     // 如果有部署信息，且为线上，则更新应用状态
     if (envTypeCode === 'prod' && appData) {
@@ -127,10 +130,10 @@ export default function DeployContent(props: DeployContentProps) {
     }
     // }
 
-    setBranchInfo({
-      deployed: resp2?.data || [],
-      unDeployed: resp3?.data || [],
-    });
+    // setBranchInfo({
+    //   deployed: resp2?.data || [],
+    //   unDeployed: resp3?.data || [],
+    // });
 
     setUpdating(false);
   };
@@ -221,7 +224,7 @@ export default function DeployContent(props: DeployContentProps) {
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
             pipelineCode={pipelineCode}
-            deployedList={branchInfo.deployed}
+            deployedList={deployed}
             appStatusInfo={appStatusInfo}
             loading={deployedLoad}
             onOperate={onOperate}
@@ -231,8 +234,8 @@ export default function DeployContent(props: DeployContentProps) {
           />
           <PublishBranch
             deployInfo={deployInfo}
-            hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
-            dataSource={branchInfo.unDeployed}
+            hasPublishContent={!!(deployed && deployed.length)}
+            dataSource={unDeployed}
             env={envTypeCode}
             onSearch={searchUndeployedBranch}
             pipelineCode={pipelineCode}
