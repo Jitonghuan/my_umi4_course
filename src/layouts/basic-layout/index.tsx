@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { ConfigProvider} from '@cffe/h2o-design';
+import { ConfigProvider,Divider} from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
 import 'antd/dist/antd.variable.min.css';
@@ -12,6 +12,7 @@ import appConfig from '@/app.config';
 import { DFSFunc } from '@/utils';
 import { IconMap } from '@/components/vc-icons';
 import AllMessage from '@/components/all-message';
+import ChangeLog from '@/components/change-log'
 import {
   FeContext,
   useDocumentTitle,
@@ -73,6 +74,7 @@ export default function Layout(props: any) {
   const effectResize = useDebounce(width, 100);
   const [posVisible, setPosVisible] = useState<boolean>(false);
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
+  const [changeLogMode, setChangeLogMode] = useState<EditorMode>('HIDE');
   const [initFlg, setInitFlg] = useState(false);
   const isPageInIFrame = () => window.self !== window.top;
   const oneKeyRead = (idsArry: any) => {
@@ -124,12 +126,9 @@ export default function Layout(props: any) {
       result?.map((item:any)=>{
         if(item?.title?.includes("Matrix")){
           version=item?.content
-
         }
-
       })
       getLatestChangelog(version)
-
     })
   },[])
 
@@ -205,6 +204,11 @@ export default function Layout(props: any) {
   };
   return (
     <ConfigProvider locale={zhCN} >
+      <ChangeLog 
+      mode={changeLogMode}
+      infoData={changeLog} 
+      onClose={()=>{setChangeLogMode("HIDE")}}
+      />
       <AllMessage
         mode={allMessageMode}
         allData={stemNoticeListData}
@@ -317,20 +321,25 @@ export default function Layout(props: any) {
                   },
                   extensions: [
                     {
-                      iconName: 'FlagOutlined',
+                      iconName: 'SettingOutlined',
                       iconType: 'antd',
                       type: 'popup',
                       content: ()=>{
-                        return <div>
-                          {console.log("data",versionData)}
-                          {versionData?.map((item:any)=>{
-                            return <div>
-                             <li><span>{item?.title}</span>:<span>{item?.content}</span></li>
-                            
+                        return(
+                          <div className="header-version-info">
+                            <p className="header-version-info-title">Matrix当前版本信息</p>
+                            <Divider className="header-version-info-divider" />
+                          {versionData?.map((item: any) => {
+                            return (<div >
+
+                              <li><span>{item?.title}</span>:<span>{item?.content}</span></li>
                             </div>
 
+                            )
                           })}
-                        </div>
+                          <li className="header-version-info-change-log"><a onClick={()=>{setChangeLogMode("VIEW")}}>查看ChangeLog</a></li>
+                          </div>
+                        )
                       }
                     },
                     {

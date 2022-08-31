@@ -1,7 +1,7 @@
 import { postRequest, getRequest, putRequest } from '@/utils/request';
 import { AppItemVO } from '../../interfaces';
 import appConfig from '@/app.config';
-import { createAppUrl, updateAppUrl, searchGitAddressUrl, queryEnvList } from '../../service';
+import { createAppUrl, updateAppUrl, searchGitAddressUrl, queryEnvList,searchGitAddressPreciseUrl } from '../../service';
 /* 查询影响到的环境 */
 export const getBackendAppResourcesEnvApi = `${appConfig.apiPrefix}/appManage/getBackendAppResourcesEnv`;
 export const getBackendAppResourcesEnv = (appCode:string) =>
@@ -35,6 +35,22 @@ export const searchGitAddress = async (keyword: string) => {
   if (!keyword) return [];
 
   const result = await getRequest(searchGitAddressUrl, {
+    data: {
+      key: keyword,
+      pageIndex: 1,
+      pageSize: 100,
+    },
+  });
+  const { dataSource } = result?.data || {};
+  return (dataSource || []).map((str: string) => ({ label: str, value: str })) as IOption[];
+};
+
+// searchGitAddressPreciseUrl
+/** 精准搜索 git 仓库 */
+export const searchGitPreciseAddress = async (keyword: string) => {
+  if (!keyword) return [];
+
+  const result = await getRequest(searchGitAddressPreciseUrl, {
     data: {
       key: keyword,
       pageIndex: 1,
