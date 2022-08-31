@@ -77,6 +77,7 @@ export default function Layout(props: any) {
   const [changeLogMode, setChangeLogMode] = useState<EditorMode>('HIDE');
   const [initFlg, setInitFlg] = useState(false);
   const isPageInIFrame = () => window.self !== window.top;
+  const rootCls = 'header-version-info';
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
       loadUnreadNum();
@@ -286,18 +287,18 @@ export default function Layout(props: any) {
                       type: 'popup',
                       content: ()=>{
                         return(
-                          <div className="header-version-info">
-                            <p className="header-version-info-title"><b>Matrix当前版本信息</b></p>
-                            <Divider className="header-version-info-divider" />
+                          <div className={rootCls}>
+                            <p className={`${rootCls}-title`}><b>Matrix当前版本信息</b></p>
+                            <Divider className={`${rootCls}-divider`}/>
                           {versionData?.map((item: any) => {
                             return (<div >
 
-                              <li><span>{item?.title}</span>:<span>{item?.content}</span></li>
+                              <li ><span className={`${rootCls}-left`}>{item?.title}</span>:<span>{item?.content}</span></li>
                             </div>
 
                             )
                           })}
-                          <li className="header-version-info-change-log"><a onClick={()=>{setChangeLogMode("VIEW")}}>查看ChangeLog</a></li>
+                          <li className={`${rootCls}-change-log`}><a onClick={()=>{setChangeLogMode("VIEW")}}>查看ChangeLog</a></li>
                           </div>
                         )
                       }

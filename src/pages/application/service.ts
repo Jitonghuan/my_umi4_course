@@ -170,8 +170,6 @@ export const updateAppUrl = `${appConfig.apiPrefix}/appManage/update`;
 /** GET 搜索 git 仓库 */
 export const searchGitAddressUrl = `${appConfig.apiPrefix}/appManage/searchGitAddress`;
 
-/* Git 仓库精准搜索 */ 
-export const searchGitAddressPreciseUrl = `${appConfig.apiPrefix}/appManage/searchGitAddressprecise`;
 /** POST 创建前端路由模板 */
 export const createFeRouteConfig = `${appConfig.apiPrefix}/appManage/feRouteTemplate/create`;
 

@@ -218,12 +218,21 @@ element.style {
 }
 .header-version-info{
   padding: 10px;
+  width: 100%;
+  height: 100%;
   overflow: auto;
-  .header-version-info-title{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
+  // &-left{
+  //   color: #3591ff ;
+  // }
+  
+  &-title{
     margin: 0px;
     // height: 18px;
   }
-  .header-version-info-divider{
+  &-divider{
     margin: 0px;
   }
 }

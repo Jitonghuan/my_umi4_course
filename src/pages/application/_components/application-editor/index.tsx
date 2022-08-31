@@ -3,9 +3,9 @@
 // @create 2021/08/25 09:23
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal, Tag,Checkbox,Row } from 'antd';
+import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal, Tag,Checkbox,Row ,Tooltip} from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined,QuestionCircleOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import DebounceSelect from '@/components/debounce-select';
 import UserSelector, { stringToList } from '@/components/user-selector';
@@ -61,7 +61,10 @@ export default function ApplicationEditor(props: IProps) {
 
   const [form] = Form.useForm<AppItemVO>();
   const onChange = (e: CheckboxChangeEvent) => {
-    setIsPrecise(e)
+    form.setFieldValue("gitAddress","")
+    setIsPrecise(e.target.checked);
+
+
   };
   
 
@@ -251,6 +254,7 @@ export default function ApplicationEditor(props: IProps) {
       setLoading(false);
     }
   }, [isEdit, form]);
+  const tooltipText="精准搜索需要输入完整的git工程地址进行搜索，例：https://gitlab.cfuture.shop/fe-xxx/umi-plugins/hbos.git"
 
   return (
     <Drawer
@@ -342,7 +346,7 @@ export default function ApplicationEditor(props: IProps) {
           <Input.TextArea placeholder="请输入应用描述" />
         </FormItem>
         <Row>
-        <FormItem style={{width:'80%',paddingRight:10}} label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
+        <FormItem style={{width:'78%',paddingRight:10}} label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
           <DebounceSelect
             fetchOptions={isPrecise? searchGitPreciseAddress: searchGitAddress}
             labelInValue={false}
@@ -352,6 +356,9 @@ export default function ApplicationEditor(props: IProps) {
         </FormItem>
         <Form.Item>
         <Checkbox onChange={onChange}>是否精准搜索</Checkbox>
+        <Tooltip title={tooltipText} placement="topRight">
+          <QuestionCircleOutlined />
+        </Tooltip>
         </Form.Item>
 
         </Row>
