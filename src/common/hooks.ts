@@ -307,12 +307,12 @@ export function useDeleteSystemNotice(): [(id: number) => Promise<void>] {
 
   return [deleteSystemNotice];
 }
-//
+
 
 // 请求matrix配置信息 getMatrixEnvConfig
 export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
   const [configData, setConfigData] = useState<matrixConfigProps>({
-    curEnvType: 'dev', //监狱管理局
+    curEnvType: 'dev',
     locationHref: '',
     domainName: 'http://c2f.apex-dev.cfuture.shop',
     wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
@@ -324,30 +324,61 @@ export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
       if (result?.success) {
         setConfigData(result?.data);
         // @ts-ignore
-        window.matrixConfigData = result?.data || {
-          curEnvType: 'dev', //监狱管理局
-          locationHref: '',
-          domainName: 'http://c2f.apex-dev.cfuture.shop',
-          wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
-          LogoName: '',
-          waterMarkName: '',
-        };
+        window.matrixConfigData = result?.data 
       } else {
         return;
       }
     });
   }, []);
-  // const getMatrixEnvConfig = useCallback(async () => {
-  //   await getRequest(APIS.getMatrixEnvConfig);
-  // }, []);
-
   return [configData, loadData];
 }
 export const getMatrixEnvConfig = () =>
   getRequest(APIS.getMatrixEnvConfig).then((res: any) => {
     if (res?.success) {
-      const dataSource = res?.data || {};
-      return dataSource;
+      let hostAdress= window.location.host;
+      let envConfigInfo={
+        LogoName: "测试",
+        curEnvType: "dev",
+        domainName: "http://c2f.apex-dev.cfuture.shop",
+        key: "matrix-local.cfuture.shop:9091",
+        locationHref: "dev",
+        waterMarkName: "测试环境",
+        wsPrefixName: "ws://matrix-api-test.cfuture.shop",
+      };
+      const dataSource = res?.data?.matrixEnvConfigs || {};
+      dataSource?.map((item:any)=>{
+        if(item?.key==hostAdress){
+          envConfigInfo=item
+        }
+
+      })
+
+      return envConfigInfo;
     }
     return {};
   });
+  export const useGetInfoList = (paramsObj: { type: string}) =>
+  getRequest(APIS.getInfoList,{data:{...paramsObj,pageIndex: -1, pageSize: -1 }}).then((res: any) => {
+    if (res?.success) {
+      const dataSource = res?.data?.dataSource || [];
+      return dataSource;
+    }
+    return [];
+  });
+
+
+
+
+export function usegetLatestChangelog(): [any,(version: string) => Promise<void>] {
+  const [changeLog,setChangeLog]=useState<any>("")
+  const getLatestChangelog = useCallback(async (version: string) => {
+    await getRequest(APIS.getLatestChangelog,{data:{version}}).then((result) => {
+      if (result?.success) {
+        setChangeLog(result?.data)
+        
+      }
+    });
+  }, []);
+
+  return [changeLog,getLatestChangelog];
+}
