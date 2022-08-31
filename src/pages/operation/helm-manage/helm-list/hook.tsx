@@ -114,6 +114,7 @@ export const queryChartVersions = (paramsObj?: { chartName: string; clusterName?
         dataArry.push({
           label: item?.chartLink,
           value: item?.chartLink,
+          
         });
       });
 

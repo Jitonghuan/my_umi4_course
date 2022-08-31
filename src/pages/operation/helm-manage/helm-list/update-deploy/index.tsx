@@ -32,6 +32,10 @@ export default function UpdateDeploy(props: ReleaseProps) {
       });
       queryChartVersions({ clusterName: curClusterName, chartName: curRecord?.chartName }).then((res) => {
         setChartLinkOptions(res);
+        const currentChartVersion =res?.map((item:any)=>{
+          
+
+        })
       });
     }
     return () => {
