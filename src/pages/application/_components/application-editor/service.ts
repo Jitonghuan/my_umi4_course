@@ -37,6 +37,24 @@ export const searchGitAddress = async (keyword: string) => {
   const result = await getRequest(searchGitAddressUrl, {
     data: {
       key: keyword,
+      precise:false,
+      pageIndex: 1,
+      pageSize: 100,
+    },
+  });
+  const { dataSource } = result?.data || {};
+  return (dataSource || []).map((str: string) => ({ label: str, value: str })) as IOption[];
+};
+
+// searchGitAddressPreciseUrl
+/** 精准搜索 git 仓库 */
+export const searchGitPreciseAddress = async (keyword: string) => {
+  if (!keyword) return [];
+
+  const result = await getRequest(searchGitAddressUrl, {
+    data: {
+      key: keyword,
+      precise:true,
       pageIndex: 1,
       pageSize: 100,
     },

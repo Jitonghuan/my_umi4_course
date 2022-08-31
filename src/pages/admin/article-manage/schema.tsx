@@ -5,6 +5,7 @@ import type { ColumnsType } from 'antd/lib/table';
 export const typeOptions = [
   { key: 'announcement', label: '公告', value: 'announcement' },
   { key: 'document', label: '文件', value: 'document' },
+  {key:"versionInfo",label:"版本信息",value:"versionInfo"}
 ];
 // 列表页-查询表单
 export const createFormColumns = (params: { onTypeChange: (value: string) => void }) => {
