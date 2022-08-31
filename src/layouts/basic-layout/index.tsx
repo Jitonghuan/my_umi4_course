@@ -80,33 +80,7 @@ export default function Layout(props: any) {
 
   async function getConfig() {
     const res = await getMatrixEnvConfig();
-    let infoSource = window.location.href?.includes('gushangke')
-      ? {
-        curEnvType: 'gushangke',
-        locationHref: 'gushangke',
-        domainName: 'http://c2f.apex.gushangke.com',
-        wsPrefixName: 'ws://matrix-api.gushangke.com',
-        LogoName: '--富阳骨伤',
-        waterMarkName: '富阳骨伤',
-      }
-      : {
-        curEnvType: res?.curEnvType,
-        locationHref: res?.locationHref,
-        domainName: res?.domainName,
-        wsPrefixName: res?.wsPrefixName,
-        LogoName: res?.LogoName,
-        waterMarkName: res?.waterMarkName,
-      };
-    setMatrixConfigInfo(infoSource);
-    // @ts-ignore
-    window.matrixConfigData = res || {
-      curEnvType: 'dev',
-      locationHref: '',
-      domainName: 'http://c2f.apex-dev.cfuture.shop',
-      wsPrefixName: 'ws://matrix-api-test.cfuture.shop',
-      LogoName: '',
-      waterMarkName: '',
-    };
+    setMatrixConfigInfo(res);
     setInitFlg(true);
   }
 
@@ -164,9 +138,7 @@ export default function Layout(props: any) {
   let deptitle = { modal_title: '切换部门' };
   ConfigProvider.config({
     theme: {
-      // primaryColor: '#1973CC',
       primaryColor: '#3591ff'
-      // primaryColor: '#2f70f4'
     },
   });
 
@@ -253,21 +225,9 @@ export default function Layout(props: any) {
                 headerProps={{
                   // env: getEnv(),
                   defaultTitle: appConfig.title,
-                  userApi: matrixConfigInfo?.domainName
-                    ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`
-                    : window.location.href?.includes('gushangke')
-                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/getLoginUserInfo'
-                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
-                  logoutApi: matrixConfigInfo?.domainName
-                    ? `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`
-                    : window.location.href?.includes('gushangke')
-                      ? 'http://c2f.apex.gushangke.com/kapi/apex-sso/logout'
-                      : `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
-                  loginUrl: matrixConfigInfo?.domainName
-                    ? `${matrixConfigInfo?.domainName}/login`
-                    : window.location.href?.includes('gushangke')
-                      ? 'http://c2f.apex.gushangke.com/login'
-                      : `${matrixConfigInfo?.domainName}/login`,
+                  userApi: `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
+                  logoutApi: `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
+                  loginUrl:  `${matrixConfigInfo?.domainName}/login`,
                   onClickPosition: () => {
                     setPosVisible(true);
                     // @ts-ignore
