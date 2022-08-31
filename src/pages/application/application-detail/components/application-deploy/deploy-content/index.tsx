@@ -13,7 +13,6 @@ import {
   queryFeatureDeployed,
   queryApplicationStatus,
   queryActiveDeployInfo,
-  getDemandList
 } from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
@@ -85,10 +84,10 @@ export default function DeployContent(props: DeployContentProps) {
     } else {
       setDeployInfo({});
     }
-    if (!branchInfo.deployed.length) {
+    if (!branchInfo?.deployed?.length) {
       setDeployedLoad(true)
     }
-    if (!branchInfo.unDeployed.length) {
+    if (!branchInfo?.unDeployed?.length) {
       setUnDeployedLoad(true)
     }
     const resp2 = await queryFeatureDeployed({

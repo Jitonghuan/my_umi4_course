@@ -734,11 +734,3 @@ export const deletePipeline = (params: { pipelineCode: string }) =>
     data: params,
   });
 
-const demandUrl = `${appConfig.apiPrefix}/releaseManage/branch/featureDeployed/relation`
-
-// 应用部署-获取分支关联需求状态
-export const getDemandList = async (params: any) => {
-  return getRequest(demandUrl, {
-    data: params,
-  });
-};
