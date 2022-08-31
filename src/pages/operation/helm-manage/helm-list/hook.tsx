@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
+import { datetimeCellRender } from '@/utils';
 import { message } from 'antd';
 /** 查询release列表 */
 export const queryReleaseList = (paramsObj?: {
@@ -114,6 +115,8 @@ export const queryChartVersions = (paramsObj?: { chartName: string; clusterName?
         dataArry.push({
           label: item?.chartLink,
           value: item?.chartLink,
+          created:item?.created?datetimeCellRender(item?.created):""
+
           
         });
       });

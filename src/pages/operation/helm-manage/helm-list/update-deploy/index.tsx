@@ -32,7 +32,17 @@ export default function UpdateDeploy(props: ReleaseProps) {
       });
       queryChartVersions({ clusterName: curClusterName, chartName: curRecord?.chartName }).then((res) => {
         setChartLinkOptions(res);
+        if(res?.length==1){
+          form.setFieldValue("chartLink",res[0]?.chartLink)
+
+        }else if(res?.length>0){
+          
+
+
+        }
+
         const currentChartVersion =res?.map((item:any)=>{
+          
           
 
         })
