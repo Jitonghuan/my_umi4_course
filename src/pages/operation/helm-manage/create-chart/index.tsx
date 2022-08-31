@@ -276,7 +276,7 @@ export default function CreateChart() {
                 <Button
                   danger
                   onClick={() => {
-                    createReleaseForm.resetFields();
+                    history.push('/matrix/operation/helm-manage/helm-list');
                   }}
                 >
                   取消
