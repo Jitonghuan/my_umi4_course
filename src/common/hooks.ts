@@ -335,18 +335,20 @@ export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
 export const getMatrixEnvConfig = () =>
   getRequest(APIS.getMatrixEnvConfig).then((res: any) => {
     if (res?.success) {
-      let hostAdress= window.location.host;
+      let hostAdress= window.location.origin;
       let envConfigInfo={
         LogoName: "测试",
         curEnvType: "dev",
         domainName: "http://c2f.apex-dev.cfuture.shop",
-        key: "matrix-local.cfuture.shop:9091",
+        key: "http://matrix-local.cfuture.shop:9091",
         locationHref: "dev",
         waterMarkName: "测试环境",
         wsPrefixName: "ws://matrix-api-test.cfuture.shop",
       };
       const dataSource = res?.data?.matrixEnvConfigs || {};
+     console.log("dataSource",dataSource,)
       dataSource?.map((item:any)=>{
+        console.log("item",item,'---',item?.key,hostAdress,window.location.origin)
         if(item?.key==hostAdress){
           envConfigInfo=item
         }
