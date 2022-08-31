@@ -12,6 +12,7 @@ export interface IProps {
   stopSpin: any;
   pipelineCode: string;
   envList: any;
+  loading: boolean
 }
 
 // 执行步骤组合

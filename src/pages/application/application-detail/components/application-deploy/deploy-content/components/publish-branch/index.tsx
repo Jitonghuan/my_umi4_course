@@ -19,7 +19,6 @@ import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
-
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
@@ -28,6 +27,7 @@ export interface PublishBranchProps {
   hasPublishContent: boolean;
   deployInfo: DeployInfoVO;
   env: string;
+  loading: boolean;
   onSearch: (name?: string) => any;
   masterBranchChange: any;
   dataSource: {
@@ -55,6 +55,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     masterBranchChange,
     pipelineCode,
     changeBranchName,
+    loading,
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -68,10 +69,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
-  const [loading, setLoading] = useState<boolean>(false);
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
-
+  const [visible, setVisible] = useState(false);//关联需求详情弹窗
+  const [currentData, setCurrentData] = useState<any>([]);
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
     if (appType === 'frontend') {
@@ -265,7 +266,23 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             <Tag color={STATUS_TYPE[text]?.color || 'red'}>{STATUS_TYPE[text]?.text || '---'}</Tag>
           )}
         />
-        <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
+        <Table.Column
+          dataIndex={['relationStatus', 'statusList']}
+          width={220}
+          align="center"
+          title="关联需求状态"
+          render={(value: any) => (
+            Array.isArray(value) && value.length ? (
+              value.map((item: any) => (
+                <div className='demand-cell'>
+                  <Tooltip title={item.title}><a target="_blank" href={item.url}>{item.title}</a></Tooltip>
+                  <Tag color={item.status === '待发布' ? '#87d068' : '#59a6ed'}>{item.status}</Tag>
+                </div>
+              ))
+            ) : null
+          )}
+        />
+        <Table.Column dataIndex="gmtCreate" title="创建时间" width={140} ellipsis render={(value) => <Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip>} />
         <Table.Column dataIndex="createUser" title="创建人" width={80} />
         {appData?.appType === 'frontend' ? (
           <Table.Column

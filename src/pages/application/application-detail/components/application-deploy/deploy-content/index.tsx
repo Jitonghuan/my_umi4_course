@@ -57,6 +57,8 @@ export default function DeployContent(props: DeployContentProps) {
   const [loading, setLoading] = useState(false);
   const [envList, setEnvList] = useState([])
   const publishContentRef = useRef<any>();
+  const [deployedLoad, setDeployedLoad] = useState(false);
+  const [unDeployedLoad, setUnDeployedLoad] = useState(false);
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
@@ -72,23 +74,6 @@ export default function DeployContent(props: DeployContentProps) {
     //   pageIndex: 1,
     //   pageSize: 10,
     // });
-
-    const resp2 = await queryFeatureDeployed({
-      appCode: appCode!,
-      envTypeCode,
-      pipelineCode,
-      isDeployed: 1,
-      masterBranch: masterBranchName.current,
-    });
-    const resp3 = await queryFeatureDeployed({
-      appCode: appCode!,
-      envTypeCode,
-      isDeployed: 0,
-      pipelineCode,
-      branchName: cachebranchName.current,
-      masterBranch: masterBranchName.current,
-    });
-
     if (resp && resp.success) {
       if (resp?.data) {
         setDeployInfo(resp.data);
@@ -99,7 +84,32 @@ export default function DeployContent(props: DeployContentProps) {
     } else {
       setDeployInfo({});
     }
+    if (!branchInfo?.deployed?.length) {
+      setDeployedLoad(true)
+    }
+    if (!branchInfo?.unDeployed?.length) {
+      setUnDeployedLoad(true)
+    }
+    const resp2 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      pipelineCode,
+      isDeployed: 1,
+      masterBranch: masterBranchName.current,
+      needRelationInfo: 1
+    });
+    const resp3 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      isDeployed: 0,
+      pipelineCode,
+      branchName: cachebranchName.current,
+      masterBranch: masterBranchName.current,
+      needRelationInfo: 1
+    });
 
+    setDeployedLoad(false);
+    setUnDeployedLoad(false);
     // 如果有部署信息，且为线上，则更新应用状态
     if (envTypeCode === 'prod' && appData) {
       const resp4 = await getRequest(queryApplicationStatus, {
@@ -120,6 +130,7 @@ export default function DeployContent(props: DeployContentProps) {
       deployed: resp2?.data || [],
       unDeployed: resp3?.data || [],
     });
+
     setUpdating(false);
   };
 
@@ -211,6 +222,7 @@ export default function DeployContent(props: DeployContentProps) {
             pipelineCode={pipelineCode}
             deployedList={branchInfo.deployed}
             appStatusInfo={appStatusInfo}
+            loading={deployedLoad}
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
@@ -230,6 +242,7 @@ export default function DeployContent(props: DeployContentProps) {
               masterBranchName.current = masterBranch;
               timerHandle('do', true);
             }}
+            loading={unDeployedLoad}
             changeBranchName={(branchName: string) => {
               // cachebranchName.current = branchName;
             }}
