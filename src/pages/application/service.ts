@@ -474,6 +474,7 @@ export const queryFeatureDeployed = async (params: {
   pipelineCode?: string;
   masterBranch?: string;
   isNpm?: boolean;
+  needRelationInfo: number
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,
@@ -732,3 +733,4 @@ export const deletePipeline = (params: { pipelineCode: string }) =>
   delRequest(`${appConfig.apiPrefix}/releaseManageappManage/appPipeline/delete/${params.pipelineCode}`, {
     data: params,
   });
+
