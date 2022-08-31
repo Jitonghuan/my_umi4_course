@@ -27,6 +27,7 @@ export interface PublishBranchProps {
   hasPublishContent: boolean;
   deployInfo: DeployInfoVO;
   env: string;
+  loading: boolean;
   onSearch: (name?: string) => any;
   masterBranchChange: any;
   dataSource: {
@@ -54,6 +55,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     masterBranchChange,
     pipelineCode,
     changeBranchName,
+    loading,
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -67,7 +69,6 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [masterBranchOptions, setMasterBranchOptions] = useState<any>([]);
   const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
-  const [loading, setLoading] = useState<boolean>(false);
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
   const [visible, setVisible] = useState(false);//关联需求详情弹窗

@@ -474,6 +474,7 @@ export const queryFeatureDeployed = async (params: {
   pipelineCode?: string;
   masterBranch?: string;
   isNpm?: boolean;
+  needRelationInfo: number
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,
@@ -732,3 +733,12 @@ export const deletePipeline = (params: { pipelineCode: string }) =>
   delRequest(`${appConfig.apiPrefix}/releaseManageappManage/appPipeline/delete/${params.pipelineCode}`, {
     data: params,
   });
+
+const demandUrl = `${appConfig.apiPrefix}/releaseManage/branch/featureDeployed/relation`
+
+// 应用部署-获取分支关联需求状态
+export const getDemandList = async (params: any) => {
+  return getRequest(demandUrl, {
+    data: params,
+  });
+};

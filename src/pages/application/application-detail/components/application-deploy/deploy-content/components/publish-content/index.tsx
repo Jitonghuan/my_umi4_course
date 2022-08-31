@@ -39,7 +39,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList, loading } = props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -271,6 +271,7 @@ export default function PublishContent(props: IProps) {
         rowKey="id"
         dataSource={deployedList}
         pagination={false}
+        loading={loading}
         bordered
         scroll={{ x: '100%' }}
         rowSelection={{
