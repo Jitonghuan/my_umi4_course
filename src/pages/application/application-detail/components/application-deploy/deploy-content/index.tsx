@@ -98,6 +98,8 @@ export default function DeployContent(props: DeployContentProps) {
       masterBranch: masterBranchName.current,
       needRelationInfo: 1
     });
+    setDeployedLoad(false);
+
     const resp3 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode,
@@ -108,7 +110,6 @@ export default function DeployContent(props: DeployContentProps) {
       needRelationInfo: 1
     });
 
-    setDeployedLoad(false);
     setUnDeployedLoad(false);
     // 如果有部署信息，且为线上，则更新应用状态
     if (envTypeCode === 'prod' && appData) {
