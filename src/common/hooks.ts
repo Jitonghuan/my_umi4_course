@@ -350,7 +350,6 @@ export const getMatrixEnvConfig = () =>
       dataSource?.map((item:any)=>{
         console.log("item",item,'---',item?.key,hostAdress,window.location.origin)
         if(item?.key==hostAdress){
-          debugger
           envConfigInfo=item
         }
 
