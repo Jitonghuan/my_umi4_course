@@ -80,7 +80,10 @@ export default function Layout(props: any) {
 
   async function getConfig() {
     const res = await getMatrixEnvConfig();
+    console.log('res-->',res)
     setMatrixConfigInfo(res);
+     // @ts-ignore
+     window.matrixConfigData = res 
     setInitFlg(true);
   }
 
