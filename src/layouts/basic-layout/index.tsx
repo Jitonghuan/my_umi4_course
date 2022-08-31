@@ -287,7 +287,7 @@ export default function Layout(props: any) {
                       content: ()=>{
                         return(
                           <div className="header-version-info">
-                            <p className="header-version-info-title">Matrix当前版本信息</p>
+                            <p className="header-version-info-title"><b>Matrix当前版本信息</b></p>
                             <Divider className="header-version-info-divider" />
                           {versionData?.map((item: any) => {
                             return (<div >
