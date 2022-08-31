@@ -3,6 +3,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { datetimeCellRender } from '@/utils';
 import { message } from 'antd';
+import moment from 'moment'
 /** 查询release列表 */
 export const queryReleaseList = (paramsObj?: {
   releaseName?: string;
@@ -115,7 +116,8 @@ export const queryChartVersions = (paramsObj?: { chartName: string; clusterName?
         dataArry.push({
           label: item?.chartLink,
           value: item?.chartLink,
-          created:item?.created?datetimeCellRender(item?.created):""
+          
+          created:item?.created?moment(item?.created).valueOf():""
 
           
         });

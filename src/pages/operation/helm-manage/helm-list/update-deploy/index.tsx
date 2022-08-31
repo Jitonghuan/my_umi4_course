@@ -3,7 +3,7 @@
 // @create 2022/06/24 17:10
 
 import { useEffect, useState } from 'react';
-import { Form, Drawer, Select, Divider, Button } from 'antd';
+import { Form, Drawer, Select, Divider, Button,Spin } from 'antd';
 import AceEditor from '@/components/ace-editor';
 import { useUpgradeRelease, queryChartVersions, getReleaseValues } from '../hook';
 import './index.less';
@@ -21,32 +21,36 @@ export default function UpdateDeploy(props: ReleaseProps) {
   const [loading, upgradeRelease] = useUpgradeRelease();
   const [form] = Form.useForm();
   const [chartLinkOptions, setChartLinkOptions] = useState<any>([]);
+  const [infoLoading,setInfoLoading]=useState<boolean>(false)
   useEffect(() => {
     if (mode) {
+      setInfoLoading(true);
+      queryChartVersions({ clusterName: curClusterName, chartName: curRecord?.chartName }).then((res) => {
+      
+        if(res?.length==1){
+          form.setFieldValue("chartLink",res[0]?.value)
+
+        }else if(res?.length>0){
+          res.sort(function (a:any, b:any) {
+            return a.created - b.created;
+          });
+          form.setFieldValue("chartLink",res[res?.length-1]?.value)
+        
+        }
+        setChartLinkOptions(res);
+
+        
+      });
       getReleaseValues({
         releaseName: curRecord?.releaseName,
         namespace: curRecord?.namespace,
         clusterName: curClusterName,
       }).then((res) => {
         form.setFieldsValue({ values: res });
+      }).finally(()=>{
+        setInfoLoading(false);
       });
-      queryChartVersions({ clusterName: curClusterName, chartName: curRecord?.chartName }).then((res) => {
-        setChartLinkOptions(res);
-        if(res?.length==1){
-          form.setFieldValue("chartLink",res[0]?.chartLink)
-
-        }else if(res?.length>0){
-          
-
-
-        }
-
-        const currentChartVersion =res?.map((item:any)=>{
-          
-          
-
-        })
-      });
+     
     }
     return () => {
       form.resetFields();
@@ -71,8 +75,8 @@ export default function UpdateDeploy(props: ReleaseProps) {
         &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
       </h3>
       <Divider />
-
-      <Form form={form}>
+     <Spin spinning={infoLoading}>
+     <Form form={form}>
         <Form.Item label="chart版本" name="chartLink" rules={[{ required: true, message: '请选择' }]}>
           <Select options={chartLinkOptions} showSearch allowClear style={{ width: 400 }} />
         </Form.Item>
@@ -87,6 +91,9 @@ export default function UpdateDeploy(props: ReleaseProps) {
           </div>
         </Form.Item>
       </Form>
+
+     </Spin>
+    
     </Drawer>
   );
 }
