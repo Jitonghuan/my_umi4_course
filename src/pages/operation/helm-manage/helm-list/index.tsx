@@ -45,7 +45,7 @@ export default function HelmList() {
 
     }
    
-  }, []);
+  }, [mode]);
   const getClusterSource=(params:{clusterName?:string,namespace?:string,clusterId?:any})=>{
     releaseForm.setFieldValue("namespace",params?.namespace);
     getClusterList().then((res) => {

@@ -63,9 +63,7 @@ export default function UpdateDeploy(props: ReleaseProps) {
       namespace: curRecord?.namespace,
       ...values,
       clusterName: curClusterName,
-    }).then(() => {
-      onSave();
-    });
+    })
   };
 
   return (

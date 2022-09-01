@@ -246,10 +246,12 @@ export const queryPodNamespaceData = (params: { clusterId: string }) =>
         result.push({
           label: ele.namespace,
           value: ele.namespace,
-        });
+        },
+       );
       }, []);
-
-      return result;
+     const option=  result.concat( {label:"AllNamespace",
+       value:""})
+      return option;
     }
     return [];
   });
