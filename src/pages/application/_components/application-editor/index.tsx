@@ -241,15 +241,26 @@ export default function ApplicationEditor(props: IProps) {
     setLoading(true);
     try {
       if (isEdit) {
-        await updateApp({ id: initData?.id!, ...submitData });
+        await updateApp({ id: initData?.id!, ...submitData }).then((res)=>{
+          if(res?.success){
+            message.success('保存成功!');
+            props?.onSubmit();
+          }
+
+        });
       } else {
         // 创建应用的时候，如果是前端应用，加上统一的 fe_ 前缀
         submitData.appCode = submitData.appType === 'frontend' ? `fe_${submitData.appCode}` : submitData.appCode;
-        await createApp(submitData);
+        await createApp(submitData).then((res)=>{
+          if(res?.success){
+            message.success('保存成功!');
+            props?.onSubmit();
+          }
+
+        });;
       }
 
-      message.success('保存成功!');
-      props?.onSubmit();
+     
     } finally {
       setLoading(false);
     }
