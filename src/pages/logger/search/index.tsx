@@ -495,8 +495,8 @@ export default function LoggerSearch(props: any) {
                         <Form.Item name="querySql">
                           <Input
                             placeholder="搜索"
-                            // onPressEnter={()=>{return false}}
                             style={{ width: 758 }}
+                            onPressEnter={submitEditScreen}
                           />
                         </Form.Item>
                         <Form.Item name="moreInput">
@@ -540,6 +540,7 @@ export default function LoggerSearch(props: any) {
                         setQuerySql('');
                       }
                     }}
+                   
                   >
                     高级搜索
                   </Button>
