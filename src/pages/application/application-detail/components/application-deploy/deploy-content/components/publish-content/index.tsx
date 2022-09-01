@@ -79,6 +79,7 @@ export default function PublishContent(props: IProps) {
           features,
         }).then(() => {
           onOperate('retryDeployEnd');
+          refreshList();
         });
       },
       onCancel() {
