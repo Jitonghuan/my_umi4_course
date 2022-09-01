@@ -31,7 +31,7 @@ export interface PublishBranchProps {
   loading: boolean;
   onSearch: (name?: string) => any;
   masterBranchChange: any;
-  loadData: any;
+  // loadData: any;
   dataSource: {
     id: string | number;
     branchName: string;
@@ -58,7 +58,6 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     pipelineCode,
     changeBranchName,
     loading,
-    loadData
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -228,7 +227,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
               {hasPublishContent ? '追加分支' : '提交分支'}
             </Button>
           )}
-          <Button
+          {/* <Button
             icon={<RedoOutlined />}
             onClick={() => {
               loadData();
@@ -236,7 +235,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             size="small"
           >
             刷新
-        </Button>
+        </Button> */}
         </div>
       </div>
       <Table
