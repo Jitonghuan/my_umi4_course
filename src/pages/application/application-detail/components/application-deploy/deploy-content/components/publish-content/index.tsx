@@ -22,6 +22,7 @@ import FrontendPreEnvSteps from './frontend-steps/pre';
 import FrontendProdEnvSteps from './frontend-steps/prod';
 import DeploySteps from './steps';
 import './index.less';
+import { RedoOutlined } from '@ant-design/icons';
 
 const rootCls = 'publish-content-compo';
 
@@ -39,7 +40,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList, loading } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList, loading, loadData } = props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -231,7 +232,7 @@ export default function PublishContent(props: IProps) {
           {!isProd && (
             <span style={{ marginRight: 14 }}>
               {appData?.deployModel === 'online' && (
-                <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy}>
+                <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy} style={{ marginLeft: '10px' }}>
                   重新提交
                   <Tooltip placement="topRight" title={resubmitText}>
                     <QuestionCircleOutlined />
@@ -248,7 +249,15 @@ export default function PublishContent(props: IProps) {
               </Tooltip>
             </Button>
           )}
-
+          <Button
+            icon={<RedoOutlined />}
+            onClick={() => {
+              loadData();
+            }}
+            size="small"
+          >
+            刷新
+        </Button>
           {/* {!isFrontend && !isProd && (
             <Popconfirm
               title="确定要重启应用吗？"
@@ -306,22 +315,24 @@ export default function PublishContent(props: IProps) {
             <Tag color={STATUS_TYPE[text]?.color || 'red'}>{STATUS_TYPE[text]?.text || '---'}</Tag>
           )}
         />
-        <Table.Column
-          dataIndex={['relationStatus', 'statusList']}
-          width={220}
-          align="center"
-          title="关联需求状态"
-          render={(value: any) => (
-            Array.isArray(value) && value.length ? (
-              value.map((item: any) => (
-                <div className='demand-cell'>
-                  <Tooltip title={item.title}><a target="_blank" href={item.url}>{item.title}</a></Tooltip>
-                  <Tag color={item.status === '待发布' ? '#87d068' : '#59a6ed'}>{item.status}</Tag>
-                </div>
-              ))
-            ) : null
-          )}
-        />
+        {envTypeCode === 'prod' && (
+          <Table.Column
+            dataIndex={['relationStatus', 'statusList']}
+            width={220}
+            align="center"
+            title="关联需求状态"
+            render={(value: any) => (
+              Array.isArray(value) && value.length ? (
+                value.map((item: any) => (
+                  <div className='demand-cell'>
+                    <Tooltip title={item.title}><a target="_blank" href={item.url}>{item.title}</a></Tooltip>
+                    <Tag color={item.status === '待发布' ? '#87d068' : '#59a6ed'}>{item.status}</Tag>
+                  </div>
+                ))
+              ) : null
+            )}
+          />
+        )}
         <Table.Column dataIndex="gmtCreate" title="创建时间" width={160} render={datetimeCellRender} />
         <Table.Column dataIndex="createUser" title="创建人" width={100} />
         {appData?.appType === 'frontend' ? (
