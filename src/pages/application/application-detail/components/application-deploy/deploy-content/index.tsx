@@ -120,7 +120,7 @@ export default function DeployContent(props: DeployContentProps) {
       pipelineCode,
       isDeployed: 1,
       masterBranch: masterBranchName.current,
-      needRelationInfo: 1
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
     }).then((res) => {
       setDeployed(res?.data || [])
     }).catch(() => {
@@ -139,7 +139,7 @@ export default function DeployContent(props: DeployContentProps) {
       pipelineCode,
       isDeployed: 0,
       masterBranch: masterBranchName.current,
-      needRelationInfo: 1
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
     }).then((res) => {
       setUnDeployed(res?.data || [])
     }).catch(() => {
@@ -228,7 +228,10 @@ export default function DeployContent(props: DeployContentProps) {
             stopSpin={stopSpin}
             envList={envList}
             loadData={requestDeployBranch}
-
+            refreshList={() => {
+              requestUnDeployBranch();
+              requestDeployBranch();
+            }}
           />
           <PublishBranch
             deployInfo={deployInfo}
@@ -239,6 +242,8 @@ export default function DeployContent(props: DeployContentProps) {
             pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
+              requestUnDeployBranch();
+              requestDeployBranch();
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;

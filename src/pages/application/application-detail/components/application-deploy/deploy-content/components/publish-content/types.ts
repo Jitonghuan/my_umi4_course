@@ -14,6 +14,7 @@ export interface IProps {
   envList: any;
   loading: boolean;
   loadData: any;
+  refreshList: any;
 }
 
 // 执行步骤组合
