@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
 import { datetimeCellRender } from '@/utils';
-import { message } from 'antd';
+import { message,Modal } from 'antd';
 import moment from 'moment'
 /** 查询release列表 */
 export const queryReleaseList = (paramsObj?: {
@@ -129,6 +129,29 @@ export const queryChartVersions = (paramsObj?: { chartName: string; clusterName?
   });
 };
 
+export const upgradeRelease=(paramsObj: {
+  releaseName: string;
+  namespace: string;
+  values: string;
+  clusterName: string;
+  chartLink: string;
+})=>{
+  return postRequest(`${APIS.upgradeRelease}`, { data: paramsObj,hideToast: true })
+  .then((result) => {
+    if (result.success) {
+      message.success(result.data);
+    } 
+    if(result?.code===1001){
+    Modal.error({
+    title: '更新失败',
+    content: result?.errorMsg,
+    });
+   }
+   return result;
+  })
+  
+}
+
 //release更新
 export function useUpgradeRelease(): [
   boolean,
@@ -251,6 +274,10 @@ export const queryPodNamespaceData = (params: { clusterId: string }) =>
       }, []);
      const option=  result.concat( {label:"AllNamespace",
        value:""})
+       option.sort(function (a:any, b:any) {
+        return a.value.toLowerCase().localeCompare(b.value.toLowerCase());
+
+      });
       return option;
     }
     return [];

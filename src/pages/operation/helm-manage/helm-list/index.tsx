@@ -21,17 +21,21 @@ export default function HelmList() {
   const [mode, setMode] = useState<boolean>(false);
   const [delLoading, deleteRelease] = useDeleteRelease();
   const [clusterOptions, setClusterOptions] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(20);
   const [currentCluster, setCurrentCluster] = useState<any>('');
 
   useEffect(() => {
+   
+    initSource()
+  }, []);
+  const initSource=()=>{
     const localstorageClusterInfo = JSON.parse(localStorage.getItem('__helm_list_cluster') || '{}');
     const localstorageNamespace = JSON.parse(localStorage.getItem('__helm_list_namespace') || '{}');
    
-    if(localstorageClusterInfo?.cluster&&localstorageClusterInfo?.clusterId&&localstorageNamespace){
+    if(localstorageClusterInfo?.cluster||localstorageClusterInfo?.clusterId||localstorageNamespace){
+      
       getClusterSource({
         clusterName:localstorageClusterInfo?.cluster,
         namespace:localstorageNamespace,
@@ -44,8 +48,8 @@ export default function HelmList() {
 
 
     }
-   
-  }, [mode]);
+
+  }
   const getClusterSource=(params:{clusterName?:string,namespace?:string,clusterId?:any})=>{
     releaseForm.setFieldValue("namespace",params?.namespace);
     getClusterList().then((res) => {
@@ -161,7 +165,7 @@ export default function HelmList() {
         }}
         onSave={() => {
           setMode(false);
-          getReleaseList({ clusterName: curClusterName });
+          initSource()
         }}
       />
 
@@ -185,7 +189,6 @@ export default function HelmList() {
               <b>选择集群：</b>
             </span>
             <Select
-              loading={loading}
               options={clusterOptions}
               style={{ width: 190 }}
               allowClear

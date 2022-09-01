@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { Form, Drawer, Select, Divider, Button,Spin } from 'antd';
 import AceEditor from '@/components/ace-editor';
-import { useUpgradeRelease, queryChartVersions, getReleaseValues } from '../hook';
+import { useUpgradeRelease, queryChartVersions, getReleaseValues,upgradeRelease } from '../hook';
 import './index.less';
 
 export interface ReleaseProps {
@@ -18,8 +18,9 @@ export interface ReleaseProps {
 
 export default function UpdateDeploy(props: ReleaseProps) {
   const { mode, curRecord, curClusterName, onCancle, onSave } = props;
-  const [loading, upgradeRelease] = useUpgradeRelease();
+  // const [loading, upgradeRelease] = useUpgradeRelease();
   const [form] = Form.useForm();
+  const [loading,setLoading]=useState<boolean>(false)
   const [chartLinkOptions, setChartLinkOptions] = useState<any>([]);
   const [infoLoading,setInfoLoading]=useState<boolean>(false)
   useEffect(() => {
@@ -57,12 +58,21 @@ export default function UpdateDeploy(props: ReleaseProps) {
     };
   }, [mode]);
   const update = async () => {
+    setLoading(true)
     const values = await form.validateFields();
     upgradeRelease({
       releaseName: curRecord?.releaseName,
       namespace: curRecord?.namespace,
       ...values,
       clusterName: curClusterName,
+    }).then((res)=>{
+      if(res?.success){
+        onSave()
+
+      }
+
+    }).finally(()=>{
+      setLoading(false)
     })
   };
 
