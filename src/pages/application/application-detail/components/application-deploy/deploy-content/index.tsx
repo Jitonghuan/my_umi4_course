@@ -90,7 +90,7 @@ export default function DeployContent(props: DeployContentProps) {
       pipelineCode,
       isDeployed: 1,
       masterBranch: masterBranchName.current,
-      needRelationInfo: 1
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
     });
     setDeployed(resp2?.data || [])
     setDeployedLoad(false);
@@ -102,7 +102,7 @@ export default function DeployContent(props: DeployContentProps) {
       pipelineCode,
       branchName: cachebranchName.current,
       masterBranch: masterBranchName.current,
-      needRelationInfo: 1
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
     });
     setUnDeployed(resp3?.data || [])
     setUnDeployedLoad(false);
