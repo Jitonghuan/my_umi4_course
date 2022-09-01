@@ -13,8 +13,8 @@ export interface IProps {
   pipelineCode: string;
   envList: any;
   loading: boolean;
-  loadData: any;
-  refreshList: any;
+  // loadData: any;
+  // refreshList: any;
 }
 
 // 执行步骤组合
