@@ -274,6 +274,7 @@ export default function DeployContent(props: DeployContentProps) {
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;
+              timerHandle('do', true);
               // requestUnDeployBranch();
             }}
             // loadData={requestUnDeployBranch}
