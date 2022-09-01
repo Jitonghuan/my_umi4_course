@@ -64,18 +64,10 @@ export default function DeployContent(props: DeployContentProps) {
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
-
     setUpdating(true);
 
     const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
 
-    // const resp1 = await queryDeployList({
-    //   appCode: appCode!,
-    //   envTypeCode,
-    //   isActive: 1,
-    //   pageIndex: 1,
-    //   pageSize: 10,
-    // });
     if (resp && resp.success) {
       if (resp?.data) {
         setDeployInfo(resp.data);
@@ -86,34 +78,6 @@ export default function DeployContent(props: DeployContentProps) {
     } else {
       setDeployInfo({});
     }
-    if (!deployed?.length) {
-      setDeployedLoad(true)
-    }
-    if (!unDeployed?.length) {
-      setUnDeployedLoad(true)
-    }
-    const resp2 = await queryFeatureDeployed({
-      appCode: appCode!,
-      envTypeCode,
-      pipelineCode,
-      isDeployed: 1,
-      masterBranch: masterBranchName.current,
-      needRelationInfo: 1
-    });
-    setDeployed(resp2?.data || [])
-    setDeployedLoad(false);
-
-    const resp3 = await queryFeatureDeployed({
-      appCode: appCode!,
-      envTypeCode,
-      isDeployed: 0,
-      pipelineCode,
-      branchName: cachebranchName.current,
-      masterBranch: masterBranchName.current,
-      needRelationInfo: 1
-    });
-    setUnDeployed(resp3?.data || [])
-    setUnDeployedLoad(false);
     // 如果有部署信息，且为线上，则更新应用状态
     if (envTypeCode === 'prod' && appData) {
       const resp4 = await getRequest(queryApplicationStatus, {
@@ -128,13 +92,6 @@ export default function DeployContent(props: DeployContentProps) {
       const { Status: nextAppStatus } = resp4?.data || {};
       setAppStatusInfo(nextAppStatus);
     }
-    // }
-
-    // setBranchInfo({
-    //   deployed: resp2?.data || [],
-    //   unDeployed: resp3?.data || [],
-    // });
-
     setUpdating(false);
   };
 
@@ -154,11 +111,50 @@ export default function DeployContent(props: DeployContentProps) {
       timerHandle('do', true);
     }
   };
+  // 获取已发布分支列表
+  const requestDeployBranch = () => {
+    setDeployedLoad(true)
+    queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      pipelineCode,
+      isDeployed: 1,
+      masterBranch: masterBranchName.current,
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
+    }).then((res) => {
+      setDeployed(res?.data || [])
+    }).catch(() => {
+      setDeployed([])
+    }).finally(() => {
+      setDeployedLoad(false);
+    })
+  }
+
+  // 获取未发布分支列表
+  const requestUnDeployBranch = () => {
+    setUnDeployedLoad(true)
+    queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      pipelineCode,
+      isDeployed: 0,
+      masterBranch: masterBranchName.current,
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
+    }).then((res) => {
+      setUnDeployed(res?.data || [])
+    }).catch(() => {
+      setUnDeployed([])
+    }).finally(() => {
+      setUnDeployedLoad(false);
+    })
+  }
 
   // appCode变化时
   useEffect(() => {
     if (!appCode || !isActive || !pipelineCode) return;
     timerHandle('do', true);
+    requestDeployBranch();
+    requestUnDeployBranch();
   }, [appCode, isActive, pipelineCode]);
 
   useEffect(() => {
@@ -231,6 +227,11 @@ export default function DeployContent(props: DeployContentProps) {
             onSpin={onSpin}
             stopSpin={stopSpin}
             envList={envList}
+            loadData={requestDeployBranch}
+            refreshList={() => {
+              requestUnDeployBranch();
+              requestDeployBranch();
+            }}
           />
           <PublishBranch
             deployInfo={deployInfo}
@@ -241,11 +242,14 @@ export default function DeployContent(props: DeployContentProps) {
             pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
+              requestUnDeployBranch();
+              requestDeployBranch();
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;
-              timerHandle('do', true);
+              requestUnDeployBranch();
             }}
+            loadData={requestUnDeployBranch}
             loading={unDeployedLoad}
             changeBranchName={(branchName: string) => {
               // cachebranchName.current = branchName;
