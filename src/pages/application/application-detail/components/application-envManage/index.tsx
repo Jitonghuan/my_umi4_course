@@ -346,6 +346,9 @@ export default function appEnvPageList() {
           <Form.Item label="项目环境分类：" name="proEnvType">
             <Select showSearch style={{ width: 130 }} options={proEnvTypeData} />
           </Form.Item>
+          <Form.Item label="环境类型：" name="envModel">
+              <Select options={envTypeOptions} allowClear showSearch style={{ width: 130 }} />
+            </Form.Item>
           <Form.Item label="环境大类：" name="envTypeCode">
             <Select options={envTypeData} allowClear showSearch style={{ width: 120 }} />
           </Form.Item>
