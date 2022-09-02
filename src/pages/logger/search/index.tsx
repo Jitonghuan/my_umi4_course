@@ -85,7 +85,7 @@ export default function LoggerSearch(props: any) {
   const [selectOptionType, setSelectOptionType] = useState<string>(defaultSelectValue);
   const [logStoreOptions] = useLogStoreOptions(envCode); //日志库选项下拉框数据
   const [queryIndexModeList, indexModeData, setIndexModeData] = useIndexModeList(); //获取字段列表  indexModeList
-  var iframe = document.createElement('iframe');
+
   useLayoutEffect(() => {
     if (Object.keys(receiveInfo).length !== 0) {
       setStartTime(30 * 60 * 1000);
@@ -131,17 +131,6 @@ export default function LoggerSearch(props: any) {
     if (!info) {
       message.info('请输入筛选条件进行查询哦～');
     }
-
-    // queryIndexModeList(envCode, logStore)
-    //   .then(() => {
-    //     message.info('请输入筛选条件进行查询哦～');
-    //   })
-    //   .catch(() => {
-    //     setIndexModeData([]);
-    //     setHitInfo('');
-    //     setLogSearchTableInfo('');
-    //     setLogHistormData([]);
-    //   });
   }, [logStore]);
 
   //使用lucene语法搜索时的事件
@@ -171,14 +160,10 @@ export default function LoggerSearch(props: any) {
     //默认传最近30分钟，处理为秒级的时间戳
     let start = Number((now - startTime) / 1000).toString();
     let end = Number(now / 1000).toString();
-    if (selectOptionType === 'lastTime') {
-      if (startTimestamp !== start) {
+    if (selectOptionType === 'lastTime') {   
         setStartTimestamp(start);
         setEndTimestamp(end);
         loadMoreData(logStore, start, end, values.querySql, messageInfo, appCodeArry);
-      } else {
-        loadMoreData(logStore, startTimestamp, endTimestamp, values.querySql, messageInfo, appCodeArry);
-      }
     } else {
       loadMoreData(logStore, startRangePicker, endRangePicker, values.querySql, messageInfo, appCodeArry);
     }
@@ -202,7 +187,6 @@ export default function LoggerSearch(props: any) {
     rangePickerForm.resetFields();
     setStartRangePicker('');
     setEndRangePicker('');
-
     const now = new Date().getTime();
     setStartTime(value);
     let startTimepl = Number((now - value) / 1000).toString();
@@ -267,15 +251,15 @@ export default function LoggerSearch(props: any) {
       appCodeArry.push('envCode:' + envCode);
       setAppCodeValue(appCodeArry);
       const now = new Date().getTime();
-      //默认传最近30分钟，处理为秒级的时间戳
+      console.info('now',now)
+      //默认传最近5分钟，处理为秒级的时间戳
       let start = Number((now - startTime) / 1000).toString();
       let end = Number(now / 1000).toString();
-
-      if (startTimestamp !== start && !startRangePicker && !endRangePicker) {
+      if ( selectOptionType === 'lastTime') {
         setStartTimestamp(start);
         setEndTimestamp(end);
         loadMoreData(logStore, start, end, querySql, messageInfo, appCodeArry);
-      } else if (startRangePicker || endRangePicker) {
+      } else if (selectOptionType==="rangePicker") {
         loadMoreData(logStore, startRangePicker, endRangePicker, querySql, messageInfo, appCodeArry);
       } else {
         loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageInfo, appCodeArry);
@@ -379,7 +363,7 @@ export default function LoggerSearch(props: any) {
 
   const getSelectOption = (type: string) => {
     setSelectOptionType(type);
-    if (type === 'timestamp') {
+    if (type === 'lastTime') {
       const now = new Date().getTime();
       let startTimepl = Number((now - startTime) / 1000).toString();
       let endTimepl = Number(now / 1000).toString();
@@ -392,11 +376,7 @@ export default function LoggerSearch(props: any) {
     }
   };
 
-  function ClearSubmit(e: any) {
-    if (e.keyCode == 13) {
-      return false;
-    }
-  }
+
   //实现无限加载滚动
   return (
     <PageContainer className="content">
@@ -515,8 +495,8 @@ export default function LoggerSearch(props: any) {
                         <Form.Item name="querySql">
                           <Input
                             placeholder="搜索"
-                            // onPressEnter={()=>{return false}}
                             style={{ width: 758 }}
+                            onPressEnter={submitEditScreen}
                           />
                         </Form.Item>
                         <Form.Item name="moreInput">
@@ -560,6 +540,7 @@ export default function LoggerSearch(props: any) {
                         setQuerySql('');
                       }
                     }}
+                   
                   >
                     高级搜索
                   </Button>
