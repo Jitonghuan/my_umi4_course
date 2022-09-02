@@ -13,6 +13,7 @@ import { queryEnvList, appTypeList, updateEnv } from '../service';
 import appConfig from '@/app.config';
 import NGDetailModal from './ng-detail';
 import BlockModal from './block-modal';
+import {envTypeOptions,envTypeCodeOptions} from '../addEnv/schema'
 import './index.less';
 
 /** 编辑页回显数据 */
@@ -48,25 +49,7 @@ export default function envManageList(props: any) {
   const [initBlockData, setInitBlockData] = useState<any>({});
   const [currentNgCode, setCurrentNgCode] = useState<string>('');
   const [optType, setOptType] = useState<string>('');
-  const envTypeData = [
-    {
-      label: 'DEV',
-      value: 'dev',
-    },
-    {
-      label: 'TEST',
-      value: 'test',
-    },
-    {
-      label: 'PRE',
-      value: 'pre',
-    },
-    {
-      label: 'PROD',
-      value: 'prod',
-    },
-  ]; //环境大类
-
+  
   useEffect(() => {
     selectCategory();
   }, []);
@@ -108,13 +91,7 @@ export default function envManageList(props: any) {
     setLoading(true);
     getRequest(queryEnvList, {
       data: {
-        envTypeCode: value?.envTypeCode,
-        envCode: value?.envCode,
-        envName: value?.envName,
-        categoryCode: value?.categoryCode,
-        pageIndex: value?.pageIndex,
-        pageSize: value?.pageSize,
-        proEnvType: value?.proEnvType,
+      ...value
       },
     })
       .then((result) => {
@@ -288,7 +265,11 @@ export default function envManageList(props: any) {
               <Select showSearch style={{ width: 130 }} options={categoryData} />
             </Form.Item>
             <Form.Item label="环境大类：" name="envTypeCode">
-              <Select options={envTypeData} allowClear showSearch style={{ width: 130 }} />
+              <Select options={envTypeCodeOptions} allowClear showSearch style={{ width: 130 }} />
+            </Form.Item>
+            {/* envModel */}
+            <Form.Item label="环境类型：" name="envModel">
+              <Select options={envTypeOptions} allowClear showSearch style={{ width: 130 }} />
             </Form.Item>
             <Form.Item label="环境名：" name="envName">
               <Input placeholder="请输入环境名称" style={{ width: 130 }} />
