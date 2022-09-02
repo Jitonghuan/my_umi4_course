@@ -15,14 +15,14 @@ import './index.less';
 const rootCls = 'all-application-page';
 
 export default function AllApplication() {
-  const currentType: any = localStorage.getItem('__last_application_type');
+  const currentType: any = sessionStorage.getItem('__last_application_type');
   const [type, setType] = useState<'all' | 'mine' | 'collect'>(currentType || 'collect');
   const [createAppVisible, setCreateAppVisible] = useState(false);
 
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [searchParams, setSearchParams] = useState<any>(
-    localStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(localStorage.ALL_APPLICATIO_SEARCH) : {},
+    sessionStorage.ALL_APPLICATIO_SEARCH ? JSON.parse(sessionStorage.ALL_APPLICATIO_SEARCH) : {},
   );
 
   const hookParams = useMemo(() => ({ ...searchParams, requestType: type }), [type, searchParams]);
@@ -31,12 +31,12 @@ export default function AllApplication() {
   const handleTypeChange = useCallback((e: any) => {
     const next = e.target.value;
     setType(next);
-    localStorage.setItem('__last_application_type', next);
+    sessionStorage.setItem('__last_application_type', next);
   }, []);
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams(next);
-    localStorage.ALL_APPLICATIO_SEARCH = JSON.stringify(next || {});
+    sessionStorage.ALL_APPLICATIO_SEARCH = JSON.stringify(next || {});
   }, []);
 
   return (
