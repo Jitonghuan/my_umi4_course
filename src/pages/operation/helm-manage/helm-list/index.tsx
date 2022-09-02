@@ -33,17 +33,15 @@ export default function HelmList() {
   const initSource=()=>{
     const localstorageClusterInfo = JSON.parse(localStorage.getItem('__helm_list_cluster') || '{}');
     const localstorageNamespace = JSON.parse(localStorage.getItem('__helm_list_namespace') || '{}');
-   
-    if(localstorageClusterInfo?.cluster||localstorageClusterInfo?.clusterId||localstorageNamespace){
-      
+    if((localstorageClusterInfo?.cluster&&localstorageClusterInfo?.clusterId)){
       getClusterSource({
         clusterName:localstorageClusterInfo?.cluster,
-        namespace:localstorageNamespace,
+        namespace:localstorageNamespace[0]?localstorageNamespace:"default",
         clusterId:localstorageClusterInfo?.clusterId,
       })
     }else{
       getClusterSource({
-        namespace:"default"
+        namespace:localstorageNamespace[0]?localstorageNamespace:"default",
       })
 
 
