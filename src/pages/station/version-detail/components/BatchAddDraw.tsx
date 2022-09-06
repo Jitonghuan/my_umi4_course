@@ -3,10 +3,10 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useQueryProductlineList } from '../component-center/hook';
+import { useQueryProductlineList } from '../../component-center/hook';
 import { Drawer, Button, Form, Tree, Spin, Select, Space, Divider } from 'antd';
-import { useGetProductlineVersion, useGetAppList, useBulkadd } from './hooks';
-import './index.less';
+import { useGetProductlineVersion, useGetAppList, useBulkadd } from '../hooks';
+import '../index.less';
 export interface AppComponentProps {
   mode: EditorMode;
   versionId?: number;

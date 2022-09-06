@@ -16,7 +16,9 @@ import {
   Modal,
   Descriptions,
   Tooltip,
+  Switch
 } from 'antd';
+import {InfoCircleOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import moment from 'moment';
@@ -76,6 +78,7 @@ export default function deliveryDescription() {
     };
     queryProductVersionList(descriptionInfoData.id, obj.pageIndex, obj.pageSize);
   };
+
 
   const columns = [
     {
@@ -269,6 +272,7 @@ export default function deliveryDescription() {
         <Modal
           title="创建版本"
           visible={creatVersionVisiable}
+          width={700}
           onCancel={() => {
             setCreatVersionVisiable(false);
           }}
@@ -288,12 +292,20 @@ export default function deliveryDescription() {
             </div>
           }
         >
-          <Form layout="vertical" form={createVersionForm} style={{ paddingLeft: 30 }}>
+          <Form layout="horizontal" form={createVersionForm} labelCol={{flex:'140px'}}>
             <Form.Item label="版本名称:" name="version_name" rules={[{ required: true, message: '请输入版本号' }]}>
               <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
             </Form.Item>
             <Form.Item label="版本描述:" name="version_description">
               <Input style={{ width: 400 }} placeholder="请输入版本描述"></Input>
+            </Form.Item>
+            <Form.Item label="引入基础设施组件:" 
+              tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+             name="version_description">
+            <Switch />
+            </Form.Item>
+            <Form.Item label="版本复刻:" name="version_description">
+              <Select style={{ width: 400 }}  showSearch allowClear/>
             </Form.Item>
           </Form>
         </Modal>

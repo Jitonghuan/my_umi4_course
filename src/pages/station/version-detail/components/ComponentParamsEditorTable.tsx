@@ -2,15 +2,16 @@ import React, { useRef, useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Form, Popconfirm } from 'antd';
+import { Button, Input, Form, Select, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import {
+  useQueryParamList,
   useQueryDeliveryParamList,
   useSaveParam,
-  useQueryDeliveryGloableParamList,
   useDeleteDeliveryParam,
+  useQueryOriginList,
   useEditVersionParam,
-} from './hooks';
+} from '../hooks';
 
 type DataSourceType = {
   id: any;
@@ -22,6 +23,7 @@ type DataSourceType = {
   state?: string;
   created_at?: string;
   children?: DataSourceType[];
+  recordCreatorProps?: any;
 };
 
 export interface VersionDetailProps {
@@ -33,28 +35,47 @@ export interface VersionDetailProps {
 
 export default (props: VersionDetailProps) => {
   const { currentTab, versionId, isEditable, initDataSource } = props;
+  const actionRef = useRef<ActionType>();
   const [saveLoading, saveParam] = useSaveParam();
   const [editLoading, editVersionParam] = useEditVersionParam();
-  const actionRef = useRef<ActionType>();
-  const [gloableTableLoading, gloableTableDataSource, setGloableDataSource, queryDeliveryGloableParamList] =
-    useQueryDeliveryGloableParamList();
-  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [originloading, originOptions, queryOriginList] = useQueryOriginList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
+  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [loading, paramOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
+
+  const updateRow = (rowKey: string, row: any) => {
+    form.setFieldsValue({ [rowKey]: row });
+  };
+  useEffect(() => {
+    //获取参数来源组件
+    queryOriginList(versionId);
+  }, []);
   useEffect(() => {
     //查询建站配置参数
-    queryDeliveryGloableParamList(versionId, 'global');
     queryDeliveryParamList(versionId);
-  }, [currentTab, versionId]);
-
-  const columns: ProColumns<DataSourceType>[] = [
+  }, []);
+  const columns: ProColumns<any>[] = [
     {
-      title: '参数名称',
-      key: 'paramName',
-      dataIndex: 'paramName',
+      title: '参数来源组件',
+      key: 'paramComponent',
+      dataIndex: 'paramComponent',
+      valueType: 'select',
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
+      },
+      // valueEnum: originOptions,
       editable: (text, record, index) => {
         if (type === 'edit' && text) {
           return false;
@@ -66,7 +87,25 @@ export default (props: VersionDetailProps) => {
           return true;
         }
       },
+      renderFormItem: (_, config: any, data) => {
+        return (
+          <Select
+            options={originOptions}
+            showSearch
+            allowClear
+            onChange={(value: any) => {
+              queryParamList(versionId, value);
+            }}
+          ></Select>
+        );
+      },
+    },
 
+    {
+      title: '选择参数',
+      key: 'paramName',
+      dataIndex: 'paramName',
+      valueType: 'select',
       formItemProps: () => {
         return {
           rules: [
@@ -78,22 +117,39 @@ export default (props: VersionDetailProps) => {
           errorType: 'default',
         };
       },
+      renderFormItem: (_, config: any, data) => {
+        let description = '';
+        paramOptions.filter((item: any) => {
+          if (item.value === config.record?.componentVersion) {
+            description = item.componentDescription;
+          }
+        });
+        return (
+          <Select
+            options={paramOptions}
+            showSearch
+            allowClear
+            onChange={(value: any) => {
+              // console.log('value', value);
+              paramOptions.filter((item: any) => {
+                if (item.value === value) {
+                  updateRow(config.recordKey, {
+                    ...form.getFieldsValue(config.recordKey),
+                    paramValue: item.paramValue,
+                  });
+                }
+              });
+            }}
+          ></Select>
+        );
+      },
     },
     {
       title: '参数值',
       key: 'paramValue',
       dataIndex: 'paramValue',
-      // valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
+      renderFormItem: (_, config: any, data) => {
+        return <Input disabled={true}></Input>;
       },
     },
     {
@@ -105,7 +161,7 @@ export default (props: VersionDetailProps) => {
       title: '操作',
       valueType: 'option',
       width: 250,
-      render: (text, record: any, _, action) => [
+      render: (text, record, _, action) => [
         <a
           key="editable"
           onClick={() => {
@@ -114,6 +170,7 @@ export default (props: VersionDetailProps) => {
             // } else {
             action?.startEditable?.(record.id);
             setType('edit');
+            queryParamList(versionId, record.paramComponent);
             // }
           }}
         >
@@ -123,7 +180,7 @@ export default (props: VersionDetailProps) => {
           title="确定要删除吗？"
           onConfirm={() => {
             deleteDeliveryParam(record.id).then(() => {
-              setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
+              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
             });
           }}
         >
@@ -136,15 +193,19 @@ export default (props: VersionDetailProps) => {
   ];
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryGloableParamList(versionId, 'global', param.paramName);
+    queryDeliveryParamList(versionId, param.paramName);
   };
+  const tableChange = (values: any) => {
+    setDataSource;
+  };
+
   return (
     <>
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="paramName">
-              <Input style={{ width: 220 }} placeholder="请输入参数名称"></Input>
+            <Form.Item name="paramComponent">
+              <Input style={{ width: 220 }} placeholder="请输入参数来源组件"></Input>
             </Form.Item>
             <Form.Item>
               <Button onClick={handleSearch} type="primary">
@@ -156,57 +217,53 @@ export default (props: VersionDetailProps) => {
         <div className="caption-right">
           {/* <Button
             type="primary"
-            // disabled={isEditable}
             onClick={() => {
-              setType('add');
               actionRef.current?.addEditRecord?.({
                 id: (Math.random() * 1000000).toFixed(0),
               });
+              setType('add');
             }}
             icon={<PlusOutlined />}
           >
-            添加全局参数
+            添加组件参数
           </Button> */}
         </div>
       </div>
-
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
-        headerTitle="可编辑表格"
-        // maxLength={5}
-        // 关闭默认的新建按钮
+        loading={tableLoading}
         // recordCreatorProps={false}
-        columns={columns}
         recordCreatorProps={{
           position: 'top',
           // newRecordType: 'dataSource',
           creatorButtonText: '新增参数',
           record: { id: (Math.random() * 1000000).toFixed(0) },
         }}
-        // request={async () => ({
-        //   data: defaultData,
-        //   total: 3,
-        //   success: true,
-        // })}
-        scroll={{ y: window.innerHeight - 340 }}
         pagination={false}
-        value={gloableTableDataSource}
-        onChange={setGloableDataSource}
+        scroll={{ y: window.innerHeight - 340 }}
+        headerTitle="可编辑表格"
+        // maxLength={5}
+        // 关闭默认的新建按钮
+        columns={columns}
+        value={tableDataSource}
+        onChange={(values) => {
+          tableChange(values);
+        }}
         editable={{
           form,
           editableKeys,
-          onSave: async () => {
+          onSave: async (values) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
             if (type !== 'edit') {
-              await saveParam({ ...params, versionId: versionId, paramComponent: 'global' }).then(() => {
-                queryDeliveryGloableParamList(versionId, 'global');
+              await saveParam({ ...params, versionId }).then(() => {
+                queryDeliveryParamList(versionId);
               });
             } else if (type === 'edit') {
               editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
-                queryDeliveryGloableParamList(versionId, 'global');
+                queryDeliveryParamList(versionId);
               });
             }
           },

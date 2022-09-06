@@ -4,9 +4,10 @@ import { Tabs, Descriptions, Button, Typography, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
 import moment from 'moment';
-import EditorTablePro from './Editor-Table-Pro';
-import GlobalParamsEditorTable from './GlobalParamsEditorTable';
-import ComponentParamsEditorTable from './ComponentParamsEditorTable';
+import EditorTablePro from './components/Editor-Table-Pro';
+import GlobalParamsEditorTable from './components/GlobalParamsEditorTable';
+import ComponentParamsEditorTable from './components/ComponentParamsEditorTable';
+import ServiceConfig from './components/ServiceConfig'
 import { productionTabsConfig, deliveryTabsConfig, productionPageTypes } from './tab-config';
 import { useVersionDescriptionInfo, useEditProductVersionDescription } from './hooks';
 import './index.less';
@@ -89,8 +90,6 @@ export default function VersionDetail() {
                   title="基本信息"
                   column={2}
                   className="basic-info-description"
-                  // labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
-                  // contentStyle={{ color: '#000' }}
                   bordered={true}
                 >
                   <Descriptions.Item label="产品名称:">{descriptionInfoData?.productName || '--'}</Descriptions.Item>
@@ -156,6 +155,16 @@ export default function VersionDetail() {
                     {item.value === 'componentParameters' && (
                       <div>
                         <ComponentParamsEditorTable
+                          currentTab={item.value}
+                          versionId={descriptionInfoData.versionId}
+                          initDataSource={gloableTableDataSource}
+                          isEditable={isEditable}
+                        />
+                      </div>
+                    )}
+                     {item.value === 'service' && (
+                      <div>
+                        <ServiceConfig
                           currentTab={item.value}
                           versionId={descriptionInfoData.versionId}
                           initDataSource={gloableTableDataSource}

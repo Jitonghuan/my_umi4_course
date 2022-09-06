@@ -4,7 +4,7 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Select, Form, Popconfirm, message } from 'antd';
-import { productionPageTypes } from './tab-config';
+import { productionPageTypes } from '../tab-config';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import {
@@ -13,8 +13,8 @@ import {
   useQueryVersionComponentList,
   useDeleteVersionComponent,
   useAddCompontent,
-} from './hooks';
-import { useQueryProductlineList } from '../component-center/hook';
+} from '../hooks';
+import { useQueryProductlineList } from '../../component-center/hook';
 import BatchDraw from './BatchAddDraw';
 
 type DataSourceType = {
@@ -73,9 +73,49 @@ export default (props: VersionDetailProps) => {
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
 
+  const columns = useMemo(() => {
+    return createTableColumns({
+      onEdit: (record, index) => {
+        setcurRecord(record);
+        setMode('EDIT');
+      },
+      onManage: (record, index) => {
+        history.push({
+          pathname: 'info',
+          state: {
+            curRecord: record,
+            instanceId: record?.id,
+            clusterId: record?.clusterId,
+            optType: 'instance-list-manage',
+          },
+        });
+      },
+      onViewPerformance: (record, index) => {
+        history.push({
+          pathname: 'info',
+          state: {
+            curRecord: record,
+            instanceId: record?.id,
+            usterId: record?.clusterId,
+            optType: 'instance-list-trend',
+          },
+        });
+      },
+      onDelete: async (id) => {
+        deleteInstance({ id }).then(() => {
+          loadListData({
+            pageIndex: 1,
+            pageSize: 20,
+          });
+        });
+      },
+      delLoading: delLoading,
+    }) as any;
+  }, []);
+
   const columns: ProColumns<DataSourceType>[] = [
     {
-      title: currentTabType === 'app' ? '应用名称' : currentTabType === 'middleware' ? '中间件名称' : '基础数据名称',
+      title: currentTabType === 'app' ? '应用名称' : currentTabType === 'fe-source' ? '前端资源名称' : '基础数据名称',
       key: 'componentName',
       dataIndex: 'componentName',
       valueType: 'select',
@@ -120,7 +160,7 @@ export default (props: VersionDetailProps) => {
       },
     },
     {
-      title: currentTabType === 'app' ? '应用版本' : currentTabType === 'middleware' ? '中间件版本' : '基础数据版本',
+      title: currentTabType === 'app' ? '应用版本' : currentTabType === 'fe-source' ? '前端资源版本' : '基础数据版本',
       key: 'componentVersion',
       dataIndex: 'componentVersion',
       valueType: 'select',
@@ -150,7 +190,36 @@ export default (props: VersionDetailProps) => {
       },
     },
     {
-      title: currentTabType === 'app' ? '应用描述' : currentTabType === 'middleware' ? '中间件描述' : '基础数据描述',
+      title: 'Bucket',
+      key: 'paramComponent',
+      dataIndex: 'paramComponent',
+      valueType: 'select',
+      formItemProps: () => {
+        return {
+          rules: [
+            {
+              required: true,
+              message: '此项为必填项',
+            },
+          ],
+          errorType: 'default',
+        };
+      },
+      renderFormItem: (_, config: any, data) => {
+        return (
+          <Select
+            options={[]}
+            showSearch
+            allowClear
+            onChange={(value: any) => {
+             
+            }}
+          ></Select>
+        );
+      },
+    },
+    {
+      title: currentTabType === 'app' ? '应用描述' : currentTabType === 'fe-source' ? '前端资源描述' : '基础数据描述',
       dataIndex: 'componentDescription',
       renderFormItem: (_, config: any, data) => {
         return <Input></Input>;
@@ -259,22 +328,6 @@ export default (props: VersionDetailProps) => {
               添加应用
             </Button>
           )}
-
-          {/* {currentTabType !== 'app' && (
-            <Button
-              type="primary"
-              disabled={isEditable}
-              onClick={() => {
-                // actionRef.current?.addEditRecord?.({
-                //   id: (Math.random() * 1000000).toFixed(0)
-                // },);
-                setPosition('top');
-              }}
-              icon={<PlusOutlined />}
-            >
-              {productionPageTypes[currentTab].text}
-            </Button>
-          )} */}
         </div>
       </div>
       <EditableProTable<DataSourceType>

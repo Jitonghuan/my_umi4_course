@@ -14,6 +14,11 @@ export const productionTabsConfig: any = [
     value: 'sql',
     type: 'sql',
   },
+  {
+    label: '前端资源',
+    value: 'fe-source',
+    type: 'fe-source',
+  },
 ];
 
 export const deliveryTabsConfig: any = [
@@ -24,6 +29,10 @@ export const deliveryTabsConfig: any = [
   {
     label: '组件参数',
     value: 'componentParameters',
+  },
+  {
+    label: '服务配置',
+    value: 'service',
   },
 ];
 

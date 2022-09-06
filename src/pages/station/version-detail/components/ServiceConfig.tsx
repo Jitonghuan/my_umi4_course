@@ -11,7 +11,7 @@ import {
   useDeleteDeliveryParam,
   useQueryOriginList,
   useEditVersionParam,
-} from './hooks';
+} from '../hooks';
 
 type DataSourceType = {
   id: any;
@@ -60,49 +60,16 @@ export default (props: VersionDetailProps) => {
   }, []);
   const columns: ProColumns<any>[] = [
     {
-      title: '参数来源组件',
-      key: 'paramComponent',
-      dataIndex: 'paramComponent',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
+        title: '基准配置',
+        key: 'paramValue',
+        dataIndex: 'paramValue',
+        renderFormItem: (_, config: any, data) => {
+          return <Input placeholder="单行输入"></Input>;
+        },
       },
-      // valueEnum: originOptions,
-      editable: (text, record, index) => {
-        if (type === 'edit' && text) {
-          return false;
-        } else if (type === 'add' && !text) {
-          return true;
-        } else if (type === 'add' && text) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      renderFormItem: (_, config: any, data) => {
-        return (
-          <Select
-            options={originOptions}
-            showSearch
-            allowClear
-            onChange={(value: any) => {
-              queryParamList(versionId, value);
-            }}
-          ></Select>
-        );
-      },
-    },
 
     {
-      title: '选择参数',
+      title: '配置中心',
       key: 'paramName',
       dataIndex: 'paramName',
       valueType: 'select',
@@ -145,17 +112,17 @@ export default (props: VersionDetailProps) => {
       },
     },
     {
-      title: '参数值',
+      title: '配置说明',
       key: 'paramValue',
       dataIndex: 'paramValue',
       renderFormItem: (_, config: any, data) => {
         return <Input disabled={true}></Input>;
       },
     },
-    {
-      title: '参数说明',
-      dataIndex: 'paramDescription',
-    },
+    // {
+    //   title: '参数说明',
+    //   dataIndex: 'paramDescription',
+    // },
 
     {
       title: '操作',
@@ -205,7 +172,7 @@ export default (props: VersionDetailProps) => {
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
             <Form.Item name="paramComponent">
-              <Input style={{ width: 220 }} placeholder="请输入参数来源组件"></Input>
+              <Input style={{ width: 220 }} placeholder="请输入"></Input>
             </Form.Item>
             <Form.Item>
               <Button onClick={handleSearch} type="primary">
@@ -215,18 +182,6 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          {/* <Button
-            type="primary"
-            onClick={() => {
-              actionRef.current?.addEditRecord?.({
-                id: (Math.random() * 1000000).toFixed(0),
-              });
-              setType('add');
-            }}
-            icon={<PlusOutlined />}
-          >
-            添加组件参数
-          </Button> */}
         </div>
       </div>
       <EditableProTable<DataSourceType>
@@ -237,7 +192,7 @@ export default (props: VersionDetailProps) => {
         recordCreatorProps={{
           position: 'top',
           // newRecordType: 'dataSource',
-          creatorButtonText: '新增参数',
+          creatorButtonText: '新增配置',
           record: { id: (Math.random() * 1000000).toFixed(0) },
         }}
         pagination={false}
