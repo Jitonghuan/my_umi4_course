@@ -43,7 +43,18 @@ export const nodeListTableSchema = ({
         </div>
       ),
     },
-
+    {
+      title: 'CPU核数',
+      dataIndex: ['metricInfo', 'cpuInfo', 'total'],
+      width: 120,
+      // fixed: 'left',
+      render: (value: string, record: any) => (
+        <div>
+          {record?.metricInfo?.cpuInfo?.unit ? `${record?.metricInfo?.cpuInfo?.usage}/${value}` : '-'}
+          <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.cpuInfo?.unit}</span>
+        </div>
+      ),
+    },
     {
       title: '内存',
       dataIndex: ['metricInfo', 'memoryInfo', 'total'],
