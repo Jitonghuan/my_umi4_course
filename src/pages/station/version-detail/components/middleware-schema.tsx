@@ -18,11 +18,11 @@ type DataSourceType = {
   };
   // 列表页-表格
 export const createMiddlewareTableColumns = (params: {
-    onEdit: (record: any, index: number) => void;
-    onManage: (record: any, index: number) => void;
-    onViewPerformance: (record: any, index: number) => void;
+    nameOnchange: (record: any, config: any) => void;
+    onConfig: (record: any) => void;
     onDelete: (record: any) => void;
-    delLoading: boolean;
+    componentOptions:any;
+    componentVersionOptions:any
     // currentTabType;
   }) => {
     return [
@@ -43,18 +43,21 @@ export const createMiddlewareTableColumns = (params: {
           },
           renderFormItem: (_, config: any, data) => {
             let description = '';
-           
+            params?.componentOptions.filter((item: any) => {
+              if (item.label === config.record?.componentName) {
+                description = item.componentDescription;
+              }
+            });
             return (
               <Select
-                options={[]}
+                options={ params?.componentOptions}
                 showSearch
                 allowClear
                 labelInValue
                 optionFilterProp="label"
                 onChange={(param: any) => {
-                 
-                  }
-                }
+                  params?.nameOnchange(param,config)
+                }}
               ></Select>
             );
           },
@@ -79,7 +82,7 @@ export const createMiddlewareTableColumns = (params: {
           //  ]
           return (
             <Select
-              options={[]}
+              options={params?.componentVersionOptions}
               showSearch
               allowClear
               // onChange={(value: any) => {
@@ -163,6 +166,7 @@ export const createMiddlewareTableColumns = (params: {
         render: (text, record: any, _, action) => [
           <a
             onClick={() => {
+              params?.onConfig(record)
             
             }}
           >
@@ -171,6 +175,7 @@ export const createMiddlewareTableColumns = (params: {
           <Popconfirm
             title="确定要删除吗？"
             onConfirm={() => {
+              params?.onDelete(record)
              
             }}
           >

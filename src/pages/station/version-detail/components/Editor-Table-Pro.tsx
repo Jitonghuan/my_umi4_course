@@ -1,10 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect,useMemo } from 'react';
 import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Select, Form, Popconfirm, message } from 'antd';
 import { productionPageTypes } from '../tab-config';
+import {createMiddlewareTableColumns} from '../components/middleware-schema'
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import {
@@ -73,43 +74,51 @@ export default (props: VersionDetailProps) => {
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
 
-  const columns = useMemo(() => {
-    return createTableColumns({
-      onEdit: (record, index) => {
-        setcurRecord(record);
-        setMode('EDIT');
+  const middleColumns = useMemo(() => {
+    return createMiddlewareTableColumns({
+      nameOnchange: (param,config:any) => {
+        queryProductVersionOptions(param.value, currentTabType);
+        componentOptions.filter((item: any) => {
+          if (item.label === param.label) {
+            updateRow(config.recordKey, {
+              ...form.getFieldsValue(config.recordKey),
+              componentDescription: item.componentDescription,
+            });
+          }
+        });
+       
       },
-      onManage: (record, index) => {
+      onConfig: (record) => {
         history.push({
-          pathname: 'info',
+          pathname: '/matrix/station/component-detail',
           state: {
-            curRecord: record,
-            instanceId: record?.id,
-            clusterId: record?.clusterId,
-            optType: 'instance-list-manage',
+            initRecord: record,
+            productVersionId: versionId,
+            componentName: record.componentName,
+            componentVersion: record.componentVersion,
+            componentId: record.componentId,
+            componentType: currentTab,
+            componentDescription: record.componentDescription,
+            optType: 'versionDetail',
+            versionDescription: versionDescription,
+            releaseStatus: releaseStatus,
+            descriptionInfoData: descriptionInfoData,
           },
         });
       },
-      onViewPerformance: (record, index) => {
-        history.push({
-          pathname: 'info',
-          state: {
-            curRecord: record,
-            instanceId: record?.id,
-            usterId: record?.clusterId,
-            optType: 'instance-list-trend',
-          },
-        });
-      },
-      onDelete: async (id) => {
-        deleteInstance({ id }).then(() => {
-          loadListData({
-            pageIndex: 1,
-            pageSize: 20,
+     
+      onDelete: async (record) => {
+        if (isEditable) {
+          message.info('已发布不可以删除!');
+        } else {
+          deleteVersionComponent(record.id).then(() => {
+            setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
           });
-        });
+        }
       },
-      delLoading: delLoading,
+      componentOptions,
+      componentVersionOptions
+     
     }) as any;
   }, []);
 
@@ -336,6 +345,7 @@ export default (props: VersionDetailProps) => {
         formRef={ref}
         headerTitle="可编辑表格"
         loading={loading}
+        rowSelection={{}}
         // maxLength={5}
         // 关闭默认的新建按钮
         // recordCreatorProps={false}
@@ -345,7 +355,7 @@ export default (props: VersionDetailProps) => {
           creatorButtonText: '新增组件',
           record: { id: (Math.random() * 1000000).toFixed(0) },
         }}
-        columns={columns}
+        columns={currentTabType === 'middleware'?middleColumns:columns}
         scroll={{ y: window.innerHeight - 340 }}
         value={tableDataSource}
         onChange={setDataSource}
@@ -371,6 +381,7 @@ export default (props: VersionDetailProps) => {
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
       />
+      <p className="compontents-delete-button"><Button>删除选中</Button></p>
     </>
   );
 };

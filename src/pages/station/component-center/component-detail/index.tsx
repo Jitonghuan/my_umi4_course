@@ -6,6 +6,7 @@ import moment from 'moment';
 import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
+import { MinusCircleOutlined,PlusCircleOutlined} from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import UserModal from '../components/UserModal';
 import BasicDataModal from '../components/basicDataModal';
@@ -63,6 +64,7 @@ export default function ComponentDetail() {
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
+  const [mode,setMode]=useState<EditorMode>("HIDE")
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   // console.log('productVersionId', productVersionId);
   const deletVersion = async (id: number) => {
@@ -336,10 +338,8 @@ export default function ComponentDetail() {
             </Button>
           </div>
         </div>
-        <Tabs defaultActiveKey="1" onChange={tabOnclick} >
-          <TabPane tab="组件信息" key="component-info">
-            <div>
-              <Spin spinning={infoLoading}>
+        <div style={{paddingBottom:14}}>
+        <Spin spinning={infoLoading}>
                 <Descriptions title="基本信息" column={2} bordered={true} className="component-info-description">
                   <Descriptions.Item label="组件名称">{componentInfo?.componentName || '--'}</Descriptions.Item>
                   <Descriptions.Item label="组件描述">
@@ -359,17 +359,31 @@ export default function ComponentDetail() {
                   <Descriptions.Item label="创建时间">
                     {moment(componentInfo?.gmtCreate).format('YYYY-MM-DD HH:mm:ss') || '--'}{' '}
                   </Descriptions.Item>
-                  <Descriptions.Item label="更新时间">
+                  <Descriptions.Item label="依赖组件" span={2}>
+                    {componentInfo?.componentUrl || '--'} 
+                    <span style={{float:"right"}}><MinusCircleOutlined onClick={()=>{setMode("ADD")}} style={{fontSize:16,color:"#3591ff"}} />&nbsp;<PlusCircleOutlined onClick={()=>{setMode("EDIT")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
+                  </Descriptions.Item> 
+                  {/* <Descriptions.Item label="更新时间">
                     {moment(componentInfo?.gmtModify).format('YYYY-MM-DD HH:mm:ss') || '--'}
                   </Descriptions.Item>
                   <Descriptions.Item label="组件地址" span={2}>
                     {componentInfo?.componentUrl || '--'}
-                  </Descriptions.Item>
+                  </Descriptions.Item> */}
                 </Descriptions>
               </Spin>
-              <Divider />
+              {/* <Divider /> */}
+        </div>
+        <Tabs defaultActiveKey="1" onChange={tabOnclick}  type="card">
+          <TabPane tab="版本信息" key="component-info">
               <div>
-                <h3 style={{ borderLeft: '4px solid #3591ff', paddingLeft: 8, height: 20, fontSize: 16 }}>组件说明:</h3>
+                <div >
+                  <div style={{paddingLeft:10}}>
+                     <span><b>版本号：</b></span>
+                     <span style={{paddingLeft:18}}><b>版本地址：</b></span>
+                  </div> 
+                <div style={{paddingLeft:10}}>
+                  <b>版本说明:</b>
+                </div>
                 <div className="instruction">
                   <div className="instruction-info">
                     <Spin spinning={infoLoading}>
@@ -385,8 +399,8 @@ export default function ComponentDetail() {
               </div>
             </div>
           </TabPane>
-          <TabPane tab="组件配置" key="component-config">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 2 }}>
+          <TabPane tab="版本配置" key="component-config">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
               <p>
                 <Button
                   type={buttonText === '编辑' ? 'primary' : 'default'}
@@ -424,6 +438,10 @@ export default function ComponentDetail() {
           </TabPane>
         </Tabs>
       </ContentCard>
+      <Modal title={mode==="ADD"?"选择要删除的依赖组件":"选择要新增的依赖组件"} visible={mode!=="HIDE"} onCancel={()=>{ setMode("HIDE")}} onOk={()=>{}}>
+        <Select style={{width:240}} mode="tags" allowClear showSearch options={[]}/>
+
+      </Modal>
     </PageContainer>
   );
 }
