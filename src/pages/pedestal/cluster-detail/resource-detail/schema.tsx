@@ -104,7 +104,7 @@ export const resourceDetailTableSchema = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          {['deployments', 'pods', 'replicasets', 'statefulsets'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
+          {['deployments', 'pods', 'replicasets', 'statefulsets', 'configmaps', 'secrets'].includes(record?.type) && <a onClick={() => handleDetail(record, index)}>详情</a>}
           {['deployments', 'replicasets', 'statefulsets'].includes(record?.type) && (
             <Popconfirm
               title={`确定要重新部署吗？`}
@@ -125,7 +125,7 @@ export const resourceDetailTableSchema = ({
               <a >{record?.info?.paused ? '恢复编排' : '停止编排'}</a>
             </Popconfirm>
           )}
-          <a onClick={() => handleYaml(record, index)}>查看YAML</a>
+          <a onClick={() => handleYaml(record, index)}>YAML</a>
           <Popconfirm
             title="确定要删除该资源吗？"
             onConfirm={() => {

@@ -34,24 +34,14 @@ export const nodeListTableSchema = ({
     },
     {
       title: 'CPU',
-      dataIndex: ['metricInfo', 'cpuInfo', 'percentage'],
-      width: 120,
+      dataIndex: ['metricInfo', 'cpuInfo'],
+      width: 180,
       // fixed: 'left',
       render: (value: any, record: any) => (
         <div>
-          <span style={{ marginLeft: '10px' }}>{value ? `${(value * 100).toFixed(2)}%` : '-'}</span>
-        </div>
-      ),
-    },
-    {
-      title: 'CPU核数',
-      dataIndex: ['metricInfo', 'cpuInfo', 'total'],
-      width: 120,
-      // fixed: 'left',
-      render: (value: string, record: any) => (
-        <div>
-          {record?.metricInfo?.cpuInfo?.unit ? `${record?.metricInfo?.cpuInfo?.usage}/${value}` : '-'}
-          <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.cpuInfo?.unit}</span>
+          <span>{value?.unit ? `${value?.usage}/${value?.total}` : '-'}</span>
+          <span style={{ margin: '0px 5px' }}>{value?.unit}</span>
+          <span style={{ marginLeft: '5px' }}>{value?.percentage ? `${(value.percentage * 100).toFixed(2)}%` : '-'}</span>
         </div>
       ),
     },
@@ -63,14 +53,14 @@ export const nodeListTableSchema = ({
       render: (value: string, record: any) => (
         <div>
           {record?.metricInfo?.memoryInfo?.unit ? `${record?.metricInfo?.memoryInfo?.usage}/${value}` : '-'}
-          <span style={{ marginLeft: '10px' }}>{record?.metricInfo?.memoryInfo?.unit}</span>
+          <span style={{ marginLeft: '7px' }}>{record?.metricInfo?.memoryInfo?.unit}</span>
         </div>
       ),
     },
     {
       title: '磁盘',
       dataIndex: ['metricInfo', 'diskInfo', 'total'],
-      width: 120,
+      width: 140,
       // fixed: 'left',
       render: (value: string, record: any) => (
         <div>
