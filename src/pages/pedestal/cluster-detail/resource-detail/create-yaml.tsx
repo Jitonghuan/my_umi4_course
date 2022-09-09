@@ -1,6 +1,4 @@
-// 新增环境抽屉页
-// @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/10/25 18:30
+
 
 import React, { useContext } from 'react';
 import { history } from 'umi';

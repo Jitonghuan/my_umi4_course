@@ -60,6 +60,17 @@ export default function ResourceDetail(props: any) {
             pathname: '/matrix/pedestal/cluster-detail/pods',
             query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind, type: '' },
           });
+        } else if (['configmaps', 'secrets'].includes(record.type)) {
+          history.push({
+            pathname: '/matrix/pedestal/cluster-detail/detail',
+            query: {
+              // key: 'resource-detail',
+              kind: record?.kind,
+              type: record?.type,
+              namespace: record?.namespace,
+              name: record?.name,
+            }
+          })
         } else {
           history.push({
             pathname: '/matrix/pedestal/cluster-detail/load-detail',
@@ -90,7 +101,7 @@ export default function ResourceDetail(props: any) {
         })
           .then((res: any) => {
             if (res?.success) {
-              setCurrentRecord({ yaml: res?.data || '' });
+              setCurrentRecord({ yaml: res?.data || '', name: record?.name });
               setYamlDetailVisible(true);
             }
           })
@@ -283,6 +294,10 @@ export default function ResourceDetail(props: any) {
           setYamlDetailVisible(false);
         }}
         initData={currentRecord}
+        onSave={() => {
+          setYamlDetailVisible(false);
+          initialSearch()
+        }}
       ></YamlDetail>
       <div className="search-form">
         <Form

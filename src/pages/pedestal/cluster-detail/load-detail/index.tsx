@@ -446,7 +446,7 @@ export default function LoadDetail(props: any) {
       </div>
       {/* 标签管理 */}
       <div className="flex-wrapper" style={{ marginTop: '10px' }}>
-        <span className="title">标签管理：</span>
+        <span className="title">Labels：</span>
         <Button
           type="primary"
           size="small"
