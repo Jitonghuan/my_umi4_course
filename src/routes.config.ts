@@ -114,6 +114,10 @@ export default [
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
   {
+    path: `${baseRoutePath}/DBMS`,
+    redirect: `${baseRoutePath}/DBMS/authority-manage/authority-apply`,
+  },
+  {
     path: 'application',
     name: '应用管理',
     icon: 'icon-poc_maindata',
@@ -1190,6 +1194,54 @@ export default [
         key: 'display',
         component: '@/pages/display',
         // hideInMenu: true,
+      },
+    ],
+  },
+  {
+    path: 'DBMS',
+    name: 'DBMS',
+    icon: 'icon-TableSettings',
+    routes: [
+      {
+        path: 'authority-manage',
+        name: '权限管理',
+        key: 'authority-manage',
+        component: '@/pages/DBMS/authority-manage',
+        routes:[
+          {
+            path: 'authority-apply',
+            name: '权限申请',
+            key: 'authority-manage',
+            component: '@/pages/DBMS/authority-manage/components/authority-apply',
+            hideInMenu: true,
+          },
+          {
+            path: 'my-authority',
+            name: '我的权限',
+            key: 'authority-manage',
+            component: '@/pages/DBMS/authority-manage/components/my-authority',
+            hideInMenu: true,
+          }
+        ]
+      },
+      {
+        path: 'data-query',
+        name: '数据查询',
+        key: 'data-query',
+        component: '@/pages/DBMS/data-query',
+      },
+
+      {
+        path: 'data-change',
+        name: '数据变更',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change',
+      },
+      {
+        path: 'configuration',
+        name: '配置项',
+        key: 'configuration',
+        component: '@/pages/DBMS/configuration',
       },
     ],
   },
