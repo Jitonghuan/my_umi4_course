@@ -278,7 +278,7 @@ export default function CsDetail(props: any) {
                             {(fields, { add, remove }) => (
                                 <>
                                     {fields.map((field, index) => (
-                                        <Space key={field.key} align="center" style={{ alignItems: "center" }}  >
+                                        <Space key={field.key} align="center" >
                                             <Form.Item
                                                 noStyle
                                                 shouldUpdate={(prevValues, curValues) =>
@@ -293,7 +293,7 @@ export default function CsDetail(props: any) {
                                                         label={index === 0 ? 'KEY' : ''}
                                                         name={[field.name, 'key']}
                                                     >
-                                                        <Input.TextArea disabled autoSize={{ minRows: 3, maxRows: 3 }} style={{ width: '350px' }} />
+                                                        <Input.TextArea disabled autoSize={{ minRows: 3, maxRows: 10 }} style={{ width: '350px' }} />
                                                     </Form.Item>
                                                 )}
                                             </Form.Item>
@@ -307,7 +307,7 @@ export default function CsDetail(props: any) {
                                                 label={index === 0 ? 'VALUE' : ''}
                                                 name={[field.name, 'value']}
                                             >
-                                                <Input.TextArea disabled={type === 'secrets' && secret} autoSize={{ minRows: 3, maxRows: 3 }} style={{ width: '350px' }} />
+                                                <Input.TextArea disabled={type === 'secrets' && secret} autoSize={{ minRows: 3, maxRows: 10 }} style={{ width: '450px' }} />
                                             </Form.Item>
                                             {/* <div
                                                 className="v-item"
