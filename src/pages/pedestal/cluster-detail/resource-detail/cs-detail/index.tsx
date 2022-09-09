@@ -210,7 +210,7 @@ export default function CsDetail(props: any) {
             >
             </AddData>
             {/* data部分 */}
-            <div>
+            <div className='flex-space-between'>
                 <p>
                     <LeftOutlined
                         style={{ fontSize: '18px' }}
@@ -224,6 +224,8 @@ export default function CsDetail(props: any) {
                     <span className='return-name'>{name}</span>
 
                     {type === 'secrets' ? <Tag color='blue' style={{ marginLeft: '10px' }}>{data?.secretType || '---'}</Tag> : null}
+                </p>
+                <p>
                     <Button
                         icon={<RedoOutlined />}
                         onClick={() => {
@@ -245,8 +247,8 @@ export default function CsDetail(props: any) {
                     <div>
                         {type === 'secrets' && Object.keys(data?.data || {}).length ?
                             secret ?
-                                <EyeInvisibleOutlined style={{ marginRight: '10px' }} onClick={() => { handleSecret(false) }} /> :
-                                <EyeOutlined style={{ marginRight: '10px' }} onClick={() => { handleSecret(true) }} />
+                                <EyeInvisibleOutlined style={{ marginRight: '10px', fontSize: '20px' }} onClick={() => { handleSecret(false) }} /> :
+                                <EyeOutlined style={{ marginRight: '10px', fontSize: '20px' }} onClick={() => { handleSecret(true) }} />
                             : null}
                         <Button
                             size="small"
@@ -287,11 +289,11 @@ export default function CsDetail(props: any) {
                                                     <Form.Item
                                                         {...field}
                                                         className="v-item"
-                                                        style={{ marginTop: '-43px' }}
+                                                        // style={{ marginTop: '-43px' }}
                                                         label={index === 0 ? 'KEY' : ''}
                                                         name={[field.name, 'key']}
                                                     >
-                                                        <Input disabled style={{ width: '350px' }} />
+                                                        <Input.TextArea disabled autoSize={{ minRows: 3, maxRows: 3 }} style={{ width: '350px' }} />
                                                     </Form.Item>
                                                 )}
                                             </Form.Item>
