@@ -7,9 +7,14 @@ import PageContainer from '@/components/page-container';
 import type { RadioChangeEvent } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
-import {options,checkOptions,START_TIME_ENUMS} from './schema'
+import {options,checkOptions,START_TIME_ENUMS} from './schema';
 import { Drawer, Form, Button, Select, Radio,Steps, Card ,Tag,Space,Input,Checkbox,DatePicker} from 'antd';
-import {ScheduleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons'
+import {ScheduleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
+import ShuttleFrame from '@/components/shuttle-frame';
+import LibraryForm from '../apply-detail/_components/library-form';
+import TableForm from '../apply-detail/_components/table-form';
+import LimitForm from '../apply-detail/_components/limit-form';
+import LibraryOwnerForm from '../apply-detail/_components/library-owner-form'
 
 
 const { RangePicker } = DatePicker;
@@ -25,7 +30,7 @@ const CheckboxGroup = Checkbox.Group;
 export default function CreateArticle(props: CreateArticleProps) {
   const createForm:any=Form.useForm()
   const { mode, curRecord, onClose, onSave } = props;
-  const [value3, setValue3] = useState('Apple');
+  const [value, setValue3] = useState('library');
   //time-ranger
   const [type,setType]=useState<string>("time-interval")
  
@@ -67,7 +72,7 @@ export default function CreateArticle(props: CreateArticleProps) {
     >
       <Form labelCol={{ flex: '110px' }} >
         <Form.Item label="对象类型">
-        <Radio.Group options={options} onChange={onChange3} value={value3} optionType="button" />
+        <Radio.Group options={options} onChange={onChange3} value={value} optionType="button" />
         </Form.Item>
         <Form.Item label="环境">
           <Select options={[]} allowClear showSearch  style={{width:220}}/>
@@ -77,43 +82,14 @@ export default function CreateArticle(props: CreateArticleProps) {
         <Select options={[]} allowClear showSearch  style={{width:220}}/>
           
         </Form.Item>
-        <Form.Item label="目标库">
-          
-        </Form.Item>
-        <Form.Item label="有效期" >
-          <Space>
-            {type==="time-interval"?( <Form.Item name="versionRangeOne"  >
-             <Select options={START_TIME_ENUMS} allowClear showSearch  style={{width:220}}/>
-           </Form.Item>):
-           ( <Form.Item name="versionRangeOne"  >
-           <RangePicker  style={{ marginLeft: '5px', width: 260 }}  format="YYYY-MM-DD HH:mm:ss" showTime />
-         </Form.Item>)}
-         {type==="time-interval"?(
-           <Form.Item>
-           <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{setType("time-ranger")}} />&nbsp;<span style={{color:'gray'}}>自定义选择时间范围</span>
-             
-           {/* <RangePicker  style={{ marginLeft: '5px', width: 260 }}  format="YYYY-MM-DD HH:mm:ss" showTime /> */}
-           </Form.Item>
+        {value==="library"&&<LibraryForm />}
+        {value==="table"&&<TableForm/>}
+        {value==="libraryOwner"&&<LibraryOwnerForm/>}
+        {value==="limit"&&<LimitForm/>}
 
-         ):(
-          <Form.Item>
-          <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{setType("time-ranger")}} />&nbsp;<span style={{color:'gray'}}>切换时间段选择</span>
-            
-          {/* <RangePicker  style={{ marginLeft: '5px', width: 260 }}  format="YYYY-MM-DD HH:mm:ss" showTime /> */}
-          </Form.Item>
-         )}
-          
-           
-          </Space>
-        </Form.Item>
-       
-        <Form.Item label="授权功能">
-        <CheckboxGroup options={checkOptions} onChange={onChange}  />
-
-          
-        </Form.Item>
+     
         <Form.Item label="理由">
-          <Input.TextArea  style={{width:320}}></Input.TextArea>
+          <Input.TextArea  style={{width:320}} placeholder="说明理由和用途"></Input.TextArea>
           
         </Form.Item>
       </Form>

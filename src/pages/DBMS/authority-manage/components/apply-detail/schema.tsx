@@ -1,10 +1,10 @@
 
 import moment from "moment";
 export const options = [
-    { label: '库权限', value: 'Apple' },
-    { label: '表权限', value: 'Pear' },
-    { label: '库Owner', value: 'Orange' },
-    { label: 'limit限制', value: 'xixi' },
+    { label: '库权限', value: 'library' },
+    { label: '表权限', value: 'table' },
+    { label: '库Owner', value: 'libraryOwner' },
+    { label: 'limit限制', value: 'limit' },
   ];
   export const timeOptions = [
     { label: '一个月', value: 'Apple' },
