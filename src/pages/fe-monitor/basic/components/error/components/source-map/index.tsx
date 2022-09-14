@@ -41,12 +41,16 @@ const SourceMapModal = (props: IProps) => {
       errorColumn: d3[1],
       filePath: '/hbos-A/' + fileList.join('/') + '.map'
     })
+
     setLoading(false);
     if (res?.data) {
       const contentRowArr = res.data.sourceCode?.split("\n"); //切分
+      let startLine = res.data.line - 10 > 0 ? res.data.line - 10 : 0;
       setSourceInfo({
         ...res.data,
-        code: res.data?.line ? contentRowArr[res.data.line - 1] : '',
+        code: contentRowArr.splice(startLine, 15).join('\n'),
+        startLine
+        // code: res.data?.line ? contentRowArr[res.data.line - 1] : '',
       });
     }
   }
@@ -77,7 +81,8 @@ const SourceMapModal = (props: IProps) => {
             <AceEditor
               mode="javascript"
               value={sourceInfo?.code}
-              firstLineNumber={sourceInfo?.line || 1}
+              readOnly={true}
+              firstLineNumber={sourceInfo?.startLine || 1}
               height={400}
             />
           </>
