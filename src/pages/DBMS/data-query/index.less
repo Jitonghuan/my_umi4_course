@@ -1,0 +1,44 @@
+
+.page-dragger{
+    display: flex !important;
+    justify-content: flex-start !important;
+    width: 100%;
+
+    .left-content-dragger{
+        position: relative;
+        // width: 300px;
+        height: 100vh;
+        padding: 20px;
+        background-color: #E6E6FA;
+        overflow: hidden;
+        flex-grow:1;
+        &-ul{
+            >li{
+                white-space: nowrap;
+            }
+        }
+      
+    
+    }
+    .draggable-box{
+        position: absolute;
+        // left: 200px;
+        top: 0;
+        width: 5px;
+        height: 100vh;
+        // background-color: green;
+        cursor: col-resize;
+        z-index: 1000;
+    
+
+    }
+
+    .right-content-dragger{
+        // width: 600px;
+        height: 100vh;
+        padding: 20px;
+        background-color: #FFF;
+        flex-grow:1;
+        // z-index: 100;
+    }
+}
