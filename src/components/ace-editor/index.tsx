@@ -33,10 +33,12 @@ export interface AceEditorProps {
   placeholder?: string;
   focus?: boolean;
   firstLineNumber?: number;
+  cursorStart?: number,
+  markers?: any[],
 }
 
 export default function AceEditor(props: AceEditorProps) {
-  const { mode = 'text', focus = false, firstLineNumber } = props;
+  const { mode = 'text', focus = false, firstLineNumber, cursorStart, markers } = props;
   const [stateValue, setStateValue] = useState<string>('value' in props ? props.value! : props.defaultValue ?? '');
   const [wrap, setWrap] = useState(false);
   const errorRef = useRef<any>();
@@ -84,7 +86,10 @@ export default function AceEditor(props: AceEditorProps) {
         height={props.height ? `${props.height}${typeof props.height === 'string' ? '' : 'px'}` : undefined}
         theme="tomorrow"
         value={displayValue}
+        cursorStart={cursorStart || 1}
+        markers={markers || []}
         onChange={handleChange}
+        highlightActiveLine={true}
         readOnly={props.readOnly}
         placeholder={props.placeholder}
         showPrintMargin={false}
