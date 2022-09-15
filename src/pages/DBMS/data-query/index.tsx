@@ -1,57 +1,87 @@
-
-import React, { useState,useEffect,Component} from 'react';
-import {  Tabs,Form,Space,Button } from 'antd';
+import React, { useState,useEffect,Component,useMemo,useRef,} from 'react';
+import {  Tabs,Form,Space,Button,Select,message } from 'antd';
+import {RightCircleFilled,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
-import Draggable from 'react-draggable'; 
-import './index.less'
-export default function DataQuery(){
-    const [initialLeftBoxWidth,setInitialLeftBoxWidth]=useState<any>(150);// 左边区块初始宽度
-    const [leftBoxWidth,setLeftBoxWidth]=useState<number>(150);// 左边区块初始宽度
-    const [leftBoxMinWidth,setLeftBoxMinWidth]=useState<any>(100);// 左边区块最小宽度
-    const [leftBoxMaxWidth,setLeftBoxMaxWidth]=useState<any>(300);// 左边区块最大宽度
-    const [dragBoxBackground,setDragBoxBackground]=useState<any>('green');//拖拽盒子的背景色
-   
-    const onDrag=(ev:any, ui:any)=>{
-       
-    const newLeftBoxWidth = ui.x + initialLeftBoxWidth;
-    setLeftBoxWidth(newLeftBoxWidth);
-    setDragBoxBackground( '#FFB6C1')
+import LightDragable from "@/components/light-dragable";
+import QueryResult from "./components/query-result";
+import SqlConsole from "./components/sql-console"
+import './index.less';
+const { TabPane } = Tabs;
+export default function ResizeLayout() {
+  const sqlConsoleRef = useRef<any>(null);
+  const queryResultRef = useRef<any>(null);
+  const addQueryResult = () => queryResultRef?.current?.addQueryResult();
+  const addSqlConsole = () => sqlConsoleRef?.current?.addSqlConsole();
+  const queryResultItems=queryResultRef?.current?.queryResultItems;
+  const sqlConsoleItems=sqlConsoleRef?.current?.sqlConsoleItems;
+  const queryResultActiveKey=queryResultRef?.current?.queryResultActiveKey;
+  const sqlConsoleActiveKey=sqlConsoleRef?.current?.sqlConsoleActiveKey;
 
-   
+  const tableMap=()=>{
+   return( ["table1","table2","table3","table4"]?.map((item:string)=>{
+      return(
+        <li className="schema-li-map" style={{listStyle:"none"}}><Space><ZoomInOutlined onClick={addQueryResult}  style={{color:'#3591ff'}} /><InsertRowAboveOutlined onClick={addSqlConsole} style={{color:"#6495ED",fontSize:16}}/><span>{item}</span></Space></li>
+      )
 
-    }
-    const onDragStop=()=>{
-        setDragBoxBackground('transparent')
-    }
+    })
+   )
+  }
+  const leftContent=useMemo(()=>{
+    return(
+      <>
+      <div className="left-content-title">选择查询对象</div>
+      <div className="left-content-form">
+        <Form layout="vertical">
+          <Form.Item>
+            <Select  placeholder="选择环境"/>
+
+          </Form.Item>
+          <Form.Item>
+          <Select  placeholder="选择实例"/>
+          </Form.Item>
+          <Form.Item>
+          <Select  placeholder="选择库"/>
+          </Form.Item>
+          <Form.Item>
+          <Select  placeholder="选择表"/>
+          </Form.Item>
+        </Form>
+        {tableMap()}
+
+      </div>
+      </>
+    )
+  },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey])
+    
+    const rightContent=useMemo(()=>{
+      return(
+        <>
+          <div className="container-top">
+          <SqlConsole ref={sqlConsoleRef}/>
+          
+          </div>
+          <div className="container-bottom">
+            
+            <QueryResult ref={queryResultRef} />
+         
+            
+          </div>
+
+        </>
+      )
+    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey]);
+   
+    return (
+      // <PageContainer>
+        <LightDragable
+        leftContent={leftContent}
+        rightContent={rightContent}
+        showIcon
+        initWidth={150}
+        />
+      // </PageContainer>
+     
+
+    );
+  }
   
-    return(<PageContainer className="page-dragger" isFlex>
-        {/* 左边 */}
-           <div className="left-content-dragger" style={{width:leftBoxWidth}} >
-          <h3 style={{paddingLeft: 20}}>目录</h3>
-          <ul className="left-content-dragger-ul">
-            <li>目录1</li>
-            <li>目录2</li>
-            <li>目录3</li>
-            <li>这是个非常长非常长非常长的目录</li>
-          </ul>
-          <Draggable 
-            axis="x"
-            defaultPosition={{ x: 0, y: 0 }}
-            bounds={{ left: leftBoxMinWidth - initialLeftBoxWidth, right: leftBoxMaxWidth - initialLeftBoxWidth }}
-            onDrag={onDrag}
-            onStop={onDragStop}>
-            <div className="draggable-box" style={{left:initialLeftBoxWidth-5,background:dragBoxBackground}}></div>
-              {/* left={initialLeftBoxWidth - 5} 
-              background={dragBoxBackground} /> */}
-          </Draggable>
-        </div>
-        {/* 右边 */}
-        <div className="right-content-dragger" style={{width:`calc(100% - ${leftBoxWidth+220}px)`}} >
-          <h3>这里是内容块</h3>
-        </div>
-
-
-        
-
-    </PageContainer>)
-}
