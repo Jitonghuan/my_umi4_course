@@ -30,13 +30,13 @@ export default function ClusterDetail(props: any) {
   const { clusterCode, clusterName } = query || {};
   const [clusterOption, setClusterOption] = useState<any>([]);
   const [selectCluster, setSelectCluster] = useState<any>({ value: clusterCode || '', label: clusterName || '' });
-  const [activeTab, setActiveTab] = useState<string>(query?.key || 'node-list');
+  const [activeTab, setActiveTab] = useState<string>(query?.key || 'resource-detail');
   const [data, total] = useClusterListData({ pageSize: -1, pageIndex: -1 });
   useEffect(() => {
     const query: any = parse(location.search);
     if (clusterCode) {
       const path = location.pathname.substring('/matrix/pedestal/cluster-detail/'.length);
-      const key = query?.key || 'node-list'
+      const key = query?.key || 'resource-detail'
       setActiveTab(key);
       const r = {
         pathname: `/matrix/pedestal/cluster-detail/${path || key}`,
@@ -80,7 +80,7 @@ export default function ClusterDetail(props: any) {
     const r = {
       pathname: `/matrix/pedestal/cluster-detail/${key}`,
       search: stringify(Object.assign(query, {
-        key: key || 'node-list',
+        key: key || 'resource-detail',
       })),
     }
     history.replace(r);
