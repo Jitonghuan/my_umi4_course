@@ -5,7 +5,8 @@ import { EyeInvisibleOutlined, MinusCircleOutlined, LeftOutlined, EyeOutlined, R
 import AddTagModal from '@/pages/pedestal/cluster-detail/load-detail/add-modal';
 import TagConfirm from '@/components/tag-confirm';
 import AddData from './add-data';
-import { history } from 'umi';
+import { history, useLocation, } from 'umi';
+import { parse, stringify } from 'query-string';
 import clusterContext from '../../context';
 import { getResourceList, resourceUpdate, resourceDel } from '../../service';
 
@@ -13,8 +14,9 @@ import './index.less'
 const mock: any = { first: '标签1' }
 const mockData = { info: {} }
 export default function CsDetail(props: any) {
-    const { location, children } = props;
-    const { type, kind, name, namespace } = location.query || {};
+    const location: any = useLocation();
+    const query = parse(location.search);
+    const { type, kind, name, namespace } = query || {};
     const { clusterCode, clusterName } = useContext(clusterContext);
     const [form] = Form.useForm();
     const [addTag, setAddTag] = useState<boolean>(false);
@@ -217,7 +219,8 @@ export default function CsDetail(props: any) {
                         onClick={() => {
                             history.push({
                                 pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
-                                query: { ...props.location.query },
+                                search: stringify(query)
+                                // query: { ...props.location.query },
                             });
                         }}
                     />

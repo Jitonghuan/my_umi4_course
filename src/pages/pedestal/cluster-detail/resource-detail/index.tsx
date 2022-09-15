@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo, useContext,useRef } from 'react';
-import { Form, Button,  Table, Select, message } from 'antd';
-import { history, useLocation} from 'umi';
+import React, { useEffect, useState, useMemo, useContext, useRef } from 'react';
+import { Form, Button, Table, Select, message } from 'antd';
+import { history, useLocation } from 'umi';
 import { resourceDetailTableSchema } from './schema';
 import clusterContext from '../context';
 import CreateYaml from './create-yaml';
@@ -70,13 +70,12 @@ export default function ResourceDetail(props: any) {
         } else if (['configmaps', 'secrets'].includes(record.type)) {
           history.push({
             pathname: '/matrix/pedestal/cluster-detail/detail',
-            query: {
-              // key: 'resource-detail',
+            search: stringify(Object.assign(query, {
               kind: record?.kind,
               type: record?.type,
               namespace: record?.namespace,
               name: record?.name,
-            }
+            }))
           })
         } else {
           history.push({
