@@ -4,11 +4,14 @@ import { columns, creatContainerColumns } from '../components/deployment-list/co
 import { ContentCard } from '@/components/vc-page-content';
 import { LIST_STATUS_TYPE } from '../deployInfo-content/schema';
 import { useGetPodEventList, useListContainer } from './hook';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
-  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id, projectEnvName } = props.location.state;
+  let location:any = useLocation();
+  const query = parse(location.search);
+  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id, projectEnvName } =location.state?.infoRecord || {};
   const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
   const [queryContainer, queryContainerData, loading] = useListContainer();
   useEffect(() => {

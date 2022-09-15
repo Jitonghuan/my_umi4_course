@@ -1,7 +1,7 @@
 import { eventTableSchema, podsTableSchema, envVarTableSchema } from '../schema';
 import React, { useEffect, useCallback, useState, useMemo, useContext } from 'react';
 import { history,useLocation, } from 'umi';
-import { parse } from 'query-string';
+import { parse,stringify } from 'query-string';
 import { Table, Tag, Tooltip, Button, Empty, message, Spin, Modal } from 'antd';
 import DownLoadFile from './download-file';
 import AddModal from './add-modal';
@@ -67,23 +67,53 @@ export default function LoadDetail(props: any) {
   const tableColumns = useMemo(() => {
     return podsTableSchema({
       toPodsDetail: (record: any, index: any) => {
+        let newQuery={
+          ...query,
+          name:record.name,
+          namespace:record.namespace,
+          kind:record.kind
+
+        }
         history.push({
           pathname: '/matrix/pedestal/cluster-detail/pods',
-          search:location.search+`&name=${record.name}&namespace=${record.namespace}&kind=${record.kind}`,
+          search:stringify(newQuery),
           // query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind },
         });
       },
       viewLog: (record: any, index: any) => {
+        let newQuery={
+          clusterCode:clusterCode,
+          clusterName:clusterName,
+          name:record.name,
+          namespace:record.namespace,
+          kind:record.kind,
+          key:"resource-detail"
+
+
+
+        }
         history.push({
           pathname: '/matrix/pedestal/view-log',
-          search:`clusterCode=${clusterCode}&clusterName=${clusterName}&name=${record.name}&namespace=${record.namespace}&kind=${record.kind}&key=resource-detail`,
+          search:stringify(newQuery),
           // query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode, clusterName },
         });
       },
       shell: (record: any, index: any) => {
+        let newQuery={
+          clusterCode:clusterCode,
+          clusterName:clusterName,
+          name:record.name,
+          namespace:record.namespace,
+          type:"pods",
+          key:"resource-detail",
+
+
+
+
+        }
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          search:`type=pods&key=resource-detail&name=${record?.name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}`
+          search:stringify(newQuery)
           // query: {
           //   type: 'pods',
           //   key: 'resource-detail',

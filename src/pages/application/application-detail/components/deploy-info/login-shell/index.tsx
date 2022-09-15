@@ -20,7 +20,7 @@ export default function AppDeployInfo(props: any) {
   let location = useLocation();
   const query = parse(location.search);
   const { appCode, envCode, optType, containerName, deploymentName } = query;
-  const instName = props.location.query.instName;
+  const instName = query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [previous, setPrevious] = useState<boolean>(false);
   const { matrixConfigData } = useContext(FeContext);
