@@ -3,7 +3,7 @@
 // @create 2021/07/23 14:20
 
 import React, { useState, useCallback, useEffect,useMemo } from 'react';
-import { Form, Input, Select, Button, Table} from 'antd';
+import { Form, Input, Select, Button, Table,message} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
 import {useDeleteTmpl} from "./hook"
@@ -46,7 +46,7 @@ export default function Launch() {
            
           },
           state:{
-            broSource:record?.broSource
+            categoryCodes:record?.categoryCodes
           }
         })
       },
@@ -66,8 +66,9 @@ export default function Launch() {
                       state:record
                   });
       },
-      onDelete: (record, index) => {
-        handleDelItem(record)
+      onDelete: (record:any, index:number,length:number) => {
+        
+        handleDelItem(record,index,length)
       },
     }) as any;
   }, []);
@@ -164,45 +165,45 @@ export default function Launch() {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
-          let resultMap:any={};
-          let filterResultSource:any=[];
-          let resultArry:any=[];
-          let source:any=[];
-          dataSource?.map((item:any)=>{
-            if(resultMap[item?.templateName]){
-              resultMap[item?.templateName].push(item);
-            }else{
-              resultMap[item?.templateName]=[item]
-            }
-          }); 
-          for (const key in resultMap) {
-            if (Object.prototype.hasOwnProperty.call(resultMap, key)) {
-              const element = resultMap[key]?.sort();
-              let appCategoryCodeArry:any=[];
-              if(element.length>1 ){
-                element?.map((item:any)=>{
-                  appCategoryCodeArry.push(item?.appCategoryCode)
-                })
-              }
-              if(element.length===1){
-                filterResultSource.push({
-                  ...element[0],
-                  appCategoryCode:[element[0]?.appCategoryCode],
-                  broSource:[]
-                })
-              }
-              if(element.length>1 ){
-                resultArry.push({
-                  ...element[0],
-                  appCategoryCode:appCategoryCodeArry,
-                  broSource:[...element]
-                })
-              }   
-            }
-          }
-          source=filterResultSource.concat(resultArry);
+          // let resultMap:any={};
+          // let filterResultSource:any=[];
+          // let resultArry:any=[];
+          // let source:any=[];
+          // dataSource?.map((item:any)=>{
+          //   if(resultMap[item?.templateName]){
+          //     resultMap[item?.templateName].push(item);
+          //   }else{
+          //     resultMap[item?.templateName]=[item]
+          //   }
+          // }); 
+          // for (const key in resultMap) {
+          //   if (Object.prototype.hasOwnProperty.call(resultMap, key)) {
+          //     const element = resultMap[key]?.sort();
+          //     let appCategoryCodeArry:any=[];
+          //     if(element.length>1 ){
+          //       element?.map((item:any)=>{
+          //         appCategoryCodeArry.push(item?.appCategoryCode)
+          //       })
+          //     }
+          //     if(element.length===1){
+          //       filterResultSource.push({
+          //         ...element[0],
+          //         appCategoryCode:[element[0]?.appCategoryCode],
+          //         broSource:[]
+          //       })
+          //     }
+          //     if(element.length>1 ){
+          //       resultArry.push({
+          //         ...element[0],
+          //         appCategoryCode:appCategoryCodeArry,
+          //         broSource:[...element]
+          //       })
+          //     }   
+          //   }
+          // }
+          // source=filterResultSource.concat(resultArry);
           setPageTotal(pageTotal);
-          setDataSource(source);
+          setDataSource(dataSource);
           setPageIndex(pageIndex);
         }
       })
@@ -212,12 +213,18 @@ export default function Launch() {
   };
 
   //删除数据
-  const handleDelItem = (record: any) => {
-    deleteTmpl(record).then(()=>{
-      loadListData({
-        pageIndex: 1,
-        pageSize: 20,
-      });
+  const handleDelItem = (record: any,index:number,length:number) => {
+    deleteTmpl({id:record?.id,index,length}).then(()=>{
+      if(index===length-1){
+        loadListData({
+          pageIndex: 1,
+          pageSize: 20,
+        });
+        console.info('----------')
+
+      }
+     
+     
     })
   };
   //抽屉保存

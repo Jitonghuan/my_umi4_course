@@ -29,7 +29,16 @@ export default function TaskEditor(props: TmplListProps) {
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [source, setSource] = useState<any[]>([]);
   const [isDeployment, setIsDeployment] = useState<string>();
-  const broSource=initData?.broSource
+  const categoryCodes=initData?.categoryCodes;
+  let oldAppCategoryCodes:any=[];
+  if(categoryCodes?.length>0){
+    categoryCodes?.map((item:any)=>{
+      oldAppCategoryCodes.push(item?.appCategoryCode)
+
+    })
+  }
+  let oldCategoryCodes=[...new Set(oldAppCategoryCodes)]
+
   const handleChange = (next: any[]) => {
     setSource(next);
   };
@@ -65,21 +74,13 @@ export default function TaskEditor(props: TmplListProps) {
         });
       }
     }
-    let appCategoryCodeArry:any=[];
-    if(initValues?.appCategoryCode.length>0){
-      let obj:any=new Set(initValues?.appCategoryCode)
-      for (const iterator of obj) {
-        if(iterator!==""){
-          appCategoryCodeArry.push(iterator);
-        }
-      }
-    }
+   
     createTmplForm.setFieldsValue({
       ...initValues,
       envCodes: envCodeCurrent,
       jvm: jvm,
       tmplConfigurableItem: arr,
-      appCategoryCode:initValues?.appCategoryCode[0]===""?undefined:appCategoryCodeArry
+      appCategoryCode:!categoryCodes[0]?.appCategoryCode?undefined:oldCategoryCodes
     });
     changeAppCategory();
     setIsDeployment(initValues.templateType);
@@ -105,30 +106,30 @@ export default function TaskEditor(props: TmplListProps) {
         label: n.categoryName,
         value: n.categoryCode,
         data: n,
-        disabled:false
+        // disabled:false
       }));
-     
-      if(appCategoryCode?.length>0){
-          let obj:any=new Set(appCategoryCode);
-          let disabledArryData:any=[]
-          for (const iterator of obj) {
-            disabledArryData.push(iterator)
+      setCategoryData(list);
+      // if(appCategoryCode?.length>0){
+      //     let obj:any=new Set(appCategoryCode);
+      //     let disabledArryData:any=[]
+      //     for (const iterator of obj) {
+      //       disabledArryData.push(iterator)
             
-          }
-           let arryData:any=[];
-           let selectedArry:any=[]
+      //     }
+      //      let arryData:any=[];
+      //      let selectedArry:any=[]
          
-           list?.filter((item:any,index:number,self:any)=>{
-             if(disabledArryData?.indexOf(item?.value)!==-1){
-              selectedArry.push({...item,disabled:true})
-             }else{
-              arryData.push(item)
-             }
-            })
-          setCategoryData(arryData.concat(selectedArry))
-        }else{
-        setCategoryData(list);
-      }
+      //      list?.filter((item:any,index:number,self:any)=>{
+      //        if(disabledArryData?.indexOf(item?.value)!==-1){
+      //         selectedArry.push({...item,disabled:true})
+      //        }else{
+      //         arryData.push(item)
+      //        }
+      //       })
+      //     setCategoryData(arryData.concat(selectedArry))
+      //   }else{
+      //   setCategoryData(list);
+      // }
       
     });
   };
@@ -165,55 +166,23 @@ export default function TaskEditor(props: TmplListProps) {
       return prev;
     }, {} as any);
     let appCategoryCodeArry=value?.appCategoryCode||[];
-    let length=appCategoryCodeArry?.length;
-    let initLength=initData?.appCategoryCode?.length;
-    let creatCodeArry:any=[];
-    let broAppCategoryCode:any=[];
-    broSource?.map((item:any)=>{
-      broAppCategoryCode.push(item?.appCategoryCode)
-    })
-    appCategoryCodeArry?.map((item:any)=>{
-        if(broAppCategoryCode?.indexOf(item)===-1){
-          creatCodeArry.push(item)
-        }
-      })
-      broSource?.map((item:any,index:number)=>{
-          putRequest(APIS.update, {
-            data: {
-              ...value,
-              appCategoryCode: item?.appCategoryCode|| '',
-              envCodes: envCodesArry,
-              tmplConfigurableItem: tmplConfigurableItem || {},
-              templateCode: item?.templateCode,
-             
-            },
-          }).then((resp: any) => {
-            if (resp.success&&initLength-1===index&&creatCodeArry.length<1) {
-              message.success('保存成功！');
-              onSave?.();
-            } 
-          });
-      })
-      if(creatCodeArry.length>0){
-        creatCodeArry?.map((item:any,index:number)=>{
-          postRequest(APIS.create, {
-            data: {
-             ...value,
-              appCategoryCode: item|| '',
-              envCodes: envCodesArry,
-              tmplConfigurableItem: tmplConfigurableItem || {},
-              
-            },
-          }).then((resp: any) => {
-            if (resp.success&&creatCodeArry.length-1===index) {
-              message.success('保存成功！');
-              onSave?.();
-            } 
-          });
-        
-      })
-
-      }
+    putRequest(APIS.update, {
+      data: {
+        ...value,
+        oldCategoryCodes:oldCategoryCodes,
+        newCategoryCodes: appCategoryCodeArry,
+        envCodes: envCodesArry,
+        tmplConfigurableItem: tmplConfigurableItem || {},
+        templateCode:initData?. templateCode,
+       
+      },
+    }).then((resp: any) => {
+      if (resp.success) {
+        message.success('保存成功！');
+        onSave?.();
+      } 
+    });
+    
      
   };
 
@@ -249,7 +218,7 @@ export default function TaskEditor(props: TmplListProps) {
             </div>
             <div style={{ marginLeft: 10 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input style={{ width: 220 }} placeholder="请输入" ></Input>
+                <Input style={{ width: 220 }} placeholder="请输入" disabled={true}></Input>
               </Form.Item>
             </div>
           </Row>
@@ -297,11 +266,11 @@ export default function TaskEditor(props: TmplListProps) {
                   style={{ width: 220 }}
                   options={categoryData}
                   disabled={mode==="VIEW"}
-                  onSelect={(value:any,option: any)=>{
-                   const sourceArry= categoryData?.filter((item,index:number,self)=>item?.value!==value
-                    )
-                   setCategoryData(sourceArry.concat([{...option,disabled:true}]))
-                  }}
+                  // onSelect={(value:any,option: any)=>{
+                  //  const sourceArry= categoryData?.filter((item,index:number,self)=>item?.value!==value
+                  //   )
+                  //  setCategoryData(sourceArry.concat([{...option,disabled:true}]))
+                  // }}
                   
                 />
               </Form.Item>

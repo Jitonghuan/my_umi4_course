@@ -18,7 +18,7 @@ import './index.less';
 export default function DemoPageTb(props: any) {
   const { Option } = Select;
   const flag = props.history.location.query.type;
-  const broSource=props.history.location.state?.broSource;
+  const categoryCodes=props.history.location.state?.categoryCodes;
   const templateCode: string = props.history.location.query.templateCode;
   const languageCode = props.history.location.query.languageCode;
   const [createTmplForm] = Form.useForm();
@@ -76,23 +76,26 @@ export default function DemoPageTb(props: any) {
         //   envCode = [];
         // }
         let appCategoryCodeArry:any=[]
-       if(broSource.length>0){
-         broSource?.map((item:any)=>{
+       if(categoryCodes.length>0){
+        categoryCodes?.map((item:any)=>{
           appCategoryCodeArry.push(item?.appCategoryCode)
          })
        
 
-       }else{
-        appCategoryCodeArry=tmplresult?.appCategoryCode
        }
+       let oldCategoryCodes=[...new Set(appCategoryCodeArry)]
+      //  else{
+      //   appCategoryCodeArry=tmplresult?.appCategoryCode
+      //  }
 
         createTmplForm.setFieldsValue({
           ...tmplresult,
           envCodes:tmplresult.envCode==""?[]:tmplresult.envCode,
           tmplConfigurableItem: arr,
           jvm: jvm,
-          appCategoryCode:tmplresult?.appCategoryCode?appCategoryCodeArry:undefined      
+          appCategoryCode:oldCategoryCodes[0]?oldCategoryCodes:undefined      
         });
+       
         setIsDeployment(tmplresult.templateType);
        
       }

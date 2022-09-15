@@ -27,7 +27,7 @@ export const createTableColumns = (params: {
     onEdit: (record: any, index: number) => void;
     onView: (record: any, index: number) => void;
     onPush: (record: any, index: number) => void;
-    onDelete: (record: any, index: number) => void;
+    onDelete: (record: any, index: number,length:number) => void;
   }) => {
     return [
       {
@@ -60,11 +60,33 @@ export const createTableColumns = (params: {
       },
       {
         title: '应用分类',
-        dataIndex: 'appCategoryCode',
-        key: 'appCategoryCode',
+        dataIndex: 'categoryCodes',
+        key: 'categoryCodes',
         width: '12%',
         ellipsis: true,
-        render: (appCategoryCode) => <Tooltip placement="topLeft" title={appCategoryCode?.map((item:string)=>{return <span style={{padding:2}}><Tag color="green">{item}</Tag></span>})}>{appCategoryCode?.map((item:string)=>{return <span style={{padding:1}}><Tag color="green">{item}</Tag></span>})}</Tooltip>,
+        render: (categoryCodes) => {
+         let oldAppCategoryCodes:any=[];
+            if(categoryCodes?.length>0){
+                categoryCodes?.map((item:any)=>{
+                oldAppCategoryCodes.push(item?.appCategoryCode)
+
+               })
+              }
+        let oldCategoryCodes=[...new Set(oldAppCategoryCodes)]
+
+        return <Tooltip placement="topLeft" 
+                 title={oldCategoryCodes?.map((item:any)=>{
+                  return <span style={{padding:2}}>
+                    <Tag color="green">{item}</Tag>
+                  </span>})}>
+
+
+                      {oldCategoryCodes?.map((item:any)=>{
+                        return <span style={{padding:1}}>
+                                 <Tag color="green">{item}</Tag>
+                              </span>})}
+                  </Tooltip>
+           },
       },
       {
         title: '环境',
@@ -137,8 +159,13 @@ export const createTableColumns = (params: {
                   </a>
                   <Popconfirm title="确定要删除该信息吗？" 
                   onConfirm={() => 
-                    params.onDelete(record, index)
-                }
+                    {
+                      let length=record?.categoryCodes?.length
+                      record?.categoryCodes?.map((item:any,index:number)=>{
+                        params.onDelete(item, index,length)
+
+                      }) 
+                }}
                   >
                      
                    <a>删除</a>
