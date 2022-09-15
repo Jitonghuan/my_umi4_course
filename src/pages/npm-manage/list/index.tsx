@@ -187,10 +187,11 @@ export default function NpmList() {
                   onClick={() => {
                     history.push({
                       pathname: 'npm-detail',
-                      query: {
-                        id: record.id,
-                        npmName: record.npmName,
-                      },
+                      search:`id=${record.id}&npmName=${record.npmName}`
+                      // query: {
+                      //   id: record.id,
+                      //   npmName: record.npmName,
+                      // },
                     });
                   }}
                 >
@@ -248,10 +249,11 @@ export default function NpmList() {
                     onClick={() => {
                       history.push({
                         pathname: 'npm-detail',
-                        query: {
-                          id: record.id,
-                          npmName: record.npmName,
-                        },
+                        search:`id=${record.id}&npmName=${record.npmName}`
+                        // query: {
+                        //   id: record.id,
+                        //   npmName: record.npmName,
+                        // },
                       });
                     }}
                   >

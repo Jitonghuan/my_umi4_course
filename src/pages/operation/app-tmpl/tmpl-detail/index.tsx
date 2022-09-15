@@ -5,7 +5,8 @@
 import React from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import request, { getRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
@@ -14,13 +15,13 @@ import { Table, Input, Button, Form, Row, Col, Select, Space } from 'antd';
 import './index.less';
 
 export default function DemoPageTb(porps: any) {
-  const [count, setCount] = useState<any>([0]);
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const [createTmplForm] = Form.useForm();
   const children: any = [];
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<string>(); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
   const [tmplConfigurable, setTmplConfigurable] = useState<any[]>([]);
   const [isDisabled, setIsdisabled] = useState<any>();
   const clickChange = () => {};
@@ -28,7 +29,7 @@ export default function DemoPageTb(porps: any) {
   useEffect(() => {
     tmplDetialResult(templateCode);
 
-    const flag = porps.history.location.query.type;
+    const flag = query.type;
     if (flag == 'info') {
       setIsdisabled(true);
     } else {
@@ -36,8 +37,8 @@ export default function DemoPageTb(porps: any) {
     }
   }, []);
   //进入页面加载信息
-  const templateCode: string = porps.history.location.query.templateCode;
-  const languageCode = porps.history.location.query.languageCode;
+  const templateCode: string = query.templateCode;
+  const languageCode = query.languageCode;
   const tmplDetialResult = (templateCode: string) => {
     getRequest(APIS.tmplList, { data: { templateCode } }).then((res: any) => {
       if (res.success) {

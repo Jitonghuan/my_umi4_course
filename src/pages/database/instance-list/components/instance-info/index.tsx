@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { infoOptions } from '../../schema';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import { Empty, Segmented } from 'antd';
 import SessionManage from './components/session-manage';
 import { useGetInstanceDetail } from '../../hook';
@@ -9,7 +9,8 @@ import AccountManage from '../../../account-manage';
 import SchemaManage from '../../../database-manage';
 import Trends from '../../../overview/trends';
 export default function InstanceInfo() {
-  const curRecordData: any = history.location?.state;
+  let location:any = useLocation();
+  const curRecordData: any = location?.state;
   const instanceId = curRecordData?.instanceId;
   const clusterId = curRecordData?.clusterId;
   const optType = curRecordData?.optType;

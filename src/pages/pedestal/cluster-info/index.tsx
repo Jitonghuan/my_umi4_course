@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect,  useState } from 'react';
 import { Form, Button, Input, Pagination, Empty, Spin } from 'antd';
 import type { PaginationProps } from 'antd';
 import Count from './component/count';
 import PageContainer from '@/components/page-container';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import {ContentCard } from '@/components/vc-page-content';
 import ProgessComponent from './component/progress';
-import { history } from 'umi';
+import { history} from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
 import { useClusterListData } from './hook';
-import { getMetric, getCluster } from './service';
-import { getNode } from '../cluster-detail/service';
+import { getCluster } from './service';
 import './index.less';
 
 export default function clusterInfo() {
@@ -85,15 +84,15 @@ export default function clusterInfo() {
                     className="item-top"
                     style={{ color: '#5183e7' }}
                     onClick={() => {
+                      // let clusterName = decodeURIComponent(escape(item.clusterName));
+                      // console.log("encodeURIComponent(item.clusterName)",clusterName)
                       history.push({
-                        pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
-                        state: {
-                          clusterInfo: item,
-                        },
-                        query: {
-                          clusterCode: item.clusterCode || '',
-                          clusterName: item.clusterName || '',
-                        },
+                        pathname: `/matrix/pedestal/cluster-detail/node-list`,
+                        search:`clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,
+                      },
+                      {
+                          clusterInfo: item
+                      
                       });
                     }}
                   >

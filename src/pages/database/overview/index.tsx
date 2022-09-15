@@ -54,11 +54,11 @@ export default function DatabaseOverView() {
       onPerformanceTrendsClick: (record, index) => {
         history.push({
           pathname: 'info',
-          state: {
+         }, {
             instanceId: record?.id,
             clusterId: record?.clusterId,
             optType: 'overview-list-trend',
-          },
+        
         });
       },
     }) as any;

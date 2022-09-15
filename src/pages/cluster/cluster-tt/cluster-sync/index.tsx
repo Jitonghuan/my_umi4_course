@@ -6,7 +6,7 @@ import React, { useState, useRef } from 'react';
 import { Button, Table, Alert, Modal } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useTableData } from './hooks';
-import DetailModal from '@/components/detail-modal';
+import {history, useLocation } from 'umi';
 
 export default function ClusterPage(props: any) {
   const [tableData, fromCache, loading, completed, reloadData] = useTableData();
@@ -38,7 +38,7 @@ export default function ClusterPage(props: any) {
           <Button
             type="primary"
             disabled={loading || !tableData?.length}
-            onClick={() => props.history.push('./cluster-sync-detail')}
+            onClick={() =>history.push('./cluster-sync-detail')}
           >
             开始集群同步
           </Button>

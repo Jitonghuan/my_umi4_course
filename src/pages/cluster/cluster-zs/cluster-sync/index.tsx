@@ -57,8 +57,8 @@ export default function ClusterPage(props: any) {
             disabled={loading || !tableData?.length}
             onClick={() =>
               history.push({
-                pathname: './cluster-sync-detail',
-                state: commonEnvCode,
+                pathname: './cluster-sync-detail'},
+                { commonEnvCode,
               })
             }
           >

@@ -6,7 +6,9 @@
  */
 
 import React, { useContext, useState } from 'react';
-import { Button, Table, message } from 'antd';
+import { Button,  message } from 'antd';
+import { history, useLocation} from 'umi';
+import { parse } from 'query-string';
 import { EditableProTable } from '@ant-design/pro-table';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
@@ -17,11 +19,16 @@ import './index.less';
 const rootCls = 'add-config-parameters-compo';
 
 export default function AddConfigParameters(props: IProps) {
-  const {
-    location: {
-      query: { env, type },
-    },
-  } = props;
+  let location:any = useLocation();
+  const query:any = parse(location.search);
+  // const {
+  //   location: {
+  //     query: { env, type },
+  //   },
+  // } = props;
+  const env=query?.env;
+  const type=query?.type
+
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
 

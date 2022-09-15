@@ -230,7 +230,7 @@ export const createTableColumns = (params: {
       width: '6%',
       render: (_: string, record: IFuncItem) => (
         <Space>
-          <Link to={`./function/editFunction?id=${record.id}`}>编辑</Link>
+          <Link to={`./editFunction?id=${record.id}`}>编辑</Link>
           <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete(record?.funcId!)}>
             <a >删除</a>
           </Popconfirm>

@@ -4,22 +4,22 @@ import { columns, creatContainerColumns } from '../components/deployment-list/co
 import { ContentCard } from '@/components/vc-page-content';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { LIST_STATUS_TYPE } from '../deployInfo-content/schema';
-import { useGetPodEventList, useListContainer, queryContainerMethods, getListPodEventMethods } from './hook';
+import { useLocation } from 'umi';
+import { parse } from 'query-string';
+import {  queryContainerMethods, getListPodEventMethods } from './hook';
 import { history } from 'umi';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
-  // const {   envCode, viewLogEnvType, id } = props.location.state;
-  const infoRecord = props.location.state?.infoRecord || {};
-  const appCode = props.location.state?.appCode || '';
-  const envCode = props.location.state?.envCode || '';
-  const viewLogEnvType = props.location.state?.viewLogEnvType || '';
-  const id = props.location.state?.id || '';
-  // const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
-  // const [queryContainer, queryContainerData, loading] = useListContainer();
+  let location = useLocation();
+  const stateParams:any=location?.state||{};
+  const infoRecord = stateParams?.infoRecord || {};
+  const appCode = stateParams?.appCode || '';
+  const envCode = stateParams?.envCode || '';
+  const viewLogEnvType = stateParams?.viewLogEnvType || '';
+  const id = stateParams?.id || '';
   const [queryContainerData, setQueryContainerData] = useState<any>([]);
   const [podListSource, setPodListSource] = useState<any>([]);
-  // let infoRecord:any=JSON.parse(initRecord)||{}
   const containerIntervalFunc = () => {
     queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
   };
@@ -64,18 +64,7 @@ export default function ContainerInfo(props: any) {
     getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
     queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
   }, [infoRecord?.instName]);
-  // useEffect(() => {
-  //   let intervalId = setInterval(() => {
-  //     if (infoRecord?.instName && envCode && appCode) {
-  //       getPodEventList({ instName: infoRecord?.instName, envCode: envCode });
-  //       queryContainer({ instName: infoRecord?.instName, envCode: envCode, appCode });
-  //     }
-  //   }, 30000);
-
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [infoRecord?.instName]);
+  
 
   // 表格列配置
   const containerColumns = useMemo(() => {
@@ -86,18 +75,19 @@ export default function ContainerInfo(props: any) {
         // );
         history.push({
           pathname: `/matrix/application/detail/viewLog`,
-          query: {
-            appCode: appCode,
-            envCode: envCode,
-            instName: infoRecord?.instName,
-            viewLogEnvType: viewLogEnvType,
-            optType: 'containerInfo',
-            containerName: record?.containerName,
-          },
-          state: {
+          search:`appCode=${appCode}&envCode=${envCode}&instName=${infoRecord?.instName}&viewLogEnvType=${viewLogEnvType}&optType=containerInfo&containerName=${record?.containerName}`
+          // query: {
+          //   appCode: appCode,
+          //   envCode: envCode,
+          //   instName: infoRecord?.instName,
+          //   viewLogEnvType: viewLogEnvType,
+          //   optType: 'containerInfo',
+          //   containerName: record?.containerName,
+          // },
+        },{
             infoRecord: infoRecord,
-          },
-        });
+          }
+        );
       },
       onLoginShellClick: (record, index) => {
         history.push(
@@ -120,13 +110,14 @@ export default function ContainerInfo(props: any) {
             onClick={() => {
               history.replace({
                 pathname: `deployInfo`,
-                query: {
-                  viewLogEnv: envCode || '',
-                  viewLogEnvType: viewLogEnvType,
-                  type: 'viewLog_goBack',
-                  id: id,
-                  appCode: appCode,
-                },
+                search:`viewLogEnv=${envCode || ''}&viewLogEnvType=${viewLogEnvType}&type=viewLog_goBack&id=${id}&appCode=${appCode}`
+                // query: {
+                //   viewLogEnv: envCode || '',
+                //   viewLogEnvType: viewLogEnvType,
+                //   type: 'viewLog_goBack',
+                //   id: id,
+                //   appCode: appCode,
+                // },
               });
             }}
           >

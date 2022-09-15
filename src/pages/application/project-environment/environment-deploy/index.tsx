@@ -3,15 +3,15 @@
 // @create 2021/08/25 17:31
 
 import { useMemo, useEffect, useState } from 'react';
-import { history, Link } from 'umi';
-import { Tabs, Spin, Empty, Tag, Badge, Button } from 'antd';
-import { CloseCircleTwoTone } from '@ant-design/icons';
+import { history, Link,useLocation,Outlet } from 'umi';
+import { Tabs, Spin, Empty, Tag, Badge } from 'antd';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
 import { getRequest } from '@/utils/request';
 import DetailContext from './context';
 import { tabsConfig } from './tab-config';
+import { parse } from 'query-string';
 import { IProps } from './types';
 import { useAppDetail } from '../../hooks';
 import { listAppEnv } from '@/pages/application/service';
@@ -27,12 +27,14 @@ const activeKeyMap: Record<string, any> = {
 };
 
 export default function ApplicationDetail(props: IProps) {
-  const { location, children } = props;
-  const { id: appId, appCode, projectEnvCode, projectEnvName, benchmarkEnvCode } = location.query || {};
+  // const { location, children } = props;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const { id: appId, appCode, projectEnvCode, projectEnvName, benchmarkEnvCode } = query || {};
   const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
   const tabActiveKey = useMemo(() => {
-    const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
+    const currRoute = /\/([\w-]+)$/.exec(location.pathname)?.[1];
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
   // 页面销毁时清空缓存
@@ -109,7 +111,8 @@ export default function ApplicationDetail(props: IProps) {
     return (
       history.replace({
         pathname: `${location.pathname}/appDeploy`,
-        query: { ...location.query },
+        // query: { ...location.query },
+        search:location.search
       }),
       null
     );
@@ -150,7 +153,8 @@ export default function ApplicationDetail(props: IProps) {
           onChange={(key) => {
             history.replace({
               pathname: `${detailPath}/${key}`,
-              query: { ...location.query },
+              search:location.search
+              // query: { ...location.query },
             });
           }}
           tabBarExtraContent={
@@ -168,11 +172,11 @@ export default function ApplicationDetail(props: IProps) {
                   onClick={() => {
                     history.push({
                       pathname: '/matrix/application/environment-detail',
-                      state: {
-                        envCode: projectEnvCode,
+                    },
+                      { envCode: projectEnvCode,
                         benchmarkEnvCode: benchmarkEnvCode,
                       },
-                    });
+                    );
                   }}
                 >
                   返回项目环境
@@ -189,7 +193,7 @@ export default function ApplicationDetail(props: IProps) {
       </FilterCard>
       <DetailContext.Provider value={{ appData, queryAppData, projectEnvCode, projectEnvName }}>
         <VCPermission code={window.location.pathname} isShowErrorPage>
-          {children}
+          <Outlet/>
         </VCPermission>
       </DetailContext.Provider>
     </PageContainer>

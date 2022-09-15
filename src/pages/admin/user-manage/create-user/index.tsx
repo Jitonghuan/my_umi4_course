@@ -5,7 +5,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Drawer, message, Form, Button, Table, Input, Card, Select, Space } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history, useLocation} from 'umi';
+import { parse } from 'query-string';
 import { ContentCard } from '@/components/vc-page-content';
 import { roleTableColumns } from '../schema';
 import {
@@ -21,7 +22,8 @@ import './index.less';
 
 export default function CreateUser() {
   const [delLoading, deleteUserRole] = useDeleteUserRole();
-  const curRecord: any = history.location.state || {};
+  let location = useLocation();
+  const curRecord: any = location.state || {};
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [saveDisabled, setSaveDisabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);

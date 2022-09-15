@@ -26,14 +26,14 @@ export default function UserManage() {
     return createTableColumns({
       onEdit: (record, index) => {
         history.push({
-          pathname: '/matrix/admin/create-user',
-          state: record,
+          pathname: '/matrix/admin/create-user'},
+          {record,
         });
       },
       onView: (record, index) => {
         history.push({
-          pathname: '/matrix/admin/create-user',
-          state: { ...record, optType: 'VIEW' },
+          pathname: '/matrix/admin/create-user'},
+          { ...record, optType: 'VIEW' 
         });
       },
     }) as any;

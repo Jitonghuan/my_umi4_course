@@ -11,7 +11,8 @@ import SecondPartyPkg from '../second-party-pkg';
 import DeployContent from './deploy-content';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
-import { history } from 'umi';
+import { history, useLocation} from 'umi';
+import { parse,stringify } from 'query-string';
 import './index.less';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl } from '@/pages/application/service';
@@ -20,6 +21,8 @@ const { TabPane } = Tabs;
 
 export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
+  let location = useLocation();
+  const query = parse(location.search);
   // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [currentValue, setCurrentValue] = useState('');
@@ -35,12 +38,24 @@ export default function ApplicationDeploy(props: any) {
         ? 'prod'
         : '';
   const [tabActive, setTabActive] = useState(
-    props.location.query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
+    query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
   );
 
   useEffect(() => {
-    sessionStorage.setItem('__init_env_tab__', tabActive);
-    history.push({ query: { ...props.location.query, activeTab: tabActive } });
+    sessionStorage.setItem('__init_env_tab__', tabActive+"");
+    const newQuery={
+      ...query,
+      activeTab: tabActive
+    }
+    history.replace({
+      //  query: 
+      //  { ...props.location.query, 
+      //   activeTab: tabActive } 
+      pathname:location.pathname,
+      search: stringify(newQuery),
+      }, 
+      );
+    
     if (tabActive && +appData?.isClient! === 0) {
       getPipeline(tabActive);
     }
@@ -62,16 +77,6 @@ export default function ApplicationDeploy(props: any) {
     return data;
   }, [tabActive, envTypeData]);
 
-  // const pipelineName=useMemo(()=>{
-  //   let result=''
-  //  if(pipelineOption&&currentValue){
-  //   const data=pipelineOption.find((item:any)=>item.value===currentValue)
-  //   if(data){
-  //    result=data.label
-  //   }
-  //  }
-  //  return result
-  // },[currentValue,pipelineOption])
 
   const queryData = () => {
     getRequest(listAppEnvType, {
@@ -125,7 +130,7 @@ export default function ApplicationDeploy(props: any) {
   };
 
   // 获取流水线
-  const getPipeline = (v?: string) => {
+  const getPipeline = (v?: any) => {
     const tab = v ? v : tabActive;
     getRequest(getPipelineUrl, {
       data: { appCode: appData?.appCode, envTypeCode: tab, pageIndex: -1, size: -1 },

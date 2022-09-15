@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Input, Select, Button, Table, Space, Divider, Popconfirm, Modal, Tag } from 'antd';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import { getRequest } from '@/utils/request';
 import { queryAppsList, queryProjectEnvList } from '../service';
 import { useRemoveApps, useAddAPPS } from '../hook';
@@ -24,8 +24,9 @@ export const appTypeOptions = [
   },
 ];
 export default function DetailList(props: any) {
-  const { dataInfo, onSpin, stopSpin, opt, isUpdata = false, cancelUpdate = () => { } } = props;
-  const [projectEnvInfo, setProjectEnvInfo] = useState<any>(history.location.state);
+  let location:any = useLocation();
+  const { dataInfo, onSpin, stopSpin, opt, isUpdata = false, cancelUpdate = () => {} } = props;
+  const [projectEnvInfo, setProjectEnvInfo] = useState<any>(location.state);
   const [formList] = Form.useForm();
   const [addAppForm] = Form.useForm();
   const [removeApps] = useRemoveApps(onSpin, stopSpin);
@@ -125,11 +126,11 @@ export default function DetailList(props: any) {
   }, [dataInfo]);
 
   useEffect(() => {
-    const data: any = history.location.state;
+    const data: any = location.state;
     if (data) {
       queryProjectEnv(data?.benchmarkEnvCode, data?.envCode);
     }
-  }, [history.location.state]);
+  }, [location.state]);
 
   useEffect(() => {
     if (projectEnvInfo) {
@@ -285,13 +286,7 @@ export default function DetailList(props: any) {
                   onClick={() => {
                     history.push({
                       pathname: `/matrix/application/environment-deploy/appDeploy`,
-                      query: {
-                        appCode: record.appCode,
-                        id: record.id,
-                        projectEnvCode: projectEnvData.envCode,
-                        projectEnvName: projectEnvData.envName,
-                        benchmarkEnvCode: projectEnvInfo?.benchmarkEnvCode,
-                      },
+                      search:`appCode=${record.appCode}&id=${record.id}&projectEnvCode=${projectEnvData.envCode}&projectEnvName=${projectEnvData.envName}&benchmarkEnvCode=${projectEnvInfo?.benchmarkEnvCode}`
                     });
                   }}
                 >

@@ -4,38 +4,30 @@
  * @date {2022/1/6 19:00}
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Collapse,
   Form,
   Select,
   Input,
   Button,
-  Row,
-  InputNumber,
-  Radio,
-  Col,
-  TimePicker,
   Spin,
   Divider,
   message,
   Space, Modal,
 } from 'antd';
 import PageContainer from '@/components/page-container';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import useRequest from '@/utils/useRequest';
-import { history } from 'umi';
-import { FileTextOutlined, EyeFilled, PlusOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import {  EyeFilled, PlusOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { putRequest, postRequest } from '@/utils/request';
 import ReactJson from 'react-json-view';
 import { ContentCard } from '@/components/vc-page-content';
 import { Item } from '../../basic/typing';
-import EditorTable from '@cffe/pc-editor-table';
 import {
-  editColumns,
   targetOptions,
-  silenceOptions,
-  rulesOptions,
   envTypeData,
   operatorOption,
   stepTableMap,
@@ -48,8 +40,10 @@ const { Panel } = Collapse;
 const { Search } = Input;
 
 export default function LogMonitor(props: any) {
-  let type = props.location.state?.type || props.location.query?.type;
-  let recordData = props.location.state?.recordData;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  let type = location.state?.type || query?.type;
+  let recordData = location.state?.recordData;
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [visible, setVisible] = useState(false);
   const [tab, setTab] = useState('log');
@@ -57,7 +51,6 @@ export default function LogMonitor(props: any) {
   const [tagrgetForm] = Form.useForm();
   const [alarmForm] = Form.useForm();
   const [logForm] = Form.useForm();
-  const [getSilenceValue, setGetSilenceValue] = useState(0);
   const [labelTableData, setLabelTableData] = useState<Item[]>([]);
   const [annotationsTableData, setAnnotationsTableData] = useState<Item[]>([]);
   const [currentTarget, setCurrentTarget] = useState<string>('');
@@ -68,13 +61,10 @@ export default function LogMonitor(props: any) {
   const [currentIndexModeField, setCurrentIndexModeField] = useState<string>('');
   const [logStoreOptions, getRuleIndex] = useLogStoreOptions(); //日志库选项下拉框数据
   const [logSample, loading, getLogSample] = useQueryLogSample();
-  const [filterVisiable, setFilterVisiable] = useState<boolean>(false);
   const [indexModeFieldsOption, getIndexModeFields] = useIndexModeFieldsOptions();
   const [editDisable, setEditDisable] = useState<boolean>(false);
   const [selectNum, setSelectNum] = useState<string>('');
   const [initLength, setInitLength] = useState<number>(0);
-  // const [, updateState] = React.useState();
-  // const forceUpdate = React.useCallback(() => updateState({} as any), []);
 
   const labelFun = (value: Item[]) => {
     setLabelTableData(value);
@@ -303,7 +293,7 @@ export default function LogMonitor(props: any) {
           <Button
             style={{ marginLeft: '15px' }}
             onClick={() => {
-              history.goBack();
+              history.back();
             }}
           >
             取消

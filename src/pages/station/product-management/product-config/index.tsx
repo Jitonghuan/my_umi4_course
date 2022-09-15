@@ -1,7 +1,8 @@
 //制品管理-配置建站参数
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { QuestionCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../service';
 import moment from 'moment';
@@ -34,7 +35,9 @@ export const STATUS_TYPE: Record<string, packageStatus> = {
 };
 
 export default function ProductConfig() {
-  const configInfo: any = history.location.state;
+  let location:any = useLocation();
+  const query:any = parse(location.search);
+  const configInfo: any = location.state;
   const { TabPane } = Tabs;
   const { Paragraph } = Typography;
   const [configForm] = Form.useForm();

@@ -123,6 +123,7 @@ const BasicOverview = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
                     key={i}
                     onClick={() => {
                       history.push({
+                        pathname:location.pathname,
                         search: '?appGroup=&tab=4',
                       });
                     }}

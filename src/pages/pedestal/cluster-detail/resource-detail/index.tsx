@@ -1,9 +1,6 @@
-import React, { useEffect, useCallback, useRef, useState, useMemo, useContext } from 'react';
-import { Form, Button, Input, Tag, Table, Select, message, Pagination } from 'antd';
-import type { PaginationProps } from 'antd';
-import { history } from 'umi';
-import PageContainer from '@/components/page-container';
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
+import React, { useEffect, useState, useMemo, useContext,useRef } from 'react';
+import { Form, Button,  Table, Select, message } from 'antd';
+import { history, useLocation} from 'umi';
 import { resourceDetailTableSchema } from './schema';
 import clusterContext from '../context';
 import CreateYaml from './create-yaml';
@@ -13,12 +10,15 @@ import { useNodeListData } from '../hook';
 import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../service';
 import { useResourceType, useNameSpace } from '../hook';
 import debounce from 'lodash/debounce';
+import { parse, stringify } from 'query-string';
+
 import './index.less';
 export default function ResourceDetail(props: any) {
-  const { location, children } = props;
+  let location: any = useLocation();
+  const query = parse(location.search);
+  // const { location, children } = props;
   let sessionData = sessionStorage.getItem('cluster_resource_params') || '{}';
   const { clusterCode } = useContext(clusterContext);
-  const [visible, setVisble] = useState(false);
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
   const [yamlDetailVisible, setYamlDetailVisible] = useState(false);
@@ -55,10 +55,17 @@ export default function ResourceDetail(props: any) {
   const tableColumns = useMemo(() => {
     return resourceDetailTableSchema({
       handleDetail: (record: any, index: any) => {
+
+        const query: any = parse(location.search);
         if (record.type === 'pods') {
           history.push({
             pathname: '/matrix/pedestal/cluster-detail/pods',
-            query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind, type: '' },
+            search: stringify(Object.assign(query, {
+              name: record.name,
+              namespace: record.namespace,
+              kind: record.kind,
+              type: '',
+            })),
           });
         } else if (['configmaps', 'secrets'].includes(record.type)) {
           history.push({
@@ -74,14 +81,13 @@ export default function ResourceDetail(props: any) {
         } else {
           history.push({
             pathname: '/matrix/pedestal/cluster-detail/load-detail',
-            query: {
-              key: 'resource-detail',
-              ...location.query,
-              kind: record?.kind,
+            search: stringify(Object.assign(query, {
+              name: record.name,
+              namespace: record.namespace,
+              kind: record.kind,
               type: record?.type,
-              namespace: record?.namespace,
-              name: record?.name,
-            },
+              key: 'resource-detail'
+            })),
           });
         }
       },
@@ -154,6 +160,8 @@ export default function ResourceDetail(props: any) {
       setSelectType(storeParams?.resourceType || 'deployments');
       queryList(undefined, storeParams);
       queryAll(storeParams);
+    } else {
+      setDataSource([])
     }
   }, [nameSpaceData, typeData]);
 

@@ -5,6 +5,7 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Button, Steps, Spin, Result, message } from 'antd';
 import moment from 'moment';
+import { history,useLocation } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import type { IResponse } from '@cffe/vc-request/es/base-request/type';
 import { getRequest, postRequest } from '@/utils/request';
@@ -312,7 +313,7 @@ export default function ClusterSyncDetail(props: any) {
                 完成集群同步
               </Button>
             ) : null}
-            <Button type="default" onClick={() => props.history.push('./cluster-sync')}>
+            <Button type="default" onClick={() => history.push('./cluster-sync')}>
               取消
             </Button>
           </div>
@@ -326,7 +327,7 @@ export default function ClusterSyncDetail(props: any) {
             // <Button key="again" type="primary" onClick={reDeploy}>
             //   再次同步集群
             // </Button>,
-            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboards')}>
+            <Button key="showlist" type="default" onClick={() => history.push('./dashboards')}>
               查看集群看板
             </Button>,
           ]}
