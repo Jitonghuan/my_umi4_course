@@ -68,9 +68,9 @@ export default function ProductConfig() {
     try {
       await getRequest(`${getPackageStatus}?id=${id}`)
         .then((res) => {
-          if (res.success) {
+          if (res?.success) {
             setCurIndentPackageStatus(res.data);
-            if (cacheRef.current && (res.data === '已出包' || res.data === '出包异常')) {
+            if (cacheRef.current && (res.data === '已出包' || res?.data === '出包异常')) {
               clearInterval(cacheRef.current);
               queryIndentInfo(configInfo.id);
             }
@@ -327,8 +327,8 @@ export default function ProductConfig() {
               <div>
                 <p>
                   产品部署包：
-                  <Tag color={STATUS_TYPE[curIndentPackageStatus].color || 'default'}>
-                    {STATUS_TYPE[curIndentPackageStatus].text || '--'}
+                  <Tag color={STATUS_TYPE[curIndentPackageStatus]?.color || 'default'}>
+                    {STATUS_TYPE[curIndentPackageStatus]?.text || '未知'}
                   </Tag>
                   {curIndentPackageStatus === '已出包' && (
                     <>

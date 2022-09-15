@@ -4,7 +4,7 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { history, Link,useLocation,Outlet } from 'umi';
-import { parse } from 'query-string';
+import { parse,stringify } from 'query-string';
 import { Tabs, Spin, Empty } from 'antd';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
@@ -153,10 +153,11 @@ export default function ApplicationDetail(props: IProps) {
           activeKey={tabActiveKey}
           onChange={(key) => {
             if(key==="monitor"){
-              let query={...location.search,entry:"appDetail-monitor"}
+              let query={...parse(location.search),entry:"appDetail-monitor"}
+              
               history.replace({
                 pathname: `${detailPath}/${key}`,
-                search: query,
+                search: stringify(query),
               });
             }else{
               history.replace({
