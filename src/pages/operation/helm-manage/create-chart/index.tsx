@@ -104,9 +104,10 @@ export default function CreateChart() {
       ...oneStepData,
       chartName: chartParam?.chartName,
       clusterName: clusterInfo?.curClusterName,
-    }).then(() => {
-      history.push('/matrix/operation/helm-manage/helm-list');
-    });
+    })
+    // .then(() => {
+    //   history.push('/matrix/operation/helm-manage/helm-list');
+    // });
   };
 
   //触发分页
@@ -276,7 +277,7 @@ export default function CreateChart() {
                 <Button
                   danger
                   onClick={() => {
-                    createReleaseForm.resetFields();
+                    history.push('/matrix/operation/helm-manage/helm-list');
                   }}
                 >
                   取消

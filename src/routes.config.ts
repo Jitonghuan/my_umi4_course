@@ -1129,7 +1129,14 @@ export default [
             component: '@/pages/pedestal/cluster-detail/load-detail/pods-detail',
             hideInMenu: true,
           },
-          { redirect: 'node-list' },
+          {
+            path: 'detail',
+            name: 'configmap详情',
+            key: 'cluster-detail',
+            component: '@/pages/pedestal/cluster-detail/resource-detail/cs-detail',
+            hideInMenu: true,
+          },
+          { redirect: 'resource-detail' },
         ],
       },
       {

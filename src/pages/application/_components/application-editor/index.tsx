@@ -3,13 +3,14 @@
 // @create 2021/08/25 09:23
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal, Tag } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Drawer, Button, Select, Radio, Input, Divider, message, Form, Modal, Tag,Checkbox,Row ,Tooltip} from 'antd';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { ExclamationCircleOutlined,QuestionCircleOutlined } from '@ant-design/icons';
 import { FeContext } from '@/common/hooks';
 import DebounceSelect from '@/components/debounce-select';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import EditorTable from '@cffe/pc-editor-table';
-import { createApp, updateApp, searchGitAddress, fetchEnvList } from './service';
+import { createApp, updateApp, searchGitAddress, fetchEnvList ,searchGitPreciseAddress} from './service';
 import { useAppGroupOptions } from '../../hooks';
 import {getBackendAppResourcesEnv} from './service'
 import {
@@ -52,13 +53,20 @@ export default function ApplicationEditor(props: IProps) {
   const [loading, setLoading] = useState(false);
   const [oldAppDeployName,setOldAppDeployName]=useState<string>("");
   const [influenceEnvCode,setInfluenceEnvCode]=useState<any>([]);
-
+  const [isPrecise,setIsPrecise]=useState<CheckboxChangeEvent|boolean>(false);
   const [categoryCode, setCategoryCode] = useState<string>();
   const [appGroupOptions, appGroupLoading] = useAppGroupOptions(categoryCode);
   const [feMicroMainProjectOptions] = useFeMicroMainProjectOptions(visible);
   const [envDataSource, setEnvDataSource] = useState<any[]>([]); //环境信息
 
   const [form] = Form.useForm<AppItemVO>();
+  const onChange = (e: CheckboxChangeEvent) => {
+    form.setFieldValue("gitAddress","")
+    setIsPrecise(e.target.checked);
+
+
+  };
+  
 
   // 获取环境列表
   async function getEnvData() {
@@ -146,6 +154,9 @@ export default function ApplicationEditor(props: IProps) {
         });
       }
     }
+    return()=>{
+      setIsPrecise(false)
+    }
   }, [isEdit, visible]);
 
   // 应用分类 - 应用组 联动
@@ -230,19 +241,31 @@ export default function ApplicationEditor(props: IProps) {
     setLoading(true);
     try {
       if (isEdit) {
-        await updateApp({ id: initData?.id!, ...submitData });
+        await updateApp({ id: initData?.id!, ...submitData }).then((res)=>{
+          if(res?.success){
+            message.success('保存成功!');
+            props?.onSubmit();
+          }
+
+        });
       } else {
         // 创建应用的时候，如果是前端应用，加上统一的 fe_ 前缀
         submitData.appCode = submitData.appType === 'frontend' ? `fe_${submitData.appCode}` : submitData.appCode;
-        await createApp(submitData);
+        await createApp(submitData).then((res)=>{
+          if(res?.success){
+            message.success('保存成功!');
+            props?.onSubmit();
+          }
+
+        });;
       }
 
-      message.success('保存成功!');
-      props?.onSubmit();
+     
     } finally {
       setLoading(false);
     }
   }, [isEdit, form]);
+  const tooltipText="精准搜索需要输入完整的git工程地址进行搜索，例：https://gitlab.cfuture.shop/fe-xxx/umi-plugins/hbos.git"
 
   return (
     <Drawer
@@ -333,14 +356,24 @@ export default function ApplicationEditor(props: IProps) {
         <FormItem label="应用描述" name="desc">
           <Input.TextArea placeholder="请输入应用描述" />
         </FormItem>
-        <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
+        <Row>
+        <FormItem style={{width:'78%',paddingRight:10}} label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
           <DebounceSelect
-            fetchOptions={searchGitAddress}
+            fetchOptions={isPrecise? searchGitPreciseAddress: searchGitAddress}
             labelInValue={false}
             placeholder="输入仓库名搜索"
             onChange={handleGitAddressChange as any}
           />
         </FormItem>
+        <Form.Item>
+        <Checkbox onChange={onChange}>是否精准搜索</Checkbox>
+        <Tooltip title={tooltipText} placement="topRight">
+          <QuestionCircleOutlined />
+        </Tooltip>
+        </Form.Item>
+
+        </Row>
+        
         {/* <FormItem label="Git 分组" name="gitGroup">
           <Input placeholder="请输入应用 gitlab 分组信息" style={{ width: 320 }} />
         </FormItem> */}

@@ -48,46 +48,25 @@ export default function DeployContent(props: DeployContentProps) {
   const [updating, setUpdating] = useState(false);
   // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
   const [deployInfo, setDeployInfo] = useState<any>({});
-  const [branchInfo, setBranchInfo] = useState<{
-    deployed: any[];
-    unDeployed: any[];
-  }>({ deployed: [], unDeployed: [] });
+  // const [branchInfo, setBranchInfo] = useState<{
+  //   deployed: any[];
+  //   unDeployed: any[];
+  // }>({ deployed: [], unDeployed: [] });
+  const [deployed, setDeployed] = useState<any>([]);
+  const [unDeployed, setUnDeployed] = useState<any>([]);
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [envList, setEnvList] = useState([])
   const publishContentRef = useRef<any>();
+  const [deployedLoad, setDeployedLoad] = useState(false);
+  const [unDeployedLoad, setUnDeployedLoad] = useState(false);
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
-
     setUpdating(true);
 
     const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
-
-    // const resp1 = await queryDeployList({
-    //   appCode: appCode!,
-    //   envTypeCode,
-    //   isActive: 1,
-    //   pageIndex: 1,
-    //   pageSize: 10,
-    // });
-
-    const resp2 = await queryFeatureDeployed({
-      appCode: appCode!,
-      envTypeCode,
-      pipelineCode,
-      isDeployed: 1,
-      masterBranch: masterBranchName.current,
-    });
-    const resp3 = await queryFeatureDeployed({
-      appCode: appCode!,
-      envTypeCode,
-      isDeployed: 0,
-      pipelineCode,
-      branchName: cachebranchName.current,
-      masterBranch: masterBranchName.current,
-    });
 
     if (resp && resp.success) {
       if (resp?.data) {
@@ -99,6 +78,34 @@ export default function DeployContent(props: DeployContentProps) {
     } else {
       setDeployInfo({});
     }
+    if (!deployed?.length) {
+      setDeployedLoad(true)
+    }
+    if (!unDeployed?.length) {
+      setUnDeployedLoad(true)
+    }
+    const resp2 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      pipelineCode,
+      isDeployed: 1,
+      masterBranch: masterBranchName.current,
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
+    });
+    setDeployed(resp2?.data || [])
+    setDeployedLoad(false);
+
+    const resp3 = await queryFeatureDeployed({
+      appCode: appCode!,
+      envTypeCode,
+      isDeployed: 0,
+      pipelineCode,
+      branchName: cachebranchName.current,
+      masterBranch: masterBranchName.current,
+      needRelationInfo: envTypeCode === 'prod' ? 1 : 0
+    });
+    setUnDeployed(resp3?.data || [])
+    setUnDeployedLoad(false);
 
     // 如果有部署信息，且为线上，则更新应用状态
     if (envTypeCode === 'prod' && appData) {
@@ -114,12 +121,6 @@ export default function DeployContent(props: DeployContentProps) {
       const { Status: nextAppStatus } = resp4?.data || {};
       setAppStatusInfo(nextAppStatus);
     }
-    // }
-
-    setBranchInfo({
-      deployed: resp2?.data || [],
-      unDeployed: resp3?.data || [],
-    });
     setUpdating(false);
   };
 
@@ -139,6 +140,43 @@ export default function DeployContent(props: DeployContentProps) {
       timerHandle('do', true);
     }
   };
+  // 获取已发布分支列表
+  // const requestDeployBranch = () => {
+  //   setDeployedLoad(true)
+  //   queryFeatureDeployed({
+  //     appCode: appCode!,
+  //     envTypeCode,
+  //     pipelineCode,
+  //     isDeployed: 1,
+  //     masterBranch: masterBranchName.current,
+  //     needRelationInfo: envTypeCode === 'prod' ? 1 : 0
+  //   }).then((res) => {
+  //     setDeployed(res?.data || [])
+  //   }).catch(() => {
+  //     setDeployed([])
+  //   }).finally(() => {
+  //     setDeployedLoad(false);
+  //   })
+  // }
+
+  // 获取未发布分支列表
+  // const requestUnDeployBranch = () => {
+  //   setUnDeployedLoad(true)
+  //   queryFeatureDeployed({
+  //     appCode: appCode!,
+  //     envTypeCode,
+  //     pipelineCode,
+  //     isDeployed: 0,
+  //     masterBranch: masterBranchName.current,
+  //     needRelationInfo: envTypeCode === 'prod' ? 1 : 0
+  //   }).then((res) => {
+  //     setUnDeployed(res?.data || [])
+  //   }).catch(() => {
+  //     setUnDeployed([])
+  //   }).finally(() => {
+  //     setUnDeployedLoad(false);
+  //   })
+  // }
 
   // appCode变化时
   useEffect(() => {
@@ -209,27 +247,38 @@ export default function DeployContent(props: DeployContentProps) {
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
             pipelineCode={pipelineCode}
-            deployedList={branchInfo.deployed}
+            deployedList={deployed}
             appStatusInfo={appStatusInfo}
+            loading={deployedLoad}
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
             envList={envList}
+          // loadData={requestDeployBranch}
+          // refreshList={() => {
+          //   requestUnDeployBranch();
+          //   requestDeployBranch();
+          // }}
           />
           <PublishBranch
             deployInfo={deployInfo}
-            hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
-            dataSource={branchInfo.unDeployed}
+            hasPublishContent={!!(deployed && deployed.length)}
+            dataSource={unDeployed}
             env={envTypeCode}
             onSearch={searchUndeployedBranch}
             pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {
               timerHandle(status === 'start' ? 'stop' : 'do', true);
+              // requestUnDeployBranch();
+              // requestDeployBranch();
             }}
             masterBranchChange={(masterBranch: string) => {
               masterBranchName.current = masterBranch;
               timerHandle('do', true);
+              // requestUnDeployBranch();
             }}
+            // loadData={requestUnDeployBranch}
+            loading={unDeployedLoad}
             changeBranchName={(branchName: string) => {
               // cachebranchName.current = branchName;
             }}

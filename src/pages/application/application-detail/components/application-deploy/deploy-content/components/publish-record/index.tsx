@@ -8,9 +8,8 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { Modal, Button, List, Tag } from 'antd';
 import VCDescription from '@/components/vc-description';
-import _ from 'lodash';
 import DetailContext from '@/pages/application/application-detail/context';
-import { recordFieldMap, recordFieldMapOut, recordDisplayMap } from './schema';
+import { recordFieldMapOut, recordDisplayMap } from './schema';
 import moment from 'moment';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';

@@ -44,6 +44,14 @@ export default function AllMessage(props: allMessageProps) {
       });
   };
 
+  const changeReadStatus=(item:any)=>{
+    console.log('item---message',item)
+    getReadList([item?.id]).then(()=>{
+      loadUnreadNum();
+      loadStemNoticeList();
+    })
+  }
+
   return (
     <Drawer
       width={700}
@@ -83,9 +91,14 @@ export default function AllMessage(props: allMessageProps) {
                     <TagOutlined />
                     <span style={{ paddingLeft: 8 }}>{item.title}</span>
                     <span style={{ fontSize: 10, paddingLeft: 8 }}>
-                      <span className={item?.readed ? 'readed-title-wrap' : 'unReaded-title-wrap'}>
-                        {item?.readed === true ? '已读' : '未读'}
+                      {
+                         item?.readed === true ? 
+                          <span className='readed-title-wrap' >
+                           已读
+                         </span> :  <span className='unReaded-title-wrap' onClick={()=>changeReadStatus(item)}>
+                         未读
                       </span>
+                      }
                     </span>
                   </span>
                   <span>

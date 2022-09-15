@@ -119,4 +119,9 @@ export const LIST_STATUS_TYPE: Record<string, statusTypeItem> = {
   pausedUnready: { text: 'pausedUnready', color: 'yellow' },
   pausedReady: { text: 'pausedReady', color: 'yellow' },
   Success: { text: 'Success', color: 'green' },
+  Active: { text: 'Active', color: 'green' },
+  Inactive: { text: 'Inactive', color: 'red' },
+  Updating: { text: 'Inactive', color: 'yellow' },
+  Failure: { text: 'Inactive', color: 'red' },
+
 };
