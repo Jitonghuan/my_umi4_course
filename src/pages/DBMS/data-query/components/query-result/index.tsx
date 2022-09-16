@@ -1,7 +1,11 @@
 import React, { useState,useEffect,forwardRef,Component,useMemo,useRef,useImperativeHandle} from 'react';
 import {  Tabs,Form,Space,Button,Select,message,Table } from 'antd';
+import {createTableColumns} from './schema';
 export default forwardRef(function QueryResult(props:any,ref:any){
     const { TabPane } = Tabs;
+    const columns = useMemo(() => {
+      return createTableColumns() as any;
+    }, []);
     useImperativeHandle(ref, () => ({
         addQueryResult: () => {add()},
         queryResultItems:items,
@@ -16,7 +20,7 @@ export default forwardRef(function QueryResult(props:any,ref:any){
         {
           label: '查询历史',
           children:  <div>
-            <Table></Table>
+            <Table columns={columns}/>
           </div>,
           key: '1',
           closable: false,
@@ -32,7 +36,10 @@ export default forwardRef(function QueryResult(props:any,ref:any){
     const add = () => {
         const newActiveKey = `newTab${newTabIndex.current++}`;
         const newPanes = [...items];
-        newPanes.push({ label: '查询结果', children: 'Content of new Tab', key: newActiveKey,closable: true, });
+        newPanes.push(
+          { label: '查询结果', children: <div>
+        <Table columns={columns}/>
+      </div>, key: newActiveKey,closable: true, });
         setItems(newPanes);
         setActiveKey(newActiveKey);
     //     let length=newPanes.length;

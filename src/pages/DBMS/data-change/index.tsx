@@ -60,7 +60,9 @@ export default function AuthorityApply (){
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <h3>数据变更列表</h3>
             <Button type="primary" onClick={()=>{
-               
+               history.push({
+                 pathname:"./change-apply"
+               })
             }}>数据变更</Button>
           </Space>
         }

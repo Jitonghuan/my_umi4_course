@@ -76,7 +76,7 @@ export default function ResizeLayout() {
         <LightDragable
         leftContent={leftContent}
         rightContent={rightContent}
-        showIcon
+        showIcon={false}
         initWidth={150}
         />
       // </PageContainer>

@@ -1238,6 +1238,13 @@ export default [
         component: '@/pages/DBMS/data-change',
       },
       {
+        path: 'change-apply',
+        name: '数据变更申请',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/change-apply',
+        hideInMenu:true
+      },
+      {
         path: 'configuration',
         name: '配置项',
         key: 'configuration',
