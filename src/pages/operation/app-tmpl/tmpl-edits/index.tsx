@@ -207,6 +207,7 @@ export default function TaskEditor(props: TmplListProps) {
                   style={{ width: 150 }}
                   options={templateTypes}
                   onChange={changeTmplType}
+                  disabled={true}
                 />
               </Form.Item>
             </div>

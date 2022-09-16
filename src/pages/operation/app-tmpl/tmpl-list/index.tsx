@@ -220,7 +220,6 @@ export default function Launch() {
           pageIndex: 1,
           pageSize: 20,
         });
-        console.info('----------')
 
       }
      

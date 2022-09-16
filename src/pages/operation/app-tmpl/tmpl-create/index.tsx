@@ -18,6 +18,7 @@ import './index.less';
 export default function DemoPageTb(props: any) {
   const { Option } = Select;
   const flag = props.history.location.query.type;
+  console.info('flag',flag)
   const categoryCodes=props.history.location.state?.categoryCodes;
   const templateCode: string = props.history.location.query.templateCode;
   const languageCode = props.history.location.query.languageCode;
@@ -158,7 +159,28 @@ export default function DemoPageTb(props: any) {
     }, {} as any);
     let appCategoryCode=value?.appCategoryCode||[];
     let length=appCategoryCode?.length;
-    appCategoryCode?.map((item:string,index:number)=>{
+  
+    if(length===0){
+      postRequest(APIS.create, {
+        data: {
+         ...value,
+          appCategoryCode: '',
+          envCodes: value.envCodes || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+         
+        },
+      }).then((resp: any) => {
+        if (resp.success ) {
+          message.success("模版新增成功！")
+          history.push({
+            pathname: 'tmpl-list',
+          });   
+        }
+      });
+
+    }
+    else if(length>0){
+      appCategoryCode?.map((item:string,index:number)=>{
    
         postRequest(APIS.create, {
           data: {
@@ -177,6 +199,9 @@ export default function DemoPageTb(props: any) {
           }
         });
     }) 
+
+    }
+    
   };
 
   //提交复制模版
@@ -194,7 +219,25 @@ export default function DemoPageTb(props: any) {
     }
     let appCategoryCode=value?.appCategoryCode||[];
     let length=appCategoryCode?.length;
-    appCategoryCode?.map((item:string,index:number)=>{
+    if(length===0){
+      postRequest(APIS.create, {
+        data: {
+          ...value,
+          appCategoryCode:  '',
+          envCodes: valArr || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          message.success("模版复制成功！")
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    }else if(length>0){
+      appCategoryCode?.map((item:string,index:number)=>{
     
         postRequest(APIS.create, {
           data: {
@@ -213,6 +256,9 @@ export default function DemoPageTb(props: any) {
           }
         });
     })
+
+    }
+    
    
   };
 

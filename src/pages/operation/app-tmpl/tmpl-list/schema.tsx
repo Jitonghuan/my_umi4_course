@@ -34,7 +34,7 @@ export const createTableColumns = (params: {
         title: 'ID',
         dataIndex: 'id',
         key: 'id',
-        width: 100,
+        width: '6%',
       },
       {
         title: '模版名称',
@@ -54,7 +54,7 @@ export const createTableColumns = (params: {
         title: '模版类型',
         dataIndex: 'templateType',
         key: 'templateType',
-        width: '8%',
+        width: '10%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
@@ -118,7 +118,7 @@ export const createTableColumns = (params: {
         title: '备注',
         dataIndex: 'remark',
         key: 'remark',
-        width: '14%',
+        width: '10%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
@@ -126,7 +126,7 @@ export const createTableColumns = (params: {
         title: '操作',
         dataIndex: 'option',
         key: 'option',
-        width: '14%',
+        width: '18%',
         render: (_: string, record, index: number) => (
           //根据不同类型跳转
           <Space size="small">
