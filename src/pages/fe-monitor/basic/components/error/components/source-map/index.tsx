@@ -48,7 +48,8 @@ const SourceMapModal = (props: IProps) => {
       let startLine = res.data.line - 10 > 0 ? res.data.line - 10 : 0;
       setSourceInfo({
         ...res.data,
-        code: contentRowArr.splice(startLine, 15).join('\n'),
+        line: res.data.line - 1,
+        code: contentRowArr.splice(startLine, 15).join("\n"),
         startLine
         // code: res.data?.line ? contentRowArr[res.data.line - 1] : '',
       });
@@ -75,11 +76,21 @@ const SourceMapModal = (props: IProps) => {
       {
         loading ? <Spin tip="分析中，请稍后" /> : (
           <>
-            <div>错误文件：{sourceInfo?.file || '-'}</div>
+            <div>错误信息：{param?.d1 || '-'}</div>
+            <div style={{ marginTop: '10px' }}>错误文件：{sourceInfo?.file || '-'}</div>
             <div style={{ marginTop: '10px' }}>错误行列：{sourceInfo?.line || '-'}:{sourceInfo?.column || '-'}</div>
             <div style={{ marginTop: '10px' }}>错误代码：</div>
             <AceEditor
               mode="javascript"
+              markers={[{
+                startRow: sourceInfo?.line - sourceInfo?.startLine || 0,
+                startCol: 0,
+                endRow: sourceInfo?.line - sourceInfo?.startLine|| 0,
+                endCol: Infinity,
+                type: 'fullLine',
+                className: 'ace_active-line ace_active-markers-line',
+                inFront: true
+              }]}
               value={sourceInfo?.code}
               readOnly={true}
               firstLineNumber={sourceInfo?.startLine || 1}
