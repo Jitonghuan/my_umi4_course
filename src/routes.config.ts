@@ -1238,6 +1238,24 @@ export default [
         component: '@/pages/DBMS/data-change',
       },
       {
+        path: 'sql',
+        name: 'sql',
+        key: 'sql',
+        component: '@/pages/DBMS/sql',
+      },
+      {
+        path: 'ticket-approval',
+        name: '工单详情-审批结束',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/ticket-approval',
+      },
+      {
+        path: 'approval-end',
+        name: '工单详情-审批中',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/approval-end',
+      },
+      {
         path: 'change-apply',
         name: '数据变更申请',
         key: 'data-change',
