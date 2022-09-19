@@ -59,7 +59,7 @@ export default function TicketApproval(){
 
   </Descriptions>
     {/* ------------------------------- */}
-  <Card style={{ width: "100%" ,marginTop:16 }} title={<span>审批进度：<span className="processing-title">进行中</span></span>}>
+  <Card style={{ width: "100%" ,marginTop:16 }} size="small" title={<span>审批进度：<span className="processing-title">进行中</span></span>}>
           <Steps direction="vertical" current={1} size="small">
             <Step title="提交" icon={<StarOutlined />} description="提交时间" />
            <Step title="库Owner" icon={<DingdingOutlined />} description="当前审批人" />
