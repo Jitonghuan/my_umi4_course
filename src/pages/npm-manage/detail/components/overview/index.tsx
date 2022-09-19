@@ -1,13 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Descriptions, Table } from 'antd';
+import { Button, Descriptions, Table } from 'antd';
 import axios from 'axios';
 import DetailContext from '../../context';
+import EditNpm from "@/pages/npm-manage/list/components/edit";
 import './index.less';
 import moment from 'moment';
 
 export default function Overview() {
-  const { npmData } = useContext(DetailContext);
+  const { npmData, queryNpmData } = useContext(DetailContext);
   const [versionList, setVersionList] = useState<any[]>([]);
+  const [visible, setVisible] = useState(false);
 
   const getDeploy = () => {
     if (!npmData?.npmName) {
@@ -37,7 +39,9 @@ export default function Overview() {
 
   return (
     <div className="npm-detail-overview">
-      <Descriptions title="基础信息" className="fixed" bordered column={1} labelStyle={{ width: 200 }}>
+      <Descriptions title="基础信息" className="fixed" bordered column={1} labelStyle={{ width: 200 }}
+                    extra={<Button onClick={() => setVisible(true)}>修改</Button>}
+      >
         <Descriptions.Item label="包名">{npmData?.npmName}</Descriptions.Item>
         <Descriptions.Item label="git地址">
           <a href={npmData?.gitAddress} target="_blank">
@@ -84,6 +88,16 @@ export default function Overview() {
           pagination={false}
         />
       </div>
+      <EditNpm
+        type="edit"
+        visible={visible}
+        onClose={() => setVisible(false)}
+        param={npmData}
+        onConfirm={() => {
+          setVisible(false);
+          queryNpmData?.();
+        }}
+        />
     </div>
   );
 }
