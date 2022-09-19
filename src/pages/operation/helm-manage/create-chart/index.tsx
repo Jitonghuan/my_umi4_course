@@ -5,6 +5,8 @@ import { history } from 'umi';
 import CreatCard from './components/create-card';
 import { ContentCard } from '@/components/vc-page-content';
 import AceEditor from '@/components/ace-editor';
+import { useLocation} from 'umi';
+import { parse } from 'query-string';
 import {
   queryPodNamespaceData,
   useGetChartName,
@@ -16,8 +18,10 @@ import {
 import './index.less';
 
 export default function CreateChart() {
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const rootCls = 'all-chart-page';
-  const clusterInfo: any = history.location?.state || {};
+  const clusterInfo: any = location?.state?.clusterInfo || {};
   const [createReleaseForm] = Form.useForm();
   const [createForm] = Form.useForm();
   const [chartNameLoading, chartNameOptions, getChartList] = useGetChartName();

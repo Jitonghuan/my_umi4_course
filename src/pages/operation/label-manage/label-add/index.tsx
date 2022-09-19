@@ -4,12 +4,10 @@
 
 import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
-import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import { LabelEdit } from '../label-list';
 import { useAppCategoryOption } from '../hook';
-import { Drawer, Input, Button, Form, Row, Col, Select, Space, message } from 'antd';
+import { Drawer, Input, Button, Form, Select, Space, message } from 'antd';
 import { useCreateLabelTag, useEditLabel } from '../hook';
 
 export interface LabelListProps {

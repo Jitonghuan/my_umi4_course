@@ -6,6 +6,8 @@ import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import { getRequest } from '@/utils/request';
 import AppCard from './app-card';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import CpuUtilization from './dashboard/cpu-utilization-line';
 import MemroyUtilization from './dashboard/memory-utilization-line';
 import DiskIOChart from './dashboard/diskIO-line';
@@ -116,9 +118,11 @@ export const RATE_ENUMS = [
  * @create 2021-04-12 19:15:42
  */
 const Coms = (props: IProps) => {
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   // 该组件会被作为路由组件使用，接收地址栏传参数
-  const appCode = props.location?.query?.appCode;
-  const entry=props.location?.query?.entry;
+  const appCode =query?.appCode;
+  const entry=query?.entry;
   const { TabPane } = Tabs;
   const [filter, setFilter] = useState<IFilter>({} as IFilter);
   const prevFilter = useRef<IFilter>({} as IFilter);

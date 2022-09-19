@@ -109,7 +109,7 @@ export const createTableColumns = (params: {
       dataIndex: 'id',
       key: 'id',
       width: '3%',
-      render: (text, record) => <Link to={`./plan/checkConfigModify?id=${text}`}>{text}</Link>,
+      render: (text, record) => <Link to={`./checkConfigModify?id=${text}`}>{text}</Link>,
     },
     {
       title: '发布状态',
@@ -198,7 +198,7 @@ export const createTableColumns = (params: {
       render: (_: string, record) => (
         //根据不同类型跳转
         <Space>
-          <Link to={`./plan/editConfigModify?id=${record.id}`}>编辑</Link>
+          <Link to={`./editConfigModify?id=${record.id}`}>编辑</Link>
           <Popconfirm title="确认删除?" onConfirm={() => params?.onDelete(record?.planId!)}>
             <a >删除</a>
           </Popconfirm>

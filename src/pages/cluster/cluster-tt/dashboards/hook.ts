@@ -11,7 +11,7 @@ type AnyObject = Record<string, any>;
 // 获取AB集群各院区流量数据
 export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) => Promise<any>] {
   const [loading, setLoading] = useState(false);
-  const [histogramData, setHistogramData] = useState(<any>[{}]);
+  const [histogramData, setHistogramData] = useState<any>([{}]);
 
   const loadHistogram = useCallback((showLoading = true) => {
     showLoading && setLoading(true);
@@ -56,7 +56,7 @@ export function useClusterA(): [any, boolean, (showLoading?: boolean) => Promise
         let a_ty_zyl_cnt: any = [];
         let a_xzqt_cnt: any = [];
 
-        dataList.map((item: any) => {
+        (dataList||[])?.map((item: any) => {
           a_ccjd_cnt.push(item.ccjd_cnt);
           a_pqz_cnt.push(item.pqz_cnt);
           a_qt_cnt.push(item.qt_cnt);
@@ -120,7 +120,7 @@ export function useClusterB(): [any, boolean, (showLoading?: boolean) => Promise
         let b_ty_zyl_cnt: any = [];
         let b_xzqt_cnt: any = [];
 
-        dataList.map((item: any) => {
+        (dataList||[])?.map((item: any) => {
           b_ccjd_cnt.push(item.ccjd_cnt);
           b_pqz_cnt.push(item.pqz_cnt);
           b_qt_cnt.push(item.qt_cnt);

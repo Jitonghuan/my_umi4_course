@@ -7,7 +7,8 @@
 import React, { useState } from 'react';
 import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag, Divider, Modal, Checkbox } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { ContentCard } from '@/components/vc-page-content';
 import { CopyOutlined } from '@ant-design/icons';
 import './index.less';
@@ -41,7 +42,9 @@ const STATUS_TYPE: Record<string, statusTypeItem> = {
 };
 
 export default function VolumeDetail() {
-  if (!history.location.state) {
+  let location:any = useLocation();
+  const query = parse(location.search);
+  if (!location.state) {
     history.push('/matrix/pedestal/volume-manage');
     return null;
   }
@@ -49,7 +52,7 @@ export default function VolumeDetail() {
   const [cureForm] = Form.useForm();
   const [brickTableData, brickLoading, getBrickInfo] = useGetBrickInfo();
   const [snapshotData, snapshotLoading, getSnapshotList] = useGetSnapshotList();
-  const volumeInfo: any = history.location.state;
+  const volumeInfo: any = location.state;
   const {
     volumeName,
     volumeType,
@@ -102,9 +105,10 @@ export default function VolumeDetail() {
               onClick={() =>
                 history.push({
                   pathname: `/matrix/pedestal/storage-manage/volume-manage`,
-                  query: {
-                    info: 'volumeManage',
-                  },
+                  search:`info=volumeManage`
+                  // query: {
+                  //   info: 'volumeManage',
+                  // },
                 })
               }
             >

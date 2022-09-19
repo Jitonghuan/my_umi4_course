@@ -9,6 +9,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import type { IResponse } from '@cffe/vc-request/es/base-request/type';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
+import {history, useLocation } from 'umi';
 import './index.less';
 
 type ResPromise = Promise<IResponse<any>>;
@@ -260,7 +261,7 @@ export default function ClusterSyncDetail(props: any) {
                 完成集群同步
               </Button>
             ) : null}
-            <Button type="default" onClick={() => props.history.push('./cluster-sync')}>
+            <Button type="default" onClick={() => history.push('./cluster-sync')}>
               返回
             </Button>
           </div>
@@ -271,7 +272,7 @@ export default function ClusterSyncDetail(props: any) {
           status="success"
           title="同步成功"
           extra={[
-            <Button key="showlist" type="default" onClick={() => props.history.push('./dashboards')}>
+            <Button key="showlist" type="default" onClick={() =>history.push('./dashboards')}>
               查看集群看板
             </Button>,
           ]}

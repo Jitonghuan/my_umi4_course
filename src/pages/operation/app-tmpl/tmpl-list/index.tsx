@@ -6,7 +6,8 @@ import React, { useState, useCallback, useEffect,useMemo } from 'react';
 import { Form, Input, Select, Button, Table,message} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import {useDeleteTmpl} from "./hook"
+import {useDeleteTmpl} from "./hook";
+import { stringify } from 'qs';
 import { getRequest} from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
@@ -37,18 +38,18 @@ export default function Launch() {
   const columns = useMemo(() => {
     return createTableColumns({
       onCopy: (record, index) => {
-        history.push({
-          pathname: 'tmpl-create',
-          query: {
-            type: 'copy',
+        let query={
+             type: 'copy',
             templateCode: record.templateCode,
             languageCode: record?.languageCode,
-           
-          },
-          state:{
-            categoryCodes:record?.categoryCodes
-          }
-        })
+        }
+        history.push({
+          pathname: 'tmpl-create',
+          search: stringify(query),
+        },{
+          categoryCodes:record?.categoryCodes
+        }
+        );
       },
       onEdit: (record, index) => {
         handleEditTask(record, index,"EDIT")
@@ -57,14 +58,16 @@ export default function Launch() {
         handleEditTask(record, index,"VIEW")
       },
       onPush: (record, index) => {
+        const query={
+          templateCode: record?.templateCode,
+          languageCode: record?.languageCode,
+        }
                   history.push({
                       pathname: 'push',
-                      query: {
-                          templateCode: record?.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      state:record
-                  });
+                      search:stringify(query)},
+                      {record
+                      }
+                  );
       },
       onDelete: (record:any, index:number,length:number) => {
         
@@ -165,43 +168,7 @@ export default function Launch() {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
-          // let resultMap:any={};
-          // let filterResultSource:any=[];
-          // let resultArry:any=[];
-          // let source:any=[];
-          // dataSource?.map((item:any)=>{
-          //   if(resultMap[item?.templateName]){
-          //     resultMap[item?.templateName].push(item);
-          //   }else{
-          //     resultMap[item?.templateName]=[item]
-          //   }
-          // }); 
-          // for (const key in resultMap) {
-          //   if (Object.prototype.hasOwnProperty.call(resultMap, key)) {
-          //     const element = resultMap[key]?.sort();
-          //     let appCategoryCodeArry:any=[];
-          //     if(element.length>1 ){
-          //       element?.map((item:any)=>{
-          //         appCategoryCodeArry.push(item?.appCategoryCode)
-          //       })
-          //     }
-          //     if(element.length===1){
-          //       filterResultSource.push({
-          //         ...element[0],
-          //         appCategoryCode:[element[0]?.appCategoryCode],
-          //         broSource:[]
-          //       })
-          //     }
-          //     if(element.length>1 ){
-          //       resultArry.push({
-          //         ...element[0],
-          //         appCategoryCode:appCategoryCodeArry,
-          //         broSource:[...element]
-          //       })
-          //     }   
-          //   }
-          // }
-          // source=filterResultSource.concat(resultArry);
+         
           setPageTotal(pageTotal);
           setDataSource(dataSource);
           setPageIndex(pageIndex);
@@ -307,9 +274,10 @@ export default function Launch() {
               onClick={() =>
                 history.push({
                   pathname: 'tmpl-create',
-                  query: {
-                    type: 'add',
-                  },
+                  search:`type=add`
+                  // query: {
+                  //   type: 'add',
+                  // },
                 })
               }
             >

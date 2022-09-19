@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { Button, Table, Alert } from 'antd';
+import { history,useLocation } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import { useTableData } from './hooks';
 
@@ -21,7 +22,7 @@ export default function ClusterPage(props: any) {
           <Button
             type="primary"
             disabled={loading || !tableData?.length}
-            onClick={() => props.history.push('./cluster-sync-detail')}
+            onClick={() => history.push('./cluster-sync-detail')}
           >
             开始集群同步
           </Button>

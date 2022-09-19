@@ -5,10 +5,12 @@
 import React from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
+import { history ,useLocation} from 'umi';
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
+import { parse } from 'query-string';
+import { stringify } from 'qs';
 import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
 import { Input, Button, Form, Row, Col, Select, Space,message } from 'antd';
@@ -17,11 +19,12 @@ import './index.less';
 
 export default function DemoPageTb(props: any) {
   const { Option } = Select;
-  const flag = props.history.location.query.type;
-  console.info('flag',flag)
-  const categoryCodes=props.history.location.state?.categoryCodes;
-  const templateCode: string = props.history.location.query.templateCode;
-  const languageCode = props.history.location.query.languageCode;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const flag = query.type;
+  const categoryCodes=location.state?.categoryCodes;
+  const templateCode: string =query.templateCode;
+  const languageCode =query.languageCode;
   const [createTmplForm] = Form.useForm();
   const [categoryData, setCategoryData] = useState<any>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型

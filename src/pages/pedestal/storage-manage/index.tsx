@@ -11,7 +11,8 @@
 // @create 2022/1/12 14:18
 
 import { useMemo, useEffect, useState } from 'react';
-import { history } from 'umi';
+import { history,Link,useLocation} from 'umi';
+import { parse } from 'query-string';
 import { Tabs } from 'antd';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
@@ -29,12 +30,14 @@ const activeKeyMap: Record<string, any> = {
 };
 
 export default function ApplicationDetail(props: any) {
+  let location:any = useLocation();
+  const query = parse(location.search);
   let tabActiveKey = useMemo(() => {
-    const currRoute = /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
+    const currRoute = /\/([\w-]+)$/.exec(location.pathname)?.[1];
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
   // 页面销毁时清空缓存
-  const volumeManage = props.location.query.info;
+  const volumeManage = query.info;
 
   useEffect(() => {}, []);
 

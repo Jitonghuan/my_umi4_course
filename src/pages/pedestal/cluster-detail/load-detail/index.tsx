@@ -1,7 +1,8 @@
 import { eventTableSchema, podsTableSchema, envVarTableSchema } from '../schema';
 import React, { useEffect, useCallback, useState, useMemo, useContext } from 'react';
+import { history,useLocation, } from 'umi';
+import { parse,stringify } from 'query-string';
 import { Table, Tag, Tooltip, Button, Empty, message, Spin, Modal } from 'antd';
-import { history } from 'umi';
 import DownLoadFile from './download-file';
 import AddModal from './add-modal';
 import './index.less';
@@ -20,8 +21,10 @@ const obj: any = {
 };
 
 export default function LoadDetail(props: any) {
-  const { location, children } = props;
-  const { type, kind, name, namespace } = location.query || {};
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  // const { location, children } = props;
+  const { type, kind, name, namespace } =query || {};
   const { clusterCode, clusterName } = useContext(clusterContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -64,28 +67,61 @@ export default function LoadDetail(props: any) {
   const tableColumns = useMemo(() => {
     return podsTableSchema({
       toPodsDetail: (record: any, index: any) => {
+        let newQuery={
+          ...query,
+          name:record.name,
+          namespace:record.namespace,
+          kind:record.kind
+
+        }
         history.push({
           pathname: '/matrix/pedestal/cluster-detail/pods',
-          query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind },
+          search:stringify(newQuery),
+          // query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind },
         });
       },
       viewLog: (record: any, index: any) => {
+        let newQuery={
+          clusterCode:clusterCode,
+          clusterName:clusterName,
+          name:record.name,
+          namespace:record.namespace,
+          kind:record.kind,
+          key:"resource-detail"
+
+
+
+        }
         history.push({
           pathname: '/matrix/pedestal/view-log',
-          query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode, clusterName },
+          search:stringify(newQuery),
+          // query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode, clusterName },
         });
       },
       shell: (record: any, index: any) => {
+        let newQuery={
+          clusterCode:clusterCode,
+          clusterName:clusterName,
+          name:record.name,
+          namespace:record.namespace,
+          type:"pods",
+          key:"resource-detail",
+
+
+
+
+        }
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          query: {
-            type: 'pods',
-            key: 'resource-detail',
-            name: record?.name,
-            namespace: record?.namespace,
-            clusterCode,
-            clusterName
-          },
+          search:stringify(newQuery)
+          // query: {
+          //   type: 'pods',
+          //   key: 'resource-detail',
+          //   name: record?.name,
+          //   namespace: record?.namespace,
+          //   clusterCode,
+          //   clusterName
+          // },
         });
       },
       // download: (record: any, index: any) => {
@@ -341,7 +377,8 @@ export default function LoadDetail(props: any) {
             onClick={() => {
               history.push({
                 pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
-                query: { ...props.location.query },
+                search:location.search
+                // query: { ...props.location.query },
               });
             }}
           >

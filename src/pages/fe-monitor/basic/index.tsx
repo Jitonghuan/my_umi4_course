@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Select, Tabs } from 'antd';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import BasicOverview from './components/overview';
 import BasicError from './components/error';
 import BasicPerformance from './components/performance';
 import BasicApi from './components/api';
 import { getCommonEnvCode } from './server';
+import { parse } from 'query-string';
 import { envList, menuList } from './const';
 import './index.less';
 import appConfig from '@/app.config';
@@ -23,9 +24,11 @@ const envType = window.matrixConfigData.curEnvType || appConfig.envType;
 const ENV_LIST = envList[envType] || envList.default;
 
 const BasicFeMonitor = () => {
-  const [activeKey, setActiveKey] = useState<any>(history?.location?.query?.appGroup || '');
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const [activeKey, setActiveKey] = useState<any>(query?.appGroup || '');
   const [feEnv, setFeEnv] = useState<string>(ENV_LIST[1].key || '*');
-  const [tabKey, setTabKey] = useState<any>(history?.location?.query?.tab || '1');
+  const [tabKey, setTabKey] = useState<any>(query?.tab || '1');
   const [envCode, setEnvCode] = useState(defaultEnvCode);
   const [timeList, setTimeList] = useState<any>(now);
 
@@ -87,10 +90,11 @@ const BasicFeMonitor = () => {
             setActiveKey(val);
             history.replace({
               pathname: '/matrix/monitor/fe-monitor',
-              query: {
-                appGroup: val,
-                tab: tabKey,
-              },
+              search:`appGroup=${val}&tab=${tabKey}`
+              // query: {
+              //   appGroup: val,
+              //   tab: tabKey,
+              // },
             });
           }}
         >
@@ -108,10 +112,11 @@ const BasicFeMonitor = () => {
             setTabKey(val);
             history.replace({
               pathname: '/matrix/monitor/fe-monitor',
-              query: {
-                appGroup: activeKey,
-                tab: val,
-              },
+              search:`appGroup=${activeKey}&tab=${val}`
+              // query: {
+              //   appGroup: activeKey,
+              //   tab: val,
+              // },
             });
           }}
         >

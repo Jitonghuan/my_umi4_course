@@ -17,6 +17,8 @@ import {
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
 import { postRequest } from '@/utils/request';
@@ -30,9 +32,11 @@ import moment from 'moment';
 import './index.less';
 
 export default function LoggerSearch(props: any) {
-  const receiveInfo = props.location.query;
   const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false)
   const [sourceInfo, setSourceInfo] = useState<any>({})
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const receiveInfo = query;
   const showWindowHref = () => {
     var sHref = window.location.href;
     var args = sHref.split('?');
