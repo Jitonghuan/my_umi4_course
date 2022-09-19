@@ -1,5 +1,6 @@
 import { useMemo, ReactNode } from 'react';
-import { history } from 'umi';
+import { history,useLocation,Outlet } from 'umi';
+import { parse } from 'query-string';
 import { Tabs, Spin } from 'antd';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
@@ -46,12 +47,14 @@ const detailPath = '/matrix/application/npm-detail';
 const { TabPane } = Tabs;
 
 export default function NpmDetail(props: IProps) {
-  const { location, children } = props;
-  const { id: npmId, npmName } = location.query || {};
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  // const { location, children } = props;
+  const { id: npmId, npmName } = query || {};
   const [npmData, isLoading, queryNpmData] = useNpmDetail(+npmId, npmName);
 
   const tabActiveKey = useMemo(() => {
-    return /\/([\w-]+)$/.exec(props.location.pathname)?.[1];
+    return /\/([\w-]+)$/.exec(location.pathname)?.[1];
   }, [location.pathname]);
 
   // 默认重定向到【概述】路由下
@@ -59,7 +62,9 @@ export default function NpmDetail(props: IProps) {
     return (
       history.replace({
         pathname: `${location.pathname}/overview`,
-        query: { ...location.query },
+        // query: { ...location.query },
+        search:location.search
+
       }),
         null
     );
@@ -84,7 +89,8 @@ export default function NpmDetail(props: IProps) {
           onChange={(key) => {
             history.replace({
               pathname: `${detailPath}/${key}`,
-              query: { ...location.query },
+              // query: { ...location.query },
+              search:location.search
             });
           }}
           tabBarExtraContent={
@@ -100,7 +106,7 @@ export default function NpmDetail(props: IProps) {
       </FilterCard>
       <DetailContext.Provider value={{ npmData, queryNpmData }}>
         <VCPermission code={window.location.pathname} isShowErrorPage>
-          {children}
+         <Outlet/>
         </VCPermission>
       </DetailContext.Provider>
     </PageContainer>

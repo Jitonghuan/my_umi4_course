@@ -11,7 +11,7 @@ type AnyObject = Record<string, any>;
 // 获取AB集群各院区流量数据
 export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) => Promise<any>] {
   const [loading, setLoading] = useState(false);
-  const [histogramData, setHistogramData] = useState(<any>[{}]);
+  const [histogramData, setHistogramData] = useState<any>([{}]);
 
   const loadHistogram = useCallback((showLoading = true) => {
     showLoading && setLoading(true);
@@ -33,7 +33,7 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
 // 获取AB集群各院区表格流量数
 export function useClusterTable(): [AnyObject, boolean, (showLoading?: boolean) => Promise<any>] {
   const [loading, setLoading] = useState(false);
-  const [clusterTableData, setClusterTableData] = useState(<any>[{}]);
+  const [clusterTableData, setClusterTableData] = useState<any>([{}]);
   useEffect(() => {
     loadClusterTable();
   }, []);

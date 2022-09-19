@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import PageContainer from '@/components/page-container';
 import { Button } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import './index.less'
 
 interface BoardInfo {
@@ -12,10 +13,12 @@ interface BoardInfo {
 }
 
 const BoardDetail = () => {
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const [info, setInfo] = useState<BoardInfo | undefined>();
   const [iframeLoading, setIframeLoading] = useState<boolean>(false)
-  const { location } = history;
-  const { query } = location;
+  // const { location } = history;
+  // const { query } = location;
   const { graphName, url, fromPage, clusterName } = query as any;
   useEffect(() => {
     let graphUrl = '';

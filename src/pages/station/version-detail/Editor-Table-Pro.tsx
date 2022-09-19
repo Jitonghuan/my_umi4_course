@@ -166,7 +166,7 @@ export default (props: VersionDetailProps) => {
           onClick={() => {
             history.push({
               pathname: '/matrix/station/component-detail',
-              state: {
+            },{
                 initRecord: record,
                 productVersionId: versionId,
                 componentName: record.componentName,
@@ -178,7 +178,7 @@ export default (props: VersionDetailProps) => {
                 versionDescription: versionDescription,
                 releaseStatus: releaseStatus,
                 descriptionInfoData: descriptionInfoData,
-              },
+              
             });
           }}
         >

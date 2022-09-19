@@ -2,10 +2,12 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/18 09:45
 
-import React, { useState, useEffect, useContext, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Tabs } from 'antd';
 import appConfig from '@/app.config';
+import { useLocation } from 'umi';
+import { parse } from 'query-string';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from './hooks';
@@ -16,7 +18,11 @@ import DeployInfoContent from './deployInfo-content';
 import './index.less';
 const { TabPane } = Tabs;
 export default function AppDeployInfo(props: any) {
-  const { type, viewLogEnv, viewLogEnvType } = props.location.query;
+  let location = useLocation();
+  const query = parse(location.search);
+  const type=query?.type||"";
+  const viewLogEnv=query?.viewLogEnv||"";
+  const viewLogEnvType=query?.viewLogEnvType||"";
   const { appData } = useContext(DetailContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);

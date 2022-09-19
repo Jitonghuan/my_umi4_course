@@ -165,7 +165,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
       }).then((resp) => {
         if (resp.success) {
           message.info('保存发布计划成功!');
-          history.goBack();
+          history.back();
         }
       });
     });
@@ -295,7 +295,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
                     <Button type="primary" onClick={submit}>
                       确定
                     </Button>
-                    <Button onClick={() => history.goBack()}>取消</Button>
+                    <Button onClick={() => history.back()}>取消</Button>
                   </Space>
                 </Form.Item>
               )}

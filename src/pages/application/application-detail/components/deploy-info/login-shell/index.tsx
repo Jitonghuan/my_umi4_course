@@ -5,23 +5,22 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Select, Form, Button, Tag, message } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
-import DetailContext from '@/pages/application/application-detail/context';
 import * as APIS from '../deployInfo-content/service';
-import appConfig from '@/app.config';
-import { history } from 'umi';
 import { getRequest } from '@/utils/request';
+import { history, useLocation} from 'umi';
+import { parse } from 'query-string';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FeContext } from '@/common/hooks';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import './index.less';
 
 export default function AppDeployInfo(props: any) {
-  const { appData } = useContext(DetailContext);
   const [viewLogform] = Form.useForm();
-  const { appCode, envCode, optType, containerName, deploymentName } = props.location.query;
-  const instName = props.location.query.instName;
+  let location = useLocation();
+  const query = parse(location.search);
+  const { appCode, envCode, optType, containerName, deploymentName } = query;
+  const instName = query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [previous, setPrevious] = useState<boolean>(false);
   const { matrixConfigData } = useContext(FeContext);
@@ -44,6 +43,7 @@ export default function AppDeployInfo(props: any) {
               label: item?.containerName,
             }));
             if (optType && optType === 'containerInfo') {
+              //@ts-ignore
               currentContainerName = containerName || '';
               viewLogform.setFieldsValue({ containerName: containerName });
               setQueryListContainer([
@@ -53,6 +53,7 @@ export default function AppDeployInfo(props: any) {
                 },
               ]);
             } else {
+              //@ts-ignore
               currentContainerName = deploymentName || '';
               viewLogform.setFieldsValue({ containerName: currentContainerName });
               setQueryListContainer(listContainer);
@@ -67,7 +68,6 @@ export default function AppDeployInfo(props: any) {
 
   const initWS = (previous?: boolean) => {
     let dom: any = document?.getElementById('terminal');
-    // window.location.href?.includes('gushangke')
     ws.current = new WebSocket(
       window.location.href?.includes('gushangke')
         ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&instName=${instName}&containerName=${currentContainerName}&previous=${previous}&action=shell`
@@ -146,7 +146,7 @@ export default function AppDeployInfo(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.goBack();
+      history.back();
     }
   };
   //选择容器

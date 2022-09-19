@@ -4,7 +4,8 @@ import {
   message, Space, Modal, Collapse, Row, Table, Tag, Tooltip, Popconfirm
 } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -47,9 +48,11 @@ const STATUS_TYPE: Record<number, StatusTypeItem> = {
 };
 
 export default function DpMonitorEdit(props: any) {
-  let type = props.location.state?.type || props.location.query?.type;
-  let bizMonitorType = props.location.state?.bizMonitorType || props.location.query?.bizMonitorType;
-  const [recordData, setRecordData] = useState<any>(props.location.state?.recordData || {});
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  let type = location.state?.type || query?.type;
+  let bizMonitorType =location.state?.bizMonitorType || query?.bizMonitorType;
+  const [recordData, setRecordData] = useState<any>(location.state?.recordData || {});
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions(); // 环境code列表
   const [dbTypeOptions, setDbTypeOptions] = useState<any>([]); // 数据库类型列表
@@ -323,7 +326,7 @@ export default function DpMonitorEdit(props: any) {
             <Button
               style={{ marginLeft: '15px' }}
               onClick={() => {
-                history.goBack();
+                history.back();
               }}
             >
               取消

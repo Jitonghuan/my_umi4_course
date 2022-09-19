@@ -5,24 +5,24 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Select, Form, Button, message, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import DetailContext from '../../../context';
-import appConfig from '@/app.config';
 import * as APIS from '../deployInfo-content/service';
-import { history } from 'umi';
+import { history ,useLocation} from 'umi';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
+import { parse } from 'query-string';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FeContext } from '@/common/hooks';
 import './index.less';
 
 export default function loginShell(props: any) {
-  const { appCode, projectEnvCode, envCode, optType, containerName, deploymentName } = props.location.query;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const { appCode, projectEnvCode, envCode, optType, containerName, deploymentName } = query;
   const [queryListContainer, setQueryListContainer] = useState<any>();
-  const instName = props.location.query.instName;
+  const instName = query.instName;
   const [previous, setPrevious] = useState<boolean>(false);
   let currentContainerName = '';
-  const { appData } = useContext(DetailContext);
   const { matrixConfigData } = useContext(FeContext);
   const [viewLogform] = Form.useForm();
   const term = useRef<any>();
@@ -140,7 +140,7 @@ export default function loginShell(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.goBack();
+      history.back();
     }
   };
   //选择容器

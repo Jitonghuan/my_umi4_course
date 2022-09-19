@@ -20,7 +20,8 @@ import {
   Radio,
 } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { stringify } from 'qs';
 import {createTableColumns} from './schema'
 import { postRequest, getRequest } from '@/utils/request';
@@ -31,11 +32,13 @@ import './index.less';
 import { queryAppGroupReq } from './service';
 
 export default function Push(props: any) {
-  const tmplDetailData:any =  history.location.state;
-  //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
-  const templateCode = props.history.location.query.templateCode;
-  const languageCode = props.history.location.query.languageCode;
   const { Option } = Select;
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const tmplDetailData:any =  location.state?.record||{};
+  //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
+  const templateCode = query.templateCode;
+  const languageCode = query.languageCode;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -238,6 +241,7 @@ export default function Push(props: any) {
   const changeEnvCode = (value: any) => {
     setEnvCodes(value);
   };
+  //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
   
   const appCodes = currentData.map((item, index) => {
     return Object.assign(item.appCode);

@@ -5,10 +5,11 @@
 import React, { useState, useEffect } from 'react';
 import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Steps, Button, Modal } from 'antd';
+import { parse } from 'query-string';
 import { retryDeploy, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
 // import DeployModal from './deploy-modal';
-import { history, Link } from 'umi';
+import { history, useLocation } from 'umi';
 import BatchDeployModal from './batch-deploy-modal';
 
 /** 部署 */
@@ -28,7 +29,11 @@ export default function DeployingStep(props: StepItemProps) {
   } = props;
   const { metadata, branchInfo, envInfo, buildInfo } = deployInfo || {};
   const { deployingBatch, confirm } = item || {};
-  const { id, appCode } = history.location.query || {};
+  // const { id, appCode } = history.location.query || {};
+  let location = useLocation();
+  const query = parse(location.search);
+  const id=query?.id||"";
+  const appCode=query.appCode;
   const { buildUrl } = buildInfo || {};
   const jenkinsUrl = getItemByKey(buildUrl, env) || '';
   const isLoading = status === 'process';
@@ -120,13 +125,14 @@ export default function DeployingStep(props: StepItemProps) {
                     localStorage.setItem('__init_env_tab__', envTypeCode);
                     history.replace({
                       pathname: `deployInfo`,
-                      query: {
-                        viewLogEnv: env || '',
-                        viewLogEnvType: envTypeCode,
-                        type: 'viewLog_goBack',
-                        id: `${id}`,
-                        appCode: appCode,
-                      },
+                      search:`viewLogEnv=${env||""}&viewLogEnvType=${envTypeCode}&id=${id}&appCode=${appCode}&type=viewLog_goBack`
+                      // query: {
+                      //   viewLogEnv: env || '',
+                      //   viewLogEnvType: envTypeCode,
+                      //   type: 'viewLog_goBack',
+                      //   id: `${id}`,
+                      //   appCode: appCode,
+                      // },
                     });
                   }}
                 >

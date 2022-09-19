@@ -3,10 +3,14 @@ import PageContainer from '@/components/page-container';
 import Coms from '../add-edit';
 import { queryPublishPlanReq } from '@/pages/publish/service';
 import moment from 'moment';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 
 const EditModify: React.FC = (props) => {
   //@ts-ignore
-  const { id } = props?.location?.query;
+  let location:any = useLocation();
+  const query:any = parse(location.search);
+  const { id } = query;
   const [detailInfo, setDetailInfo] = useState<any>({});
   useEffect(() => {
     if (id) {

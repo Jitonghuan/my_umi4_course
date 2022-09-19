@@ -54,12 +54,6 @@ export default function TaskEditor(props: TmplListProps) {
       envCodes: initData?.envCode || [],
     };
 
-    let envCodeCurrent: any = [];
-    if (initData?.envCode.indexOf('') === 0) {
-      envCodeCurrent = [];
-    } else if (initData?.envCode.indexOf('') === -1) {
-      envCodeCurrent = initValues.envCodes;
-    }
 
     let arr = [];
     let jvm = '';
@@ -74,10 +68,17 @@ export default function TaskEditor(props: TmplListProps) {
         });
       }
     }
+    let envCodeArry:any=[];
+    initValues.envCodes?.map((item:string|null)=>{
+      if(item!==""){
+        envCodeArry.push(item)
+      }
+
+    })
    
     createTmplForm.setFieldsValue({
       ...initValues,
-      envCodes: envCodeCurrent,
+      envCodes: initValues.envCodes==""?[]:envCodeArry,
       jvm: jvm,
       tmplConfigurableItem: arr,
       appCategoryCode:!categoryCodes[0]?.appCategoryCode?undefined:oldCategoryCodes
@@ -165,7 +166,8 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    let appCategoryCodeArry=value?.appCategoryCode||[];
+    let appCategoryCodeArry=value?.appCategoryCode?.length===0?[""]:value?.appCategoryCode===undefined?[""]:value?.appCategoryCode;
+   
     putRequest(APIS.update, {
       data: {
         ...value,
