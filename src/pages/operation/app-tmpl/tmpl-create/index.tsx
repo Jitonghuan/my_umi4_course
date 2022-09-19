@@ -5,13 +5,14 @@
 import React from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
+import { history ,useLocation} from 'umi';
 import { getRequest, postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
+import { parse } from 'query-string';
+import { stringify } from 'qs';
 import AceEditor from '@/components/ace-editor';
 import EditorTable from '@cffe/pc-editor-table';
-import { history,useLocation } from 'umi';
-import { parse } from 'query-string';
 import { Input, Button, Form, Row, Col, Select, Space,message } from 'antd';
 import {appDevelopLanguageOptions} from '../tmpl-list/schema'
 import './index.less';
@@ -19,10 +20,11 @@ import './index.less';
 export default function DemoPageTb(props: any) {
   const { Option } = Select;
   let location:any = useLocation();
-  const query = parse(location.search);
-  const flag =query.type;
-  const templateCode = query.templateCode;
-  const languageCode = query.languageCode;
+  const query :any= parse(location.search);
+  const flag = query.type;
+  const categoryCodes=location.state?.categoryCodes;
+  const templateCode: string =query.templateCode;
+  const languageCode =query.languageCode;
   const [createTmplForm] = Form.useForm();
   const [categoryData, setCategoryData] = useState<any>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
@@ -38,6 +40,7 @@ export default function DemoPageTb(props: any) {
   useEffect(() => {
     selectTmplType();
     selectCategory();
+    changeAppCategory();
    
     if (flag == 'copy'&&templateCode) {
       tmplDetialResult(templateCode);
@@ -72,32 +75,33 @@ export default function DemoPageTb(props: any) {
           }
         }
 
-        let envCode = tmplresult.envCode;
-        if (envCode == '') {
-          envCode = [];
-        }
-        console.log("appCategoryCodeArry",appCategoryCodeArry)
+        // let envCode = tmplresult.envCode;
+        // if (envCode == '') {
+        //   envCode = [];
+        // }
         let appCategoryCodeArry:any=[]
-       if( !Array.isArray(tmplresult.appCategoryCode)  ){
-        appCategoryCodeArry=[tmplresult.appCategoryCode]
+       if(categoryCodes.length>0){
+        categoryCodes?.map((item:any)=>{
+          appCategoryCodeArry.push(item?.appCategoryCode)
+         })
+       
 
-       }else{
-        appCategoryCodeArry=tmplresult.appCategoryCode
        }
+       let oldCategoryCodes=[...new Set(appCategoryCodeArry)]
+      //  else{
+      //   appCategoryCodeArry=tmplresult?.appCategoryCode
+      //  }
 
         createTmplForm.setFieldsValue({
-          templateType: tmplresult.templateType,
-          templateName: tmplresult.templateName,
-          templateValue: tmplresult.templateValue,
-          appCategoryCode: appCategoryCodeArry?.length>0?appCategoryCodeArry:undefined,
-          envCodes: envCode?.length>0?envCode:undefined,
+          ...tmplresult,
+          envCodes:tmplresult.envCode==""?[]:tmplresult.envCode,
           tmplConfigurableItem: arr,
           jvm: jvm,
-          languageCode: tmplresult.languageCode,
-          remark: tmplresult.remark,
+          appCategoryCode:oldCategoryCodes[0]?oldCategoryCodes:undefined      
         });
+       
         setIsDeployment(tmplresult.templateType);
-        changeAppCategory(tmplresult.appCategoryCode);
+       
       }
     });
   };
@@ -133,7 +137,7 @@ export default function DemoPageTb(props: any) {
     setLanguageCurrent(values);
   };
   // 查询环境
-  const changeAppCategory = (categoryCode: string) => {
+  const changeAppCategory = () => {
     //调用接口 查询env
     setEnvDatas([]);
     getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
@@ -158,60 +162,49 @@ export default function DemoPageTb(props: any) {
     }, {} as any);
     let appCategoryCode=value?.appCategoryCode||[];
     let length=appCategoryCode?.length;
-    appCategoryCode?.map((item:string,index:number)=>{
-      if (value?.languageCode === 'java') {
+  
+    if(length===0){
+      postRequest(APIS.create, {
+        data: {
+         ...value,
+          appCategoryCode: '',
+          envCodes: value.envCodes || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+         
+        },
+      }).then((resp: any) => {
+        if (resp.success ) {
+          message.success("模版新增成功！")
+          history.push({
+            pathname: 'tmpl-list',
+          });   
+        }
+      });
+
+    }
+    else if(length>0){
+      appCategoryCode?.map((item:string,index:number)=>{
+   
         postRequest(APIS.create, {
           data: {
-            templateName: value.templateName,
-            templateType: value.templateType,
-            templateValue: value.templateValue,
+           ...value,
             appCategoryCode:item || '',
             envCodes: value.envCodes || [],
             tmplConfigurableItem: tmplConfigurableItem || {},
-            languageCode: value?.languageCode,
-            jvm: value?.jvm,
-            remark: value?.remark,
-          },
-        }).then((resp: any) => {
-          if (resp.success &&length-1===index) {
-            // const datas = resp.data || [];
-            // setEnvDatas(datas.envCodes);
-            message.success("模版新增成功！")
-            history.push({
-              pathname: 'tmpl-list',
-            });
-            
-          }
-        });
-      } else {
-        postRequest(APIS.create, {
-          data: {
-            templateName: value.templateName,
-            templateType: value.templateType,
-            templateValue: value.templateValue,
-            appCategoryCode: item|| '',
-            envCodes: value.envCodes || [],
-            tmplConfigurableItem: tmplConfigurableItem || {},
-            languageCode: value?.languageCode,
-            remark: value?.remark,
-          },
-        }).then((resp: any) => {
-          if (resp.success &&length-1===index) {
-            message.success("模版新增成功！")
-            history.push({
-              pathname: 'tmpl-list',
-            });
-            // const datas = resp.data || [];
-            // setEnvDatas(datas.envCodes);
            
+          },
+        }).then((resp: any) => {
+          if (resp.success &&length-1===index) {
+            message.success("模版新增成功！")
+            history.push({
+              pathname: 'tmpl-list',
+            });   
           }
         });
-      }
+    }) 
 
-    })
-
-
-   
+    }
+    
   };
 
   //提交复制模版
@@ -229,63 +222,51 @@ export default function DemoPageTb(props: any) {
     }
     let appCategoryCode=value?.appCategoryCode||[];
     let length=appCategoryCode?.length;
-    appCategoryCode?.map((item:string,index:number)=>{
-      if (languageCode === 'java') {
+    if(length===0){
+      postRequest(APIS.create, {
+        data: {
+          ...value,
+          appCategoryCode:  '',
+          envCodes: valArr || [],
+          tmplConfigurableItem: tmplConfigurableItem || {},
+          
+        },
+      }).then((resp: any) => {
+        if (resp.success) {
+          message.success("模版复制成功！")
+          history.push({
+            pathname: 'tmpl-list',
+          });
+        }
+      });
+    }else if(length>0){
+      appCategoryCode?.map((item:string,index:number)=>{
+    
         postRequest(APIS.create, {
           data: {
-            templateName: value.templateName,
-            templateType: value.templateType,
-            templateValue: value.templateValue,
+            ...value,
             appCategoryCode: item || '',
             envCodes: valArr || [],
             tmplConfigurableItem: tmplConfigurableItem || {},
-            jvm: value?.jvm,
-            languageCode: value?.languageCode,
-            remark: value?.remark,
-            // templateCode:templateCode
+            
           },
         }).then((resp: any) => {
           if (resp.success &&length-1===index) {
-            // const datas = resp.data || [];
-            // setEnvDatas(datas.envCodes);
             message.success("模版复制成功！")
             history.push({
               pathname: 'tmpl-list',
             });
           }
         });
-      } else {
-        postRequest(APIS.create, {
-          data: {
-            templateName: value.templateName,
-            templateType: value.templateType,
-            templateValue: value.templateValue,
-            appCategoryCode: value.appCategoryCode || '',
-            envCodes: valArr || [],
-            tmplConfigurableItem: tmplConfigurableItem || {},
-  
-            languageCode: value?.languageCode,
-            remark: value?.remark,
-            // templateCode:templateCode
-          },
-        }).then((resp: any) => {
-          if (resp.success  &&length-1===index) {
-            // const datas = resp.data || [];
-            // setEnvDatas(datas.envCodes);
-            message.success("模版复制成功！")
-            history.push({
-              pathname: 'tmpl-list',
-            });
-          }
-        });
-      }
-
     })
+
+    }
     
+   
   };
 
   return (
-    <PageContainer className="tmpl-detail">
+    <PageContainer className="tmpl-create">
       <ContentCard>
         <Form form={createTmplForm} onFinish={flag==="add"?createTmpl:copyCreateTmpl}>
           <Row>
@@ -307,13 +288,13 @@ export default function DemoPageTb(props: any) {
                   style={{ width: 150 }}
                   options={appDevelopLanguageOptions}
                   onChange={selectLanguage}
-                  disabled={flag==="add"?true:false}
+                  disabled={flag==="add"?false:true}
                 />
               </Form.Item>
             </div>
             <div style={{ paddingLeft: 12 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
+                <Input style={{ width: 220 }} placeholder="请输入" ></Input>
               </Form.Item>
             </div>
           </Row>
@@ -341,7 +322,7 @@ export default function DemoPageTb(props: any) {
                       colProps: { width: 280 },
                     },
                   ]}
-                  disabled={isDisabled}
+                
                 />
               </Form.Item>
               {isDeployment === 'deployment' && languageCurrent === 'java' ? <span>JVM参数:</span> : ''}
@@ -359,7 +340,7 @@ export default function DemoPageTb(props: any) {
                 style={{ marginTop: '50px' }}
                
               >
-                <Select showSearch  mode="multiple" style={{ width: 220 }} disabled={isDisabled} options={categoryData} onChange={changeAppCategory} />
+                <Select showSearch  mode="multiple" style={{ width: 220 }}  options={categoryData} />
               </Form.Item>
               <Form.Item label="选择默认环境：" labelCol={{ span: 8 }} name="envCodes">
                 <Select
@@ -368,9 +349,8 @@ export default function DemoPageTb(props: any) {
                   style={{ width: 220 }}
                   showSearch
                   placeholder="支持通过envCode搜索环境"
-                  // defaultValue={['a10', 'c12']}
                   options={envDatas}
-                  disabled={isDisabled}
+                 
 
                 />
               </Form.Item>
@@ -395,7 +375,7 @@ export default function DemoPageTb(props: any) {
               >
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" >
                 提交
               </Button>
             </Space>

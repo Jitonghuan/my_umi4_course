@@ -5,13 +5,13 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import Editor, { IAnnotation } from 'react-ace';
+import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/mode-html';
-import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 // import ace from 'ace-builds/src-noconflict/ace';

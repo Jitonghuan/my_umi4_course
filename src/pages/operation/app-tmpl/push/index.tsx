@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useMemo } from 'react';
 import {
   Form,
   Input,
@@ -23,6 +23,7 @@ import PageContainer from '@/components/page-container';
 import { history,useLocation } from 'umi';
 import { parse } from 'query-string';
 import { stringify } from 'qs';
+import {createTableColumns} from './schema'
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
@@ -31,8 +32,13 @@ import './index.less';
 import { queryAppGroupReq } from './service';
 
 export default function Push(props: any) {
-  const { Option } = Select;let location:any = useLocation();
+  const { Option } = Select;
+  let location:any = useLocation();
   const query :any= parse(location.search);
+  const tmplDetailData:any =  history.location.state;
+  //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
+  const templateCode = query.templateCode;
+  const languageCode = query.languageCode;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
@@ -40,12 +46,10 @@ export default function Push(props: any) {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [appCategoryCode, setAppCategoryCode] = useState<string>(''); //应用分类获取到的值
-  const [appGroupCode, setAppGroupCode] = useState<string>(''); //应用分类获取到的值
   const [envCodes, setEnvCodes] = useState<string[]>([]); //环境CODE获取到的值
   const [formTmpl] = Form.useForm();
   const [formTmplQuery] = Form.useForm();
   const [tmplDetailForm] = Form.useForm();
-  const [selectList, setSelectList] = useState<any[]>([]);
   const [pageTotal, setPageTotal] = useState<number>();
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false); //是否显示弹窗
@@ -56,6 +60,20 @@ export default function Push(props: any) {
   const [labelLoading, setLabelLoading] = useState<boolean>(false);
   const [businessData, setBusinessData] = useState<any[]>([]);
   const [value, setValue] = useState<number>(1); //弹窗radio的值
+
+  const columns = useMemo(() => {
+    return createTableColumns({
+      onParam: (record, index) => {
+        const query = {
+          id: record.id,
+          appCode: record.appCode,
+          templateType: record.templateType,
+          envCode: record.envCode,
+        };
+        history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
+      },
+    }) as any;
+  }, []);
 
   const getLabelList = () => {
     setLabelLoading(true);
@@ -77,8 +95,8 @@ export default function Push(props: any) {
         setLabelLoading(false);
       });
   };
-  //通过session缓存信息
-  let tmplDetailData = JSON.parse(sessionStorage.getItem('tmplDetailData') || '');
+  
+  
   // const [tmplName,setTmplName]=useState<string>(tmplDetailData?.templateName)
   let tmplName = tmplDetailData?.templateName;
 
@@ -120,11 +138,6 @@ export default function Push(props: any) {
 
   const showModal = () => {
     if (selectedRowKeys.length > 0) {
-      // tmplDetailForm.setFieldsValue({
-      //   pushItem: undefined,
-      //   envCodes: undefined,
-      //   appCategoryCode: undefined,
-      // });
       setIsModalVisible(true);
     } else {
       message.warning('请先勾选应用！');
@@ -151,10 +164,6 @@ export default function Push(props: any) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    // tmplDetailForm.setFieldsValue({
-    //   pushItem: undefined,
-    //   envCodes: undefined,
-    // });
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   useEffect(() => {
@@ -218,11 +227,6 @@ export default function Push(props: any) {
       }
     });
   };
-
-  //选择应用组
-  const selectAppGroup = (appGroupCode: string) => {
-    setAppGroupCode(appGroupCode);
-  };
   useEffect(() => {
     let values = formTmplQuery.getFieldsValue();
     if (values.appCategoryCode) {
@@ -238,8 +242,7 @@ export default function Push(props: any) {
     setEnvCodes(value);
   };
   //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
-  const templateCode = query.templateCode;
-  const languageCode = query.languageCode;
+  
   const appCodes = currentData.map((item, index) => {
     return Object.assign(item.appCode);
   });
@@ -248,9 +251,6 @@ export default function Push(props: any) {
 
   const handleOk = async () => {
     const values = await tmplDetailForm.validateFields();
-    // Object.assign(values, {
-    //   TakeEffectTime: moment(values.TakeEffectTime).format('YYYY-MM-DD HH:mm:ss'),
-    // });
     // 如果选择all时走原来的推送接口
     if (values?.pushItem === 'all') {
       if (appCategoryCode && envCodes) {
@@ -299,7 +299,6 @@ export default function Push(props: any) {
         }).then((resp: any) => {
           if (resp.success) {
             message.success('推送成功！');
-            // window.location.reload();
             setIsModalVisible(false);
             loadListData({ pageIndex: 1, pageSize: 20 });
             setTimeout(() => {
@@ -318,17 +317,9 @@ export default function Push(props: any) {
     setLoading(true);
     getRequest(APIS.appList, {
       data: {
-        tagNames: value?.tagNames,
-        appCategoryCode: value.appCategoryCode,
-        appCode: value.appCode,
+        ...value,
         languageCode,
-        // envCode: value.envCode,
         appType: 'backend',
-        appGroupCode: value.appGroupCode,
-        // isClient: 0,
-        pageSize: value.pageSize,
-        pageIndex: value.pageIndex,
-        // pageSize: value.pageSize,
       },
     })
       .then((res: any) => {
@@ -354,7 +345,6 @@ export default function Push(props: any) {
     };
     setPageIndex(pagination.current);
     loadListData(obj);
-    setSelectList(currentDataSource);
   };
   const loadListData = (params: any) => {
     const values = formTmplQuery.getFieldsValue();
@@ -523,7 +513,6 @@ export default function Push(props: any) {
               placeholder="请选择应用组Code"
               style={{ width: 190 }}
               options={businessData}
-              onChange={selectAppGroup}
             ></Select>
           </Form.Item>
           <Form.Item label="应用CODE：" name="appCode">
@@ -554,6 +543,7 @@ export default function Push(props: any) {
                 dataSource={dataSource}
                 rowKey="id"
                 loading={loading}
+                columns={columns}
                 rowSelection={{ ...rowSelection }}
                 pagination={{
                   total: pageTotal,
@@ -567,56 +557,7 @@ export default function Push(props: any) {
                   showTotal: () => `总共 ${pageTotal} 条数据`,
                 }}
                 onChange={pageSizeClick}
-              >
-                <Table.Column title="ID" dataIndex="id" width="4%" />
-                <Table.Column title="应用名" dataIndex="appName" width="18%" />
-                <Table.Column title="应用CODE" dataIndex="appCode" width="18%" />
-                <Table.Column title="应用分类" dataIndex="appCategoryCode" width="14%" />
-                <Table.Column
-                  title="应用标签"
-                  dataIndex="bindTagNames"
-                  width="32%"
-                  render={(current) => (
-                    <span>
-                      {current?.map((tag: any) => {
-                        let color = 'green';
-                        return (
-                          <span
-                            style={{
-                              marginTop: 2,
-                            }}
-                          >
-                            <Tag color={color}>{tag}</Tag>
-                          </span>
-                        );
-                      })}
-                    </span>
-                  )}
-                />
-                <Table.Column
-                  width="14%"
-                  title="操作"
-                  dataIndex="gmtModify"
-                  key="action"
-                  render={(text, record: any) => (
-                    <Space size="large">
-                      <a
-                        onClick={() => {
-                          const query = {
-                            id: record.id,
-                            appCode: record.appCode,
-                            templateType: record.templateType,
-                            envCode: record.envCode,
-                          };
-                          history.push(`/matrix/application/detail/AppParameters?${stringify(query)}`);
-                        }}
-                      >
-                        当前应用参数
-                      </a>
-                    </Space>
-                  )}
-                />
-              </Table>
+              />
             </Form.Item>
             <Space size="middle" style={{ float: 'right' }}>
               <Form.Item>
@@ -638,10 +579,8 @@ export default function Push(props: any) {
             onCancel={handleCancel}
             className="push-form"
             width={750}
-          // bodyStyle={{ height: '300px' }}
           >
             <Form layout="inline" form={tmplDetailForm} labelCol={{ flex: '150px' }}>
-              {/* <div style={{ width: '100%' }}> */}
               <Row style={{ width: '100%' }}>
                 <Col span={12}>
                   <Form.Item
@@ -686,8 +625,6 @@ export default function Push(props: any) {
                   </Form.Item>
                 </Col>
               </Row>
-              {/* </div> */}
-              {/* <div style={{ width: '100%', marginTop: 18 }}> */}
               <Form.Item
                 label="推送项："
                 name="pushItem"
@@ -711,8 +648,6 @@ export default function Push(props: any) {
                   options={tmplDetailOptions}
                 />
               </Form.Item>
-              {/* </div> */}
-              {/* <div style={{ width: '100%', marginTop: 16 }}></div> */}
               <Divider />
               <Form.Item
                 label="生效策略："
@@ -731,21 +666,10 @@ export default function Push(props: any) {
                   }}
                   value={value}
                 >
-                  {/* <Radio value={3}>定时生效</Radio> */}
                   <Radio value={1}>下次发布生效</Radio>
                   <Radio value={2}>立即生效</Radio>
                 </Radio.Group>
               </Form.Item>
-              {/* {value === 3 && (
-                  <Form.Item
-                    label="生效时间："
-                    name="TakeEffectTime"
-                    style={{ width: '100%', marginTop: '15px' }}
-                    rules={[{ required: true, message: '这是必选项' }]}
-                  >
-                    <DatePicker showTime allowClear />
-                  </Form.Item>
-                )} */}
               {(value === 3 || value === 2) && tmplDetailData?.templateType === 'deployment' && (
                 <Form.Item
                   label="并发数量："
