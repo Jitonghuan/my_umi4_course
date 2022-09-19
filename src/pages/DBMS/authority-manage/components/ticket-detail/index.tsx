@@ -69,7 +69,7 @@ export default function CreateArticle(props: CreateArticleProps) {
           <Steps direction="vertical" current={1} size="small">
             <Step title="提交" icon={<StarOutlined />} description="提交时间" />
            <Step title="库Owner" icon={<DingdingOutlined />} description="当前审批人" />
-           <Step title="完成" icon={<CheckCircleTwoTone />} description={<Space><Button type="primary" size="small">同意</Button> <Button danger size="small">拒绝</Button></Space>} />
+           <Step title="完成" icon={<CheckCircleTwoTone />} description={<Space><Tag >同意</Tag> <Tag >拒绝</Tag></Space>} />
          </Steps>
 
 
