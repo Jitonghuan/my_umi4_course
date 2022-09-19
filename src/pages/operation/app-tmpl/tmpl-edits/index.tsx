@@ -166,7 +166,8 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    let appCategoryCodeArry=value?.appCategoryCode||[""];
+    let appCategoryCodeArry=value?.appCategoryCode?.length===0?[""]:value?.appCategoryCode===undefined?[""]:value?.appCategoryCode;
+   
     putRequest(APIS.update, {
       data: {
         ...value,
