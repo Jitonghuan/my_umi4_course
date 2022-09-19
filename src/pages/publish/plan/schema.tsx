@@ -109,7 +109,7 @@ export const createTableColumns = (params: {
       dataIndex: 'id',
       key: 'id',
       width: '3%',
-      render: (text, record) => <Link to={`./plan/checkConfigModify?id=${text}`}>{text}</Link>,
+      render: (text, record) => <Link to={`./checkConfigModify?id=${text}`}>{text}</Link>,
     },
     {
       title: '发布状态',

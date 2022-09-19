@@ -35,7 +35,7 @@ export default function Push(props: any) {
   const { Option } = Select;
   let location:any = useLocation();
   const query :any= parse(location.search);
-  const tmplDetailData:any =  history.location.state;
+  const tmplDetailData:any =  location.state?.record||{};
   //推送模版 模版Code 应用分类 环境Code 应用Code  customPush
   const templateCode = query.templateCode;
   const languageCode = query.languageCode;

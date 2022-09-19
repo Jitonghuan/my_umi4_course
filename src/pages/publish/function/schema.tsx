@@ -123,7 +123,7 @@ export const createTableColumns = (params: {
       dataIndex: 'id',
       key: 'id',
       width: 70,
-      render: (text) => <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>,
+      render: (text) => <Link to={`./checkFunction?id=${text}`}>{text}</Link>,
     },
     {
       title: '发布功能',
