@@ -10,6 +10,7 @@ export interface IProps {
   onSpin: any;
   stopSpin: any;
   envList: any;
+  pipelineCode?: string;
 }
 
 // 执行步骤组合

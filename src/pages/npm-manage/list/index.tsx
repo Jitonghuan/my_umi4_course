@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, message, Table, Drawer, Tooltip, Radio, Popconfirm } from 'antd';
+import { Button, Form, Input, message, Table, Tooltip, Radio, Popconfirm } from 'antd';
 import PageContainer from '@/components/page-container';
-import UserSelector, { stringToList } from '@/components/user-selector';
-import EditorTable from '@cffe/pc-editor-table';
-import DebounceSelect from '@/components/debounce-select';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
-import { npmCreate, searchGitAddress, npmUpdate, npmList, npmDelete } from './server';
+import { delRequest, getRequest } from '@/utils/request';
+import { npmList, npmDelete } from './server';
+import EditNpm from "./components/edit";
 import { history } from 'umi';
 import './index.less';
 
 const { Item: FormItem } = Form;
-
-const shouldUpdate = (keys: string[]) => {
-  return (prev: any, curr: any) => {
-    return keys.some((key) => prev[key] !== curr[key]);
-  };
-};
 
 export default function NpmList() {
   const [searchField] = Form.useForm();
@@ -26,9 +18,8 @@ export default function NpmList() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [type, setType] = useState('add');
-  const [form] = Form.useForm();
+  const [editParam, setEditParam] = useState({});
 
   async function handleSearch(pagination?: any) {
     const param = (await searchField.getFieldsValue()) || {};
@@ -63,44 +54,6 @@ export default function NpmList() {
     void handleSearch({
       pageIndex: page,
     });
-  }
-
-  async function handleSubmit() {
-    const params = await form.validateFields();
-    const { ownerList, gitDir, linkage, relationNpm, ...others } = params;
-
-    const submitData: any = {
-      ...others,
-      npmOwner: ownerList?.join(',') || '',
-      customParams: JSON.stringify({
-        gitDir,
-        linkage,
-        relationNpm,
-      })
-    };
-
-    setLoading(true);
-    let res = null;
-    if (type === 'add') {
-      res = await postRequest(npmCreate, {
-        data: submitData,
-      });
-    } else {
-      res = await putRequest(npmUpdate, {
-        data: submitData,
-      });
-    }
-    setLoading(false);
-    if (res?.success) {
-      message.success(type === 'add' ? '新增成功!' : '修改成功');
-      void handleClose();
-      resetPage(1);
-    }
-  }
-
-  function handleClose() {
-    setVisible(false);
-    form.resetFields();
   }
 
   useEffect(() => {
@@ -152,6 +105,7 @@ export default function NpmList() {
             type="primary"
             onClick={() => {
               setType('add');
+              setEditParam({});
               setVisible(true);
             }}
           >
@@ -233,13 +187,10 @@ export default function NpmList() {
                   <a
                     onClick={() => {
                       setType('edit');
-                      setVisible(true);
-                      const customParams = record.customParams ? JSON.parse(record.customParams) : {};
-                      form.setFieldsValue({
+                      setEditParam({
                         ...record,
-                        ...customParams,
-                        ownerList: stringToList(record?.npmOwner),
                       });
+                      setVisible(true);
                     }}
                   >
                     编辑
@@ -268,64 +219,16 @@ export default function NpmList() {
           ]}
         />
       </ContentCard>
-      <Drawer
-        width={660}
-        title={type === 'add' ? '新增' : '编辑'}
+      <EditNpm
+        type={type}
         visible={visible}
-        onClose={handleClose}
-        maskClosable={false}
-        footer={
-          <div className="drawer-footer">
-            <Button type="primary" loading={loading} onClick={handleSubmit}>
-              保存
-            </Button>
-            <Button type="default" onClick={handleClose}>
-              取消
-            </Button>
-          </div>
-        }
-      >
-        <Form form={form} labelCol={{ flex: '100px' }}>
-          <Form.Item label="包名" name="npmName" rules={[{ required: true, message: '请输入包名' }]}>
-            <Input disabled={type !== 'add'} />
-          </Form.Item>
-          <FormItem label="Git 地址" name="gitAddress" rules={[{ required: true, message: '请输入 gitlab 地址' }]}>
-            <DebounceSelect
-              fetchOptions={searchGitAddress}
-              labelInValue={false}
-              placeholder="输入仓库名搜索"
-            />
-          </FormItem>
-          <Form.Item label="包目录" name="gitDir">
-            <Input placeholder="适用于一个仓库下多个包的模式，填写包的目录" />
-          </Form.Item>
-          <Form.Item label="多包一起发布" name="linkage">
-            <Radio.Group>
-              <Radio value={0}>否</Radio>
-              <Radio value={1}>是</Radio>
-            </Radio.Group>
-          </Form.Item>
-          <FormItem noStyle shouldUpdate={shouldUpdate(['linkage'])}>
-            {({getFieldValue}) =>
-              getFieldValue('linkage') === 1 && (
-                <Form.Item label="关联包信息设置:" name="relationNpm">
-                  <EditorTable
-                    columns={[
-                      {dataIndex: 'npmName', title: '包名'},
-                      {dataIndex: 'gitDir', title: '目录'},
-                    ]}
-                  />
-                </Form.Item>)
-            }
-          </FormItem>
-          <FormItem label="负责人" name="ownerList" rules={[{ required: true, message: '请输入负责人' }]}>
-            <UserSelector />
-          </FormItem>
-          <Form.Item label="描述" name="desc">
-            <Input.TextArea placeholder="请输入描述" rows={3} />
-          </Form.Item>
-        </Form>
-      </Drawer>
+        onClose={() => setVisible(false)}
+        param={editParam}
+        onConfirm={() => {
+          setVisible(false);
+          resetPage(1);
+        }}
+        />
     </PageContainer>
   );
 }

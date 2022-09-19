@@ -16,7 +16,7 @@ import './index.less';
 const rootCls = 'publish-content-compo';
 
 export default function PublishContent(props: IProps) {
-  const { envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, envList } = props;
+  const { envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, envList, pipelineCode } = props;
   let { metadata, status } = deployInfo;
   const { deployNodes, deployStatus } = status || {}; //步骤条数据
   const { npmData } = useContext(DetailContext);
@@ -142,6 +142,7 @@ export default function PublishContent(props: IProps) {
         onOperate={onOperate}
         envTypeCode={envTypeCode}
         appData={npmData}
+        pipelineCode={pipelineCode}
         onCancelDeploy={onCancelDeploy}
         stopSpin={stopSpin}
         notShowCancel={notShowCancel}
