@@ -682,18 +682,17 @@ export default [
         key: 'app-tmpl',
         routes: [
           {
+            path: 'tmpl-create',
+            name: '应用模版编辑',
+            key: 'app-tmpl',
+            component: '@/pages/operation/app-tmpl/tmpl-create',
+            hideInMenu: true,
+          },
+          {
             path: 'tmpl-list',
             name: '应用模版列表',
             key: 'app-tmpl',
             component: '@/pages/operation/app-tmpl/tmpl-list',
-            hideInMenu: true,
-          },
-
-          {
-            path: 'tmpl-detail',
-            name: '应用模版详情',
-            key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-detail',
             hideInMenu: true,
           },
           {
@@ -701,20 +700,6 @@ export default [
             name: '推送模版',
             key: 'app-tmpl',
             component: '@/pages/operation/app-tmpl/push',
-            hideInMenu: true,
-          },
-          {
-            path: 'tmpl-add',
-            name: '新增应用模版',
-            key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-add',
-            hideInMenu: true,
-          },
-          {
-            path: 'tmpl-copy',
-            name: '复制应用模版',
-            key: 'app-tmpl',
-            component: '@/pages/operation/app-tmpl/tmpl-copy',
             hideInMenu: true,
           },
         ],

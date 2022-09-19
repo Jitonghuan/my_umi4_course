@@ -5,10 +5,10 @@
 import React from 'react';
 import { ContentCard } from '@/components/vc-page-content';
 import { history } from 'umi';
-import { getRequest, putRequest } from '@/utils/request';
+import { getRequest, putRequest,postRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
 import * as APIS from '../service';
-import { TmplEdit } from '../tmpl-list';
+import { TmplEdit } from '../tmpl-list/schema';
 import EditorTable from '@cffe/pc-editor-table';
 import AceEditor from '@/components/ace-editor';
 import { Drawer, Input, Button, Form, Row, Col, Select, Space, message, Divider } from 'antd';
@@ -28,9 +28,17 @@ export default function TaskEditor(props: TmplListProps) {
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
   const [source, setSource] = useState<any[]>([]);
-  const [isDisabled, setIsdisabled] = useState<any>();
   const [isDeployment, setIsDeployment] = useState<string>();
-  const templateCode = initData?.templateCode;
+  const categoryCodes=initData?.categoryCodes;
+  let oldAppCategoryCodes:any=[];
+  if(categoryCodes?.length>0){
+    categoryCodes?.map((item:any)=>{
+      oldAppCategoryCodes.push(item?.appCategoryCode)
+
+    })
+  }
+  let oldCategoryCodes=[...new Set(oldAppCategoryCodes)]
+
   const handleChange = (next: any[]) => {
     setSource(next);
   };
@@ -41,16 +49,9 @@ export default function TaskEditor(props: TmplListProps) {
     if (mode === 'HIDE') return;
     createTmplForm.resetFields();
     //进入页面加载信息
-    const initValues = {
-      templateCode: initData?.templateCode,
-      templateType: initData?.templateType,
-      templateName: initData?.templateName,
-      tmplConfigurableItem: initData?.tmplConfigurableItem,
-      appCategoryCode: initData?.appCategoryCode || '',
+    const initValues :any= {
+      ...initData,
       envCodes: initData?.envCode || [],
-      templateValue: initData?.templateValue,
-      languageCode: initData?.languageCode,
-      remark: initData?.remark,
     };
 
     let envCodeCurrent: any = [];
@@ -73,21 +74,18 @@ export default function TaskEditor(props: TmplListProps) {
         });
       }
     }
+   
     createTmplForm.setFieldsValue({
-      templateType: initValues.templateType,
-      templateName: initValues.templateName,
-      templateValue: initValues.templateValue,
-      appCategoryCode: initValues.appCategoryCode,
+      ...initValues,
       envCodes: envCodeCurrent,
       jvm: jvm,
       tmplConfigurableItem: arr,
-      languageCode: initValues.languageCode,
-      remark: initValues?.remark,
+      appCategoryCode:!categoryCodes[0]?.appCategoryCode?undefined:oldCategoryCodes
     });
-    changeAppCategory(initValues.appCategoryCode);
+    changeAppCategory();
     setIsDeployment(initValues.templateType);
     selectTmplType();
-    selectCategory();
+    selectCategory(initValues?.appCategoryCode);
   }, [mode]);
 
   //加载模版类型下拉选择
@@ -102,19 +100,42 @@ export default function TaskEditor(props: TmplListProps) {
     });
   };
   //加载应用分类下拉选择
-  const selectCategory = () => {
+  const selectCategory = (appCategoryCode?:any) => {
     getRequest(APIS.appTypeList).then((result) => {
       const list = (result.data.dataSource || []).map((n: any) => ({
         label: n.categoryName,
         value: n.categoryCode,
         data: n,
+        // disabled:false
       }));
       setCategoryData(list);
+      // if(appCategoryCode?.length>0){
+      //     let obj:any=new Set(appCategoryCode);
+      //     let disabledArryData:any=[]
+      //     for (const iterator of obj) {
+      //       disabledArryData.push(iterator)
+            
+      //     }
+      //      let arryData:any=[];
+      //      let selectedArry:any=[]
+         
+      //      list?.filter((item:any,index:number,self:any)=>{
+      //        if(disabledArryData?.indexOf(item?.value)!==-1){
+      //         selectedArry.push({...item,disabled:true})
+      //        }else{
+      //         arryData.push(item)
+      //        }
+      //       })
+      //     setCategoryData(arryData.concat(selectedArry))
+      //   }else{
+      //   setCategoryData(list);
+      // }
+      
     });
   };
 
   // 查询环境
-  const changeAppCategory = (categoryCode: string) => {
+  const changeAppCategory = () => {
     //调用接口 查询env
     setEnvDatas([]);
     getRequest(APIS.envList, { data: { pageSize: -1 } }).then((resp: any) => {
@@ -134,7 +155,7 @@ export default function TaskEditor(props: TmplListProps) {
   //保存编辑模版
 
   const createTmpl = (value: any) => {
-    let envCodesArry = [];
+    let envCodesArry :any= [];
     if (Array.isArray(value?.envCodes)) {
       envCodesArry = value?.envCodes;
     } else {
@@ -144,56 +165,25 @@ export default function TaskEditor(props: TmplListProps) {
       prev[el.key] = el?.value;
       return prev;
     }, {} as any);
-    if (initData?.languageCode === 'java') {
-      putRequest(APIS.update, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          jvm: value?.jvm,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: envCodesArry,
-          tmplConfigurableItem: tmplConfigurableItem || {},
-          templateCode: templateCode,
-          remark: value?.remark,
-        },
-      }).then((resp: any) => {
-        if (resp.success) {
-          const datas = resp.data || [];
-          history.push({
-            pathname: 'tmpl-list',
-          });
-          message.success('保存成功！');
-          onSave?.();
-        } else {
-          message.error('保存失败');
-        }
-      });
-    } else {
-      putRequest(APIS.update, {
-        data: {
-          templateName: value.templateName,
-          templateType: value.templateType,
-          templateValue: value.templateValue,
-          appCategoryCode: value.appCategoryCode || '',
-          envCodes: envCodesArry,
-          tmplConfigurableItem: tmplConfigurableItem || {},
-          templateCode: templateCode,
-          remark: value?.remark,
-        },
-      }).then((resp: any) => {
-        if (resp.success) {
-          const datas = resp.data || [];
-          history.push({
-            pathname: 'tmpl-list',
-          });
-          message.success('保存成功！');
-          onSave?.();
-        } else {
-          message.error('保存失败');
-        }
-      });
-    }
+    let appCategoryCodeArry=value?.appCategoryCode||[];
+    putRequest(APIS.update, {
+      data: {
+        ...value,
+        oldCategoryCodes:oldCategoryCodes,
+        newCategoryCodes: appCategoryCodeArry,
+        envCodes: envCodesArry,
+        tmplConfigurableItem: tmplConfigurableItem || {},
+        templateCode:initData?. templateCode,
+       
+      },
+    }).then((resp: any) => {
+      if (resp.success) {
+        message.success('保存成功！');
+        onSave?.();
+      } 
+    });
+    
+     
   };
 
   const changeTmplType = (value: any) => {
@@ -202,7 +192,7 @@ export default function TaskEditor(props: TmplListProps) {
   return (
     <Drawer
       visible={mode !== 'HIDE'}
-      title={mode === 'EDIT' ? '编辑模版' : ''}
+      title={mode === 'EDIT' ? '编辑模版' : '查看模版'}
       maskClosable={false}
       onClose={onClose}
       width={'70%'}
@@ -216,8 +206,8 @@ export default function TaskEditor(props: TmplListProps) {
                   showSearch
                   style={{ width: 150 }}
                   options={templateTypes}
-                  disabled={isDisabled}
                   onChange={changeTmplType}
+                  disabled={true}
                 />
               </Form.Item>
             </div>
@@ -229,7 +219,7 @@ export default function TaskEditor(props: TmplListProps) {
             </div>
             <div style={{ marginLeft: 10 }}>
               <Form.Item label="模版名称：" name="templateName" rules={[{ required: true, message: '这是必填项' }]}>
-                <Input style={{ width: 220 }} placeholder="请输入" disabled={isDisabled}></Input>
+                <Input style={{ width: 220 }} placeholder="请输入" disabled={true}></Input>
               </Form.Item>
             </div>
           </Row>
@@ -261,7 +251,7 @@ export default function TaskEditor(props: TmplListProps) {
               {isDeployment == 'deployment' && initData?.languageCode === 'java' ? <span>JVM参数:</span> : null}
               {isDeployment == 'deployment' && initData?.languageCode === 'java' ? (
                 <Form.Item name="jvm">
-                  <AceEditor mode="yaml" height={300} />
+                  <AceEditor mode="yaml" height={300} readOnly={mode==="VIEW"} />
                 </Form.Item>
               ) : null}
               <Form.Item
@@ -272,10 +262,17 @@ export default function TaskEditor(props: TmplListProps) {
               >
                 <Select
                   showSearch
+                  mode="multiple"
+                  className="multiple-select-appCategoryCode"
                   style={{ width: 220 }}
                   options={categoryData}
-                  onChange={changeAppCategory}
-                  disabled={isDisabled}
+                  disabled={mode==="VIEW"}
+                  // onSelect={(value:any,option: any)=>{
+                  //  const sourceArry= categoryData?.filter((item,index:number,self)=>item?.value!==value
+                  //   )
+                  //  setCategoryData(sourceArry.concat([{...option,disabled:true}]))
+                  // }}
+                  
                 />
               </Form.Item>
 
@@ -288,7 +285,7 @@ export default function TaskEditor(props: TmplListProps) {
                   placeholder="支持通过envCode搜索环境"
                   onChange={clickChange}
                   options={envDatas}
-                  disabled={isDisabled}
+                  
                 >
                   {children}
                 </Select>
@@ -305,7 +302,7 @@ export default function TaskEditor(props: TmplListProps) {
               <Button type="ghost" htmlType="reset" danger onClick={onClose}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isDisabled}>
+              <Button type="primary" htmlType="submit" disabled={mode==="VIEW"}>
                 保存编辑
               </Button>
             </Space>
@@ -315,3 +312,6 @@ export default function TaskEditor(props: TmplListProps) {
     </Drawer>
   );
 }
+
+
+

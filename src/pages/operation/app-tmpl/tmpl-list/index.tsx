@@ -2,58 +2,76 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/07/23 14:20
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { Form, Input, Select, Button, Table, Space, Popconfirm, message, Tag } from 'antd';
+import React, { useState, useCallback, useEffect,useMemo } from 'react';
+import { Form, Input, Select, Button, Table,message} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history } from 'umi';
-import { getRequest, delRequest } from '@/utils/request';
+import {useDeleteTmpl} from "./hook"
+import { getRequest} from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import * as APIS from '../service';
 import TmplEditDraw from '../tmpl-edits';
-/** 应用开发语言(后端) */
-export type AppDevelopLanguage = 'java' | 'golang' | 'python';
-export const appDevelopLanguageOptions: IOption<AppDevelopLanguage>[] = [
-  { label: 'GOLANG', value: 'golang' },
-  { label: 'JAVA', value: 'java' },
-  { label: 'PYTHON', value: 'python' },
-];
-/** 编辑页回显数据 */
-export interface TmplEdit extends Record<string, any> {
-  templateCode: string;
-  templateType: string;
-  templateName: string;
-  tmplConfigurableItem: object;
-  appCategoryCode: any;
-  envCodes: string;
-  templateValue: string;
-  languageCode: string;
-  remark: string;
-}
+import {createTableColumns,appDevelopLanguageOptions,TmplEdit} from './schema';
+
 export default function Launch() {
   const { Option } = Select;
+  const [formTmpl] = Form.useForm();
+  const [delLoading, deleteTmpl]=useDeleteTmpl()
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]); //应用分类
   const [templateTypes, setTemplateTypes] = useState<any[]>([]); //模版类型
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
-  const [appCategoryCode, setAppCategoryCode] = useState<string>(); //应用分类获取到的值
-  const [envCode, setenvCode] = useState<any>(); //环境的值
-  const [templateType, setTemplateType] = useState<any>(); //模版类型
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [formTmpl] = Form.useForm();
   const [pageTotal, setPageTotal] = useState<number>();
-  const [tmplDetailData, setTmplDetailData] = useState<any>(' ');
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
   const handleEditTask = useCallback(
-    (record: TmplEdit, index: number) => {
+    (record: TmplEdit, index: number,optType?:any) => {
       setTmplateData(record);
-      setTmplEditMode('EDIT');
-      setDataSource(dataSource);
+      setTmplEditMode(optType);
     },
     [dataSource],
   );
+  const columns = useMemo(() => {
+    return createTableColumns({
+      onCopy: (record, index) => {
+        history.push({
+          pathname: 'tmpl-create',
+          query: {
+            type: 'copy',
+            templateCode: record.templateCode,
+            languageCode: record?.languageCode,
+           
+          },
+          state:{
+            categoryCodes:record?.categoryCodes
+          }
+        })
+      },
+      onEdit: (record, index) => {
+        handleEditTask(record, index,"EDIT")
+      },
+      onView: (record, index) => {
+        handleEditTask(record, index,"VIEW")
+      },
+      onPush: (record, index) => {
+                  history.push({
+                      pathname: 'push',
+                      query: {
+                          templateCode: record?.templateCode,
+                          languageCode: record?.languageCode,
+                        },
+                      state:record
+                  });
+      },
+      onDelete: (record:any, index:number,length:number) => {
+        
+        handleDelItem(record,index,length)
+      },
+    }) as any;
+  }, []);
 
   //查询编辑参数
   useEffect(() => {
@@ -91,7 +109,6 @@ export default function Launch() {
     //调用接口 查询env 参数就是appCategoryCode
     //setEnvDatas
     setEnvDatas([]);
-    setAppCategoryCode(categoryCode);
     getRequest(APIS.envList, { data: { categoryCode, pageSize: -1 } }).then((resp: any) => {
       if (resp.success) {
         let dataArry: any = [];
@@ -131,9 +148,7 @@ export default function Launch() {
 
   // 查询数据
   const queryList = (value: any) => {
-    // setDataSource(dataSource);
     setLoading(true);
-
     getRequest(APIS.tmplList, {
       data: {
         appCategoryCode: value.appCategoryCode,
@@ -150,9 +165,43 @@ export default function Launch() {
           const dataSource = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;
-          value.appCategoryCode = appCategoryCode;
-          value.envCode = envCode;
-          value.templateType = templateType;
+          // let resultMap:any={};
+          // let filterResultSource:any=[];
+          // let resultArry:any=[];
+          // let source:any=[];
+          // dataSource?.map((item:any)=>{
+          //   if(resultMap[item?.templateName]){
+          //     resultMap[item?.templateName].push(item);
+          //   }else{
+          //     resultMap[item?.templateName]=[item]
+          //   }
+          // }); 
+          // for (const key in resultMap) {
+          //   if (Object.prototype.hasOwnProperty.call(resultMap, key)) {
+          //     const element = resultMap[key]?.sort();
+          //     let appCategoryCodeArry:any=[];
+          //     if(element.length>1 ){
+          //       element?.map((item:any)=>{
+          //         appCategoryCodeArry.push(item?.appCategoryCode)
+          //       })
+          //     }
+          //     if(element.length===1){
+          //       filterResultSource.push({
+          //         ...element[0],
+          //         appCategoryCode:[element[0]?.appCategoryCode],
+          //         broSource:[]
+          //       })
+          //     }
+          //     if(element.length>1 ){
+          //       resultArry.push({
+          //         ...element[0],
+          //         appCategoryCode:appCategoryCodeArry,
+          //         broSource:[...element]
+          //       })
+          //     }   
+          //   }
+          // }
+          // source=filterResultSource.concat(resultArry);
           setPageTotal(pageTotal);
           setDataSource(dataSource);
           setPageIndex(pageIndex);
@@ -164,25 +213,24 @@ export default function Launch() {
   };
 
   //删除数据
-  const handleDelItem = (record: any) => {
-    let id = record.id;
-    delRequest(`${APIS.deleteTmpl}/${id}`).then((res: any) => {
-      if (res.success) {
-        message.success('删除成功！');
+  const handleDelItem = (record: any,index:number,length:number) => {
+    deleteTmpl({id:record?.id,index,length}).then(()=>{
+      if(index===length-1){
         loadListData({
           pageIndex: 1,
           pageSize: 20,
         });
+
       }
-    });
+     
+     
+    })
   };
   //抽屉保存
   const saveEditData = () => {
     setTmplEditMode('HIDE');
-    setTimeout(() => {
-      loadListData({ pageIndex: 1, pageSize: 20 });
-    }, 100);
-    // window.location.reload();
+    loadListData({ pageIndex: 1, pageSize: 20 });
+   
   };
   return (
     <PageContainer>
@@ -218,9 +266,6 @@ export default function Launch() {
             <Select
               options={envDatas}
               allowClear
-              onChange={(n) => {
-                setenvCode(n);
-              }}
               showSearch
               style={{ width: 120 }}
             />
@@ -231,9 +276,6 @@ export default function Launch() {
               allowClear
               style={{ width: 120 }}
               options={templateTypes}
-              onChange={(n) => {
-                setTemplateType(n);
-              }}
             />
           </Form.Item>
           <Form.Item label="模版语言：" name="languageCode">
@@ -264,7 +306,10 @@ export default function Launch() {
               type="primary"
               onClick={() =>
                 history.push({
-                  pathname: 'tmpl-add',
+                  pathname: 'tmpl-create',
+                  query: {
+                    type: 'add',
+                  },
                 })
               }
             >
@@ -276,6 +321,7 @@ export default function Launch() {
           <Table
             rowKey="id"
             dataSource={dataSource}
+            columns={columns}
             bordered
             loading={loading}
             pagination={{
@@ -289,89 +335,9 @@ export default function Launch() {
               },
               showTotal: () => `总共 ${pageTotal} 条数据`,
             }}
-            // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
-            onChange={pageSizeClick}
-          >
-            <Table.Column title="ID" dataIndex="id" width="4%" />
-            <Table.Column title="模版名称" dataIndex="templateName" width="20%" ellipsis />
-            <Table.Column title="模版语言" dataIndex="languageCode" width="8%" ellipsis />
-            <Table.Column title="模版类型" dataIndex="templateType" width="8%" ellipsis />
-            <Table.Column title="应用分类" dataIndex="appCategoryCode" width="8%" ellipsis />
-            <Table.Column
-              title="环境"
-              dataIndex="envCode"
-              width="16%"
-              render={(current) => (
-                <span>
-                  {current?.map((item: any) => {
-                    return (
-                      <span style={{ marginLeft: 4, marginTop: 2 }}>
-                        <Tag color='#e8f8ff'><span style={{ color: '#1890ff' }}>{item}</span></Tag>
-                      </span>
-                    );
-                  })}
-                </span>
-              )}
-            />
-            <Table.Column title="备注" dataIndex="remark" width="18%" ellipsis />
-            <Table.Column
-              title="操作"
-              dataIndex="gmtModify"
-              width="18%"
-              key="action"
-              render={(_, record: TmplEdit, index) => (
-                <Space size="small">
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-copy',
-                        query: {
-                          type: 'edit',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      })
-                    }
-                  >
-                    复制
-                  </a>
-                  <a
-                    onClick={() =>
-                      history.push({
-                        pathname: 'tmpl-detail',
-                        query: {
-                          type: 'info',
-                          templateCode: record.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      })
-                    }
-                  >
-                    详情 {record.lastName}
-                  </a>
-
-                  <a onClick={() => handleEditTask(record, index)}>编辑</a>
-                  <a
-                    onClick={() => {
-                      sessionStorage.setItem('tmplDetailData', JSON.stringify(record || ''));
-                      history.push({
-                        pathname: 'push',
-                        query: {
-                          templateCode: record?.templateCode,
-                          languageCode: record?.languageCode,
-                        },
-                      });
-                    }}
-                  >
-                    推送
-                  </a>
-                  <Popconfirm title="确定要删除该信息吗？" onConfirm={() => handleDelItem(record)}>
-                    <a>删除</a>
-                  </Popconfirm>
-                </Space>
-              )}
-            />
-          </Table>
+            onChange={pageSizeClick}        
+          />
+           
         </div>
       </ContentCard>
     </PageContainer>
