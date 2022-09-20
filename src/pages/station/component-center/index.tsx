@@ -9,7 +9,8 @@ import { Tabs, Button, Typography, Select, Form, Input } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { productionTabsConfig } from './tab-config';
 import InfoTable from './ReadOnlyTable';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import BasicDataModal from './components/basicDataModal';
 import { useQueryComponentList, useQueryProductlineList } from './hook';
 import AddApplicationDraw from './components/addApplicationDraw';
@@ -18,7 +19,9 @@ const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 
 export default function ComponentCenter() {
-  const identification: any = history.location.state;
+  let location:any = useLocation();
+  const query = parse(location.search);
+  const identification: any = location.state;
   const [productLineForm] = Form.useForm();
   const [tabActiveKey, setTabActiveKey] = useState<string>('app');
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();

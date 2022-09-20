@@ -55,10 +55,11 @@ export default function ApplicationCardList(props: IProps) {
           onClick={() =>
             history.push({
               pathname: 'detail',
-              query: {
-                id: `${item.id}`,
-                appCode: item.appCode,
-              },
+              search:`id=${item.id}&appCode=${item.appCode}`
+              // query: {
+              //   id: `${item.id}`,
+              //   appCode: item.appCode,
+              // },
             })
           }
         >

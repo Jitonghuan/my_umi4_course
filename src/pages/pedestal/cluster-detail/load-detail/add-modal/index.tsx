@@ -21,7 +21,8 @@ export default function AddModal(props: any) {
   };
   return (
     <Modal
-      title={type === 'tag' ? '新增标签' : '新增环境变量'}
+      // title={type === 'tag' ? '新增标签' : '新增环境变量'}
+      title='新增'
       width={500}
       visible={visible}
       onCancel={onCancel}

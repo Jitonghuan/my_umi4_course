@@ -6,8 +6,8 @@ import React, { useState, useEffect, useContext, useRef, useMemo, useLayoutEffec
 import { Select, message, Form, Tag, Button, Checkbox } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
-import appConfig from '@/app.config';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import DetailContext from '@/pages/application/application-detail/context';
@@ -20,11 +20,13 @@ export default function ViewLog(props: any) {
   const { appData } = useContext(DetailContext);
   const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
-  const [currentContainer, setCurrentContainer] = useState<string>('');
+  const [currentContainer, setCurrentContainer] = useState<any>('');
   const [previous, setPrevious] = useState<boolean>(false);
-  const { appCode, envCode, instName, viewLogEnvType, optType, containerName, deploymentName } = props.location.query;
+  let location:any = useLocation();
+  const query = parse(location.search);
+  const { appCode, envCode, instName, viewLogEnvType, optType, containerName, deploymentName } = query;
   // const { infoRecord } = props?.location?.state;
-  const infoRecord = props?.location?.state?.infoRecord || {};
+  const infoRecord:any=location.state?.infoRecord || {};
   const { matrixConfigData } = useContext(FeContext);
   const logData = useRef<string>('');
   let currentContainerName = '';
@@ -47,6 +49,7 @@ export default function ViewLog(props: any) {
         }));
 
         if (optType && optType === 'containerInfo') {
+          //@ts-ignore
           currentContainerName = containerName;
           viewLogform.setFieldsValue({ containerName: containerName });
           setCurrentContainer(containerName);
@@ -57,6 +60,7 @@ export default function ViewLog(props: any) {
             },
           ]);
         } else {
+            //@ts-ignore
           currentContainerName = deploymentName;
           viewLogform.setFieldsValue({ containerName: currentContainerName });
           setCurrentContainer(currentContainerName);
@@ -224,29 +228,31 @@ export default function ViewLog(props: any) {
       if (optType && optType === 'containerInfo') {
         history.push({
           pathname: `/matrix/application/detail/container-info`,
-          query: {
-            appCode: appCode,
-            envCode: envCode,
-            viewLogEnvType: viewLogEnvType,
-          },
-          state: {
+          search:`appCode=${appCode}&envCode=${envCode}&viewLogEnvType=${viewLogEnvType}`,
+          // query: {
+          //   appCode: appCode,
+          //   envCode: envCode,
+          //   viewLogEnvType: viewLogEnvType,
+          // },
+         }, {
             appCode: appCode,
             envCode: envCode,
             viewLogEnvType: viewLogEnvType,
             infoRecord: infoRecord,
             id: appData?.id,
           },
-        });
+        );
       } else {
         history.push({
           pathname: `/matrix/application/detail/deployInfo`,
-          query: {
-            appCode: appCode,
-            id: id + '',
-            viewLogEnv: envCode,
-            type: 'viewLog_goBack',
-            viewLogEnvType: viewLogEnvType,
-          },
+          search:`appCode=${appCode}&id=${id + ''}&viewLogEnv=${envCode}&viewLogEnvType=${viewLogEnvType}`
+          // query: {
+          //   appCode: appCode,
+          //   id: id + '',
+          //   viewLogEnv: envCode,
+          //   type: 'viewLog_goBack',
+          //   viewLogEnvType: viewLogEnvType,
+          // },
         });
       }
     }

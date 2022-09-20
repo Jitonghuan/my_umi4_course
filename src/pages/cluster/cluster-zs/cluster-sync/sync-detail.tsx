@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Button, Steps, Spin, Result, Modal } from 'antd';
 import moment from 'moment';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import { ContentCard } from '@/components/vc-page-content';
 import type { IResponse } from '@cffe/vc-request/es/base-request/type';
 import { getRequest, postRequest } from '@/utils/request';
@@ -57,10 +57,11 @@ const sleep = (s: number) => new Promise((resolve) => setTimeout(resolve, s));
 let resultLogCache = '';
 
 export default function ClusterSyncDetail(props: any) {
-  if (!history.location.state) {
+  let location:any = useLocation();
+  if (!location.state) {
     return null;
   }
-  const commonEnvCode = history.location.state;
+  const commonEnvCode = location.state;
   const [pending, setPending] = useState(true);
   const [currStep, setCurrStep] = useState<number>(-1);
   const [resultLog, setResultLog] = useState<string>('');

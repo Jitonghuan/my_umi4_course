@@ -7,7 +7,8 @@ import { Button, Row, Col, Form, Select, Space, message, Spin, Modal, Radio, Pop
 import { ContentCard } from '@/components/vc-page-content';
 import { getRequest, putRequest } from '@/utils/request';
 import { useState, useEffect } from 'react';
-import appConfig from '@/app.config';
+import {  useLocation } from 'umi';
+import { parse } from 'query-string';
 import AceEditor from '@/components/ace-editor';
 import DetailContext from '@/pages/application/application-detail/context';
 import EditorTable from '@cffe/pc-editor-table';
@@ -36,7 +37,11 @@ export default function ApplicationParams(props: any) {
 
   // 进入页面显示结果
   const { appCode, appCategoryCode } = appData || {};
-  const { templateType, envCode } = props?.history.location?.query || {};
+  let location = useLocation();
+  const query = parse(location.search);
+  const envCode=query?.envCode;
+  const templateType=query?.templateType;
+  // const { templateType, envCode } = props?.history.location?.query || {};
   let firstEnvChoose = useRef<string>('');
   let firstTmplType = useRef<string>('');
   useEffect(() => {

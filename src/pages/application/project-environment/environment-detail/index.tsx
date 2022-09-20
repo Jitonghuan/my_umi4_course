@@ -2,16 +2,15 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/14 10:20
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect,} from 'react';
 import { Button, Spin, Descriptions } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { useLocation } from 'umi';
 import { DiffOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
-import { queryProjectEnvList, queryAppsList } from '../service';
+import { queryProjectEnvList,} from '../service';
 import { ContentCard } from '@/components/vc-page-content';
 import EnvironmentEditDraw from '../add-environment';
-import { useRemoveApps, useUpdateProjectEnv, useAddAPPS } from '../hook';
 import './index.less';
 import DetailList from './detail-list';
 
@@ -37,13 +36,12 @@ export const appTypeOptions = [
   },
 ];
 export default function EnvironmentList() {
-  const projectEnvInfo: any = history.location.state;
+  let location:any = useLocation();
+  const projectEnvInfo: any = location.state;
   const [isUpdata, setIsUpdata] = useState<boolean>(false);
   const [enviroInitData, setEnviroInitData] = useState<EnvironmentEdit>();
   const [enviroEditMode, setEnviroEditMode] = useState<EditorMode>('HIDE');
-  const [appsListData, setAppsListData] = useState<any>([]);
   const [projectEnvData, setProjectEnvData] = useState<any>([]);
-  const [dataSource, setDataSource] = useState<any>([]);
   const [listLoading, setListLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSpinning, setIsSpinning] = useState<boolean>(false);

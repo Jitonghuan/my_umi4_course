@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import EditTable from '../add-edit';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import { IFuncItem } from '../../typing';
+import { parse } from 'query-string';
 import { queryFunctionReq } from '../../service';
 import moment from 'moment';
 
 const EditFunction: React.FC = () => {
+  let location:any = useLocation();
+  const query:any = parse(location.search);
   //@ts-ignore
-  const { id } = history?.location?.query;
+  const { id } = query;
   const [detailInfo, setDetailInfo] = useState<any>({});
   const [initData, setInitData] = useState<IFuncItem[]>([]);
 

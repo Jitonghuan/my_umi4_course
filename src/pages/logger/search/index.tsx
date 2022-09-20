@@ -17,19 +17,26 @@ import {
 } from 'antd';
 import ChartCaseList from './LogHistorm';
 import ReactJson from 'react-json-view';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
 import { postRequest } from '@/utils/request';
 import { QuestionCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { useEnvOptions, useLogStoreOptions, useFrameUrl, useIndexModeList } from './hooks';
+import { useEnvOptions, useLogStoreOptions, useIndexModeList } from './hooks';
+import SourceMapModal from "@/pages/fe-monitor/basic/components/error/components/source-map";
 import { START_TIME_ENUMS, selectOption } from './type';
 import moment from 'moment';
 import './index.less';
 
 export default function LoggerSearch(props: any) {
-  const receiveInfo = props.location.query;
+  const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false)
+  const [sourceInfo, setSourceInfo] = useState<any>({})
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const receiveInfo = query;
   const showWindowHref = () => {
     var sHref = window.location.href;
     var args = sHref.split('?');
@@ -112,7 +119,7 @@ export default function LoggerSearch(props: any) {
         subInfoForm.setFieldsValue({ traceId: receiveInfo.traceId });
         appCodeArry.push('traceId:' + receiveInfo.traceId);
       }
-      if (receiveInfo.appCode) {
+      if (receiveInfo.appCode && receiveInfo.indexMode !== 'frontend_log') {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
         setAppCodeValue(appCodeArry);
         subInfoForm.setFieldsValue({
@@ -160,7 +167,7 @@ export default function LoggerSearch(props: any) {
     //默认传最近30分钟，处理为秒级的时间戳
     let start = Number((now - startTime) / 1000).toString();
     let end = Number(now / 1000).toString();
-    if (selectOptionType === 'lastTime') {   
+    if (selectOptionType === 'lastTime') {
         setStartTimestamp(start);
         setEndTimestamp(end);
         loadMoreData(logStore, start, end, values.querySql, messageInfo, appCodeArry);
@@ -215,6 +222,7 @@ export default function LoggerSearch(props: any) {
     }
     return result;
   }
+
   const PickerWithType = (type: any, onChange: any) => {
     if (type === 'time') return <TimePicker onChange={onChange} />;
     if (type === 'date') return <DatePicker onChange={onChange} />;
@@ -354,7 +362,7 @@ export default function LoggerSearch(props: any) {
     setScrollLoading(true);
 
     setTimeout(() => {
-      let moreList = logSearchTableInfo.splice(0, 20);
+      let moreList = logSearchTableInfo?.splice(0, 20) || [];
       let vivelist = viewLogSearchTabInfo.concat(moreList);
       setViewlogSeaechTabInfo(vivelist);
       setScrollLoading(false);
@@ -540,7 +548,7 @@ export default function LoggerSearch(props: any) {
                         setQuerySql('');
                       }
                     }}
-                   
+
                   >
                     高级搜索
                   </Button>
@@ -608,12 +616,28 @@ export default function LoggerSearch(props: any) {
                                       style={{ width: '86%', fontSize: 10 }}
                                       dangerouslySetInnerHTML={{ __html: `${JSON.stringify(item)}` }}
                                       className="detailInfo"
-                                    ></div>
+                                    />
                                   </div>
                                 }
                                 key={index}
                               >
-                                <Tabs defaultActiveKey="1" onChange={callback}>
+                                <Tabs defaultActiveKey="1"
+                                      onChange={callback}
+                                      tabBarExtraContent={{
+                                        right: logStore === 'frontend_log' ? (
+                                          <Button
+                                            type="link"
+                                            onClick={() => {
+                                              setSourceInfo({
+                                                ...item,
+                                                filePath: item.d2,
+                                                envCode
+                                              });
+                                              setSourceMapVisible(true);
+                                            }}
+                                          >sourceMap 还原</Button>) : null
+                                      }}
+                                >
                                   <TabPane tab="表" key="1">
                                     {Object.keys(item)?.map((key: any) => {
                                       return key === '@timestamp' ? (
@@ -666,6 +690,11 @@ export default function LoggerSearch(props: any) {
                 </Spin>
               </div>
             </div>
+            <SourceMapModal
+              visible={sourceMapVisible}
+              onClose={() => setSourceMapVisible(false)}
+              param={sourceInfo}
+            />
           </div>
         ) : null}
       </ContentCard>

@@ -1,7 +1,8 @@
 //组件详情
 import { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import moment from 'moment';
 import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
@@ -29,6 +30,8 @@ import { useUpdateDescription, useUpdateConfiguration } from './hooks';
 
 import './index.less';
 export default function ComponentDetail() {
+  let location:any = useLocation();
+  const query:any = parse(location.search);
   const {
     initRecord,
     productVersionId,
@@ -43,7 +46,7 @@ export default function ComponentDetail() {
     type,
     optType,
     descriptionInfoData,
-  }: any = history.location.state;
+  }: any = location.state;
   const { TabPane } = Tabs;
   const tabOnclick = (key: any) => { };
   const [configForm] = Form.useForm();
@@ -311,7 +314,7 @@ export default function ComponentDetail() {
                 if (optType === 'versionDetail') {
                   history.push({
                     pathname: '/matrix/station/version-detail',
-                    state: {
+                   }, {
                       optType: 'componentDetail',
                       versionId: productVersionId,
                       versionDescription: versionDescription,
@@ -321,13 +324,13 @@ export default function ComponentDetail() {
                       productGmtCreate: descriptionInfoData.gmtCreate,
                       versionName: descriptionInfoData.versionName,
                     },
-                  });
+                  );
                 } else {
                   history.push({
                     pathname: '/matrix/station/component-center',
-                    state: {
+                  },{
                       identification: componentType,
-                    },
+                    
                   });
                 }
               }}

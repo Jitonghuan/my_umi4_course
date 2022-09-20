@@ -12,6 +12,8 @@ import HistoryLog from './components/history-log';
 import ParamConfig from './components/param-config';
 import { options } from './schema';
 import { queryReleaseInfo } from './hook';
+import { useLocation} from 'umi';
+import { parse } from 'query-string';
 import './index.less';
 
 export interface Item {
@@ -24,7 +26,9 @@ export interface Item {
 }
 
 export default function HelmDetail() {
-  const initInfo: any = history.location?.state || {};
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const initInfo: any =location?.state || {};
   const record = initInfo?.record || {};
   const curClusterName = initInfo?.curClusterName || '';
   const [activeValue, setActiveValue] = useState<string>('basic-info');
