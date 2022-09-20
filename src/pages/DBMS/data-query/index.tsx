@@ -4,7 +4,8 @@ import {RightCircleFilled,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-desi
 import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
 import QueryResult from "./components/query-result";
-import SqlConsole from "./components/sql-console"
+import SqlConsole from "./components/sql-console";
+
 import './index.less';
 const { TabPane } = Tabs;
 export default function ResizeLayout() {

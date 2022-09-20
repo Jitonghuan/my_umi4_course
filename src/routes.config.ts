@@ -1208,12 +1208,6 @@ export default [
         component: '@/pages/DBMS/data-change',
       },
       {
-        path: `${baseRoutePath}/DBMS/sql`,
-        name: 'sql',
-        key: 'sql',
-        component: '@/pages/DBMS/sql',
-      },
-      {
         path: `${baseRoutePath}/DBMS/ticket-approval`,
         name: '工单详情-审批结束',
         key: 'ticket-approval',

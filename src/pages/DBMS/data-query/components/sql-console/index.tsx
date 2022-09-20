@@ -1,5 +1,6 @@
 import React, { useState,useEffect,Component,useMemo,useRef,forwardRef,useImperativeHandle} from 'react';
 import {  Tabs,Form,Space,Button,Select,message } from 'antd';
+import MonacoSqlEditor from '../../../monaco-sql-editor';
 export default  forwardRef(function QueryResult(props:any,ref:any){
     const { TabPane } = Tabs;
     useImperativeHandle(ref, () => ({
@@ -13,7 +14,7 @@ export default  forwardRef(function QueryResult(props:any,ref:any){
 
     const defaultPanes = new Array(2).fill(null).map((_, index) => {
         const id = String(index + 1);
-        return { label: `SQL console ${id}`, children: `Content of Tab Pane ${index + 1}`, key: id };
+        return { label: `SQL console ${id}`, children: <MonacoSqlEditor/>, key: id };
       });
     const [activeKey, setActiveKey] = useState(defaultPanes[0].key);
     const [items, setItems] = useState(defaultPanes);
