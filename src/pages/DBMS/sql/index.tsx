@@ -1,100 +1,49 @@
-
 import React from 'react';
-import codemirror from 'codemirror';
-require('codemirror/codemirror.css'); // CodeMirrory原生样式
-require('codemirror/mode/sql/sql');
-require('codemirror/mode/shell/shell');
-require('codemirror/addon/display/placeholder'); 
-require('codemirror/addon/hint/show-hint.css'); // 用来做代码提示
-require('codemirror/addon/hint/show-hint.js'); // 用来做代码提示
-require('codemirror/addon/hint/sql-hint.js'); // 用来做代码提示
-class CodeMirror extends React.Component {
+import { UnControlled as CodeMirror } from 'react-codemirror2'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/sql/sql';
+import 'codemirror/mode/shell/shell';
+import 'codemirror/addon/display/placeholder';
+import 'codemirror/addon/hint/show-hint.css'; // 用来做代码提示
+import 'codemirror/addon/hint/show-hint.js'; // 用来做代码提示
+import 'codemirror/addon/hint/sql-hint.js'; // 用来做代码提示
+
+export default class SqlConsole extends React.Component {
+  // 语法提示，自动补全，语言高亮，主题切换，自适应，单行选中，格式化，主题切换
+    state = {};
     static defaultProps = {
-      useFocus: true
+       useFocus: true,
+        options: {
+            mode: 'text/x-mysql',
+            lineNumbers: true,
+            styleActiveLine: true,
+            cursorHeight: 1,
+            autofocus: true,
+            extraKeys: {
+            }
+        }
     }
-  
-    componentDidMount() {
-      this.paste = '';
-      const {
-        onChange, onBlur, options, value = '', onScroll,
-        onCursorActivity, onInputRead,
-      } = this.props;
-  
-      this.editor = codemirror(this.ref, {
-        indentWithTabs: true,
-        smartIndent: true,
-        lineNumbers: true,
-        matchBrackets: true,
-        autofocus: true,
-        extraKeys: { Tab: 'autocomplete' },
-        hintOptions: { completeSingle: false }
-        lineWrapping: true,
-        value
-      });
-      const { editor, setCursor } = this;
-  
-      setCursor(editor, true);
-      const changeDelay = debounce((e) => {
-        setCursor(e);
-        onChange && onChange(e.getValue());
-      }, 300);
-      editor.on('change', changeDelay);
-      editor.on('blur', (e) => {
-        setCursor(e);
-        onBlur && onBlur(e.getValue());
-      });
-      editor.on('cursorActivity', onCursorActivity);
-      editor.on('inputRead', (cm, change) => onInputRead(cm, change, editor));
-      onScroll && editor.on('scroll', onScroll);
-    }
-  
-    shouldComponentUpdate({ paste = '', value = '', }) {
-      const { editor } = this;
-  
-      if (paste !== this.paste) {
-        this.focus();
-        editor.replaceSelection(` ${paste}`);
-        this.paste = paste;
-      } else if (value !== editor.getValue()) {
-        editor.setOption('value', value);
-  
-        editor.setValue(value);
-        this.fixBottom();
-        this.focus();
-      }
-      return false;
-    }
-  
-    setCursor = (editor, toEnd) => {
-      const { line, ch } = editor.doc.getCursor();
-      this.cursor = { ch, line: toEnd ? line + 1 : line };
-    }
-  
-    focus() {
-      const { editor } = this;
-      const { options: { readOnly }, useFocus } = this.props;
-      if (readOnly) return;
-      if (!useFocus) return;
-      editor.focus();
-      editor.setCursor({ ...this.cursor }, readOnly);
-    }
-  
-    fixBottom() {
-      const { fixBottom } = this.props;
-      if (!fixBottom) return;
-  
-      const { editor } = this;
-      const { height } = editor.getScrollInfo();
-      editor.scrollTo(0, height);
-    }
-  
+
     render() {
-      const { className, options: { readOnly } } = this.props;
-      return (
-        <div
-          className={`${className} ${readOnly && 'readOnly'}`}
-          ref={(self) => { this.ref = self; }}
-        />
-      );
+        const { options } = this.props;
+        return (
+          <>
+        <div style={{ width: '100%', height: '100%', fontSize: '16px' }}>
+            <CodeMirror
+                value="select * from word"
+                options={options}
+                onInputRead={(editor, change) => {
+//库和表名显示，一般是库名中包含一个表名数组，但是要在第一级显示，也需要把表名加进去
+                 var data = { test: ['t_user', 'menu', 'auth_info'], t_user: [], menu: [''], default: ['tableinfo'] };
+                    editor.setOption('hintOptions', {
+                        tables: data,
+                        completeSingle: false
+                    });
+                    editor.execCommand('autocomplete');
+                }}
+            />
+        </div>
+        </>
+        );
     }
-  }
+}
