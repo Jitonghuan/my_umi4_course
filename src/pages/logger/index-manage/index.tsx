@@ -45,8 +45,10 @@ export default function DemoPageList() {
   }, [pageIndex, pageSize]);
 
   //提交新增数据
-  const handleSubmit = () => {
-    const paramsdata = addIndexForm.getFieldsValue();
+  const handleSubmit = async() => {
+    // const paramsdata = addIndexForm.getFieldsValue();
+    const paramsdata =await addIndexForm.validateFields();
+
     let envCode = paramsdata?.envCode;
     let fields = paramsdata?.fields;
     let indexMode = paramsdata?.indexMode;
@@ -95,10 +97,10 @@ export default function DemoPageList() {
           <Form.Item label="环境Code" name="envCode" rules={[{ required: true, message: '请输入环境Code' }]}>
             <Select options={envOptions} style={{ width: 440 }} placeholder="请选择" />
           </Form.Item>
-          <Form.Item label="日志库(索引模式)" name="indexMode">
+          <Form.Item label="日志库(索引模式)" name="indexMode" rules={[{ required: true, message: '请输入索引模式' }]}>
             <Input placeholder="请输入" style={{ width: 440 }} />
           </Form.Item>
-          <Form.Item label="字段" name="fields" rules={[{ required: true }]}>
+          <Form.Item label="字段" name="fields" >
             <Input style={{ width: 440 }} />
           </Form.Item>
         </Form>
