@@ -7,32 +7,14 @@ import {} from 'antd';
 import PageContainer from '@/components/page-container';
 import { CardRowGroup, ContentCard } from '@/components/vc-page-content';
 
-// export default function DemoPageLr() {
-//   return (
-//     <PageContainer>
-//       <CardRowGroup>
-//         <CardRowGroup.SlideCard width={200}>LEFT</CardRowGroup.SlideCard>
-//         <ContentCard>RIGHT</ContentCard>
-//       </CardRowGroup>
-//     </PageContainer>
-//   );
-// }
-class App extends React.Component {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      count: 1,
-    };
-  }
-
-  handleClick = () => {
-    setTimeout(() => {
-      // this.setState({ number:this.state.count+1 })
-      console.log(this.state);
-    }, 1000);
-  };
-
-  render() {
-    return <div></div>;
-  }
+export default function DemoPageLr() {
+  return (
+    <PageContainer>
+      <CardRowGroup>
+        <CardRowGroup.SlideCard width={200}>LEFT</CardRowGroup.SlideCard>
+        <ContentCard>RIGHT</ContentCard>
+      </CardRowGroup>
+    </PageContainer>
+  );
 }
+

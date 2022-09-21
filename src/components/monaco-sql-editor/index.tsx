@@ -11,6 +11,7 @@
  import {  Tabs,Form,Space,Button,Select,message } from 'antd';
  import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
  import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
+ //@ts-ignore
  import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql';
  import { format } from 'sql-formatter';
  import './index.less'
@@ -35,8 +36,7 @@
   const { keywords } = language
   
 export default function SqlEditor(props:Iprops){
-    // const codeContainerRef = useRef(null) as any;
-    const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
+    const [editorInstance, setEditorInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
 
     const rootCls = 'monaco-sql-editor-title';
     const {isSqlExecutePlanBtn,isSqlBueatifyBtn,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn}=props;
@@ -63,7 +63,7 @@ export default function SqlEditor(props:Iprops){
                 },
                 tabSize: 2, // tab缩进长度
             });
-            setInstance(monacoEditor);
+            setEditorInstance(monacoEditor);
             registerCompletion();
             // 将 initValue Property 同步到编辑器中
             monacoEditor.setValue(initValue);
@@ -85,47 +85,47 @@ export default function SqlEditor(props:Iprops){
     }, [codeContainerRef])
     
     useEffect(()=>{
-        if(instance){
+        if(editorInstance){
             getSelectionVal();
         }
-    },[instance])
+    },[editorInstance])
     useEffect(()=>{
-        if(instance){
+        if(editorInstance){
             
             getValue();
             console.log('--------', getValue())
         }
         
-    },[instance,getVal])
+    },[editorInstance,getVal])
     useEffect(()=>{
-        if(instance){
+        if(editorInstance){
             monaco.editor.setTheme(theme)
         }  
-    },[instance,theme])
+    },[editorInstance,theme])
     useEffect(()=>{
-        if(instance){
-            instance.layout()
+        if(editorInstance){
+            editorInstance.layout()
         }  
-    },[instance])
+    },[editorInstance])
     useEffect(()=>{ 
         return ()=>{
-            if(instance){
-                instance?.dispose()
+            if(editorInstance){
+                editorInstance?.dispose()
             }
 
         }
-    },[instance])
+    },[editorInstance])
     const getValue=()=> {
-        setGetVal(instance?.getModel()?.getValue())
-        return instance?.getModel()?.getValue()
+        setGetVal(editorInstance?.getModel()?.getValue())
+        return editorInstance?.getModel()?.getValue()
       };
      
       //获取选中代码
     const  getSelectionVal=()=> {
-        const selection =instance?.getSelection() // 获取光标选中的值
+        const selection =editorInstance?.getSelection() // 获取光标选中的值
         if (!selection) return;
         const { startLineNumber=0, endLineNumber, startColumn, endColumn }:any = selection
-        const model = instance?.getModel()
+        const model = editorInstance?.getModel()
   
         return model?.getValueInRange({
           startLineNumber,
@@ -173,10 +173,10 @@ export default function SqlEditor(props:Iprops){
       };
       //处理光标位置
       const setPosition=(column:any, lineNumber:any)=>{
-        instance?.setPosition({ column, lineNumber })
+        editorInstance?.setPosition({ column, lineNumber })
       }
      const getPosition=()=>{
-        return instance?.getPosition()
+        return editorInstance?.getPosition()
       }
       //自定义 SQL 库表提示，并保留原有 SQL 提示
 
@@ -207,9 +207,9 @@ export default function SqlEditor(props:Iprops){
         }))
       }
    const formatSql=()=> {
-       if(instance){
-        instance?.getModel()?.setValue(
-            format(instance?.getValue(), {
+       if(editorInstance){
+        editorInstance?.getModel()?.setValue(
+            format(editorInstance?.getValue(), {
               indentStyle: 'tabularLeft',
             })
           )
@@ -222,7 +222,7 @@ export default function SqlEditor(props:Iprops){
             <div className="monaco-sql-editor-title">
                 <Space className={`${rootCls}-wrapper`}>
                    {isSqlExecuteBtn&&<span className={`${rootCls}-btn`} id="one" onClick={()=>{
-                         console.log('--------', instance?.getValue())
+                         console.log('--------', editorInstance?.getValue())
                     }}>执行</span> } 
                    {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two">sql检测</span>}  
                    {isSqlBueatifyBtn&&<span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span>}  
