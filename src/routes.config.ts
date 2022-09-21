@@ -110,6 +110,11 @@ export default [
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
   {
+    path: `${baseRoutePath}/DBMS`,
+    redirect: `${baseRoutePath}/DBMS/authority-manage/authority-apply`,
+  },
+  {
+   
     "path": `${baseRoutePath}/application`,
     "name": "应用管理",
     "icon": "icon-poc_maindata",

@@ -135,21 +135,6 @@ function Shortcuts() {
           </Spin>
         </div>
       </Modal>
-
-      {/* <Typography.Title
-          heading={6}
-          style={{ marginTop: 0, paddingLeft: 6, display: 'flex', justifyContent: 'space-between' }}
-        >
-          <span>快捷入口</span>
-          <Link
-            style={{ paddingRight: 6 }}
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            管理快捷入口
-          </Link>
-        </Typography.Title> */}
       {myEntrySource[1]?.length !== 0 ? (
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {myEntrySource[1]?.map((shortcut: any, index: number) => (

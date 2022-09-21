@@ -2,11 +2,9 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/23 14:58
 
-// import logo from '@/assets/imgs/logo7.png';
 import logo from '@/assets/imgs/logo.png';
 import favicon from '@/assets/imgs/logo.png';
 import { baseRoutePath } from './routes.config';
-import { domainName, wsPrefixName, LogoName, waterMarkName } from './envType.config';
 
 /** 是否是本地开发环境 */
 const IS_LOCAL = process.env.NODE_ENV === 'development';
