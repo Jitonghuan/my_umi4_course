@@ -1,5 +1,5 @@
 /**
- * VS Code 编辑器
+ * VS Code SQL编辑器
  *
  * 通过 getEditorVal 函数向外传递编辑器即时内容
  * 通过 initValue 用于初始化编辑器内容。
@@ -25,6 +25,12 @@
     language?:string;
     height?:number,
     theme?:string,
+    subChange?:()=>void;
+    isSubChangeBtn?:boolean;
+    isSqlCheckBtn?:boolean;
+    isSqlBueatifyBtn?:boolean;
+    isSqlExecuteBtn?:boolean;
+    isSqlExecutePlanBtn?:boolean;
   }
   const { keywords } = language
   
@@ -33,8 +39,7 @@ export default function SqlEditor(props:Iprops){
     const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
 
     const rootCls = 'monaco-sql-editor-title';
-    const {initValue="select * from user limit 20",readOnly,language="sql",height=500,theme='vs'}=props;
-    const [inputVal,setInputVal]=useState<any>();
+    const {isSqlExecutePlanBtn,isSqlBueatifyBtn,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn}=props;
     const [getVal,setGetVal]=useState<any>();
     let divNode:any;
     const codeContainerRef = useCallback((node:any) => {
@@ -216,16 +221,17 @@ export default function SqlEditor(props:Iprops){
         <div className="monaco-sql-editor-content">
             <div className="monaco-sql-editor-title">
                 <Space className={`${rootCls}-wrapper`}>
-                    <span className={`${rootCls}-btn`} id="one" onClick={()=>{
+                   {isSqlExecuteBtn&&<span className={`${rootCls}-btn`} id="one" onClick={()=>{
                          console.log('--------', instance?.getValue())
-                    }}>执行</span> 
-                    {/* <span className={`${rootCls}-btn`} id="two">sql检测</span>  */}
-                    <span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span> 
-                    <span className={`${rootCls}-btn`} id="four">执行计划</span> 
+                    }}>执行</span> } 
+                   {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two">sql检测</span>}  
+                   {isSqlBueatifyBtn&&<span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span>}  
+                   {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four">执行计划</span>} 
+                   {isSubChangeBtn&&<span className={`${rootCls}-btn`} id="fifth">提交变更</span> } 
                 </Space>
             </div>
             {/* calc(100vh - 566px */}
-            <div ref={codeContainerRef} className="editor-container" style={{height: 'calc(100vh - 440px)',minHeight:300}}  />
+            <div ref={codeContainerRef} className="editor-container" style={{height: 'calc(100vh - 560px)',minHeight:300}}  />
 
         </div>
     )

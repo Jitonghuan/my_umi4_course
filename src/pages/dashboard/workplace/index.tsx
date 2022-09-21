@@ -1,16 +1,9 @@
-import { Grid, Space } from '@arco-design/web-react';
-import Overview from './overview';
-import ContentPercentage from './content-percentage';
-import { ContentCard } from '@/components/vc-page-content';
 import Shortcuts from './shortcuts';
-import Announcement from './announcement';
-import Docs from './docs';
 import React, { useState, useEffect } from 'react';
 import { useGetInfoList } from '../workplace/hook';
 import { Tag } from 'antd';
-import { Link, Card, Typography, Spin, Drawer, Modal, List } from '@arco-design/web-react';
+import { Card,  Drawer, Modal, List } from '@arco-design/web-react';
 import styles from './style/index.module.less';
-import favicon from '@/assets/imgs/logo6.png';
 import announce from '@/assets/imgs/announce.svg';
 import doc from '@/assets/imgs/doc.svg';
 import observable from '@/assets/imgs/observable.png';
@@ -19,7 +12,6 @@ import devops from '@/assets/imgs/devops.png';
 import cloudNative from '@/assets/imgs/cloud-native.png';
 import clusterManage from '@/assets/imgs/cluster-manage.png';
 import './index.less';
-import moment from 'moment';
 
 function Workplace() {
   const [docLoading, docTotal, docData, getInfoList] = useGetInfoList();

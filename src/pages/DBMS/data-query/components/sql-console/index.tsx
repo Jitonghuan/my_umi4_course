@@ -1,6 +1,6 @@
 import React, { useState,useEffect,Component,useMemo,useRef,forwardRef,useImperativeHandle} from 'react';
 import {  Tabs,Form,Space,Button,Select,message } from 'antd';
-import MonacoSqlEditor from '../../../monaco-sql-editor';
+import MonacoSqlEditor from '@/components/monaco-sql-editor';
 export default  forwardRef(function QueryResult(props:any,ref:any){
     const { TabPane } = Tabs;
     useImperativeHandle(ref, () => ({
@@ -14,7 +14,7 @@ export default  forwardRef(function QueryResult(props:any,ref:any){
 
     const defaultPanes = new Array(2).fill(null).map((_, index) => {
         const id = String(index + 1);
-        return { label: `SQL console ${id}`, children: <MonacoSqlEditor/>, key: id };
+        return { label: `SQL console ${id}`, children: <MonacoSqlEditor isSqlExecuteBtn={true} isSqlBueatifyBtn={true} isSqlExecutePlanBtn={true} />, key: id };
       });
     const [activeKey, setActiveKey] = useState(defaultPanes[0].key);
     const [items, setItems] = useState(defaultPanes);
@@ -28,7 +28,7 @@ export default  forwardRef(function QueryResult(props:any,ref:any){
       const newActiveKey = `newTab${newTabIndex.current++}`;
       let tabArry=[...items, { label: 'SQL console ', children: 'New Tab Pane', key: newActiveKey }]
       if(tabArry.length<11){
-        setItems([...items, { label: 'SQL console ', children: 'New Tab Pane', key: newActiveKey }]);
+        setItems([...items, { label: 'SQL console ', children: <MonacoSqlEditor isSqlExecuteBtn={true} isSqlBueatifyBtn={true} isSqlExecutePlanBtn={true} />, key: newActiveKey }]);
        
         setActiveKey(newActiveKey);
   
