@@ -90,24 +90,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-  // useEffect(() => {
-  //   if (initData) {
-  //     setNodeCpuData(initData?.nodeCpu);
-  //     setNodeMemData(initData?.nodeMem);
-  //     setNodeDiskData(initData?.nodeDisk);
-  //     setNodeLoadData(initData?.nodeLoad);
-  //     setNodeIOData(initData?.nodeIO);
-  //     setNodeFileData(initData?.nodeFile);
-  //     setNodeNetWorkData(initData?.nodeNetWork);
-  //     setNodeSocketData(initData?.nodeSocket);
-  //   }
-
-  //   // if(ipDetailVisiable){
-  //   //   setStartTime(30 * 60 * 1000);
-  //   //   console.log('进入页面重置时间')
-
-  //   // }
-  // }, [initData]);
   useEffect(() => {
     if (initData?.nodeCpu) {
       setNodeCpuData(initData?.nodeCpu);
@@ -146,7 +128,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   useEffect(() => {
     if (initData?.nodeNetWork) {
       setNodeNetWorkData(initData?.nodeNetWork);
-      // console.log('99999')
     }
   }, [initData?.nodeNetWork]);
   useEffect(() => {
@@ -157,7 +138,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   useEffect(() => {
     if (ipDetailVisiable) {
       setStartTime(30 * 60 * 1000);
-      // console.log('进入页面重置时间')
     }
   }, [ipDetailVisiable]);
 

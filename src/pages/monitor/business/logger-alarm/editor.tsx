@@ -93,7 +93,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       silenceEnd: values.silenceEnd?.format('HH:mm'),
     };
 
-    console.log('> AlarmEditor.handleOk: ', submitData);
+  
     if (props.mode === 'ADD') {
       await postRequest(APIS.createRule, {
         data: submitData,
@@ -136,7 +136,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
 
       <Form form={field} labelCol={{ flex: '132px' }} wrapperCol={{ span: 16 }}>
         <FormItem label="告警名称" name="name" required={false} rules={[{ required: true, message: '请输入告警名称' }]}>
-          <Input placeholder="请输入" />
+          <Input placeholder="请输入" disabled={props.mode === 'EDIT'}  />
         </FormItem>
         <FormItem label="应用名" name="appCode" required={false} rules={[{ required: true, message: '请选择应用' }]}>
           <Select
