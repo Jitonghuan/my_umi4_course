@@ -196,7 +196,7 @@ export default function DpMonitorEdit(props: any) {
       labels: res?.data?.labels || [],
       values: res?.data?.values || []
     }
-    console.log(obj)
+   
     setSqlRes(obj);
     if (res?.success) {
       message.success('解析成功')

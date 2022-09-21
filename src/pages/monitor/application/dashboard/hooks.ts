@@ -35,13 +35,9 @@ export function useQueryPodCpu() {
             if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
               if (key === 'cpuLimit') {
                 dataSource['cpuLimit']?.map((ele: any, index_one: number) => {
-                  console.log('---------->dataSource',
-                  dataSource['cpuLimit'],
-                  "ele---->",ele,
-                  "ele22222---->", ele[Object.keys(ele)[0]],
-                  "ele333333---->", Object.keys(ele)[0])
+                  
                   ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-                    console.log('---------->ele[Object.keys(ele)[0]],',ele[Object.keys(ele)[0]],Object.keys(ele)[0])
+                 
                     cpuLimitData.push({
                       category: 'cpuLimit_' + Object.keys(ele)[0],
                       // time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),

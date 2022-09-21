@@ -40,7 +40,7 @@ export default function LogAccess() {
   const [delMonitor] = useDelMonitor();
 
   const callback = (key: any) => {
-    console.log(key);
+   
   };
 
   const editMonitor = (item: any) => {
@@ -247,7 +247,7 @@ export default function LogAccess() {
             size="large"
             pagination={{
               onChange: (page) => {
-                console.log(page);
+              
                 getListMonitor(page, 5);
               },
               total: total,

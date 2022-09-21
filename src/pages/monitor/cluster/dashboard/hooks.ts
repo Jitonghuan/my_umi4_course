@@ -82,7 +82,7 @@ export function usequeryNodeMem() {
               category: '内存',
             });
           });
-          // console.log('nodeMemDataArry',nodeMemDataArry)
+        
           setQueryNodeMemData(nodeMemDataArry);
         }
       })
