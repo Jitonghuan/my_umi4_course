@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { message } from 'antd';
+import { message,Modal } from 'antd';
 /** 查询资源列表 */
 export const queryReleaseInfo = (paramsObj: { releaseName: string; namespace: string; clusterName: string }) => {
   return getRequest(APIS.getReleaseInfo, {
@@ -51,12 +51,16 @@ export function useRollbackRelease(): [
     clusterName: string;
   }) => {
     setLoading(true);
-    await postRequest(`${APIS.rollbackRelease}`, { data: paramsObj })
+    await postRequest(`${APIS.rollbackRelease}`, { data: paramsObj ,hideToast: true,})
       .then((result) => {
         if (result.success) {
           message.success(result.data);
-        } else {
-          return;
+        };
+        if(result?.code===1001){
+          Modal.error({
+            title: '更新失败',
+            content: result?.errorMsg,
+          });
         }
       })
       .finally(() => {

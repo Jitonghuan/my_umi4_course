@@ -5,13 +5,13 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import Editor, { IAnnotation } from 'react-ace';
+import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/mode-sql';
 import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/mode-xml';
 import 'ace-builds/src-noconflict/mode-html';
-import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 // import ace from 'ace-builds/src-noconflict/ace';
@@ -33,10 +33,12 @@ export interface AceEditorProps {
   placeholder?: string;
   focus?: boolean;
   firstLineNumber?: number;
+  cursorStart?: number,
+  markers?: any[],
 }
 
 export default function AceEditor(props: AceEditorProps) {
-  const { mode = 'text', focus = false, firstLineNumber } = props;
+  const { mode = 'text', focus = false, firstLineNumber, cursorStart, markers } = props;
   const [stateValue, setStateValue] = useState<string>('value' in props ? props.value! : props.defaultValue ?? '');
   const [wrap, setWrap] = useState(false);
   const errorRef = useRef<any>();
@@ -84,7 +86,10 @@ export default function AceEditor(props: AceEditorProps) {
         height={props.height ? `${props.height}${typeof props.height === 'string' ? '' : 'px'}` : undefined}
         theme="tomorrow"
         value={displayValue}
+        cursorStart={cursorStart || 1}
+        markers={markers || []}
         onChange={handleChange}
+        highlightActiveLine={true}
         readOnly={props.readOnly}
         placeholder={props.placeholder}
         showPrintMargin={false}

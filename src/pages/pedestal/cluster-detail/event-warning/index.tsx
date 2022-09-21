@@ -1,15 +1,11 @@
-import React, { useEffect, useRef, useState, useMemo, useContext } from 'react';
-import { Form, Button, Input, Tag, Table, Select, message } from 'antd';
-import type { PaginationProps } from 'antd';
-import { history } from 'umi';
+import React, {  useState} from 'react';
+import { Table} from 'antd';
 import './index.less';
 import { warningTableSchema, eventSchema } from '../schema';
 import './index.less';
 const mockData: any = [];
 const statusColor: any = { Etcd: '#2fce4b', Controller: '#2fce4b', Scheduler: '#dccc43', ApiServer: '#c12726' };
-export default function EventWarning(props: any) {
-  const { location, children } = props;
-  const [visible, setVisble] = useState(false);
+export default function EventWarning() {
   const [pageSize, setPageSize] = useState(20);
   const [pageIndex, setPageIndex] = useState(1);
   const [eventPageSize, setEventPageSize] = useState(20);

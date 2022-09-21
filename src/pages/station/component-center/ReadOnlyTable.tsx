@@ -73,7 +73,7 @@ export default function VersionDetail(props: DetailProps) {
               onClick={() => {
                 history.push({
                   pathname: '/matrix/station/component-detail',
-                  state: {
+                 }, {
                     initRecord: record,
                     type: 'componentCenter',
                     componentName: record.componentName,
@@ -83,7 +83,7 @@ export default function VersionDetail(props: DetailProps) {
 
                     // componentId: record.id,
                     // componentDescription:record.componentDescription
-                  },
+                  
                 });
               }}
             >

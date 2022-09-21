@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from '../service';
-import { message } from 'antd';
+import { message,Modal } from 'antd';
+import { history } from 'umi';
 
 //获取chart名称
 export function useGetChartName(): [
@@ -152,12 +153,17 @@ export function useChartInstall(): [
     repository: string;
   }) => {
     setLoading(true);
-    await postRequest(`${APIS.chartInstall}`, { data: paramsObj })
+    await postRequest(`${APIS.chartInstall}`, { data: paramsObj,hideToast: true, } )
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           message.success(result?.data);
-        } else {
-          return;
+          history.push('/matrix/operation/helm-manage/helm-list');
+        } 
+        if(result?.code===1001){
+          Modal.error({
+            title: '创建失败',
+            content: result?.errorMsg,
+          });
         }
       })
       .finally(() => {

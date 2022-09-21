@@ -4,19 +4,22 @@
 
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { Select, Form, Button, Tag, message } from 'antd';
-import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
+import { history, useLocation } from 'umi';
+import { parse } from 'query-string';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FeContext } from '@/common/hooks';
-import clusterContext from '../../context';
 import { getResourceList } from '../../service';
 import './index.less';
 
 export default function ClusteLoginShell(props: any) {
   const [viewLogform] = Form.useForm();
-  const { type, name, namespace, clusterCode, containerName, clusterName } = props.location.query || {};
+  let location: any = useLocation();
+  const query = parse(location.search);
+  console.log(query, 'query')
+
+  const { type, name, namespace, clusterCode, containerName, clusterName } = query || {};
   const { matrixConfigData } = useContext(FeContext);
   const [container, setContainer] = useState<any>([]);
   const [selectContainer, setSelectContainer] = useState<any>('');
@@ -78,6 +81,7 @@ export default function ClusteLoginShell(props: any) {
   }, [type, name, namespace, matrixConfigData?.wsPrefixName]);
 
   const initWS = (value: string) => {
+    console.log(111)
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(getUrl(value)); //建立通道
     //初始化terminal
@@ -153,7 +157,7 @@ export default function ClusteLoginShell(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.goBack();
+      history.back();
     }
   };
   //选择容器

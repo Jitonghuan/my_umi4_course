@@ -21,40 +21,49 @@ export default function HelmList() {
   const [mode, setMode] = useState<boolean>(false);
   const [delLoading, deleteRelease] = useDeleteRelease();
   const [clusterOptions, setClusterOptions] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [nameSpaceOption, setNameSpaceOption] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(20);
   const [currentCluster, setCurrentCluster] = useState<any>('');
 
   useEffect(() => {
+   
+    initSource()
+  }, []);
+  const initSource=()=>{
+    const localstorageClusterInfo = JSON.parse(localStorage.getItem('__helm_list_cluster') || '{}');
+    const localstorageNamespace = JSON.parse(localStorage.getItem('__helm_list_namespace') || '{}');
+    if((localstorageClusterInfo?.cluster&&localstorageClusterInfo?.clusterId)){
+      getClusterSource({
+        clusterName:localstorageClusterInfo?.cluster,
+        namespace:localstorageNamespace[0]?localstorageNamespace:"default",
+        clusterId:localstorageClusterInfo?.clusterId,
+      })
+    }else{
+      getClusterSource({
+        namespace:localstorageNamespace[0]?localstorageNamespace:"default",
+      })
+
+
+    }
+
+  }
+  const getClusterSource=(params:{clusterName?:string,namespace?:string,clusterId?:any})=>{
+    releaseForm.setFieldValue("namespace",params?.namespace);
     getClusterList().then((res) => {
       setClusterOptions(res);
-      setCurClusterName(res[0]?.value);
-
-      // const curClusterOption = res?.filter((item: any) => {
-      //   if (item.value === '来未来') return item?.clusterId;
-      // });
-
-      // if (curClusterOption[0]?.clusterId) {
-      //   queryNameSpace(curClusterOption[0].clusterId);
-      //   setClusterInfo({
-      //     curClusterId: curClusterOption[0].clusterId,
-      //     curClusterName: '来未来',
-      //   });
-      //   getReleaseList({ clusterName: '来未来' });
-      // } else {
-      queryNameSpace(res[0]?.clusterId);
-      setCurrentCluster(res[0]?.value);
+      let initClusterName=params?.clusterName?params?.clusterName:res[0]?.value;
+      let initClusterId=params?.clusterId?params?.clusterId:res[0]?.clusterId
+      setCurClusterName(initClusterName);
+      queryNameSpace(initClusterId);
+      setCurrentCluster(initClusterName);
       setClusterInfo({
-        curClusterId: res[0]?.clusterId,
-        curClusterName: res[0]?.value,
+        curClusterId: initClusterId,
+        curClusterName: initClusterName,
       });
-      getReleaseList({ clusterName: res[0]?.value });
+      getReleaseList({ clusterName: initClusterName,namespace:params?.namespace }); });
 
-      // }
-    });
-  }, []);
+  }
 
   const getReleaseList = (paramsObj?: { releaseName?: string; namespace?: string; clusterName?: string }) => {
     setTableLoading(true);
@@ -78,10 +87,10 @@ export default function HelmList() {
       onDetailClick: (record, index) => {
         history.push({
           pathname: 'helm-detail',
-          state: {
+        },{
             record: record,
             curClusterName: curClusterName,
-          },
+        
         });
       },
       onDelClick: async (record, index) => {
@@ -116,8 +125,16 @@ export default function HelmList() {
       curClusterId: curClusterOption[0].clusterId,
       curClusterName: cluster,
     });
+    const localStorageObj={
+      cluster,
+      clusterId:curClusterOption[0].clusterId
+    }
+    localStorage.setItem('__helm_list_cluster', JSON.stringify(localStorageObj) );
     getReleaseList({ releaseName: params.releaseName, namespace: params.namespace, clusterName: cluster });
   };
+  const changeNamespace=(namespace:string)=>{
+    localStorage.setItem('__helm_list_namespace', JSON.stringify(namespace) );
+  }
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
@@ -146,7 +163,7 @@ export default function HelmList() {
         }}
         onSave={() => {
           setMode(false);
-          getReleaseList({ clusterName: curClusterName });
+          initSource()
         }}
       />
 
@@ -170,7 +187,6 @@ export default function HelmList() {
               <b>选择集群：</b>
             </span>
             <Select
-              loading={loading}
               options={clusterOptions}
               style={{ width: 190 }}
               allowClear
@@ -186,6 +202,7 @@ export default function HelmList() {
               allowClear
               style={{ width: 290 }}
               options={nameSpaceOption}
+              onChange={changeNamespace}
             />
           </Form.Item>
           <Form.Item label="名称：" name="releaseName">
@@ -216,7 +233,7 @@ export default function HelmList() {
                   setCurRecord(undefined);
                   history.push({
                     pathname: 'create-chart',
-                    state: clusterInfo,
+                   },{clusterInfo,
                   });
                 }}
               >

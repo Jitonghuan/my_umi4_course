@@ -17,7 +17,20 @@ import {
   envAppCR,
   updateAppApply,
 } from '@/pages/application/service';
-
+export const envTypeOptions = [
+  {
+    label: '通用发布环境',
+    value: 'currency-deploy',
+  },
+  {
+    label: '前端专有环境',
+    value: 'fe-exclusive',
+  },
+  {
+    label: '离线打包环境',
+    value: 'offline-pack',
+  },
+];
 export default function appEnvPageList() {
   const { appData } = useContext(DetailContext);
   const [loading, setLoading] = useState(false);
@@ -109,11 +122,7 @@ export default function appEnvPageList() {
     getRequest(listAppEnv, {
       data: {
         appCode,
-        envTypeCode: value?.envTypeCode,
-        envCode: value?.envCode,
-        envName: value?.envName,
-        categoryCode: value?.categoryCode,
-        proEnvType: value?.proEnvType,
+        ...value,
       },
     })
       .then((result) => {
@@ -145,12 +154,7 @@ export default function appEnvPageList() {
     setLoading(true);
     getRequest(queryEnvList, {
       data: {
-        envTypeCode: value?.envTypeCode,
-        envCode: value?.envCode,
-        envName: value?.envName,
-        categoryCode: value?.categoryCode,
-        pageIndex: value?.pageIndex,
-        pageSize: value?.pageSize,
+       ...value,
       },
     })
       .then((result) => {
@@ -221,7 +225,7 @@ export default function appEnvPageList() {
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
-        width={900}
+        width={1200}
         bodyStyle={{ height: '580px' }}
         footer={
           <div className="drawer-footer">
@@ -268,6 +272,9 @@ export default function appEnvPageList() {
           <Form.Item label="环境大类" name="envTypeCode">
             <Select showSearch style={{ width: 150 }} options={envTypeData} />
           </Form.Item>
+          <Form.Item label="环境类型：" name="envModel">
+              <Select options={envTypeOptions} allowClear showSearch style={{ width: 130 }} />
+            </Form.Item>
           <Form.Item label="默认分类：" name="categoryCode">
             <Select showSearch style={{ width: 120 }} options={categoryData} />
           </Form.Item>
@@ -339,6 +346,9 @@ export default function appEnvPageList() {
           <Form.Item label="项目环境分类：" name="proEnvType">
             <Select showSearch style={{ width: 130 }} options={proEnvTypeData} />
           </Form.Item>
+          <Form.Item label="环境类型：" name="envModel">
+              <Select options={envTypeOptions} allowClear showSearch style={{ width: 130 }} />
+            </Form.Item>
           <Form.Item label="环境大类：" name="envTypeCode">
             <Select options={envTypeData} allowClear showSearch style={{ width: 120 }} />
           </Form.Item>

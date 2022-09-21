@@ -8,8 +8,12 @@ import PageContainer from '@/components/page-container';
 import { postRequest, getRequest } from '@/utils/request';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { appTypeList, appList, pushAppEnv } from '../service';
+import { useLocation} from 'umi';
+import { parse } from 'query-string';
 
 export default function PushEnv(props: any) {
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -21,7 +25,7 @@ export default function PushEnv(props: any) {
   const [pageTotal, setPageTotal] = useState<number>();
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [dataSource, setDataSource] = useState<any[]>([]);
-  const envCodeCurrent = props.history.location.query.envCode;
+  const envCodeCurrent = query.envCode;
   const appTypeOptions = useMemo(
     () => [
       { value: 'backend', label: '后端' },

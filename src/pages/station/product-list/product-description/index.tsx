@@ -20,7 +20,8 @@ import {
 } from 'antd';
 import {InfoCircleOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history,useLocation, } from 'umi';
+import { parse } from 'query-string';
 import moment from 'moment';
 import { ContentCard } from '@/components/vc-page-content';
 import {
@@ -51,10 +52,12 @@ export const STATUS_TYPE: Record<number, releaseStatus> = {
 };
 
 export default function deliveryDescription() {
+  let location:any = useLocation();
+  const query:any = parse(location.search);
   const { Paragraph } = Typography;
   const [createVersionForm] = Form.useForm();
   const { Option } = Select;
-  const descriptionInfoData: any = history.location.state;
+  const descriptionInfoData: any = location.state?.record;
   const [editableStr, setEditableStr] = useState(descriptionInfoData.productDescription);
   const [editLoading, editProductDescription] = useEditProductDescription();
   const [creatLoading, createProductVersion] = useCreateProductVersion();
@@ -124,7 +127,7 @@ export default function deliveryDescription() {
             onClick={() => {
               history.push({
                 pathname: '/matrix/station/version-detail',
-                state: {
+               }, {
                   productId: descriptionInfoData.id,
                   versionId: record.id,
                   versionName: record.versionName,
@@ -135,7 +138,7 @@ export default function deliveryDescription() {
                   productGmtCreate: descriptionInfoData.gmtCreate,
                   releaseStatus: record.releaseStatus,
                 },
-              });
+              );
             }}
           >
             管理

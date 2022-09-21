@@ -25,6 +25,8 @@ export interface DeployContentProps {
 
 export default function DeployContent(props: DeployContentProps) {
   const { envTypeCode, isActive, envList, pipelineCode } = props;
+  console.log(pipelineCode)
+  console.log('--1---1---')
   const { npmData } = useContext(DetailContext);
   const { npmName } = npmData || {};
   const cachebranchName = useRef<string>();
@@ -124,6 +126,7 @@ export default function DeployContent(props: DeployContentProps) {
             appCode={npmName!}
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
+            pipelineCode={pipelineCode}
             deployedList={branchInfo.deployed}
             onOperate={onOperate}
             onSpin={onSpin}

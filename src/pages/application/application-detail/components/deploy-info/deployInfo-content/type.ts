@@ -8,8 +8,8 @@ export interface DeployContentProps {
   onDeployNextEnvSuccess: () => void;
   intervalStop: () => void;
   intervalStart: () => void;
-  viewLogEnv: string;
-  type: string;
-  viewLogEnvType: string;
+  viewLogEnv: any;
+  type: any;
+  viewLogEnvType: any;
   // viewLogEnvType:string
 }

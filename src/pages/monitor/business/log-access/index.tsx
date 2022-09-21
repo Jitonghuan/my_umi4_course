@@ -46,10 +46,10 @@ export default function LogAccess() {
   const editMonitor = (item: any) => {
     history.push({
       pathname: '/matrix/monitor/log-monitor',
-      state: {
+    },{
         type: 'edit',
         recordData: item,
-      },
+      
     });
   };
   const enableMonitorClick = (monitorName: string) => {
@@ -169,7 +169,7 @@ export default function LogAccess() {
   }
 
   const creatLogMinitor = () => {
-    history.push({ pathname: '/matrix/monitor/log-monitor', state: { type: 'add' } });
+    history.push({ pathname: '/matrix/monitor/log-monitor'},{ type: 'add' });
   };
   const selectEnvType = (value: string) => {
     setCurrentEnvType(value);

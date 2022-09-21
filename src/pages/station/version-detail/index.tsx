@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import { Tabs, Descriptions, Button, Typography, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
 import moment from 'moment';
 import EditorTablePro from './components/Editor-Table-Pro';
 import GlobalParamsEditorTable from './components/GlobalParamsEditorTable';
@@ -15,7 +15,8 @@ import { useQueryDeliveryParamList, useQueryDeliveryGloableParamList } from './h
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 export default function VersionDetail() {
-  const descriptionInfoData: any = history.location.state;
+  let location:any = useLocation();
+  const descriptionInfoData: any = location.state;
   const [tableLoading, tableDataSource, queryDeliveryParamList] = useQueryDeliveryParamList();
   const [gloableTableLoading, gloableTableDataSource, queryDeliveryGloableParamList] =
     useQueryDeliveryGloableParamList();
@@ -62,12 +63,12 @@ export default function VersionDetail() {
             onClick={() => {
               history.push({
                 pathname: '/matrix/station/product-description',
-                state: {
+              },{
                   id: descriptionInfoData.productId,
                   productName: descriptionInfoData.productName,
                   productDescription: descriptionInfoData.productDescription,
                   gmtCreate: descriptionInfoData.productGmtCreate,
-                },
+              
               });
             }}
           >

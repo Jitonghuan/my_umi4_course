@@ -89,6 +89,10 @@
 .ant-layout-sider-trigger {
   background-color: rgb(226, 226, 226);
 }
+.v_basic-layout-wrapper .ant-layout-sider,
+.v_basic-layout-wrapper .ant-layout-sider-trigger {
+  background: #000000;
+}
 
 element.style {
   width: 200px;
@@ -155,9 +159,24 @@ element.style {
     background: #fafafa;
     border-right: 1px solid #f0f0f0;
   }
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 28px;
+  }
+  .ant-select-multiple .ant-select-selector:after{
+    line-height: 20px;
+  }
+  .ant-select-show-search.ant-select-multiple .ant-select-selector .ant-select-selection-overflow-item{
+    line-height: 24px;
+    & .ant-select-selection-item{
+      height: 20px;
+      line-height: 20px;
+      font-size: 13px;
+
+    }
+  }
   .ant-select-show-search.ant-select:not(.ant-select-customize-input) .ant-select-selector,
   .ant-select-single:not(.ant-select-customize-input) .ant-select-selector{
-    height: 28px;
+    // height: 28px;
     line-height: 28px;
   }
   
@@ -227,12 +246,13 @@ element.style {
   // &-left{
   //   color: #3591ff ;
   // }
+ 
   
   &-title{
     margin: 0px;
     // height: 18px;
   }
   &-divider{
-    margin: 0px;
+    margin: 0px !important;
   }
 }

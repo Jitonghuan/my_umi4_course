@@ -5,6 +5,8 @@ import { history } from 'umi';
 import CreatCard from './components/create-card';
 import { ContentCard } from '@/components/vc-page-content';
 import AceEditor from '@/components/ace-editor';
+import { useLocation} from 'umi';
+import { parse } from 'query-string';
 import {
   queryPodNamespaceData,
   useGetChartName,
@@ -16,8 +18,10 @@ import {
 import './index.less';
 
 export default function CreateChart() {
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const rootCls = 'all-chart-page';
-  const clusterInfo: any = history.location?.state || {};
+  const clusterInfo: any = location?.state?.clusterInfo || {};
   const [createReleaseForm] = Form.useForm();
   const [createForm] = Form.useForm();
   const [chartNameLoading, chartNameOptions, getChartList] = useGetChartName();
@@ -104,9 +108,10 @@ export default function CreateChart() {
       ...oneStepData,
       chartName: chartParam?.chartName,
       clusterName: clusterInfo?.curClusterName,
-    }).then(() => {
-      history.push('/matrix/operation/helm-manage/helm-list');
-    });
+    })
+    // .then(() => {
+    //   history.push('/matrix/operation/helm-manage/helm-list');
+    // });
   };
 
   //触发分页
@@ -276,7 +281,7 @@ export default function CreateChart() {
                 <Button
                   danger
                   onClick={() => {
-                    createReleaseForm.resetFields();
+                    history.push('/matrix/operation/helm-manage/helm-list');
                   }}
                 >
                   取消

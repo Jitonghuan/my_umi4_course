@@ -3,9 +3,10 @@
 // @create 2022/06/24 17:10
 
 import { useEffect, useState } from 'react';
-import { Form, Drawer, Select, Divider, Button } from 'antd';
+import { Form, Drawer, Select, Divider, Button,Spin,Alert } from 'antd';
 import AceEditor from '@/components/ace-editor';
-import { useUpgradeRelease, queryChartVersions, getReleaseValues } from '../hook';
+import {InfoCircleOutlined } from '@ant-design/icons';
+import { useUpgradeRelease, queryChartVersions, getReleaseValues,upgradeRelease } from '../hook';
 import './index.less';
 
 export interface ReleaseProps {
@@ -18,36 +19,85 @@ export interface ReleaseProps {
 
 export default function UpdateDeploy(props: ReleaseProps) {
   const { mode, curRecord, curClusterName, onCancle, onSave } = props;
-  const [loading, upgradeRelease] = useUpgradeRelease();
+  // const [loading, upgradeRelease] = useUpgradeRelease();
   const [form] = Form.useForm();
+  const chartVersion=curRecord?.chartVersion;
+  const [loading,setLoading]=useState<boolean>(false)
   const [chartLinkOptions, setChartLinkOptions] = useState<any>([]);
+  const [infoLoading,setInfoLoading]=useState<boolean>(false);
+  const [hasVersion,setHasVersion]=useState<boolean>(false);
   useEffect(() => {
     if (mode) {
+      setInfoLoading(true);
+      queryChartVersions({ clusterName: curClusterName, chartName: curRecord?.chartName }).then((res) => {
+      
+        // if(res?.length==1){
+        //   form.setFieldValue("chartLink",res[0]?.value)
+
+        // }else if(res?.length>0){
+        //   res.sort(function (a:any, b:any) {
+        //     return a.created - b.created;
+        //   });
+        //   form.setFieldValue("chartLink",res[res?.length-1]?.value)
+        
+        // }
+        if(res?.length>0){
+          let version=""
+         res?.map((item:any)=>{
+            if(item?.value.includes(chartVersion)){
+              version= item?.value
+
+            }
+            
+          })
+          if(version&&version!==""){
+            console.log(version)
+            setHasVersion(true)
+
+          }
+          form.setFieldValue("chartLink",version)
+
+        }
+        setChartLinkOptions(res);
+
+        
+      });
       getReleaseValues({
         releaseName: curRecord?.releaseName,
         namespace: curRecord?.namespace,
         clusterName: curClusterName,
       }).then((res) => {
         form.setFieldsValue({ values: res });
+      }).finally(()=>{
+        setInfoLoading(false);
       });
-      queryChartVersions({ clusterName: curClusterName, chartName: curRecord?.chartName }).then((res) => {
-        setChartLinkOptions(res);
-      });
+     
     }
     return () => {
       form.resetFields();
+      
+      setHasVersion(false)
+     
+     
     };
   }, [mode]);
   const update = async () => {
+    setLoading(true)
     const values = await form.validateFields();
     upgradeRelease({
       releaseName: curRecord?.releaseName,
       namespace: curRecord?.namespace,
       ...values,
       clusterName: curClusterName,
-    }).then(() => {
-      onSave();
-    });
+    }).then((res)=>{
+      if(res?.success){
+        onSave()
+
+      }
+
+    }).finally(()=>{
+      setLoading(false)
+    })
   };
 
   return (
@@ -57,8 +107,12 @@ export default function UpdateDeploy(props: ReleaseProps) {
         &nbsp;&nbsp;&nbsp;&nbsp;当前集群：{curClusterName || '--'}
       </h3>
       <Divider />
-
-      <Form form={form}>
+     <Spin spinning={infoLoading}>
+       {console.log(hasVersion,'---')}
+     {!hasVersion&&( 
+          <Alert type="info" showIcon message="当前的版本已下架" style={{ marginBottom: 16 }} />
+     )}
+     <Form form={form}>
         <Form.Item label="chart版本" name="chartLink" rules={[{ required: true, message: '请选择' }]}>
           <Select options={chartLinkOptions} showSearch allowClear style={{ width: 400 }} />
         </Form.Item>
@@ -73,6 +127,9 @@ export default function UpdateDeploy(props: ReleaseProps) {
           </div>
         </Form.Item>
       </Form>
+
+     </Spin>
+    
     </Drawer>
   );
 }

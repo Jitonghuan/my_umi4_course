@@ -54,6 +54,12 @@ export const searchYaml = (data: any) => {
   return getRequest(url, { data: data });
 };
 
+// 资源详情-编辑yaml
+export const updateYaml = (data: any) => {
+  const url = addAPIPrefix('/infraManage/resource/yaml/edit');
+  return putRequest(url, { data: data });
+};
+
 // 资源类型查询接口
 export const getResourceType = (data: any) => {
   const url = addAPIPrefix('/infraManage/resource/type/list');

@@ -84,10 +84,11 @@ export default function NGModalDetail(props: NGInfo) {
           onClick={() => {
             history.push({
               pathname: '/matrix/operation/ng-manage/ng-list',
-              state: {
+            },{
+             
                 type: 'editNGInfo',
                 ngCode: ngCode,
-              },
+             
             });
           }}
         >

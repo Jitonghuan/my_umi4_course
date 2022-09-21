@@ -31,6 +31,9 @@ import {
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
+import { parse } from 'querystring';
+import { Outlet, useLocation, history } from 'umi';
+import routelist, { baseRoutePath } from '@/routes.config'
 
 // 屏蔽掉 React Development 模式下红色的警告
 if (appConfig.isLocal) {
@@ -43,8 +46,9 @@ if (appConfig.isLocal) {
   };
 }
 export default function Layout(props: any) {
+  const location = useLocation();
   // 初始化 doc title hook
-  useDocumentTitle('', props?.location?.pathname);
+  useDocumentTitle('', location?.pathname);
   // 权限数据
   const [permissionData] = usePermissionData();
   // 所属数据
@@ -87,7 +91,6 @@ export default function Layout(props: any) {
 
   async function getConfig() {
     const res = await getMatrixEnvConfig();
-    console.log('res-->',res)
     setMatrixConfigInfo(res);
      // @ts-ignore
      window.matrixConfigData = res 
@@ -110,6 +113,16 @@ export default function Layout(props: any) {
     })
   },[])
 
+  const route = [
+    {
+      path: baseRoutePath,
+      component: '../layouts/index',
+      exact: false,
+      routes: [...routelist],
+    },
+  ]
+
+
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
     const map = {} as Record<string, any>;
@@ -122,19 +135,19 @@ export default function Layout(props: any) {
       loadStemNoticeList();
     }
   }, [unreadNum]);
-  useEffect(()=>{
+  useEffect(() => {
     const localstorageTheme = JSON.parse(localStorage.getItem('__matrix_theme') || '{}');
-    if(localstorageTheme==="matrixDark"){
+    if (localstorageTheme === "matrixDark") {
       setStyle('matrixDark');
       document.body.setAttribute('matrix-theme', 'matrixDark');
       document.body.setAttribute('arco-theme', 'dark');
-    }else{
+    } else {
       setStyle('globalLight');
       document.body.removeAttribute('matrix-theme');
       document.body.setAttribute('arco-theme', 'light');
     }
 
-  },[])
+  }, [])
 
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
@@ -167,13 +180,13 @@ export default function Layout(props: any) {
   const changeTheme = () => {
     if (style == 'matrixDark') {
       setStyle('globalLight');
-      localStorage.setItem('__matrix_theme', JSON.stringify('globalLight') );
+      localStorage.setItem('__matrix_theme', JSON.stringify('globalLight'));
       document.body.removeAttribute('matrix-theme');
 
       document.body.setAttribute('arco-theme', 'light');
     } else {
       setStyle('matrixDark');
-      localStorage.setItem('__matrix_theme', JSON.stringify('matrixDark') );
+      localStorage.setItem('__matrix_theme', JSON.stringify('matrixDark'));
       document.body.setAttribute('matrix-theme', 'matrixDark');
       document.body.setAttribute('arco-theme', 'dark');
     }
@@ -227,6 +240,9 @@ export default function Layout(props: any) {
                 isOpenLogin={true}
                 className='test'
                 layout='LTB'
+                history={history}
+                location={location}
+                routes={route}
                 pagePrefix={appConfig.pagePrefix}
                 siderMenuProps={{
                   isOpenPermission: appConfig.isOpenPermission,
@@ -238,7 +254,7 @@ export default function Layout(props: any) {
                         <img src={appConfig.logo}
                           style={{ marginRight: '5px', height: 45, width: 45 }}
                           onClick={() => {
-                            props.history.push('/matrix/index');
+                           history.push('/matrix/index');
                           }}
                         />
                         <div className='matrix-title-matrix'>{appConfig.title}</div>
@@ -332,7 +348,9 @@ export default function Layout(props: any) {
                   positionText: '部门',
                   isShowGlobalMenu: false,
                 }}
-              />
+              >
+                <Outlet />
+              </BasicLayout>
             )}
           </ChartsContext.Provider>
         </FeContext.Provider>
