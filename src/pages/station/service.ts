@@ -168,3 +168,7 @@ export const editIndentConfig = addAPIPrefix('/deliveryManage/indent/config/edit
 export const getPackageStatus = addAPIPrefix('/deliveryManage/indent/package/status');
 /*59、 POST 更新建站参数 */
 export const updateParamIndent = addAPIPrefix('/deliveryManage/indent/param/update');
+
+/* ---------------------------------------建站管理二期------------------------------------ */
+/*1、 GET 查询当前产品版本号 */
+export const queryVersionNameList = addAPIPrefix('/deliveryManage/product/versionName/list');

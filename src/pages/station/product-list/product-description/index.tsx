@@ -30,6 +30,7 @@ import {
   useDeleteProductVersion,
   useQueryProductList,
   usePublishProductVersion,
+  useQueryVersionNameList
 } from './hooks';
 import './index.less';
 
@@ -56,10 +57,10 @@ export default function deliveryDescription() {
   const query:any = parse(location.search);
   const { Paragraph } = Typography;
   const [createVersionForm] = Form.useForm();
-  const { Option } = Select;
   const descriptionInfoData: any = location.state?.record;
   const [editableStr, setEditableStr] = useState(descriptionInfoData.productDescription);
   const [editLoading, editProductDescription] = useEditProductDescription();
+  const [verisonLoading, versionOptions,queryVersionNameList]=useQueryVersionNameList()
   const [creatLoading, createProductVersion] = useCreateProductVersion();
   const [delLoading, deleteProductVersion] = useDeleteProductVersion();
   const [publishLoading, publishProductVersion] = usePublishProductVersion();
@@ -71,6 +72,7 @@ export default function deliveryDescription() {
       return;
     }
     queryProductVersionList(descriptionInfoData.id);
+    queryVersionNameList(descriptionInfoData.id)
   }, []);
 
   const pageSizeClick = (pagination: any) => {
@@ -266,7 +268,6 @@ export default function deliveryDescription() {
                 },
                 showTotal: () => `总共 ${pageInfo.total} 条数据`,
               }}
-              // pagination={{ showSizeChanger: true, showTotal: () => `总共 ${pageTotal} 条数据`  }}
               onChange={pageSizeClick}
             ></Table>
           </div>
@@ -296,19 +297,19 @@ export default function deliveryDescription() {
           }
         >
           <Form layout="horizontal" form={createVersionForm} labelCol={{flex:'140px'}}>
-            <Form.Item label="版本名称:" name="version_name" rules={[{ required: true, message: '请输入版本号' }]}>
+            <Form.Item label="版本名称:" name="versionName" rules={[{ required: true, message: '请输入版本号' }]}>
               <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
             </Form.Item>
-            <Form.Item label="版本描述:" name="version_description">
+            <Form.Item label="版本描述:" name="versionDescription">
               <Input style={{ width: 400 }} placeholder="请输入版本描述"></Input>
             </Form.Item>
             <Form.Item label="引入基础设施组件:" 
               tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-             name="version_description">
+             name="baseStatus">
             <Switch />
             </Form.Item>
-            <Form.Item label="版本复刻:" name="version_description">
-              <Select style={{ width: 400 }}  showSearch allowClear/>
+            <Form.Item label="版本复刻:" name="copyName">
+              <Select style={{ width: 400 }} loading={verisonLoading} options={versionOptions}  showSearch allowClear/>
             </Form.Item>
           </Form>
         </Modal>

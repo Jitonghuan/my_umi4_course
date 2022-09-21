@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
-type AnyObject = Record<string, any>;
 //编辑产品描述
 export function useEditProductDescription(): [boolean, (id: number, productDescription: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
@@ -148,4 +147,33 @@ export function usePublishProductVersion(): [boolean, (id: number) => Promise<vo
     }
   };
   return [loading, publishProductVersion];
+}
+
+
+// 查询当前产品版本号
+export function useQueryVersionNameList(): [boolean,any, (productId: number) => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const [options,setOptions] =useState<any>([]);
+  const queryVersionNameList = async (productId: number) => {
+    setLoading(true);
+    try {
+      await getRequest(`${APIS.queryVersionNameList}?productId=${productId}`)
+        .then((res) => {
+          if (res?.success) {
+           const data= res?.data?.map((item:string)=>({
+             label:item,
+             value:item
+           }))
+           setOptions(data)
+          }
+
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, options,queryVersionNameList];
 }
