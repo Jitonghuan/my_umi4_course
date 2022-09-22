@@ -3,26 +3,12 @@
 // @create 2022/02/21 17:10
 
 import { useState, useEffect } from 'react';
-import {
-  Form,
-  Input,
-  Select,
-  Button,
-  Table,
-  Space,
-  Popconfirm,
-  Typography,
-  Tag,
-  Modal,
-  Descriptions,
-  Tooltip,
-  Switch
-} from 'antd';
-import {InfoCircleOutlined} from '@ant-design/icons';
+import {Form, Button,Table,Space,Popconfirm,Typography,Tag, Descriptions,Tooltip,} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history,useLocation, } from 'umi';
 import { parse } from 'query-string';
 import moment from 'moment';
+import CreateVersionModal from './create-version-modal'
 import { ContentCard } from '@/components/vc-page-content';
 import {
   useEditProductDescription,
@@ -187,16 +173,13 @@ export default function deliveryDescription() {
   ];
 
 
-  const handleSubmit = () => {
-    let params = createVersionForm.getFieldsValue();
- 
-    createProductVersion({...params}).then(() => {
-      setCreatVersionVisiable(false);
-      queryProductVersionList(descriptionInfoData.id);
-    });
-  };
   return (
     <PageContainer className="product-description">
+      <CreateVersionModal
+      visible={creatVersionVisiable}
+      onCancel={()=>{setCreatVersionVisiable(false);}}
+
+      />
       <ContentCard>
         <div>
           <Descriptions
@@ -276,46 +259,6 @@ export default function deliveryDescription() {
           </div>
         </div>
 
-        <Modal
-          title="创建版本"
-          visible={creatVersionVisiable}
-          width={700}
-          onCancel={() => {
-            setCreatVersionVisiable(false);
-          }}
-          footer={
-            <div className="drawer-footer">
-              <Button type="primary" loading={creatLoading} onClick={handleSubmit}>
-                确定
-              </Button>
-              <Button
-                type="default"
-                onClick={() => {
-                  setCreatVersionVisiable(false);
-                }}
-              >
-                取消
-              </Button>
-            </div>
-          }
-        >
-          <Form layout="horizontal" form={createVersionForm} labelCol={{flex:'140px'}}>
-            <Form.Item label="版本名称:" name="versionName" rules={[{ required: true, message: '请输入版本号' }]}>
-              <Input style={{ width: 400 }} placeholder="请输入版本号"></Input>
-            </Form.Item>
-            <Form.Item label="版本描述:" name="versionDescription">
-              <Input style={{ width: 400 }} placeholder="请输入版本描述"></Input>
-            </Form.Item>
-            <Form.Item label="引入基础设施组件:" 
-              tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-             name="baseStatus">
-            <Switch  />
-            </Form.Item>
-            <Form.Item label="版本复刻:" name="copyName">
-              <Select style={{ width: 400 }} loading={verisonLoading} options={versionOptions}  showSearch allowClear/>
-            </Form.Item>
-          </Form>
-        </Modal>
       </ContentCard>
     </PageContainer>
   );
