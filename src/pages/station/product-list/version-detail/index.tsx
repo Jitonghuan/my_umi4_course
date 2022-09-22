@@ -4,10 +4,10 @@ import { Tabs, Descriptions, Button, Typography, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { history,useLocation } from 'umi';
 import moment from 'moment';
-import EditorTablePro from './components/Editor-Table-Pro';
-import GlobalParamsEditorTable from './components/GlobalParamsEditorTable';
-import ComponentParamsEditorTable from './components/ComponentParamsEditorTable';
-import ServiceConfig from './components/ServiceConfig'
+import EditorTablePro from './components/editor-table-pro';
+import GlobalParamsEditorTable from './components/global-params-editor-table';
+import ComponentParamsEditorTable from './components/component-params-editor-table';
+import ServiceConfig from './components/service-config'
 import { productionTabsConfig, deliveryTabsConfig, productionPageTypes } from './tab-config';
 import { useVersionDescriptionInfo, useEditProductVersionDescription } from './hooks';
 import './index.less';

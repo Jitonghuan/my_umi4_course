@@ -11,7 +11,7 @@ import {
   useDeleteDeliveryParam,
   useQueryOriginList,
   useEditVersionParam,
-} from '../hooks';
+} from '../../hooks';
 
 type DataSourceType = {
   id: any;

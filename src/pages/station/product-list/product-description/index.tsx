@@ -2,41 +2,18 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/02/21 17:10
 
-import { useState, useEffect } from 'react';
-import {Form, Button,Table,Space,Popconfirm,Typography,Tag, Descriptions,Tooltip,} from 'antd';
+import { useState, useEffect,useMemo } from 'react';
+import {Form, Button,Table,Typography, Descriptions,Spin} from 'antd';
 import PageContainer from '@/components/page-container';
 import { history,useLocation, } from 'umi';
 import { parse } from 'query-string';
 import moment from 'moment';
+import {createTableColumns} from './schema';
 import CreateVersionModal from './create-version-modal'
 import { ContentCard } from '@/components/vc-page-content';
-import {
-  useEditProductDescription,
-  useCreateProductVersion,
-  useDeleteProductVersion,
-  useQueryProductList,
-  usePublishProductVersion,
-  useQueryVersionNameList
-} from './hooks';
+import {useEditProductDescription,useDeleteProductVersion,useQueryProductList,usePublishProductVersion,useQueryVersionNameList} from './hooks';
 import './index.less';
 
-export interface Item {
-  id: number;
-  versionName: string;
-  versionDescription: string;
-  releaseTime: number;
-  gmtCreate: any;
-  releaseStatus: number;
-}
-type releaseStatus = {
-  text: string;
-  type: any;
-  disabled: boolean;
-};
-export const STATUS_TYPE: Record<number, releaseStatus> = {
-  0: { text: '发布', type: 'primary', disabled: false },
-  1: { text: '已发布', type: 'default', disabled: true },
-};
 
 export default function deliveryDescription() {
   let location:any = useLocation();
@@ -46,8 +23,7 @@ export default function deliveryDescription() {
   const descriptionInfoData: any = location.state?.record;
   const [editableStr, setEditableStr] = useState(descriptionInfoData.productDescription);
   const [editLoading, editProductDescription] = useEditProductDescription();
-  const [verisonLoading, versionOptions,queryVersionNameList]=useQueryVersionNameList()
-  const [creatLoading, createProductVersion] = useCreateProductVersion();
+  const [verisonLoading, versionOptions,queryVersionNameList]=useQueryVersionNameList();
   const [delLoading, deleteProductVersion] = useDeleteProductVersion();
   const [publishLoading, publishProductVersion] = usePublishProductVersion();
   const [tableLoading, dataSource, pageInfo, setPageInfo, queryProductVersionList] = useQueryProductList();
@@ -70,107 +46,40 @@ export default function deliveryDescription() {
     queryProductVersionList(descriptionInfoData.id, obj.pageIndex, obj.pageSize);
   };
 
+  const columns = useMemo(() => {
+    return createTableColumns({
+      onManage: (record, index) => {
+        history.push({
+          pathname: '/matrix/station/version-detail',
+         }, {
+            productId: descriptionInfoData.id,
+            versionId: record.id,
+            versionName: record.versionName,
+            versionDescription: record.versionDescription,
+            versionGmtCreate: record.gmtCreate,
+            productName: descriptionInfoData.productName,
+            productDescription: descriptionInfoData.productDescription,
+            productGmtCreate: descriptionInfoData.gmtCreate,
+            releaseStatus: record.releaseStatus,
+          },
+        );
+       
+      },
+      onPublish: (record, index) => {
+        publishProductVersion(record.id).then(() => {
+          queryProductVersionList(descriptionInfoData.id);
+        });
+      },
+      onDelete: async (record, index) => {
+        deleteProductVersion(record.id).then(() => {
+          queryProductVersionList(descriptionInfoData.id);
+        });
+      },
+      
+    }) as any;
+  }, []);
 
-  const columns = [
-    {
-      title: '版本',
-      dataIndex: 'versionName',
-      width: '30%',
-    },
-    {
-      title: '发布状态',
-      dataIndex: 'releaseStatus',
-      width: '10%',
-      render: (status: any, record: Item) => (
-        <span>
-          <Tag color={status === 0 ? 'default' : 'success'}> {status === 0 ? '未发布' : '已发布'}</Tag>
-        </span>
-      ),
-    },
-    {
-      title: '版本描述',
-      dataIndex: 'versionDescription',
-      width: '20%',
-      render: (value: string) => (
-        <Tooltip placement="topLeft" title={value}>
-          {value}
-        </Tooltip>
-      ),
-    },
-    {
-      title: '发布时间',
-      dataIndex: 'gmtCreate',
-      width: '30%',
-      render: (value: any, record: Item) => <span>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</span>,
-    },
-    {
-      title: '操作',
-      dataIndex: 'option',
-      width: 240,
-      render: (_: string, record: Item) => (
-        <Space>
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => {
-              history.push({
-                pathname: '/matrix/station/version-detail',
-               }, {
-                  productId: descriptionInfoData.id,
-                  versionId: record.id,
-                  versionName: record.versionName,
-                  versionDescription: record.versionDescription,
-                  versionGmtCreate: record.gmtCreate,
-                  productName: descriptionInfoData.productName,
-                  productDescription: descriptionInfoData.productDescription,
-                  productGmtCreate: descriptionInfoData.gmtCreate,
-                  releaseStatus: record.releaseStatus,
-                },
-              );
-            }}
-          >
-            管理
-          </Button>
-          <Popconfirm
-            disabled={STATUS_TYPE[record.releaseStatus].disabled}
-            title="发布后编排不可修改，是否确认发布？"
-            onConfirm={() => {
-              publishProductVersion(record.id).then(() => {
-                queryProductVersionList(descriptionInfoData.id);
-              });
-            }}
-            // onCancel={cancel}
-            okText="确认"
-            cancelText="取消"
-          >
-            <Button
-              size="small"
-              type={STATUS_TYPE[record.releaseStatus].type || 'default'}
-              disabled={STATUS_TYPE[record.releaseStatus].disabled}
-              loading={publishLoading}
-            >
-              {STATUS_TYPE[record.releaseStatus].text}
-            </Button>
-          </Popconfirm>
-          <Popconfirm
-            title="确认删除？"
-            onConfirm={() => {
-              deleteProductVersion(record.id).then(() => {
-                queryProductVersionList(descriptionInfoData.id);
-              });
-            }}
-            // onCancel={cancel}
-            okText="是"
-            cancelText="否"
-          >
-            <Button size="small" loading={delLoading}>
-              删除
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+
 
 
   return (
@@ -178,6 +87,13 @@ export default function deliveryDescription() {
       <CreateVersionModal
       visible={creatVersionVisiable}
       onCancel={()=>{setCreatVersionVisiable(false);}}
+      verisonLoading={verisonLoading}
+      versionOptions={versionOptions}
+      productId={descriptionInfoData.id}
+      onSave={()=>{
+        setCreatVersionVisiable(false);
+        queryProductVersionList(descriptionInfoData.id);
+      }}
 
       />
       <ContentCard>
@@ -235,6 +151,7 @@ export default function deliveryDescription() {
             </div>
           </div>
           <div>
+            <Spin spinning={delLoading||publishLoading}>
             <Table
               rowKey="id"
               dataSource={dataSource}
@@ -255,7 +172,10 @@ export default function deliveryDescription() {
                 showTotal: () => `总共 ${pageInfo.total} 条数据`,
               }}
               onChange={pageSizeClick}
-            ></Table>
+            />
+
+            </Spin>
+          
           </div>
         </div>
 

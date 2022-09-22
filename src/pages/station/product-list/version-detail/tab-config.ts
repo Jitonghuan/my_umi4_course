@@ -16,8 +16,8 @@ export const productionTabsConfig: any = [
   },
   {
     label: '前端资源',
-    value: 'fe-source',
-    type: 'fe-source',
+    value: 'front',
+    type: 'front',
   },
 ];
 

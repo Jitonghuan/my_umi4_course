@@ -4,19 +4,20 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Select, Form, Popconfirm, message } from 'antd';
-import { productionPageTypes } from '../tab-config';
-import {createMiddlewareTableColumns} from '../components/middleware-schema'
+import { productionPageTypes } from '../../tab-config';
+import {createMiddlewareTableColumns} from '../middle-ware-schema';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
+import {createProTableColumns} from './schema'
 import {
   useQueryComponentOptions,
   useQueryComponentVersionOptions,
   useQueryVersionComponentList,
   useDeleteVersionComponent,
   useAddCompontent,
-} from '../hooks';
-import { useQueryProductlineList } from '../../component-center/hook';
-import BatchDraw from './BatchAddDraw';
+} from '../../hooks';
+import { useQueryProductlineList } from '../../../../component-center/hook';
+import BatchDraw from '../batch-add-draw';
 
 type DataSourceType = {
   id: any;
@@ -90,8 +91,8 @@ export default (props: VersionDetailProps) => {
       },
       onConfig: (record) => {
         history.push({
-          pathname: '/matrix/station/component-detail',
-          state: {
+          pathname: '/matrix/station/component-detail'},
+         {
             initRecord: record,
             productVersionId: versionId,
             componentName: record.componentName,
@@ -104,7 +105,7 @@ export default (props: VersionDetailProps) => {
             releaseStatus: releaseStatus,
             descriptionInfoData: descriptionInfoData,
           },
-        });
+        );
       },
      
       onDelete: async (record) => {
@@ -122,7 +123,26 @@ export default (props: VersionDetailProps) => {
     }) as any;
   }, []);
 
-  const columns: ProColumns<DataSourceType>[] = [
+  const columns = useMemo(() => {
+   
+    return createProTableColumns({
+      currentTabType: currentTabType,
+      onManage: (record, index) => {
+       
+       
+      },
+      onPublish: (record, index) => {
+       
+      },
+      onDelete: async (record, index) => {
+       
+      },
+      
+    }) as any;
+  }, []);
+
+
+  const columnss: ProColumns<DataSourceType>[] = [
     {
       title: currentTabType === 'app' ? '应用名称' : currentTabType === 'fe-source' ? '前端资源名称' : '基础数据名称',
       key: 'componentName',
@@ -169,7 +189,7 @@ export default (props: VersionDetailProps) => {
       },
     },
     {
-      title: currentTabType === 'app' ? '应用版本' : currentTabType === 'fe-source' ? '前端资源版本' : '基础数据版本',
+      title: currentTabType === 'app' ? '应用版本' : currentTabType === 'front' ? '前端资源版本' : '基础数据版本',
       key: 'componentVersion',
       dataIndex: 'componentVersion',
       valueType: 'select',

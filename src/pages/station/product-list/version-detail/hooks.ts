@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import * as APIS from '../service';
+import * as APIS from '../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;

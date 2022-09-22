@@ -4,21 +4,23 @@ import {useCreateProductVersion} from '../hooks'
 interface Iprops{
     visible:boolean;
     onCancel:()=>void;
+    verisonLoading:boolean;
+    versionOptions:any;
+    onSave:()=>void;
+    productId:number;
 
 }
 export default function CreateVersionModal(props:Iprops){
-    const {visible,onCancel}=props;
+    const {visible,onCancel,verisonLoading,versionOptions,productId,onSave}=props;
     const [createVersionForm] = Form.useForm();
     const [creatLoading, createProductVersion] = useCreateProductVersion();
 
   const handleSubmit = () => {
     let params = createVersionForm.getFieldsValue();
     console.log("params---",params)
- 
-    // createProductVersion({...params,productId:descriptionInfoData.id}).then(() => {
-    //   setCreatVersionVisiable(false);
-    //   queryProductVersionList(descriptionInfoData.id);
-    // });
+    createProductVersion({...params,productId,baseStatus:params?.baseStatus===true?0:1}).then(() => {
+      onSave()
+    });
   };
     return(
 

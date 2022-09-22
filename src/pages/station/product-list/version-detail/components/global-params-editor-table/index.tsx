@@ -10,7 +10,7 @@ import {
   useQueryDeliveryGloableParamList,
   useDeleteDeliveryParam,
   useEditVersionParam,
-} from '../hooks';
+} from '../../hooks';
 
 type DataSourceType = {
   id: any;
