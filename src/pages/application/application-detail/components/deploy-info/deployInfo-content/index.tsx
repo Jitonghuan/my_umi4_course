@@ -476,7 +476,7 @@ export default function DeployContent(props: DeployContentProps) {
                           viewLogEnvType: envTypeCode,
                           infoRecord: record,
                           id: appData?.id,
-                      }});
+                       } });
                     }}
                   >
                     {v}
