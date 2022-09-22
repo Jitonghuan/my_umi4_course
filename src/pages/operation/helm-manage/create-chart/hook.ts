@@ -53,8 +53,8 @@ export const queryPodNamespaceData = (params: { clusterId: string }) =>
       let dataSource = res.data;
       dataSource?.map((ele: any) => {
         result.push({
-          label: ele.namespace,
-          value: ele.namespace,
+          label: ele,
+          value: ele,
         });
       }, []);
 
