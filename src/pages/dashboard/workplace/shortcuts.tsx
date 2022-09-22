@@ -148,7 +148,7 @@ function Shortcuts() {
             </div>
           ))}
           <div className={`${styles.item} icon-item`} >
-            <IconPlus onClick={() => { setVisible(true); console.log(11) }} />
+            <IconPlus onClick={() => { setVisible(true);}} />
           </div>
         </div>
       ) : (

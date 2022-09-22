@@ -26,17 +26,25 @@ export function useEditProductDescription(): [boolean, (id: number, productDescr
   };
   return [loading, editProductDescription];
 }
+interface createProductVersion{
+ productId: number,
+ versionName: string,
+ versionDescription: string,
+ baseStatus:boolean,
+ copyName:string
+
+}
 
 // 创建产品版本
 export function useCreateProductVersion(): [
   boolean,
-  (productId: number, versionName: string, versionDescription: string) => Promise<void>,
+  (params:createProductVersion) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
-  const createProductVersion = async (productId: number, versionName: string, versionDescription: string) => {
+  const createProductVersion = async (params:createProductVersion) => {
     setLoading(true);
     try {
-      await postRequest(APIS.createProductVersion, { data: { productId, versionName, versionDescription } })
+      await postRequest(APIS.createProductVersion, { data: params })
         .then((res) => {
           if (res.success) {
             message.success('创建产品版本成功!');

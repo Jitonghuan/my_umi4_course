@@ -126,7 +126,7 @@ export default function CreateChart() {
   };
 
   const loadListData = (params: any) => {
-    console.log('params', params);
+  
     queryChartListInfo('', params?.pageIndex, params?.pageSize);
   };
 

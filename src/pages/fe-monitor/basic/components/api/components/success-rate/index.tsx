@@ -74,8 +74,7 @@ const SuccessRate = (props: IProps) => {
           rowKey="ts"
           loading={loading}
           onChange={(newPagination, filters, sorter, { action }) => {
-            console.log(action);
-            console.log(sorter);
+         
             if (action === 'sort') {
               const sortType = orderMap[sorter?.order];
               const sortField = sorter.field;

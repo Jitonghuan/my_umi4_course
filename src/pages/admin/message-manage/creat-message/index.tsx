@@ -53,7 +53,6 @@ export default function CreateMessage(props: CreateMessageProps) {
   }, [mode]);
   const handleSubmit = () => {
     const params = editForm.getFieldsValue();
-    console.log('params', params);
     if (mode === 'EDIT') {
       updateArticle({
         id: initData?.id,

@@ -185,9 +185,12 @@ export default function deliveryDescription() {
       ),
     },
   ];
+
+
   const handleSubmit = () => {
     let params = createVersionForm.getFieldsValue();
-    createProductVersion(descriptionInfoData.id, params.version_name, params.version_description).then(() => {
+ 
+    createProductVersion({...params}).then(() => {
       setCreatVersionVisiable(false);
       queryProductVersionList(descriptionInfoData.id);
     });
@@ -306,7 +309,7 @@ export default function deliveryDescription() {
             <Form.Item label="引入基础设施组件:" 
               tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
              name="baseStatus">
-            <Switch />
+            <Switch  />
             </Form.Item>
             <Form.Item label="版本复刻:" name="copyName">
               <Select style={{ width: 400 }} loading={verisonLoading} options={versionOptions}  showSearch allowClear/>

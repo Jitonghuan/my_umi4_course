@@ -81,7 +81,6 @@ export default function RuleDrawer(props: any) {
           form.setFieldsValue({ versionRangeFour: version2 });
         }
         let curEnvCode = initData?.envCode?.split(',');
-        console.log('curEnvCode', curEnvCode, curEnvCode[0] === '' ? undefined : curEnvCode);
         form.setFieldsValue({
           ruleName: initData?.ruleName,
           groupId: initData?.groupId,

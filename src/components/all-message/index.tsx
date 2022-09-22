@@ -45,7 +45,7 @@ export default function AllMessage(props: allMessageProps) {
   };
 
   const changeReadStatus=(item:any)=>{
-    console.log('item---message',item)
+ 
     getReadList([item?.id]).then(()=>{
       loadUnreadNum();
       loadStemNoticeList();

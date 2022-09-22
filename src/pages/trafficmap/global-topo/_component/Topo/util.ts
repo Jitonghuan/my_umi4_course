@@ -227,7 +227,6 @@ if (G6) {
         {
             draw: (cfg: any, group: any) => {
                 const { status } = cfg;
-                console.log(cfg, 'cfg')
                 let config = {
                     fontColor: '#000000',
                     borderColor: APP_STATUS_COLOR[status || 'normal'],

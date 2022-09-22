@@ -22,18 +22,6 @@ export default function clusterInfo() {
   useEffect(() => {
     if (clusterDatas && clusterDatas.length !== 0) {
       setData(clusterDatas);
-      // 先请求节点数
-      // clusterDatas.forEach((item: any) => {
-      //     getNode({ clusterCode: item.clusterCode }).then((res: any) => {
-      //         if (res?.success) {
-      //             item.node = res?.data?.items || [];
-      //             console.log(item.node, 11)
-      //             item.status = res?.data?.status || '';
-      //             setData([...clusterDatas] as any)
-      //         }
-      //     })
-      // });
-      // 再请求全部数据
       getCluster({ needMetric: true, pageIndex, pageSize }).then((res: any) => {
         if (res?.success) {
           const data = res?.data?.dataSource || [];
@@ -84,8 +72,7 @@ export default function clusterInfo() {
                     className="item-top"
                     style={{ color: '#5183e7' }}
                     onClick={() => {
-                      // let clusterName = decodeURIComponent(escape(item.clusterName));
-                      // console.log("encodeURIComponent(item.clusterName)",clusterName)
+                   
                       history.push({
                         pathname: `/matrix/pedestal/cluster-detail/node-list`,
                         search:`clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,

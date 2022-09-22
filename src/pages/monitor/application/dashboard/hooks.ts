@@ -35,13 +35,7 @@ export function useQueryPodCpu() {
             if (Object.prototype.hasOwnProperty.call(dataSource, key)) {
               if (key === 'cpuLimit') {
                 dataSource['cpuLimit']?.map((ele: any, index_one: number) => {
-                  console.log('---------->dataSource',
-                  dataSource['cpuLimit'],
-                  "ele---->",ele,
-                  "ele22222---->", ele[Object.keys(ele)[0]],
-                  "ele333333---->", Object.keys(ele)[0])
                   ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-                    console.log('---------->ele[Object.keys(ele)[0]],',ele[Object.keys(ele)[0]],Object.keys(ele)[0])
                     cpuLimitData.push({
                       category: 'cpuLimit_' + Object.keys(ele)[0],
                       // time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
@@ -51,24 +45,13 @@ export function useQueryPodCpu() {
                   });
                 });
               }
-              // if (key === 'cpuRequest') {
-              //   dataSource['cpuRequest']?.map((ele: any, index_one: number) => {
-              //     ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
-              //       cpuRequestData.push({
-              //         category: 'cpuRequest_' + Object.keys(ele)[0],
-              //         // time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-              //         time: parseInt(item[0]) * 1000,
-              //         precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
-              //       });
-              //     });
-              //   });
-              // }
+  
               if (key === 'cpuUse') {
                 dataSource['cpuUse']?.map((ele: any, index_one: number) => {
                   ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
                     cpuUseData.push({
                       category: 'cpuUse_' + Object.keys(ele)[0],
-                      // time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
+                     
                       time: parseInt(item[0]) * 1000,
                       precentage: item[1] ? Number(Number(item[1]).toFixed(1)) : 0,
                     });
@@ -86,15 +69,6 @@ export function useQueryPodCpu() {
           cpuLimitData.map((el: any) => {
             cpuLimitDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
           });
-
-          /* ---------------- */
-          // cpuRequestData.sort((a: any, b: any) => {
-          //   return a.time - b.time;
-          // });
-
-          // cpuRequestData.map((el: any) => {
-          //   cpuRequestDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
-          // });
 
           /* ---------------- */
           cpuUseData.sort((a: any, b: any) => {
@@ -179,14 +153,6 @@ export function usequeryPodMem() {
               });
             }
           }
-
-          // podMemDataArry.sort((a: any, b: any) => {
-          //   return a.time - b.time;
-          // });
-
-          // podMemDataArry.map((el: any) => {
-          //   podMemDataSource.push({ ...el, time: moment(el?.time).format('MM-DD HH:mm:ss') });
-          // });
 
           /* ---------------- */
           memLimitInfoData.sort((a: any, b: any) => {

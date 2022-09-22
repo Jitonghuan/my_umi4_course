@@ -112,7 +112,7 @@ export default function CsDetail(props: any) {
         }
         if (updateParams === 'data') {
             infoData.data[key] = undefined;
-            console.log(key, 'key')
+          
         }
         const res: any = await resourceUpdate({
             resourceType: type,

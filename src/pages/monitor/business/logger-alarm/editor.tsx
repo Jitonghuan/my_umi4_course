@@ -93,7 +93,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       silenceEnd: values.silenceEnd?.format('HH:mm'),
     };
 
-    console.log('> AlarmEditor.handleOk: ', submitData);
+  
     if (props.mode === 'ADD') {
       await postRequest(APIS.createRule, {
         data: submitData,

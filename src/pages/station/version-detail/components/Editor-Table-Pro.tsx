@@ -367,7 +367,7 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-            // console.log('params',params)
+         
             await addComponent({
               versionId,
               ...params,

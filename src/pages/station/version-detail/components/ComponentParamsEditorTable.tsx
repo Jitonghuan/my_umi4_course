@@ -130,7 +130,7 @@ export default (props: VersionDetailProps) => {
             showSearch
             allowClear
             onChange={(value: any) => {
-              // console.log('value', value);
+            
               paramOptions.filter((item: any) => {
                 if (item.value === value) {
                   updateRow(config.recordKey, {

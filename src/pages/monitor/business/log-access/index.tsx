@@ -247,7 +247,7 @@ export default function LogAccess() {
             size="large"
             pagination={{
               onChange: (page) => {
-                console.log(page);
+              
                 getListMonitor(page, 5);
               },
               total: total,

@@ -346,9 +346,7 @@ export const getMatrixEnvConfig = () =>
         wsPrefixName: "ws://matrix-api-test.cfuture.shop",
       };
       const dataSource = res?.data?.matrixEnvConfigs || {};
-     console.log("dataSource",dataSource,)
       dataSource?.map((item:any)=>{
-        console.log("item",item,'---',item?.key,hostAdress,window.location.origin)
         if(item?.key==hostAdress){
           envConfigInfo=item
         }

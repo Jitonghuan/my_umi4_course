@@ -24,13 +24,6 @@ export default function TrafficScheduling() {
 
     editField.setFieldsValue(initData);
   }, [initData]);
-
-  // useEffect(() => {
-  //   getRequest(APIS.trafficMap).then(result => {
-  //     console.log('>>> trafficMap', result.data);
-  //   });
-  // }, []);
-
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();
 

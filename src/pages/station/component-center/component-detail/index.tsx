@@ -155,17 +155,7 @@ export default function ComponentDetail() {
     if (!initRecord.id) {
       return;
     }
-    // if(componentVersion && componentName&&optType==='versionDetail'){
-    //   //componentId
-    //   console.log('进入这里1111')
-    //   queryComponentInfo(componentName, componentVersion, componentType, componentId);
-    //   getComponentVersionList(initRecord.id);
-    //   setCurVersion({
-    //     version: componentVersion,
-    //     componentId: componentId,
-    //   });
-
-    // }componentVersion
+   
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
 

@@ -25,21 +25,6 @@ export default function TrafficScheduling(props: any) {
     editField.setFieldsValue(initData);
   }, [initData, visable]);
 
-  // useEffect(() => {
-  //   getRequest(APIS.trafficMap).then(result => {
-  //     console.log('>>> trafficMap', result.data);
-  //   });
-  // }, []);
-  // useEffect(() => {
-  //   if (appConfig.IS_Matrix !== 'public') {
-  //     getRequest(getCommonEnvCode).then((result) => {
-  //       if (result?.success) {
-  //         setCommonEnvCode(result.data);
-  //       }
-  //     });
-  //   }
-  // }, [visable]);
-
   const handleSubmit = useCallback(async () => {
     const values = await editField.validateFields();
     let ip = '';

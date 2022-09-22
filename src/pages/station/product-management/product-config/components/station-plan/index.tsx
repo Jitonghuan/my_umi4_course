@@ -48,7 +48,7 @@ export default function StationPlan() {
         });
     };
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
+    
         setSelectedRowKeys(newSelectedRowKeys);
     };
 

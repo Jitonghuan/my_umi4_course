@@ -98,7 +98,6 @@ export default function CreateArticle(props: CreateArticleProps) {
     }
   };
   const changeType = (values: any) => {
-    console.log('values', values);
     setCurType(values);
   };
 

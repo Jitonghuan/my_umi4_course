@@ -3,7 +3,6 @@
 // @create 2021/11/23 16:49
 import moment from 'moment';
 export function loggerChart(data: any) {
-  // console.log('data', data);
   let logHistormData = data;
   const countList: any = [];
   const timeList: any = [];

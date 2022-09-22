@@ -266,7 +266,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   //收集数据
   const onFinish = () => {
     form.validateFields().then((value) => {
-      console.log('value', value);
+   
       const obj = {
         ...value,
         receiver: (value?.receiver || []).join(','),

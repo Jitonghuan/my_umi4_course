@@ -95,7 +95,7 @@ export default function BasicModal(props: DetailProps) {
   };
   useEffect(() => {
     if (Object.keys(initData || {})?.length !== 0) {
-      console.log('initData', initData);
+     
       form.setFieldsValue({ ...initData, componentVersion: curVersion });
       if (tabActiveKey === 'app' && optType !== 'comdetailReadOnly') {
         getApplicationOption(initData.componentSourceEnv);
