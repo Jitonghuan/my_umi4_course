@@ -63,11 +63,11 @@ export default function VersionDetail() {
               history.push({
                 pathname: '/matrix/station/product-description',
               },{
-                  id: descriptionInfoData.productId,
+                record:{ id: descriptionInfoData.productId,
                   productName: descriptionInfoData.productName,
                   productDescription: descriptionInfoData.productDescription,
                   gmtCreate: descriptionInfoData.productGmtCreate,
-              
+                }
               });
             }}
           >
