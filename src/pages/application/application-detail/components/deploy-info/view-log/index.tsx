@@ -235,12 +235,12 @@ export default function ViewLog(props: any) {
           //   viewLogEnvType: viewLogEnvType,
           // },
          }, {
-            appCode: appCode,
+          infoRecord:{  appCode: appCode,
             envCode: envCode,
             viewLogEnvType: viewLogEnvType,
             infoRecord: infoRecord,
             id: appData?.id,
-          },
+          } },
         );
       } else {
         history.push({

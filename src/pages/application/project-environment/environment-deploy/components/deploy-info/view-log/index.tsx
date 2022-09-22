@@ -138,13 +138,13 @@ export default function ViewLog(props: any) {
           search:`appCode=${appCode}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`
         },
           {
-            appCode: appCode,
+            infoRecord:{  appCode: appCode,
             projectEnvCode: projectEnvCode,
             projectEnvName: projectEnvName,
             // viewLogEnvType: viewLogEnvType,
             infoRecord: infoRecord,
             id: appData?.id,
-          },
+          }},
         );
       } else {
         history.push({
