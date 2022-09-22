@@ -410,14 +410,14 @@ export default function DeployContent(props: DeployContentProps) {
                         //   // initRecord:JSON.stringify(record)
                         // },
                       },{
-                          appCode: appCode,
+                        infoRecord:{ appCode: appCode,
                           // envCode: currentEnvData,
                           projectEnvName: projectEnvName,
                           projectEnvCode: currentEnvData,
                           // viewLogEnvType: envTypeCode,
                           infoRecord: record,
                           id: appData?.id,
-                        
+                        }
                       });
                     }}
                   >
