@@ -40,7 +40,7 @@ export default function LogAccess() {
   const [delMonitor] = useDelMonitor();
 
   const callback = (key: any) => {
-    console.log(key);
+   
   };
 
   const editMonitor = (item: any) => {

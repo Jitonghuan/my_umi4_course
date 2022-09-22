@@ -149,7 +149,7 @@ export const queryGcCount = (params: { [key: string]: string }) =>
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
-    
+   
 
       return {
         //瞬时值
@@ -462,6 +462,7 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
+     
 
       return {
         fullCount: {

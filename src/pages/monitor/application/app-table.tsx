@@ -235,6 +235,11 @@ const Coms = (props: IProps) => {
   // 查询节点使用率
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
   const queryNodeList = (params?:{appCode?:string,envCode?:string}) => {
+    prevFilter.current = {
+      // ...prevFilter.current,
+      envCode:entry? params?.envCode:prevFilter.current?.envCode,
+      appCode:entry? params?.appCode:prevFilter.current?.appCode,
+    };  
     getRequest(queryPodInfoApi, {
       data: {
         start: Number((now - startTime) / 1000),
@@ -326,6 +331,7 @@ const Coms = (props: IProps) => {
       queryNodeList();
     }
     if(filter?.appCode  &&filter?.envCode &&entry){
+      console.log("prevFilter.current?.envCode00000",prevFilter.current)
       queryNodeList({appCode,envCode:prevFilter.current?.envCode});
     }
   }, [filter]);
@@ -417,7 +423,7 @@ const Coms = (props: IProps) => {
     if (value) {
       timeRateInterval.current = setInterval(() => {
         // reset();
-        queryNodeList();
+        queryNodeList({appCode,envCode:prevFilter.current?.envCode});
         prevRateNum.current += 1;
         setRateNum(prevRateNum.current);
       }, value * 1000);
@@ -425,7 +431,7 @@ const Coms = (props: IProps) => {
   };
   const refreash = () => {
     // reset();
-    queryNodeList();
+    queryNodeList({appCode,envCode:prevFilter.current?.envCode});
   };
 
   return (
@@ -513,7 +519,8 @@ const Coms = (props: IProps) => {
               style={{ float: 'right' }}
               onClick={() => {
                 // reset();
-                queryNodeList();
+                console.log("prevFilter.current?.envCode",prevFilter.current)
+                queryNodeList({appCode,envCode:prevFilter.current?.envCode});
               }}
             />
           </h3>

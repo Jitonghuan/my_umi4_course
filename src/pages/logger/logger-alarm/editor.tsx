@@ -159,7 +159,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
 
       <Form form={field} labelCol={{ flex: '132px' }} wrapperCol={{ span: 16 }}>
         <FormItem label="告警名称" name="name" rules={[{ required: true, message: '请输入告警名称' }]}>
-          <Input placeholder="请输入" value={name} onChange={(e) => setName(e.target.value)} onBlur={checkName} />
+          <Input placeholder="请输入" value={name} onChange={(e) => setName(e.target.value)} onBlur={checkName} disabled={props.mode === 'EDIT'} />
         </FormItem>
         <FormItem label="应用名" name="appCode" rules={[{ required: true, message: '请选择应用' }]}>
           <Select

@@ -90,7 +90,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-  
   useEffect(() => {
     if (initData?.nodeCpu) {
       setNodeCpuData(initData?.nodeCpu);
@@ -129,7 +128,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   useEffect(() => {
     if (initData?.nodeNetWork) {
       setNodeNetWorkData(initData?.nodeNetWork);
-    
     }
   }, [initData?.nodeNetWork]);
   useEffect(() => {
@@ -140,7 +138,6 @@ export default function DashboardsModal(props: minitorDashboardProps) {
   useEffect(() => {
     if (ipDetailVisiable) {
       setStartTime(30 * 60 * 1000);
-     
     }
   }, [ipDetailVisiable]);
 

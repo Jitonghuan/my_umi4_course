@@ -267,15 +267,15 @@ export const queryPodNamespaceData = (params: { clusterId: string }) =>
       let dataSource = res.data;
       dataSource?.map((ele: any) => {
         result.push({
-          label: ele.namespace,
-          value: ele.namespace,
+          label: ele,
+          value: ele,
         },
        );
       }, []);
      const option=  result.concat( {label:"AllNamespace",
        value:""})
-       option.sort(function (a:any, b:any) {
-        return a.value.toLowerCase().localeCompare(b.value.toLowerCase());
+       option?.sort(function (a:any, b:any) {
+        return a?.value?.toLowerCase().localeCompare(b.value.toLowerCase());
 
       });
       return option;
