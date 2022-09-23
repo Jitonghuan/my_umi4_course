@@ -5,7 +5,6 @@ import { Button, Table, Modal, Form, Input, Space, Select } from 'antd';
 
 export default function EditModal(props: any) {
     const { visible, onCancel, onSave, loading, initData } = props;
-    console.log(initData, 'initDAta')
     const [form] = Form.useForm();
     useEffect(() => {
         if (visible) {
