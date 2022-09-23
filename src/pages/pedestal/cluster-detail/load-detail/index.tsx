@@ -1,10 +1,11 @@
 import { eventTableSchema, podsTableSchema, envVarTableSchema } from '../schema';
 import React, { useEffect, useCallback, useState, useMemo, useContext } from 'react';
-import { history,useLocation, } from 'umi';
-import { parse,stringify } from 'query-string';
+import { history, useLocation, } from 'umi';
+import { parse, stringify } from 'query-string';
 import { Table, Tag, Tooltip, Button, Empty, message, Spin, Modal } from 'antd';
 import DownLoadFile from './download-file';
 import AddModal from './add-modal';
+import EditModal from './edit-modal';
 import './index.less';
 import { getResourceList, resourceUpdate, resourceDel } from '../service';
 import { LoadingOutlined, RedoOutlined } from '@ant-design/icons';
@@ -21,10 +22,10 @@ const obj: any = {
 };
 
 export default function LoadDetail(props: any) {
-  let location:any = useLocation();
-  const query :any= parse(location.search);
+  let location: any = useLocation();
+  const query: any = parse(location.search);
   // const { location, children } = props;
-  const { type, kind, name, namespace } =query || {};
+  const { type, kind, name, namespace } = query || {};
   const { clusterCode, clusterName } = useContext(clusterContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -39,6 +40,11 @@ export default function LoadDetail(props: any) {
   const [subLoading, setSubLoading] = useState<boolean>(false); //-号loading
   const [addLoading, setAddLoading] = useState<boolean>(false); //+号loading
   const [data, setData] = useState<any>({});
+  const [editVisible, setEditVisible] = useState<boolean>(false);
+  const [editLoading, setEditLoading] = useState<boolean>(false);
+  const [initData, setInitData] = useState<any>({});
+  const [editType, setEditType] = useState<string>('envVar');
+  const [editContainer, setEditContainer] = useState<string>('');
   useEffect(() => {
     queryData();
     queryEvent();
@@ -67,53 +73,46 @@ export default function LoadDetail(props: any) {
   const tableColumns = useMemo(() => {
     return podsTableSchema({
       toPodsDetail: (record: any, index: any) => {
-        let newQuery={
+        let newQuery = {
           ...query,
-          name:record.name,
-          namespace:record.namespace,
-          kind:record.kind
+          name: record.name,
+          namespace: record.namespace,
+          kind: record.kind
 
         }
         history.push({
           pathname: '/matrix/pedestal/cluster-detail/pods',
-          search:stringify(newQuery),
+          search: stringify(newQuery),
           // query: { ...location.query, name: record.name, namespace: record.namespace, kind: record.kind },
         });
       },
       viewLog: (record: any, index: any) => {
-        let newQuery={
-          clusterCode:clusterCode,
-          clusterName:clusterName,
-          name:record.name,
-          namespace:record.namespace,
-          kind:record.kind,
-          key:"resource-detail"
-
-
-
+        let newQuery = {
+          clusterCode: clusterCode,
+          clusterName: clusterName,
+          name: record.name,
+          namespace: record.namespace,
+          kind: record.kind,
+          key: "resource-detail"
         }
         history.push({
           pathname: '/matrix/pedestal/view-log',
-          search:stringify(newQuery),
+          search: stringify(newQuery),
           // query: { key: 'resource-detail', name: record?.name, namespace: record?.namespace, clusterCode, clusterName },
         });
       },
       shell: (record: any, index: any) => {
-        let newQuery={
-          clusterCode:clusterCode,
-          clusterName:clusterName,
-          name:record.name,
-          namespace:record.namespace,
-          type:"pods",
-          key:"resource-detail",
-
-
-
-
+        let newQuery = {
+          clusterCode: clusterCode,
+          clusterName: clusterName,
+          name: record.name,
+          namespace: record.namespace,
+          type: "pods",
+          key: "resource-detail",
         }
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          search:stringify(newQuery)
+          search: stringify(newQuery)
           // query: {
           //   type: 'pods',
           //   key: 'resource-detail',
@@ -199,6 +198,12 @@ export default function LoadDetail(props: any) {
               setLoading(false);
             });
         },
+        handleEdit: (record: any, index: any) => {
+          setEditContainer(item.containerName);
+          setInitData(record);
+          setEditVisible(true);
+          setEditType('envVar');
+        }
       }) as any;
     },
     [data?.info?.containersEnv],
@@ -294,6 +299,43 @@ export default function LoadDetail(props: any) {
         setButtonLoading(false);
       });
   };
+  // 编辑
+  const editSave = (params: any) => {
+    const requstParams = JSON.parse(JSON.stringify(data?.info));
+    if (editType === 'envVar') {
+      requstParams?.containersEnv?.forEach((item: any) => {
+        if (editContainer === item.containerName) {
+          item.env = item.env || [];
+          item.env.forEach((e: any) => {
+            if (e.name === params.name) {
+              e.value = params.value
+            }
+          })
+        }
+      });
+    } else {
+      requstParams.labels = requstParams?.labels || {};
+      requstParams.labels[params.name] = params.value;
+    }
+    setEditLoading(true)
+    resourceUpdate({
+      resourceType: type,
+      namespace: namespace,
+      clusterCode,
+      resourceName: name,
+      updateBody: JSON.stringify(requstParams),
+    })
+      .then((res) => {
+        if (res?.success) {
+          message.success('操作成功！');
+          queryData();
+          setEditVisible(false);
+        }
+      })
+      .finally(() => {
+        setEditLoading(false);
+      });
+  }
   // 点击+/-号
   const clickSign = (sign: string) => {
     if (data?.info?.replicas === 0 && sign === 'sub') {
@@ -338,6 +380,13 @@ export default function LoadDetail(props: any) {
     }
   };
 
+  const handleEditTag = (value: any) => {
+    const data = value.split(':');
+    setEditType('tag');
+    setInitData({ name: data[0], value: data[1] })
+    setEditVisible(true)
+  }
+
   return (
     <div className="load-detail-wrapper">
       <DownLoadFile
@@ -356,6 +405,15 @@ export default function LoadDetail(props: any) {
         containerOption={containerOption}
         loading={buttonLoading}
       ></AddModal>
+      <EditModal
+        visible={editVisible}
+        onCancel={() => {
+          setEditVisible(false);
+        }}
+        onSave={editSave}
+        loading={editLoading}
+        initData={initData}
+      />
       <div className="flex-wrapper">
         <p className="title">
           工作负载：<span style={{ color: 'green' }}>{data?.name || '---'}</span>
@@ -377,7 +435,7 @@ export default function LoadDetail(props: any) {
             onClick={() => {
               history.push({
                 pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
-                search:location.search
+                search: location.search
                 // query: { ...props.location.query },
               });
             }}
@@ -498,22 +556,13 @@ export default function LoadDetail(props: any) {
       <div className="tag-wrapper">
         {Object.keys(data?.info?.labels || {}).map((item: string) => {
           return (
-            // <Tag
-            //   color="green"
-            //   closable
-            //   onClose={(e) => {
-            //     e.preventDefault();
-            //     setTagVisible(true)
-            //     // handleClose(item);
-            //   }}
-            // >
-            //   {item}:{data?.info?.labels[item]}
-            // </Tag>
             <TagConfirm
               content={`${item}:${data?.info?.labels[item]}`}
               title='你确定要删除该标签吗？'
               onConfirm={() => { handleClose(item) }}
               style={{ marginTop: '5px' }}
+              canEdit={true}
+              handleEdit={handleEditTag}
             >
             </TagConfirm>
           );

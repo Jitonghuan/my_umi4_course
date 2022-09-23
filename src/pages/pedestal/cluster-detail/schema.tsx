@@ -1,6 +1,6 @@
 import { history } from 'umi';
 import { Tooltip, Popconfirm, Button, Tag } from 'antd';
-import { Html5Outlined, CodeOutlined, MinusCircleFilled } from '@ant-design/icons';
+import { EditFilled, EditOutlined, MinusCircleFilled } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { LIST_STATUS_TYPE } from './load-detail/schema';
 import { STATUS_TEXT, STATUS_COLOR } from '@/pages/pedestal/cluster-info/type';
@@ -323,7 +323,12 @@ export const eventTableSchema = () =>
   ] as any;
 
 // 资源详情-负载-环境变量列表
-export const envVarTableSchema = ({ handleDelete }: { handleDelete: (record: any, index: number) => void }) =>
+export const envVarTableSchema = (
+  { handleDelete, handleEdit }: {
+    handleDelete: (record: any, index: number) => void,
+    handleEdit: (record: any, index: number) => void
+  }
+) =>
   [
     {
       title: 'KEY',
@@ -357,6 +362,7 @@ export const envVarTableSchema = ({ handleDelete }: { handleDelete: (record: any
       align: 'right',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
+          <EditFilled style={{ color: '#3591ff', marginRight: '10px' }} onClick={() => { handleEdit(record, index) }} />
           <Popconfirm
             title="确定要删除吗？"
             onConfirm={() => {
