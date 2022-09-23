@@ -43,7 +43,7 @@ export default function InstanceList() {
          }, {
             curRecord: record,
             instanceId: record?.id,
-            usterId: record?.clusterId,
+            clusterId: record?.clusterId,
             optType: 'instance-list-trend',
           
         });
