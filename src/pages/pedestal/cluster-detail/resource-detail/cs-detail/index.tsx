@@ -9,6 +9,7 @@ import { history, useLocation, } from 'umi';
 import { parse, stringify } from 'query-string';
 import clusterContext from '../../context';
 import { getResourceList, resourceUpdate, resourceDel } from '../../service';
+import EditModal from '../../load-detail/edit-modal'
 
 import './index.less'
 const mock: any = { first: '标签1' }
@@ -28,8 +29,10 @@ export default function CsDetail(props: any) {
     const [secret, setSecret] = useState<boolean>(true);
     const [hasChange, setHasChange] = useState<boolean>(false);
     const [saveLoading, setSaveLoading] = useState<boolean>(false);
-    const [, updateState] = React.useState();
-    const forceUpdate = React.useCallback(() => updateState({} as any), []);
+    const [editType, setEditType] = useState<string>('tag');
+    const [editVisible, setEditVisible] = useState<boolean>(false);
+    const [editLoading, setEditLoading] = useState<boolean>(false);
+    const [initData, setInitData] = useState<any>({});
     useEffect(() => {
         form.setFieldsValue({ 'base-tags': [undefined] });
         queryData()
@@ -187,6 +190,41 @@ export default function CsDetail(props: any) {
             setHasChange(true)
         }
     }
+    const handleEdit = (value: any) => {
+        const data = value.split(':');
+        setInitData({ name: data[0], value: data[1] });
+        setEditVisible(true)
+    }
+
+    // 编辑tag/Annotions
+    const editSave = (params: any) => {
+        const requstParams = JSON.parse(JSON.stringify(data));
+        if (editType === 'tag') {
+            requstParams.labels = requstParams.labels || {};
+            requstParams.labels[params.name] = params.value;
+        } else {
+            requstParams.annotations = requstParams.annotations || {};
+            requstParams.annotations[params.name] = params.value;
+        }
+        setEditLoading(true);
+        resourceUpdate({
+            resourceType: type,
+            namespace: namespace,
+            clusterCode,
+            resourceName: name,
+            updateBody: JSON.stringify(requstParams),
+        })
+            .then((res) => {
+                if (res?.success) {
+                    message.success('操作成功！');
+                    setEditVisible(false);
+                    initSearch();
+                }
+            })
+            .finally(() => {
+                setEditLoading(false);
+            });
+    }
 
     const initSearch = () => {
         queryData();
@@ -211,6 +249,15 @@ export default function CsDetail(props: any) {
                 loading={loading}
             >
             </AddData>
+            <EditModal
+                visible={editVisible}
+                onCancel={() => {
+                    setEditVisible(false);
+                }}
+                onSave={editSave}
+                loading={editLoading}
+                initData={initData}
+            />
             {/* data部分 */}
             <div className='flex-space-between'>
                 <p>
@@ -368,6 +415,8 @@ export default function CsDetail(props: any) {
                                 title='你确定要删除该标签吗？'
                                 onConfirm={() => { handleClose(item, 'tag') }}
                                 style={{ marginTop: '5px' }}
+                                canEdit
+                                handleEdit={(value: any) => { setEditType('tag'); handleEdit(value) }}
                             >
                             </TagConfirm>
                         );
@@ -397,6 +446,8 @@ export default function CsDetail(props: any) {
                                 title='你确定要删除吗？'
                                 onConfirm={() => { handleClose(item, 'annotations') }}
                                 style={{ marginTop: '5px' }}
+                                canEdit
+                                handleEdit={(value: any) => { setEditType('annotions'); handleEdit(value) }}
                             >
                             </TagConfirm>
                         );
