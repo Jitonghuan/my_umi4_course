@@ -165,13 +165,6 @@ export default function ApplicationDetail(props: IProps) {
                 search: location.search,
               });
             }
-            // // debugger
-           
-            // history.replace({
-            //   pathname: `${detailPath}/${key}`,
-            //   // query: { ...location.query },
-            //   search: location.search,
-            // });
           }}
           tabBarExtraContent={
             <div className="tab-right-extra">

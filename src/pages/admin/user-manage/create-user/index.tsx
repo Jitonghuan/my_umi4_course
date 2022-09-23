@@ -24,6 +24,7 @@ export default function CreateUser() {
   const [delLoading, deleteUserRole] = useDeleteUserRole();
   let location = useLocation();
   const curRecord: any = location.state || {};
+  console.log("umi4---->",location.state )
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [saveDisabled, setSaveDisabled] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);

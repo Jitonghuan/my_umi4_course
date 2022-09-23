@@ -27,7 +27,7 @@ export default function UserManage() {
       onEdit: (record, index) => {
         history.push({
           pathname: '/matrix/admin/create-user'},
-          {record,
+          {...record,
         });
       },
       onView: (record, index) => {
