@@ -13,6 +13,7 @@ export default function ContainerInfo(props: any) {
   const query = parse(location.search);
   const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id, projectEnvName } =location.state?.infoRecord || {};
   const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
+  console.info("stateParams---->",location.state?.infoRecord)
   const [queryContainer, queryContainerData, loading] = useListContainer();
   useEffect(() => {
     if (!infoRecord?.instName || !projectEnvCode || !appCode) {

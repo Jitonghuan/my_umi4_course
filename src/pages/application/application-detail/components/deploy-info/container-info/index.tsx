@@ -13,7 +13,6 @@ import './index.less';
 export default function ContainerInfo(props: any) {
   let location = useLocation();
   const stateParams:any=location?.state||{};
-  console.info("stateParams---->",stateParams)
   const infoRecordTotal= stateParams?.infoRecord || {};
   const appCode = infoRecordTotal?.appCode || '';
   const envCode = infoRecordTotal?.envCode || '';

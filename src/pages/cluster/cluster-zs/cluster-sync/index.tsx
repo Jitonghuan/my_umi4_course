@@ -60,7 +60,7 @@ export default function ClusterPage(props: any) {
                 pathname: './cluster-sync-detail'
               },
 
-                { commonEnvCode,
+                { commonEnvCode:commonEnvCode,
               })
             }
           >
