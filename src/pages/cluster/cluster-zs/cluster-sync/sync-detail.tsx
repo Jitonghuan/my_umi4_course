@@ -61,7 +61,7 @@ export default function ClusterSyncDetail(props: any) {
   if (!location.state) {
     return null;
   }
-  const commonEnvCode = location.state;
+  const commonEnvCode = location.state?.commonEnvCode;
   const [pending, setPending] = useState(true);
   const [currStep, setCurrStep] = useState<number>(-1);
   const [resultLog, setResultLog] = useState<string>('');
