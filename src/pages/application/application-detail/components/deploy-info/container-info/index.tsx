@@ -14,10 +14,10 @@ export default function ContainerInfo(props: any) {
   let location = useLocation();
   const stateParams:any=location?.state||{};
   const infoRecord = stateParams?.infoRecord || {};
-  const appCode = stateParams?.appCode || '';
-  const envCode = stateParams?.envCode || '';
-  const viewLogEnvType = stateParams?.viewLogEnvType || '';
-  const id = stateParams?.id || '';
+  const appCode = infoRecord?.appCode || '';
+  const envCode = infoRecord?.envCode || '';
+  const viewLogEnvType = infoRecord?.viewLogEnvType || '';
+  const id = infoRecord?.id || '';
   const [queryContainerData, setQueryContainerData] = useState<any>([]);
   const [podListSource, setPodListSource] = useState<any>([]);
   const containerIntervalFunc = () => {
