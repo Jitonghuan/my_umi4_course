@@ -96,8 +96,9 @@ export default function CsDetail(props: any) {
             .then((res) => {
                 if (res?.success) {
                     message.success('操作成功！');
-                    queryData();
+                    initSearch();
                     setAddTag(false);
+
                 }
             })
             .finally(() => {
@@ -115,7 +116,6 @@ export default function CsDetail(props: any) {
         }
         if (updateParams === 'data') {
             infoData.data[key] = undefined;
-            console.log(key, 'key')
         }
         const res: any = await resourceUpdate({
             resourceType: type,
@@ -126,11 +126,7 @@ export default function CsDetail(props: any) {
         });
         if (res?.success) {
             message.success('操作成功！');
-            if (updateParams === 'annotations') {
-                initSearch()
-            } else {
-                queryData();
-            }
+            initSearch()
         }
     };
     // 新增data
