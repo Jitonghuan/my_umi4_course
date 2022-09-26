@@ -3,7 +3,7 @@
 // @create 2021/08/25 17:31
 
 import { useMemo, useEffect, useState } from 'react';
-import { history, Link,useLocation,Outlet } from 'umi';
+import { history, Link, useLocation, Outlet } from 'umi';
 import { Tabs, Spin, Empty, Tag, Badge } from 'antd';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
@@ -28,8 +28,8 @@ const activeKeyMap: Record<string, any> = {
 
 export default function ApplicationDetail(props: IProps) {
   // const { location, children } = props;
-  let location:any = useLocation();
-  const query :any= parse(location.search);
+  let location: any = useLocation();
+  const query: any = parse(location.search);
   const { id: appId, appCode, projectEnvCode, projectEnvName, benchmarkEnvCode } = query || {};
   const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
@@ -112,7 +112,7 @@ export default function ApplicationDetail(props: IProps) {
       history.replace({
         pathname: `${location.pathname}/appDeploy`,
         // query: { ...location.query },
-        search:location.search
+        search: location.search
       }),
       null
     );
@@ -153,14 +153,14 @@ export default function ApplicationDetail(props: IProps) {
           onChange={(key) => {
             history.replace({
               pathname: `${detailPath}/${key}`,
-              search:location.search
+              search: location.search
               // query: { ...location.query },
             });
           }}
           tabBarExtraContent={
             <div className="tab-right-extra">
               <Badge status="processing" text="当前项目环境：" />
-              {/* <h4>{projectEnvCode}</h4> */}
+              <h4>{projectEnvCode}</h4>
               <span>
                 <Tag color="blue">{projectEnvName}</Tag>
               </span>
@@ -173,7 +173,8 @@ export default function ApplicationDetail(props: IProps) {
                     history.push({
                       pathname: '/matrix/application/environment-detail',
                     },
-                      { envCode: projectEnvCode,
+                      {
+                        envCode: projectEnvCode,
                         benchmarkEnvCode: benchmarkEnvCode,
                       },
                     );
@@ -193,7 +194,7 @@ export default function ApplicationDetail(props: IProps) {
       </FilterCard>
       <DetailContext.Provider value={{ appData, queryAppData, projectEnvCode, projectEnvName }}>
         <VCPermission code={window.location.pathname} isShowErrorPage>
-          <Outlet/>
+          <Outlet />
         </VCPermission>
       </DetailContext.Provider>
     </PageContainer>
