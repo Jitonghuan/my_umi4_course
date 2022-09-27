@@ -73,24 +73,24 @@ export default function StationPlan() {
                     <Form layout="horizontal"  labelCol={{ flex: '150px' }}>
                         <Row gutter={12} >
                             <Col >
-                                <Form.Item   name="code" label="项目Code" >
+                                <Form.Item   name="projectCode" label="项目Code" >
                                     <Input style={{width:260}}/>
                                 </Form.Item>
                             </Col >
                             <Col >
-                            <Form.Item   name="code" label="ssh用户" >
+                            <Form.Item   name="sshUser" label="ssh用户" >
                                     <Input style={{width:260}}/>
                                 </Form.Item>
                            </Col>
                         </Row> 
                         <Row>
                             <Col >
-                                <Form.Item   name="code" label="项目domian" >
+                                <Form.Item   name="projectDomain" label="项目domian" >
                                     <Input style={{width:260}}/>
                                 </Form.Item>
                             </Col >
                             {/* <Col  > */}
-                            <Form.Item   name="code" label="ssh密码" >
+                            <Form.Item   name="sshPassword" label="ssh密码" >
                                     <Input style={{width:260}}/>
                                 </Form.Item>
 
@@ -98,31 +98,31 @@ export default function StationPlan() {
                         </Row>
                         <Row gutter={16}>
                             <Col span={8}>
-                                <Form.Item   name="code" label="k8s版本" >
+                                <Form.Item   name="kubernetesVersion" label="k8s版本" >
                                     <Input style={{width:260}}/>
                                 </Form.Item>
                            </Col > 
                             <Col > 
-                            <Form.Item   name="code" label="部署双集群" >
+                            <Form.Item   name="mutiClusterEnable" label="部署双集群" >
                                     <Switch />
                                 </Form.Item>
 
                             </Col>
                         </Row>
                         <Row>
-                        <Form.Item   name="code" label="VIP" >
+                        <Form.Item   name="vip" label="VIP" >
                                 <Input style={{width:260}}/>
                         </Form.Item>
 
                         </Row>
                         <Row>
-                        <Form.Item   name="code" label="DNS" >
+                        <Form.Item   name="dnsIp" label="DNS" >
                                 <Input style={{width:260}}/>
                         </Form.Item>
 
                         </Row>
                         <Row>
-                        <Form.Item   name="code" label="NTP" >
+                        <Form.Item   name="ntpServer" label="NTP" >
                              <Input style={{width:260}}/>
                         </Form.Item>
                        
@@ -165,31 +165,31 @@ export default function StationPlan() {
         },
         {
             title: '数据设施',
-            content: (<div style={{ display: 'flex', justifyContent: "space-around", width: '100%' }}>
+            content: (<div style={{ display: 'flex',  width: '100%',justifyContent:"center",height:"100%",overflow:"scroll" }}>
                 <div>
                     <p><b>数据库信息</b></p>
                     <p className="third-step-content">
                         <Form form={form} layout="horizontal" labelCol={{ flex: '120px' }} name="dynamic_form_nest_item" onFinish={() => { }} >
-                            <Form.Item name="area" label="数据库类型" rules={[{ required: true, message: 'Missing area' }]}>
+                            <Form.Item name="DbType" label="数据库类型" rules={[{ required: true, message: 'Missing area' }]}>
                                 <Select options={areas} style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="area" label="地址" rules={[{ required: true, message: 'Missing area' }]}>
+                            <Form.Item name="DbAddress" label="地址" rules={[{ required: true, message: 'Missing area' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="area" label="端口" rules={[{ required: true, message: 'Missing area' }]}>
+                            <Form.Item name="DbPort" label="端口" rules={[{ required: true, message: 'Missing area' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="area" label="用户名" rules={[{ required: true, message: 'Missing area' }]}>
+                            <Form.Item name="DbUser" label="用户名" rules={[{ required: true, message: 'Missing area' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="area" label="密码" rules={[{ required: true, message: 'Missing area' }]}>
+                            <Form.Item name="DbPassword" label="密码" rules={[{ required: true, message: 'Missing area' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
                             <Form.Item name="area" label="类别" rules={[{ required: true, message: 'Missing area' }]}>
                                 <Select options={areas} style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
                             < Divider/>
-                            <Form.List name="sights" >
+                            <Form.List name="DbUsage" >
                                 {(fields, { add, remove }) => (
                                     <>
                                         {fields.map(field => (
@@ -265,21 +265,7 @@ export default function StationPlan() {
 
                     </p>
                 </div>
-                <div>
-                    <p><b>minio信息</b></p>
-                    <Form form={form} layout="horizontal" labelCol={{ flex: '120px' }} name="dynamic_form_nest_item" onFinish={() => { }} >
-                        <Form.Item name="area" label="地址" rules={[{ required: true, message: 'Missing area' }]}>
-                            <Input style={{ width: 220 }} onChange={() => { }} />
-                        </Form.Item>
-                        <Form.Item name="area" label="accessKey" rules={[{ required: true, message: 'Missing area' }]}>
-                            <Input style={{ width: 220 }} onChange={() => { }} />
-                        </Form.Item>
-                        <Form.Item name="area" label="secretKey" rules={[{ required: true, message: 'Missing area' }]}>
-                            <Input style={{ width: 220 }} onChange={() => { }} />
-                        </Form.Item>
-                    </Form>
-
-                </div>
+               
             </div>),
         },
     ];

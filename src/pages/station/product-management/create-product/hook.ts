@@ -3,25 +3,20 @@ import * as APIS from '../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
 type AnyObject = Record<string, any>;
+export interface CreateIndentItems{
+  indentName: string;
+  indentDescription: string;
+  deliveryProject: string;
+  productName: string;
+  productVersion: string;
+}
 // 创建制品
 export function useCreateIndent(): [
   boolean,
-  (paramsObj: {
-    indentName: string;
-    indentDescription: string;
-    deliveryProject: string;
-    productName: string;
-    productVersion: string;
-  }) => Promise<void>,
+  (paramsObj: CreateIndentItems) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
-  const createIndent = async (paramsObj: {
-    indentName: string;
-    indentDescription: string;
-    deliveryProject: string;
-    productName: string;
-    productVersion: string;
-  }) => {
+  const createIndent = async (paramsObj: CreateIndentItems) => {
     setLoading(true);
     try {
       await postRequest(APIS.createIndent, { data: paramsObj })

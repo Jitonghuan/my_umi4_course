@@ -18,7 +18,7 @@ import {
   Button,
   Descriptions,
   Typography,
-  Divider,
+  Tag,
   Spin,
   Modal,
   Table,
@@ -27,8 +27,7 @@ import {
 } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentList, useQueryProductlineList } from '../hook';
-import { useUpdateDescription, useUpdateConfiguration } from './hooks';
-
+import { useUpdateDescription, useUpdateConfiguration,useAddRely,useDeleteRely } from './hooks';
 import './index.less';
 export default function ComponentDetail() {
   let location:any = useLocation();
@@ -58,6 +57,8 @@ export default function ComponentDetail() {
   const [componentInfo, setComponentInfo] = useState<any>({});
   const [editableStr, setEditableStr] = useState('');
   const [editLoading, updateDescription] = useUpdateDescription();
+  const [addLoading, addRely]=useAddRely();
+  const [delLoading, deleteRely]=useDeleteRely();
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
   const [loading, setLoading] = useState(false);
   const [versionOptions, setVersionOptions] = useState<any>([]);
@@ -67,15 +68,16 @@ export default function ComponentDetail() {
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
-  const [mode,setMode]=useState<EditorMode>("HIDE")
-  const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
-  // console.log('productVersionId', productVersionId);
+  const [mode,setMode]=useState<EditorMode>("HIDE");
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList,options] = useQueryComponentList();
+  
   const deletVersion = async (id: number) => {
     await postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
       if (res.success) {
         message.success(res.data);
         getComponentVersionList(initRecord.id);
-        // queryComponentInfo(componentName, curVersion?.version, componentType, curVersion.componentId);
+       
       } else {
         return;
       }
@@ -156,11 +158,11 @@ export default function ComponentDetail() {
       return;
     }
    
+    queryComponentList({ componentType: componentType,pageIndex:-1,
+      pageSize:-1 })
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
-
       queryComponentInfo(componentName, componentVersion, componentType, componentId);
-
       setCurVersion({
         version: componentVersion,
         componentId: componentId,
@@ -168,7 +170,7 @@ export default function ComponentDetail() {
     } else {
       getComponentVersionList(initRecord.id);
     }
-  }, [componentName, componentVersion]);
+  }, [componentName, componentVersion,]);
 
   const changeVersion = (versionInfo: any) => {
     setCurVersion({
@@ -278,9 +280,6 @@ export default function ComponentDetail() {
                   if (componentType === 'app') {
                     setUserModalVisiable(true);
                   }
-                  //  if (componentType === 'middleware') {
-                  //    // setMiddlewareModalVisibale(true);
-                  //  }
                   if (componentType === 'sql') {
                     setBasicDataModalVisiable(true);
                   }
@@ -352,16 +351,13 @@ export default function ComponentDetail() {
                   <Descriptions.Item label="创建时间">
                     {moment(componentInfo?.gmtCreate).format('YYYY-MM-DD HH:mm:ss') || '--'}{' '}
                   </Descriptions.Item>
-                  <Descriptions.Item label="依赖组件" span={2}>
-                    {componentInfo?.componentUrl || '--'} 
-                    <span style={{float:"right"}}><MinusCircleOutlined onClick={()=>{setMode("ADD")}} style={{fontSize:16,color:"#3591ff"}} />&nbsp;<PlusCircleOutlined onClick={()=>{setMode("EDIT")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
-                  </Descriptions.Item> 
-                  {/* <Descriptions.Item label="更新时间">
-                    {moment(componentInfo?.gmtModify).format('YYYY-MM-DD HH:mm:ss') || '--'}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="组件地址" span={2}>
-                    {componentInfo?.componentUrl || '--'}
-                  </Descriptions.Item> */}
+              
+                  {componentType==="middleware"&&
+                   <Descriptions.Item label="依赖组件" span={2}>
+                   {componentInfo?.componentDependency || '--'} 
+                   <span style={{float:"right"}}><MinusCircleOutlined onClick={()=>{setMode("EDIT");}} style={{fontSize:16,color:"#3591ff"}} />&nbsp;<PlusCircleOutlined onClick={()=>{setMode("ADD")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
+                 </Descriptions.Item> }
+                 
                 </Descriptions>
               </Spin>
               {/* <Divider /> */}
@@ -370,12 +366,19 @@ export default function ComponentDetail() {
           <TabPane tab="版本信息" key="component-info">
               <div>
                 <div >
-                  <div style={{paddingLeft:10}}>
-                     <span><b>版本号：</b></span>
-                     <span style={{paddingLeft:18}}><b>版本地址：</b></span>
+                  <div style={{paddingLeft:10,display:"flex"}}>
+                     <span>
+                       <b>版本号：</b>
+                       <Tag color="geekblue">{componentInfo?.componentVersion}</Tag>
+                     </span>
+                     <span style={{paddingLeft:18,display:"flex"}}>
+                       <b>版本地址：</b>
+                       <Paragraph copyable>{componentInfo?.componentUrl}</Paragraph>
+                     </span>
                   </div> 
-                <div style={{paddingLeft:10}}>
+                <div style={{paddingLeft:10,display:"flex"}}>
                   <b>版本说明:</b>
+                  <span>{componentInfo?.componentExplanation}</span>
                 </div>
                 <div className="instruction">
                   <div className="instruction-info">
@@ -431,8 +434,20 @@ export default function ComponentDetail() {
           </TabPane>
         </Tabs>
       </ContentCard>
-      <Modal title={mode==="ADD"?"选择要删除的依赖组件":"选择要新增的依赖组件"} visible={mode!=="HIDE"} onCancel={()=>{ setMode("HIDE")}} onOk={()=>{}}>
-        <Select style={{width:240}} mode="tags" allowClear showSearch options={[]}/>
+      <Modal destroyOnClose title={mode==="ADD"?"选择要新增的依赖组件":"选择要删除的依赖组件"} visible={mode!=="HIDE"} onCancel={()=>{ setMode("HIDE")}} confirmLoading={addLoading||delLoading} onOk={()=>{
+        if(mode==="ADD"){
+          addRely(initRecord.id,selectedItems).then(()=>{
+            setMode("HIDE")
+            queryComponentInfo(componentName, componentVersion, componentType, componentId);
+          })
+        }else{
+          deleteRely(initRecord.id,selectedItems).then(()=>{
+            setMode("HIDE")
+            queryComponentInfo(componentName, componentVersion, componentType, componentId);
+          })
+        }
+      }}>
+        依赖组件： <Select style={{width:300}} mode="tags" allowClear  onChange={setSelectedItems} showSearch options={options} />
 
       </Modal>
     </PageContainer>

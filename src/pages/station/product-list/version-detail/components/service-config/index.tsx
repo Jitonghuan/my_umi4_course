@@ -10,6 +10,7 @@ import {
   useDeleteDeliveryParam,
   useQueryOriginList,
   useEditVersionParam,
+  useQueryParamtypeList
 } from '../../hooks';
 
 type DataSourceType = {
@@ -36,6 +37,7 @@ export default (props: VersionDetailProps) => {
   const { currentTab, versionId, isEditable, initDataSource } = props;
   const actionRef = useRef<ActionType>();
   const [saveLoading, saveParam] = useSaveParam();
+  const [paramtypeOptions, queryParamtypeList]=useQueryParamtypeList()
   const [editLoading, editVersionParam] = useEditVersionParam();
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
@@ -52,6 +54,7 @@ export default (props: VersionDetailProps) => {
   useEffect(() => {
     //获取参数来源组件
     queryOriginList(versionId);
+    queryParamtypeList()
   }, []);
   useEffect(() => {
     //查询建站配置参数
@@ -62,6 +65,7 @@ export default (props: VersionDetailProps) => {
       type:type,
       paramOptions:paramOptions,
       originOptions:originOptions,
+      paramtypeOptions:paramtypeOptions,
       onComChange: (value: any) => {
         queryParamList(versionId, value);
        
@@ -88,7 +92,7 @@ export default (props: VersionDetailProps) => {
         });
       }  
     }) as any;
-  }, [type,originOptions,paramOptions]);
+  }, [type,originOptions,paramOptions,paramtypeOptions]);
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param.paramName);

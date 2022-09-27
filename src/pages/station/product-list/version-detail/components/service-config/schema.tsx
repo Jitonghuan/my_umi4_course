@@ -17,6 +17,7 @@ export const createServiceConfigTableColumns = (params: {
     type:string;
     paramOptions:any;
     originOptions:any;
+    paramtypeOptions:any
     onComChange: (value: any) => void;
     onParamChange: (config: any,value: any) => void;
     onEdit: (record: any, action: any,) => void;
@@ -35,8 +36,8 @@ export const createServiceConfigTableColumns = (params: {
 
     {
       title: '配置中心',
-      key: 'paramName',
-      dataIndex: 'paramName',
+      key: 'paramType',
+      dataIndex: 'paramType',
       valueType: 'select',
       formItemProps: () => {
         return {
@@ -58,19 +59,10 @@ export const createServiceConfigTableColumns = (params: {
         });
         return (
           <Select
-            options={ params?.paramOptions}
+            options={ params?.paramtypeOptions}
             showSearch
             allowClear
             onChange={(value: any) => {
-         
-              // paramOptions.filter((item: any) => {
-              //   if (item.value === value) {
-              //     updateRow(config.recordKey, {
-              //       ...form.getFieldsValue(config.recordKey),
-              //       paramValue: item.paramValue,
-              //     });
-              //   }
-              // });
             }}
           ></Select>
         );

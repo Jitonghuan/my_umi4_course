@@ -198,3 +198,24 @@ export const bulkdeleteApi = addAPIPrefix('/deliveryManage/product/version/compo
 /*8、POST 批量添加中间件 */
 export const bulkaddApi = addAPIPrefix('/deliveryManage/product/version/middleware/bulkadd');
 
+/*9、 POST 上传前端资源文件 */
+
+export const uploadFrontfile = addAPIPrefix('/deliveryManage/component/frontfile/upload');
+
+
+/*10、 POST 上传前端资源文件 */
+
+export const addFrontComponentApi = addAPIPrefix('/deliveryManage/component/front/add');
+
+/*11、 GET 获取配置中心 */
+
+export const paramtypeListApi = addAPIPrefix('/deliveryManage/product/version/paramtype/list');
+
+/*12、 POST 新增依赖组件 */
+
+export const addRelyApi = addAPIPrefix('/deliveryManage/component/rely/add');
+
+
+/*13、 DELETE 删除依赖组件 */
+
+export const deleteRelyApi = addAPIPrefix('/deliveryManage/component/rely/delete');

@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
-type AnyObject = Record<string, any>;
 //组件版本查询
 export function useQueryComponentVersionList(): [boolean, any, (componentId: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
@@ -35,69 +34,26 @@ export function useQueryComponentVersionList(): [boolean, any, (componentId: str
   return [loading, dataSource, queryComponentVersionList];
 }
 
-// //组件详情
-// export function useQueryComponentInfo(): [
-//   boolean,
-//   any,
-//   (componentName: string, componentVersion: string, componentType: string) => Promise<void>,
-// ] {
-//   const [loading, setLoading] = useState(false);
-//   const [dataSource, setDataSource] = useState({});
-//   const queryComponentInfo = async (componentName: string, componentVersion: string, componentType: string) => {
-//     setLoading(true);
-//     try {
-//       await getRequest(APIS.queryComponentInfo, {
-//         data: { componentName, componentVersion, componentType },
-//       })
-//         .then((res) => {
-//           if (res.success) {
-//             let dataSource = res.data;
-//             setDataSource(dataSource);
-//             return dataSource;
-//           } else {
-//             return {};
-//           }
-//         })
-//         .finally(() => {
-//           setLoading(false);
-//         });
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-//   return [loading, dataSource, queryComponentInfo];
-// }
-
+export interface UpdateComponentItems{
+  filePath: string;
+  componentName: string;
+  componentVersion: string;
+  componentType: string;
+  componentDescription: string;
+  componentUrl: string;
+  componentSource_env: string;
+  componentExplanation: string;
+  componentConfiguration: string;
+  productLine: string;
+}
 // updateComponent
 //基础数据接入
 export function useUpdateComponent(): [
   boolean,
-  (paramsObj: {
-    filePath: string;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
-    componentDescription: string;
-    componentUrl: string;
-    componentSource_env: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    productLine: string;
-  }) => Promise<void>,
+  (paramsObj: UpdateComponentItems) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const updateComponent = async (paramsObj: {
-    filePath: string;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
-    componentDescription: string;
-    componentUrl: string;
-    componentSource_env: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    productLine: string;
-  }) => {
+  const updateComponent = async (paramsObj: UpdateComponentItems) => {
     setLoading(true);
     try {
       await postRequest(`${APIS.updateComponent}?componentDescription=${paramsObj.componentDescription}`, {
@@ -126,35 +82,13 @@ export function useUpdateDescription(): [
   boolean,
   (componentInfo: {
     id: number;
-    // componentName: string;
-    // componentVersion: string;
-    // componentType: string;
     componentDescription: string;
-    // componentUrl: string;
-    // componentSourceEnv: string;
-    // componentExplanation: string;
-    // componentConfiguration: string;
-    // createUser: string;
-    // modifyUser: string;
-    // gmtCreate: string;
-    // gmtModify: string;
   }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
   const updateDescription = async (componentInfo: {
     id: number;
-    // componentName: string;
-    // componentVersion: string;
-    // componentType: string;
     componentDescription: string;
-    // componentUrl: string;
-    // componentSourceEnv: string;
-    // componentExplanation: string;
-    // componentConfiguration: string;
-    // createUser: string;
-    // modifyUser: string;
-    // gmtCreate: string;
-    // gmtModify: string;
   }) => {
     setLoading(true);
     try {
@@ -199,4 +133,55 @@ export function useUpdateConfiguration(): [boolean, (id: number, componentConfig
     }
   };
   return [loading, updateConfiguration];
+}
+
+//删除依赖组件
+
+export function useDeleteRely(): [boolean, (id: number, componentDependency: string[]) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const deleteRely = async (id: number, componentDependency: string) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.deleteRelyApi, { data: { id, componentDependency } })
+        .then((res) => {
+          if (res.success) {
+            message.success("删除依赖成功！");
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, deleteRely];
+}
+
+//新增依赖组件
+
+
+export function useAddRely(): [boolean, (id: number, componentDependency: string[]) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const addRely = async (id: number, componentDependency: string) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.addRelyApi, { data: { id, componentDependency } })
+        .then((res) => {
+          if (res.success) {
+            message.success("新增依赖成功！");
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, addRely];
 }

@@ -14,6 +14,7 @@ import { parse } from 'query-string';
 import BasicDataModal from './components/basicDataModal';
 import { useQueryComponentList, useQueryProductlineList } from './hook';
 import AddApplicationDraw from './components/addApplicationDraw';
+import FrontAddDraw from './components/frontAddModal'
 import './index.less';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
@@ -27,6 +28,7 @@ export default function ComponentCenter() {
   const [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
+  const [frontAddVisiable, setFrontAddVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [curProductLine, setCurProductLine] = useState<string>('');
   const [queryParams, setQueryParams] = useState<any>({});
@@ -34,6 +36,7 @@ export default function ComponentCenter() {
     app: { text: '+ 应用组件接入' },
     middleware: { text: '+ 中间件组件接入' },
     sql: { text: '+ 基础数据接入' },
+    front: { text: '+ 前端资源接入' },
   };
   const getCurProductLine = (value: string) => {
     setCurProductLine(value);
@@ -70,6 +73,16 @@ export default function ComponentCenter() {
   return (
     <PageContainer>
       <ContentCard>
+        <FrontAddDraw
+         visable={frontAddVisiable}
+         tabActiveKey={tabActiveKey}
+         curProductLine={curProductLine}
+         queryParams={queryParams}
+         queryComponentList={({ componentType: tabActiveKey }) => queryComponentList({ componentType: tabActiveKey })}
+         onClose={() => {
+          setFrontAddVisiable(false);
+         }}
+         />
         <AddApplicationDraw
           mode={batchAddMode}
           productLineOptions={productLineOptions || []}
@@ -82,18 +95,6 @@ export default function ComponentCenter() {
             setBatchAddMode('HIDE');
           }}
         />
-
-        {/* <UserModal
-          visable={userModalVisiable}
-          productLineOptions={productLineOptions || []}
-          tabActiveKey={tabActiveKey}
-          curProductLine={curProductLine}
-          queryParams={queryParams}
-          queryComponentList={({ componentType: tabActiveKey }) => queryComponentList({ componentType: tabActiveKey })}
-          onClose={() => {
-            setUserModalVisiable(false);
-          }}
-        /> */}
         <BasicDataModal
           visable={basicDataModalVisiable}
           tabActiveKey={tabActiveKey}
@@ -152,6 +153,9 @@ export default function ComponentCenter() {
                               //  }
                               if (tabActiveKey === 'sql') {
                                 setBasicDataModalVisiable(true);
+                              }
+                              if(tabActiveKey === 'front'){
+                                setFrontAddVisiable(true)
                               }
                             }}
                           >

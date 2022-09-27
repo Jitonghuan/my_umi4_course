@@ -55,6 +55,46 @@ export function useEditProductVersionDescription(): [
   return [loading, editProductVersionDescription];
 }
 
+//paramtypeListApi
+
+//组件查询
+export function useQueryParamtypeList(): [ any, () => Promise<void>] {
+  // const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+
+  const queryParamtypeList =  useCallback(async () => {
+    // setLoading(true);
+    try {
+      await getRequest(APIS.paramtypeListApi)
+        .then((res) => {
+          if (res.success) {
+            let dataSource = res.data
+            let options: any = [];
+            dataSource?.map((item: any) => {
+              options.push({
+                label: item,
+                value: item,
+                
+              });
+            });
+            setDataSource(options);
+           
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          // setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  },[] );
+  return [dataSource, queryParamtypeList];
+}
+
+
+
 //组件查询
 export function useQueryComponentOptions(): [ any, (componentType: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
