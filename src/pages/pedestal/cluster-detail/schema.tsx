@@ -1,6 +1,7 @@
 import { history } from 'umi';
+import { useState } from 'react';
 import { Tooltip, Popconfirm, Button, Tag } from 'antd';
-import { EditFilled, EditOutlined, MinusCircleFilled } from '@ant-design/icons';
+import { EditFilled, RightOutlined, MinusCircleFilled, LeftOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { LIST_STATUS_TYPE } from './load-detail/schema';
 import { STATUS_TEXT, STATUS_COLOR } from '@/pages/pedestal/cluster-info/type';
@@ -12,14 +13,19 @@ export const nodeListTableSchema = ({
   drain,
   // handleDelete,
   shell,
+  expand,
+  setExpand
 }: {
   clickTag: (record: any, index: number) => void;
   updateNode: (record: any, index: number) => void;
   drain: (record: any, index: number) => void;
   // handleDelete: (record: any, index: number) => void;
   shell: (record: any, index: number) => void;
-}) =>
-  [
+  expand: boolean;
+  setExpand: (expand: boolean) => void;
+}) => {
+  // const [expand, setExpand] = useState<boolean>(true)
+  return [
     {
       title: '节点名',
       dataIndex: 'nodeName',
@@ -113,31 +119,36 @@ export const nodeListTableSchema = ({
       ),
     },
     {
-      title: '操作',
+      title: <div onClick={() => { setExpand(!expand) }}>
+        操作
+        <span style={{ marginLeft: '10px' }} >{expand ? <RightOutlined /> : <LeftOutlined />}
+        </span></div>,
       fixed: 'right',
-      width: 300,
+      width: expand ? 300 : 80,
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
-        <div className="action-cell">
-          <a onClick={() => shell(record, index)}>登陆shell</a>
-          <a onClick={() => clickTag(record, index)}>设置标签</a>
-          <Popconfirm
-            title={`确定要设置为${record.unschedulable ? '可调度' : '不可调度'}吗？`}
-            onConfirm={() => {
-              updateNode(record, index);
-            }}
-          >
-            <a>{record.unschedulable ? '可调度' : '不可调度'}</a>
-          </Popconfirm>
-          <Popconfirm
-            title="确定要排空吗？"
-            onConfirm={() => {
-              drain(record, index);
-            }}
-          >
-            <a>排空</a>
-          </Popconfirm>
-          {/* <Popconfirm
+        !expand
+          ? <div onClick={() => { setExpand(!expand) }}>...</div>
+          : <div className="action-cell">
+            <a onClick={() => shell(record, index)}>登陆shell</a>
+            <a onClick={() => clickTag(record, index)}>设置标签</a>
+            <Popconfirm
+              title={`确定要设置为${record.unschedulable ? '可调度' : '不可调度'}吗？`}
+              onConfirm={() => {
+                updateNode(record, index);
+              }}
+            >
+              <a>{record.unschedulable ? '可调度' : '不可调度'}</a>
+            </Popconfirm>
+            <Popconfirm
+              title="确定要排空吗？"
+              onConfirm={() => {
+                drain(record, index);
+              }}
+            >
+              <a>排空</a>
+            </Popconfirm>
+            {/* <Popconfirm
                         title="确定要删除该节点吗？"
                         onConfirm={() => {
                             handleDelete(record, index)
@@ -147,10 +158,13 @@ export const nodeListTableSchema = ({
                             删除
                         </a>
                     </Popconfirm> */}
-        </div>
+          </div>
+
       ),
     },
   ] as ColumnProps[];
+}
+
 
 // 资源详情-负载-Pods列表
 export const podsTableSchema = ({

@@ -21,6 +21,7 @@ export default function NodeList() {
   const [updateLoading, setUpdateLoading] = useState(false);
   const [baseData, total, loading, loadData] = useNodeListData({ clusterCode: clusterCode || '' }); //表格的基础数据
   const [data, setData] = useState<any>([]); //表格的完整数据
+  const [expand, setExpand] = useState<boolean>(true);
 
   useEffect(() => {
     if (baseData && baseData.length) {
@@ -89,6 +90,8 @@ export default function NodeList() {
             setUpdateLoading(false);
           });
       },
+      expand,
+      setExpand
       // 删除
       // handleDelete: async (record: any, index: any) => {
       //     const res = await delRequest(`${appConfig.apiPrefix}/infraManage/node/delete/${record?.nodeName}`);
@@ -97,7 +100,7 @@ export default function NodeList() {
       //     }
       // },
     }) as any;
-  }, [data]);
+  }, [data, expand, setExpand]);
 
   return (
     <div className="cluster-node-list">
