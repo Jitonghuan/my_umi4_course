@@ -128,7 +128,7 @@ export const nodeListTableSchema = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         !expand
-          ? <div onClick={() => { setExpand(!expand) }}>...</div>
+          ? <div onClick={() => { setExpand(!expand) }} style={{ cursor: 'pointer' }}>...</div>
           : <div className="action-cell">
             <a onClick={() => shell(record, index)}>登陆shell</a>
             <a onClick={() => clickTag(record, index)}>设置标签</a>
