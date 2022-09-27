@@ -1,11 +1,11 @@
-import React, { useEffect,  useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Button, Input, Pagination, Empty, Spin } from 'antd';
 import type { PaginationProps } from 'antd';
 import Count from './component/count';
 import PageContainer from '@/components/page-container';
-import {ContentCard } from '@/components/vc-page-content';
+import { ContentCard } from '@/components/vc-page-content';
 import ProgessComponent from './component/progress';
-import { history} from 'umi';
+import { history } from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
 import { useClusterListData } from './hook';
 import { getCluster } from './service';
@@ -87,13 +87,12 @@ export default function clusterInfo() {
                       // let clusterName = decodeURIComponent(escape(item.clusterName));
                       // console.log("encodeURIComponent(item.clusterName)",clusterName)
                       history.push({
-                        pathname: `/matrix/pedestal/cluster-detail/node-list`,
-                        search:`clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,
+                        pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
+                        search: `clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,
                       },
-                      {
+                        {
                           clusterInfo: item
-                      
-                      });
+                        });
                     }}
                   >
                     {item.clusterName || '----'}
