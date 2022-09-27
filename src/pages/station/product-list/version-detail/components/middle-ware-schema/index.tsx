@@ -1,9 +1,5 @@
-
-import { history } from 'umi';
 import type { ProColumns } from '@ant-design/pro-table';
-import { EditableProTable } from '@ant-design/pro-table';
-import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Select, Form, Popconfirm, message,Space,Tag } from 'antd';
+import {  Input, Select,  Popconfirm} from 'antd';
 
 type DataSourceType = {
     id: any;
@@ -23,13 +19,16 @@ export const createMiddlewareTableColumns = (params: {
     onDelete: (record: any) => void;
     componentOptions:any;
     componentVersionOptions:any
+    namespaceOption:any;
+  
+
     // currentTabType;
   }) => {
     return [
       {
         title: '中间件名称',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'componentName',
+        key: 'componentName',
         formItemProps: () => {
             return {
               rules: [
@@ -94,8 +93,29 @@ export const createMiddlewareTableColumns = (params: {
       },
       {
         title: 'Realease名称',
-        key: 'paramComponent',
-        dataIndex: 'paramComponent',
+        key: 'componentReleaseName',
+        dataIndex: 'componentReleaseName',
+        valueType: 'select',
+        formItemProps: () => {
+          return {
+            rules: [
+              {
+                required: true,
+                message: '此项为必填项',
+              },
+            ],
+            errorType: 'default',
+          };
+        },
+        renderFormItem: (_, config: any, data) => {
+          return (
+            <Input/>
+          )},
+      },
+      {
+        title: 'Namespace',
+        key: 'componentNamespace',
+        dataIndex: 'componentNamespace',
         valueType: 'select',
         formItemProps: () => {
           return {
@@ -111,7 +131,7 @@ export const createMiddlewareTableColumns = (params: {
         renderFormItem: (_, config: any, data) => {
           return (
             <Select
-              options={[]}
+              options={params?.namespaceOption}
               showSearch
               allowClear
               onChange={(value: any) => {
@@ -129,8 +149,8 @@ export const createMiddlewareTableColumns = (params: {
         },
       },
       {title: '依赖',
-      key: 'componentVersion',
-      dataIndex: 'componentVersion',
+      key: 'componentDependency',
+      dataIndex: 'componentDependency',
       valueType: 'select',
       formItemProps: () => {
         return {
@@ -146,15 +166,7 @@ export const createMiddlewareTableColumns = (params: {
       renderFormItem: (_, config: any, data) => {
         //  ]
         return (
-          <Select
-            options={[]}
-            showSearch
-            allowClear
-            mode="tags"
-            // onChange={(value: any) => {
-
-            // }}
-          ></Select>
+         <Input/>
         );
       },
     },

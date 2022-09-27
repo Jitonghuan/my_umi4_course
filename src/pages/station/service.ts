@@ -172,3 +172,29 @@ export const updateParamIndent = addAPIPrefix('/deliveryManage/indent/param/upda
 /* ---------------------------------------建站管理二期------------------------------------ */
 /*1、 GET 查询当前产品版本号 */
 export const queryVersionNameList = addAPIPrefix('/deliveryManage/product/versionName/list');
+
+/*2、 GET 获取bucket列表 */
+export const queryFrontbucketList = addAPIPrefix('/deliveryManage/product/version/frontbucket/list');
+
+/*3、 GET 获取belong列表 */
+export const queryBelongList = addAPIPrefix('/deliveryManage/product/version/belong/list');
+
+
+/*4、 GET 获取基础组件列表 */
+export const queryBasecomponentList = addAPIPrefix('/deliveryManage/product/version/basecomponent/list');
+
+
+/*5、 GET 获取中间件组件的命名空间 */
+export const queryNamespaceList = addAPIPrefix('/deliveryManage/product/version/namespace/list');
+
+
+/*6、 GET 获取组件ReleaseName */
+export const queryReleaseList = addAPIPrefix('/deliveryManage/product/version/param/releaselist');
+
+
+/*7、DELETE 组件版本删除 */
+export const bulkdeleteApi = addAPIPrefix('/deliveryManage/product/version/component/bulkdelete');
+
+/*8、POST 批量添加中间件 */
+export const bulkaddApi = addAPIPrefix('/deliveryManage/product/version/middleware/bulkadd');
+

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
@@ -56,7 +56,7 @@ export function useEditProductVersionDescription(): [
 }
 
 //组件查询
-export function useQueryComponentOptions(): [boolean, any, (componentType: string) => Promise<void>] {
+export function useQueryComponentOptions(): [ any, (componentType: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
 
@@ -80,6 +80,7 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
                 value: item.id,
                 componentId: item.id,
                 componentDescription: item.componentDescription,
+                componentDependency:item?.componentDependency
               });
             });
             setDataSource(options);
@@ -101,12 +102,11 @@ export function useQueryComponentOptions(): [boolean, any, (componentType: strin
       console.log(error);
     }
   };
-  return [loading, dataSource, queryComponentOptions];
+  return [dataSource, queryComponentOptions];
 }
 
 //组件版本查询
 export function useQueryComponentVersionOptions(): [
-  boolean,
   any,
   (componentId: number, componentType: string, componentName?: string) => Promise<void>,
 ] {
@@ -148,30 +148,27 @@ export function useQueryComponentVersionOptions(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, queryProductVersionOptions];
+  return [ dataSource, queryProductVersionOptions];
 }
+export interface addCompontentItems{
+  versionId: number;
+  componentType: string;
+  componentName: string;
+  componentVersion: string;
+  componentDescription?: string;
+  componentReleaseName?:string	
+  componentConfiguration?:string	
+  componentNamespace?:string	
+  productLine?:string		
 
+}
 //产品版本添加组件
 export function useAddCompontent(): [
   boolean,
-  (paramsObj: {
-    versionId: number;
-    componentType: string;
-    componentName: string;
-    componentVersion: string;
-    componentDescription?: string;
-    // versionDescription?: string,
-  }) => Promise<void>,
+  (paramsObj: addCompontentItems) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const addComponent = async (paramsObj: {
-    versionId: number;
-    componentType: string;
-    componentName: string;
-    componentVersion: string;
-    componentDescription?: string;
-    // versionDescription?: string,
-  }) => {
+  const addComponent = async (paramsObj:addCompontentItems) => {
     setLoading(true);
     try {
       await postRequest(APIS.addComponent, {
@@ -424,26 +421,23 @@ export function useQueryDeliveryGloableParamList(): [
   };
   return [loading, dataSource, setDataSource, queryDeliveryParamList];
 }
+export interface saveParamItem{
+    versionId: number;
+    paramComponent?: string;
+    paramName: string;
+    paramValue?: string;
+    paramDescription?: string;
+    paramComponentReleaseName?:string;
+    paramType?:string;
+}
 
 //保存交付配置参数
 export function useSaveParam(): [
   boolean,
-  (paramsObj: {
-    versionId: number;
-    paramComponent: string;
-    paramName: string;
-    paramValue: string;
-    paramDescription?: string;
-  }) => Promise<void>,
+  (paramsObj: saveParamItem) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const saveParam = async (paramsObj: {
-    versionId: number;
-    paramComponent: string;
-    paramName: string;
-    paramValue: string;
-    paramDescription?: string;
-  }) => {
+  const saveParam = async (paramsObj:saveParamItem) => {
     setLoading(true);
     try {
       await postRequest(APIS.saveParam, {
@@ -551,7 +545,6 @@ export function useGetProductlineVersion() {
 
   return [loading, dataSource, getProductlineVersion];
 }
-
 // 获取应用
 export function useGetAppList() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -581,6 +574,41 @@ export function useGetAppList() {
   };
 
   return [loading, dataSource, setDataSource, queryAppList];
+}
+//批量添加中间件
+//bulkaddApi
+export function useBulkaddMiddleware(): [
+  boolean,
+  (paramsObj: {
+    versionId: number;
+    componentName: any;
+  }) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const saveBulkadd = async (paramsObj: {
+    versionId: number;
+    componentName: any;
+  }) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.bulkaddApi, {
+        data: paramsObj,
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success('保存成功！');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, saveBulkadd];
 }
 
 //批量添加应用

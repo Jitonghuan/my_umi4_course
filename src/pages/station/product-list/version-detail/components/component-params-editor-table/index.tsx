@@ -1,9 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
-import type { ProColumns } from '@ant-design/pro-table';
+import React, { useRef, useState, useEffect,useMemo } from 'react';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Form, Select, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, Input, Form } from 'antd';
+import {useBasecomponentList,useReleaseList} from './hook';
+import {createCompontentsTableColumns, } from './schema';
 import {
   useQueryParamList,
   useQueryDeliveryParamList,
@@ -34,6 +34,8 @@ export interface VersionDetailProps {
 }
 
 export default (props: VersionDetailProps) => {
+  //useReleaseList
+  const [releaseOptionLoading, releaseOption,queryReleaseList] = useReleaseList();
   const { currentTab, versionId, isEditable, initDataSource } = props;
   const actionRef = useRef<ActionType>();
   const [saveLoading, saveParam] = useSaveParam();
@@ -58,139 +60,43 @@ export default (props: VersionDetailProps) => {
     //查询建站配置参数
     queryDeliveryParamList(versionId);
   }, []);
-  const columns: ProColumns<any>[] = [
-    {
-      title: '参数来源组件',
-      key: 'paramComponent',
-      dataIndex: 'paramComponent',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
-      // valueEnum: originOptions,
-      editable: (text, record, index) => {
-        if (type === 'edit' && text) {
-          return false;
-        } else if (type === 'add' && !text) {
-          return true;
-        } else if (type === 'add' && text) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      renderFormItem: (_, config: any, data) => {
-        return (
-          <Select
-            options={originOptions}
-            showSearch
-            allowClear
-            onChange={(value: any) => {
-              queryParamList(versionId, value);
-            }}
-          ></Select>
-        );
-      },
-    },
 
-    {
-      title: '选择参数',
-      key: 'paramName',
-      dataIndex: 'paramName',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
+  const compontentsColumns = useMemo(() => {
+    return createCompontentsTableColumns({
+      type:type,
+      paramOptions:paramOptions,
+      originOptions:originOptions,
+      releaseOption:releaseOption,
+      onComChange: (value: any) => {
+        queryParamList(versionId, value);
+        queryReleaseList(value)
+       
       },
-      renderFormItem: (_, config: any, data) => {
-        let description = '';
+      onParamChange:(config:any,value: any)=>{
+
         paramOptions.filter((item: any) => {
-          if (item.value === config.record?.componentVersion) {
-            description = item.componentDescription;
+          if (item.value === value) {
+            updateRow(config.recordKey, {
+              ...form.getFieldsValue(config.recordKey),
+              paramValue: item.paramValue,
+            });
           }
         });
-        return (
-          <Select
-            options={paramOptions}
-            showSearch
-            allowClear
-            onChange={(value: any) => {
-            
-              paramOptions.filter((item: any) => {
-                if (item.value === value) {
-                  updateRow(config.recordKey, {
-                    ...form.getFieldsValue(config.recordKey),
-                    paramValue: item.paramValue,
-                  });
-                }
-              });
-            }}
-          ></Select>
-        );
       },
-    },
-    {
-      title: '参数值',
-      key: 'paramValue',
-      dataIndex: 'paramValue',
-      renderFormItem: (_, config: any, data) => {
-        return <Input disabled={true}></Input>;
+      onEdit:(record,  action)=>{
+        action?.startEditable?.(record.id);
+        setType('edit');
+        queryParamList(versionId, record.paramComponent);
       },
-    },
-    {
-      title: '参数说明',
-      dataIndex: 'paramDescription',
-    },
-
-    {
-      title: '操作',
-      valueType: 'option',
-      width: 250,
-      render: (text, record, _, action) => [
-        <a
-          key="editable"
-          onClick={() => {
-            // if (isEditable) {
-            //   message.info('已发布不可以编辑!');
-            // } else {
-            action?.startEditable?.(record.id);
-            setType('edit');
-            queryParamList(versionId, record.paramComponent);
-            // }
-          }}
-        >
-          编辑
-        </a>,
-        <Popconfirm
-          title="确定要删除吗？"
-          onConfirm={() => {
-            deleteDeliveryParam(record.id).then(() => {
-              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-            });
-          }}
-        >
-          <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>
-            删除
-          </a>
-        </Popconfirm>,
-      ],
-    },
-  ];
+      onDelete:(record:any)=>{
+        deleteDeliveryParam(record.id).then(() => {
+          setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+        });
+      }  
+    }) as any;
+  }, [type,originOptions,paramOptions,releaseOption]);
+  
+  
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param.paramName);
@@ -246,7 +152,7 @@ export default (props: VersionDetailProps) => {
         headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮
-        columns={columns}
+        columns={compontentsColumns}
         value={tableDataSource}
         onChange={(values) => {
           tableChange(values);

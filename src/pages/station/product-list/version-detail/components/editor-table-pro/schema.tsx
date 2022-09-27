@@ -1,11 +1,6 @@
-import { datetimeCellRender } from '@/utils';
-import { Space, Popconfirm, Tooltip,Tag,Button,Select,Input } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
-import moment from 'moment';
+import { Popconfirm, Select,Input } from 'antd';
 import type { ProColumns } from '@ant-design/pro-table';
-import { EditableProTable } from '@ant-design/pro-table';
-import type { ActionType } from '@ant-design/pro-table';
-type DataSourceType = {
+export type DataSourceType = {
     id: any;
     title?: string;
     labels?: {
@@ -21,15 +16,22 @@ type DataSourceType = {
 
 // 列表页-表格
 export const createProTableColumns = (params: {
-  onManage: (record: any, index: number) => void;
-  onPublish: (record: any, index: number) => void;
-  onDelete: (record: any, index: number) => void;
-  currentTabType:string
+  currentTabType:string,
+  componentOptions:any,
+  componentVersionOptions:any,
+  bucketsOption:any,
+  belongOption:any,
+  bucketLoading:boolean,
+  belongLoading:boolean
+  onConfig: (text:React.ReactNode, record: any, _:any, action:any) => void;
+  onDelete: (text:React.ReactNode, record: any, _:any, action:any) => void;
+  onChange:(param:any,config:any)=>void;
+  
  
 }) => {
   return [
     {
-        title:params?.currentTabType === 'app' ? '应用名称' : params?.currentTabType === 'fe-source' ? '前端资源名称' : '基础数据名称',
+        title:params?.currentTabType === 'app' ? '应用名称' : params?.currentTabType === 'front' ? '前端资源名称' : '基础数据名称',
         key: 'componentName',
         dataIndex: 'componentName',
         valueType: 'select',
@@ -46,35 +48,28 @@ export const createProTableColumns = (params: {
         },
         renderFormItem: (_, config: any, data) => {
           let description = '';
-          componentOptions.filter((item: any) => {
+          params?.componentOptions.filter((item: any) => {
             if (item.label === config.record?.componentName) {
               description = item.componentDescription;
             }
           });
           return (
+            <>
             <Select
-              options={componentOptions}
+              options={ params?.componentOptions}
               showSearch
               allowClear
               labelInValue
               optionFilterProp="label"
               onChange={(param: any) => {
-                queryProductVersionOptions(param.value, currentTabType);
-                componentOptions.filter((item: any) => {
-                  if (item.label === param.label) {
-                    updateRow(config.recordKey, {
-                      ...form.getFieldsValue(config.recordKey),
-                      componentDescription: item.componentDescription,
-                    });
-                  }
-                });
+                params?.onChange(param,config)
               }}
             ></Select>
-          );
+          </>);
         },
       },
       {
-        title: currentTabType === 'app' ? '应用版本' : currentTabType === 'front' ? '前端资源版本' : '基础数据版本',
+        title: params?.currentTabType === 'app' ? '应用版本' : params?.currentTabType === 'front' ? '前端资源版本' : '基础数据版本',
         key: 'componentVersion',
         dataIndex: 'componentVersion',
         valueType: 'select',
@@ -93,7 +88,7 @@ export const createProTableColumns = (params: {
           //  ]
           return (
             <Select
-              options={componentVersionOptions}
+              options={params?.componentVersionOptions}
               showSearch
               allowClear
               // onChange={(value: any) => {
@@ -104,9 +99,9 @@ export const createProTableColumns = (params: {
         },
       },
       {
-        title: 'Bucket',
-        key: 'paramComponent',
-        dataIndex: 'paramComponent',
+        title: params?.currentTabType === 'sql' ? '归属' : 'Bucket',
+        key: "componentConfiguration" ,
+        dataIndex: "componentConfiguration" ,
         valueType: 'select',
         formItemProps: () => {
           return {
@@ -122,9 +117,10 @@ export const createProTableColumns = (params: {
         renderFormItem: (_, config: any, data) => {
           return (
             <Select
-              options={[]}
+              options={params?.currentTabType === 'sql'?params?.belongOption:params?.bucketsOption}
               showSearch
               allowClear
+              loading={params?.bucketLoading||params?.belongLoading}
               onChange={(value: any) => {
                
               }}
@@ -133,7 +129,7 @@ export const createProTableColumns = (params: {
         },
       },
       {
-        title: currentTabType === 'app' ? '应用描述' : currentTabType === 'fe-source' ? '前端资源描述' : '基础数据描述',
+        title: params?.currentTabType === 'app' ? '应用描述' : params?.currentTabType === 'front' ? '前端资源描述' : '基础数据描述',
         dataIndex: 'componentDescription',
         renderFormItem: (_, config: any, data) => {
           return <Input></Input>;
@@ -147,22 +143,7 @@ export const createProTableColumns = (params: {
         render: (text, record: any, _, action) => [
           <a
             onClick={() => {
-              history.push({
-                pathname: '/matrix/station/component-detail',
-              },{
-                  initRecord: record,
-                  productVersionId: versionId,
-                  componentName: record.componentName,
-                  componentVersion: record.componentVersion,
-                  componentId: record.componentId,
-                  componentType: currentTab,
-                  componentDescription: record.componentDescription,
-                  optType: 'versionDetail',
-                  versionDescription: versionDescription,
-                  releaseStatus: releaseStatus,
-                  descriptionInfoData: descriptionInfoData,
-                
-              });
+              params?.onConfig(text, record, _, action)
             }}
           >
             配置
@@ -170,13 +151,7 @@ export const createProTableColumns = (params: {
           <Popconfirm
             title="确定要删除吗？"
             onConfirm={() => {
-              if (isEditable) {
-                message.info('已发布不可以删除!');
-              } else {
-                deleteVersionComponent(record.id).then(() => {
-                  setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-                });
-              }
+              params?.onDelete(text, record, _, action)
             }}
           >
             <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>

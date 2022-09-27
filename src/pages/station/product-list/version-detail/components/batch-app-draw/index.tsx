@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { useQueryProductlineList } from '../../../../component-center/hook';
 import { Drawer, Button, Form, Tree, Spin, Select, Space, Divider } from 'antd';
 import { useGetProductlineVersion, useGetAppList, useBulkadd } from '../../hooks';
-import '../../index.less';
+import './index.less';
 export interface AppComponentProps {
   mode: EditorMode;
   versionId?: number;
@@ -79,7 +79,7 @@ export default function TmplEditor(props: AppComponentProps) {
       title="添加应用"
       // maskClosable={false}
       onClose={onClose}
-      width={'50%'}
+      width={'30%'}
       footer={
         <div className="drawer-footer">
           <Button type="primary" disabled={isDisabled} loading={saveLoading} onClick={handleSubmit}>
@@ -118,12 +118,12 @@ export default function TmplEditor(props: AppComponentProps) {
         <p className="app-list-show">
           <span> 应用列表:</span>
           <Space style={{ marginLeft: 12 }}>
-            <Button size="small" type="primary" onClick={allCheck}>
+            <span  className="all-select-btn" onClick={allCheck}>
               全选
-            </Button>
-            <Button size="small" onClick={unAllCheck}>
+            </span>
+            <span className="not-all-select-btn"  onClick={unAllCheck}>
               全不选
-            </Button>
+            </span>
           </Space>
         </p>
       )}

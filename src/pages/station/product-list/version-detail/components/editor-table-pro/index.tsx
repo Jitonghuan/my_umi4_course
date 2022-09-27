@@ -1,35 +1,17 @@
-import React, { useRef, useState, useEffect,useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { history } from 'umi';
-import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Select, Form, Popconfirm, message } from 'antd';
-import { productionPageTypes } from '../../tab-config';
-import {createMiddlewareTableColumns} from '../middle-ware-schema';
+import type { TableRowSelection } from 'antd/es/table/interface';
+import { Button, Input, Form, message } from 'antd';
+import { createMiddlewareTableColumns } from '../middle-ware-schema';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import {createProTableColumns} from './schema'
-import {
-  useQueryComponentOptions,
-  useQueryComponentVersionOptions,
-  useQueryVersionComponentList,
-  useDeleteVersionComponent,
-  useAddCompontent,
-} from '../../hooks';
-import { useQueryProductlineList } from '../../../../component-center/hook';
-import BatchDraw from '../batch-add-draw';
-
-type DataSourceType = {
-  id: any;
-  title?: string;
-  labels?: {
-    key: string;
-    label: string;
-  }[];
-  state?: string;
-  created_at?: string;
-  children?: DataSourceType[];
-};
+import { createProTableColumns, DataSourceType } from './schema'
+import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList, useDeleteVersionComponent, useAddCompontent, } from '../../hooks';
+import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete } from './hook'
+import BatchAppDraw from '../batch-app-draw';
+import BatchMiddlewareDraw from '../batch-middleware-draw';
 
 export interface VersionDetailProps {
   currentTab: string;
@@ -55,44 +37,63 @@ export default (props: VersionDetailProps) => {
   } = props;
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();
-  const [versionLoading, componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
-  const [componentLoading, componentOptions, queryComponentOptions] = useQueryComponentOptions();
+  const [ componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
+  const [componentOptions, queryComponentOptions] = useQueryComponentOptions();
   const [loading, tableDataSource, setDataSource, queryVersionComponentList] = useQueryVersionComponentList();
+  //useFrontbucketList
+  const [bucketLoading, bucketsOption, queryFrontbucketList] = useFrontbucketList();
+  //useBelongList
+  const [belongLoading, belongOption, queryBelongList] = useBelongList();
+  //useNamespaceList
+  const [namespaceLoading, namespaceOption, queryNamespaceList] = useNamespaceList();
+  const [delSelectLoading, bulkdelete] = useBulkdelete();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  //selectedRows
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
   const ref = useRef<ProFormInstance>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
+  const [batchMiddlewareMode, setBatchMiddlewareMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
-  const [position, setPosition] = useState<'top' | 'bottom' | undefined>('top');
   const updateRow = (rowKey: string, row: any) => {
     form.setFieldsValue({ [rowKey]: row });
   };
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
-    // getProductlineList();
-    // queryProductVersionOptions(currentTabType); //组件版本查询
     queryVersionComponentList(versionId, currentTab);
   }, [currentTab]);
+  useEffect(() => {
+    queryFrontbucketList();
+    queryBelongList();
+
+  }, [])
+
 
   const middleColumns = useMemo(() => {
     return createMiddlewareTableColumns({
-      nameOnchange: (param,config:any) => {
+      nameOnchange: (param, config: any) => {
         queryProductVersionOptions(param.value, currentTabType);
+        queryNamespaceList(param.label)
         componentOptions.filter((item: any) => {
           if (item.label === param.label) {
             updateRow(config.recordKey, {
               ...form.getFieldsValue(config.recordKey),
               componentDescription: item.componentDescription,
+              componentDependency: item.componentDependency,
+              componentReleaseName: item.label,
+
             });
           }
         });
-       
+
       },
       onConfig: (record) => {
         history.push({
-          pathname: '/matrix/station/component-detail'},
-         {
+          pathname: '/matrix/station/component-detail'
+        },
+          {
             initRecord: record,
             productVersionId: versionId,
             componentName: record.componentName,
@@ -107,7 +108,7 @@ export default (props: VersionDetailProps) => {
           },
         );
       },
-     
+      // queryReleaseList()
       onDelete: async (record) => {
         if (isEditable) {
           message.info('已发布不可以删除!');
@@ -118,189 +119,79 @@ export default (props: VersionDetailProps) => {
         }
       },
       componentOptions,
-      componentVersionOptions
-     
+      componentVersionOptions,
+      namespaceOption,
+
+
     }) as any;
-  }, []);
+  }, [componentOptions, componentVersionOptions, namespaceOption,]);
 
   const columns = useMemo(() => {
-   
+
     return createProTableColumns({
       currentTabType: currentTabType,
-      onManage: (record, index) => {
-       
-       
-      },
-      onPublish: (record, index) => {
-       
-      },
-      onDelete: async (record, index) => {
-       
-      },
-      
-    }) as any;
-  }, []);
+      componentOptions,
+      componentVersionOptions,
+      bucketsOption,
+      belongOption,
+      bucketLoading,
+      belongLoading,
+      onConfig: (text: React.ReactNode, record: any, _: any, action: any) => {
+        history.push({
+          pathname: '/matrix/station/component-detail',
+        }, {
+          initRecord: record,
+          productVersionId: versionId,
+          componentName: record.componentName,
+          componentVersion: record.componentVersion,
+          componentId: record.componentId,
+          componentType: currentTab,
+          componentDescription: record.componentDescription,
+          optType: 'versionDetail',
+          versionDescription: versionDescription,
+          releaseStatus: releaseStatus,
+          descriptionInfoData: descriptionInfoData,
+
+        });
 
 
-  const columnss: ProColumns<DataSourceType>[] = [
-    {
-      title: currentTabType === 'app' ? '应用名称' : currentTabType === 'fe-source' ? '前端资源名称' : '基础数据名称',
-      key: 'componentName',
-      dataIndex: 'componentName',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
       },
-      renderFormItem: (_, config: any, data) => {
-        let description = '';
+
+      onDelete: async (text: React.ReactNode, record: any, _: any, action: any) => {
+        if (isEditable) {
+          message.info('已发布不可以删除!');
+        } else {
+          deleteVersionComponent(record.id).then(() => {
+            setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+          });
+        }
+      },
+      onChange: (param: any, config: any) => {
+        queryProductVersionOptions(param.value, currentTabType);
         componentOptions.filter((item: any) => {
-          if (item.label === config.record?.componentName) {
-            description = item.componentDescription;
+          if (item.label === param.label) {
+            updateRow(config.recordKey, {
+              ...form.getFieldsValue(config.recordKey),
+              componentDescription: item.componentDescription,
+            });
           }
         });
-        return (
-          <Select
-            options={componentOptions}
-            showSearch
-            allowClear
-            labelInValue
-            optionFilterProp="label"
-            onChange={(param: any) => {
-              queryProductVersionOptions(param.value, currentTabType);
-              componentOptions.filter((item: any) => {
-                if (item.label === param.label) {
-                  updateRow(config.recordKey, {
-                    ...form.getFieldsValue(config.recordKey),
-                    componentDescription: item.componentDescription,
-                  });
-                }
-              });
-            }}
-          ></Select>
-        );
-      },
-    },
-    {
-      title: currentTabType === 'app' ? '应用版本' : currentTabType === 'front' ? '前端资源版本' : '基础数据版本',
-      key: 'componentVersion',
-      dataIndex: 'componentVersion',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
-      renderFormItem: (_, config: any, data) => {
-        //  ]
-        return (
-          <Select
-            options={componentVersionOptions}
-            showSearch
-            allowClear
-            // onChange={(value: any) => {
 
-            // }}
-          ></Select>
-        );
       },
-    },
-    {
-      title: 'Bucket',
-      key: 'paramComponent',
-      dataIndex: 'paramComponent',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
-      renderFormItem: (_, config: any, data) => {
-        return (
-          <Select
-            options={[]}
-            showSearch
-            allowClear
-            onChange={(value: any) => {
-             
-            }}
-          ></Select>
-        );
-      },
-    },
-    {
-      title: currentTabType === 'app' ? '应用描述' : currentTabType === 'fe-source' ? '前端资源描述' : '基础数据描述',
-      dataIndex: 'componentDescription',
-      renderFormItem: (_, config: any, data) => {
-        return <Input></Input>;
-      },
-    },
 
-    {
-      title: '操作',
-      valueType: 'option',
-      width: 250,
-      render: (text, record: any, _, action) => [
-        <a
-          onClick={() => {
-            history.push({
-              pathname: '/matrix/station/component-detail',
-            },{
-                initRecord: record,
-                productVersionId: versionId,
-                componentName: record.componentName,
-                componentVersion: record.componentVersion,
-                componentId: record.componentId,
-                componentType: currentTab,
-                componentDescription: record.componentDescription,
-                optType: 'versionDetail',
-                versionDescription: versionDescription,
-                releaseStatus: releaseStatus,
-                descriptionInfoData: descriptionInfoData,
-              
-            });
-          }}
-        >
-          配置
-        </a>,
-        <Popconfirm
-          title="确定要删除吗？"
-          onConfirm={() => {
-            if (isEditable) {
-              message.info('已发布不可以删除!');
-            } else {
-              deleteVersionComponent(record.id).then(() => {
-                setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-              });
-            }
-          }}
-        >
-          <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>
-            删除
-          </a>
-        </Popconfirm>,
-      ],
-    },
-  ];
+    }) as any;
+  }, [currentTabType, componentOptions, componentVersionOptions, bucketsOption, belongOption, belongLoading]);
+
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: any) => {
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedRows(selectedRows)
+  };
+  const rowSelection: TableRowSelection<DataSourceType> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
 
   const search = () => {
     const value = searchForm.getFieldsValue();
@@ -308,7 +199,19 @@ export default (props: VersionDetailProps) => {
   };
   return (
     <>
-      <BatchDraw
+      <BatchMiddlewareDraw
+        mode={batchMiddlewareMode}
+        versionId={versionId}
+        componentOptions={componentOptions}
+        onClose={() => setBatchMiddlewareMode('HIDE')}
+        onSave={() => {
+          queryVersionComponentList(versionId, currentTab);
+          setBatchMiddlewareMode('HIDE');
+          searchForm.resetFields();
+        }}
+
+      />
+      <BatchAppDraw
         mode={batchAddMode}
         versionId={versionId}
         onClose={() => setBatchAddMode('HIDE')}
@@ -328,8 +231,9 @@ export default (props: VersionDetailProps) => {
                   currentTabType === 'app'
                     ? '请输入应用名称'
                     : currentTabType === 'middleware'
-                    ? '请输入中间件名称'
-                    : '请输入基础数据名称'
+                      ? '请输入中间件名称' : currentTabType === 'front'
+                        ? '请输入前端资源名称'
+                        : '请输入基础数据名称'
                 }
               ></Input>
             </Form.Item>
@@ -357,6 +261,17 @@ export default (props: VersionDetailProps) => {
               添加应用
             </Button>
           )}
+          {currentTabType === 'middleware' && (
+            <Button
+              type="primary"
+              disabled={isEditable}
+              icon={<PlusOutlined />}
+              style={{ marginRight: 12 }}
+              onClick={() => setBatchMiddlewareMode('ADD')}
+            >
+              批量添加中间件
+            </Button>
+          )}
         </div>
       </div>
       <EditableProTable<DataSourceType>
@@ -365,7 +280,11 @@ export default (props: VersionDetailProps) => {
         formRef={ref}
         headerTitle="可编辑表格"
         loading={loading}
-        rowSelection={{}}
+        rowSelection={rowSelection}
+        // tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (
+        //  <>
+        //  </>
+        // )}
         // maxLength={5}
         // 关闭默认的新建按钮
         // recordCreatorProps={false}
@@ -375,7 +294,7 @@ export default (props: VersionDetailProps) => {
           creatorButtonText: '新增组件',
           record: { id: (Math.random() * 1000000).toFixed(0) },
         }}
-        columns={currentTabType === 'middleware'?middleColumns:columns}
+        columns={currentTabType === 'middleware' ? middleColumns : columns}
         scroll={{ y: window.innerHeight - 340 }}
         value={tableDataSource}
         onChange={setDataSource}
@@ -387,7 +306,7 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-         
+
             await addComponent({
               versionId,
               ...params,
@@ -401,7 +320,19 @@ export default (props: VersionDetailProps) => {
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
       />
-      <p className="compontents-delete-button"><Button>删除选中</Button></p>
+      <p className="compontents-delete-button"><Button onClick={() => {
+        let ids: any = []
+        selectedRows?.map((ele: any) => {
+          ids.push(ele?.componentId)
+
+        })
+        bulkdelete(ids).then(() => {
+          selectedRowKeys?.map((item) => {
+            setDataSource(tableDataSource.filter((item: any) => item.id !== item));
+          })
+
+        })
+      }}>删除选中</Button></p>
     </>
   );
 };

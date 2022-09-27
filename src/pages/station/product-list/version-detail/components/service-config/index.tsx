@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
-import type { ProColumns } from '@ant-design/pro-table';
+import React, { useRef, useState, useEffect,useMemo } from 'react';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import { Button, Input, Form, Select, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Button, Input, Form} from 'antd';
+import {createServiceConfigTableColumns} from './schema'
 import {
   useQueryParamList,
   useQueryDeliveryParamList,
@@ -56,108 +55,40 @@ export default (props: VersionDetailProps) => {
   }, []);
   useEffect(() => {
     //查询建站配置参数
-    queryDeliveryParamList(versionId);
+    queryDeliveryParamList(versionId,"service");
   }, []);
-  const columns: ProColumns<any>[] = [
-    {
-        title: '基准配置',
-        key: 'paramValue',
-        dataIndex: 'paramValue',
-        renderFormItem: (_, config: any, data) => {
-          return <Input placeholder="单行输入"></Input>;
-        },
+  const serviceConfigColumns = useMemo(() => {
+    return createServiceConfigTableColumns({
+      type:type,
+      paramOptions:paramOptions,
+      originOptions:originOptions,
+      onComChange: (value: any) => {
+        queryParamList(versionId, value);
+       
       },
+      onParamChange:(config:any,value: any)=>{
 
-    {
-      title: '配置中心',
-      key: 'paramName',
-      dataIndex: 'paramName',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
-      renderFormItem: (_, config: any, data) => {
-        let description = '';
         paramOptions.filter((item: any) => {
-          if (item.value === config.record?.componentVersion) {
-            description = item.componentDescription;
+          if (item.value === value) {
+            updateRow(config.recordKey, {
+              ...form.getFieldsValue(config.recordKey),
+              paramValue: item.paramValue,
+            });
           }
         });
-        return (
-          <Select
-            options={paramOptions}
-            showSearch
-            allowClear
-            onChange={(value: any) => {
-         
-              paramOptions.filter((item: any) => {
-                if (item.value === value) {
-                  updateRow(config.recordKey, {
-                    ...form.getFieldsValue(config.recordKey),
-                    paramValue: item.paramValue,
-                  });
-                }
-              });
-            }}
-          ></Select>
-        );
       },
-    },
-    {
-      title: '配置说明',
-      key: 'paramValue',
-      dataIndex: 'paramValue',
-      renderFormItem: (_, config: any, data) => {
-        return <Input disabled={true}></Input>;
+      onEdit:(record:any,  action:any)=>{
+        action?.startEditable?.(record.id);
+        setType('edit');
+        queryParamList(versionId, record.paramComponent);
       },
-    },
-    // {
-    //   title: '参数说明',
-    //   dataIndex: 'paramDescription',
-    // },
-
-    {
-      title: '操作',
-      valueType: 'option',
-      width: 250,
-      render: (text, record, _, action) => [
-        <a
-          key="editable"
-          onClick={() => {
-            // if (isEditable) {
-            //   message.info('已发布不可以编辑!');
-            // } else {
-            action?.startEditable?.(record.id);
-            setType('edit');
-            queryParamList(versionId, record.paramComponent);
-            // }
-          }}
-        >
-          编辑
-        </a>,
-        <Popconfirm
-          title="确定要删除吗？"
-          onConfirm={() => {
-            deleteDeliveryParam(record.id).then(() => {
-              setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
-            });
-          }}
-        >
-          <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>
-            删除
-          </a>
-        </Popconfirm>,
-      ],
-    },
-  ];
+      onDelete:(record:any)=>{
+        deleteDeliveryParam(record.id).then(() => {
+          setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+        });
+      }  
+    }) as any;
+  }, [type,originOptions,paramOptions]);
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param.paramName);
@@ -200,7 +131,7 @@ export default (props: VersionDetailProps) => {
         headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮
-        columns={columns}
+        columns={serviceConfigColumns}
         value={tableDataSource}
         onChange={(values) => {
           tableChange(values);
@@ -214,11 +145,11 @@ export default (props: VersionDetailProps) => {
             let params = value[objKey[0]];
             if (type !== 'edit') {
               await saveParam({ ...params, versionId }).then(() => {
-                queryDeliveryParamList(versionId);
+                queryDeliveryParamList(versionId,"service");
               });
             } else if (type === 'edit') {
               editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
-                queryDeliveryParamList(versionId);
+                queryDeliveryParamList(versionId,"service");
               });
             }
           },
