@@ -121,7 +121,7 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          <Button>批量添加</Button>
+          {/* <Button>批量添加</Button> */}
           {/* <Button
             type="primary"
             onClick={() => {

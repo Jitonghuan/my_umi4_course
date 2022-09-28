@@ -163,7 +163,7 @@ export default function VersionDetail() {
                         />
                       </div>
                     )}
-                     {item.value === 'service' && (
+                     {item.value === 'server' && (
                       <div>
                         <ServiceConfig
                           currentTab={item.value}
