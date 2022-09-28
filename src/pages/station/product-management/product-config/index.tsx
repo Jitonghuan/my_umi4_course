@@ -11,7 +11,7 @@ import { getRequest, postRequest } from '@/utils/request';
 import StationConfig from '../product-config/components/station-config';
 import StationDeploy from '../product-config/components/station-deploy';
 import StationPlan from '../product-config/components/station-plan'
-import AceEditor from '@/components/ace-editor';
+
 import { Tabs, Spin, Button, Descriptions, Typography, Table, Tag, Form, message, Tooltip, Modal,Segmented } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import {packageOutOptions} from './schema'
@@ -23,6 +23,7 @@ import {
   useCreatePackageInde,
   useEditIndentConfigYaml,
   useUpdateParamIndent,
+  useQueryIndentServerList
 } from '../hook';
 
 import './index.less';
@@ -49,6 +50,8 @@ export default function ProductConfig() {
   const [configInfoData, setConfigInfoData] = useState<any>({});
   const [editableStr, setEditableStr] = useState('');
   const [downloading, createPackageInde] = useCreatePackageInde();
+  //useQueryIndentServerList
+  const [serverLoading, serverDataSource, queryIndentServerList] = useQueryIndentServerList();
   const [loading, dataSource, queryIndentParamList] = useQueryIndentParamList();
   const [configLoading, configDataSource, queryIndentConfigParamList] = useQueryIndentConfigParamList();
   const [updateLoading, updateParamIndent] = useUpdateParamIndent();
@@ -59,7 +62,7 @@ export default function ProductConfig() {
   const [type, setType] = useState<string>('');
   const [curRecord, setCurRecord] = useState<any>({});
   const [packageLoading, setPackageLoading] = useState<boolean>(false);
-  const [editConfigLoading, editIndentConfigYaml] = useEditIndentConfigYaml();
+  
   const [indentConfigInfo, setIndentConfigInfo] = useState<any>({});
   const [configInfoLoading, setConfigInfoLoading] = useState<boolean>(false);
   const [curIndentPackageStatus, setCurIndentPackageStatus] = useState<string>('未知');
@@ -128,8 +131,9 @@ export default function ProductConfig() {
     if (configInfo.id) {
       queryPackageStatus(configInfo.id);
       queryIndentInfo(configInfo.id);
-      queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
-      queryIndentParamList({ id: configInfo.id, isGlobal: false });
+      queryIndentConfigParamList({ id: configInfo.id, paramComponent:"global" });
+      queryIndentParamList({ id: configInfo.id,  });
+      queryIndentServerList({id: configInfo.id, paramComponent:"server" })
     } else {
       return;
     }
@@ -137,7 +141,7 @@ export default function ProductConfig() {
   
   
   const downLoadIndent = () => {
-    createPackageInde(configInfo.id);
+    // createPackageInde(configInfo.id);
     cacheRef.current = setInterval(() => {
       queryPackageStatus(configInfo.id);
     }, 100);
@@ -166,18 +170,7 @@ export default function ProductConfig() {
   const getConfigInfo = () => {
     queryIndentConfigInfo(configInfo.id);
   };
-  const saveConfig = () => {
-    const value = configForm.getFieldsValue();
-    editIndentConfigYaml(configInfo.id, value.configInfo)
-      .then(() => {
-        queryIndentInfo(configInfo.id);
-        setReadOnly(true);
-        setButtonText('编辑');
-      })
-      .then(() => {
-        setVisible(false);
-      });
-  };
+
   const afreshText = '由最新的建站参数等配置生成新的制品配置，会覆盖原有的自定义配置';
   const updateText = '获取产品版本里最新的建站参数并更新到此处，不会改动参数值';
 
@@ -243,31 +236,41 @@ export default function ProductConfig() {
            
           }}
         />
-        {activeValue==="1"&&(<StationPlan/>)}
+        {activeValue==="1"&&(<StationPlan indentId={configInfo.id} />)}
         {activeValue==="2"&&(
         <StationConfig 
           configInfo={configInfo}
           onUpdate={()=>{
-            queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
-            queryIndentParamList({ id: configInfo.id, isGlobal: false });
+            //
+            queryIndentConfigParamList({ id: configInfo.id, paramComponent:"global" });
+            queryIndentParamList({ id: configInfo.id,  });
+            queryIndentConfigParamList({ id: configInfo.id, paramComponent:"server" });
+            // queryIndentConfigParamList({ id: configInfo.id, paramComponent:"server" });
           }}
           onSaveGlobal={()=>{
             queryIndentInfo(configInfo.id).then(() => {
-              queryIndentConfigParamList({ id: configInfo.id, isGlobal: true });
+              queryIndentConfigParamList({ id: configInfo.id, paramComponent:"global" });
             });
           }}
           onSave={()=>{
             queryIndentInfo(configInfo.id).then(() => {
-              queryIndentConfigParamList({ id: configInfo.id, isGlobal: false });
+              queryIndentConfigParamList({ id: configInfo.id,  });
+            });
+          }}
+          onSaveServer={()=>{
+            queryIndentInfo(configInfo.id).then(() => {
+              queryIndentConfigParamList({ id: configInfo.id, paramComponent:"server" });
             });
           }}
 
           configTableInfo={{configDataSource,configLoading}}
           compontentTableInfo={{loading, dataSource}}
+          serverTableInfo={{ serverDataSource,serverLoading,}}
+          
         
         
         />)}
-        {activeValue==="3"&&(<StationDeploy/>)}
+        {activeValue==="3"&&(<StationDeploy indentId={configInfo.id}/>)}
 
 
 

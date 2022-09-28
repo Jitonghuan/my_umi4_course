@@ -1,26 +1,36 @@
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+export const DbUsageOptions=[
+  {
+  label:"RDS",
+  value:"rds"
+  },
+  {
+    label:"mysql",
+    value:"mysql"
+    },
+]
 export const nodesSchema = ({ onEditClick }: { onEditClick: (record: any, index: number) => void }) =>
   [
     {
       title: '节点Ip',
-      dataIndex: 'paramComponent',
-      key: 'paramComponent',
+      dataIndex: 'serverIp',
+      key: 'serverIp',
     },
     {
       title: '主机名',
-      dataIndex: 'paramName',
+      dataIndex: 'hostname',
     },
     {
       title: '共享数据盘',
-      dataIndex: 'paramValue',
+      dataIndex: 'isRootDisk',
     },
     {
       title: '角色',
-      dataIndex: 'paramDescription',
+      dataIndex: 'nodeRole',
     },
     {
         title: '用途',
-        dataIndex: 'paramDescription',
+        dataIndex: 'dataDisk',
       },
     {
       title: '操作',

@@ -32,7 +32,7 @@ export const deliveryTabsConfig: any = [
   },
   {
     label: '服务配置',
-    value: 'service',
+    value: 'server',
   },
 ];
 

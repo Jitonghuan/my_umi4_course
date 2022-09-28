@@ -176,7 +176,7 @@ export default function BasicModal(props: DetailProps) {
           getValueFromEvent={normFile}
           rules={[{ required: true, message: '请上传基础数据！' }]}
         >
-          <Upload name="logo" accept=".sql" action="/upload.do" {...Uploadprops}>
+          <Upload name="logo" accept=".tgz" action="/upload.do" {...Uploadprops}>
             <Button icon={<UploadOutlined />}>选择文件</Button>
           </Upload>
         </Form.Item>

@@ -354,7 +354,11 @@ export default function ComponentDetail() {
               
                   {componentType==="middleware"&&
                    <Descriptions.Item label="依赖组件" span={2}>
-                   {componentInfo?.componentDependency || '--'} 
+                   
+                   {componentInfo?.componentDependency?.split(',')?.map((item:any)=>{
+                     <Tag>{item}</Tag>
+
+                   }) || '--'} 
                    <span style={{float:"right"}}><MinusCircleOutlined onClick={()=>{setMode("EDIT");}} style={{fontSize:16,color:"#3591ff"}} />&nbsp;<PlusCircleOutlined onClick={()=>{setMode("ADD")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
                  </Descriptions.Item> }
                  
@@ -378,7 +382,7 @@ export default function ComponentDetail() {
                   </div> 
                 <div style={{paddingLeft:10,display:"flex"}}>
                   <b>版本说明:</b>
-                  <span>{componentInfo?.componentExplanation}</span>
+                  {/* <span>{componentInfo?.componentExplanation}</span> */}
                 </div>
                 <div className="instruction">
                   <div className="instruction-info">
@@ -398,7 +402,8 @@ export default function ComponentDetail() {
           <TabPane tab="版本配置" key="component-config">
             <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
               <p>
-                <Button
+                {type !== 'componentCenter'&&(
+                  <Button
                   type={buttonText === '编辑' ? 'primary' : 'default'}
                   disabled={type === 'componentCenter'}
                   onClick={() => {
@@ -413,6 +418,9 @@ export default function ComponentDetail() {
                 >
                   {buttonText}
                 </Button>
+
+                )}
+                
               </p>
             </div>
             <div>
@@ -436,14 +444,15 @@ export default function ComponentDetail() {
       </ContentCard>
       <Modal destroyOnClose title={mode==="ADD"?"选择要新增的依赖组件":"选择要删除的依赖组件"} visible={mode!=="HIDE"} onCancel={()=>{ setMode("HIDE")}} confirmLoading={addLoading||delLoading} onOk={()=>{
         if(mode==="ADD"){
-          addRely(initRecord.id,selectedItems).then(()=>{
+          // receiver: (values.receiver || []).join(','),
+          addRely(initRecord.id,(selectedItems||[]).join(',')).then(()=>{
             setMode("HIDE")
-            queryComponentInfo(componentName, componentVersion, componentType, componentId);
+            queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);
           })
         }else{
-          deleteRely(initRecord.id,selectedItems).then(()=>{
+          deleteRely(initRecord.id,(selectedItems||[]).join(',')).then(()=>{
             setMode("HIDE")
-            queryComponentInfo(componentName, componentVersion, componentType, componentId);
+            queryComponentInfo(componentName,  curVersion.version, componentType, curVersion.componentId);
           })
         }
       }}>

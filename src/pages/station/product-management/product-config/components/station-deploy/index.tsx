@@ -1,10 +1,71 @@
-import React, { useState,  useMemo,useRef } from 'react';
-import { Tabs, Button,Table, Tooltip,message,Row,Col,Tag,Card} from 'antd';
-import './index.less'
-export default function StationDeploy(){
+import React, { useState,  useMemo,useRef ,useEffect,useCallback} from 'react';
+import { Tabs, Button,Table, Tooltip,message,Row,Col,Tag,Card,Spin} from 'antd';
+import ConfigModal from './config-modal';
+import {useCreatePackageInde,} from '../../../hook';
+import { getRequest, postRequest } from '@/utils/request';
+import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../../../service';
+import './index.less';
+// "online", 在线包
+// "offline",离线包
+// "onlineComponent",在线组件包
+// "offlineComponent",离线组件包
+interface Iprops{
+    indentId:number
+}
+export default function StationDeploy(props:Iprops){
+    const {indentId}=props;
+    const [indentConfigInfo, setIndentConfigInfo] = useState<any>("");
+    const [configInfoLoading, setConfigInfoLoading] = useState<boolean>(false);
+    const [editVisable,setEditVisable] = useState<boolean>(false);
+    const [downloading, createPackageInde] = useCreatePackageInde();
+    useEffect(()=>{
+        if(!indentId) return
+        queryIndentConfigInfo(indentId)
+    },[indentId])
+    const getConfigInfo = () => {
+        queryIndentConfigInfo(indentId)
+      };
+    
+    const queryIndentConfigInfo = useCallback(async (id: number) => {
+        setConfigInfoLoading(true);
+        try {
+          await postRequest(`${generateIndentConfig}?id=${id}`)
+            .then((res) => {
+              if (res.success) {
+                setIndentConfigInfo(res.data || '');
+              } else {
+                return;
+              }
+            })
+            .finally(() => {
+              setConfigInfoLoading(false);
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      },[]);
+      const downLoadIndent = (packageType:string) => {
+        createPackageInde(indentId,packageType);
+        
+      };
+      
+    
     return (<div className="station-deploy-content" >
-        <div>
-            <span><b>建站配置：</b> <Tag color="cyan" >编辑</Tag> &nbsp; &nbsp;<Tag color="geekblue" >重新生成</Tag></span>
+        <ConfigModal 
+        configInfoLoading={configInfoLoading} 
+        indentConfigInfo={indentConfigInfo}  
+        indentId={indentId}
+        onSave={()=>{setEditVisable(false);  queryIndentConfigInfo(indentId)}}
+        onClose={()=>{setEditVisable(false);}}
+        visible={editVisable}
+
+        />
+        <div >
+            <span style={{display:'flex'}}>
+                <b>建站配置：</b> 
+                <Tag color="cyan" onClick={()=>{setEditVisable(true)}}>编辑</Tag> &nbsp; &nbsp;
+                <Spin spinning={configInfoLoading} ><Tag color="geekblue"  onClick={getConfigInfo}  >重新生成</Tag></Spin>
+            </span>
         </div>
         <div style={{paddingTop:16}}>
             <p><b>出包部署:</b></p>

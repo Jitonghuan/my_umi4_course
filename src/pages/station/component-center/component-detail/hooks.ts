@@ -137,7 +137,7 @@ export function useUpdateConfiguration(): [boolean, (id: number, componentConfig
 
 //删除依赖组件
 
-export function useDeleteRely(): [boolean, (id: number, componentDependency: string[]) => Promise<void>] {
+export function useDeleteRely(): [boolean, (id: number, componentDependency: string) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const deleteRely = async (id: number, componentDependency: string) => {
     setLoading(true);
@@ -163,7 +163,7 @@ export function useDeleteRely(): [boolean, (id: number, componentDependency: str
 //新增依赖组件
 
 
-export function useAddRely(): [boolean, (id: number, componentDependency: string[]) => Promise<void>] {
+export function useAddRely(): [boolean, (id: number, componentDependency: string) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const addRely = async (id: number, componentDependency: string) => {
     setLoading(true);

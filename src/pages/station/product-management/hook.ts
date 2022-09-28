@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import * as APIS from '../service';
 import { message } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
+
+
 // 查询产品列表
 export function useQueryIndentList(): [
   boolean,
@@ -140,15 +142,48 @@ export function useEditDescription(): [boolean, (id: number, indentDescription: 
 }
 
 // 获取制品建站配置列表
-export function useQueryIndentConfigParamList(): [
+export function useQueryIndentServerList(): [
   boolean,
   any[],
-  (paramsObj: { id: number; isGlobal?: boolean }) => Promise<void>,
+  (paramsObj: { id: number;paramComponent?: string}) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
 
-  const queryIndentConfigParamList = async (paramsObj: { id: number; isGlobal?: boolean }) => {
+  const queryIndentServerList = async (paramsObj: { id: number;paramComponent?: string }) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryIndentParamList, {
+        data: paramsObj,
+      })
+        .then((res) => {
+          if (res.success) {
+            setDataSource(res.data);
+          } else {
+            return [];
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, queryIndentServerList];
+}
+
+
+// 获取制品建站配置列表
+export function useQueryIndentConfigParamList(): [
+  boolean,
+  any[],
+  (paramsObj: { id: number;paramComponent?: string}) => Promise<void>,
+] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+
+  const queryIndentConfigParamList = async (paramsObj: { id: number;paramComponent?: string }) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryIndentParamList, {
@@ -175,12 +210,12 @@ export function useQueryIndentConfigParamList(): [
 export function useQueryIndentParamList(): [
   boolean,
   any[],
-  (paramsObj: { id: number; isGlobal?: boolean }) => Promise<void>,
+  (paramsObj: { id: number;  }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
 
-  const queryIndentParamList = async (paramsObj: { id: number; isGlobal?: boolean }) => {
+  const queryIndentParamList = async (paramsObj: { id: number;  }) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryIndentParamList, {
@@ -229,12 +264,12 @@ export function useSaveIndentParam(): [boolean, (id: number, paramValue: string)
 }
 
 // 出部署包
-export function useCreatePackageInde(): [boolean, (id: number) => Promise<void>] {
+export function useCreatePackageInde(): [boolean, (id: number,packageType:string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const createPackageInde = async (id: number) => {
+  const createPackageInde = async (id: number,packageType:string) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.createPackageInde}?id=${id}`)
+      await postRequest(`${APIS.createPackageInde}?id=${id}&packageType=${packageType}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);

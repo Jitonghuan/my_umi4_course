@@ -3,18 +3,21 @@ import { Tabs, Button,Table, Tooltip} from 'antd';
 import {useUpdateParamIndent,} from '../../../hook';
 import { QuestionCircleOutlined} from '@ant-design/icons';
 import { compontentsSchema, configDeliverySchema,serviceConfigSchema } from '../../schema';
-import ParameterEditModal from '../../editModal';
+import ParameterEditModal from './editModal';
+
 export interface IProps {
     configInfo:any;
     onUpdate:()=>void;
     onSaveGlobal:()=>void;
     onSave:()=>void;
+    onSaveServer:()=>void;
     configTableInfo:any;
     compontentTableInfo:any
+    serverTableInfo:any
   }
   
 export default function StationConfig(props:IProps){
-    const {configInfo,onUpdate,onSaveGlobal,onSave,configTableInfo,compontentTableInfo} =props
+    const {configInfo,onUpdate,onSaveGlobal,onSave,serverTableInfo,onSaveServer,configTableInfo,compontentTableInfo} =props
     const { TabPane } = Tabs;
     const [tabActiveKey, setTabActiveKey] = useState<string>('1');
     const [editVisable, setEditVisable] = useState<boolean>(false);
@@ -22,7 +25,7 @@ export default function StationConfig(props:IProps){
     const [type, setType] = useState<string>('');
     const [curRecord, setCurRecord] = useState<any>({});
     const updateText = '获取产品版本里最新的建站参数并更新到此处，不会改动参数值';
-    const tabOnclick = (key: any) => {
+    const tabOnclick = (key: string) => {
         setTabActiveKey(key);
       };
      
@@ -53,7 +56,7 @@ const serviceConfigTableColumns = useMemo(() => {
       onEditClick: (record, index) => {
         setEditVisable(true);
         setCurRecord(record);
-        setType('compontent');
+        setType('server');
       },
     }) as any;
   }, []);
@@ -62,9 +65,13 @@ const serviceConfigTableColumns = useMemo(() => {
     if (type === 'config') {
     onSaveGlobal()
       setEditVisable(false);
-    } else {
+    } else if(type === 'compontent') {
      onSave();
       setEditVisable(false);
+    }else if(type === 'server'){
+      onSaveServer();
+      setEditVisable(false)
+
     }
   };
 
@@ -77,7 +84,9 @@ const serviceConfigTableColumns = useMemo(() => {
               activeKey={tabActiveKey}
               onChange={tabOnclick}
               tabBarExtraContent={
-                <Button
+                <>
+              
+                  <Button
                   type="primary"
                   loading={updateLoading}
                   onClick={() => {
@@ -91,7 +100,10 @@ const serviceConfigTableColumns = useMemo(() => {
                     <QuestionCircleOutlined />
                   </Tooltip>
                 </Button>
-              }
+               
+             
+              
+              </>}
             >
               <TabPane tab="全局参数" key="1">
                 <Table columns={configTableColumns} dataSource={configTableInfo?.configDataSource} loading={configTableInfo?.configLoading}></Table>
@@ -100,7 +112,7 @@ const serviceConfigTableColumns = useMemo(() => {
                 <Table columns={componentTableColumns} dataSource={compontentTableInfo?.dataSource} loading={compontentTableInfo?.loading}></Table>
               </TabPane>
               <TabPane tab="服务配置" key="3">
-                <Table columns={serviceConfigTableColumns} dataSource={compontentTableInfo?.dataSource} loading={compontentTableInfo?.loading}></Table>
+                <Table columns={serviceConfigTableColumns} dataSource={serverTableInfo?.dataSource} loading={serverTableInfo?.loading}></Table>
               </TabPane>
             </Tabs>
             <ParameterEditModal
@@ -112,6 +124,7 @@ const serviceConfigTableColumns = useMemo(() => {
               }}
               onSubmit={handleSubmit}
       />
+    
         
     </div>
    

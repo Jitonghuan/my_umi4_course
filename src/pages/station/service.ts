@@ -219,3 +219,31 @@ export const addRelyApi = addAPIPrefix('/deliveryManage/component/rely/add');
 /*13、 DELETE 删除依赖组件 */
 
 export const deleteRelyApi = addAPIPrefix('/deliveryManage/component/rely/delete');
+
+/*14、 POST 保存基础配置 */
+
+export const saveBasicInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/saveBasicInfo');
+
+/*15、 POST 保存节点配置 */
+
+export const saveServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/saveServerInfo');
+
+/*16、 POST 保存数据库信息 */
+
+export const saveDatabaseInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/saveDatabaseInfo');
+
+/*17、 GET 查看节点配置 */
+
+export const listServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listServerInfo');
+
+/*18、 GET 校验主机ip唯一性 */
+
+export const checkServerIpApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerIp');
+
+/*19、 GET 校验主机名称唯一性 */
+
+export const checkServerNameApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerName');
+//deliveryManage/indent/arrangement/deleteServer
+/*20、 DELETE 节点多选删除 */
+
+export const deleteServerApi = addAPIPrefix('/deliveryManage/indent/arrangement/deleteServer');
