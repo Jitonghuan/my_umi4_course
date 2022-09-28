@@ -471,12 +471,12 @@ export default function DeployContent(props: DeployContentProps) {
                           pathname: 'container-info',
                           search:`appCode=${appCode}&envCode=${currentEnvData}&viewLogEnvType=${envTypeCode}`
                       },{
-                          appCode: appCode,
+                        infoRecord:{ appCode: appCode,
                           envCode: currentEnvData,
                           viewLogEnvType: envTypeCode,
                           infoRecord: record,
                           id: appData?.id,
-                      });
+                       } });
                     }}
                   >
                     {v}

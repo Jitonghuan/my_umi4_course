@@ -410,14 +410,14 @@ export default function DeployContent(props: DeployContentProps) {
                         //   // initRecord:JSON.stringify(record)
                         // },
                       },{
-                          appCode: appCode,
+                        infoRecord:{ appCode: appCode,
                           // envCode: currentEnvData,
                           projectEnvName: projectEnvName,
                           projectEnvCode: currentEnvData,
                           // viewLogEnvType: envTypeCode,
                           infoRecord: record,
                           id: appData?.id,
-                        
+                        }
                       });
                     }}
                   >
@@ -438,8 +438,8 @@ export default function DeployContent(props: DeployContentProps) {
                 width={100}
                 render={(status, record) => {
                   return (
-                    <Tag color={LIST_STATUS_TYPE[status].color || 'default'}>
-                      {LIST_STATUS_TYPE[status].text || status}
+                    <Tag color={LIST_STATUS_TYPE[status]?.color || 'default'}>
+                      {LIST_STATUS_TYPE[status]?.text || status}
                     </Tag>
                   );
                 }}

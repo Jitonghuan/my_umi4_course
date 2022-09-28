@@ -18,7 +18,7 @@ import './index.less';
 export default function ViewLog(props: any) {
   const [previous, setPrevious] = useState<boolean>(false);
   let location:any = useLocation();
-  const { infoRecord } = location.state;
+  const { infoRecord } = location?.state;
   const query :any= parse(location.search);
   const [viewLogform] = Form.useForm();
   const { appData } = useContext(DetailContext);
@@ -138,13 +138,13 @@ export default function ViewLog(props: any) {
           search:`appCode=${appCode}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`
         },
           {
-            appCode: appCode,
+            infoRecord:{  appCode: appCode,
             projectEnvCode: projectEnvCode,
             projectEnvName: projectEnvName,
             // viewLogEnvType: viewLogEnvType,
             infoRecord: infoRecord,
             id: appData?.id,
-          },
+          }},
         );
       } else {
         history.push({

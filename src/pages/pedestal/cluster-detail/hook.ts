@@ -62,6 +62,7 @@ export function useNodeListData(props: any) {
       }
     } catch (ex) {
       setData([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }

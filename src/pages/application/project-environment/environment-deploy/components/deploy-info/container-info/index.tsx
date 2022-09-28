@@ -13,6 +13,7 @@ export default function ContainerInfo(props: any) {
   const query = parse(location.search);
   const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id, projectEnvName } =location.state?.infoRecord || {};
   const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
+  console.info("stateParams---->",location.state?.infoRecord)
   const [queryContainer, queryContainerData, loading] = useListContainer();
   useEffect(() => {
     if (!infoRecord?.instName || !projectEnvCode || !appCode) {
@@ -103,8 +104,8 @@ export default function ContainerInfo(props: any) {
         </Descriptions.Item>
         <Descriptions.Item label="运行状态">
           {
-            <Tag color={LIST_STATUS_TYPE[infoRecord.instStatus]?.color || 'default'}>
-              {LIST_STATUS_TYPE[infoRecord.instStatus]?.text || infoRecord.instStatus}
+            <Tag color={LIST_STATUS_TYPE[infoRecord?.instStatus]?.color || 'default'}>
+              {LIST_STATUS_TYPE[infoRecord?.instStatus]?.text || infoRecord?.instStatus}
             </Tag>
           }
         </Descriptions.Item>

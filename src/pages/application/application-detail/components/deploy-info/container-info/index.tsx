@@ -13,11 +13,12 @@ import './index.less';
 export default function ContainerInfo(props: any) {
   let location = useLocation();
   const stateParams:any=location?.state||{};
-  const infoRecord = stateParams?.infoRecord || {};
-  const appCode = stateParams?.appCode || '';
-  const envCode = stateParams?.envCode || '';
-  const viewLogEnvType = stateParams?.viewLogEnvType || '';
-  const id = stateParams?.id || '';
+  const infoRecordTotal= stateParams?.infoRecord || {};
+  const appCode = infoRecordTotal?.appCode || '';
+  const envCode = infoRecordTotal?.envCode || '';
+  const viewLogEnvType = infoRecordTotal?.viewLogEnvType || '';
+  const id = infoRecordTotal?.id || '';
+  const infoRecord=infoRecordTotal?.infoRecord;
   const [queryContainerData, setQueryContainerData] = useState<any>([]);
   const [podListSource, setPodListSource] = useState<any>([]);
   const containerIntervalFunc = () => {
