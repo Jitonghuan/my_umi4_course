@@ -182,7 +182,7 @@ export const createMiddlewareTableColumns = (params: {
             
             }}
           >
-            配置
+            编辑
           </a>,
           <Popconfirm
             title="确定要删除吗？"
