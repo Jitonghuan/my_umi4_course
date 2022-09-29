@@ -20,10 +20,6 @@ export const createMiddlewareTableColumns = (params: {
     componentOptions:any;
     componentVersionOptions:any
     namespaceOption:any;
-  
-  
-
-    // currentTabType;
   }) => {
     return [
       {

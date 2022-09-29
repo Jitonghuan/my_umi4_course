@@ -1,7 +1,6 @@
 import { useState,useCallback } from 'react';
 import * as APIS from '../../../../service';
-import { getRequest, postRequest, delRequest } from '@/utils/request';
-type AnyObject = Record<string, any>;
+import { getRequest,} from '@/utils/request';
 
   //queryBasecomponentList
   export function useBasecomponentList() {

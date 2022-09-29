@@ -12,19 +12,7 @@ import {
   useEditVersionParam,
   useQueryParamtypeList
 } from '../../hooks';
-
-type DataSourceType = {
-  id: any;
-  title?: string;
-  labels?: {
-    key: string;
-    label: string;
-  }[];
-  state?: string;
-  created_at?: string;
-  children?: DataSourceType[];
-  recordCreatorProps?: any;
-};
+import {DataSourceType} from '../editor-table-pro/schema'
 
 export interface VersionDetailProps {
   currentTab: string;
@@ -34,7 +22,7 @@ export interface VersionDetailProps {
 }
 
 export default (props: VersionDetailProps) => {
-  const { currentTab, versionId, isEditable, initDataSource } = props;
+  const {  versionId, } = props;
   const actionRef = useRef<ActionType>();
   const [saveLoading, saveParam] = useSaveParam();
   const [paramtypeOptions, queryParamtypeList]=useQueryParamtypeList()

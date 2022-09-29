@@ -356,10 +356,16 @@ export default function ComponentDetail() {
                    <Descriptions.Item label="依赖组件" span={2}>
                    
                    {componentInfo?.componentDependency?.split(',')?.map((item:any)=>{
-                     <Tag>{item}</Tag>
+                     <Tag  closable={true} onClose={() =>{
+                      deleteRely(initRecord.id,item).then(()=>{
+                        setMode("HIDE")
+                        queryComponentInfo(componentName,  curVersion.version, componentType, curVersion.componentId);
+                      })
+                     }}>{item}</Tag>
 
                    }) || '--'} 
-                   <span style={{float:"right"}}><MinusCircleOutlined onClick={()=>{setMode("EDIT");}} style={{fontSize:16,color:"#3591ff"}} />&nbsp;<PlusCircleOutlined onClick={()=>{setMode("ADD")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
+                   {/* <MinusCircleOutlined onClick={()=>{setMode("EDIT");}} style={{fontSize:16,color:"#3591ff"}} />&nbsp; */}
+                   <span style={{float:"right"}}><PlusCircleOutlined onClick={()=>{setMode("ADD")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
                  </Descriptions.Item> }
                  
                 </Descriptions>
@@ -448,11 +454,6 @@ export default function ComponentDetail() {
           addRely(initRecord.id,(selectedItems||[]).join(',')).then(()=>{
             setMode("HIDE")
             queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);
-          })
-        }else{
-          deleteRely(initRecord.id,(selectedItems||[]).join(',')).then(()=>{
-            setMode("HIDE")
-            queryComponentInfo(componentName,  curVersion.version, componentType, curVersion.componentId);
           })
         }
       }}>

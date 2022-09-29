@@ -2,7 +2,7 @@ import { useState,useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
-type AnyObject = Record<string, any>;
+
 
 //查询版本详情
 export function useVersionDescriptionInfo(): [boolean, any, (id: number) => Promise<void>] {
@@ -162,14 +162,10 @@ export function useQueryComponentVersionOptions(): [
         .then((res) => {
           if (res.success) {
             let dataSource = res.data;
-            // let options: any = {};
+         
             let options: any = [];
             dataSource?.map((item: any) => {
-              // componentDescription
-              // options[item.componentDescription] = {
-              //   text: item.componentVersion,
-              //   componentDescription: item.componentDescription,
-              // };
+              
               options.push({
                 label: item.componentVersion,
                 value: item.componentVersion,
@@ -336,9 +332,7 @@ export function useQueryOriginList() {
           let dataSource = res.data.dataSource;
           let options: any = [];
           dataSource?.map((item: any) => {
-            // options[item.componentName] = {
-            //   text: item.componentName,
-            // };
+            
             options.push({
               label: item.componentName,
               value: item.componentName,
@@ -367,13 +361,10 @@ export function useQueryParamList() {
       .then((res) => {
         if (res?.success) {
           let dataSource = res.data;
-          // let options: any = {};
+       
           let options: any = [];
           for (const key in dataSource) {
-            // options[key] = {
-            //   text: key,
-            //   configParamValue: JSON.stringify(dataSource[key]),
-            // };
+          
             options.push({
               label: key,
               value: key,

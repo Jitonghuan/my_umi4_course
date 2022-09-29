@@ -90,9 +90,6 @@ export const createProTableColumns = (params: {
               options={params?.componentVersionOptions}
               showSearch
               allowClear
-              // onChange={(value: any) => {
-  
-              // }}
             ></Select>
           );
         },

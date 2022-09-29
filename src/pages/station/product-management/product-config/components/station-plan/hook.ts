@@ -95,3 +95,83 @@ export const saveDatabaseInfo = (params: any) => {
     return postRequest(APIS.saveDatabaseInfoApi, { data: params });
   };
 //保存数据库信息
+//listNacosInfoApi
+export function useGetListNacosPurposeInfo(): [boolean,any, () => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const [data,setData]=useState<any>([]);
+  const getListNacosPurposeInfo= async () => {
+    setLoading(true);
+    try {
+      await getRequest(`${APIS.listNacosInfoApi}`,{data:{keyName:"nodePurpose"}})
+        .then((res) => {
+          if (res.success) {
+            const source=  res?.data?.map((item:string)=>(
+              {label:item,
+              value:item}
+            )
+              
+            )
+              setData(source)
+          } 
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading,data, getListNacosPurposeInfo];
+}
+export function useGetListNacosRoleInfo(): [boolean,any, () => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const [data,setData]=useState<any>([]);
+  const getListNacosRoleInfo= async () => {
+    setLoading(true);
+    try {
+      await getRequest(`${APIS.listNacosInfoApi}`,{data:{keyName:"nodeRole"}})
+        .then((res) => {
+          if (res.success) {
+          const source=  res?.data?.map((item:string)=>(
+            {label:item,
+            value:item}
+          )
+            
+          )
+            setData(source)
+          } 
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading,data, getListNacosRoleInfo];
+}
+
+//listBasicInfoApi
+
+export function useGetListBasicInfo(): [boolean,any, (indentId:number) => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const [data,setData]=useState<any>([]);
+  const getListBasicInfo= async (indentId:number) => {
+    setLoading(true);
+    try {
+      await getRequest(`${APIS.listBasicInfoApi}`,{data:{indentId}})
+        .then((res) => {
+          if (res.success) {
+         
+            setData(res?.data)
+          } 
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading,data, getListBasicInfo];
+}

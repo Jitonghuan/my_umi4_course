@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { history } from 'umi';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import type { TableRowSelection } from 'antd/es/table/interface';
@@ -10,7 +9,7 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import { createProTableColumns, DataSourceType } from './schema';
 import {createAppProTableColumns} from './app-schema'
 import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList, useDeleteVersionComponent, useAddCompontent, } from '../../hooks';
-import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent,useQueryComponentList } from './hook'
+import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent} from './hook'
 import BatchAppDraw from '../batch-app-draw';
 import BatchMiddlewareDraw from '../batch-middleware-draw';
 
@@ -31,10 +30,6 @@ export default (props: VersionDetailProps) => {
     versionId,
     currentTabType,
     isEditable,
-    releaseStatus,
-    initDataSource,
-    versionDescription,
-    descriptionInfoData,
   } = props;
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();

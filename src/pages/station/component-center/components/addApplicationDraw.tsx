@@ -38,12 +38,6 @@ export default function TmplEditor(props: AppComponentProps) {
   const handleSubmit = () => {
     if (type === 'success') {
       addForm.validateFields().then((params) => {
-        // let componentName;
-        // if (!Array.isArray(params.componentName)) {
-        //   componentName = [params.componentName];
-        // } else {
-        //   componentName = params.componentName;
-        // }
         addApplication({ ...params, componentName: curComponentName, componentType: tabActiveKey }).then(() => {
           onSave();
         });
@@ -165,9 +159,6 @@ export default function TmplEditor(props: AppComponentProps) {
         <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
           <Select style={{ width: 320 }} options={productLineOptions || []} disabled={isDisabled}></Select>
         </Form.Item>
-        {/* <Form.Item label="组件名称" name="componentName" rules={[{ required: true, message: '请选择组件名称' }]}>
-          <Select style={{ width: 320 }} mode="multiple" options={applicationOptions} disabled={isDisabled}></Select>
-        </Form.Item> */}
         <Form.Item
           label="组件版本"
           name="componentVersion"

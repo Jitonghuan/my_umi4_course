@@ -250,3 +250,11 @@ export const deleteServerApi = addAPIPrefix('/deliveryManage/indent/arrangement/
 /*21、 GET 查看出包详情 */
 
 export const packageListApi = addAPIPrefix('/deliveryManage/indent/package/list');
+
+/*22、 GET 获取主机角色和主机用途 分类 */
+
+export const listNacosInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listNacosInfo');
+
+/*23、 GET 查看基础配置信息 */
+
+export const listBasicInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listBasicInfo');

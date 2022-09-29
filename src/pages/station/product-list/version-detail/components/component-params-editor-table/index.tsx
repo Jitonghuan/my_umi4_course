@@ -3,28 +3,8 @@ import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Form } from 'antd';
 import {useBasecomponentList,useReleaseList} from './hook';
-import {createCompontentsTableColumns, } from './schema';
-import {
-  useQueryParamList,
-  useQueryDeliveryParamList,
-  useSaveParam,
-  useDeleteDeliveryParam,
-  useQueryOriginList,
-  useEditVersionParam,
-} from '../../hooks';
-
-type DataSourceType = {
-  id: any;
-  title?: string;
-  labels?: {
-    key: string;
-    label: string;
-  }[];
-  state?: string;
-  created_at?: string;
-  children?: DataSourceType[];
-  recordCreatorProps?: any;
-};
+import {createCompontentsTableColumns,DataSourceType } from './schema';
+import {useQueryParamList,useQueryDeliveryParamList,useSaveParam,useDeleteDeliveryParam,useQueryOriginList,useEditVersionParam,} from '../../hooks';
 
 export interface VersionDetailProps {
   currentTab: string;
@@ -121,19 +101,6 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          {/* <Button>批量添加</Button> */}
-          {/* <Button
-            type="primary"
-            onClick={() => {
-              actionRef.current?.addEditRecord?.({
-                id: (Math.random() * 1000000).toFixed(0),
-              });
-              setType('add');
-            }}
-            icon={<PlusOutlined />}
-          >
-            添加组件参数
-          </Button> */}
         </div>
       </div>
       <EditableProTable<DataSourceType>

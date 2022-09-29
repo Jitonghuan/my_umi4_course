@@ -3,27 +3,8 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Form, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import {
-  useQueryDeliveryParamList,
-  useSaveParam,
-  useQueryDeliveryGloableParamList,
-  useDeleteDeliveryParam,
-  useEditVersionParam,
-} from '../../hooks';
-
-type DataSourceType = {
-  id: any;
-  title?: string;
-  labels?: {
-    key: string;
-    label: string;
-  }[];
-  state?: string;
-  created_at?: string;
-  children?: DataSourceType[];
-};
-
+import {DataSourceType} from '../editor-table-pro/schema'
+import {useQueryDeliveryParamList,useSaveParam,useQueryDeliveryGloableParamList,useDeleteDeliveryParam,useEditVersionParam} from '../../hooks';
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
@@ -155,19 +136,6 @@ export default (props: VersionDetailProps) => {
         </div>
         <div className="caption-right">
         <Button>批量添加</Button>
-          {/* <Button
-            type="primary"
-            // disabled={isEditable}
-            onClick={() => {
-              setType('add');
-              actionRef.current?.addEditRecord?.({
-                id: (Math.random() * 1000000).toFixed(0),
-              });
-            }}
-            icon={<PlusOutlined />}
-          >
-            添加全局参数
-          </Button> */}
         </div>
       </div>
 

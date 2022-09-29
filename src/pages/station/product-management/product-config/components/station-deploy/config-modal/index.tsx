@@ -1,6 +1,6 @@
 import AceEditor from '@/components/ace-editor';
-import { useEffect,useState } from 'react';
-import { Modal, Input, Form,Spin } from 'antd';
+import { useEffect, } from 'react';
+import { Modal,Form,Spin } from 'antd';
 import {useEditIndentConfigYaml} from '../../../../hook';
 interface Iprops{
     configInfoLoading:boolean

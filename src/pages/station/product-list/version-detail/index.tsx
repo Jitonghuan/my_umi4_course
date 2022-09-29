@@ -8,7 +8,7 @@ import EditorTablePro from './components/editor-table-pro';
 import GlobalParamsEditorTable from './components/global-params-editor-table';
 import ComponentParamsEditorTable from './components/component-params-editor-table';
 import ServiceConfig from './components/service-config'
-import { productionTabsConfig, deliveryTabsConfig, productionPageTypes } from './tab-config';
+import { productionTabsConfig, deliveryTabsConfig} from './tab-config';
 import { useVersionDescriptionInfo, useEditProductVersionDescription } from './hooks';
 import './index.less';
 import { useQueryDeliveryParamList, useQueryDeliveryGloableParamList } from './hooks';
@@ -28,7 +28,6 @@ export default function VersionDetail() {
 
   useEffect(() => {
     if (!descriptionInfoData.versionId) {
-      debugger;
       return;
     }
     if (descriptionInfoData?.optType === 'componentDetail') {

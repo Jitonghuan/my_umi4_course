@@ -1,17 +1,19 @@
 import type { ProColumns } from '@ant-design/pro-table';
 import {  Input, Select,  Popconfirm, } from 'antd';
+export type DataSourceType = {
+  id: any;
+  title?: string;
+  labels?: {
+    key: string;
+    label: string;
+  }[];
+  state?: string;
+  created_at?: string;
+  children?: DataSourceType[];
+  recordCreatorProps?: any;
+};
 
-type DataSourceType = {
-    id: any;
-    title?: string;
-    labels?: {
-      key: string;
-      label: string;
-    }[];
-    state?: string;
-    created_at?: string;
-    children?: DataSourceType[];
-  };
+
   // 列表页-表格
 export const createCompontentsTableColumns = (params: {
     type:string;

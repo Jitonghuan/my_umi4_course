@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
-import { getRequest, postRequest, delRequest } from '@/utils/request';
-type AnyObject = Record<string, any>;
+import { getRequest, postRequest} from '@/utils/request';
 export interface CreateIndentItems{
   indentName: string;
   indentDescription: string;

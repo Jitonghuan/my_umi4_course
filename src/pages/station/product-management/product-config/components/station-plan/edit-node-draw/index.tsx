@@ -3,10 +3,11 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Drawer, Button, Form, Spin, Select, Space, Divider, Input, Switch,message } from 'antd';
+import { Drawer, Button, Form, Spin, Select, Input, Switch,message } from 'antd';
 import {  saveServerInfo } from '../hook';
 import { getRequest } from '@/utils/request';
-import { checkServerIpApi, checkServerNameApi } from '../../../../../service';
+import { checkServerIpApi, checkServerNameApi, } from '../../../../../service';
+import {useGetListNacosPurposeInfo,useGetListNacosRoleInfo} from '../hook'
 
 
 export interface IProps {
@@ -23,8 +24,9 @@ export default function EditNodeDraw(props: IProps) {
     const [loading, setLoading] = useState<boolean>(false);
     const [type, setType] = useState<string>('');
     const [rightInfo, setRightInfo] = useState<boolean>(false);
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const [infoLoading,purposeOptions, getListNacosPurposeInfo]=useGetListNacosPurposeInfo()
+    const [roleLoading,roleOptions, getListNacosRoleInfo]=useGetListNacosPurposeInfo()
     useEffect(()=>{
         if (mode === 'HIDE') return;
         if(mode==="EDIT"){
@@ -35,6 +37,9 @@ export default function EditNodeDraw(props: IProps) {
             })
 
         }
+        getListNacosPurposeInfo()
+        getListNacosRoleInfo()
+
     },[mode])
     const handleSubmit = async() => {
       const values=  await nodeForm.validateFields();
@@ -49,21 +54,22 @@ export default function EditNodeDraw(props: IProps) {
     };
     const onServerIpChange = (value: any) => {
         let formData = nodeForm.getFieldsValue();
-        getCheck("serverIp",formData.serverIp, );
+        getCheck("serverIp",formData.serverIp,checkServerIpApi );
       };
       const onHostnameChange = (value: any) => {
         let formData = nodeForm.getFieldsValue();
-        getCheck("hostname",formData.hostname, );
+        getCheck("hostname",formData.hostname,checkServerNameApi );
       };
     const getCheck = async (
         key:string,
         value: string, 
+        ip:string
       ) => {
         setLoading(true);
         setType('begin');
         try {
           await getRequest(
-            `${checkServerIpApi}?indentId=${indentId}&${key}=${value}`,
+            `${ip}?indentId=${indentId}&${key}=${value}`,
           )
             .then((res) => {
               if (res.success && res.data === 'success') {
@@ -199,10 +205,10 @@ rules={[
 
             </Form.Item>
             <Form.Item name="nodeRole" label="主机角色">
-                <Select style={{ width: 320 }}/>
+                <Select style={{ width: 320 }} loading={roleLoading} options={roleOptions}/>
             </Form.Item>
             <Form.Item name="nodePurpose" label="主机用途">
-                <Select style={{ width: 320 }}/>
+                <Select style={{ width: 320 }} loading={infoLoading} options={purposeOptions}/>
             </Form.Item>
             <Form.Item name="enableNfs" label="启用nfs server">
             <Switch />
