@@ -23,7 +23,7 @@ export const createProTableColumns = (params: {
   belongOption:any,
   bucketLoading:boolean,
   belongLoading:boolean
-  onConfig: (text:React.ReactNode, record: any, _:any, action:any) => void;
+  onEdit: (text:React.ReactNode, record: any, _:any, action:any) => void;
   onDelete: (text:React.ReactNode, record: any, _:any, action:any) => void;
   onChange:(param:any,config:any)=>void;
   
@@ -31,11 +31,10 @@ export const createProTableColumns = (params: {
 }) => {
   return [
     {
-        title:params?.currentTabType === 'app' ? '应用名称' : params?.currentTabType === 'front' ? '前端资源名称' : '基础数据名称',
-        key: 'componentName',
-        dataIndex: 'componentName',
-        valueType: 'select',
-        formItemProps: () => {
+      title: params?.currentTabType === 'front' ? '前端资源名称' : '基础数据名称',
+      dataIndex: 'componentName',
+      key: 'componentName',
+      formItemProps: () => {
           return {
             rules: [
               {
@@ -54,7 +53,6 @@ export const createProTableColumns = (params: {
             }
           });
           return (
-            <>
             <Select
               options={ params?.componentOptions}
               showSearch
@@ -65,11 +63,12 @@ export const createProTableColumns = (params: {
                 params?.onChange(param,config)
               }}
             ></Select>
-          </>);
+          );
         },
-      },
+    },
+    
       {
-        title: params?.currentTabType === 'app' ? '应用版本' : params?.currentTabType === 'front' ? '前端资源版本' : '基础数据版本',
+        title: params?.currentTabType === 'front' ? '前端资源版本' : '基础数据版本',
         key: 'componentVersion',
         dataIndex: 'componentVersion',
         valueType: 'select',
@@ -143,10 +142,10 @@ export const createProTableColumns = (params: {
         render: (text, record: any, _, action) => [
           <a
             onClick={() => {
-              params?.onConfig(text, record, _, action)
+              params?.onEdit(text, record, _, action)
             }}
           >
-            配置
+            编辑
           </a>,
           <Popconfirm
             title="确定要删除吗？"

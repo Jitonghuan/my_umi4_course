@@ -138,3 +138,42 @@ export function useBulkAdd() {
 
   return [loading,bulkadd];
 }
+interface editorParams{
+   id	:number		//产品组件编排id	true
+   componentName:string	//组件名称		true
+   componentType:string	//组件类型		true
+   componentVersion:string	//组件版本		true
+   componentDescription:string	//组件描述		true
+   componentReleaseName:string	//组件部署名称	true
+   componentConfiguration:string	//组件配置		true
+   componentNamespace:string //组件命名空间	true
+   componentDependency:string	//组件依赖		true
+   productLine:string	 //产品线			true
+
+}
+//编辑组件配置
+
+export function useEditComponent(): [boolean, (params: editorParams) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const editComponent = async (params: editorParams) => {
+    setLoading(true);
+    try {
+      await postRequest(APIS.editComponent, {
+        data: params
+      })
+        .then((res) => {
+          if (res.success) {
+            message.success(res.data);
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, editComponent];
+}

@@ -1,7 +1,6 @@
+import { Popconfirm, Select,Input } from 'antd';
 import type { ProColumns } from '@ant-design/pro-table';
-import {  Input, Select,  Popconfirm} from 'antd';
-
-type DataSourceType = {
+export type DataSourceType = {
     id: any;
     title?: string;
     labels?: {
@@ -12,21 +11,23 @@ type DataSourceType = {
     created_at?: string;
     children?: DataSourceType[];
   };
-  // 列表页-表格
-export const createMiddlewareTableColumns = (params: {
-    nameOnchange: (record: any, config: any) => void;
-    onConfig: (record: any) => void;
-    onDelete: (record: any) => void;
-    componentOptions:any;
-    componentVersionOptions:any
-    namespaceOption:any;
+  
   
 
-    // currentTabType;
-  }) => {
-    return [
-      {
-        title: '中间件名称',
+// 列表页-表格
+export const createAppProTableColumns = (params: {
+//   currentTabType:string,
+  componentOptions:any,
+  componentVersionOptions:any,
+  onEdit: (text:React.ReactNode, record: any, _:any, action:any) => void;
+  onDelete: (text:React.ReactNode, record: any, _:any, action:any) => void;
+  onChange:(param:any,config:any)=>void;
+  
+ 
+}) => {
+  return [
+    {
+        title: '应用名称',
         dataIndex: 'componentName',
         key: 'componentName',
         formItemProps: () => {
@@ -55,14 +56,15 @@ export const createMiddlewareTableColumns = (params: {
                 labelInValue
                 optionFilterProp="label"
                 onChange={(param: any) => {
-                  params?.nameOnchange(param,config)
+                    params?.onChange(param,config)
                 }}
               ></Select>
             );
           },
       },
+   
       {
-        title: '版本',
+        title: '应用版本',
         key: 'componentVersion',
         dataIndex: 'componentVersion',
         valueType: 'select',
@@ -91,104 +93,31 @@ export const createMiddlewareTableColumns = (params: {
           );
         },
       },
+     
       {
-        title: 'Realease名称',
-        key: 'componentReleaseName',
-        dataIndex: 'componentReleaseName',
-        valueType: 'select',
-        formItemProps: () => {
-          return {
-            rules: [
-              {
-                required: true,
-                message: '此项为必填项',
-              },
-            ],
-            errorType: 'default',
-          };
-        },
-        renderFormItem: (_, config: any, data) => {
-          return (
-            <Input/>
-          )},
-      },
-      {
-        title: 'Namespace',
-        key: 'componentNamespace',
-        dataIndex: 'componentNamespace',
-        valueType: 'select',
-        formItemProps: () => {
-          return {
-            rules: [
-              {
-                required: true,
-                message: '此项为必填项',
-              },
-            ],
-            errorType: 'default',
-          };
-        },
-        renderFormItem: (_, config: any, data) => {
-          return (
-            <Select
-              options={params?.namespaceOption}
-              showSearch
-              allowClear
-              onChange={(value: any) => {
-               
-              }}
-            ></Select>
-          );
-        },
-      },
-      {
-        title: '中间件描述',
+        title:'应用描述',
         dataIndex: 'componentDescription',
         renderFormItem: (_, config: any, data) => {
           return <Input></Input>;
         },
       },
-      {title: '依赖',
-      key: 'componentDependency',
-      dataIndex: 'componentDependency',
-      valueType: 'select',
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
-      renderFormItem: (_, config: any, data) => {
-        //  ]
-        return (
-         <Input/>
-        );
-      },
-    },
-      
-    {
+  
+      {
         title: '操作',
         valueType: 'option',
         width: 250,
         render: (text, record: any, _, action) => [
           <a
             onClick={() => {
-              params?.onConfig(record)
-            
+              params?.onEdit(text, record, _, action)
             }}
           >
-            配置
+            编辑
           </a>,
           <Popconfirm
             title="确定要删除吗？"
             onConfirm={() => {
-              params?.onDelete(record)
-             
+              params?.onDelete(text, record, _, action)
             }}
           >
             <a key="delete" style={{ color: 'rgb(255, 48, 3)' }}>
@@ -197,5 +126,6 @@ export const createMiddlewareTableColumns = (params: {
           </Popconfirm>,
         ],
       },
-    ] as ProColumns<DataSourceType>[];
-  };
+   
+  ] as ProColumns<DataSourceType>[];
+};

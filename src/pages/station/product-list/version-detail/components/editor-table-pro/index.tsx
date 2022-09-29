@@ -4,12 +4,13 @@ import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import { Button, Input, Form, message } from 'antd';
-import { createMiddlewareTableColumns } from '../middle-ware-schema';
+import { createMiddlewareTableColumns } from './middle-ware-schema';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import { createProTableColumns, DataSourceType } from './schema'
+import { createProTableColumns, DataSourceType } from './schema';
+import {createAppProTableColumns} from './app-schema'
 import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList, useDeleteVersionComponent, useAddCompontent, } from '../../hooks';
-import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete } from './hook'
+import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent } from './hook'
 import BatchAppDraw from '../batch-app-draw';
 import BatchMiddlewareDraw from '../batch-middleware-draw';
 
@@ -50,11 +51,14 @@ export default (props: VersionDetailProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   //selectedRows
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [editLoading, editComponent]=useEditComponent()
   const [delLoading, deleteVersionComponent] = useDeleteVersionComponent();
   const actionRef = useRef<ActionType>();
   const ref = useRef<ProFormInstance>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [batchAddMode, setBatchAddMode] = useState<EditorMode>('HIDE');
+  const [type, setType] = useState<string>('');
+  const [curRecord,setCurRecord]=useState<any>({})
   const [batchMiddlewareMode, setBatchMiddlewareMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
   const updateRow = (rowKey: string, row: any) => {
@@ -70,7 +74,7 @@ export default (props: VersionDetailProps) => {
 
   }, [])
 
-
+//createAppProTableColumns
   const middleColumns = useMemo(() => {
     return createMiddlewareTableColumns({
       nameOnchange: (param, config: any) => {
@@ -89,26 +93,12 @@ export default (props: VersionDetailProps) => {
         });
 
       },
-      onConfig: (record) => {
-        history.push({
-          pathname: '/matrix/station/component-detail'
-        },
-          {
-            initRecord: record,
-            productVersionId: versionId,
-            componentName: record.componentName,
-            componentVersion: record.componentVersion,
-            componentId: record.componentId,
-            componentType: currentTab,
-            componentDescription: record.componentDescription,
-            optType: 'versionDetail',
-            versionDescription: versionDescription,
-            releaseStatus: releaseStatus,
-            descriptionInfoData: descriptionInfoData,
-          },
-        );
+      onEdit:(text: React.ReactNode, record: any, _: any, action: any)=>{
+        action?.startEditable?.(record.id);
+        setType('edit');
+        setCurRecord(record)
       },
-      // queryReleaseList()
+     
       onDelete: async (record) => {
         if (isEditable) {
           message.info('已发布不可以删除!');
@@ -126,6 +116,42 @@ export default (props: VersionDetailProps) => {
     }) as any;
   }, [componentOptions, componentVersionOptions, namespaceOption,]);
 
+
+  const appColumns = useMemo(() => {
+
+    return createAppProTableColumns({
+      componentOptions,
+      componentVersionOptions,
+      onEdit:(text: React.ReactNode, record: any, _: any, action: any)=>{
+        action?.startEditable?.(record.id);
+        setType('edit');
+        setCurRecord(record)
+      },
+      onDelete: async (text: React.ReactNode, record: any, _: any, action: any) => {
+        if (isEditable) {
+          message.info('已发布不可以删除!');
+        } else {
+          deleteVersionComponent(record.id).then(() => {
+            setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+          });
+        }
+      },
+      onChange: (param: any, config: any) => {
+        queryProductVersionOptions(param.value, currentTabType);
+        componentOptions.filter((item: any) => {
+          if (item.label === param.label) {
+            updateRow(config.recordKey, {
+              ...form.getFieldsValue(config.recordKey),
+              componentDescription: item.componentDescription,
+            });
+          }
+        });
+
+      },
+
+    }) as any;
+  }, [componentOptions, componentVersionOptions,]);
+
   const columns = useMemo(() => {
 
     return createProTableColumns({
@@ -136,27 +162,11 @@ export default (props: VersionDetailProps) => {
       belongOption,
       bucketLoading,
       belongLoading,
-      onConfig: (text: React.ReactNode, record: any, _: any, action: any) => {
-        history.push({
-          pathname: '/matrix/station/component-detail',
-        }, {
-          initRecord: record,
-          productVersionId: versionId,
-          componentName: record.componentName,
-          componentVersion: record.componentVersion,
-          componentId: record.componentId,
-          componentType: currentTab,
-          componentDescription: record.componentDescription,
-          optType: 'versionDetail',
-          versionDescription: versionDescription,
-          releaseStatus: releaseStatus,
-          descriptionInfoData: descriptionInfoData,
-
-        });
-
-
+      onEdit:(text: React.ReactNode, record: any, _: any, action: any)=>{
+        action?.startEditable?.(record.id);
+        setType('edit');
+        setCurRecord(record)
       },
-
       onDelete: async (text: React.ReactNode, record: any, _: any, action: any) => {
         if (isEditable) {
           message.info('已发布不可以删除!');
@@ -184,7 +194,6 @@ export default (props: VersionDetailProps) => {
 
 
   const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: any) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
     setSelectedRows(selectedRows)
   };
@@ -294,7 +303,7 @@ export default (props: VersionDetailProps) => {
           creatorButtonText: '新增组件',
           record: { id: (Math.random() * 1000000).toFixed(0) },
         }}
-        columns={currentTabType === 'middleware' ? middleColumns : columns}
+        columns={currentTabType === 'middleware' ? middleColumns :currentTabType === 'app' ?appColumns: columns}
         scroll={{ y: window.innerHeight - 340 }}
         value={tableDataSource}
         onChange={setDataSource}
@@ -307,14 +316,30 @@ export default (props: VersionDetailProps) => {
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
 
-            await addComponent({
-              versionId,
-              ...params,
-              componentName: params.componentName.label,
-              componentType: currentTab,
-            }).then(() => {
-              queryVersionComponentList(versionId, currentTab);
-            });
+            if(type==="edit"){
+              await  editComponent({
+                id:curRecord?.id,
+                ...params,
+                componentName: params.componentName.label,
+                componentType: currentTab,
+                productLine:curRecord?.productLine
+              
+      
+              }).then(() => {
+                queryVersionComponentList(versionId, currentTab);
+              });
+
+            }else if(type!=="edit"){
+               console.log("params",params)
+              await addComponent({
+                versionId,
+                ...params,
+                componentName: params.componentName.label,
+                componentType: currentTab,
+              }).then(() => {
+                queryVersionComponentList(versionId, currentTab);
+              });
+            }
           },
           onChange: setEditableRowKeys,
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
