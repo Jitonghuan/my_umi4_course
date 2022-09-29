@@ -328,7 +328,7 @@ export default function StationPlan(props:Iprops) {
                         if (current === 1) {
                             next()
                         }
-                        next()
+                        
                     }}>
                         下一步
                     </Button>

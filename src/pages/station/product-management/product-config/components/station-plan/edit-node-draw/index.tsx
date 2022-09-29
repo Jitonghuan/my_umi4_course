@@ -26,7 +26,7 @@ export default function EditNodeDraw(props: IProps) {
     const [rightInfo, setRightInfo] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [infoLoading,purposeOptions, getListNacosPurposeInfo]=useGetListNacosPurposeInfo()
-    const [roleLoading,roleOptions, getListNacosRoleInfo]=useGetListNacosPurposeInfo()
+    const [roleLoading,roleOptions, getListNacosRoleInfo]=useGetListNacosRoleInfo()
     useEffect(()=>{
         if (mode === 'HIDE') return;
         if(mode==="EDIT"){
@@ -43,7 +43,7 @@ export default function EditNodeDraw(props: IProps) {
     },[mode])
     const handleSubmit = async() => {
       const values=  await nodeForm.validateFields();
-      saveServerInfo({...values,enableNfs:values?.enableNfs?1:0,isRootDisk:values?.isRootDisk?1:0}).then((res)=>{
+      saveServerInfo({indentId,server:{...values,enableNfs:values?.enableNfs?1:0,isRootDisk:values?.isRootDisk?1:0}}).then((res)=>{
           if(res?.code===1000){
               message.success(res?.data)
               onSave()
@@ -208,7 +208,7 @@ rules={[
                 <Select style={{ width: 320 }} loading={roleLoading} options={roleOptions}/>
             </Form.Item>
             <Form.Item name="nodePurpose" label="主机用途">
-                <Select style={{ width: 320 }} loading={infoLoading} options={purposeOptions}/>
+                <Select style={{ width: 320 }} loading={infoLoading} mode="multiple" options={purposeOptions}/>
             </Form.Item>
             <Form.Item name="enableNfs" label="启用nfs server">
             <Switch />

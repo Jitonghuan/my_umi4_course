@@ -57,7 +57,7 @@ export function useSaveBasicInfo(): [(params: SaveBasicInfoItems) => Promise<voi
   }
   export interface SaveServerInfoItems{
     indentId:number;//		制品id	true
-    serverIp:string	//主机ip		true
+    server:{ serverIp:string	//主机ip		true
     hostname:string	//主机名		true
     cpu	:string	//cpu 		true
     memory:string	//内存		true
@@ -67,7 +67,7 @@ export function useSaveBasicInfo(): [(params: SaveBasicInfoItems) => Promise<voi
     nodePurpose:string	//主机用途	true
     enableNfs:number	//是否启用nfs-server（0为关，1为开） true
     nfsWhite:string 	//nfs服务白名单		true
-
+    }
 }
 export const saveServerInfo = (params: SaveServerInfoItems) => {
     return postRequest(APIS.saveServerInfoApi, { data: params });
