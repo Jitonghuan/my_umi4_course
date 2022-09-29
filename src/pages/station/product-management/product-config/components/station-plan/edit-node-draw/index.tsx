@@ -141,39 +141,56 @@ export default function EditNodeDraw(props: IProps) {
                 >
                 <Input style={{ width: 320 }} placeholder="请输入" onBlur={onHostnameChange}></Input>
                 </Form.Item>
-                <Form.Item
-                    label="CPU"
-                    name="cpu"
-                    hasFeedback
-                    rules={[
-                        {
-                            required: true,
-                            message: '请输入',
-                           
-                        },
-                    ]}
+                <Form.Item  label="CPU" style={{display:"flex"}}>
+                    <div style={{display:'flex',height:30}}>
+                    <Form.Item
+                   
+                   name="cpu"
+                   hasFeedback
+                   rules={[
+                       {
+                           required: true,
+                           message: '请输入',
+                          
+                       },
+                   ]}
 
-                >
-                    <Input style={{ width: 160 }} placeholder="请输入"></Input>
-                    <span className="ant-form-text"  style={{marginLeft:8}}> C</span>
+               >
+                   <Input style={{ width: 160 }} placeholder="请输入"></Input>
+                  
+               </Form.Item>
+               <Form.Item style={{marginLeft:8}}> C</Form.Item>
+
+
+                    </div>
+             
                 </Form.Item>
-           
-            <Form.Item
-                label="内存"
-                name="memory"
-                hasFeedback
-                rules={[
-                    {
-                        required: true,
-                        message: '请输入',
-                     
-                    },
-                ]}
 
-            >
-                <Input style={{ width: 160 }} placeholder="请输入"></Input>
-                <span className="ant-form-text" style={{marginLeft:8}}> G</span>
-            </Form.Item>
+           <Form.Item  label="内存" >
+               <div style={{display:'flex',height:30}}>
+               <Form.Item
+
+name="memory"
+hasFeedback
+rules={[
+    {
+        required: true,
+        message: '请输入',
+     
+    },
+]}
+
+>
+<Input style={{ width: 160 }} placeholder="请输入"></Input>
+
+</Form.Item>
+<Form.Item style={{marginLeft:8}} > G</Form.Item>
+
+               </div>
+            
+
+           </Form.Item>
+           
             <Form.Item name="isRootDisk" label="共用系统盘">
             <Switch />
             </Form.Item>

@@ -21,6 +21,7 @@ export const createMiddlewareTableColumns = (params: {
     componentVersionOptions:any
     namespaceOption:any;
   
+  
 
     // currentTabType;
   }) => {
@@ -151,7 +152,7 @@ export const createMiddlewareTableColumns = (params: {
       {title: '依赖',
       key: 'componentDependency',
       dataIndex: 'componentDependency',
-      valueType: 'select',
+     
       formItemProps: () => {
         return {
           rules: [
@@ -166,7 +167,7 @@ export const createMiddlewareTableColumns = (params: {
       renderFormItem: (_, config: any, data) => {
         //  ]
         return (
-         <Input/>
+        <Input disabled={true}/>
         );
       },
     },

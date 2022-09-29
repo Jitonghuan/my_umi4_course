@@ -247,3 +247,6 @@ export const checkServerNameApi = addAPIPrefix('/deliveryManage/indent/arrangeme
 /*20、 DELETE 节点多选删除 */
 
 export const deleteServerApi = addAPIPrefix('/deliveryManage/indent/arrangement/deleteServer');
+/*21、 GET 查看出包详情 */
+
+export const packageListApi = addAPIPrefix('/deliveryManage/indent/package/list');

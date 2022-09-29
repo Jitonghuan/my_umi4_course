@@ -10,7 +10,7 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import { createProTableColumns, DataSourceType } from './schema';
 import {createAppProTableColumns} from './app-schema'
 import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList, useDeleteVersionComponent, useAddCompontent, } from '../../hooks';
-import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent } from './hook'
+import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent,useQueryComponentList } from './hook'
 import BatchAppDraw from '../batch-app-draw';
 import BatchMiddlewareDraw from '../batch-middleware-draw';
 
@@ -111,7 +111,7 @@ export default (props: VersionDetailProps) => {
       componentOptions,
       componentVersionOptions,
       namespaceOption,
-
+    
 
     }) as any;
   }, [componentOptions, componentVersionOptions, namespaceOption,]);

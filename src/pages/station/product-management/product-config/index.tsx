@@ -6,7 +6,7 @@ import { parse } from 'query-string';
 import { QuestionCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import { queryIndentInfoApi, generateIndentConfig, getPackageStatus } from '../../service';
 import moment from 'moment';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 import { getRequest, postRequest } from '@/utils/request';
 import StationConfig from '../product-config/components/station-config';
 import StationDeploy from '../product-config/components/station-deploy';
@@ -211,7 +211,7 @@ export default function ProductConfig() {
                 </Paragraph>
               </Descriptions.Item>
               <Descriptions.Item label="建站产品">{configInfoData.productName || '--'}</Descriptions.Item>
-              <Descriptions.Item label="建站版本">{configInfoData.productVersion || '--'}</Descriptions.Item>
+              <Descriptions.Item label="建站版本"><Tag color="geekblue">{configInfoData.productVersion || '--'}</Tag></Descriptions.Item>
               <Descriptions.Item label="建站项目">{configInfoData.deliveryProject || '--'}</Descriptions.Item>
               <Descriptions.Item label="创建时间">
                 {moment(configInfoData.gmtCreate).format('YYYY-MM-DD HH:mm:ss')}

@@ -66,6 +66,60 @@ export function useFrontbucketList() {
   
     return [loading, dataSource,queryBelongList];
   }
+
+
+//依赖查询
+export function useQueryComponentList(): [
+  
+  (
+    componentType: string
+  ) => Promise<void>,
+  any,
+] {
+  
+  const [options, setOptions] = useState([]);
+  
+  let optionsArry:any=[]
+  const queryComponentList = async (
+    componentType: string
+   
+  ) => {
+    
+    try {
+      await getRequest(APIS.queryComponentList, {
+        data: {
+          componentType: componentType,
+         
+          pageIndex:-1,
+          pageSize:-1,
+        },
+      })
+        .then((res) => {
+          if (res.success) {
+            let dataSource = res.data.dataSource;
+          
+           
+            dataSource?.map((item:any)=>{
+              optionsArry.push({
+                label:item?.componentName,
+                value:item?.componentName,
+              })
+
+            })
+            setOptions(optionsArry)
+           
+          } else {
+            return [];
+          }
+        })
+       
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [queryComponentList,options];
+}
+
   
 
   

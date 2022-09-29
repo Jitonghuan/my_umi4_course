@@ -7,7 +7,7 @@ type AnyObject = Record<string, any>;
   export function useBasecomponentList() {
     const [loading, setLoading] = useState<boolean>(false);
     const [dataSource, setDataSource] = useState<any>([]);
-    const queryBelongList = useCallback(async () => {
+    const queryBasecomponentList = useCallback(async () => {
       setLoading(true);
       await getRequest(APIS.queryBasecomponentList)
         .then((res) => {
@@ -32,7 +32,7 @@ type AnyObject = Record<string, any>;
         });
     },[]);
   
-    return [loading, dataSource,queryBelongList];
+    return [loading, dataSource,queryBasecomponentList];
   }
 
   //获取queryReleaseList

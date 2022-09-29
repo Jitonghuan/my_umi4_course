@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useRef,useEffect,useCallback } from 'react';
-import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select, Space } from 'antd';
-import { useUpdateParamIndent, } from '../../../hook';
+import React, { useState, useMemo,useEffect,useCallback } from 'react';
+import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select, } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { nodesSchema, DbUsageOptions } from './schema';
 import { saveBasicInfo, saveDatabaseInfo,getNodeList,useDeleteServer } from './hook';
-import EditNodeDraw from './edit-node-draw'
+import EditNodeDraw from './edit-node-draw';
+import {useBelongList} from '../../../../product-list/version-detail/components/editor-table-pro/hook'
 import './index.less'
 
 interface Iprops{
@@ -13,6 +13,7 @@ interface Iprops{
 
 export default function StationPlan(props:Iprops) {
     const {indentId} =props
+    const [loading, options,queryBelongList]=useBelongList()
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const { Step } = Steps;
@@ -27,6 +28,7 @@ export default function StationPlan(props:Iprops) {
     useEffect(()=>{
         if (!indentId) return;
         getNodeListData();
+        queryBelongList()
     },[indentId])
     
     const getNodeListData=useCallback(()=>{
@@ -78,24 +80,24 @@ export default function StationPlan(props:Iprops) {
                     <Form layout="horizontal" form={baseInfoForm} labelCol={{ flex: '150px' }}>
                         <Row gutter={12} >
                             <Col >
-                                <Form.Item name="projectCode" label="项目Code" rules={[{ required: true, message: '请填写' }]}>
+                                <Form.Item name="projectCode" label="项目Code" >
                                     <Input style={{ width: 260 }} />
                                 </Form.Item>
                             </Col >
                             <Col >
-                                <Form.Item name="sshUser" label="ssh用户" rules={[{ required: true, message: '请填写' }]}>
+                                <Form.Item name="sshUser" label="ssh用户" >
                                     <Input style={{ width: 260 }} />
                                 </Form.Item>
                             </Col>
                         </Row>
                         <Row>
                             <Col >
-                                <Form.Item name="projectDomain" label="项目domian" rules={[{ required: true, message: '请填写' }]}>
+                                <Form.Item name="projectDomain" label="项目domian" >
                                     <Input style={{ width: 260 }} />
                                 </Form.Item>
                             </Col >
                             {/* <Col  > */}
-                            <Form.Item name="sshPassword" label="ssh密码" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="sshPassword" label="ssh密码" >
                                 <Input style={{ width: 260 }} />
                             </Form.Item>
 
@@ -103,7 +105,7 @@ export default function StationPlan(props:Iprops) {
                         </Row>
                         <Row gutter={16}>
                             <Col >
-                                <Form.Item name="kubernetesVersion" label="k8s版本" rules={[{ required: true, message: '请填写' }]}>
+                                <Form.Item name="kubernetesVersion" label="k8s版本" >
                                     <Input style={{ width: 260 }} />
                                 </Form.Item>
                             </Col >
@@ -115,19 +117,19 @@ export default function StationPlan(props:Iprops) {
                             </Col>
                         </Row>
                         <Row>
-                            <Form.Item name="vip" label="VIP" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="vip" label="VIP" >
                                 <Input style={{ width: 260 }} />
                             </Form.Item>
 
                         </Row>
                         <Row>
-                            <Form.Item name="dnsIp" label="DNS" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="dnsIp" label="DNS" >
                                 <Input style={{ width: 260 }} />
                             </Form.Item>
 
                         </Row>
                         <Row>
-                            <Form.Item name="ntpServer" label="NTP" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="ntpServer" label="NTP" >
                                 <Input style={{ width: 260 }} />
                             </Form.Item>
                         </Row>
@@ -194,7 +196,7 @@ export default function StationPlan(props:Iprops) {
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
                             <Form.Item name="DbUsage" label="类别" rules={[{ required: true, message: '请填写' }]}>
-                                <Select options={DbUsageOptions} style={{ width: 220 }} onChange={() => { }} />
+                                <Select options={options} loading={loading} style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
                             < Divider />
                             <Form.List name="more" >
@@ -315,7 +317,7 @@ export default function StationPlan(props:Iprops) {
                         if (current === 1) {
                             next()
                         }
-                      
+                        next()
                     }}>
                         下一步
                     </Button>
