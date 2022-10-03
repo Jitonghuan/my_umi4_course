@@ -30,9 +30,9 @@ export interface SaveBasicInfoItems{
      indentId:number;//制品id		true
      projectCode:string ;//	项目code	true
      projectDomain:string;//	项目domain	true
-     kubernetesVersion:string;//	k8s版本		true
+     k8SVersion:string;//	k8s版本		true
      vip:string	;//VIP			true
-     dnsIp:string;	//DNS		true
+     dns:string;	//DNS		true
      mutiClusterEnable:number;// 	int		双集群开关（0为关，1为开）	true
      sshPassword:string //	ssh密码		true
      sshUser:string //	ssh密码		true
@@ -59,8 +59,8 @@ export function useSaveBasicInfo(): [(params: SaveBasicInfoItems) => Promise<voi
     indentId:number;//		制品id	true
     server:{ serverIp:string	//主机ip		true
     hostname:string	//主机名		true
-    cpu	:string	//cpu 		true
-    memory:string	//内存		true
+    cpu	:number	//cpu 		true
+    memory:number	//内存		true
     isRootDisk:boolean	//数据盘		true
     dataDisk:string	//数据盘		true
     nodeRole:string	//主机角色		true

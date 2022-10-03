@@ -116,7 +116,7 @@ export default function StationPlan(props:Iprops) {
                         </Row>
                         <Row gutter={16}>
                             <Col >
-                                <Form.Item name="kubernetesVersion" label="k8s版本" >
+                                <Form.Item name="k8SVersion" label="k8s版本" >
                                     <Input style={{ width: 260 }} />
                                 </Form.Item>
                             </Col >
@@ -134,7 +134,7 @@ export default function StationPlan(props:Iprops) {
 
                         </Row>
                         <Row>
-                            <Form.Item name="dnsIp" label="DNS" >
+                            <Form.Item name="dns" label="DNS" >
                                 <Input style={{ width: 260 }} />
                             </Form.Item>
 

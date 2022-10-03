@@ -43,7 +43,7 @@ export default function EditNodeDraw(props: IProps) {
     },[mode])
     const handleSubmit = async() => {
       const values=  await nodeForm.validateFields();
-      saveServerInfo({indentId,server:{...values,enableNfs:values?.enableNfs?1:0,isRootDisk:values?.isRootDisk?1:0}}).then((res)=>{
+      saveServerInfo({indentId,server:{...values,cpu:parseInt(values?.cpu),memory:parseInt(values?.memory),enableNfs:values?.enableNfs?1:0,isRootDisk:values?.isRootDisk?1:0}}).then((res)=>{
           if(res?.code===1000){
               message.success(res?.data)
               onSave()
