@@ -87,6 +87,7 @@ export default function BasicModal(props: DetailProps) {
     onChange(info: any) {
       if (info.file.status !== 'uploading') {
         let path = info.file.response.data;
+     
         setFilePath(path);
       }
       if (info.file.status === 'done' && info.file?.response.success) {
@@ -177,7 +178,7 @@ export default function BasicModal(props: DetailProps) {
           rules={[{ required: true, message: '请上传基础数据！' }]}
         >
           <Upload name="logo" accept=".tgz" action="/upload.do" {...Uploadprops}>
-            <Button icon={<UploadOutlined />}>选择文件</Button>
+            <Button icon={<UploadOutlined />}>选择文件</Button><span style={{marginLeft:10,color:"darkgray"}}>(仅支持以.tgz结尾的文件)</span>
           </Upload>
         </Form.Item>
         <Form.Item
