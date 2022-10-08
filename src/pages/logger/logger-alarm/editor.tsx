@@ -224,7 +224,7 @@ export default function AlarmEditor(props: AlarmEditorProps) {
             </FormItem>
           </Input.Group>
         </FormItem>
-        <FormItem label="采集频率" required={true}>
+        <FormItem label="采集频率" required={true} tooltip="采集频率和告警阈值结合使用。若采集频率为5分钟，代表任意5分钟内达到告警阈值即触发告警。">
           <Input.Group compact>
             <FormItem noStyle name="interval" rules={[{ required: true, message: '请填写采集频率' }]}>
               <InputNumber step={1} min={0.1} />
