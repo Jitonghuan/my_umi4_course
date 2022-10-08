@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { Drawer, Button, Form, Spin, Select, Input, Switch,message } from 'antd';
 import {  saveServerInfo } from '../hook';
 import { getRequest } from '@/utils/request';
-import { checkServerIpApi, checkServerNameApi, } from '../../../../../service';
+import { checkServerIpApi, checkServerInfoApi, } from '../../../../../service';
 import {useGetListNacosPurposeInfo,useGetListNacosRoleInfo} from '../hook'
 
 
@@ -54,11 +54,11 @@ export default function EditNodeDraw(props: IProps) {
     };
     const onServerIpChange = (value: any) => {
         let formData = nodeForm.getFieldsValue();
-        getCheck("serverIp",formData.serverIp,checkServerIpApi );
+        getCheck("serverIp",formData.serverIp,checkServerInfoApi);
       };
       const onHostnameChange = (value: any) => {
         let formData = nodeForm.getFieldsValue();
-        getCheck("hostname",formData.hostname,checkServerNameApi );
+        getCheck("hostname",formData.hostname,checkServerInfoApi );
       };
     const getCheck = async (
         key:string,

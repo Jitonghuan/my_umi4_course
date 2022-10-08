@@ -43,8 +43,8 @@ export const saveBasicInfo = (params: SaveBasicInfoItems) => {
     return postRequest(APIS.saveBasicInfoApi, { data: params });
   };
 
-  export const getNodeList = (indentId:number) => {
-    return getRequest(APIS.listServerInfoApi, { data: {indentId} });
+  export const getNodeList = (indentId:number,infoType:string) => {
+    return getRequest(APIS.getInfoApi, { data: {indentId,infoType} });
   };
   
 //保存基础配置
@@ -153,13 +153,37 @@ export function useGetListNacosRoleInfo(): [boolean,any, () => Promise<void>] {
 
 //listBasicInfoApi
 
-export function useGetListBasicInfo(): [boolean,any, (indentId:number) => Promise<void>] {
+export function useGetListBasicInfo(): [boolean,any, (indentId:number,infoType:string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
   const [data,setData]=useState<any>([]);
-  const getListBasicInfo= async (indentId:number) => {
+  const getListBasicInfo= async (indentId:number,infoType:string) => {
     setLoading(true);
     try {
-      await getRequest(`${APIS.listBasicInfoApi}`,{data:{indentId}})
+      await getRequest(`${APIS.getInfoApi}`,{data:{indentId,infoType}})
+        .then((res) => {
+          if (res.success) {
+         
+            setData(res?.data)
+          } 
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading,data, getListBasicInfo];
+}
+//listBasicInfoApi
+
+export function useGetDatabaseInfo(): [boolean,any, (indentId:number,infoType:string) => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const [data,setData]=useState<any>([]);
+  const getListBasicInfo= async (indentId:number,infoType:string) => {
+    setLoading(true);
+    try {
+      await getRequest(`${APIS.getInfoApi}`,{data:{indentId,infoType}})
         .then((res) => {
           if (res.success) {
          

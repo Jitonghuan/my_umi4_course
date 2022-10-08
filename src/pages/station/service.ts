@@ -232,17 +232,20 @@ export const saveServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangemen
 
 export const saveDatabaseInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/saveDatabaseInfo');
 
-/*17、 GET 查看节点配置 */
+/*17、 GET 查看节点配置---已弃用 */
 
 export const listServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listServerInfo');
 
-/*18、 GET 校验主机ip唯一性 */
+/*18、 GET 校验主机ip唯一性 ---已弃用 */
 
 export const checkServerIpApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerIp');
 
-/*19、 GET 校验主机名称唯一性 */
+/*19、 GET 校验主机名称唯一性 ---已弃用*/
 
 export const checkServerNameApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerName');
+
+
+export const checkServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerInfo');
 //deliveryManage/indent/arrangement/deleteServer
 /*20、 DELETE 节点多选删除 */
 
@@ -258,3 +261,6 @@ export const listNacosInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement
 /*23、 GET 查看基础配置信息 */
 
 export const listBasicInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listBasicInfo');
+/* 24、GET 查看建站规划相关信息 */
+
+export const getInfoApi=addAPIPrefix('deliveryManage/indent/arrangement/getInfo')

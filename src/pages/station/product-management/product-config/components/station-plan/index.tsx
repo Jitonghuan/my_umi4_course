@@ -2,7 +2,7 @@ import React, { useState, useMemo,useEffect,useCallback } from 'react';
 import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select, } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { nodesSchema, DbUsageOptions } from './schema';
-import { saveBasicInfo, saveDatabaseInfo,getNodeList,useDeleteServer ,useGetListBasicInfo} from './hook';
+import { saveBasicInfo, saveDatabaseInfo,getNodeList,useDeleteServer ,useGetListBasicInfo,useGetDatabaseInfo} from './hook';
 import EditNodeDraw from './edit-node-draw';
 import {useBelongList} from '../../../../product-list/version-detail/components/editor-table-pro/hook'
 import './index.less'
@@ -14,6 +14,7 @@ interface Iprops{
 export default function StationPlan(props:Iprops) {
     const {indentId} =props;
     const [infoLoading,basicInfoData, getListBasicInfo]=useGetListBasicInfo()
+    const [dataBaseLoading,databaseData, getDatabaseInfo]=useGetDatabaseInfo()
     const [loading, options,queryBelongList]=useBelongList()
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
@@ -30,8 +31,24 @@ export default function StationPlan(props:Iprops) {
         if (!indentId) return;
         getNodeListData();
         queryBelongList();
-        getListBasicInfo(indentId)
+        
+        getListBasicInfo(indentId,'basic')
+        getDatabaseInfo(indentId,'database')
     },[indentId])
+    useEffect(()=>{
+        if(Object.keys(databaseData)?.length>0){
+            let databaseDataOne=databaseData[0]
+            let moreDataArry=databaseData.shift()
+            form.setFieldsValue({
+               ...databaseDataOne,
+               more:moreDataArry
+               
+            }) 
+
+        }
+       
+    },[databaseData])
+
     useEffect(()=>{
         if(Object.keys(basicInfoData)?.length>0){
             baseInfoForm.setFieldsValue({
@@ -42,8 +59,9 @@ export default function StationPlan(props:Iprops) {
        
     },[basicInfoData])
     
+    
     const getNodeListData=useCallback(()=>{
-       getNodeList(indentId).then((res)=>{
+       getNodeList(indentId,'server').then((res)=>{
            if(res?.success){
             setDataSource(res?.data||[]) 
            }
@@ -353,10 +371,6 @@ export default function StationPlan(props:Iprops) {
                            if(params?.more?.length>0){
                              dataParams=[objectData].concat(params?.more)
                            }
-                          
-                           
-
-                            
                             saveDatabaseInfo({indentId:indentId,databases:dataParams }).then((res) => {
                                 if(res?.success){
                                     message.success(res?.data)
