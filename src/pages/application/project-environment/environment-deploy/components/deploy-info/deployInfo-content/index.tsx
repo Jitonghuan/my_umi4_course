@@ -489,20 +489,12 @@ export default function DeployContent(props: DeployContentProps) {
                             {
                               pathname: '/matrix/application/environment-deploy/viewLog',
                               search:`appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`
-                              // query: {
-                              //   appCode: appData?.appCode,
-                              //   projectEnvCode: currentEnvData,
-                              //   instName: record?.instName,
-                              //   projectEnvName: projectEnvName,
-                              //   // viewLogEnvType: envTypeCode,
-                              //   optType: 'deployInfo',
-                              //   deploymentName: appData?.deploymentName,
-                              // },
+                            
                             },{
                                 infoRecord: record,
                               },
                             
-                            // `/matrix/application/environment-deploy/viewLog?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}`,
+                           
                           )
                         }
                       >
@@ -534,10 +526,10 @@ export default function DeployContent(props: DeployContentProps) {
                       <Popconfirm
                         title="确定要删除该信息吗？"
                         onConfirm={() => {
-                          deleteInstance(appData?.appCode, currentEnvData, record.instName);
-                          setTimeout(() => {
+                          deleteInstance(appData?.appCode, currentEnvData, record.instName).then(()=>{
                             queryInstanceList(appData?.appCode, currentEnvData);
-                          }, 200);
+                          });
+                         
                         }}
                       >
                         <Button size="small" type="default" >
@@ -581,13 +573,13 @@ export default function DeployContent(props: DeployContentProps) {
                     <span>操作事件：</span>
                     <b>
                       <Tag color="geekblue">
-                        {item.operateEvent === 'PodFileDownload'
+                        {item.operateEvent?.toLowerCase === 'podFileDownload'
                           ? '文件下载'
-                          : item.operateEvent === 'restartApp'
+                          : item.operateEvent?.toLowerCase === 'restartApp'
                             ? '重启应用'
-                            : item.operateEvent === 'rollback'
+                            : item.operateEvent?.toLowerCase === 'rollback'
                               ? '回滚应用'
-                              : item.operateEvent === 'DeletePod'
+                              : item.operateEvent?.toLowerCase === 'deletePod'
                                 ? '删除Pod'
                                 : null}
                       </Tag>

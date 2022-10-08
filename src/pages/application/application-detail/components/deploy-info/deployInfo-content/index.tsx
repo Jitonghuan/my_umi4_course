@@ -579,10 +579,10 @@ export default function DeployContent(props: DeployContentProps) {
                       <Popconfirm
                         title="确定要删除该信息吗？"
                         onConfirm={() => {
-                          deleteInstance(appData?.appCode, currentEnvData, record.instName);
-                          setTimeout(() => {
+                          deleteInstance(appData?.appCode, currentEnvData, record.instName).then(()=>{
                             queryInstanceList(appData?.appCode, currentEnvData);
-                          }, 200);
+                          });
+                          
                         }}
                       >
                         <a>
