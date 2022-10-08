@@ -133,7 +133,6 @@ export default function Application() {
             title="B集群"
             dataIndex={['ClusterB', 'appImageTag']}
             width={140}
-            // render={(text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>}
             render={(current, record: any) => (
               <span style={{ color: current !== record?.ClusterA?.appImageTag ? 'red' : 'black' }}>{current}</span>
             )}

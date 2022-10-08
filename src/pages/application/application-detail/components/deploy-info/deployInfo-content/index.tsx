@@ -23,6 +23,7 @@ import RollbackModal from '../components/rollback-modal';
 import { LIST_STATUS_TYPE } from './schema';
 import DeploymentList from '../components/deployment-list';
 import { DeployContentProps } from './type';
+import {OPERATE_TYPE} from './schema'
 import './index.less';
 const rootCls = 'deploy-content-compo';
 
@@ -581,6 +582,7 @@ export default function DeployContent(props: DeployContentProps) {
                         onConfirm={() => {
                           deleteInstance(appData?.appCode, currentEnvData, record.instName).then(()=>{
                             queryInstanceList(appData?.appCode, currentEnvData);
+                            queryAppOperateLog(currentEnvData);
                           });
                           
                         }}
@@ -625,16 +627,8 @@ export default function DeployContent(props: DeployContentProps) {
                   <p>
                     <span>操作事件：</span>
                     <b>
-                      <Tag color="geekblue">
-                        {item.operateEvent === 'PodFileDownload'
-                          ? '文件下载'
-                          : item.operateEvent === 'restartApp'
-                            ? '重启应用'
-                            : item.operateEvent === 'rollback'
-                              ? '回滚应用'
-                              : item.operateEvent === 'DeletePod'
-                                ? '删除Pod'
-                                : null}
+                      <Tag color= {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.color||"default"}>
+                        {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.tagText||"--"}
                       </Tag>
                     </b>
                   </p>
