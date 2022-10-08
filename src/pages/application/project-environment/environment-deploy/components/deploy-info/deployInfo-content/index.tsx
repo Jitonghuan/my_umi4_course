@@ -23,6 +23,7 @@ import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
 import { LIST_STATUS_TYPE } from './schema';
 import DeploymentList from '../components/deployment-list';
+import {OPERATE_TYPE} from './schema'
 import './index.less';
 const rootCls = 'deploy-content-Info';
 export interface DeployContentProps {
@@ -572,16 +573,8 @@ export default function DeployContent(props: DeployContentProps) {
                   <p>
                     <span>操作事件：</span>
                     <b>
-                      <Tag color="geekblue">
-                        {item.operateEvent?.toLowerCase === 'podFileDownload'
-                          ? '文件下载'
-                          : item.operateEvent?.toLowerCase === 'restartApp'
-                            ? '重启应用'
-                            : item.operateEvent?.toLowerCase === 'rollback'
-                              ? '回滚应用'
-                              : item.operateEvent?.toLowerCase === 'deletePod'
-                                ? '删除Pod'
-                                : null}
+                    <Tag color= {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.color||"default"}>
+                        {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.tagText||"--"}
                       </Tag>
                     </b>
                   </p>
