@@ -529,6 +529,7 @@ export default function DeployContent(props: DeployContentProps) {
                         onConfirm={() => {
                           deleteInstance(appData?.appCode, currentEnvData, record.instName).then(()=>{
                             queryInstanceList(appData?.appCode, currentEnvData);
+                            queryAppOperateLog(currentEnvData);
                           });
                          
                         }}
