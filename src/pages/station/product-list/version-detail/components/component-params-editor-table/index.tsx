@@ -67,6 +67,8 @@ export default (props: VersionDetailProps) => {
         action?.startEditable?.(record.id);
         setType('edit');
         queryParamList(versionId, record.paramComponent);
+        queryReleaseList(record?.paramComponent)
+       
       },
       onDelete:(record:any)=>{
         deleteDeliveryParam(record.id).then(() => {

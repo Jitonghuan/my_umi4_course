@@ -147,8 +147,8 @@ export default function StationPlan(props:Iprops) {
                                 </Form.Item>
                             </Col >
                             <Col style={{ marginLeft: 38 }}>
-                                <Form.Item name="mutiClusterEnable" label="部署双集群"  >
-                                    <Switch />
+                                <Form.Item name="enableMutiCluster" label="部署双集群"  >
+                                    <Switch checked={basicInfoData?.enableMutiCluster?true:false} />
                                 </Form.Item>
 
                             </Col>
@@ -346,8 +346,8 @@ export default function StationPlan(props:Iprops) {
                     <Button type="primary" onClick={async () => {
                         if (current === 0) {
                             const params = await baseInfoForm.validateFields()
-                           
-                            saveBasicInfo({ ...params,indentId:indentId, mutiClusterEnable:params?.mutiClusterEnable===true?1:0 }).then((res) => {
+                           //enableMutiCluster
+                            saveBasicInfo({ ...params,indentId:indentId, enableMutiCluster:params?.enableMutiCluster===true?true:false }).then((res) => {
                                 if (res?.code === 1000) {
                                     next()
                                 }

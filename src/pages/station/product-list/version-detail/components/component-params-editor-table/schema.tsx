@@ -91,7 +91,6 @@ export const createCompontentsTableColumns = (params: {
                   options={params?.releaseOption}
                   showSearch
                   allowClear
-                  disabled={params?.type === 'edit'}
                   // onChange={(value: any) => {
       
                   // }}
@@ -157,6 +156,7 @@ export const createCompontentsTableColumns = (params: {
                 key="editable"
                 onClick={() => {
                 params?.onEdit(record,action)
+                
                 }}
               >
                 编辑

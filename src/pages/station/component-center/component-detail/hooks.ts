@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
-import { getRequest, postRequest } from '@/utils/request';
+import { getRequest, postRequest,delRequest } from '@/utils/request';
 //组件版本查询
 export function useQueryComponentVersionList(): [boolean, any, (componentId: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
@@ -137,12 +137,17 @@ export function useUpdateConfiguration(): [boolean, (id: number, componentConfig
 
 //删除依赖组件
 
+export const deleteRely = (id: number, componentDependency: string) => {
+  return delRequest(`${APIS.deleteRelyApi}?id=${id}&componentDependency=${componentDependency}`)
+};
+
+
 export function useDeleteRely(): [boolean, (id: number, componentDependency: string) => Promise<void>] {
   const [loading, setLoading] = useState<boolean>(false);
   const deleteRely = async (id: number, componentDependency: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.deleteRelyApi, { data: { id, componentDependency } })
+      await delRequest(`${APIS.deleteRelyApi}?id=${id}&componentDependency=${componentDependency}`)
         .then((res) => {
           if (res.success) {
             message.success("删除依赖成功！");

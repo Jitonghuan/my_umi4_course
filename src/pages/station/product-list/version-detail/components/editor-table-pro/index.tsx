@@ -92,6 +92,7 @@ export default (props: VersionDetailProps) => {
         action?.startEditable?.(record.id);
         setType('edit');
         setCurRecord(record)
+        queryNamespaceList(record.label)
       },
      
       onDelete: async (record) => {
@@ -310,7 +311,6 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
-
             if(type==="edit"){
               await  editComponent({
                 id:curRecord?.id,
@@ -340,15 +340,15 @@ export default (props: VersionDetailProps) => {
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
       />
-      <p className="compontents-delete-button"><Button onClick={() => {
+      <p className="compontents-delete-button">
+        <Button onClick={() => {
         let ids: any = []
         selectedRows?.map((ele: any) => {
-          ids.push(ele?.componentId)
-
+          ids.push(ele?.id)
         })
         bulkdelete(ids).then(() => {
-          selectedRowKeys?.map((item) => {
-            setDataSource(tableDataSource.filter((item: any) => item.id !== item));
+          selectedRowKeys?.map((ele) => {
+            setDataSource(tableDataSource.filter((item: any) => item.id !== ele));
           })
 
         })

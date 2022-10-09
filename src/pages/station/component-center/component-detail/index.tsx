@@ -27,7 +27,7 @@ import {
 } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentList, useQueryProductlineList } from '../hook';
-import { useUpdateDescription, useUpdateConfiguration,useAddRely,useDeleteRely } from './hooks';
+import { useUpdateDescription, useUpdateConfiguration,useAddRely,deleteRely } from './hooks';
 import './index.less';
 export default function ComponentDetail() {
   let location:any = useLocation();
@@ -58,7 +58,7 @@ export default function ComponentDetail() {
   const [editableStr, setEditableStr] = useState('');
   const [editLoading, updateDescription] = useUpdateDescription();
   const [addLoading, addRely]=useAddRely();
-  const [delLoading, deleteRely]=useDeleteRely();
+  // const [delLoading, deleteRely]=useDeleteRely();
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
   const [loading, setLoading] = useState(false);
   const [versionOptions, setVersionOptions] = useState<any>([]);
@@ -179,6 +179,10 @@ export default function ComponentDetail() {
     });
 
     queryComponentInfo(componentName, versionInfo.value, componentType, initRecord.id);
+  };
+  const preventDefault = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    console.log('Clicked! But prevent default.');
   };
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
@@ -356,12 +360,15 @@ export default function ComponentDetail() {
                    <Descriptions.Item label="依赖组件" span={2}>
                    
                    {componentInfo?.componentDependency?.split(',')?.map((item:any)=>{
-                     <Tag  closable={true} onClose={() =>{
-                      deleteRely(initRecord.id,item).then(()=>{
-                        setMode("HIDE")
+                   return( <Tag  closable={true} onClose={() =>{
+                    deleteRely(initRecord.id,item).then((res)=>{
+                      if (res.success) {
+                        message.success("删除依赖成功！");    
+                      } 
+                      }).finally(()=>{
                         queryComponentInfo(componentName,  curVersion.version, componentType, curVersion.componentId);
                       })
-                     }}>{item}</Tag>
+                     }}>{item}</Tag>)
 
                    }) || '--'} 
                    {/* <MinusCircleOutlined onClick={()=>{setMode("EDIT");}} style={{fontSize:16,color:"#3591ff"}} />&nbsp; */}
@@ -448,7 +455,7 @@ export default function ComponentDetail() {
           </TabPane>
         </Tabs>
       </ContentCard>
-      <Modal destroyOnClose title={mode==="ADD"?"选择要新增的依赖组件":"选择要删除的依赖组件"} visible={mode!=="HIDE"} onCancel={()=>{ setMode("HIDE")}} confirmLoading={addLoading||delLoading} onOk={()=>{
+      <Modal destroyOnClose title={mode==="ADD"?"选择要新增的依赖组件":"选择要删除的依赖组件"} visible={mode!=="HIDE"} onCancel={()=>{ setMode("HIDE")}} confirmLoading={addLoading} onOk={()=>{
         if(mode==="ADD"){
           // receiver: (values.receiver || []).join(','),
           addRely(initRecord.id,(selectedItems||[]).join(',')).then(()=>{

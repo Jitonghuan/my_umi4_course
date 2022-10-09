@@ -17,7 +17,6 @@ export default function CreateVersionModal(props:Iprops){
 
   const handleSubmit = () => {
     let params = createVersionForm.getFieldsValue();
-    console.log("params---",params)
     createProductVersion({...params,productId,baseStatus:params?.baseStatus===true?0:1}).then(() => {
       onSave()
     });

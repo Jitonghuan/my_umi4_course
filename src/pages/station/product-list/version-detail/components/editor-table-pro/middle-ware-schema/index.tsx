@@ -148,18 +148,6 @@ export const createMiddlewareTableColumns = (params: {
       {title: '依赖',
       key: 'componentDependency',
       dataIndex: 'componentDependency',
-     
-      formItemProps: () => {
-        return {
-          rules: [
-            {
-              required: true,
-              message: '此项为必填项',
-            },
-          ],
-          errorType: 'default',
-        };
-      },
       renderFormItem: (_, config: any, data) => {
         //  ]
         return (

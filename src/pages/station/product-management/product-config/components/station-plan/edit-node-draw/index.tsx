@@ -177,16 +177,15 @@ export default function EditNodeDraw(props: IProps) {
            <Form.Item  label="内存" >
                <div style={{display:'flex',height:30}}>
                <Form.Item
-
-name="memory"
-hasFeedback
-rules={[
-    {
-        required: true,
-        message: '请输入',
+                name="memory"
+                hasFeedback
+                rules={[
+                    {
+                     required: true,
+                     message: '请输入',
      
-    },
-]}
+                    },
+               ]}
 
 >
 <Input style={{ width: 160 }} placeholder="请输入"></Input>
@@ -200,7 +199,7 @@ rules={[
            </Form.Item>
            
             <Form.Item name="isRootDisk" label="共用系统盘">
-            <Switch />
+            <Switch  checked={curRecord?.isRootDisk?true:false}/>
             </Form.Item>
             <Form.Item name="dataDisk" label="数据盘">
                 <Input style={{ width: 320 }} disabled={nodeForm.getFieldValue("isRootDisk")===true}/>
@@ -213,7 +212,7 @@ rules={[
                 <Select style={{ width: 320 }} loading={infoLoading} mode="multiple" options={purposeOptions}/>
             </Form.Item>
             <Form.Item name="enableNfs" label="启用nfs server">
-            <Switch />
+            <Switch checked={curRecord?.enableNfs?true:false} />
             </Form.Item>
             {nodeForm.getFieldValue("enableNfs")===true &&(
                 <Form.Item name="nfsWhite" label="白名单">

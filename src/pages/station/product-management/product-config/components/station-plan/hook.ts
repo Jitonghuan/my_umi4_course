@@ -33,7 +33,7 @@ export interface SaveBasicInfoItems{
      k8SVersion:string;//	k8s版本		true
      vip:string	;//VIP			true
      dns:string;	//DNS		true
-     mutiClusterEnable:number;// 	int		双集群开关（0为关，1为开）	true
+     enableMutiCluster:boolean;// 	int		双集群开关（0为关，1为开）	true
      sshPassword:string //	ssh密码		true
      sshUser:string //	ssh密码		true
      ntpServer:string	//ntp服务器地址	true
