@@ -5,7 +5,7 @@
 import { useMemo, useEffect, useState } from 'react';
 import { history, Link,useLocation,Outlet } from 'umi';
 import { parse,stringify } from 'query-string';
-import { Tabs, Spin, Empty } from 'antd';
+import { Tabs, Spin, Empty,Modal } from 'antd';
 import VCPermission from '@/components/vc-permission';
 import PageContainer from '@/components/page-container';
 import { FilterCard } from '@/components/vc-page-content';
@@ -56,7 +56,16 @@ export default function ApplicationDetail(props: IProps) {
       if (result?.success) {
         let dataSource = result?.data;
         setAppEnvDataSource(dataSource);
+        if(dataSource?.length<1){
+          warning()
+        }
       }
+    });
+  };
+  const warning = () => {
+    Modal.warning({
+      title: '该应用下还未绑定环境！',
+      content: '请先为该应用绑定环境哦...',
     });
   };
 
