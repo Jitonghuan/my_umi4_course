@@ -317,7 +317,8 @@ export default (props: VersionDetailProps) => {
                 ...params,
                 componentName: params.componentName.label,
                 componentType: currentTab,
-                productLine:curRecord?.productLine
+                productLine:curRecord?.productLine,
+               
               
       
               }).then(() => {
@@ -325,12 +326,14 @@ export default (props: VersionDetailProps) => {
               });
 
             }else if(type!=="edit"){
-               console.log("params",params)
+              
               await addComponent({
                 versionId,
                 ...params,
                 componentName: params.componentName.label,
                 componentType: currentTab,
+               
+
               }).then(() => {
                 queryVersionComponentList(versionId, currentTab);
               });

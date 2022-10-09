@@ -28,6 +28,7 @@ export default function StationPlan(props:Iprops) {
     const [nodeMode,setNodeMode]=useState<EditorMode>("HIDE");
     const [curRecord,setCurRecord]=useState<any>({});
     const [dataSource,setDataSource]=useState<any>([]);
+    const [isClusterChecked, setIsClusterChecked] = useState<boolean>(false);
     useEffect(()=>{
         if (!indentId) return;
         getNodeListData();
@@ -63,6 +64,7 @@ export default function StationPlan(props:Iprops) {
                 baseInfoForm.setFieldsValue({
                     ...result
                 }) 
+                setIsClusterChecked(result?.enableMutiCluster?true:false)
     
             }
           })
@@ -71,13 +73,33 @@ export default function StationPlan(props:Iprops) {
     const getNodeListData=useCallback(()=>{
        getNodeList(indentId,'server').then((res)=>{
            if(res?.success){
-            setDataSource(res?.data||[]) 
+            let dataSource=[]
+               if(res?.data?.length>0){
+               dataSource= res?.data?.map((ele:any,index:number)=>({
+                   key:index,
+                   ...ele
+               })
+
+                )
+
+               }
+            setDataSource(dataSource||[]) 
            }
 
            
        })
 
     },[indentId])
+    const onClusterSwitchChange=(checked: boolean)=>{
+        if (checked === true) {
+            setIsClusterChecked(true);
+            
+          } else {
+            setIsClusterChecked(false);
+            
+          }
+
+    }
 
 
     const next = () => {
@@ -148,7 +170,7 @@ export default function StationPlan(props:Iprops) {
                             </Col >
                             <Col style={{ marginLeft: 38 }}>
                                 <Form.Item name="enableMutiCluster" label="部署双集群"  >
-                                    <Switch checked={basicInfoData?.enableMutiCluster?true:false} />
+                                    <Switch checked={isClusterChecked} onChange={onClusterSwitchChange} />
                                 </Form.Item>
 
                             </Col>
@@ -183,12 +205,15 @@ export default function StationPlan(props:Iprops) {
                             <Button type="primary" onClick={() => { 
                            
                                 let ips: any = []
+                               
                                 selectedRows?.map((ele: any) => {
-                                 ips.push(ele?.componentId)
+                                 ips.push(ele?.serverIp)
 
                                     })
                                 deleteServer(indentId,ips).then(()=>{
                                     getNodeListData();
+                                    setSelectedRowKeys([])
+                                    setSelectedRows([])
                                 })
                             }} disabled={!hasSelected} loading={delLoading} >
                                 删除选中
@@ -234,7 +259,7 @@ export default function StationPlan(props:Iprops) {
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
                             <Form.Item name="dbUsage" label="类别" rules={[{ required: true, message: '请填写' }]}>
-                                <Select options={options} loading={loading} style={{ width: 220 }}  />
+                                <Select options={DbUsageOptions} loading={loading} style={{ width: 220 }}  />
                             </Form.Item>
                             < Divider />
                             <Form.List name="more" >

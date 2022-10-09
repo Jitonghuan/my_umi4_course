@@ -459,6 +459,7 @@ export interface saveParamItem{
     paramValue?: string;
     paramDescription?: string;
     paramComponentReleaseName?:string;
+    paramComponentNamespace?:string;
     paramType?:string;
 }
 

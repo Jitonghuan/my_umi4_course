@@ -7,7 +7,8 @@ import { Drawer, Button, Form, Spin, Select, Input, Switch,message } from 'antd'
 import {  saveServerInfo } from '../hook';
 import { getRequest } from '@/utils/request';
 import { checkServerIpApi, checkServerInfoApi, } from '../../../../../service';
-import {useGetListNacosPurposeInfo,useGetListNacosRoleInfo} from '../hook'
+import {useGetListNacosPurposeInfo,useGetListNacosRoleInfo} from '../hook';
+
 
 
 export interface IProps {
@@ -26,15 +27,40 @@ export default function EditNodeDraw(props: IProps) {
     const [rightInfo, setRightInfo] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [infoLoading,purposeOptions, getListNacosPurposeInfo]=useGetListNacosPurposeInfo()
-    const [roleLoading,roleOptions, getListNacosRoleInfo]=useGetListNacosRoleInfo()
+    const [roleLoading,roleOptions, getListNacosRoleInfo]=useGetListNacosRoleInfo();
+    const [isRootDiskChecked, setIsRootDiskChecked] = useState<boolean>(false);
+    const [enableNfsChecked, setEnableNfsChecked] = useState<boolean>(false);
+    const onEnableNfsChange=(checked: boolean)=>{
+      if (checked === true) {
+        setEnableNfsChecked(true);
+          
+        } else {
+          setEnableNfsChecked(false);
+          
+        }
+
+  }
+  const onRootDiskChange=(checked: boolean)=>{
+    if (checked === true) {
+      setIsRootDiskChecked(true);
+        
+      } else {
+        setIsRootDiskChecked(false);
+        
+      }
+
+}
     useEffect(()=>{
         if (mode === 'HIDE') return;
         if(mode==="EDIT"){
             nodeForm.setFieldsValue({
                 ...curRecord,
-                enableNfs:curRecord?.enableNfs?true:false,
-                isRootDisk:curRecord?.isRootDisk?true:false
+                // enableNfs:curRecord?.enableNfs?true:false,
+                // isRootDisk:curRecord?.isRootDisk?true:false
             })
+           setEnableNfsChecked(curRecord?.enableNfs?true:false,) 
+           setIsRootDiskChecked( curRecord?.isRootDisk?true:false)
+          
             // onServerIpChange()
             // onHostnameChange()
 
@@ -199,7 +225,7 @@ export default function EditNodeDraw(props: IProps) {
            </Form.Item>
            
             <Form.Item name="isRootDisk" label="共用系统盘">
-            <Switch  checked={curRecord?.isRootDisk?true:false}/>
+            <Switch  checked={isRootDiskChecked} onChange={onRootDiskChange}/>
             </Form.Item>
             <Form.Item name="dataDisk" label="数据盘">
                 <Input style={{ width: 320 }} disabled={nodeForm.getFieldValue("isRootDisk")===true}/>
@@ -212,7 +238,7 @@ export default function EditNodeDraw(props: IProps) {
                 <Select style={{ width: 320 }} loading={infoLoading} mode="multiple" options={purposeOptions}/>
             </Form.Item>
             <Form.Item name="enableNfs" label="启用nfs server">
-            <Switch checked={curRecord?.enableNfs?true:false} />
+            <Switch checked={enableNfsChecked} onChange={onEnableNfsChange} />
             </Form.Item>
             {nodeForm.getFieldValue("enableNfs")===true &&(
                 <Form.Item name="nfsWhite" label="白名单">

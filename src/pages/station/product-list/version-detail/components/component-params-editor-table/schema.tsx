@@ -20,6 +20,7 @@ export const createCompontentsTableColumns = (params: {
     paramOptions:any;
     originOptions:any;
     releaseOption:any;
+    namespaceOption:any;
     onComChange: (value: any) => void;
     onParamChange: (config: any,value: any) => void;
     onEdit: (record: any, action: any,) => void;
@@ -89,6 +90,36 @@ export const createCompontentsTableColumns = (params: {
               return (
                 <Select
                   options={params?.releaseOption}
+                  showSearch
+                  allowClear
+                  // onChange={(value: any) => {
+      
+                  // }}
+                ></Select>
+              );
+            },
+          },
+          {
+            title: 'NameSpace',
+            key: 'paramComponentNamespace',
+            dataIndex: 'paramComponentNamespace',
+            valueType: 'select',
+            formItemProps: () => {
+              return {
+                rules: [
+                  {
+                    required: true,
+                    message: '此项为必填项',
+                  },
+                ],
+                errorType: 'default',
+              };
+            },
+            renderFormItem: (_, config: any, data) => {
+              //  ]
+              return (
+                <Select
+                  options={params?.namespaceOption}
                   showSearch
                   allowClear
                   // onChange={(value: any) => {

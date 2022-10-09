@@ -3,6 +3,8 @@ import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Form } from 'antd';
 import {useBasecomponentList,useReleaseList} from './hook';
+import {useNamespaceList} from '../editor-table-pro/hook'
+
 import {createCompontentsTableColumns,DataSourceType } from './schema';
 import {useQueryParamList,useQueryDeliveryParamList,useSaveParam,useDeleteDeliveryParam,useQueryOriginList,useEditVersionParam,} from '../../hooks';
 
@@ -14,6 +16,8 @@ export interface VersionDetailProps {
 }
 
 export default (props: VersionDetailProps) => {
+  //useNamespaceList
+  const [namespaceLoading, namespaceOption, queryNamespaceList] = useNamespaceList();
   //useReleaseList
   const [releaseOptionLoading, releaseOption,queryReleaseList] = useReleaseList();
   const { currentTab, versionId, isEditable, initDataSource } = props;
@@ -47,9 +51,11 @@ export default (props: VersionDetailProps) => {
       paramOptions:paramOptions,
       originOptions:originOptions,
       releaseOption:releaseOption,
+      namespaceOption:namespaceOption,
       onComChange: (value: any) => {
         queryParamList(versionId, value);
         queryReleaseList(value)
+        queryNamespaceList(value)
        
       },
       onParamChange:(config:any,value: any)=>{
@@ -68,6 +74,7 @@ export default (props: VersionDetailProps) => {
         setType('edit');
         queryParamList(versionId, record.paramComponent);
         queryReleaseList(record?.paramComponent)
+        queryNamespaceList(record?.paramComponent)
        
       },
       onDelete:(record:any)=>{
@@ -134,7 +141,7 @@ export default (props: VersionDetailProps) => {
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
             if (type !== 'edit') {
-              await saveParam({ ...params, versionId }).then(() => {
+              await saveParam({ ...params,  versionId }).then(() => {
                 queryDeliveryParamList(versionId);
               });
             } else if (type === 'edit') {
