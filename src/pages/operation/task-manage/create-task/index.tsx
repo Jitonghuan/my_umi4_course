@@ -82,7 +82,7 @@ export default function CreatTask(props: RecordEditDataProps) {
     console.log('initData?.appCode&&mode!=="HIDE"&&mode!=="VIEW"', initData?.appCode, mode !== 'HIDE', mode !== 'VIEW');
 
     if (initData?.appCode && mode !== 'HIDE' && mode !== 'VIEW') {
-      debugger;
+    
       queryAppEnvData({ appCode: initData?.appCode });
     }
   }, [mode]);

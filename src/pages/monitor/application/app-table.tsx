@@ -253,7 +253,7 @@ const Coms = (props: IProps) => {
       },
     }).then((resp) => {
         if (resp.data && resp.data[0]) {
-          debugger
+        
           setCurtIp(resp.data[0].hostIP);
           setHostName(resp.data[0]?.hostName);
         }
@@ -392,7 +392,7 @@ const Coms = (props: IProps) => {
   const handleFilter = useCallback(
     (vals:any) => {
       setCurtIp('');
-      debugger
+     
       setHostName('');
       if (vals.appCode) {
         prevFilter.current = {
