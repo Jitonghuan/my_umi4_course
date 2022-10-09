@@ -187,16 +187,18 @@ const Coms = (props: IProps) => {
       queryAppList().then((resp) => {
         setAppData(resp);
       })
-    } else {
-      queryAppList().then((resp) => {
-        setAppData(resp);
-        prevFilter.current = {
-          appCode: appCode || (resp.length ? resp[0].value : undefined),
-        };
-        setFilter(prevFilter.current);
-        formInstance.setFieldsValue(prevFilter.current);
-      });
-    }
+    } 
+    // else {
+    //   queryAppList().then((resp) => {
+    //     setAppData(resp);
+    //     prevFilter.current = {
+    //       appCode: appCode || (resp.length ? resp[0].value : undefined),
+    //     };
+    //     debugger
+    //     setFilter(prevFilter.current);
+    //     formInstance.setFieldsValue(prevFilter.current);
+    //   });
+    // }
   };
 
   // 查询环境列表
@@ -227,6 +229,7 @@ const Coms = (props: IProps) => {
       // if(entry){
       //   queryNodeList({...prevFilter.current});
       // }
+    
       setFilter(prevFilter.current);
       formInstance.setFieldsValue(prevFilter.current);
     });
@@ -248,9 +251,9 @@ const Coms = (props: IProps) => {
         envCode:entry? params?.envCode:prevFilter.current?.envCode,
         appCode:entry? params?.appCode:prevFilter.current?.appCode,
       },
-    })
-      .then((resp) => {
+    }).then((resp) => {
         if (resp.data && resp.data[0]) {
+          debugger
           setCurtIp(resp.data[0].hostIP);
           setHostName(resp.data[0]?.hostName);
         }
@@ -272,6 +275,7 @@ const Coms = (props: IProps) => {
         if (!resp?.dataSource[0]?.hostName) {
           return;
         }
+      
 
         queryPodCpu(
           resp?.dataSource[0]?.hostName,
@@ -328,11 +332,12 @@ const Coms = (props: IProps) => {
   useEffect(() => {
     if (filter?.appCode  &&filter?.envCode &&!entry) {
       // reset();
+     
       queryNodeList();
     }
     if(filter?.appCode  &&filter?.envCode &&entry){
-      console.log("prevFilter.current?.envCode00000",prevFilter.current)
-      queryNodeList({appCode,envCode:prevFilter.current?.envCode});
+     
+      queryNodeList({appCode,envCode:filter?.envCode});
     }
   }, [filter]);
 
@@ -344,47 +349,50 @@ const Coms = (props: IProps) => {
       selector?.forEach((el) => {
         el.setAttribute('title', '');
       });
-      if (hostName && curtIP) {
-        queryPodCpu(
-          hostName,
-          filter.envCode,
-          Number((now - startTime) / 1000),
-          Number(now / 1000),
-          filter.appCode,
-          curtIP,
-        );
-        queryPodMem(
-          hostName,
-          filter.envCode,
-          Number((now - startTime) / 1000),
-          Number(now / 1000),
-          filter.appCode,
-          curtIP,
-        );
-        queryPodDisk(
-          hostName,
-          filter.envCode,
-          Number((now - startTime) / 1000),
-          Number(now / 1000),
-          filter.appCode,
-          curtIP,
-        );
-        queryPodNetwork(
-          hostName,
-          filter.envCode,
-          Number((now - startTime) / 1000),
-          Number(now / 1000),
-          filter.appCode,
-          curtIP,
-        );
-      }
+     
+      // if (hostName && curtIP&&currentEnvCode) {
+      //   queryPodCpu(
+      //     hostName,
+      //     filter.envCode,
+      //     Number((now - startTime) / 1000),
+      //     Number(now / 1000),
+      //     filter.appCode,
+      //     curtIP,
+      //   );
+      //   queryPodMem(
+      //     hostName,
+      //     filter.envCode,
+      //     Number((now - startTime) / 1000),
+      //     Number(now / 1000),
+      //     filter.appCode,
+      //     curtIP,
+      //   );
+      //   queryPodDisk(
+      //     hostName,
+      //     filter.envCode,
+      //     Number((now - startTime) / 1000),
+      //     Number(now / 1000),
+      //     filter.appCode,
+      //     curtIP,
+      //   );
+      //   queryPodNetwork(
+      //     hostName,
+      //     filter.envCode,
+      //     Number((now - startTime) / 1000),
+      //     Number(now / 1000),
+      //     filter.appCode,
+      //     curtIP,
+      //   );
+      // }
+    
     }
-  }, [startTime, timeRate]);
+  }, [startTime, timeRate,prevFilter.current]);
 
   // 过滤操作
   const handleFilter = useCallback(
     (vals:any) => {
       setCurtIp('');
+      debugger
       setHostName('');
       if (vals.appCode) {
         prevFilter.current = {
@@ -396,7 +404,7 @@ const Coms = (props: IProps) => {
           ...vals,
         };
       }
-      localStorage.setItem('monitor_application_filter', JSON.stringify(prevFilter.current || ''))
+      localStorage.setItem('monitor_application_filter', JSON.stringify(prevFilter.current || '{}'))
       setFilter(prevFilter.current);
     },
     [filter],
@@ -450,40 +458,45 @@ const Coms = (props: IProps) => {
             <Tooltip title="Relative time ranges" placement="top">
               <Select
                 value={startTime}
-                onChange={(value) => {
+                onChange={(value) => {         
                   setStartTime(value);
-                  queryPodCpu(
-                    hostName,
-                    filter.envCode,
-                    Number((now - value) / 1000),
-                    Number(now / 1000),
-                    filter.appCode,
-                    curtIP,
-                  );
-                  queryPodMem(
-                    hostName,
-                    filter.envCode,
-                    Number((now - value) / 1000),
-                    Number(now / 1000),
-                    filter.appCode,
-                    curtIP,
-                  );
-                  queryPodDisk(
-                    hostName,
-                    filter.envCode,
-                    Number((now - value) / 1000),
-                    Number(now / 1000),
-                    filter.appCode,
-                    curtIP,
-                  );
-                  queryPodNetwork(
-                    hostName,
-                    filter.envCode,
-                    Number((now - value) / 1000),
-                    Number(now / 1000),
-                    filter.appCode,
-                    curtIP,
-                  );
+                  let currentEnvCode= filter.envCode||prevFilter.current?.envCode
+                   if (hostName && curtIP&&currentEnvCode) {
+                     queryPodCpu(
+                       hostName,
+                       currentEnvCode,
+                       Number((now - startTime) / 1000),
+                       Number(now / 1000),
+                       filter.appCode,
+                       curtIP,
+                     );
+                     queryPodMem(
+                       hostName,
+                       currentEnvCode,
+                       Number((now - startTime) / 1000),
+                       Number(now / 1000),
+                       filter.appCode,
+                       curtIP,
+                     );
+                     queryPodDisk(
+                       hostName,
+                       currentEnvCode,
+                       Number((now - startTime) / 1000),
+                       Number(now / 1000),
+                       filter.appCode,
+                       curtIP,
+                     );
+                     queryPodNetwork(
+                       hostName,
+                       currentEnvCode,
+                       Number((now - startTime) / 1000),
+                       Number(now / 1000),
+                       filter.appCode,
+                       curtIP,
+                     );
+                   }
+
+                 
                 }}
                 style={{ width: 150 }}
               >
