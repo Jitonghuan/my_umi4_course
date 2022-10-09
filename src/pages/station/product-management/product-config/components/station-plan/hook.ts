@@ -83,12 +83,12 @@ export function useSaveServerInfo(): [(params: SaveServerInfoItems) => Promise<v
 
   export interface SaveDatabaseInfoItems{
     indentId:number;//		制品id						true
-    DbType:string;//	数据库类型（mysql、rds）	true
-    DbAddress:string ;//	地址						true
-    DbUser:string;//	用户						true
-    DbPassword:string;//	密码					true
-    DbPort:number;//	        端口					true
-    DbUsage:string;//	数据盘						true
+    dbType:string;//	数据库类型（mysql、rds）	true
+    dbAddress:string ;//	地址						true
+    dbUser:string;//	用户						true
+    dbPassword:string;//	密码					true
+    dbPort:number;//	        端口					true
+    dbUsage:string;//	数据盘						true
 
 }
 export const saveDatabaseInfo = (params: any) => {
@@ -151,51 +151,14 @@ export function useGetListNacosRoleInfo(): [boolean,any, () => Promise<void>] {
   return [loading,data, getListNacosRoleInfo];
 }
 
-//listBasicInfoApi
 
-export function useGetListBasicInfo(): [boolean,any, (indentId:number,infoType:string) => Promise<void>] {
-  const [loading, setLoading] = useState(false);
-  const [data,setData]=useState<any>([]);
-  const getListBasicInfo= async (indentId:number,infoType:string) => {
-    setLoading(true);
-    try {
-      await getRequest(`${APIS.getInfoApi}`,{data:{indentId,infoType}})
-        .then((res) => {
-          if (res.success) {
-         
-            setData(res?.data)
-          } 
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  return [loading,data, getListBasicInfo];
-}
 //listBasicInfoApi
+export const useGetDatabaseInfo = (indentId:number,infoType:string) =>
+ getRequest(APIS.getInfoApi,{data:{indentId,infoType}}).then((res: any) => {
+  if (res?.success) {
+    const dataSource =res?.data|| [];
+    return dataSource;
+  }
+  return [];
+ })
 
-export function useGetDatabaseInfo(): [boolean,any, (indentId:number,infoType:string) => Promise<void>] {
-  const [loading, setLoading] = useState(false);
-  const [data,setData]=useState<any>([]);
-  const getListBasicInfo= async (indentId:number,infoType:string) => {
-    setLoading(true);
-    try {
-      await getRequest(`${APIS.getInfoApi}`,{data:{indentId,infoType}})
-        .then((res) => {
-          if (res.success) {
-         
-            setData(res?.data)
-          } 
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  return [loading,data, getListBasicInfo];
-}

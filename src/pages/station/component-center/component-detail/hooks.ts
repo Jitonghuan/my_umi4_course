@@ -168,7 +168,7 @@ export function useAddRely(): [boolean, (id: number, componentDependency: string
   const addRely = async (id: number, componentDependency: string) => {
     setLoading(true);
     try {
-      await postRequest(APIS.addRelyApi, { data: { id, componentDependency } })
+      await postRequest(`${APIS.addRelyApi}?id=${id}&componentDependency=${componentDependency}`  )
         .then((res) => {
           if (res.success) {
             message.success("新增依赖成功！");

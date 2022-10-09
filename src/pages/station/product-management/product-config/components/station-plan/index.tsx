@@ -1,8 +1,8 @@
 import React, { useState, useMemo,useEffect,useCallback } from 'react';
-import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select, } from 'antd';
+import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select,Spin } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { nodesSchema, DbUsageOptions } from './schema';
-import { saveBasicInfo, saveDatabaseInfo,getNodeList,useDeleteServer ,useGetListBasicInfo,useGetDatabaseInfo} from './hook';
+import { saveBasicInfo, saveDatabaseInfo,getNodeList,useDeleteServer ,useGetDatabaseInfo} from './hook';
 import EditNodeDraw from './edit-node-draw';
 import {useBelongList} from '../../../../product-list/version-detail/components/editor-table-pro/hook'
 import './index.less'
@@ -13,8 +13,9 @@ interface Iprops{
 
 export default function StationPlan(props:Iprops) {
     const {indentId} =props;
-    const [infoLoading,basicInfoData, getListBasicInfo]=useGetListBasicInfo()
-    const [dataBaseLoading,databaseData, getDatabaseInfo]=useGetDatabaseInfo()
+    const [databaseData,setDatabaseData]=useState<any>([])
+    const [basicInfoData,setBasicInfoData]=useState<any>([])
+    const [dataBaseLoading,setDataBaseLoading]=useState<boolean>(false)
     const [loading, options,queryBelongList]=useBelongList()
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
@@ -32,33 +33,40 @@ export default function StationPlan(props:Iprops) {
         getNodeListData();
         queryBelongList();
         
-        getListBasicInfo(indentId,'basic')
-        getDatabaseInfo(indentId,'database')
-    },[indentId])
-    useEffect(()=>{
-        if(Object.keys(databaseData)?.length>0){
-            let databaseDataOne=databaseData[0]
-            let moreDataArry=databaseData.shift()
-            form.setFieldsValue({
-               ...databaseDataOne,
-               more:moreDataArry
-               
-            }) 
-
-        }
-       
-    },[databaseData])
-
-    useEffect(()=>{
-        if(Object.keys(basicInfoData)?.length>0){
-            baseInfoForm.setFieldsValue({
-                ...basicInfoData
-            }) 
-
-        }
-       
-    },[basicInfoData])
+        getListBasicInfo(indentId,)
+        getDatabaseInfo(indentId,)
+    },[indentId]);
+    const getDatabaseInfo=(indentId:number)=>{
+        setDataBaseLoading(true)
+        useGetDatabaseInfo(indentId,'database').then((result)=>{
+            setDatabaseData(result);
+            if(result?.length>0){
+                let databaseDataOne=result[0];
+                //深拷贝
+                let data:any=JSON.parse(JSON.stringify(result))||[]
+                data.shift();//26
+                form.setFieldsValue({
+                   ...databaseDataOne,
+                   more:data
+                   
+                }) 
     
+            }
+          }).finally(()=>{
+            setDataBaseLoading(false)
+          })
+    }
+    const getListBasicInfo=(indentId:number)=>{
+        useGetDatabaseInfo(indentId,'basic').then((result)=>{
+            setBasicInfoData(result);
+            if(Object.keys(result)?.length>0){
+                baseInfoForm.setFieldsValue({
+                    ...result
+                }) 
+    
+            }
+          })
+    }
     
     const getNodeListData=useCallback(()=>{
        getNodeList(indentId,'server').then((res)=>{
@@ -206,26 +214,27 @@ export default function StationPlan(props:Iprops) {
             title: '数据设施',
             content: (<div style={{ display: 'flex', width: '100%', justifyContent: "center", height: "100%", overflow: "scroll" }}>
                 <div>
+                    <Spin spinning={dataBaseLoading}>
                     <p><b>数据库信息</b></p>
                     <p className="third-step-content">
                         <Form form={form} layout="horizontal" labelCol={{ flex: '120px' }} name="dynamic_form_nest_item" onFinish={() => { }} >
-                            <Form.Item name="DbType" label="数据库类型" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="dbType" label="数据库类型" rules={[{ required: true, message: '请填写' }]}>
                                 <Select options={DbUsageOptions} style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="DbAddress" label="地址" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="dbAddress" label="地址" rules={[{ required: true, message: '请填写' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="DbPort" label="端口" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="dbPort" label="端口" rules={[{ required: true, message: '请填写' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="DbUser" label="用户名" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="dbUser" label="用户名" rules={[{ required: true, message: '请填写' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="DbPassword" label="密码" rules={[{ required: true, message: '请填写' }]}>
+                            <Form.Item name="dbPassword" label="密码" rules={[{ required: true, message: '请填写' }]}>
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
-                            <Form.Item name="DbUsage" label="类别" rules={[{ required: true, message: '请填写' }]}>
-                                <Select options={options} loading={loading} style={{ width: 220 }} onChange={() => { }} />
+                            <Form.Item name="dbUsage" label="类别" rules={[{ required: true, message: '请填写' }]}>
+                                <Select options={options} loading={loading} style={{ width: 220 }}  />
                             </Form.Item>
                             < Divider />
                             <Form.List name="more" >
@@ -237,7 +246,7 @@ export default function StationPlan(props:Iprops) {
                                                 <Form.Item
                                                     {...field}
                                                     label="数据库类型"
-                                                    name={[field.name, 'DbType']}
+                                                    name={[field.name, 'dbType']}
                                                     rules={[{ required: true, message: '请填写' }]}
                                                 >
                                                     <Select options={DbUsageOptions} style={{ width: 242 }} onChange={() => { }} />
@@ -245,7 +254,7 @@ export default function StationPlan(props:Iprops) {
                                                 <Form.Item
                                                     {...field}
                                                     label="地址"
-                                                    name={[field.name, 'DbAddress']}
+                                                    name={[field.name, 'dbAddress']}
                                                     rules={[{ required: true, message: '请填写' }]}
                                                 >
                                                     <Input />
@@ -253,7 +262,7 @@ export default function StationPlan(props:Iprops) {
                                                 <Form.Item
                                                     {...field}
                                                     label="端口"
-                                                    name={[field.name, 'DbPort']}
+                                                    name={[field.name, 'dbPort']}
                                                     rules={[{ required: true, message: '请填写' }]}
                                                 >
                                                     <Input />
@@ -261,7 +270,7 @@ export default function StationPlan(props:Iprops) {
                                                 <Form.Item
                                                     {...field}
                                                     label="用户名"
-                                                    name={[field.name, 'DbUser']}
+                                                    name={[field.name, 'dbUser']}
                                                     rules={[{ required: true, message: '请填写' }]}
                                                 >
                                                     <Input />
@@ -269,7 +278,7 @@ export default function StationPlan(props:Iprops) {
                                                 <Form.Item
                                                     {...field}
                                                     label="密码"
-                                                    name={[field.name, 'DbPassword']}
+                                                    name={[field.name, 'dbPassword']}
                                                     rules={[{ required: true, message: '请填写' }]}
                                                 >
                                                     <Input />
@@ -279,7 +288,7 @@ export default function StationPlan(props:Iprops) {
                                                     <Form.Item
                                                         {...field}
                                                         label="类别"
-                                                        name={[field.name, 'DbUsage']}
+                                                        name={[field.name, 'dbUsage']}
                                                         rules={[{ required: true, message: '请填写' }]}
                                                     >
                                                         <Select options={DbUsageOptions} style={{ width: 220 }} onChange={() => { }} />
@@ -303,6 +312,9 @@ export default function StationPlan(props:Iprops) {
                         </Form>
 
                     </p>
+
+                    </Spin>
+                   
                 </div>
 
             </div>),
