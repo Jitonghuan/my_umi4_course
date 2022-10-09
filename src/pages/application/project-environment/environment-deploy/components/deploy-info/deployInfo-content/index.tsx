@@ -23,6 +23,7 @@ import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
 import { LIST_STATUS_TYPE } from './schema';
 import DeploymentList from '../components/deployment-list';
+import {OPERATE_TYPE} from './schema'
 import './index.less';
 const rootCls = 'deploy-content-Info';
 export interface DeployContentProps {
@@ -489,20 +490,12 @@ export default function DeployContent(props: DeployContentProps) {
                             {
                               pathname: '/matrix/application/environment-deploy/viewLog',
                               search:`appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`
-                              // query: {
-                              //   appCode: appData?.appCode,
-                              //   projectEnvCode: currentEnvData,
-                              //   instName: record?.instName,
-                              //   projectEnvName: projectEnvName,
-                              //   // viewLogEnvType: envTypeCode,
-                              //   optType: 'deployInfo',
-                              //   deploymentName: appData?.deploymentName,
-                              // },
+                            
                             },{
                                 infoRecord: record,
                               },
                             
-                            // `/matrix/application/environment-deploy/viewLog?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}`,
+                           
                           )
                         }
                       >
@@ -534,10 +527,11 @@ export default function DeployContent(props: DeployContentProps) {
                       <Popconfirm
                         title="确定要删除该信息吗？"
                         onConfirm={() => {
-                          deleteInstance(appData?.appCode, currentEnvData, record.instName);
-                          setTimeout(() => {
+                          deleteInstance(appData?.appCode, currentEnvData, record.instName).then(()=>{
                             queryInstanceList(appData?.appCode, currentEnvData);
-                          }, 200);
+                            queryAppOperateLog(currentEnvData);
+                          });
+                         
                         }}
                       >
                         <Button size="small" type="default" >
@@ -580,16 +574,8 @@ export default function DeployContent(props: DeployContentProps) {
                   <p>
                     <span>操作事件：</span>
                     <b>
-                      <Tag color="geekblue">
-                        {item.operateEvent === 'PodFileDownload'
-                          ? '文件下载'
-                          : item.operateEvent === 'restartApp'
-                            ? '重启应用'
-                            : item.operateEvent === 'rollback'
-                              ? '回滚应用'
-                              : item.operateEvent === 'DeletePod'
-                                ? '删除Pod'
-                                : null}
+                    <Tag color= {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.color||"default"}>
+                        {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.tagText||"--"}
                       </Tag>
                     </b>
                   </p>

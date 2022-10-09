@@ -19,3 +19,15 @@ export const LIST_STATUS_TYPE: Record<string, statusTypeItem> = {
   Waiting: { text: 'Waiting', color: 'yellow' },
   Unknown: { text: 'Unknown', color: 'red' },
 };
+
+type OperateStatusTypeItem = {
+  color: string;
+  tagText: string;
+};
+
+export const OPERATE_TYPE: Record<string, OperateStatusTypeItem> = {
+  "podfiledownload": { tagText: '文件下载',color: 'geekblue'},
+  "restartapp": { tagText: '重启应用',  color: "cyan"},
+  "rollback": { tagText: '回滚应用',  color: 'purple'},
+  "deletepod": { tagText: '删除Pod',  color: 'red'},
+};
