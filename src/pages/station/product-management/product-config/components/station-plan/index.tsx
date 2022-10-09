@@ -259,7 +259,7 @@ export default function StationPlan(props:Iprops) {
                                 <Input style={{ width: 220 }} onChange={() => { }} />
                             </Form.Item>
                             <Form.Item name="dbUsage" label="类别" rules={[{ required: true, message: '请填写' }]}>
-                                <Select options={DbUsageOptions} loading={loading} style={{ width: 220 }}  />
+                                <Select options={options} loading={loading} style={{ width: 220 }}  />
                             </Form.Item>
                             < Divider />
                             <Form.List name="more" >
@@ -316,7 +316,7 @@ export default function StationPlan(props:Iprops) {
                                                         name={[field.name, 'dbUsage']}
                                                         rules={[{ required: true, message: '请填写' }]}
                                                     >
-                                                        <Select options={DbUsageOptions} style={{ width: 220 }} onChange={() => { }} />
+                                                        <Select options={options} style={{ width: 220 }} onChange={() => { }} />
                                                     </Form.Item>
                                                     <Form.Item style={{ marginLeft: 80 }}><MinusCircleOutlined onClick={() => remove(field.name)} /></Form.Item>
                                                 </div>
