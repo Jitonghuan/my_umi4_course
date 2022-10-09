@@ -401,13 +401,27 @@ export default function StationPlan(props:Iprops) {
                                         objectData[key]=element
 
                                     }
+                                    if(key==="dbPort"){
+                                        objectData[key]=Number(element)
+
+                                    }
                                     
                                 }
                             }
                             dataParams=[objectData]
                            if(params?.more?.length>0){
-                             dataParams=[objectData].concat(params?.more)
+                          const paramsData=  params?.more?.map((ele:any)=>(
+                              {
+                                  ...ele,
+                                  dbPort:Number(ele?.dbPort)
+                              }
+                          )
+
+
+                            )
+                             dataParams=[objectData].concat(paramsData)
                            }
+                           console.info("dataParams",dataParams)
                             saveDatabaseInfo({indentId:indentId,databases:dataParams }).then((res) => {
                                 if(res?.success){
                                     message.success(res?.data)

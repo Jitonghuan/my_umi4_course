@@ -92,7 +92,8 @@ export default (props: VersionDetailProps) => {
         action?.startEditable?.(record.id);
         setType('edit');
         setCurRecord(record)
-        queryNamespaceList(record.label)
+        console.info("record.label",record)
+        queryNamespaceList(record.componentName)
       },
      
       onDelete: async (record) => {

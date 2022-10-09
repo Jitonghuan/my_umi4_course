@@ -59,6 +59,7 @@ export default function ComponentDetail() {
   const [editLoading, updateDescription] = useUpdateDescription();
   const [addLoading, addRely]=useAddRely();
   // const [delLoading, deleteRely]=useDeleteRely();
+  const [delLoading,setDelLoading]=useState(false);
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
   const [loading, setLoading] = useState(false);
   const [versionOptions, setVersionOptions] = useState<any>([]);
@@ -73,6 +74,7 @@ export default function ComponentDetail() {
   const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList,options] = useQueryComponentList();
   
   const deletVersion = async (id: number) => {
+    setDelLoading(true)
     await postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
       if (res.success) {
         message.success(res.data);
@@ -81,6 +83,8 @@ export default function ComponentDetail() {
       } else {
         return;
       }
+    }).finally(()=>{
+      setDelLoading(false)
     });
   };
   const getComponentVersionList = async (componentId: string) => {
@@ -358,19 +362,25 @@ export default function ComponentDetail() {
               
                   {componentType==="middleware"&&
                    <Descriptions.Item label="依赖组件" span={2}>
-                   
-                   {componentInfo?.componentDependency?.split(',')?.map((item:any)=>{
-                   return( <Tag  closable={true} onClose={() =>{
+                   <Spin spinning={delLoading} > 
+                   {componentInfo?.componentDependency!==""?componentInfo?.componentDependency?.split(',')?.map((item:any)=>{
+                   return(
+                     <Tag  closable={true} onClose={() =>{
                     deleteRely(initRecord.id,item).then((res)=>{
                       if (res.success) {
                         message.success("删除依赖成功！");    
                       } 
                       }).finally(()=>{
-                        queryComponentInfo(componentName,  curVersion.version, componentType, curVersion.componentId);
+                        queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);
+                       
                       })
-                     }}>{item}</Tag>)
+                     }}>{item}</Tag>
 
-                   }) || '--'} 
+                   )
+
+                   }) :"--"} 
+                   </Spin>
+                  
                    {/* <MinusCircleOutlined onClick={()=>{setMode("EDIT");}} style={{fontSize:16,color:"#3591ff"}} />&nbsp; */}
                    <span style={{float:"right"}}><PlusCircleOutlined onClick={()=>{setMode("ADD")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
                  </Descriptions.Item> }

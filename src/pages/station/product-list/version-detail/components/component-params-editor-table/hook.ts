@@ -38,9 +38,9 @@ import { getRequest,} from '@/utils/request';
   export function useReleaseList() {
     const [loading, setLoading] = useState<boolean>(false);
     const [dataSource, setDataSource] = useState<any>([]);
-    const queryReleaseList = useCallback(async (componentName:string) => {
+    const queryReleaseList = useCallback(async (componentName:string,versionId:number) => {
       setLoading(true);
-      await getRequest(APIS.queryReleaseList,{data:{componentName}})
+      await getRequest(APIS.queryReleaseList,{data:{componentName,versionId}})
         .then((res) => {
           if (res?.success) {
             let dataSource = res.data || [];

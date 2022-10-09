@@ -54,7 +54,7 @@ export default (props: VersionDetailProps) => {
       namespaceOption:namespaceOption,
       onComChange: (value: any) => {
         queryParamList(versionId, value);
-        queryReleaseList(value)
+        queryReleaseList(value,versionId)
         queryNamespaceList(value)
        
       },
@@ -73,7 +73,8 @@ export default (props: VersionDetailProps) => {
         action?.startEditable?.(record.id);
         setType('edit');
         queryParamList(versionId, record.paramComponent);
-        queryReleaseList(record?.paramComponent)
+        console.info("record?.paramComponent",record)
+        queryReleaseList(record?.paramComponent,versionId)
         queryNamespaceList(record?.paramComponent)
        
       },
