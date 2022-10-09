@@ -163,7 +163,8 @@ export default function ProductConfig() {
           }}
           onSave={()=>{
             queryIndentInfo(configInfo.id).then(() => {
-              queryIndentConfigParamList({ id: configInfo.id,  });
+             
+              queryIndentParamList({ id: configInfo.id,  });
             });
           }}
           onSaveServer={()=>{

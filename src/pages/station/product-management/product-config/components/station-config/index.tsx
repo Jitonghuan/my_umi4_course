@@ -19,7 +19,7 @@ export interface IProps {
 export default function StationConfig(props:IProps){
     const {configInfo,onUpdate,onSaveGlobal,onSave,serverTableInfo,onSaveServer,configTableInfo,compontentTableInfo} =props
     const { TabPane } = Tabs;
-    const [tabActiveKey, setTabActiveKey] = useState<string>('1');
+    const [tabActiveKey, setTabActiveKey] = useState<string>('config');
     const [editVisable, setEditVisable] = useState<boolean>(false);
     const [updateLoading, updateParamIndent] = useUpdateParamIndent();
     const [type, setType] = useState<string>('');
@@ -63,14 +63,17 @@ const serviceConfigTableColumns = useMemo(() => {
 
   const handleSubmit = () => {
     if (type === 'config') {
-    onSaveGlobal()
+      onSaveGlobal()
       setEditVisable(false);
+      setTabActiveKey('config');
     } else if(type === 'compontent') {
-     onSave();
+      onSave();
       setEditVisable(false);
+      setTabActiveKey('compontent');
     }else if(type === 'server'){
       onSaveServer();
       setEditVisable(false)
+      setTabActiveKey('server');
 
     }
   };
@@ -105,14 +108,14 @@ const serviceConfigTableColumns = useMemo(() => {
               
               </>}
             >
-              <TabPane tab="全局参数" key="1">
+              <TabPane tab="全局参数" key="config">
                 <Table columns={configTableColumns} dataSource={configTableInfo?.configDataSource} loading={configTableInfo?.configLoading}></Table>
               </TabPane>
-              <TabPane tab="组件参数" key="2">
+              <TabPane tab="组件参数" key="compontent">
                 <Table columns={componentTableColumns} dataSource={compontentTableInfo?.dataSource} loading={compontentTableInfo?.loading}></Table>
               </TabPane>
-              <TabPane tab="服务配置" key="3">
-                <Table columns={serviceConfigTableColumns} dataSource={serverTableInfo?.dataSource} loading={serverTableInfo?.loading}></Table>
+              <TabPane tab="服务配置" key="server">
+                <Table columns={serviceConfigTableColumns} dataSource={serverTableInfo?.serverDataSource} loading={serverTableInfo?.serverLoading}></Table>
               </TabPane>
             </Tabs>
             <ParameterEditModal
