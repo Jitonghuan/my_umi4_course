@@ -1,4 +1,5 @@
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+import { Switch} from 'antd';
 export const DbUsageOptions=[
   {
   label:"RDS",
@@ -21,8 +22,19 @@ export const nodesSchema = ({ onEditClick }: { onEditClick: (record: any, index:
       dataIndex: 'hostname',
     },
     {
-      title: '共享数据盘',
+      title: '共享系统盘',
       dataIndex: 'isRootDisk',
+      render: (enable: boolean, record: any, index: number) => (
+        <>
+          <Switch
+            checked={enable===true? true : false}
+            disabled={true}
+            onClick={() => {
+             
+            }}
+          />
+        </>
+      ),
     },
     {
       title: '角色',

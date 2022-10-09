@@ -32,9 +32,11 @@ export default function EditNodeDraw(props: IProps) {
         if(mode==="EDIT"){
             nodeForm.setFieldsValue({
                 ...curRecord,
-                enableNfs:curRecord?.enableNfs===1?true:false,
-                isRootDisk:curRecord?.isRootDisk===1?true:false
+                enableNfs:curRecord?.enableNfs?true:false,
+                isRootDisk:curRecord?.isRootDisk?true:false
             })
+            // onServerIpChange()
+            // onHostnameChange()
 
         }
         getListNacosPurposeInfo()
@@ -43,7 +45,7 @@ export default function EditNodeDraw(props: IProps) {
     },[mode])
     const handleSubmit = async() => {
       const values=  await nodeForm.validateFields();
-      saveServerInfo({indentId,server:{...values,cpu:parseInt(values?.cpu),memory:parseInt(values?.memory),enableNfs:values?.enableNfs?1:0,isRootDisk:values?.isRootDisk?1:0}}).then((res)=>{
+      saveServerInfo({indentId,server:{...values,cpu:parseInt(values?.cpu),memory:parseInt(values?.memory),enableNfs:values?.enableNfs?true:false,isRootDisk:values?.isRootDisk===true?true:false}}).then((res)=>{
           if(res?.code===1000){
               message.success(res?.data)
               onSave()
@@ -52,11 +54,11 @@ export default function EditNodeDraw(props: IProps) {
       })
 
     };
-    const onServerIpChange = (value: any) => {
+    const onServerIpChange = (value?: any) => {
         let formData = nodeForm.getFieldsValue();
         getCheck("serverIp",formData.serverIp,checkServerInfoApi);
       };
-      const onHostnameChange = (value: any) => {
+      const onHostnameChange = (value?: any) => {
         let formData = nodeForm.getFieldsValue();
         getCheck("hostname",formData.hostname,checkServerInfoApi );
       };

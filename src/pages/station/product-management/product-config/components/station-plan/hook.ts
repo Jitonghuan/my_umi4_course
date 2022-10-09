@@ -65,7 +65,7 @@ export function useSaveBasicInfo(): [(params: SaveBasicInfoItems) => Promise<voi
     dataDisk:string	//数据盘		true
     nodeRole:string	//主机角色		true
     nodePurpose:string	//主机用途	true
-    enableNfs:number	//是否启用nfs-server（0为关，1为开） true
+    enableNfs:boolean	//是否启用nfs-server（0为关，1为开） true
     nfsWhite:string 	//nfs服务白名单		true
     }
 }
