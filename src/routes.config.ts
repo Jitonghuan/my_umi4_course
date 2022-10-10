@@ -414,6 +414,106 @@ export default [
     ],
   },
   {
+    path: `${baseRoutePath}/DBMS`,
+    name: 'DBMS',
+    icon: 'icon-TableSettings',
+    routes: [
+      {
+        path:  `${baseRoutePath}/DBMS/authority-manage`,
+        name: '权限管理',
+        key: 'authority-manage',
+        component: '@/pages/DBMS/authority-manage',
+        routes:[
+          {
+            path:`${baseRoutePath}/DBMS/authority-manage/authority-apply` ,
+            name: '权限申请',
+            key: 'authority-manage',
+            component: '@/pages/DBMS/authority-manage/components/authority-apply',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/DBMS/authority-manage/my-authority`,
+            name: '我的权限',
+            key: 'authority-manage',
+            component: '@/pages/DBMS/authority-manage/components/my-authority',
+            hideInMenu: true,
+          }
+        ]
+      },
+      {
+        path: `${baseRoutePath}/DBMS/data-query`,
+        name: '数据查询',
+        key: 'data-query',
+        component: '@/pages/DBMS/data-query',
+      },
+
+      {
+        path:`${baseRoutePath}/DBMS/data-change` ,
+        name: '数据变更',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change',
+      },
+      {
+        path: `${baseRoutePath}/DBMS/ticket-approval`,
+        name: '工单详情-审批结束',
+        key: 'ticket-approval',
+        component: '@/pages/DBMS/data-change/components/ticket-approval',
+      },
+      {
+        path:`${baseRoutePath}/DBMS/approval-end`,
+        name: '工单详情-审批中',
+        key: 'approval-end',
+        component: '@/pages/DBMS/data-change/components/approval-end',
+      },
+      {
+        path: `${baseRoutePath}/DBMS/change-apply`,
+        name: '数据变更申请',
+        key: 'change-apply',
+        component: '@/pages/DBMS/data-change/components/change-apply',
+        hideInMenu:true
+      },
+      {
+        path: `${baseRoutePath}/DBMS/configuratio`,
+        name: '配置项',
+        key: 'configuration',
+        component: '@/pages/DBMS/configuration',
+      },
+    ],
+  },
+  {
+    path: `${baseRoutePath}/database`,
+    name: '数据库管理',
+    icon: 'icon-TableSettings',
+    routes: [
+      {
+        path: `${baseRoutePath}/database/overview`,
+        name: '概览',
+        key: 'overview',
+        component: '@/pages/database/overview',
+      },
+      {
+        path: `${baseRoutePath}/database/info`,
+        name: '实例详情',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list/components/instance-info',
+        hideInMenu: true,
+      },
+
+      {
+        path: `${baseRoutePath}/database/instance-list`,
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
+      },
+      {
+        path: `${baseRoutePath}/database/cluster-list`,
+        name: '集群列表',
+        key: 'cluster-list',
+        component: '@/pages/database/cluster-list',
+      },
+    ],
+  },
+  {
     "path": `${baseRoutePath}/publish`,
     "name": "项目管理",
     "icon": "icon-exit",
@@ -1167,106 +1267,7 @@ export default [
       }
     ]
   },
-  {
-    path: `${baseRoutePath}/DBMS`,
-    name: 'DBMS',
-    icon: 'icon-TableSettings',
-    routes: [
-      {
-        path:  `${baseRoutePath}/DBMS/authority-manage`,
-        name: '权限管理',
-        key: 'authority-manage',
-        component: '@/pages/DBMS/authority-manage',
-        routes:[
-          {
-            path:`${baseRoutePath}/DBMS/authority-manage/authority-apply` ,
-            name: '权限申请',
-            key: 'authority-manage',
-            component: '@/pages/DBMS/authority-manage/components/authority-apply',
-            hideInMenu: true,
-          },
-          {
-            path: `${baseRoutePath}/DBMS/authority-manage/my-authority`,
-            name: '我的权限',
-            key: 'authority-manage',
-            component: '@/pages/DBMS/authority-manage/components/my-authority',
-            hideInMenu: true,
-          }
-        ]
-      },
-      {
-        path: `${baseRoutePath}/DBMS/data-query`,
-        name: '数据查询',
-        key: 'data-query',
-        component: '@/pages/DBMS/data-query',
-      },
-
-      {
-        path:`${baseRoutePath}/DBMS/data-change` ,
-        name: '数据变更',
-        key: 'data-change',
-        component: '@/pages/DBMS/data-change',
-      },
-      {
-        path: `${baseRoutePath}/DBMS/ticket-approval`,
-        name: '工单详情-审批结束',
-        key: 'ticket-approval',
-        component: '@/pages/DBMS/data-change/components/ticket-approval',
-      },
-      {
-        path:`${baseRoutePath}/DBMS/approval-end`,
-        name: '工单详情-审批中',
-        key: 'approval-end',
-        component: '@/pages/DBMS/data-change/components/approval-end',
-      },
-      {
-        path: `${baseRoutePath}/DBMS/change-apply`,
-        name: '数据变更申请',
-        key: 'change-apply',
-        component: '@/pages/DBMS/data-change/components/change-apply',
-        hideInMenu:true
-      },
-      {
-        path: `${baseRoutePath}/DBMS/configuratio`,
-        name: '配置项',
-        key: 'configuration',
-        component: '@/pages/DBMS/configuration',
-      },
-    ],
-  },
-  {
-    path: `${baseRoutePath}/database`,
-    name: '数据库管理',
-    icon: 'icon-TableSettings',
-    routes: [
-      {
-        path: `${baseRoutePath}/database/overview`,
-        name: '概览',
-        key: 'overview',
-        component: '@/pages/database/overview',
-      },
-      {
-        path: `${baseRoutePath}/database/info`,
-        name: '实例详情',
-        key: 'instance-list',
-        component: '@/pages/database/instance-list/components/instance-info',
-        hideInMenu: true,
-      },
-
-      {
-        path: `${baseRoutePath}/database/instance-list`,
-        name: '实例列表',
-        key: 'instance-list',
-        component: '@/pages/database/instance-list',
-      },
-      {
-        path: `${baseRoutePath}/database/cluster-list`,
-        name: '集群列表',
-        key: 'cluster-list',
-        component: '@/pages/database/cluster-list',
-      },
-    ],
-  },
+ 
   {
     path: `${baseRoutePath}/admin`,
     name: '管理员菜单',
