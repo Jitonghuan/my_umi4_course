@@ -58,7 +58,7 @@ export default function StationDeploy(props:Iprops){
         }
       },[]);
       const downLoadIndent = (packageType:string) => {
-        createPackageInde(indentId,packageType);
+        createPackageInde(indentId);
         
       };
       

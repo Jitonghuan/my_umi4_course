@@ -264,9 +264,9 @@ export function useSaveIndentParam(): [boolean, (id: number, paramValue: string)
 }
 
 // 出部署包
-export function useCreatePackageInde(): [boolean, (id: number,packageType:string) => Promise<void>] {
+export function useCreatePackageInde(): [boolean, (id: number,packageType?:string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
-  const createPackageInde = async (id: number,packageType:string) => {
+  const createPackageInde = async (id: number,packageType?:string) => {
     setLoading(true);
     try {
       await postRequest(`${APIS.createPackageInde}?id=${id}&packageType=${packageType}`)
