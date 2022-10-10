@@ -1,4 +1,4 @@
-import { Popconfirm, Select,Input } from 'antd';
+import { Popconfirm, Select,Input,InputNumber } from 'antd';
 import type { ProColumns } from '@ant-design/pro-table';
 export type DataSourceType = {
     id: any;
@@ -93,6 +93,17 @@ export const createAppProTableColumns = (params: {
           );
         },
       },
+      {
+        title: '部署优先级',
+      key: 'componentPriority',
+      dataIndex: 'componentPriority',
+      renderFormItem: (_, config: any, data) => {
+        //  ]
+        return (
+        <InputNumber placeholder="请输入1-100之间的值" style={{width:"100%"}} />
+        );
+      },},
+      
      
       {
         title:'应用描述',
@@ -100,12 +111,14 @@ export const createAppProTableColumns = (params: {
         renderFormItem: (_, config: any, data) => {
           return <Input></Input>;
         },
+       
       },
+     
   
       {
         title: '操作',
         valueType: 'option',
-        width: 250,
+        width: 150,
         render: (text, record: any, _, action) => [
           <a
             onClick={() => {

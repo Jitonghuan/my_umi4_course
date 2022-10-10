@@ -196,6 +196,7 @@ export interface addCompontentItems{
   componentConfiguration?:string	
   componentNamespace?:string	
   productLine?:string		
+  componentPriority?:string
 
 }
 //产品版本添加组件

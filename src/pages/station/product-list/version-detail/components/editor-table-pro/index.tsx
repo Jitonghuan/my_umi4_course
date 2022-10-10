@@ -9,7 +9,7 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import { createProTableColumns, DataSourceType } from './schema';
 import {createAppProTableColumns} from './app-schema'
 import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList, useDeleteVersionComponent, useAddCompontent, } from '../../hooks';
-import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent} from './hook'
+import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent,useCheckComponentRely} from './hook'
 import BatchAppDraw from '../batch-app-draw';
 import BatchMiddlewareDraw from '../batch-middleware-draw';
 
@@ -33,6 +33,7 @@ export default (props: VersionDetailProps) => {
   } = props;
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();
+  const [checkComponentRely]=useCheckComponentRely()
   const [ componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentOptions, queryComponentOptions] = useQueryComponentOptions();
   const [loading, tableDataSource, setDataSource, queryVersionComponentList] = useQueryVersionComponentList();
@@ -62,6 +63,10 @@ export default (props: VersionDetailProps) => {
   useEffect(() => {
     queryComponentOptions(currentTabType); //组件查询
     queryVersionComponentList(versionId, currentTab);
+    if(currentTab==="middleware"){
+      checkComponentRely(versionId)
+    }
+    
   }, [currentTab]);
   useEffect(() => {
     queryFrontbucketList();
@@ -82,6 +87,7 @@ export default (props: VersionDetailProps) => {
               componentDescription: item.componentDescription,
               componentDependency: item.componentDependency,
               componentReleaseName: item.label,
+              componentPriority:50
 
             });
           }
@@ -92,7 +98,6 @@ export default (props: VersionDetailProps) => {
         action?.startEditable?.(record.id);
         setType('edit');
         setCurRecord(record)
-        console.info("record.label",record)
         queryNamespaceList(record.componentName)
       },
      
@@ -140,6 +145,7 @@ export default (props: VersionDetailProps) => {
             updateRow(config.recordKey, {
               ...form.getFieldsValue(config.recordKey),
               componentDescription: item.componentDescription,
+              componentPriority:50
             });
           }
         });
@@ -180,6 +186,7 @@ export default (props: VersionDetailProps) => {
             updateRow(config.recordKey, {
               ...form.getFieldsValue(config.recordKey),
               componentDescription: item.componentDescription,
+              componentPriority:50
             });
           }
         });
@@ -202,6 +209,9 @@ export default (props: VersionDetailProps) => {
   const search = () => {
     const value = searchForm.getFieldsValue();
     queryVersionComponentList(versionId, currentTab, value.componentName);
+    if(currentTab==="middleware"){
+      checkComponentRely(versionId)
+    }
   };
   return (
     <>
@@ -212,6 +222,9 @@ export default (props: VersionDetailProps) => {
         onClose={() => setBatchMiddlewareMode('HIDE')}
         onSave={() => {
           queryVersionComponentList(versionId, currentTab);
+          if(currentTab==="middleware"){
+            checkComponentRely(versionId)
+          }
           setBatchMiddlewareMode('HIDE');
           searchForm.resetFields();
         }}
@@ -312,6 +325,11 @@ export default (props: VersionDetailProps) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
+            if(parseInt(params?.componentPriority)<1||parseInt(params?.componentPriority)>100||parseInt(params?.componentPriority)===NaN){
+              message.warning("请输入1-100之间的值")
+              return
+
+            }
             if(type==="edit"){
               await  editComponent({
                 id:curRecord?.id,
@@ -319,11 +337,15 @@ export default (props: VersionDetailProps) => {
                 componentName: params.componentName.label,
                 componentType: currentTab,
                 productLine:curRecord?.productLine,
+                componentPriority:parseInt(params?.componentPriority)
                
               
       
               }).then(() => {
                 queryVersionComponentList(versionId, currentTab);
+                if(currentTab==="middleware"){
+                  checkComponentRely(versionId)
+                }
                
               });
 
@@ -334,10 +356,14 @@ export default (props: VersionDetailProps) => {
                 ...params,
                 componentName: params.componentName.label,
                 componentType: currentTab,
+                componentPriority:parseInt(params?.componentPriority)
                
 
               }).then(() => {
                 queryVersionComponentList(versionId, currentTab);
+                if(currentTab==="middleware"){
+                  checkComponentRely(versionId)
+                }
               });
             }
           },
@@ -357,7 +383,10 @@ export default (props: VersionDetailProps) => {
           })
 
 
-        }).then(()=>{ queryVersionComponentList(versionId, currentTab);})
+        }).then(()=>{ queryVersionComponentList(versionId, currentTab);
+          if(currentTab==="middleware"){
+            checkComponentRely(versionId)
+          }})
       }}>删除选中</Button></p>
     </>
   );

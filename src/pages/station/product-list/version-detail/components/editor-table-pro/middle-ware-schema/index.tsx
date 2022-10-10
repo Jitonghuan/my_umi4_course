@@ -1,5 +1,5 @@
 import type { ProColumns } from '@ant-design/pro-table';
-import {  Input, Select,  Popconfirm} from 'antd';
+import {  Input, Select,  Popconfirm,InputNumber} from 'antd';
 
 type DataSourceType = {
     id: any;
@@ -145,13 +145,15 @@ export const createMiddlewareTableColumns = (params: {
           return <Input></Input>;
         },
       },
-      {title: '依赖',
-      key: 'componentDependency',
-      dataIndex: 'componentDependency',
+      {title: '部署优先级',
+      key: 'componentPriority',
+      dataIndex: 'componentPriority',
       renderFormItem: (_, config: any, data) => {
+       
         //  ]
         return (
-        <Input disabled={true}/>
+          
+        <InputNumber placeholder="请输入1-100之间的值" style={{width:"100%"}}/>
         );
       },
     },
@@ -159,7 +161,7 @@ export const createMiddlewareTableColumns = (params: {
     {
         title: '操作',
         valueType: 'option',
-        width: 250,
+        width: 100,
         render: (text, record: any, _, action) => [
           <a
             onClick={() => {

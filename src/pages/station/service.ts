@@ -264,3 +264,6 @@ export const listBasicInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement
 /* 24、GET 查看建站规划相关信息 */
 
 export const getInfoApi=addAPIPrefix('deliveryManage/indent/arrangement/getInfo')
+/* 25、POST 校验产品版本组件依赖是否编排 */
+
+export const checkComponentRelyApi=addAPIPrefix('deliveryManage/product/version/componentRely/check')

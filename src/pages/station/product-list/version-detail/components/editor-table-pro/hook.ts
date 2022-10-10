@@ -192,6 +192,28 @@ export function useBulkAdd() {
 
   return [loading,bulkadd];
 }
+//checkComponentRelyApi
+export function useCheckComponentRely() {
+ 
+  const checkComponentRely = useCallback(async (versionId:number) => {
+   
+    await postRequest(APIS.checkComponentRelyApi,{data:{versionId}})
+      .then((res) => {
+        if (res?.success) {
+          let data:any=res?.data
+          if(data?.length>0){
+            const toolip= (data||[]).join(',')
+            message.success(`${toolip}依赖组件未编排！`)
+
+          }
+          
+        } 
+      })
+     
+  },[]);
+
+  return [checkComponentRely];
+}
 interface editorParams{
    id	:number		//产品组件编排id	true
    componentName:string	//组件名称		true
@@ -203,6 +225,7 @@ interface editorParams{
    componentNamespace:string //组件命名空间	true
    componentDependency:string	//组件依赖		true
    productLine:string	 //产品线			true
+   componentPriority?:number
 
 }
 //编辑组件配置
