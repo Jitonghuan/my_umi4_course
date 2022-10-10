@@ -67,6 +67,11 @@ export default function EditNodeDraw(props: IProps) {
         }
         getListNacosPurposeInfo()
         getListNacosRoleInfo()
+        return()=>{
+          nodeForm.resetFields()
+          setIsRootDiskChecked(false)
+          setEnableNfsChecked(false)
+        }
 
     },[mode])
     const handleSubmit = async() => {
@@ -141,40 +146,66 @@ export default function EditNodeDraw(props: IProps) {
             }
         >
             <Form  form={nodeForm} labelCol={{ flex: '100px' }}>
-                <Form.Item label="主机IP" name="serverIp" 
-                rules={[{ required: true, message: '请输入唯一的主机IP' }]}
-                hasFeedback
-                validateTrigger="onBlur"
-                validateStatus={
-                  rightInfo && !loading && type === 'success'
-                    ? 'success'
-                    : !rightInfo && !loading && type === 'begin'
-                    ? 'validating'
-                    : type === 'error'
-                    ? 'error'
-                    : 'warning'
-                }
-                help={type === 'success' ? '主机IP唯一性检查通过' : type === 'error' ? errorMessage : '等待检查主机IP唯一性'}
-                >
-                <Input style={{ width: 320 }} disabled={mode==="EDIT"} placeholder="请输入" onBlur={mode==="ADD"?onServerIpChange:onblur}></Input>
-                </Form.Item>
-                <Form.Item label="主机名" name="hostname" 
-                rules={[{ required: true, message: '请输入唯一的主机名' }]}
-                hasFeedback
-                validateTrigger="onBlur"
-                validateStatus={
-                  rightInfo && !loading && type === 'success'
-                    ? 'success'
-                    : !rightInfo && !loading && type === 'begin'
-                    ? 'validating'
-                    : type === 'error'
-                    ? 'error'
-                    : 'warning'
-                }
-                help={type === 'success' ? '主机名唯一性检查通过' : type === 'error' ? errorMessage : '等待主机名是否唯一'}
-                >
-                <Input style={{ width: 320 }} disabled={mode==="EDIT"} placeholder="请输入" onBlur={mode==="ADD"?onHostnameChange:onblur}></Input>
-                </Form.Item>
+              {mode==="EDIT"&&(
+                 <Form.Item label="主机IP" name="serverIp" 
+                 rules={[{ required: true, message: '请输入唯一的主机IP' }]}
+
+                 >
+                 <Input style={{ width: 320 }} disabled={true} placeholder="请输入"></Input>
+                 </Form.Item>
+                
+              )}
+              {mode==="ADD"&&(
+                 <Form.Item label="主机IP" name="serverIp" 
+                 rules={[{ required: true, message: '请输入唯一的主机IP' }]}
+                 hasFeedback
+                 validateTrigger="onBlur"
+                 validateStatus={
+                   rightInfo && !loading && type === 'success'
+                     ? 'success'
+                     : !rightInfo && !loading && type === 'begin'
+                     ? 'validating'
+                     : type === 'error'
+                     ? 'error'
+                     : 'warning'
+                 }
+                 help={type === 'success' ? '主机IP唯一性检查通过' : type === 'error' ? errorMessage : '等待检查主机IP唯一性'}
+                 >
+                 <Input style={{ width: 320 }} placeholder="请输入" onBlur={onServerIpChange}></Input>
+                 </Form.Item>
+
+              )}
+              {mode==="ADD"&&(
+                 <Form.Item label="主机名" name="hostname" 
+                 rules={[{ required: true, message: '请输入唯一的主机名' }]}
+                 hasFeedback
+                 validateTrigger="onBlur"
+                 validateStatus={
+                   rightInfo && !loading && type === 'success'
+                     ? 'success'
+                     : !rightInfo && !loading && type === 'begin'
+                     ? 'validating'
+                     : type === 'error'
+                     ? 'error'
+                     : 'warning'
+                 }
+                 help={type === 'success' ? '主机名唯一性检查通过' : type === 'error' ? errorMessage : '等待主机名是否唯一'}
+                 >
+                 <Input style={{ width: 320 }}  placeholder="请输入" onBlur={onHostnameChange}></Input>
+                 </Form.Item>
+
+              )}
+              {mode==="EDIT"&&(
+                  <Form.Item label="主机名" name="hostname" 
+                  rules={[{ required: true, message: '请输入唯一的主机名' }]}
+                
+                 
+                  >
+                  <Input style={{ width: 320 }}  placeholder="请输入" disabled={true} onBlur={onHostnameChange}></Input>
+                  </Form.Item>
+              )}
+               
+               
                 <Form.Item  label="CPU" style={{display:"flex"}}>
                     <div style={{display:'flex',height:30}}>
                     <Form.Item

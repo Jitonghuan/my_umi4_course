@@ -4,6 +4,7 @@ import {useUpdateParamIndent,} from '../../../hook';
 import { QuestionCircleOutlined} from '@ant-design/icons';
 import { compontentsSchema, configDeliverySchema,serviceConfigSchema } from '../../schema';
 import ParameterEditModal from './editModal';
+import ServerModal from './serverModal'
 
 export interface IProps {
     configInfo:any;
@@ -21,6 +22,7 @@ export default function StationConfig(props:IProps){
     const { TabPane } = Tabs;
     const [tabActiveKey, setTabActiveKey] = useState<string>('config');
     const [editVisable, setEditVisable] = useState<boolean>(false);
+    const [serverVisable, setServerVisable] = useState<boolean>(false);
     const [updateLoading, updateParamIndent] = useUpdateParamIndent();
     const [type, setType] = useState<string>('');
     const [curRecord, setCurRecord] = useState<any>({});
@@ -54,7 +56,7 @@ export default function StationConfig(props:IProps){
 const serviceConfigTableColumns = useMemo(() => {
     return serviceConfigSchema({
       onEditClick: (record, index) => {
-        setEditVisable(true);
+        setServerVisable(true);
         setCurRecord(record);
         setType('server');
       },
@@ -72,7 +74,7 @@ const serviceConfigTableColumns = useMemo(() => {
       setTabActiveKey('compontent');
     }else if(type === 'server'){
       onSaveServer();
-      setEditVisable(false)
+      setServerVisable(false)
       setTabActiveKey('server');
 
     }
@@ -126,6 +128,15 @@ const serviceConfigTableColumns = useMemo(() => {
                setEditVisable(false);
               }}
               onSubmit={handleSubmit}
+      />
+      <ServerModal
+       visible={serverVisable}
+       initData={curRecord}
+       type={type}
+       onClose={() => {
+        setServerVisable(false);
+       }}
+       onSubmit={handleSubmit}
       />
     
         

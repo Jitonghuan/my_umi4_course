@@ -1,6 +1,12 @@
-// 编辑参数
-// @author JITONGHUAN <muxi@come-future.com>
-// @create 2022/04/26 14:12
+/*
+ * @Author: muxi.jth 2016670689@qq.com
+ * @Date: 2022-10-10 12:03:26
+ * @LastEditors: muxi.jth 2016670689@qq.com
+ * @LastEditTime: 2022-10-10 12:11:15
+ * @FilePath: /fe-matrix/src/pages/station/product-management/product-config/components/station-config/serverModal.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+
 
 import { useEffect } from 'react';
 import { Modal, Input, Form } from 'antd';
@@ -48,17 +54,17 @@ export default function EditorModal(props: IProps) {
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
         {type !== 'config' && (
-          <Form.Item label={type==="server"?"基准配置值":"参数来源组件"} name="paramComponent">
+          <Form.Item label="基准配置值" name="paramName">
             <Input disabled={true} />
           </Form.Item>
         )}
-        <Form.Item label={type==="server"?"目标配置值":"参数名称"} name="paramName">
-          <Input disabled={true} />
+        <Form.Item label="目标配置值" name="paramValue" rules={[{ required: true, message: '请填写参数值' }]}>
+          <Input  />
         </Form.Item>
-        <Form.Item label={type==="server"?"配置中心":"参数值" }name="paramValue" rules={[{ required: true, message: '请填写参数值' }]}>
-          <Input />
+        <Form.Item label="配置中心" name="paramType" >
+          <Input  disabled={true} />
         </Form.Item>
-        <Form.Item label={type==="server"?"配置说明":"填写说明"} name="paramDescription">
+        <Form.Item label="配置说明" name="paramDescription">
           <Input.TextArea placeholder="填写说明" rows={3} disabled={true} />
         </Form.Item>
       </Form>
