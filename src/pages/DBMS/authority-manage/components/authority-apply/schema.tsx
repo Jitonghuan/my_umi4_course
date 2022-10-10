@@ -1,6 +1,7 @@
-import { Space, Popconfirm, Tooltip } from 'antd';
+import { Space, Popconfirm, Tooltip ,Tag} from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { datetimeCellRender } from '@/utils';
 
 export const formOptions: FormProps[] = [
    
@@ -8,7 +9,7 @@ export const formOptions: FormProps[] = [
       key: '1',
       type: 'select',
       label: '工单状态',
-      dataIndex: 'appCode',
+      dataIndex: 'currentStatus',
       width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,
@@ -19,7 +20,7 @@ export const formOptions: FormProps[] = [
       key: '2',
       type: 'select',
       label: '申请人',
-      dataIndex: 'envCode',
+      dataIndex: 'userName',
       width: '160px',
       showSelectSearch: true,
       option:[],
@@ -28,7 +29,7 @@ export const formOptions: FormProps[] = [
       key: '3',
       type: 'input',
       label: '申请原因',
-      dataIndex: 'metricsUrl',
+      dataIndex: 'remark',
       width: '160px',
       placeholder: '请输入',
     },
@@ -42,63 +43,79 @@ export const createTableColumns = (params: {
   return [
     {
       title: '工单号',
-      dataIndex: 'id',
-      key: 'id',
-      width: 120,
+      dataIndex: 'InstanceId',
+      key: 'InstanceId',
+      width: 100,
     },
     {
       title: '申请原因',
-      dataIndex: 'name',
-      key: 'name',
-      width: '14%',
+      dataIndex: 'remark',
+      key: 'remark',
+      width: '18%',
     },
     {
       title: '对象类型',
-      dataIndex: 'email',
-      key: 'email',
-      width: '30%',
+      dataIndex: 'privWfType',
+      key: 'privWfType',
+      width: '16%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
       title: '当前状态',
-      dataIndex: 'mobile',
-      key: 'mobile',
-      width: '28%',
+      dataIndex: 'currentStatus',
+      key: 'currentStatus',
+      width: '20%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
         title: '申请人',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
+        dataIndex: 'userName',
+        key: 'userName',
+        width: '16%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (user) =>  <Tag color="#2db7f5">{user}</Tag>,
       },
       {
         title: '当前处理人',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
+        dataIndex: 'audit',
+        key: 'audit',
+        width: '30%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (users,record) => {
+          let auditUsers=[];
+          if(record?.audit?.AuditStatus==="wait"){
+            auditUsers=record?.audit?.AuditStatus?.Groups 
+          }
+          // auditUsers?.length>0?auditUsers?.map():"暂无",
+          return (
+            <>
+            {auditUsers?.length>0?auditUsers?.map((item:string)=>{
+              <Tag>{item}</Tag>
+            }):"暂无"}
+
+            </>
+            
+            
+          )
+        }
       },
       {
         title: '最后操作时间',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
+        dataIndex: 'endTime',
+        key: 'endTime',
+        width: '30%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (value) => <>{datetimeCellRender(value)} </>,
       },
       {
         title: '时间',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
+        dataIndex: 'validEndTime',
+        key: 'validEndTime',
+        width: '30%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (value) => <>{datetimeCellRender(value)} </>,
       },
 
     {

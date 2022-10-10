@@ -415,8 +415,8 @@ export default [
   },
   {
     path: `${baseRoutePath}/DBMS`,
-    name: 'DBMS',
-    icon: 'icon-TableSettings',
+    name: '数据变更管理',
+    icon: 'icon-Detail',
     routes: [
       {
         path:  `${baseRoutePath}/DBMS/authority-manage`,

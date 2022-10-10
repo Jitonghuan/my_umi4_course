@@ -3,13 +3,16 @@ import {Form, Space } from 'antd';
 import TableSearch from '@/components/table-search';
 import { createTableColumns,formOptions } from './schema';
 import useTable from '@/utils/useTable';
+import {queryPrivListApi} from '../../../service'
+import {  useDeletePriv} from './hook';
 export default function MyAuthority (){
+    const [loading, deletePriv]=useDeletePriv()
     const [form] = Form.useForm();
     const {
         tableProps,
         search: { submit, reset },
       } = useTable({
-        url: '',
+        url: queryPrivListApi,
         method: 'GET',
         form,
         formatter: (params) => {
@@ -18,20 +21,18 @@ export default function MyAuthority (){
           };
         },
         formatResult: (result) => {
-           let   data=[{
-                 id:1,
-                 name:'ceshi'
-             }]
+         
           return {
             total: result.data?.pageInfo?.total,
-            // list: result.data?.dataSource || [],
-            list:data
+            list: result.data?.dataSource || [],
+            
           };
         },
       });
       const columns = useMemo(() => {
         return createTableColumns({
           onDelete: (record, index) => {
+            deletePriv(record?.id)
             
           },
          

@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import {Form, Button, Space } from 'antd';
+import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { createTableColumns,formOptions } from './schema';
 import TicketDetail from '../../components/ticket-detail';
 import ApplyDetailDrawer from '../apply-detail'
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import useTable from '@/utils/useTable';
-import {queryPrivListApi} from '../../../service'
+import {queryWorkflowPrivListApi} from '../../../service'
 import {history} from 'umi';
 export default function AuthorityApply (){
     const [form] = Form.useForm();
@@ -16,7 +18,7 @@ export default function AuthorityApply (){
         tableProps,
         search: { submit, reset },
       } = useTable({
-        url: queryPrivListApi,
+        url: queryWorkflowPrivListApi,
         method: 'GET',
         form,
         formatter: (params) => {
@@ -25,14 +27,11 @@ export default function AuthorityApply (){
           };
         },
         formatResult: (result) => {
-           let   data=[{
-                 id:1,
-                 name:'ceshi'
-             }]
+          
           return {
             total: result.data?.pageInfo?.total,
-            // list: result.data?.dataSource || [],
-            list:data
+            list: result.data?.dataSource || [],
+            
           };
         },
       });
@@ -45,7 +44,7 @@ export default function AuthorityApply (){
          
         }) as any;
       }, []);
-    return(<>
+    return(<PageContainer>
       <TableSearch
         form={form}
         bordered
@@ -86,5 +85,5 @@ export default function AuthorityApply (){
       onClose={()=>{setApplyDetailMode("HIDE")}}
       onSave={()=>{setApplyDetailMode("HIDE");reset()}}
       />
-    </>)
+    </PageContainer>)
 }

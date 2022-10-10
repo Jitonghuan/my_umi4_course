@@ -1,6 +1,7 @@
 import { Space, Popconfirm, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { datetimeCellRender } from '@/utils';
 
 export const formOptions: FormProps[] = [
    
@@ -8,7 +9,7 @@ export const formOptions: FormProps[] = [
       key: '1',
       type: 'select',
       label: '用户',
-      dataIndex: 'appCode',
+      dataIndex: 'userName',
       width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,
@@ -19,7 +20,7 @@ export const formOptions: FormProps[] = [
       key: '2',
       type: 'select',
       label: '实例',
-      dataIndex: 'envCode',
+      dataIndex: 'instanceName',
       width: '160px',
       showSelectSearch: true,
       option:[],
@@ -28,7 +29,7 @@ export const formOptions: FormProps[] = [
         key: '3',
         type: 'select',
         label: '数据库',
-        dataIndex: 'envCode',
+        dataIndex: 'dbCode',
         width: '160px',
         showSelectSearch: true,
         option:[],
@@ -43,65 +44,73 @@ export const createTableColumns = (params: {
   return [
     {
       title: '用户',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'userName',
+      key: 'userName',
       width: 120,
     },
     {
       title: '对象类型',
-      dataIndex: 'name',
-      key: 'name',
-      width: '14%',
+      dataIndex: 'privType',
+      key: 'privType',
+      width: '18%',
     },
     {
       title: '实例',
-      dataIndex: 'email',
-      key: 'email',
-      width: '30%',
+      dataIndex: 'instanceName',
+      key: 'instanceName',
+      width: '26%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
       title: '数据库',
-      dataIndex: 'mobile',
-      key: 'mobile',
+      dataIndex: 'dbCode',
+      key: 'dbCode',
       width: '28%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
         title: '结果集限制',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
+        dataIndex: 'limitNum',
+        key: 'limitNum',
+        width: '20%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
       {
         title: '创建时间',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
+        dataIndex: 'validStartTime',
+        key: 'validStartTime',
+        width: '30%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (value) => <>{datetimeCellRender(value)} </>,
       },
       {
         title: '过期时间',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
+        dataIndex: 'validEndTime',
+        key: 'validEndTime',
+        width: '30%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (value) => <>{datetimeCellRender(value)} </>,
       },
 
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '14%',
+      width: '18%',
       render: (_: string, record, index: number) => (
         <Space>
-          <a onClick={() => params.onDelete(record, index)}>删除权限</a>
+            <Popconfirm
+            title="确认删除此权限?"
+            onConfirm={() => {
+              params.onDelete(record, index)
+            }}
+          >
+            <a style={{color:"red"}}>删除权限</a>
+          </Popconfirm>
+         
         </Space>
       ),
     },

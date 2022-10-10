@@ -51,8 +51,8 @@ export const createTableColumns = (params: {
   return [
     {
       title: '工单号',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'instanceId',
+      key: 'instanceId',
       width: 120,
     },
     {
