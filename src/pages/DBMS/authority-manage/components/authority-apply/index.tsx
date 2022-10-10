@@ -5,6 +5,7 @@ import { createTableColumns,formOptions } from './schema';
 import TicketDetail from '../../components/ticket-detail';
 import ApplyDetailDrawer from '../apply-detail'
 import useTable from '@/utils/useTable';
+import {queryPrivListApi} from '../../../service'
 import {history} from 'umi';
 export default function AuthorityApply (){
     const [form] = Form.useForm();
@@ -15,7 +16,7 @@ export default function AuthorityApply (){
         tableProps,
         search: { submit, reset },
       } = useTable({
-        url: '',
+        url: queryPrivListApi,
         method: 'GET',
         form,
         formatter: (params) => {

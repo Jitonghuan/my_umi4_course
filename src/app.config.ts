@@ -59,6 +59,8 @@ export default {
   /** 接口前缀 */
   apiPrefix: '/v1',
 
+  dmpApiPrefix:"/kapi-base-dev.cfuture.shop/matrix-dmp",
+
   /** 是否开启菜单权限权限，本地开发时关闭校验 */
   isOpenPermission: !IS_LOCAL,
 
