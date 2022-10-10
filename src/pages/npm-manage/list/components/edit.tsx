@@ -27,7 +27,7 @@ const EditNpm = (props: IProps) => {
 
   async function handleSubmit() {
     const params = await form.validateFields();
-    const { ownerList, gitDir, linkage, relationNpm, ...others } = params;
+    const { ownerList, gitDir, linkage, relationNpm, materialCenter, ...others } = params;
 
     const submitData: any = {
       ...others,
@@ -36,6 +36,7 @@ const EditNpm = (props: IProps) => {
         gitDir,
         linkage,
         relationNpm,
+        materialCenter
       })
     };
 
@@ -124,6 +125,12 @@ const EditNpm = (props: IProps) => {
                 />
               </Form.Item>)
           }
+        </Form.Item>
+        <Form.Item label="发布物料中心" name="materialCenter" extra="PROD下发布npm同时发布至物料中心">
+          <Radio.Group>
+            <Radio value={0}>否</Radio>
+            <Radio value={1}>是</Radio>
+          </Radio.Group>
         </Form.Item>
         <Form.Item label="负责人" name="ownerList" rules={[{ required: true, message: '请输入负责人' }]}>
           <UserSelector />
