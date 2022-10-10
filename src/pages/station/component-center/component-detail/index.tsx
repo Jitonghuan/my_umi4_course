@@ -7,7 +7,7 @@ import moment from 'moment';
 import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
-import { MinusCircleOutlined,PlusCircleOutlined} from '@ant-design/icons';
+import { PlusCircleOutlined} from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import UserModal from '../components/UserModal';
 import BasicDataModal from '../components/basicDataModal';
@@ -141,6 +141,7 @@ export default function ComponentDetail() {
         .then((res) => {
           if (res.success) {
             let dataSource = res.data;
+            
             setComponentInfo(dataSource);
             setEditableStr(dataSource.componentDescription);
             configForm.setFieldsValue({
@@ -363,19 +364,23 @@ export default function ComponentDetail() {
                   {componentType==="middleware"&&
                    <Descriptions.Item label="依赖组件" span={2}>
                    <Spin spinning={delLoading} > 
+                  
                    {componentInfo?.componentDependency!==""?componentInfo?.componentDependency?.split(',')?.map((item:any)=>{
                    return(
-                     <Tag  closable={true} onClose={() =>{
+                     <>
+                     <Tag  closable={true} onClose={(e) =>{
+                       e.preventDefault();
                     deleteRely(initRecord.id,item).then((res)=>{
                       if (res.success) {
-                        message.success("删除依赖成功！");    
-                      } 
-                      }).finally(()=>{
+                        message.success("删除依赖成功！");  
+                        queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);  
+                        } else{
                         queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);
-                       
+                        }
                       })
                      }}>{item}</Tag>
-
+                   
+</>
                    )
 
                    }) :"--"} 

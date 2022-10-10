@@ -57,16 +57,16 @@ export const configDeliverySchema = ({ onEditClick }: { onEditClick: (record: an
   [
     {
       title: '基准配置值',
-      dataIndex: 'paramComponent',
-      key: 'paramComponent',
+      dataIndex: 'paramName',
+      key: 'paramName',
     },
     {
       title: '目标配置值',
-      dataIndex: 'paramName',
+      dataIndex: 'paramValue',
     },
     {
       title: '配置中心',
-      dataIndex: 'paramValue',
+      dataIndex: 'paramType',
     },
     {
       title: '配置说明',

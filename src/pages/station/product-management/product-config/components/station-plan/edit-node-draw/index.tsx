@@ -118,7 +118,7 @@ export default function EditNodeDraw(props: IProps) {
           console.log(error);
         }
       };
-
+ const onblur=()=>{}
 
 
     return (
@@ -156,7 +156,7 @@ export default function EditNodeDraw(props: IProps) {
                 }
                 help={type === 'success' ? '主机IP唯一性检查通过' : type === 'error' ? errorMessage : '等待检查主机IP唯一性'}
                 >
-                <Input style={{ width: 320 }} placeholder="请输入" onBlur={onServerIpChange}></Input>
+                <Input style={{ width: 320 }} disabled={mode==="EDIT"} placeholder="请输入" onBlur={mode==="ADD"?onServerIpChange:onblur}></Input>
                 </Form.Item>
                 <Form.Item label="主机名" name="hostname" 
                 rules={[{ required: true, message: '请输入唯一的主机名' }]}
@@ -173,7 +173,7 @@ export default function EditNodeDraw(props: IProps) {
                 }
                 help={type === 'success' ? '主机名唯一性检查通过' : type === 'error' ? errorMessage : '等待主机名是否唯一'}
                 >
-                <Input style={{ width: 320 }} placeholder="请输入" onBlur={onHostnameChange}></Input>
+                <Input style={{ width: 320 }} disabled={mode==="EDIT"} placeholder="请输入" onBlur={mode==="ADD"?onHostnameChange:onblur}></Input>
                 </Form.Item>
                 <Form.Item  label="CPU" style={{display:"flex"}}>
                     <div style={{display:'flex',height:30}}>
