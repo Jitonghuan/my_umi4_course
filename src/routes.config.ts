@@ -110,7 +110,7 @@ export default [
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
   {
-    path: `${baseRoutePath}/DBMS`,
+    path: `${baseRoutePath}/DBMS/authority-manage`,
     redirect: `${baseRoutePath}/DBMS/authority-manage/authority-apply`,
   },
   {
