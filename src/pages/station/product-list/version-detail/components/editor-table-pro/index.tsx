@@ -324,6 +324,7 @@ export default (props: VersionDetailProps) => {
       
               }).then(() => {
                 queryVersionComponentList(versionId, currentTab);
+               
               });
 
             }else if(type!=="edit"){
@@ -355,7 +356,8 @@ export default (props: VersionDetailProps) => {
             setDataSource(tableDataSource.filter((item: any) => item.id !== ele));
           })
 
-        })
+
+        }).then(()=>{ queryVersionComponentList(versionId, currentTab);})
       }}>删除选中</Button></p>
     </>
   );
