@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-10-10 12:03:26
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-10-10 12:11:15
+ * @LastEditTime: 2022-10-10 15:00:53
  * @FilePath: /fe-matrix/src/pages/station/product-management/product-config/components/station-config/serverModal.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -45,7 +45,7 @@ export default function EditorModal(props: IProps) {
     <Modal
       destroyOnClose
       width={800}
-      title={type === 'config' ? '编辑全局建站可变参数值' :type === 'compontent'? '编辑组件建站态可变参数值':"编辑服务配置可变参数值"}
+      title="编辑服务配置可变参数值"
       visible={visible}
       onOk={handleSubmit}
       onCancel={onClose}

@@ -87,7 +87,7 @@ export default function StationDeploy(props:Iprops){
                
                   {packageInfo?.map((element:any)=>{
                     return<>
-                     <Col span={6}>
+                     <Col span={6} style={{marginBottom:10}}>
                        <Card style={{ width: 280 }} title={STATUS_TYPE[element?.indentPackageType]?.text||""} extra={<Space><CopyToClipboard text={element?.indentPackageUrl||""}><a>复制链接<CopyOutlined /></a></CopyToClipboard>
                        <Spin spinning={downloading}>
                        <a onClick={()=>{
@@ -98,7 +98,7 @@ export default function StationDeploy(props:Iprops){
                       </Space>} >
                      
 
-                      <p style={{display:'flex',justifyContent:"space-between"}}><span>  {STATUS_TYPE[element?.indentPackageType]?.image||""}</span><span><Tag color={PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.color||"gold"}>{PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.text||""}</Tag></span></p>
+                      <p style={{display:'flex',justifyContent:"space-between"}}><span>  {element?.packageTypeDescription||""}</span><span><Tag color={PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.color||"gold"}>{PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.text||""}</Tag></span></p>
                      {element?.errMessage&&(<p style={{width:"100%"}}><span>错误信息：</span><span style={{width:'100%',display:"flex",textOverflow:"ellipsis",whiteSpace:"nowrap",overflowX:"scroll",}}>{element?.errMessage}</span></p>)}  
                        </Card>
                      </Col>        

@@ -56,6 +56,7 @@ export default function StationConfig(props:IProps){
 const serviceConfigTableColumns = useMemo(() => {
     return serviceConfigSchema({
       onEditClick: (record, index) => {
+     
         setServerVisable(true);
         setCurRecord(record);
         setType('server');
@@ -72,13 +73,14 @@ const serviceConfigTableColumns = useMemo(() => {
       onSave();
       setEditVisable(false);
       setTabActiveKey('compontent');
-    }else if(type === 'server'){
+    }
+  };
+  const handleServer=()=>{
+   
       onSaveServer();
       setServerVisable(false)
       setTabActiveKey('server');
-
-    }
-  };
+  }
 
     return(
         <>
@@ -136,7 +138,7 @@ const serviceConfigTableColumns = useMemo(() => {
        onClose={() => {
         setServerVisable(false);
        }}
-       onSubmit={handleSubmit}
+       onSubmit={handleServer}
       />
     
         

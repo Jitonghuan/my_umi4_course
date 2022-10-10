@@ -5,7 +5,7 @@ import { Button, Input, Form} from 'antd';
 import {createServiceConfigTableColumns} from './schema'
 import {
   useQueryParamList,
-  useQueryDeliveryParamList,
+  useQueryServerParamList,
   useSaveParam,
   useDeleteDeliveryParam,
   useQueryOriginList,
@@ -29,7 +29,7 @@ export default (props: VersionDetailProps) => {
   const [editLoading, editVersionParam] = useEditVersionParam();
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
-  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] = useQueryDeliveryParamList();
+  const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] = useQueryServerParamList();
   const [loading, paramOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
@@ -46,7 +46,7 @@ export default (props: VersionDetailProps) => {
   }, []);
   useEffect(() => {
     //查询建站配置参数
-    queryDeliveryParamList(versionId,"service");
+    queryDeliveryParamList(versionId,"server");
   }, []);
   const serviceConfigColumns = useMemo(() => {
     return createServiceConfigTableColumns({
@@ -136,12 +136,12 @@ export default (props: VersionDetailProps) => {
             let objKey = Object.keys(value);
             let params = value[objKey[0]];
             if (type !== 'edit') {
-              await saveParam({ ...params, versionId }).then(() => {
-                queryDeliveryParamList(versionId,"service");
+              await saveParam({ ...params,paramComponent:"server", versionId }).then(() => {
+                queryDeliveryParamList(versionId,"server");
               });
             } else if (type === 'edit') {
               editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
-                queryDeliveryParamList(versionId,"service");
+                queryDeliveryParamList(versionId,"server");
               });
             }
           },

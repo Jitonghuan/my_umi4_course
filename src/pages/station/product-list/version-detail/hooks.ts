@@ -452,6 +452,41 @@ export function useQueryDeliveryGloableParamList(): [
   };
   return [loading, dataSource, setDataSource, queryDeliveryParamList];
 }
+
+//查询交付配置参数
+export function useQueryServerParamList(): [
+  boolean,
+  any,
+  any,
+
+  (versionId: number, paramComponent?: string, paramName?: string) => Promise<void>,
+] {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
+
+  const queryDeliveryParamList = async (versionId: number, paramComponent?: string, paramName?: string) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.queryDeliveryParamList, {
+        data: { versionId, paramComponent, paramName, pageIndex: -1, pageSize: -1 },
+      })
+        .then((res) => {
+          if (res.success) {
+            let dataSource = res.data.dataSource;
+            setDataSource(dataSource);
+          } else {
+            return {};
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, setDataSource, queryDeliveryParamList];
+}
 export interface saveParamItem{
     versionId: number;
     paramComponent?: string;

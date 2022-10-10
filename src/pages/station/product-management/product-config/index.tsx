@@ -153,7 +153,7 @@ export default function ProductConfig() {
           onUpdate={()=>{
             queryIndentConfigParamList({ id: configInfo.id, paramComponent:"global" });
             queryIndentParamList({ id: configInfo.id,  });
-            queryIndentConfigParamList({ id: configInfo.id, paramComponent:"server" });
+            queryIndentServerList({ id: configInfo.id, paramComponent:"server" });
           
           }}
           onSaveGlobal={()=>{
@@ -169,7 +169,8 @@ export default function ProductConfig() {
           }}
           onSaveServer={()=>{
             queryIndentInfo(configInfo.id).then(() => {
-              queryIndentConfigParamList({ id: configInfo.id, paramComponent:"server" });
+             
+              queryIndentServerList({ id: configInfo.id, paramComponent:"server" });
             });
           }}
 

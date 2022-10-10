@@ -4,10 +4,10 @@ type status = {
     image:string;
   };
   export const STATUS_TYPE: Record<string, status> = {
-    "online": { text: '在线包',image:"不含镜像"  },
-    "offline": { text: '离线包',image:"含底座、组件以及镜像"  },
-    "onlineComponent": { text: '在线组件包',image:"不包含底座" },
-    "offlineComponent": { text: '离线组件包', image:"" },
+    "onlineAll": { text: '在线包',image:"不含镜像"  },
+    "offlineAll": { text: '离线包',image:"含底座、组件以及镜像"  },
+    "onlineComponentOnly": { text: '在线组件包',image:"不包含底座" },
+    "offlineComponentOnly": { text: '离线组件包', image:"" },
    
   };
   type packageStatus = {

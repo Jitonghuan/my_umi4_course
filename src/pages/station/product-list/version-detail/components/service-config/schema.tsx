@@ -27,8 +27,8 @@ export const createServiceConfigTableColumns = (params: {
     return [
       {
         title: '基准配置值',
-        key: 'paramValue',
-        dataIndex: 'paramValue',
+        key: 'paramName',
+        dataIndex: 'paramName',
         renderFormItem: (_, config: any, data) => {
           return <Input placeholder="单行输入"></Input>;
         },
@@ -70,10 +70,10 @@ export const createServiceConfigTableColumns = (params: {
     },
     {
       title: '配置说明',
-      key: 'paramValue',
-      dataIndex: 'paramValue',
+      key: 'paramDescription',
+      dataIndex: 'paramDescription',
       renderFormItem: (_, config: any, data) => {
-        return <Input disabled={true}></Input>;
+        return <Input ></Input>;
       },
     },
     // {
