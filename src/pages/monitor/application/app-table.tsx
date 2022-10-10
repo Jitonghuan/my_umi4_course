@@ -187,18 +187,17 @@ const Coms = (props: IProps) => {
       queryAppList().then((resp) => {
         setAppData(resp);
       })
-    } 
-    // else {
-    //   queryAppList().then((resp) => {
-    //     setAppData(resp);
-    //     prevFilter.current = {
-    //       appCode: appCode || (resp.length ? resp[0].value : undefined),
-    //     };
-    //     debugger
-    //     setFilter(prevFilter.current);
-    //     formInstance.setFieldsValue(prevFilter.current);
-    //   });
-    // }
+    } else if(!entry) {
+      queryAppList().then((resp) => {
+        setAppData(resp);
+        prevFilter.current = {
+          appCode: appCode || (resp.length ? resp[0].value : undefined),
+        };
+       
+        setFilter(prevFilter.current);
+        formInstance.setFieldsValue(prevFilter.current);
+      });
+    }
   };
 
   // 查询环境列表
