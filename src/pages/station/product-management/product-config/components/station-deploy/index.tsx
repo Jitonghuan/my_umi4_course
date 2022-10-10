@@ -88,7 +88,7 @@ export default function StationDeploy(props:Iprops){
                   {packageInfo?.map((element:any)=>{
                     return<>
                      <Col span={6} style={{marginBottom:10}}>
-                       <Card style={{ width: 280 }} title={STATUS_TYPE[element?.indentPackageType]?.text||""} extra={<Space><CopyToClipboard text={element?.indentPackageUrl||""}><a>复制链接<CopyOutlined /></a></CopyToClipboard>
+                       <Card style={{ width: 280 }} title={element?.indentPackageType} extra={<Space><CopyToClipboard text={element?.indentPackageUrl||""}><a>复制链接<CopyOutlined /></a></CopyToClipboard>
                        <Spin spinning={downloading}>
                        <a onClick={()=>{
                          downLoadIndent(element?.indentPackageType)
