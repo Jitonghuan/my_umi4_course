@@ -132,7 +132,7 @@ export default function ContainerInfo(props: any) {
         <Descriptions.Item label="运行状态">
           {
             <Tag color={LIST_STATUS_TYPE[infoRecord.instStatus]?.color || 'default'}>
-              {LIST_STATUS_TYPE[infoRecord.instStatus]?.text || infoRecord.instStatus}
+              {LIST_STATUS_TYPE[infoRecord.instStatus]?.text || infoRecord?.instStatus}
             </Tag>
           }
         </Descriptions.Item>

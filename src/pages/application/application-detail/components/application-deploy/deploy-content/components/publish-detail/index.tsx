@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography } from 'antd';
+import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select, Typography,Spin } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { history } from 'umi';
@@ -38,6 +38,7 @@ export default function PublishDetail(props: IProps) {
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, feType, deployModel } = appData || {};
   const [loading, envDataSource] = useEnvList();
+  const [envLoading,setEnvLoading]=useState<boolean>(false);
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [envProjectVisible, setEnvProjectVisible] = useState(false);
@@ -126,6 +127,7 @@ export default function PublishDetail(props: IProps) {
 
   // 获取环境列表
   const getEnvList = (params: any) => {
+    setEnvLoading(true)
     getRequest(listAppEnv, {
       data: {
         ...params,
@@ -140,12 +142,17 @@ export default function PublishDetail(props: IProps) {
         setOffLineEnvData(envs);
         // }
         if (params.proEnvType === 'benchmark') {
+          setOffLineEnvData(envs);
+        }
+        if (params.proEnvType === 'benchmark') {
           setEnvDataList(envs);
         }
         if (params.proEnvType === 'project') {
           setProjectEnvCodeOptions(envs);
         }
       }
+    }).finally(()=>{
+      setEnvLoading(false)
     });
   };
   // 下一个部署环境
@@ -423,24 +430,6 @@ export default function PublishDetail(props: IProps) {
     }
   });
 
-  // let deployErrInfo: any[] = [];
-  // try {
-  //   if (status && status.deployErrInfo) {
-  //     Object.keys(status.deployErrInfo).forEach((item) => {
-  //       deployErrInfo.push({ item: status.deployErrorInfo[item] })
-  //     })
-  //   }
-  // } catch (e) {
-  //   if (status && status.deployErrInfo) {
-  //     const data = Object.keys(deployErrInfo)
-  //     deployErrInfo = [
-  //       {
-  //         subErrInfo: status.deployErrInfo,
-  //         envCode: envInfo.deployEnvs,
-  //       },
-  //     ];
-  //   }
-  // }
 
   let errorInfo: any[] = [];
   if (status && status.deployErrInfo) {
@@ -459,23 +448,7 @@ export default function PublishDetail(props: IProps) {
         window.open(data, '_blank');
       }
     }
-    // try {
-    //   // jenkinsUrl = deployInfo.jenkinsUrl ? JSON.parse(deployInfo.jenkinsUrl) : [];
-    //   jenkinsUrl = buildInfo.buildUrl ? JSON.parse(buildInfo.buildUrl) : [];
-    // } catch (e) {
-    //   if (buildInfo.buildUrl) {
-    //     jenkinsUrl = [
-    //       {
-    //         subJenkinsUrl: buildInfo.buildUrl,
-    //         envCode: envInfo.deployEnvs,
-    //       },
-    //     ];
-    //   }
-    // }
-    // const data = jenkinsUrl.find((val) => val.envCode === item.key);
-    // if (data && data.subJenkinsUrl) {
-    //   window.open(data.subJenkinsUrl, '_blank');
-    // }
+    
   }
 
   const handleChange = (v: string) => {
@@ -710,6 +683,7 @@ export default function PublishDetail(props: IProps) {
         onCancel={handleCancel}
         maskClosable={false}
       >
+        <Spin spinning={envLoading}>
         <div>
           <span>发布环境：</span>
           <Radio.Group
@@ -750,6 +724,10 @@ export default function PublishDetail(props: IProps) {
             </Button>
           </Upload>
         </div>
+
+       </Spin>
+   
+       
       </Modal>
 
       {/* 重启按钮 */}

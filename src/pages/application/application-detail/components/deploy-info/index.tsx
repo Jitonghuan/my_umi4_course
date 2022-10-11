@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Tabs } from 'antd';
+import { Tabs,Modal } from 'antd';
 import appConfig from '@/app.config';
 import { useLocation } from 'umi';
 import { parse } from 'query-string';
@@ -49,6 +49,12 @@ export default function AppDeployInfo(props: any) {
   };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
+  const warning = () => {
+    Modal.warning({
+      title: '该应用未绑定环境！',
+      content: '请先为该应用绑定环境哦...',
+    });
+  };
   useEffect(() => {
     queryData();
   }, []);
@@ -57,41 +63,45 @@ export default function AppDeployInfo(props: any) {
     await getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
-      const { data } = result || [];
-      envTypeDataSource = result?.data;
-      let next: any = [];
-      (data || []).map((el: any) => {
-        if (el?.typeCode === 'dev') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+      if(result?.success){
+        const { data } = result || [];
+        envTypeDataSource = result?.data;
+      
+        if(result?.data?.length<1||!result?.data?.length){
+          warning()
+          return
+
         }
-        if (el?.typeCode === 'test') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
-        }
-        if (el?.typeCode === 'pre') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
-        }
-        if (el?.typeCode === 'prod') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
-        }
-      });
-      next.sort((a: any, b: any) => {
-        return a.sortType - b.sortType;
-      }); //升序
-      setEnvTypeData(next);
-      let currentTabActive =
-        localStorage.__init_env_tab__ &&
-        envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
-          ? localStorage.getItem('__init_env_tab__')
-          : next[0]?.typeCode || env;
-      setTabActive(currentTabActive);
+        let next: any = [];
+        (data || []).map((el: any) => {
+          if (el?.typeCode === 'dev') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+          }
+          if (el?.typeCode === 'test') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+          }
+          if (el?.typeCode === 'pre') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+          }
+          if (el?.typeCode === 'prod') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+          }
+        });
+        next.sort((a: any, b: any) => {
+          return a.sortType - b.sortType;
+        }); //升序
+        setEnvTypeData(next);
+        let currentTabActive =
+          localStorage.__init_env_tab__ &&
+          envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
+            ? localStorage.getItem('__init_env_tab__')
+            : next[0]?.typeCode || env;
+        setTabActive(currentTabActive);
+
+      }
+     
     });
 
-    // let currentTabActive =
-    //   localStorage.__init_env_tab__ &&
-    //   envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
-    //     ? localStorage.getItem('__init_env_tab__')
-    //     : env;
-    // setTabActive(currentTabActive);
   };
 
   useEffect(() => {

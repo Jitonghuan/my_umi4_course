@@ -3,7 +3,7 @@
 // @create 2021/08/25 16:21
 
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Tabs, Select, Tag } from 'antd';
+import { Tabs, Select, Tag,Modal } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
@@ -77,41 +77,55 @@ export default function ApplicationDeploy(props: any) {
     return data;
   }, [tabActive, envTypeData]);
 
-
+  const warning = () => {
+    Modal.warning({
+      title: '该应用未绑定环境！',
+      content: '请先为该应用绑定环境哦...',
+    });
+  };
   const queryData = () => {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
-      const { data } = result || [];
-      let next: any = [];
-      (data || []).map((el: any) => {
-        if (el?.typeCode === 'dev') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+      if(result?.success){
+        const { data } = result || [];
+       
+        if(data?.length<1||!data?.length){
+          warning()
+          return
         }
-        if (el?.typeCode === 'test') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
-        }
-        if (el?.typeCode === 'pre') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
-        }
-        if (el?.typeCode === 'prod') {
-          next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
-        }
-      });
-      next.sort((a: any, b: any) => {
-        return a.sortType - b.sortType;
-      }); //升序
-      const currentTab = sessionStorage.getItem('__init_env_tab__') || next[0]?.typeCode || env;
-      setTabActive(currentTab);
-      let pipelineObj: any = {};
-      const saveData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '{}');
-      next.forEach((e: any) => {
-        if (e.typeCode) {
-          pipelineObj[e.typeCode] = saveData && saveData[e.typeCode] ? saveData[e.typeCode] : '';
-        }
-      });
-      sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
-      setEnvTypeData(next);
+        let next: any = [];
+        (data || []).map((el: any) => {
+          if (el?.typeCode === 'dev') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 1 });
+          }
+          if (el?.typeCode === 'test') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 2 });
+          }
+          if (el?.typeCode === 'pre') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 3 });
+          }
+          if (el?.typeCode === 'prod') {
+            next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
+          }
+        });
+        next.sort((a: any, b: any) => {
+          return a.sortType - b.sortType;
+        }); //升序
+        const currentTab = sessionStorage.getItem('__init_env_tab__') || next[0]?.typeCode || env;
+        setTabActive(currentTab);
+        let pipelineObj: any = {};
+        const saveData = JSON.parse(sessionStorage.getItem('env_pipeline_obj') || '{}');
+        next.forEach((e: any) => {
+          if (e.typeCode) {
+            pipelineObj[e.typeCode] = saveData && saveData[e.typeCode] ? saveData[e.typeCode] : '';
+          }
+        });
+        sessionStorage.setItem('env_pipeline_obj', JSON.stringify(pipelineObj));
+        setEnvTypeData(next);
+
+      }
+     
     });
   };
 
