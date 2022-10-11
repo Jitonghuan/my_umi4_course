@@ -7,12 +7,9 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 /* 数据变更管理接口文档 https://come-future.yuque.com/sekh46/bbgc7f/eh25u4#Wm5mi */
-import { addAPIPrefix } from '@/utils';
 import appConfig from '@/app.config';
-
 let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 //kapi-base-dev.cfuture.shop/matrix-dmp
-
 const dmpApiPrefix=`http://kapi-base-${env}.cfuture.shop/matrix-dmp/v1`;
 /* 权限 */
 /* GET  1、 查询权限列表 */

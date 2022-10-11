@@ -481,39 +481,6 @@ export default [
     ],
   },
   {
-    path: `${baseRoutePath}/database`,
-    name: '数据库管理',
-    icon: 'icon-TableSettings',
-    routes: [
-      {
-        path: `${baseRoutePath}/database/overview`,
-        name: '概览',
-        key: 'overview',
-        component: '@/pages/database/overview',
-      },
-      {
-        path: `${baseRoutePath}/database/info`,
-        name: '实例详情',
-        key: 'instance-list',
-        component: '@/pages/database/instance-list/components/instance-info',
-        hideInMenu: true,
-      },
-
-      {
-        path: `${baseRoutePath}/database/instance-list`,
-        name: '实例列表',
-        key: 'instance-list',
-        component: '@/pages/database/instance-list',
-      },
-      {
-        path: `${baseRoutePath}/database/cluster-list`,
-        name: '集群列表',
-        key: 'cluster-list',
-        component: '@/pages/database/cluster-list',
-      },
-    ],
-  },
-  {
     "path": `${baseRoutePath}/publish`,
     "name": "项目管理",
     "icon": "icon-exit",
@@ -1267,7 +1234,39 @@ export default [
       }
     ]
   },
- 
+  {
+    path: `${baseRoutePath}/database`,
+    name: '数据库管理',
+    icon: 'icon-TableSettings',
+    routes: [
+      {
+        path: `${baseRoutePath}/database/overview`,
+        name: '概览',
+        key: 'overview',
+        component: '@/pages/database/overview',
+      },
+      {
+        path: `${baseRoutePath}/database/info`,
+        name: '实例详情',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list/components/instance-info',
+        hideInMenu: true,
+      },
+
+      {
+        path: `${baseRoutePath}/database/instance-list`,
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
+      },
+      {
+        path: `${baseRoutePath}/database/cluster-list`,
+        name: '集群列表',
+        key: 'cluster-list',
+        component: '@/pages/database/cluster-list',
+      },
+    ],
+  },
   {
     path: `${baseRoutePath}/admin`,
     name: '管理员菜单',
