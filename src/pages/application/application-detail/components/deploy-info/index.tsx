@@ -51,7 +51,7 @@ export default function AppDeployInfo(props: any) {
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   const warning = () => {
     Modal.warning({
-      title: '该应用下不存在环境分类！',
+      title: '该应用未绑定环境！',
       content: '请先为该应用绑定环境哦...',
     });
   };

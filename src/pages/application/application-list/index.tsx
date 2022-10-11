@@ -3,13 +3,14 @@
 // @create 2021/08/25 09:23
 
 import React, { useMemo, useState, useCallback, useContext } from 'react';
-import { Button, message, Table, Modal } from 'antd';
+import { Button, message, Table, Modal,Tag ,Spin} from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import ApplicationEditor from '../_components/application-editor';
 import { FeContext } from '@/common/hooks';
 import PageContainer from '@/components/page-container';
 import { createTableSchema } from './schema';
-import { deleteApp } from '../service';
+import { deleteApp, } from '../service';
+import {getBackendAppResourcesEnv} from '../_components/application-editor/service'
 import { useAppListData } from '../hooks';
 import FilterHeader from '../_components/filter-header';
 import { AppItemVO } from '../interfaces';
@@ -27,6 +28,8 @@ export default function ApplicationList() {
   const [curRecord, setCurRecord] = useState<AppItemVO>();
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [resourcesEnv,setResourcesEnv]=useState<any>([]);
+  const [envLoading, setEnvLoading] = useState<boolean>(false);
 
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
@@ -44,6 +47,13 @@ export default function ApplicationList() {
       onDelClick: async (record, index) => {
         setCurRecord(record);
         setVisible(true);
+        setEnvLoading(true)
+        getBackendAppResourcesEnv(record?.appCode).then((res)=>{
+          setResourcesEnv(res)
+
+        }).finally(()=>{
+          setEnvLoading(false)
+        })
         // await deleteApp({ appCode: record.appCode, id: record.id });
         // message.success('删除成功');
         // loadAppListData();
@@ -61,6 +71,7 @@ export default function ApplicationList() {
           setVisible(false);
           message.success('删除成功');
           loadAppListData();
+         
         }
       })
       .finally(() => {
@@ -140,7 +151,8 @@ export default function ApplicationList() {
         }
       >
         <div style={{ fontSize: '13px', color: '#4f4848', lineHeight: '25px' }}>
-          {/* <ExclamationOutlined color='red' /><ExclamationOutlined /> */}
+         <p> <Spin spinning={envLoading}>
+         影响环境：{resourcesEnv?.map((item:string)=>{ return<> <Tag color="pink">{item}</Tag>&nbsp; </>})}</Spin></p>
           删除应用将导致<span style={{ color: 'red' }}>该应用在相关环境下运行中的服务全部清除</span>，
           确定要删除该应用吗？
         </div>
