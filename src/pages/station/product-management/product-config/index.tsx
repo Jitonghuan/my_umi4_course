@@ -31,6 +31,7 @@ export default function ProductConfig() {
   const [configLoading, configDataSource, queryIndentConfigParamList] = useQueryIndentConfigParamList();
   const [editLoading, editDescription] = useEditDescription();
   const [activeValue, setActiveValue] = useState<string>("1");
+  const [flag,setFlag]=useState<string>("");
 
   const queryIndentInfo = async (id: number) => {
     setInfoLoading(true);
@@ -143,10 +144,13 @@ export default function ProductConfig() {
           value={activeValue}
           onChange={(value: any) => {
             setActiveValue(value);
+            if(value==="3"){
+              setFlag("request")
+            }
            
           }}
         />
-        {activeValue==="1"&&(<StationPlan indentId={configInfo.id} onUpdate={()=>{   queryIndentInfo(configInfo.id)}} />)}
+        {activeValue==="1"&&(<StationPlan indentId={configInfo.id}  onUpdate={()=>{   queryIndentInfo(configInfo.id)}} />)}
         {activeValue==="2"&&(
         <StationConfig 
           configInfo={configInfo}
@@ -178,7 +182,7 @@ export default function ProductConfig() {
           compontentTableInfo={{loading, dataSource}}
           serverTableInfo={{ serverDataSource,serverLoading,}}  
         />)}
-        {activeValue==="3"&&(<StationDeploy indentId={configInfo.id}/>)}
+        {activeValue==="3"&&(<StationDeploy indentId={configInfo.id} flag={flag}/>)}
         </div>
       </ContentCard>
 
