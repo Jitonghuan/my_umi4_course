@@ -37,7 +37,7 @@ export default function ApplicationParams(props: any) {
   const { appCode, appCategoryCode } = appData || {};
   let location:any = useLocation();
   const query :any= parse(location.search);
-  const { templateType, envCode } = query || {};
+  const { templateType, envCode,benchmarkEnvCode } = query || {};
   let firstEnvChoose = useRef<string>('');
   let firstTmplType = useRef<string>('');
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function ApplicationParams(props: any) {
       let dataArry: any = [];
       if (result.success) {
         result.data?.map((n: any) => {
-          if (n.proEnvType === 'benchmark' && n.envName.search('前端') === -1) {
+          if (n.proEnvType === 'benchmark' && n.envName.search('前端') === -1&&n?.envCode===benchmarkEnvCode) {
             dataArry.push({
               value: n?.envCode,
               label: n?.envName,

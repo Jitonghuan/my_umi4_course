@@ -49,7 +49,7 @@ export default function PushResourceStep(props: StepItemProps) {
         });
         setSupportEnv(downloadImageEnv);
       }
-    });
+    })
   };
   const handleRetryClick = async () => {
     try {
