@@ -73,7 +73,6 @@ export default (props: VersionDetailProps) => {
         action?.startEditable?.(record.id);
         setType('edit');
         queryParamList(versionId, record.paramComponent);
-        console.info("record?.paramComponent",record)
         queryReleaseList(record?.paramComponent,versionId)
         queryNamespaceList(record?.paramComponent)
        
@@ -84,7 +83,7 @@ export default (props: VersionDetailProps) => {
         });
       }  
     }) as any;
-  }, [type,originOptions,paramOptions,releaseOption]);
+  }, [type,originOptions,paramOptions,releaseOption,namespaceOption]);
   
   
   const handleSearch = () => {
@@ -117,6 +116,7 @@ export default (props: VersionDetailProps) => {
         rowKey="id"
         actionRef={actionRef}
         loading={tableLoading}
+       
         // recordCreatorProps={false}
         recordCreatorProps={{
           position: 'top',
@@ -137,6 +137,7 @@ export default (props: VersionDetailProps) => {
         editable={{
           form,
           editableKeys,
+         
           onSave: async (values) => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
@@ -146,12 +147,15 @@ export default (props: VersionDetailProps) => {
                 queryDeliveryParamList(versionId);
               });
             } else if (type === 'edit') {
-              editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
+            
+              editVersionParam({ ...params, id: parseInt(objKey[0]),versionId }).then(() => {
                 queryDeliveryParamList(versionId);
+                setType("")
               });
             }
           },
           onChange: setEditableRowKeys,
+          onCancel:async()=>{setType("")} ,
           actionRender: (row, config, dom) => [dom.save, dom.cancel],
         }}
       />

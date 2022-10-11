@@ -116,7 +116,6 @@ export const createCompontentsTableColumns = (params: {
               };
             },
             renderFormItem: (_, config: any, data) => {
-              //  ]
               return (
                 <Select
                   options={params?.namespaceOption}
@@ -181,7 +180,7 @@ export const createCompontentsTableColumns = (params: {
           {
             title: '操作',
             valueType: 'option',
-            width: 250,
+            width: 150,
             render: (text, record, _, action) => [
               <a
                 key="editable"

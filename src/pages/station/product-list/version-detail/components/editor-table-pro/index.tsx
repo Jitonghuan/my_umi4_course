@@ -3,13 +3,14 @@ import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import { Button, Input, Form, message } from 'antd';
+import { useQueryProductlineList } from '../../../../component-center/hook';
 import { createMiddlewareTableColumns } from './middle-ware-schema';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { createProTableColumns, DataSourceType } from './schema';
 import {createAppProTableColumns} from './app-schema'
 import { useQueryComponentOptions, useQueryComponentVersionOptions, useQueryVersionComponentList, useDeleteVersionComponent, useAddCompontent, } from '../../hooks';
-import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent,useCheckComponentRely} from './hook'
+import { useFrontbucketList, useBelongList, useNamespaceList, useBulkdelete,useEditComponent,useCheckComponentRely,} from './hook'
 import BatchAppDraw from '../batch-app-draw';
 import BatchMiddlewareDraw from '../batch-middleware-draw';
 
@@ -34,6 +35,7 @@ export default (props: VersionDetailProps) => {
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();
   const [checkComponentRely]=useCheckComponentRely()
+  const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [ componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentOptions, queryComponentOptions] = useQueryComponentOptions();
   const [loading, tableDataSource, setDataSource, queryVersionComponentList] = useQueryVersionComponentList();
@@ -66,11 +68,15 @@ export default (props: VersionDetailProps) => {
     if(currentTab==="middleware"){
       checkComponentRely(versionId)
     }
+    if(currentTab==="app"){
+      getProductlineList();
+    }
     
   }, [currentTab]);
   useEffect(() => {
     queryFrontbucketList();
     queryBelongList();
+   
 
   }, [])
 
@@ -124,6 +130,7 @@ export default (props: VersionDetailProps) => {
     return createAppProTableColumns({
       componentOptions,
       componentVersionOptions,
+      productLineOptions,
       onEdit:(text: React.ReactNode, record: any, _: any, action: any)=>{
         action?.startEditable?.(record.id);
         setType('edit');
@@ -153,7 +160,7 @@ export default (props: VersionDetailProps) => {
       },
 
     }) as any;
-  }, [componentOptions, componentVersionOptions,]);
+  }, [componentOptions, componentVersionOptions,productLineOptions]);
 
   const columns = useMemo(() => {
 
@@ -321,6 +328,7 @@ export default (props: VersionDetailProps) => {
         editable={{
           form,
           editableKeys,
+          onCancel:async()=>{setType("")} ,
           onSave: async () => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
@@ -331,6 +339,7 @@ export default (props: VersionDetailProps) => {
 
             }
             if(type==="edit"){
+              setType("")
               await  editComponent({
                 id:curRecord?.id,
                 ...params,
@@ -343,6 +352,7 @@ export default (props: VersionDetailProps) => {
       
               }).then(() => {
                 queryVersionComponentList(versionId, currentTab);
+                
                 if(currentTab==="middleware"){
                   checkComponentRely(versionId)
                 }
@@ -350,7 +360,7 @@ export default (props: VersionDetailProps) => {
               });
 
             }else if(type!=="edit"){
-              
+             
               await addComponent({
                 versionId,
                 ...params,
@@ -361,6 +371,7 @@ export default (props: VersionDetailProps) => {
 
               }).then(() => {
                 queryVersionComponentList(versionId, currentTab);
+               
                 if(currentTab==="middleware"){
                   checkComponentRely(versionId)
                 }
@@ -384,6 +395,8 @@ export default (props: VersionDetailProps) => {
 
 
         }).then(()=>{ queryVersionComponentList(versionId, currentTab);
+          setSelectedRowKeys([])
+          setSelectedRows([])
           if(currentTab==="middleware"){
             checkComponentRely(versionId)
           }})

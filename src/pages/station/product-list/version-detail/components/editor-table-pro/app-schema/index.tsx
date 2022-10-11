@@ -19,6 +19,7 @@ export const createAppProTableColumns = (params: {
 //   currentTabType:string,
   componentOptions:any,
   componentVersionOptions:any,
+  productLineOptions:any,
   onEdit: (text:React.ReactNode, record: any, _:any, action:any) => void;
   onDelete: (text:React.ReactNode, record: any, _:any, action:any) => void;
   onChange:(param:any,config:any)=>void;
@@ -84,6 +85,36 @@ export const createAppProTableColumns = (params: {
           return (
             <Select
               options={params?.componentVersionOptions}
+              showSearch
+              allowClear
+              // onChange={(value: any) => {
+  
+              // }}
+            ></Select>
+          );
+        },
+      },
+      {
+        title: '产品线',
+        key: 'productLine',
+        dataIndex: 'productLine',
+        valueType: 'select',
+        formItemProps: () => {
+          return {
+            rules: [
+              {
+                required: true,
+                message: '此项为必填项',
+              },
+            ],
+            errorType: 'default',
+          };
+        },
+        renderFormItem: (_, config: any, data) => {
+          //  ]
+          return (
+            <Select
+              options={params?.productLineOptions}
               showSearch
               allowClear
               // onChange={(value: any) => {

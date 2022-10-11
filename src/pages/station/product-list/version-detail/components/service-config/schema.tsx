@@ -84,7 +84,7 @@ export const createServiceConfigTableColumns = (params: {
     {
       title: '操作',
       valueType: 'option',
-      width: 250,
+      width: 150,
       render: (text, record, _, action) => [
         <a
           key="editable"

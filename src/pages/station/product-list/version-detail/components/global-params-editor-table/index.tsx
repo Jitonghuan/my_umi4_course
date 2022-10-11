@@ -85,7 +85,7 @@ export default (props: VersionDetailProps) => {
     {
       title: '操作',
       valueType: 'option',
-      width: 250,
+      width: 150,
       render: (text, record: any, _, action) => [
         <a
           key="editable"
@@ -165,6 +165,7 @@ export default (props: VersionDetailProps) => {
         editable={{
           form,
           editableKeys,
+          onCancel:async()=>{setType("")} ,
           onSave: async () => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
@@ -174,8 +175,10 @@ export default (props: VersionDetailProps) => {
                 queryDeliveryGloableParamList(versionId, 'global');
               });
             } else if (type === 'edit') {
-              editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
+              setType("")
+              editVersionParam({ ...params,versionId: versionId, paramComponent: 'global', id: parseInt(objKey[0]) }).then(() => {
                 queryDeliveryGloableParamList(versionId, 'global');
+               
               });
             }
           },

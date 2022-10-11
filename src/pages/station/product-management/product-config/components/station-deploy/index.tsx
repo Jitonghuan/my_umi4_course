@@ -88,7 +88,12 @@ export default function StationDeploy(props:Iprops){
                   {packageInfo?.map((element:any)=>{
                     return<>
                      <Col span={6} style={{marginBottom:10}}>
-                       <Card style={{ width: 280 }} title={element?.indentPackageType} extra={<Space><CopyToClipboard text={element?.indentPackageUrl||""}><a>复制链接<CopyOutlined /></a></CopyToClipboard>
+                       <Card style={{ width: 280 }} title={element?.indentPackageType} extra={
+                       <Space>
+                         {element?.indentPackageUrl===""?<span style={{color:"gray"}}>复制链接</span>: <CopyToClipboard text={element?.indentPackageUrl||""}>
+                           <a>复制链接<CopyOutlined /></a>
+                         </CopyToClipboard>}
+                        
                        <Spin spinning={downloading}>
                        <a onClick={()=>{
                          downLoadIndent(element?.indentPackageType)
@@ -98,7 +103,7 @@ export default function StationDeploy(props:Iprops){
                       </Space>} >
                      
 
-                      <p style={{display:'flex',justifyContent:"space-between"}}><span>  {element?.packageTypeDescription||""}</span><span><Tag color={PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.color||"gold"}>{PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.text||""}</Tag></span></p>
+                      <p style={{display:'flex',justifyContent:"space-between"}}><span className="package-type-description">  {element?.packageTypeDescription||""}</span><span><Tag color={PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.color||"gold"}>{PACKAGE_STATUS_TYPE[element?.indentPackageStatus]?.text||""}</Tag></span></p>
                      {element?.errMessage&&(<p style={{width:"100%"}}><span>错误信息：</span><span style={{width:'100%',display:"flex",textOverflow:"ellipsis",whiteSpace:"nowrap",overflowX:"scroll",}}>{element?.errMessage}</span></p>)}  
                        </Card>
                      </Col>        

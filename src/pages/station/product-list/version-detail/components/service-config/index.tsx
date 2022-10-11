@@ -140,7 +140,7 @@ export default (props: VersionDetailProps) => {
                 queryDeliveryParamList(versionId,"server");
               });
             } else if (type === 'edit') {
-              editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
+              editVersionParam({ ...params, id: parseInt(objKey[0]),paramComponent:"server", versionId }).then(() => {
                 queryDeliveryParamList(versionId,"server");
               });
             }
