@@ -531,10 +531,10 @@ export function useSaveParam(): [
 //编辑交付配置参数
 export function useEditVersionParam(): [
   boolean,
-  (paramsObj: { id: number; paramValue: string; paramDescription: string }) => Promise<void>,
+  (paramsObj: { id: number;paramName:string;paramComponent:string; paramValue: string; paramDescription: string;versionId:number }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const editVersionParam = async (paramsObj: { id: number; paramValue: string; paramDescription: string }) => {
+  const editVersionParam = async (paramsObj: { id: number;paramName:string;paramComponent:string; paramValue: string; paramDescription: string;versionId:number  }) => {
     setLoading(true);
     try {
       await postRequest(APIS.editVersionParam, {

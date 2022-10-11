@@ -9,10 +9,11 @@ import './index.less'
 
 interface Iprops{
     indentId:number;
+    onUpdate:()=>void;
 }
 
 export default function StationPlan(props:Iprops) {
-    const {indentId} =props;
+    const {indentId,onUpdate} =props;
     const [databaseData,setDatabaseData]=useState<any>([])
     const [basicInfoData,setBasicInfoData]=useState<any>([])
     const [dataBaseLoading,setDataBaseLoading]=useState<boolean>(false)
@@ -421,11 +422,13 @@ export default function StationPlan(props:Iprops) {
                             )
                              dataParams=[objectData].concat(paramsData)
                            }
-                           console.info("dataParams",dataParams)
+                          
                             saveDatabaseInfo({indentId:indentId,databases:dataParams }).then((res) => {
                                 if(res?.success){
                                     message.success(res?.data)
                                     setDisabled(true)
+                                    // onUpdate()
+                                    
                                 }
                                
                               

@@ -32,6 +32,7 @@ export default (props: VersionDetailProps) => {
   const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
+  const [record,setRecord]=useState<any>({})
 
   const updateRow = (rowKey: string, row: any) => {
     form.setFieldsValue({ [rowKey]: row });
@@ -72,6 +73,7 @@ export default (props: VersionDetailProps) => {
       onEdit:(record,  action)=>{
         action?.startEditable?.(record.id);
         setType('edit');
+        setRecord(record)
         queryParamList(versionId, record.paramComponent);
         queryReleaseList(record?.paramComponent,versionId)
         queryNamespaceList(record?.paramComponent)
@@ -147,8 +149,7 @@ export default (props: VersionDetailProps) => {
                 queryDeliveryParamList(versionId);
               });
             } else if (type === 'edit') {
-            
-              editVersionParam({ ...params, id: parseInt(objKey[0]),versionId }).then(() => {
+              editVersionParam({ ...params,paramComponent:record?.paramComponent, id: parseInt(objKey[0]),versionId }).then(() => {
                 queryDeliveryParamList(versionId);
                 setType("")
               });

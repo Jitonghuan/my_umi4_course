@@ -146,7 +146,7 @@ export default function ProductConfig() {
            
           }}
         />
-        {activeValue==="1"&&(<StationPlan indentId={configInfo.id} />)}
+        {activeValue==="1"&&(<StationPlan indentId={configInfo.id} onUpdate={()=>{   queryIndentInfo(configInfo.id)}} />)}
         {activeValue==="2"&&(
         <StationConfig 
           configInfo={configInfo}

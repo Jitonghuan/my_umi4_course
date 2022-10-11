@@ -24,6 +24,7 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
+  const [record,setRecord]=useState<any>({})
   const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询建站配置参数
@@ -95,6 +96,7 @@ export default (props: VersionDetailProps) => {
             // } else {
             action?.startEditable?.(record.id);
             setType('edit');
+            setRecord(record)
             // }
           }}
         >
@@ -176,7 +178,8 @@ export default (props: VersionDetailProps) => {
               });
             } else if (type === 'edit') {
               setType("")
-              editVersionParam({ ...params,versionId: versionId, paramComponent: 'global', id: parseInt(objKey[0]) }).then(() => {
+              
+              editVersionParam({ ...params,versionId: versionId,paramName:record?.paramName, paramComponent: 'global', id: parseInt(objKey[0]) }).then(() => {
                 queryDeliveryGloableParamList(versionId, 'global');
                
               });

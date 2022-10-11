@@ -15,11 +15,10 @@ type DataSourceType = {
   // 列表页-表格
 export const createServiceConfigTableColumns = (params: {
     type:string;
-    paramOptions:any;
+    // paramOptions:any;
     originOptions:any;
     paramtypeOptions:any
-    onComChange: (value: any) => void;
-    onParamChange: (config: any,value: any) => void;
+    // onParamChange: (config: any,value: any) => void;
     onEdit: (record: any, action: any,) => void;
     onDelete: (record: any) => void;
     // currentTabType;
@@ -51,12 +50,12 @@ export const createServiceConfigTableColumns = (params: {
         };
       },
       renderFormItem: (_, config: any, data) => {
-        let description = '';
-        params?.paramOptions.filter((item: any) => {
-          if (item.value === config.record?.componentVersion) {
-            description = item.componentDescription;
-          }
-        });
+        // let description = '';
+        // params?.paramOptions.filter((item: any) => {
+        //   if (item.value === config.record?.componentVersion) {
+        //     description = item.componentDescription;
+        //   }
+        // });
         return (
           <Select
             options={ params?.paramtypeOptions}

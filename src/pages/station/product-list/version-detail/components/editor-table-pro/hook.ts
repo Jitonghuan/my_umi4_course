@@ -197,7 +197,7 @@ export function useCheckComponentRely() {
  
   const checkComponentRely = useCallback(async (versionId:number) => {
    
-    await postRequest(APIS.checkComponentRelyApi,{data:{versionId}})
+    await postRequest(`${APIS.checkComponentRelyApi}?versionId=${versionId}`)
       .then((res) => {
         if (res?.success) {
           let data:any=res?.data

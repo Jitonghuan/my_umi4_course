@@ -4,7 +4,6 @@ import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Form} from 'antd';
 import {createServiceConfigTableColumns} from './schema'
 import {
-  useQueryParamList,
   useQueryServerParamList,
   useSaveParam,
   useDeleteDeliveryParam,
@@ -30,7 +29,6 @@ export default (props: VersionDetailProps) => {
   const [originloading, originOptions, queryOriginList] = useQueryOriginList();
   const [delLoading, deleteDeliveryParam] = useDeleteDeliveryParam();
   const [tableLoading, tableDataSource, setDataSource, queryDeliveryParamList] = useQueryServerParamList();
-  const [loading, paramOptions, queryParamList] = useQueryParamList();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
@@ -51,28 +49,12 @@ export default (props: VersionDetailProps) => {
   const serviceConfigColumns = useMemo(() => {
     return createServiceConfigTableColumns({
       type:type,
-      paramOptions:paramOptions,
       originOptions:originOptions,
       paramtypeOptions:paramtypeOptions,
-      onComChange: (value: any) => {
-        queryParamList(versionId, value);
-       
-      },
-      onParamChange:(config:any,value: any)=>{
-
-        paramOptions.filter((item: any) => {
-          if (item.value === value) {
-            updateRow(config.recordKey, {
-              ...form.getFieldsValue(config.recordKey),
-              paramValue: item.paramValue,
-            });
-          }
-        });
-      },
       onEdit:(record:any,  action:any)=>{
         action?.startEditable?.(record.id);
         setType('edit');
-        queryParamList(versionId, record.paramComponent);
+        // queryParamList(versionId, record.paramComponent);
       },
       onDelete:(record:any)=>{
         deleteDeliveryParam(record.id).then(() => {
@@ -80,7 +62,7 @@ export default (props: VersionDetailProps) => {
         });
       }  
     }) as any;
-  }, [type,originOptions,paramOptions,paramtypeOptions]);
+  }, [type,originOptions,paramtypeOptions]);
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
     queryDeliveryParamList(versionId, param.paramName);
