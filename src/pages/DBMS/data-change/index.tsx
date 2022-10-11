@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import {Form, Button, Space } from 'antd';
 import TableSearch from '@/components/table-search';
 import { createTableColumns,formOptions } from './schema';
+import {querySqlListApi} from '../service'
 
 import useTable from '@/utils/useTable';
 import {history} from 'umi';
@@ -12,7 +13,7 @@ export default function AuthorityApply (){
         tableProps,
         search: { submit, reset },
       } = useTable({
-        url: '',
+        url: querySqlListApi,
         method: 'GET',
         form,
         formatter: (params) => {
@@ -21,14 +22,10 @@ export default function AuthorityApply (){
           };
         },
         formatResult: (result) => {
-           let   data=[{
-                 id:1,
-                 name:'ceshi'
-             }]
           return {
             total: result.data?.pageInfo?.total,
-            // list: result.data?.dataSource || [],
-            list:data
+            list: result.data?.dataSource || [],
+
           };
         },
       });

@@ -1,6 +1,7 @@
-import { Space, Popconfirm, Tooltip } from 'antd';
+import { Space, Popconfirm, Tooltip,Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { datetimeCellRender } from '@/utils';
 
 export const formOptions: FormProps[] = [
    
@@ -53,61 +54,77 @@ export const createTableColumns = (params: {
       title: '工单号',
       dataIndex: 'instanceId',
       key: 'instanceId',
-      width: 120,
+      width: '10%',
     },
     {
       title: '申请原因',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'remark',
+      key: 'remark',
       width: '14%',
     },
     {
       title: '变更库',
-      dataIndex: 'email',
-      key: 'email',
+      dataIndex: 'dbCode',
+      key: 'dbCode',
       width: '30%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
       title: '当前状态',
-      dataIndex: 'mobile',
-      key: 'mobile',
+      dataIndex: 'currentStatusDesc',
+      key: 'currentStatusDesc',
       width: '28%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
         title: '申请人',
-        dataIndex: 'mobile',
-        key: 'mobile',
+        dataIndex: 'userName',
+        key: 'userName',
         width: '28%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
       {
         title: '当前处理人',
-        dataIndex: 'mobile',
-        key: 'mobile',
+        dataIndex: 'audit',
+        key: 'audit',
         width: '28%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (users,record) => {
+          let auditUsers=[];
+          if(record?.audit?.AuditStatus==="wait"){
+            auditUsers=record?.audit?.AuditStatus?.Groups 
+          }
+          // auditUsers?.length>0?auditUsers?.map():"暂无",
+          return (
+            <>
+            {auditUsers?.length>0?auditUsers?.map((item:string)=>{
+              <Tag>{item}</Tag>
+            }):"暂无"}
+
+            </>
+            
+            
+          )
+        }
       },
       {
         title: '创建时间',
-        dataIndex: 'mobile',
-        key: 'mobile',
+        dataIndex: 'startTime',
+        key: 'startTime',
         width: '28%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (value) => <>{datetimeCellRender(value)} </>,
       },
       {
         title: '最后操作时间',
-        dataIndex: 'mobile',
-        key: 'mobile',
+        dataIndex: 'endTime',
+        key: 'endTime',
         width: '28%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (value) => <>{datetimeCellRender(value)} </>,
       },
       
 

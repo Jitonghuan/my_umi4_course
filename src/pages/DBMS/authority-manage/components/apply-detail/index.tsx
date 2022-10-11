@@ -14,7 +14,9 @@ import ShuttleFrame from '@/components/shuttle-frame';
 import LibraryForm from '../apply-detail/_components/library-form';
 import TableForm from '../apply-detail/_components/table-form';
 import LimitForm from '../apply-detail/_components/limit-form';
-import LibraryOwnerForm from '../apply-detail/_components/library-owner-form'
+import LibraryOwnerForm from '../apply-detail/_components/library-owner-form';
+import {useCreatePriv} from './hook'
+import {useEnvList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions} from '../../../common-hook'
 
 
 const { RangePicker } = DatePicker;
@@ -28,30 +30,58 @@ const { Step } = Steps;
 const CheckboxGroup = Checkbox.Group;
 
 export default function CreateArticle(props: CreateArticleProps) {
-  const createForm:any=Form.useForm()
+  const [createForm]=Form.useForm();
+  const [createLoading, createPriv]=useCreatePriv()
+  const [envOptionLoading,  envOptions, queryEnvList]=useEnvList();
+  const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
+ 
+  const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
+
   const { mode, curRecord, onClose, onSave } = props;
-  const [value, setValue3] = useState('library');
-  //time-ranger
-  const [type,setType]=useState<string>("time-interval")
+  const [value, setValue] = useState(2);
+  const [flag,setFlag]=useState<string>("");
+  
+  
+
  
   useEffect(() => {
-    if (mode === 'HIDE' || !curRecord) return;
-   
+    if (mode === 'HIDE' ) return;
+    queryEnvList()
+    getInstanceList()
+    
     return () => {
-     
+      setFlag("");
+      createForm.resetFields()
+      setSource([])
     };
   }, [mode]);
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
     console.log('radio3 checked', value);
-    setValue3(value);
-  };
-  const onChange = (list: CheckboxValueType[]) => {
-  
+    setValue(value);
   };
 
+const submit=async(params:any)=>{
+  const values=await createForm.validateFields();
+  
+  createPriv({
+    // ...values,
+    remark:values?.remark,
+    limitNum:values?.limitNum,
+    privList:values?.privList,
+    dbList:values?.dbList,
+    privWfType:values?.privWfType,
+    instanceId:values?.instanceId,
+    envCode:values?.envCode,
+    tableList:values?.tableList,
+    ...params}).then(()=>{
+    onSave()
+  })
+
+}
   
   return (
     <Drawer
+    destroyOnClose
     width={900}
     title="申请权限"
     placement="right"
@@ -60,7 +90,7 @@ export default function CreateArticle(props: CreateArticleProps) {
     maskClosable={false}
     footer={
       <div className="drawer-footer">
-      <Button type="primary" >
+      <Button type="primary" loading={createLoading} onClick={()=>{setFlag("submit")}}>
         提交申请
       </Button>
       <Button type="default" onClick={onClose}>
@@ -70,25 +100,34 @@ export default function CreateArticle(props: CreateArticleProps) {
     }
     className="apply-detail-drawer"
     >
-      <Form labelCol={{ flex: '110px' }} >
-        <Form.Item label="对象类型">
+      <Form labelCol={{ flex: '110px' }} form ={createForm}  >
+        <Form.Item label="对象类型" name="privWfType" initialValue={options[0].value} rules={[{ required: true, message: '请选择' }]}>
         <Radio.Group options={options} onChange={onChange3} value={value} optionType="button" />
         </Form.Item>
-        <Form.Item label="环境">
-          <Select options={[]} allowClear showSearch  style={{width:220}}/>
+        <Form.Item label="环境" name="envCode" rules={[{ required: true, message: '请选择' }]}>
+          <Select options={envOptions} allowClear showSearch loading={envOptionLoading}  style={{width:220}}/>
           
         </Form.Item>
-        <Form.Item label="实例选择">
-        <Select options={[]} allowClear showSearch  style={{width:220}}/>
+        <Form.Item label="实例选择" name="instanceId" rules={[{ required: true, message: '请选择' }]}>
+        <Select options={instanceOptions} allowClear showSearch loading={instanceLoading} style={{width:220}} onChange={(instanceId)=>{queryDatabases(instanceId)}}/>
           
         </Form.Item>
-        {value==="library"&&<LibraryForm />}
-        {value==="table"&&<TableForm/>}
-        {value==="libraryOwner"&&<LibraryOwnerForm/>}
-        {value==="limit"&&<LimitForm/>}
+        {/* 库权限 */}
+        {value===2&&<LibraryForm  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions}  />}
+        {/* 表权限 */}
+        {value===3&&<TableForm  
+        databasesOptions={databasesOptions} 
+        databasesOptionsLoading={databasesOptionsLoading}
+        flag={flag} submit={(params:any)=>submit(params)}
+      
+        />}
+        {/* 库owner权限 */}
+        {value===1&&<LibraryOwnerForm  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions} />}
+        {/* limit限制 */}
+        {value===4&&<LimitForm flag={flag} submit={(params:any)=>submit(params)}   databasesOptions={databasesOptions} databasesOptionsLoading={databasesOptionsLoading}/>}
 
      
-        <Form.Item label="理由">
+        <Form.Item label="理由" name="remark">
           <Input.TextArea  style={{width:320}} placeholder="说明理由和用途"></Input.TextArea>
           
         </Form.Item>

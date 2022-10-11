@@ -1,19 +1,33 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo,useEffect } from 'react';
 import {Form, Button, Space } from 'antd';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { createTableColumns,formOptions } from './schema';
+import { createTableColumns,createFormItems,currentStatusOptions } from './schema';
 import TicketDetail from '../../components/ticket-detail';
 import ApplyDetailDrawer from '../apply-detail'
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import useTable from '@/utils/useTable';
 import {queryWorkflowPrivListApi} from '../../../service'
 import {history} from 'umi';
+import {useSearchUser} from '../../../common-hook'
+
 export default function AuthorityApply (){
     const [form] = Form.useForm();
     const [mode,setMode]=useState<EditorMode>("HIDE");
     const [curRecord,setCurRecord]=useState<any>({});
+    const [loading, userNameOptions, searchUser] =useSearchUser()
+   
     const [applyDetailMode,setApplyDetailMode]=useState<EditorMode>("HIDE");
+    useEffect(()=>{
+      searchUser()
+    },[])
+    const formOptions = useMemo(() => {
+      return createFormItems({
+        currentStatusOptions,
+        userNameOptions,
+       
+      });
+    }, [userNameOptions,currentStatusOptions]);
     const {
         tableProps,
         search: { submit, reset },
@@ -51,7 +65,7 @@ export default function AuthorityApply (){
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        scroll={{ x: '100%' }}
+        // scroll={{ x: '100%' }}
         {...tableProps}
         //@ts-ignore
         pagination={{

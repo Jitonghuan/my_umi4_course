@@ -1,34 +1,82 @@
-import React, { useState,} from 'react';
+import React, { useState,useEffect} from 'react';
 import ShuttleFrame from '@/components/shuttle-frame';
 import {START_TIME_ENUMS} from '../../schema';
 import {ScheduleOutlined,} from '@ant-design/icons';
-import {Form, Select, Space,Input,DatePicker} from 'antd';
+import {Form, Select, Space,Input,DatePicker,InputNumber} from 'antd';
+import {useQueryTablesOptions} from '../../../../../common-hook'
+import moment from "moment";
 const { RangePicker } = DatePicker;
-export default function LibraryForm (){
+export interface IProps {
+  databasesOptions:any[];
+  databasesOptionsLoading:boolean;
+  submit: (params:any) => any;
+  flag:string
+
+}
+export default  function LibraryForm (props:IProps,ref:any){
+    const {databasesOptions,databasesOptionsLoading,submit,flag}=props
     const [type,setType]=useState<string>("time-interval")
+    const [targetSource,setTargetSource]=useState<any>([]);
+    const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
+    const [startTime,setStartTime]=useState<string>('')
+    const [endTime,setEndTime]=useState<string>('')
+    const now = new Date().getTime();
+    
+     
+useEffect(()=>{
+  if(flag==="submit"){
+
+    submit({
+      tableList:targetSource,
+        validStartTime:startTime,
+        validEndTime:endTime
+    })
+   
+
+  }
+ return()=>{
+  
+ }
+},[flag])
+   const selectTimeInterval=(timeValue:number)=>{
+    let start = Number((now - timeValue) / 1000).toString();
+    let end = Number(now / 1000).toString();
+    setStartTime(start)
+    setEndTime(end)
+  }
+   //选择时间间隔
+const selectTime = (time: any, timeString: string) => {
+let start = moment(timeString[0]).unix().toString();
+let end = moment(timeString[1]).unix().toString();
+if (start !== 'NaN' && end !== 'NaN') {
+  setStartTime(start);
+  setEndTime(end);
+ 
+} 
+};
     return <>
     {/* <Form labelCol={{ flex: '110px' }}> */}
-    <Form.Item label="目标库">
-          <Select options={[]} allowClear showSearch  style={{width:220}}/>
+    <Form.Item label="目标库" name="dbList" rules={[{ required: true, message: '请选择' }]}>
+          <Select options={databasesOptions} loading={databasesOptionsLoading} onChange={(dbCode)=>{queryTables({dbCode})}} allowClear showSearch  style={{width:220}}/>
           
         </Form.Item>
      <Form.Item label="目标表">
         <ShuttleFrame  
            showSearch 
            title={["可选项","已选择"]}
-           canAddSource={[]}
+           canAddSource={tablesOptions}
            alreadyAddTargets={[]}
-           onOk={(targetSource:any)=>{}}
+           onOk={(targetSource:any)=>{setTargetSource(targetSource)}}
          />
           
         </Form.Item>
         <Form.Item label="有效期" >
           <Space style={{height:20}}>
             {type==="time-interval"?( <Form.Item name="versionRangeOne"  >
-             <Select options={START_TIME_ENUMS} allowClear showSearch  style={{width:220}}/>
+             <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval} style={{width:220}}/>
            </Form.Item>):
            ( <Form.Item name="versionRangeOne"  >
-           <RangePicker  style={{ marginLeft: '5px', width: 260 }}  format="YYYY-MM-DD HH:mm:ss" showTime />
+           <RangePicker  style={{ marginLeft: '5px', width: 260 }} onChange={(v: any, b: any) => selectTime(v, b)} format="YYYY-MM-DD HH:mm:ss" showTime />
          </Form.Item>)}
          {type==="time-interval"?(
            <Form.Item>
@@ -45,8 +93,8 @@ export default function LibraryForm (){
           </Space>
         </Form.Item>
        
-        <Form.Item label="授权行数">
-          <Input placeholder="请输入"  style={{width:220}}/>
+        <Form.Item label="授权行数" name="limitNum" rules={[{ required: true, message: '请输入' }]}>
+          <InputNumber placeholder="请输入"  style={{width:220}}/>
           
         </Form.Item>
     {/* </Form> */}

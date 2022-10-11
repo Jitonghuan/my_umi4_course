@@ -17,11 +17,17 @@ export const queryPrivListApi = `${dmpApiPrefix}/dmp/user/priv/list`;
 /* DELETE 2、 删除权限 */
 export const delPrivApi = `${dmpApiPrefix}/dmp/user/priv`;
 /* 工单 */
-/* GET 3、查询权限申请工单详情 */
+/* GET 3、查询权限申请工单列表 */
 export const queryWorkflowPrivListApi = `${dmpApiPrefix}/dmp/workflow/priv/list`;
 
-/* POST 4、新增用户角色 */
+/* GET 4、查询sql变更工单列表 */
+export const querySqlListApi = `${dmpApiPrefix}/dmp/workflow/sql/list`;
 
+/* POST 5、创建权限申请工单 */
+export const createPrivApi = `${dmpApiPrefix}/dmp/workflow/priv/create`;
+
+/* GET 6、查询权限申请工单详情 */
+export const getPrivInfoApi = `${dmpApiPrefix}/dmp/workflow/priv/info`;
 /* PUT 5、更新用户角色 */
 
 
