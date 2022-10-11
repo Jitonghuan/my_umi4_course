@@ -153,7 +153,7 @@ export const createMiddlewareTableColumns = (params: {
         //  ]
         return (
           
-        <InputNumber placeholder="请输入1-100之间的值" style={{width:"100%"}}/>
+        <InputNumber placeholder="请输入1-100之间的值"  min={1} max={100}  style={{width:"100%"}}/>
         );
       },
     },

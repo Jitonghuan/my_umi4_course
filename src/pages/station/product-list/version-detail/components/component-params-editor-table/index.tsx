@@ -90,7 +90,7 @@ export default (props: VersionDetailProps) => {
   
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryParamList(versionId, param.paramName);
+    queryDeliveryParamList(versionId, param.paramComponent);
   };
   const tableChange = (values: any) => {
     setDataSource;

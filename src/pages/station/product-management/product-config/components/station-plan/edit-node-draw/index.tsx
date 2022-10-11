@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Drawer, Button, Form, Spin, Select, Input, Switch,message } from 'antd';
+import { Drawer, Button, Form, Spin, Select, Input, Switch,message ,InputNumber} from 'antd';
 import {  saveServerInfo } from '../hook';
 import { getRequest } from '@/utils/request';
 import { checkServerIpApi, checkServerInfoApi, } from '../../../../../service';
@@ -24,12 +24,16 @@ export default function EditNodeDraw(props: IProps) {
     const { mode, curRecord, onClose, onSave,indentId } = props;
     const [loading, setLoading] = useState<boolean>(false);
     const [type, setType] = useState<string>('');
+    const [serverRightInfo, setServerRightInfo] = useState<boolean>(false);
+    const [serverType, setServerType]=useState<string>('');
+    const [serverErrorMessage, setServerErrorMessage] = useState<string>('');
     const [rightInfo, setRightInfo] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [infoLoading,purposeOptions, getListNacosPurposeInfo]=useGetListNacosPurposeInfo()
     const [roleLoading,roleOptions, getListNacosRoleInfo]=useGetListNacosRoleInfo();
     const [isRootDiskChecked, setIsRootDiskChecked] = useState<boolean>(false);
     const [enableNfsChecked, setEnableNfsChecked] = useState<boolean>(false);
+   
     const onEnableNfsChange=(checked: boolean)=>{
       if (checked === true) {
         setEnableNfsChecked(true);
@@ -71,6 +75,10 @@ export default function EditNodeDraw(props: IProps) {
           nodeForm.resetFields()
           setIsRootDiskChecked(false)
           setEnableNfsChecked(false)
+          setServerRightInfo(false)
+          setRightInfo(false)
+          setServerType("")
+          setType("")
         }
 
     },[mode])
@@ -99,20 +107,56 @@ export default function EditNodeDraw(props: IProps) {
         ip:string
       ) => {
         setLoading(true);
-        setType('begin');
+        if(key==="serverIp"){
+          setServerType('begin');
+
+          }else{
+            setType('begin');
+          }
+         
+        
         try {
           await getRequest(
             `${ip}?indentId=${indentId}&${key}=${value}`,
           )
             .then((res) => {
               if (res.success && res.data === 'success') {
-                setRightInfo(true);
+                if(key==="serverIp"){
+                setServerRightInfo(true)
+
+                }else{
+                  setRightInfo(true);
+                }
+                if(key==="serverIp"){
+                  setServerType('success');
+        
+                  }else{
+                    setType('success');
+                  }
     
-                setType('success');
+                
               } else if (res.success && res.data !== 'success') {
-                setRightInfo(false);
-                setErrorMessage(res.data);
-                setType('error');
+               
+                if(key==="serverIp"){
+                  setServerRightInfo(false)
+  
+                  }else{
+                    setRightInfo(false);
+                  }
+                if(key==="serverIp"){
+                  setServerErrorMessage(res?.data)
+                }else{
+                  setErrorMessage(res?.data);
+                }
+                if(key==="serverIp"){
+                  setServerType('error');
+        
+                  }else{
+                    setType('error');
+                  }
+    
+               
+              
                 return;
               }
             })
@@ -161,15 +205,15 @@ export default function EditNodeDraw(props: IProps) {
                  hasFeedback
                  validateTrigger="onBlur"
                  validateStatus={
-                   rightInfo && !loading && type === 'success'
+                  serverRightInfo && !loading && serverType === 'success'
                      ? 'success'
-                     : !rightInfo && !loading && type === 'begin'
+                     : !serverRightInfo && !loading && serverType === 'begin'
                      ? 'validating'
-                     : type === 'error'
+                     : serverType === 'error'
                      ? 'error'
                      : 'warning'
                  }
-                 help={type === 'success' ? '主机IP唯一性检查通过' : type === 'error' ? errorMessage : '等待检查主机IP唯一性'}
+                 help={serverType === 'success' ? '主机IP唯一性检查通过' : serverType === 'error' ? serverErrorMessage : '等待检查主机IP是否唯一'}
                  >
                  <Input style={{ width: 320 }} placeholder="请输入" onBlur={onServerIpChange}></Input>
                  </Form.Item>
@@ -189,7 +233,7 @@ export default function EditNodeDraw(props: IProps) {
                      ? 'error'
                      : 'warning'
                  }
-                 help={type === 'success' ? '主机名唯一性检查通过' : type === 'error' ? errorMessage : '等待主机名是否唯一'}
+                 help={type === 'success' ? '主机名唯一性检查通过' : type === 'error' ? errorMessage : '等待检查主机名是否唯一'}
                  >
                  <Input style={{ width: 320 }}  placeholder="请输入" onBlur={onHostnameChange}></Input>
                  </Form.Item>
@@ -201,7 +245,7 @@ export default function EditNodeDraw(props: IProps) {
                 
                  
                   >
-                  <Input style={{ width: 320 }}  placeholder="请输入" disabled={true} onBlur={onHostnameChange}></Input>
+                  <Input style={{ width: 320 }}  placeholder="请输入" disabled={true} ></Input>
                   </Form.Item>
               )}
                
@@ -211,7 +255,7 @@ export default function EditNodeDraw(props: IProps) {
                     <Form.Item
                    
                    name="cpu"
-                   hasFeedback
+                  //  hasFeedback
                    rules={[
                        {
                            required: true,
@@ -221,7 +265,7 @@ export default function EditNodeDraw(props: IProps) {
                    ]}
 
                >
-                   <Input style={{ width: 160 }} placeholder="请输入"></Input>
+                   <InputNumber style={{ width: 160 }} min={1}  placeholder="请输入"></InputNumber>
                   
                </Form.Item>
                <Form.Item style={{marginLeft:8}}> C</Form.Item>
@@ -235,7 +279,7 @@ export default function EditNodeDraw(props: IProps) {
                <div style={{display:'flex',height:30}}>
                <Form.Item
                 name="memory"
-                hasFeedback
+                // hasFeedback
                 rules={[
                     {
                      required: true,
@@ -245,7 +289,7 @@ export default function EditNodeDraw(props: IProps) {
                ]}
 
 >
-<Input style={{ width: 160 }} placeholder="请输入"></Input>
+<InputNumber style={{ width: 160 }}  min={1}   placeholder="请输入"></InputNumber>
 
 </Form.Item>
 <Form.Item style={{marginLeft:8}} > G</Form.Item>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo,useEffect,useCallback } from 'react';
-import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select,Spin } from 'antd';
+import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select,Spin,Popconfirm} from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { nodesSchema, DbUsageOptions } from './schema';
 import { saveBasicInfo, saveDatabaseInfo,getNodeList,useDeleteServer ,useGetDatabaseInfo} from './hook';
@@ -203,23 +203,29 @@ export default function StationPlan(props:Iprops) {
                 <div style={{ padding: 10 }}>
                     <div style={{ marginBottom: 16, display: "flex", justifyContent: 'space-between' }}>
                         <div >
+                        <Popconfirm
+              title="确定要删除吗？"
+              onConfirm={() => {
+               
+                let ips: any = []
+                               
+                selectedRows?.map((ele: any) => {
+                 ips.push(ele?.serverIp)
+
+                    })
+                deleteServer(indentId,ips).then(()=>{
+                    getNodeListData();
+                    setSelectedRowKeys([])
+                    setSelectedRows([])
+                })
+              }}
+            >
                             <Button type="primary" onClick={() => { 
                            
-                                let ips: any = []
-                               
-                                selectedRows?.map((ele: any) => {
-                                 ips.push(ele?.serverIp)
-
-                                    })
-                                deleteServer(indentId,ips).then(()=>{
-                                    getNodeListData();
-                                    setSelectedRowKeys([])
-                                    setSelectedRows([])
-                                })
                             }} disabled={!hasSelected} loading={delLoading} >
                                 删除选中
                              </Button>
-
+</Popconfirm>
                             <span style={{ marginLeft: 8 }}>
                                 {hasSelected ? `选中 ${selectedRowKeys.length} 条数据` : ''}
                             </span>

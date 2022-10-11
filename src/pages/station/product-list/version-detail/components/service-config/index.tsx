@@ -65,7 +65,8 @@ export default (props: VersionDetailProps) => {
   }, [type,originOptions,paramtypeOptions]);
   const handleSearch = () => {
     const param = searchForm.getFieldsValue();
-    queryDeliveryParamList(versionId, param.paramName);
+    // queryDeliveryParamList(versionId,"server");
+    queryDeliveryParamList(versionId,"server", param.paramName);
   };
   const tableChange = (values: any) => {
     setDataSource;
@@ -76,8 +77,8 @@ export default (props: VersionDetailProps) => {
       <div className="table-caption-application">
         <div className="caption-left">
           <Form layout="inline" form={searchForm}>
-            <Form.Item name="paramComponent">
-              <Input style={{ width: 220 }} placeholder="请输入"></Input>
+            <Form.Item name="paramName">
+              <Input style={{ width: 220 }} placeholder="请输入基准配置值"></Input>
             </Form.Item>
             <Form.Item>
               <Button onClick={handleSearch} type="primary">

@@ -194,7 +194,7 @@ export function useBulkAdd() {
 }
 //checkComponentRelyApi
 export function useCheckComponentRely() {
- 
+  const [data,setData]=useState<any>("")
   const checkComponentRely = useCallback(async (versionId:number) => {
    
     await postRequest(`${APIS.checkComponentRelyApi}?versionId=${versionId}`)
@@ -203,8 +203,8 @@ export function useCheckComponentRely() {
           let data:any=res?.data
           if(data?.length>0){
             const toolip= (data||[]).join(',')
-            message.success(`${toolip}依赖组件未编排！`)
-
+            // message.success(`${toolip}依赖组件未编排！`)
+            setData(toolip)
           }
           
         } 
@@ -212,7 +212,7 @@ export function useCheckComponentRely() {
      
   },[]);
 
-  return [checkComponentRely];
+  return [data,checkComponentRely];
 }
 interface editorParams{
    id	:number		//产品组件编排id	true

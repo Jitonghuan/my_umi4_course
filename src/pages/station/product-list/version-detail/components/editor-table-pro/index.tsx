@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import type { TableRowSelection } from 'antd/es/table/interface';
-import { Button, Input, Form, message } from 'antd';
+import { Button, Input, Form, message,Alert } from 'antd';
 import { useQueryProductlineList } from '../../../../component-center/hook';
 import { createMiddlewareTableColumns } from './middle-ware-schema';
 import { PlusOutlined } from '@ant-design/icons';
@@ -34,7 +34,7 @@ export default (props: VersionDetailProps) => {
   } = props;
   const [searchForm] = Form.useForm();
   const [addLoading, addComponent] = useAddCompontent();
-  const [checkComponentRely]=useCheckComponentRely()
+  const [checkData,checkComponentRely]=useCheckComponentRely()
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [ componentVersionOptions, queryProductVersionOptions] = useQueryComponentVersionOptions();
   const [componentOptions, queryComponentOptions] = useQueryComponentOptions();
@@ -307,6 +307,12 @@ export default (props: VersionDetailProps) => {
         headerTitle="可编辑表格"
         loading={loading}
         rowSelection={rowSelection}
+        toolBarRender={() => [
+          currentTabType === 'middleware' && <span>
+            <Alert message={`${checkData}依赖组件未编排！`} type="warning" showIcon/>
+          {/* {`${checkData}依赖组件未编排！` } */}
+          </span>
+        ]}
         // tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (
         //  <>
         //  </>

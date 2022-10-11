@@ -385,21 +385,21 @@ export function useQueryParamList() {
 
   return [loading, dataSource, queryParamList];
 }
-//查询交付配置参数
+//查询交付配置组件参数
 export function useQueryDeliveryParamList(): [
   boolean,
   any,
   any,
-  (versionId: number, configParamComponent?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
+  (versionId: number, paramComponent?: string, pageIndex?: number, pageInfo?: number) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
 
-  const queryDeliveryParamList = async (versionId: number, configParamComponent?: string) => {
+  const queryDeliveryParamList = async (versionId: number, paramComponent?: string) => {
     setLoading(true);
     try {
       await getRequest(APIS.queryDeliveryParamList, {
-        data: { versionId, configParamComponent, pageIndex: -1, pageSize: -1 },
+        data: { versionId, paramComponent, pageIndex: -1, pageSize: -1 },
       })
         .then((res) => {
           if (res.success) {
