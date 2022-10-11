@@ -41,7 +41,7 @@ export default function StationDeploy(props:Iprops){
       };
     
     const queryIndentConfigInfo = useCallback(async (id: number) => {
-      debugger
+    
         setConfigInfoLoading(true);
         try {
           await postRequest(`${generateIndentConfig}?id=${id}`)
