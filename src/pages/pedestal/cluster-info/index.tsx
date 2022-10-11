@@ -5,6 +5,7 @@ import Count from './component/count';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import ProgessComponent from './component/progress';
+import AddCluster from './component/add-cluster';
 import { history } from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
 import { useClusterListData } from './hook';
@@ -57,6 +58,7 @@ export default function clusterInfo() {
   };
   return (
     <PageContainer className="cluster-info">
+      <AddCluster visible={visible} onClose={() => { setVisble(false) }}></AddCluster>
       <ContentCard>
         <div className="search-wrapper">
           <Form layout="inline" form={form}>
@@ -70,8 +72,8 @@ export default function clusterInfo() {
         </div>
         <div className="flex-space-between" style={{ margin: '5px 0px' }}>
           <h3>集群概览</h3>
-          <Button type="primary" disabled>
-            新增集群
+          <Button type="primary" onClick={() => { setVisble(true) }}>
+            导入集群
           </Button>
         </div>
         {data.length > 0 || loading ? (

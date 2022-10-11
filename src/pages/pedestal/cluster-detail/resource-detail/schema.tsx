@@ -46,6 +46,17 @@ export const resourceDetailTableSchema = ({
       ),
     },
     {
+      title: 'IP',
+      dataIndex: 'ip',
+      width: 100,
+      ellipsis: true,
+      render: (value) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+    {
       title: '命名空间',
       dataIndex: 'namespace',
       width: 180,

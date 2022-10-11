@@ -148,6 +148,7 @@ export default function NodeList() {
         loading={loading || updateLoading}
         bordered
         rowKey="id"
+        size='small'
         // pagination={{
         //     pageSize: pageSize,
         //     total: total,

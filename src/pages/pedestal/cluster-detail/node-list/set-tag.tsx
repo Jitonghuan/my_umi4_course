@@ -19,12 +19,19 @@ export default function SetTag(props: any) {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [hasAddTag, setHasAddTag] = useState(false);
   const hasUpdate = useMemo(() => hasAddTag || (removeTags && removeTags.length), [hasAddTag, removeTags])
-  const tags = useMemo(
-    () => (baseTags || []).concat(dirtyTags || []).filter((e: any) => !removeTags.includes(e)),
-    [removeTags, baseTags, dirtyTags],
-  );
+  // const tags = useMemo(
+  //   () => (baseTags || []).concat(dirtyTags || []).filter((e: any) => !removeTags.includes(e)),
+  //   [removeTags, baseTags, dirtyTags],
+  // );
   const [tagType, setTagType] = useState<string>('');
   const [form] = Form.useForm();
+  const base = useMemo(
+    () => (baseTags || []).filter((e: any) => !removeTags.includes(e)),
+    [removeTags, baseTags]);
+
+  const dirty = useMemo(
+    () => (dirtyTags || []).filter((e: any) => !removeTags.includes(e)),
+    [removeTags, dirtyTags])
 
   useEffect(() => {
     if (visible) {
@@ -43,6 +50,7 @@ export default function SetTag(props: any) {
       let labels: any = {};
       let taints: any = [];
       const value = formValue['base-tags'];
+      const tags = (base || []).concat(dirty || [])
       tags.forEach((item: any) => {
         item.effect ? taints.push(item) : (labels[item.key] = item.value);
       });
@@ -104,28 +112,33 @@ export default function SetTag(props: any) {
       <div className="node-tag-modal">
         <div className='flex-space-between'>
           <div>已有标签</div>
-          {!showForm && <Button size='small' onClick={() => { setShowForm(true) }}>新增标签</Button>}
+          {!showForm && <Button size='small' onClick={() => { setShowForm(true) }}>新增标签/污点</Button>}
         </div>
         <div className="tag-wrapper">
-          {tags.map((item: any, i: any) => {
+          {(base || []).map((item: any, i: any) => {
             return (
-              // <Popconfirm title="确认删除该标签吗？" onConfirm={() => { setRemoveTags([...removeTags, item]); }}>
-              // <Tag
-              //   key={i}
-              //   color="green"
-              //   // onClose={(e: any) => {
-              //   //   // e.preventDefault();
-              //   //   // setRemoveTags([...removeTags, item]);
-              //   // }}
-              //   closable
-              // >
-              //   {`${item.key}:${item.value}`}
-              // </Tag>
-              // </Popconfirm>
               <TagConfirm
                 content={`${item.key}:${item.value}`}
                 title={() => <div>
                   该操作只是暂时移除标签<br />如要提交修改请点击弹窗确认按钮
+                </div>}
+                onConfirm={() => handleRemoveTag(item)}
+                style={{ marginTop: '5px' }}
+              >
+              </TagConfirm>
+            );
+          })}
+        </div>
+        <div className='flex-space-between'>
+          <div>已有污点</div>
+        </div>
+        <div className="tag-wrapper">
+          {(dirty || []).map((item: any, i: any) => {
+            return (
+              <TagConfirm
+                content={`${item.key}:${item.value} ${item.effect}`}
+                title={() => <div>
+                  该操作只是暂时移除污点<br />如要提交修改请点击弹窗确认按钮
                 </div>}
                 onConfirm={() => handleRemoveTag(item)}
                 style={{ marginTop: '5px' }}

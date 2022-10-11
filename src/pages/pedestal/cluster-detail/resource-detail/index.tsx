@@ -53,6 +53,7 @@ export default function ResourceDetail(props: any) {
   const searchValueInput = useRef(null) as any;
   // 表格列配置
   const tableColumns = useMemo(() => {
+    const showIp = dataSource.find((e: any) => e.type === 'pods')
     return resourceDetailTableSchema({
       handleDetail: (record: any, index: any) => {
 
@@ -128,7 +129,7 @@ export default function ResourceDetail(props: any) {
             setUpdateLoading(false);
           });
       },
-    }) as any;
+    }).filter((col: any) => col.dataIndex !== 'ip' || showIp);
   }, [dataSource]);
 
   useEffect(() => {
@@ -411,6 +412,7 @@ export default function ResourceDetail(props: any) {
           loading={loading || updateLoading || allLoading}
           bordered
           rowKey="id"
+          size='small'
           pagination={false}
           columns={tableColumns}
         // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}

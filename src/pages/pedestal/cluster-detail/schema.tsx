@@ -105,15 +105,28 @@ export const nodeListTableSchema = ({
     {
       title: '标签',
       dataIndex: 'tags',
-      width: 300,
+      width: 200,
       className: 'my-ant-table-cell',
       render: (value: any, record: any) => (
         <div style={{ whiteSpace: 'nowrap' }}>
           {Object.keys(record.labels || {}).map((k) => (
             <Tag color="green">{`${k}=${record.labels[k]}`}</Tag>
           ))}
-          {(record?.taints || []).map((e: any) => (
+          {/* {(record?.taints || []).map((e: any) => (
             <Tag color="green">{`${e.key}=${e.value}`}</Tag>
+          ))} */}
+        </div>
+      ),
+    },
+    {
+      title: '污点',
+      dataIndex: 'taints',
+      width: 200,
+      className: 'my-ant-table-cell',
+      render: (value: any, record: any) => (
+        <div style={{ whiteSpace: 'nowrap' }}>
+          {(value || []).map((e: any) => (
+            <Tag color="green">{`${e.key}=${e.value} ${e.effect}`}</Tag>
           ))}
         </div>
       ),
