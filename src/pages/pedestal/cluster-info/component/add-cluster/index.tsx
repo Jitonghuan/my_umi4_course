@@ -1,33 +1,47 @@
-import { Drawer, message, Form, Button, Modal, Input, Upload, Radio } from 'antd';
+import { Drawer, message, Form, Button, Checkbox, Input, Upload, Radio } from 'antd';
 import { useState, useEffect } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
-import { importCluster } from '../../service'
+import { importCluster, updateCluster } from '../../service'
 
 
 export default function AddDrawer(props: any) {
-    const { visible, onClose } = props;
+    const { mode, onClose, initData, onSave } = props;
     const [form] = Form.useForm<Record<string, string>>();
+    const [checked, setChecked] = useState<boolean>(false);
     useEffect(() => {
-        if (visible) {
+        if (mode === 'ADD') {
             form.resetFields()
         }
-    }, [visible])
+        if (mode === 'EDIT') {
+            form.setFieldsValue(initData)
+            form.setFieldsValue({ prometheusPwd: '******', kubeConfig: '******' })
+            console.log(initData, 'initData')
+        }
+    }, [mode])
     const handleSubmit = async () => {
         const value = await form.validateFields();
-        // const res = await importCluster({ ...value });
-        // if (res?.success) {
-        //     message.success('导入成功');
-        // }
-        console.log(value, 'value')
+        const res = await (mode === 'ADD' ? importCluster({ ...value }) : updateCluster({ ...value }));
+        if (res?.success) {
+            message.success(`${mode === 'ADD' ? '导入' : '编辑'}成功`);
+            onClose();
+            onSave();
+        }
+    }
+
+    const handleChange = (e: any) => {
+        setChecked(e.target.checked)
+        if (e.target.checked) {
+            form.setFieldsValue({ prometheusPwd: '', kubeConfig: '' })
+        }
     }
 
     return (
         <Drawer
-            width={700}
-            title='导入集群'
+            width='50%'
+            title={mode === 'ADD' ? '导入集群' : '编辑集群'}
             placement="right"
-            visible={visible}
+            visible={mode !== 'HIDE'}
             onClose={onClose}
             maskClosable={false}
             footer={
@@ -42,32 +56,36 @@ export default function AddDrawer(props: any) {
                     <Input style={{ width: 340 }} />
                 </Form.Item>
                 <Form.Item label="集群code" name="clusterCode" rules={[{ required: true, message: '请输入' }]}>
-                    <Input style={{ width: 340 }} />
+                    <Input style={{ width: 340 }} disabled={mode === 'EDIT'} />
                 </Form.Item>
-                <Form.Item label="prometheusUrl" name="prometheusUrl" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item label="prometheusUrl" name="prometheusUrl">
                     <Input style={{ width: 340 }} />
                 </Form.Item>
 
                 <Form.Item
                     label="prometheusUser"
                     name="prometheusUser"
-                    rules={[{ required: true, message: '请输入账号' }]}
                 >
-                    <Input.Password style={{ width: 340 }} />
+                    <Input style={{ width: 340 }} />
                 </Form.Item>
+                {mode === 'EDIT' && (
+                    <Form.Item label="修改密码">
+                        <Checkbox onChange={handleChange} checked={checked}></Checkbox>
+                    </Form.Item>
+                )}
                 <Form.Item
                     label="prometheusPwd"
                     name="prometheusPwd"
-                    rules={[{ required: true, message: '请输入密码' }]}
                 >
-                    <Input.Password style={{ width: 340 }} />
+                    <Input.Password style={{ width: 340 }} disabled={mode === 'EDIT' && !checked} visibilityToggle={mode === 'EDIT' && !checked ? false : true} />
                 </Form.Item>
 
                 <Form.Item
                     name="kubeConfig"
                     label="kubeConfig"
+                    rules={[{ required: mode === 'ADD' ? true : false, message: '请输入' }]}
                 >
-                    <AceEditor mode="yaml" height={450} />
+                    <AceEditor mode="yaml" height={450} readOnly={mode === 'EDIT' && !checked} />
                 </Form.Item>
 
             </Form>

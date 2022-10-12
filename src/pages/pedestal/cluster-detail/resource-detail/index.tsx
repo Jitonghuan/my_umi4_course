@@ -130,7 +130,7 @@ export default function ResourceDetail(props: any) {
             setUpdateLoading(false);
           });
       },
-    }).filter((col: any) => col.dataIndex !== 'ip' || showIp);
+    }).filter((col: any) => !(Array.isArray(col.dataIndex) && col.dataIndex[1] === 'ip') || showIp);
   }, [dataSource]);
 
   useEffect(() => {

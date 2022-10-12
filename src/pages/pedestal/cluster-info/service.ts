@@ -18,3 +18,9 @@ export const importCluster = (data: any) => {
   const url = addAPIPrefix('/infraManage/cluster/import');
   return postRequest(url, { data: data });
 };
+
+// 集群概览-更新集群
+export const updateCluster = (data: any) => {
+  const url = addAPIPrefix('/infraManage/cluster/update');
+  return putRequest(url, { data: data });
+};
