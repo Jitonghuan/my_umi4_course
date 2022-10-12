@@ -6,28 +6,44 @@
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/approval-end/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Card,Descriptions,Space ,Tag,Table,Input,Modal,Popconfirm,Form,Spin} from 'antd';
+import { Card,Descriptions,Space ,Tag,Table,Input,Modal,Popconfirm,Form,Spin,Radio} from 'antd';
 import React,{useMemo,useState,useEffect} from 'react';
 import PageContainer from '@/components/page-container';
+import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import {createTableColumns} from './schema';
 import {history,useLocation} from 'umi';
 import './index.less';
 import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
-import {useGetSqlInfo,useAuditTicket} from './hook'
+import {useGetSqlInfo,useAuditTicket,useRunSql} from './hook'
 const StatusMapping: Record<string, number> = {
   wait:1,
   pass:2,
   reject:2
 };
+const runModeOptions=[
+  {
+    label:"立即执行",
+    value:1
+  },
+  {
+    label:"定时执行",
+    value:2
+  }
+]
 export default function ApprovalEnd(){
   const [info,setInfo]=useState<any>({});
   const [form]=Form.useForm()
+  const [runSqlform]=Form.useForm()
   const [loading,setLoading]=useState<boolean>(false);
   const [status,setstatus]=useState<string>("");
   const [owner,setOwner]=useState<any>([]);
   const [auditLoading, auditTicket]= useAuditTicket();
+  //useRunSql
+  const [runLoading, runSql]= useRunSql();
   const [statusText,setStatusText]=useState<string>("");
+  const [executeResultData,setExecuteResultData]=useState<any>([])
+  const [reviewContentData,setReviewContentData]=useState<any>([])
   let location = useLocation();
   const initInfo: any = location.state || {};
   const { confirm } = Modal;
@@ -37,6 +53,32 @@ export default function ApprovalEnd(){
 
     getInfo()
   },[])
+  const showRunSqlConfirm = () => {
+    confirm({
+      title: '请选择执行方式',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <Form form={runSqlform}>
+          <Form.Item name="runMode"   rules={[{ required: true, message: '请输入' }]}>
+          <Radio.Group options={runModeOptions} />
+
+          </Form.Item>
+        </Form>
+      ),
+      onOk () {
+        form.validateFields().then((info)=>{
+          
+          runSql({runMode:info?.runMode,runDate:"",id:initInfo?.record?.id}).then(()=>{
+            getInfo()
+          })
+        })
+      
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
 
   const showConfirm = (auditType:string) => {
     confirm({
@@ -51,8 +93,8 @@ export default function ApprovalEnd(){
         </Form>
       ),
       onOk () {
-        form.validateFields().then((remark)=>{
-          auditTicket({remark,auditType,id:initInfo?.record?.id}).then(()=>{
+        form.validateFields().then((info)=>{
+          auditTicket({remark:info?.remark,auditType,id:initInfo?.record?.id}).then(()=>{
             getInfo()
           })
         })
@@ -75,6 +117,12 @@ export default function ApprovalEnd(){
         // if(res?.audit[0]?.AuditStatus==="wait"){
           auditUsers=res?.audit[0]?.Groups 
           setOwner(auditUsers)
+
+    const executeResult=JSON.parse(res?.executeResult||"{}")
+    //reviewContent
+    const reviewContent=JSON.parse(res?.reviewContent||"{}")
+    setReviewContentData(reviewContent)
+    setExecuteResultData(executeResult)
         
         // }
 
@@ -87,7 +135,7 @@ export default function ApprovalEnd(){
     })
 
   }
-  
+ 
 
   
     const columns = useMemo(() => {
@@ -100,12 +148,13 @@ export default function ApprovalEnd(){
       }, []);
     return(
     <PageContainer className="approval-end">
+      <ContentCard>
        {/* ------------------------------- */}
        <Spin spinning={loading}>
     <div className="ticket-detail-title">
       <span className="ticket-detail-title-left">
       <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
-      <span><Space><span>工单类型:</span><span><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.title}</Tag></span></Space></span>
+      <span><Space><span>工单类型:</span><span><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>暂无</Tag></span></Space></span>
       <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
 
       </span>
@@ -147,8 +196,8 @@ export default function ApprovalEnd(){
   <Descriptions.Item label="变更库" span={2}>{info?.dbCode}</Descriptions.Item>
   <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item>
   <Descriptions.Item label="上线理由" span={2}>{info?.remark}</Descriptions.Item>
-  <Descriptions.Item label="变更sql"span={2} contentStyle={{width:'100%',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.sqlContent}</Descriptions.Item>
-  <Descriptions.Item label="sql检测结果">影响行数：10000</Descriptions.Item>
+  <Descriptions.Item label="变更sql"span={2} ><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.sqlContent}</span></Descriptions.Item>
+  <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item>
   <Descriptions.Item label="sql审核">通过</Descriptions.Item>
   <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item>
 
@@ -168,11 +217,32 @@ export default function ApprovalEnd(){
       <div style={{marginBottom:10}}>
           <Space>
               <span><b>执行详情</b></span>&nbsp;&nbsp;
-              <span><Tag color="geekblue">开始执行</Tag></span>
+             {info?.currentStatus==="manReviewing"&&<span><Spin spinning={runLoading}><Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag></Spin></span>} 
              
           </Space>
      </div>
-     <Table columns={columns}/>
+     {executeResultData?.length>0?
+      <Table   scroll={{ x: '100%' }} dataSource={executeResultData} loading={loading} >
+      {executeResultData?.length>0&&(
+        Object.keys(executeResultData[0])?.map((item:any)=>{
+          return(
+            <Table.Column title={item} dataIndex={item}   key={item}  />
+          )
+        })
+
+      )}
+    </Table>: <Table   scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
+          {reviewContentData?.length>0&&(
+            Object.keys(reviewContentData[0])?.map((item:any)=>{
+              return(
+                <Table.Column title={item} dataIndex={item}   key={item}  />
+              )
+            })
+
+          )}
+        </Table>
+     }
+    
   </Card>
 
  {/* ------------------------------- */}
@@ -185,7 +255,7 @@ export default function ApprovalEnd(){
       
     </div>
   {/* ------------------------------- */}
-  <div className="ticket-detail-footer">
+  {/* <div className="ticket-detail-footer">
       <span className="ticket-detail-title-left">
       <span><Space><span>回滚:</span><span><Tag color="geekblue">下载回滚SQL</Tag></span></Space></span>
       <span><Space><span>离线发布:</span><span><Tag color="geekblue">下载离线Sql包</Tag></span></Space></span>
@@ -194,6 +264,7 @@ export default function ApprovalEnd(){
       </span>
     
       
-    </div>
+    </div> */}
+    </ContentCard>
     </PageContainer>)
 }

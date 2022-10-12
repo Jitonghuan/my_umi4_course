@@ -25,19 +25,22 @@
     language?:string;
     height?:number,
     theme?:string,
-    subChange?:(params:{sqlContent:string,sqlType:string})=>void;
+    subChange?:(params:{sqlContent:string,sqlType?:string})=>void;
+    subSqlChange?:(params:{sqlContent:string,sqlType?:string})=>void;
+    sqlCheck?:(sqlContent:string)=>void;
     isSubChangeBtn?:boolean;
     isSqlCheckBtn?:boolean;
     isSqlBueatifyBtn?:boolean;
     isSqlExecuteBtn?:boolean;
     isSqlExecutePlanBtn?:boolean;
     tableFields?:any;
+   
     
   }
   const { keywords } = language
   console.log('0')
 export default function SqlEditor(props:Iprops){
-  const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange}=props;
+  const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,sqlCheck,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange,subSqlChange}=props;
     // const codeContainerRef = useRef(null) as any;
     console.log('1')
     const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
@@ -249,10 +252,20 @@ export default function SqlEditor(props:Iprops){
                          
                          
                     }}>执行</span> } 
-                   {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two">sql检测</span>}  
+                   {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two" onClick={()=>{
+                       console.log('10')
+                       sqlCheck(instance?.getValue()||"")
+                         
+                         
+                    }}>sql检测</span>}  
                    {isSqlBueatifyBtn&&<span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span>}  
                    {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>} 
-                   {isSubChangeBtn&&<span className={`${rootCls}-btn`} id="fifth">提交变更</span> } 
+                   {isSubChangeBtn&&<span className={`${rootCls}-btn`} id="fifth" onClick={()=>{
+                       console.log('9')
+                       subSqlChange({sqlContent:instance?.getValue()||""})
+                         
+                         
+                    }}>提交变更</span> } 
                 </Space>
             </div>
             {/* calc(100vh - 566px */}

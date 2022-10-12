@@ -32,8 +32,17 @@ export const getPrivInfoApi = `${dmpApiPrefix}/dmp/workflow/priv/info`;
 /* POST 7、审批工单 */
 export const auditApi = `${dmpApiPrefix}/dmp/workflow/audit`;
 
-/* GET 6、查询权限申请工单详情 */
+/* GET 8、查询权限申请工单详情 */
 export const getSqlInfoApi = `${dmpApiPrefix}/dmp/workflow/sql/info`;
+
+/* POST 9、创建sql变更工单 */
+export const createSqlApi = `${dmpApiPrefix}/dmp/workflow/sql/create`;
+
+/* POST 10、sql检测 */
+export const checkSqlApi = `${dmpApiPrefix}/dmp/workflow/sql/run`;
+
+/* POST 11、sql执行 */
+export const runSqlApi = `${dmpApiPrefix}/dmp/sql/check`;
 
 
 /* POST 6、 新增用户信息 */

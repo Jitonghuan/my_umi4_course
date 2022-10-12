@@ -97,7 +97,7 @@ export default function TicketApproval(){
      <div className="ticket-detail-title">
       <span className="ticket-detail-title-left">
       <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
-      <span><Space><span>工单类型:</span><span><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.title}</Tag></span></Space></span>
+      <span><Space><span>工单类型:</span><span><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>暂无</Tag></span></Space></span>
       <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
 
       </span>

@@ -18,11 +18,9 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
       return createTableColumns() as any;
     }, []);
    
-    const sqlResultSource=JSON.parse(sqlResult||"{}")
+    const sqlResultSource=sqlResult?JSON.parse(sqlResult||"{}"):[]
    
-    useEffect(()=>{
-     
-    },[sqlResultSource])
+  
     // useEffect(()=>{
     //   if(sqlResultSource?.length>0){
     //     setActiveKey(initialItems[0].key)
@@ -104,7 +102,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
         const newPanes = [...items];
         newPanes.push(
           { label: '查询结果', children: <div>
-        <Table dataSource={sqlResultSource} loading={sqlLoading} >
+        <Table dataSource={sqlResultSource} loading={sqlLoading}   scroll={{ x: '100%' }} >
           {sqlResultSource?.length>0&&(
             Object.keys(sqlResultSource[0])?.map((item:any)=>{
               return(

@@ -474,12 +474,12 @@ export default [
         component: '@/pages/DBMS/data-change/components/change-apply',
         hideInMenu:true
       },
-      {
-        path: `${baseRoutePath}/DBMS/configuration`,
-        name: '配置项',
-        key: 'configuration',
-        component: '@/pages/DBMS/configuration',
-      },
+      // {
+      //   path: `${baseRoutePath}/DBMS/configuration`,
+      //   name: '配置项',
+      //   key: 'configuration',
+      //   component: '@/pages/DBMS/configuration',
+      // },
     ],
   },
   {
