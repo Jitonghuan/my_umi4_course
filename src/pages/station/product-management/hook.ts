@@ -269,7 +269,7 @@ export function useCreatePackageInde(): [boolean, (id: number,packageType?:strin
   const createPackageInde = async (id: number,packageType?:string) => {
     setLoading(true);
     try {
-      await postRequest(`${APIS.createPackageInde}?id=${id}&packageType=${packageType}`)
+      await postRequest(`${APIS.createPackageInde}?id=${id}`)
         .then((res) => {
           if (res.success) {
             message.success(res.data);

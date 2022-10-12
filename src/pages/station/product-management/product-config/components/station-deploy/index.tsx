@@ -59,8 +59,8 @@ export default function StationDeploy(props:Iprops){
           console.log(error);
         }
       },[]);
-      const downLoadIndent = (packageType:string) => {
-        createPackageInde(indentId);
+      const downLoadIndent = (packageType:string,id:number) => {
+        createPackageInde(id);
         
       };
       
@@ -98,7 +98,7 @@ export default function StationDeploy(props:Iprops){
                         
                        <Spin spinning={downloading}>
                        <a onClick={()=>{
-                         downLoadIndent(element?.indentPackageType)
+                         downLoadIndent(element?.indentPackageType,element?.id)
                        }}>生成</a>
 
                        </Spin>
