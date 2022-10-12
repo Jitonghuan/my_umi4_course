@@ -10,6 +10,7 @@ import { history } from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
 import { useClusterListData } from './hook';
 import { getCluster } from './service';
+import { EditOutlined } from '@ant-design/icons';
 import './index.less';
 
 export default function clusterInfo() {
@@ -86,8 +87,6 @@ export default function clusterInfo() {
                     className="item-top"
                     style={{ color: '#5183e7' }}
                     onClick={() => {
-                      // let clusterName = decodeURIComponent(escape(item.clusterName));
-                      // console.log("encodeURIComponent(item.clusterName)",clusterName)
                       history.push({
                         pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
                         search: `clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,
@@ -99,6 +98,7 @@ export default function clusterInfo() {
                   >
                     {item.clusterName || '----'}
                   </a>
+                  {/* <EditOutlined /> */}
                   <div className="display-item" style={{ justifyContent: 'flex-start' }}>
                     节点数：{item?.items?.length || 0}
                     <Count data={item?.items || []}></Count>
