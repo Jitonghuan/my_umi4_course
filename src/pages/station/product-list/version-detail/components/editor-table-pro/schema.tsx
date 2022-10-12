@@ -31,7 +31,7 @@ export const createProTableColumns = (params: {
 }) => {
   return [
     {
-      title: params?.currentTabType === 'feRsources' ? '前端资源名称' : '基础数据名称',
+      title: params?.currentTabType === 'feResources' ? '前端资源名称' : '基础数据名称',
       dataIndex: 'componentName',
       key: 'componentName',
       formItemProps: () => {
@@ -68,7 +68,7 @@ export const createProTableColumns = (params: {
     },
     
       {
-        title: params?.currentTabType === 'feRsources' ? '前端资源版本' : '基础数据版本',
+        title: params?.currentTabType === 'feResources' ? '前端资源版本' : '基础数据版本',
         key: 'componentVersion',
         dataIndex: 'componentVersion',
         valueType: 'select',
@@ -135,7 +135,7 @@ export const createProTableColumns = (params: {
         );
       },},
       {
-        title: params?.currentTabType === 'app' ? '应用描述' : params?.currentTabType === 'feRsources' ? '前端资源描述' : '基础数据描述',
+        title: params?.currentTabType === 'app' ? '应用描述' : params?.currentTabType === 'feResources' ? '前端资源描述' : '基础数据描述',
         dataIndex: 'componentDescription',
         renderFormItem: (_, config: any, data) => {
           return <Input></Input>;

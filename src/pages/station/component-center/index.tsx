@@ -38,7 +38,7 @@ export default function ComponentCenter() {
     app: { text: '+ 应用组件接入' },
     middleware: { text: '+ 中间件组件接入' },
     sql: { text: '+ 基础数据接入' },
-    feRsources: { text: '+ 前端资源接入' },
+    feResources: { text: '+ 前端资源接入' },
   };
   const getCurProductLine = (value: string) => {
     setCurProductLine(value);
@@ -156,7 +156,7 @@ export default function ComponentCenter() {
                               if (tabActiveKey === 'sql') {
                                 setBasicDataModalVisiable(true);
                               }
-                              if(tabActiveKey === 'feRsources'){
+                              if(tabActiveKey === 'feResources'){
                                 setFrontAddVisiable(true)
                               }
                             }}
