@@ -1,5 +1,6 @@
 import React, { useState, useMemo,useEffect } from 'react';
 import {Form, Button, Space } from 'antd';
+import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { createTableColumns,createFormItems } from './schema';
 import {currentStatusOptions} from '../authority-manage/components/authority-apply/schema'
@@ -68,7 +69,7 @@ export default function AuthorityApply (){
          
         }) as any;
       }, []);
-    return(<>
+    return(<PageContainer>
       <TableSearch
         form={form}
         bordered
@@ -101,5 +102,5 @@ export default function AuthorityApply (){
       />
      
       
-    </>)
+    </PageContainer>)
 }

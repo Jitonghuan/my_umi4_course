@@ -12,6 +12,7 @@ import React,{useMemo,useState,useEffect} from 'react';
 import PageContainer from '@/components/page-container';
 import {SendOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
 import {history,useLocation} from 'umi';
+import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
 import {useGetSqlInfo,useAuditTicket} from './hook'
 import './index.less'
 const { Step } = Steps;
@@ -22,16 +23,17 @@ export default function TicketApproval(){
   const [owner,setOwner]=useState<any>([]);
   const [auditLoading, auditTicket]= useAuditTicket();
   let location = useLocation();
-  const curRecord: any = location.state || {};
-  console.log("000000curRecord",curRecord)
+  const initInfo: any = location.state || {};
+  console.log("000000curRecord",initInfo)
   
   useEffect(()=>{
-    debugger
+    if(!initInfo?.record?.id) return
+
     getInfo()
   },[])
   const getInfo=()=>{
     setLoading(true)
-    useGetSqlInfo(curRecord?.id).then((res)=>{
+    useGetSqlInfo(initInfo?.record?.id).then((res)=>{
       setInfo(res)
       let auditUsers=[];
      
@@ -57,15 +59,15 @@ export default function TicketApproval(){
      {/* ------------------------------- */}
      <div className="ticket-detail-title">
       <span className="ticket-detail-title-left">
-      <span><Space><span>工单号:</span><span>0007</span></Space></span>
-      <span><Space><span>工单类型:</span><span>数据变更</span></Space></span>
-      <span><Space><span>工单状态:</span><span><Tag color="processing">审批中</Tag></span></Space></span>
+      <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
+      <span><Space><span>工单类型:</span><span><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.title}</Tag></span></Space></span>
+      <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
 
       </span>
       <span className="ticket-detail-title-right">
        <Space>
        <Tag color="geekblue">复制工单</Tag>
-         <Popconfirm  title="确认撤销该工单吗?"
+      <Popconfirm  title="确认撤销该工单吗?"
             onConfirm={() => {
              
             }}>
