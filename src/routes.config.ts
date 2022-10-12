@@ -415,7 +415,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/DBMS`,
-    name: '数据变更管理',
+    name: '数据管理',
     icon: 'icon-Detail',
     routes: [
       {
@@ -455,20 +455,22 @@ export default [
       },
       {
         path: `${baseRoutePath}/DBMS/ticket-approval`,
-        name: '工单详情-审批结束',
-        key: 'ticket-approval',
+        name: '工单详情-审批中',
+        key: 'data-change',
         component: '@/pages/DBMS/data-change/components/ticket-approval',
+        hideInMenu: true,
       },
       {
         path:`${baseRoutePath}/DBMS/approval-end`,
-        name: '工单详情-审批中',
-        key: 'approval-end',
+        name: '工单详情-审批结束',
+        key: 'data-change',
         component: '@/pages/DBMS/data-change/components/approval-end',
+        hideInMenu: true,
       },
       {
         path: `${baseRoutePath}/DBMS/change-apply`,
         name: '数据变更申请',
-        key: 'change-apply',
+        key: 'data-change',
         component: '@/pages/DBMS/data-change/components/change-apply',
         hideInMenu:true
       },

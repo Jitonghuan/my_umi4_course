@@ -1,14 +1,27 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo,useEffect } from 'react';
 import {Form, Button, Space } from 'antd';
 import TableSearch from '@/components/table-search';
-import { createTableColumns,formOptions } from './schema';
-import {querySqlListApi} from '../service'
+import { createTableColumns,createFormItems } from './schema';
+import {currentStatusOptions} from '../authority-manage/components/authority-apply/schema'
+import {querySqlListApi} from '../service';
+import {useSearchUser} from '../common-hook'
 
 import useTable from '@/utils/useTable';
 import {history} from 'umi';
 export default function AuthorityApply (){
     const [form] = Form.useForm();
     const [curRecord,setCurRecord]=useState<any>({});
+    const [loading, userNameOptions, searchUser] =useSearchUser()
+    useEffect(()=>{
+      searchUser()
+    },[])
+    const formOptions = useMemo(() => {
+      return createFormItems({
+        currentStatusOptions,
+        userNameOptions,
+       
+      });
+    }, [userNameOptions,currentStatusOptions]);
     const {
         tableProps,
         search: { submit, reset },
@@ -33,6 +46,24 @@ export default function AuthorityApply (){
         return createTableColumns({
           onDetail: (record, index) => {
             setCurRecord(record)
+            if(record?.currentStatus!=="manReviewing"){
+              history.push({
+                pathname:"/matrix/DBMS/approval-end",
+                
+              
+              },{
+                record
+              })
+            }
+            if(record?.currentStatus==="manReviewing"){
+              history.push({
+                pathname:"/matrix/DBMS/ticket-approval",
+                
+              },{
+                record
+              })
+            }
+           
           },
          
         }) as any;

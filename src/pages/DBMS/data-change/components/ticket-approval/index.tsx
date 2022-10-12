@@ -8,12 +8,50 @@
  */
 
 import { Card,Descriptions,Space ,Tag,Button,Input,Steps,Popconfirm} from 'antd';
-import React,{useMemo} from 'react';
+import React,{useMemo,useState,useEffect} from 'react';
 import PageContainer from '@/components/page-container';
 import {SendOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
+import {history,useLocation} from 'umi';
+import {useGetSqlInfo,useAuditTicket} from './hook'
 import './index.less'
 const { Step } = Steps;
 export default function TicketApproval(){
+  const [info,setInfo]=useState<any>({});
+  const [loading,setLoading]=useState<boolean>(false);
+  const [status,setstatus]=useState<string>("");
+  const [owner,setOwner]=useState<any>([]);
+  const [auditLoading, auditTicket]= useAuditTicket();
+  let location = useLocation();
+  const curRecord: any = location.state || {};
+  console.log("000000curRecord",curRecord)
+  
+  useEffect(()=>{
+    debugger
+    getInfo()
+  },[])
+  const getInfo=()=>{
+    setLoading(true)
+    useGetSqlInfo(curRecord?.id).then((res)=>{
+      setInfo(res)
+      let auditUsers=[];
+     
+      if(res?.audit?.length>0){
+        setstatus(res?.audit[0]?.AuditStatus)
+        // if(res?.audit[0]?.AuditStatus==="wait"){
+          auditUsers=res?.audit[0]?.Groups 
+          setOwner(auditUsers)
+          console.log('---',auditUsers,)
+        // }
+
+      }
+      
+     
+      
+    }).finally(()=>{
+      setLoading(false)
+    })
+
+  }
    
     return(<PageContainer>
      {/* ------------------------------- */}
@@ -33,6 +71,16 @@ export default function TicketApproval(){
             }}>
          <Tag color="orange">撤销工单</Tag>
          </Popconfirm>
+         <Tag onClick={()=>{
+          
+           history.push({
+            pathname:"/matrix/DBMS/data-change",
+            
+          })
+         }}>
+           返回
+
+         </Tag>
          
        </Space>
       </span>

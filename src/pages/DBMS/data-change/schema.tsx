@@ -2,25 +2,30 @@ import { Space, Popconfirm, Tooltip,Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { datetimeCellRender } from '@/utils';
+import {CurrentStatusStatus} from '../authority-manage/components/authority-apply/schema'
 
-export const formOptions: FormProps[] = [
-   
+export const createFormItems = (params: {
+  currentStatusOptions?: any[];
+  userNameOptions?: any[];
+  
+}) => {
+  return [
     {
       key: '1',
       type: 'select',
       label: '工单状态',
-      dataIndex: 'appCode',
+      dataIndex: 'currentStatus',
       width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,
-      option:[],
+      option:params?.currentStatusOptions,
      
     },
     {
       key: '2',
       type: 'select',
       label: '变更库',
-      dataIndex: 'envCode',
+      dataIndex: 'dbCode',
       width: '160px',
       showSelectSearch: true,
       option:[],
@@ -29,20 +34,21 @@ export const formOptions: FormProps[] = [
         key: '2',
         type: 'select',
         label: '申请人',
-        dataIndex: 'envCode',
+        dataIndex: 'userName',
         width: '160px',
         showSelectSearch: true,
-        option:[],
+        option:params?.userNameOptions,
       },
     {
       key: '3',
       type: 'input',
       label: '申请原因',
-      dataIndex: 'metricsUrl',
+      dataIndex: 'remark',
       width: '160px',
       placeholder: '请输入',
     },
-  ];
+  ] as FormProps[];
+};
 
 
 // 列表页-表格
@@ -76,7 +82,7 @@ export const createTableColumns = (params: {
       key: 'currentStatusDesc',
       width: '28%',
       ellipsis: true,
-      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+      render: (text,record:any) => <Tooltip title={text}><Tag color={CurrentStatusStatus[record?.currentStatus]?.tagColor||"default"}>{text}</Tag></Tooltip>
     },
     {
         title: '申请人',
@@ -86,30 +92,30 @@ export const createTableColumns = (params: {
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
-      {
-        title: '当前处理人',
-        dataIndex: 'audit',
-        key: 'audit',
-        width: '28%',
-        ellipsis: true,
-        render: (users,record) => {
-          let auditUsers=[];
-          if(record?.audit?.AuditStatus==="wait"){
-            auditUsers=record?.audit?.AuditStatus?.Groups 
-          }
-          // auditUsers?.length>0?auditUsers?.map():"暂无",
-          return (
-            <>
-            {auditUsers?.length>0?auditUsers?.map((item:string)=>{
-              <Tag>{item}</Tag>
-            }):"暂无"}
+      // {
+      //   title: '当前处理人',
+      //   dataIndex: 'audit',
+      //   key: 'audit',
+      //   width: '28%',
+      //   ellipsis: true,
+      //   render: (users,record) => {
+      //     let auditUsers=[];
+      //     if(record?.audit?.AuditStatus==="wait"){
+      //       auditUsers=record?.audit?.AuditStatus?.Groups 
+      //     }
+      //     // auditUsers?.length>0?auditUsers?.map():"暂无",
+      //     return (
+      //       <>
+      //       {auditUsers?.length>0?auditUsers?.map((item:string)=>{
+      //         <Tag>{item}</Tag>
+      //       }):"暂无"}
 
-            </>
+      //       </>
             
             
-          )
-        }
-      },
+      //     )
+      //   }
+      // },
       {
         title: '创建时间',
         dataIndex: 'startTime',

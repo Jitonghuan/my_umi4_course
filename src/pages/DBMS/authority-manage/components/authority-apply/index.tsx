@@ -16,7 +16,6 @@ export default function AuthorityApply (){
     const [mode,setMode]=useState<EditorMode>("HIDE");
     const [curRecord,setCurRecord]=useState<any>({});
     const [loading, userNameOptions, searchUser] =useSearchUser()
-   
     const [applyDetailMode,setApplyDetailMode]=useState<EditorMode>("HIDE");
     useEffect(()=>{
       searchUser()

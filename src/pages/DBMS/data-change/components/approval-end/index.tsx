@@ -10,8 +10,12 @@ import { Card,Descriptions,Space ,Tag,Table,Input,Button,Popconfirm} from 'antd'
 import React,{useMemo} from 'react';
 import PageContainer from '@/components/page-container';
 import {createTableColumns} from './schema';
+import {history,useLocation} from 'umi';
 import './index.less'
 export default function ApprovalEnd(){
+  let location = useLocation();
+  const curRecord: any = location.state || {};
+  console.log("000000curRecord9999999",curRecord)
     const columns = useMemo(() => {
        
         return createTableColumns(
@@ -37,7 +41,16 @@ export default function ApprovalEnd(){
             }}>
          <Tag color="orange">撤销工单</Tag>
          </Popconfirm>
-         
+         <Tag onClick={()=>{
+          
+          history.push({
+           pathname:"/matrix/DBMS/data-change",
+           
+         })
+        }}>
+          返回
+
+        </Tag>
        </Space>
       </span>
       
