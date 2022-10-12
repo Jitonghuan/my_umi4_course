@@ -18,3 +18,9 @@ export const queryTablesApi = `${dmpApiPrefix}/dmp/instance/database/tables`;
 
 /* GET 表字段查询 */
 export const queryTableFieldsApi = `${dmpApiPrefix}/dmp/instance/database/table/fields`;
+
+/* POST sql查询*/
+export const querySqlApi = `${dmpApiPrefix}/dmp/sql/query`;
+
+/* POST sql查询历史*/
+export const queryLogsApi = `${dmpApiPrefix}/dmp/sql/query/logs`;

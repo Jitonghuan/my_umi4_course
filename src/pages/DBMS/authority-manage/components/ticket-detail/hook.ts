@@ -11,3 +11,26 @@ getRequest(APIS.getPrivInfoApi,{data:{id}}).then((res: any) => {
   }
   return {};
 });
+//auditApi
+export function useAuditTicket(): [
+  boolean,
+  (paramsObj: { auditType: string; remark?: string;}) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const auditTicket = async (paramsObj: { auditType: string; remark?: string }) => {
+    setLoading(true);
+    await postRequest(APIS.auditApi, { data: paramsObj })
+      .then((result) => {
+        if (result.success) {
+          message.success('审批成功！');
+        } else {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, auditTicket];
+}

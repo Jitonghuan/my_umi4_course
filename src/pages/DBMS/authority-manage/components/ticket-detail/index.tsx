@@ -3,10 +3,11 @@
 // @create 2022/09/8 14:50
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Drawer, Form, Spin, Select, Steps, Card ,Tag,Descriptions,Space} from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal} from 'antd';
 import {SendOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons'
 import './index.less';
-import {useGetPrivInfo} from './hook';
+import {useGetPrivInfo,useAuditTicket} from './hook';
 import {CurrentStatusStatus,PrivWfType} from '../authority-apply/schema'
 
 
@@ -17,33 +18,80 @@ export interface CreateArticleProps {
   onSave: () => any;
 }
 const { Step } = Steps;
+const StatusMapping: Record<string, number> = {
+  wait:1,
+  pass:2,
+  reject:2
+};
 export default function CreateArticle(props: CreateArticleProps) {
   const { mode, curRecord, onClose, onSave } = props;
+  const { confirm } = Modal;
+  const [form]=Form.useForm()
   const [info,setInfo]=useState<any>({});
   const [loading,setLoading]=useState<boolean>(false);
   const [owner,setOwner]=useState<any>([]);
+  const [status,setstatus]=useState<string>("");
+  const [auditLoading, auditTicket]= useAuditTicket();
  
   useEffect(() => {
     if (mode === 'HIDE' || !curRecord?.id) return;
-    setLoading(true)
-    useGetPrivInfo(curRecord?.id).then((res)=>{
-      setInfo(res)
-      let auditUsers=[];
-      if((res?.audit[0])?.AuditStatus==="wait"){
-        auditUsers=res?.audit?.AuditStatus?.Groups 
-      }
-      setOwner(auditUsers)
-      
-    }).finally(()=>{
-      setLoading(false)
-    })
+    getInfo()
+   
 
    
     return () => {
      
     };
   }, [mode]);
-  
+ 
+  const getInfo=()=>{
+    setLoading(true)
+    useGetPrivInfo(curRecord?.id).then((res)=>{
+      setInfo(res)
+      let auditUsers=[];
+     
+      if(res?.audit?.length>0){
+        setstatus(res?.audit[0]?.AuditStatus)
+        // if(res?.audit[0]?.AuditStatus==="wait"){
+          auditUsers=res?.audit[0]?.Groups 
+          setOwner(auditUsers)
+          console.log('---',auditUsers,)
+        // }
+
+      }
+      
+     
+      
+    }).finally(()=>{
+      setLoading(false)
+    })
+
+  }
+  const showConfirm = (auditType:string) => {
+    confirm({
+      title: '请填写理由',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <Form form={form}>
+          <Form.Item name="remark"  rules={[{ required: true, message: '请输入' }]}>
+            <Input.TextArea></Input.TextArea>
+
+          </Form.Item>
+        </Form>
+      ),
+      onOk () {
+        form.validateFields().then((remark)=>{
+          auditTicket({remark,auditType}).then(()=>{
+            getInfo()
+          })
+        })
+      
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
   return (
       <Drawer
           width={700}
@@ -63,7 +111,10 @@ export default function CreateArticle(props: CreateArticleProps) {
                     <Descriptions.Item label="工单类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.title}</Tag></Descriptions.Item>
                    
                     <Descriptions.Item  label="工单状态"><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </Descriptions.Item>
-                    <Descriptions.Item label=""><Tag color="volcano">撤销工单</Tag></Descriptions.Item>
+                    <Descriptions.Item label="">
+                      {status==="wait"&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
+                    
+                    </Descriptions.Item>
                     
              </Descriptions>
 
@@ -78,7 +129,7 @@ export default function CreateArticle(props: CreateArticleProps) {
                     <Descriptions.Item label="实例"><Tag>{info?.InstanceName}</Tag></Descriptions.Item>
                     <Descriptions.Item label="对象类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.privWfTypeDesc}</Tag></Descriptions.Item>
                     
-                    <Descriptions.Item label="有效期">待写</Descriptions.Item>
+                    <Descriptions.Item label="有效期">{info?.validEndTime}</Descriptions.Item>
                     <Descriptions.Item label="库表对象" span={2}>{info?.tableList?.length>0?info?.tableList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
                     
                   
@@ -91,17 +142,36 @@ export default function CreateArticle(props: CreateArticleProps) {
             </Spin>
              
           </Card>
-          <Card size="small" style={{ width: "90%" ,marginTop:16 }} title={<span>审批进度：<span className="processing-title">{info?.audit?.length>0?(info?.audit)[0]?.AuditStatus:"--"}</span></span>}>
-          <Steps direction="vertical" current={1} size="small">
-            <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
-           <Step title="库Owner" icon={<DingdingOutlined />} description={`当前审批人:${owner?.length>0?owner?.map((ele:string)=>{return(<span style={{padding:2}}>{ele}</span>)}):"--"}`} />
+          <Card size="small" style={{ width: "90%" ,marginTop:16 }} title={<span>审批进度：<span className="processing-title">{status==="wait"?"等待审批":status==="pass"?"审批通过":"已拒绝"}</span></span>}>
+          <Spin spinning={loading}>
+          <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
+           <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
+           <Step title="库Owner" icon={<DingdingOutlined />} 
+           description={`当前审批人:
+           ${owner?.join(',') || ''}
+         `} />
            
-           <Step title="完成" icon={<CheckCircleTwoTone />} description={<Space><Tag color="geekblue" >同意</Tag> <Tag >拒绝</Tag></Space>} />
+           <Step title="完成" icon={<CheckCircleTwoTone />} description={
+             <Spin spinning={auditLoading}>
+                <Space>
+             {status==="wait"&&(<> <Tag color="geekblue" onClick={()=>{
+                auditTicket({auditType:"pass"}).then(()=>{
+                  getInfo()
+                })
+             }}>同意</Tag> <Tag color="volcano" onClick={()=>showConfirm("reject")}>拒绝</Tag>  </>)}
+            
+            </Space>
+
+             </Spin>
+          } />
          </Steps>
 
 
-          </Card>
+          </Spin>
+        
 
+          </Card>
+ 
 
 
       </Drawer>

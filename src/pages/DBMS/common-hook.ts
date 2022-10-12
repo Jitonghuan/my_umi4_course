@@ -19,7 +19,7 @@ export function useEnvList() {
                 label:ele?.envName,
                 value:ele?.envCode
             }))
-            
+           
             setSource(option);
           
           }
@@ -156,24 +156,28 @@ export function useQueryDatabasesOptions() {
 
 export function useQueryTableFieldsOptions() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [source, setSource] = useState<any>([]);
+  const [source, setSource] = useState<any>({});
+  const [options, setOptions] = useState<any>([]);
 
   const queryTableFields = async (params:{dbCode:string,tableCode:string}) => {
     setLoading(true);
     await getRequest(APIS.queryTableFieldsApi, { data: params})
       .then((result) => {
         if (result?.success) {
-          let dataSource = result.data?.fields;
-          let dataArry: any = [];
+          let dataSource = result.data?.fields||[];
+          let dataObject: any = {};
+          setOptions(dataSource)
+        //  dimi: ['ads_adid', 'ads_spec_adid_category'],
           dataSource?.map((item: any) => {
-            dataArry.push({
-             label:item,
-             value:item,
-             title: item,
-            });
+            // dataArry.push({
+            //  label:item,
+            //  value:item,
+            //  title: item,
+            // });
+            dataObject[item]=item
           });
-         
-          setSource(dataArry);
+       
+          setSource(dataObject);
          
         }
       
@@ -183,5 +187,83 @@ export function useQueryTableFieldsOptions() {
       });
   };
 
-  return [loading, source, queryTableFields];
+  return [loading, source,options, queryTableFields];
 }
+//querySqlApi
+interface querySqlItems{
+  sqlContent:string;
+  dbCode:string;
+  tableCode:string;
+  sqlType:string;
+}
+//queryLogsApi
+
+//任务执行情况列表查询
+export function useQueryLogsList() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [source, setSource] = useState<any>([]);
+  const [pageInfo, setPageInfo] = useState({
+    pageIndex: 1,
+    pageSize: 20,
+    total: 0,
+  });
+
+  const queryLogsList = async (paramObj: {  pageIndex?: number; pageSize?: number }) => {
+    setLoading(true);
+    await getRequest(
+      `${APIS.queryLogsApi}?pageIndex=${paramObj?.pageIndex || 1}&pageSize=${
+        paramObj?.pageSize || 20
+      }`,
+    )
+      .then((result) => {
+        if (result?.success) {
+          const dataSource = result.data.dataSource || [];
+          const pageInfo = result.data.pageInfo;
+          setSource(dataSource);
+          setPageInfo(pageInfo);
+        }
+        if (!result?.success) {
+          return;
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  return [loading, pageInfo, source, setSource, setPageInfo, queryLogsList];
+}
+// export function useQuerySql(): [boolean, any, (params:querySqlItems) => Promise<void>] {
+//   const [loading, setLoading] = useState<boolean>(false);
+//   const [data, setData] = useState<any>("");
+//   const querySql = async (params:querySqlItems) => {
+//     setLoading(true);
+//     await postRequest(APIS.querySqlApi, { data:params })
+//       .then((result) => {
+//         if (result.success) {
+//           let dataSource = result?.data?.result;
+         
+//           setData(dataSource);
+//         } else {
+//           return;
+//         }
+//       })
+//       .finally(() => {
+//         setLoading(false);
+//       });
+//   };
+
+//   return [loading, data, querySql];
+// }
+// export const querySqlResultInfo = async(params:querySqlItems) =>
+// await postRequest(APIS.querySqlApi,{data:{...params}}).then((res: any) => {
+//   if (res?.success) {
+//     const dataSource =   res?.data?.result|| "";
+//     return dataSource;
+//   }
+//   return "";
+// });
+export const querySqlResultInfo = (params: querySqlItems) =>
+  postRequest(APIS.querySqlApi, {
+    data: params,
+  });

@@ -1,11 +1,38 @@
 import React, { useState,useEffect,forwardRef,Component,useMemo,useRef,useImperativeHandle} from 'react';
 import {  Tabs,Form,Space,Button,Select,message,Table } from 'antd';
 import {createTableColumns} from './schema';
-export default forwardRef(function QueryResult(props:any,ref:any){
+import {useQueryLogsList} from '../../../common-hook';
+import './index.less'
+interface Iprops{
+  sqlResult:any;
+  
+  sqlLoading:boolean;
+  
+}
+export default forwardRef(function QueryResult(props:Iprops,ref:any){
+  const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
+  const {sqlResult,sqlLoading}=props;
+  
     const { TabPane } = Tabs;
     const columns = useMemo(() => {
       return createTableColumns() as any;
     }, []);
+   
+    const sqlResultSource=JSON.parse(sqlResult||"{}")
+   
+    useEffect(()=>{
+     
+    },[sqlResultSource])
+    // useEffect(()=>{
+    //   if(sqlResultSource?.length>0){
+    //     setActiveKey(initialItems[0].key)
+    //     setItems(initialItems)
+
+    //   }
+
+    // },
+    // [sqlResultSource,sqlLoading,])
+   
     useImperativeHandle(ref, () => ({
         addQueryResult: () => {add()},
         queryResultItems:items,
@@ -14,13 +41,51 @@ export default forwardRef(function QueryResult(props:any,ref:any){
 
 
     }))
+    useEffect(()=>{
+      queryLogsList()
+    },[])
+    useEffect(()=>{
+      if(logsSource?.length>0){
+        setActiveKey(initialItems[0].key)
+        setItems(initialItems)
+
+      }
+
+    },
+    [logsSource,logsloading,pageInfo])
+    const pageSizeClick = (pagination: any) => {
+      setPageInfo({
+        pageIndex: pagination.current,
+        pageSize: pagination.pageSize,
+        total: pagination.total,
+      });
+      let obj = {
+        pageIndex: pagination.current,
+        pageSize: pagination.pageSize,
+      };
+  
+      queryLogsList({ ...obj });
+    };
 
     const initialItems = [
       
         {
           label: '查询历史',
           children:  <div>
-            <Table columns={columns}/>
+            <Table 
+            columns={columns} 
+            dataSource={logsSource} 
+            loading={logsloading}  
+            pagination={{
+            current: pageInfo.pageIndex,
+            total: pageInfo.total,
+            pageSize: pageInfo.pageSize,
+            showSizeChanger: true,
+            showTotal: () => `总共 ${pageInfo.total} 条数据`,
+            }}
+            onChange={pageSizeClick}
+          />
+        
           </div>,
           key: '1',
           closable: false,
@@ -33,12 +98,22 @@ export default forwardRef(function QueryResult(props:any,ref:any){
     const onChange = (key: string) => {
       setActiveKey(key);
     };
+   
     const add = () => {
         const newActiveKey = `newTab${newTabIndex.current++}`;
         const newPanes = [...items];
         newPanes.push(
           { label: '查询结果', children: <div>
-        <Table columns={columns}/>
+        <Table dataSource={sqlResultSource} loading={sqlLoading} >
+          {sqlResultSource?.length>0&&(
+            Object.keys(sqlResultSource[0])?.map((item:any)=>{
+              return(
+                <Table.Column title={item} dataIndex={item}   key={item}  />
+              )
+            })
+
+          )}
+        </Table>
       </div>, key: newActiveKey,closable: true, });
         setItems(newPanes);
         setActiveKey(newActiveKey);
@@ -82,6 +157,12 @@ export default forwardRef(function QueryResult(props:any,ref:any){
          type="editable-card"
          onEdit={onEdit}
          // items={items}
+         tabBarExtraContent={
+          <div className="tabs-extra">
+          {activeKey==="1"&& <a onClick={()=>{
+             queryLogsList()
+            }}>刷新历史</a>} 
+            </div>}
        >
         {items?.map((item: any) => (
          <TabPane tab={item.label} key={item.key} closable={item?.closable} >

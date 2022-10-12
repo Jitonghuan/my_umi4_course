@@ -38,7 +38,7 @@ export default function CreateArticle(props: CreateArticleProps) {
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
 
   const { mode, curRecord, onClose, onSave } = props;
-  const [value, setValue] = useState(2);
+  const [value, setValue] = useState("database");
   const [flag,setFlag]=useState<string>("");
   
   
@@ -113,18 +113,18 @@ const submit=async(params:any)=>{
           
         </Form.Item>
         {/* 库权限 */}
-        {value===2&&<LibraryForm  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions}  />}
+        {value==="database"&&<LibraryForm  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions}  />}
         {/* 表权限 */}
-        {value===3&&<TableForm  
+        {value==="table"&&<TableForm  
         databasesOptions={databasesOptions} 
         databasesOptionsLoading={databasesOptionsLoading}
         flag={flag} submit={(params:any)=>submit(params)}
       
         />}
         {/* 库owner权限 */}
-        {value===1&&<LibraryOwnerForm  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions} />}
+        {value==="owner"&&<LibraryOwnerForm  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions} />}
         {/* limit限制 */}
-        {value===4&&<LimitForm flag={flag} submit={(params:any)=>submit(params)}   databasesOptions={databasesOptions} databasesOptionsLoading={databasesOptionsLoading}/>}
+        {value==="limit"&&<LimitForm flag={flag} submit={(params:any)=>submit(params)}   databasesOptions={databasesOptions} databasesOptionsLoading={databasesOptionsLoading}/>}
 
      
         <Form.Item label="理由" name="remark">

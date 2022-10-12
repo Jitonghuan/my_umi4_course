@@ -1,10 +1,11 @@
 
 import moment from "moment";
+
 export const options = [
-    { label: '库权限', value: 2 },
-    { label: '表权限', value: 3 },
-    { label: '库Owner', value: 1 },
-    { label: 'limit限制', value: 4 },
+    { label: '库权限', value: "database" },
+    { label: '表权限', value: "table" },
+    { label: '库Owner', value: "owner" },
+    { label: 'limit限制', value: "limit" },
   ];
   export const timeOptions = [
     { label: '一个月', value: 'Apple' },
@@ -13,8 +14,8 @@ export const options = [
     { label: '三年', value: 'xixi' },
   ];
   export const checkOptions = [
-    { label: '查询', value: 2 },
-    { label: '变更', value: 3 },
+    { label: '查询', value: "query" },
+    { label: '变更', value: "exec" },
   ];
   // 时间枚举
 

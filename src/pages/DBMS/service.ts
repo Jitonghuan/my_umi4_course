@@ -28,7 +28,8 @@ export const createPrivApi = `${dmpApiPrefix}/dmp/workflow/priv/create`;
 
 /* GET 6、查询权限申请工单详情 */
 export const getPrivInfoApi = `${dmpApiPrefix}/dmp/workflow/priv/info`;
-/* PUT 5、更新用户角色 */
+/* POST 7、审批工单 */
+export const auditApi = `${dmpApiPrefix}/dmp/workflow/audit`;
 
 
 /* POST 6、 新增用户信息 */

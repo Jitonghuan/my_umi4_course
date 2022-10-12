@@ -25,12 +25,14 @@
     language?:string;
     height?:number,
     theme?:string,
-    subChange?:()=>void;
+    subChange?:(params:{sqlContent:string,sqlType:string})=>void;
     isSubChangeBtn?:boolean;
     isSqlCheckBtn?:boolean;
     isSqlBueatifyBtn?:boolean;
     isSqlExecuteBtn?:boolean;
     isSqlExecutePlanBtn?:boolean;
+    tableFields?:any;
+    
   }
   const { keywords } = language
   
@@ -39,7 +41,7 @@ export default function SqlEditor(props:Iprops){
     const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
 
     const rootCls = 'monaco-sql-editor-title';
-    const {isSqlExecutePlanBtn,isSqlBueatifyBtn,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn}=props;
+    const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange}=props;
     const [getVal,setGetVal]=useState<any>();
     let divNode:any;
     const codeContainerRef = useCallback((node:any) => {
@@ -47,7 +49,7 @@ export default function SqlEditor(props:Iprops){
         divNode = node;
     }, []);
     let completeProvider:any
-
+    console.log("tableFields",tableFields)
     useEffect(() => {
         if (divNode) {
             const monacoEditor = monaco.editor.create(divNode, {
@@ -92,11 +94,13 @@ export default function SqlEditor(props:Iprops){
     useEffect(()=>{
         if(instance){
             
-            getValue();
+          let sqlContent= getValue();
+            
+         
             console.log('--------', getValue())
         }
         
-    },[instance,getVal])
+    },[instance,getVal,tableFields])
     useEffect(()=>{
         if(instance){
             monaco.editor.setTheme(theme)
@@ -156,7 +160,7 @@ export default function SqlEditor(props:Iprops){
   
             if (lastToken.endsWith('.')) {
               const tokenNoDot = lastToken.slice(0, lastToken.length - 1)
-              if (Object.keys(hintData).includes(tokenNoDot)) {
+              if (Object.keys(tableFields).includes(tokenNoDot)) {
                 suggestions = [...getTableSuggest(tokenNoDot)]
               }
             } else if (lastToken === '.') {
@@ -189,14 +193,14 @@ export default function SqlEditor(props:Iprops){
             }))
         };
       const getDBSuggest=()=>{
-        return Object.keys(hintData).map((key) => ({
+        return Object.keys(tableFields).map((key) => ({
           label: key,
           kind: monaco.languages.CompletionItemKind.Constant,
           insertText: key,
         }))
       };
      const  getTableSuggest=(dbName:string)=>{
-        const tableNames = hintData[dbName]
+        const tableNames = tableFields[dbName]
         if (!tableNames) {
           return []
         }
@@ -222,11 +226,14 @@ export default function SqlEditor(props:Iprops){
             <div className="monaco-sql-editor-title">
                 <Space className={`${rootCls}-wrapper`}>
                    {isSqlExecuteBtn&&<span className={`${rootCls}-btn`} id="one" onClick={()=>{
-                         console.log('--------', instance?.getValue())
+                       
+                         subChange({sqlContent:instance?.getValue()||"",sqlType:"query"})
+                         
+                         
                     }}>执行</span> } 
                    {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two">sql检测</span>}  
                    {isSqlBueatifyBtn&&<span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span>}  
-                   {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four">执行计划</span>} 
+                   {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>} 
                    {isSubChangeBtn&&<span className={`${rootCls}-btn`} id="fifth">提交变更</span> } 
                 </Space>
             </div>

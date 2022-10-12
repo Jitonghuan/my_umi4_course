@@ -4,8 +4,8 @@ import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
 interface createPrivItem{
     remark?:string;
-    privWfType:number;
-    privList?:number[];
+    privWfType:string;
+    privList?:string[];
     envCode:string;
     instanceId:number;
     dbList?:string[];
