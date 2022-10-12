@@ -157,6 +157,19 @@ export const createMiddlewareTableColumns = (params: {
         );
       },
     },
+    //componentDependency
+    {title: '依赖',
+    key: 'componentDependency',
+    dataIndex: 'componentDependency',
+    renderFormItem: (_, config: any, data) => {
+     
+      //  ]
+      return (
+        
+      <Input  disabled={true}  style={{width:"100%"}}/>
+      );
+    },
+  },
       
     {
         title: '操作',

@@ -230,7 +230,7 @@ interface editorParams{
    componentReleaseName:string	//组件部署名称	true
    componentConfiguration:string	//组件配置		true
    componentNamespace:string //组件命名空间	true
-   componentDependency:string	//组件依赖		true
+   componentDependency?:string	//组件依赖		true
    productLine?:string	 //产品线			true
    componentPriority?:number
 
