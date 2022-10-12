@@ -16,8 +16,8 @@ export const productionTabsConfig: any = [
   },
   {
     label: '前端资源',
-    value: 'front',
-    type: 'front',
+    value: 'feRsources',
+    type: 'feRsources',
   },
 ];
 export const componentTypeOptions = [

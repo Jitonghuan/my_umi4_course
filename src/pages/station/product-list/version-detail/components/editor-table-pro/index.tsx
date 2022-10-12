@@ -258,7 +258,7 @@ export default (props: VersionDetailProps) => {
                   currentTabType === 'app'
                     ? '请输入应用名称'
                     : currentTabType === 'middleware'
-                      ? '请输入中间件名称' : currentTabType === 'front'
+                      ? '请输入中间件名称' : currentTabType === 'feRsources'
                         ? '请输入前端资源名称'
                         : '请输入基础数据名称'
                 }
