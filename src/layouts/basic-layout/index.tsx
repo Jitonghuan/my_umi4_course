@@ -93,7 +93,7 @@ export default function Layout(props: any) {
     const res = await getMatrixEnvConfig();
     setMatrixConfigInfo(res);
      // @ts-ignore
-     window.matrixConfigData = res 
+     window.matrixConfigData = res
     setInitFlg(true);
   }
 
@@ -193,9 +193,9 @@ export default function Layout(props: any) {
   };
   return (
     <ConfigProvider locale={zhCN} >
-      <ChangeLog 
+      <ChangeLog
       mode={changeLogMode}
-      infoData={changeLog} 
+      infoData={changeLog}
       onClose={()=>{setChangeLogMode("HIDE")}}
       />
       <AllMessage
@@ -268,6 +268,7 @@ export default function Layout(props: any) {
                 headerProps={{
                   // env: getEnv(),
                   defaultTitle: appConfig.title,
+                  tokenInvalidNotRedirect: matrixConfigInfo?.isSkipLogin,
                   userApi: `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
                   logoutApi: `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
                   loginUrl:  `${matrixConfigInfo?.domainName}/login`,
