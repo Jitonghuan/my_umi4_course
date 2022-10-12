@@ -35,7 +35,7 @@
     
   }
   const { keywords } = language
-  
+  console.log('0')
 export default function SqlEditor(props:Iprops){
   const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange}=props;
     // const codeContainerRef = useRef(null) as any;
@@ -53,7 +53,9 @@ export default function SqlEditor(props:Iprops){
     let completeProvider:any
     console.log("tableFields",tableFields)
     useEffect(() => {
+      console.log("1.5")
         if (divNode) {
+          console.log("1.6")
             const monacoEditor = monaco.editor.create(divNode, {
                 autoIndent: "keep",
                 value: 'select * from user limit 10;', // 编辑器初始显示文字
@@ -67,6 +69,7 @@ export default function SqlEditor(props:Iprops){
                 },
                 tabSize: 2, // tab缩进长度
             });
+            console.log("1.7",monacoEditor)
             setInstance(monacoEditor);
             registerCompletion();
             // 将 initValue Property 同步到编辑器中

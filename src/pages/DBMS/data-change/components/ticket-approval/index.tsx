@@ -97,11 +97,11 @@ export default function TicketApproval(){
     contentStyle={{ color: '#000' }}
     column={2}
     >
-  <Descriptions.Item label="环境">dev</Descriptions.Item>
-  <Descriptions.Item label="实例">hbos-dev</Descriptions.Item>
-  <Descriptions.Item label="变更库" span={2}>Hangzhou, Zhejiang</Descriptions.Item>
+  <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
+  <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
+  <Descriptions.Item label="变更库" span={2}>{info?.dbCode}</Descriptions.Item>
   <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item>
-  <Descriptions.Item label="上线理由" span={2}>订正数据</Descriptions.Item>
+  <Descriptions.Item label="上线理由" span={2}>{info?.remark}</Descriptions.Item>
   <Descriptions.Item label="变更sql"span={2}><Input></Input></Descriptions.Item>
   <Descriptions.Item label="sql检测结果">影响行数：10000</Descriptions.Item>
   <Descriptions.Item label="sql审核">通过</Descriptions.Item>

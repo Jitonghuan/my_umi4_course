@@ -55,7 +55,7 @@ export default function CreateArticle(props: CreateArticleProps) {
         // if(res?.audit[0]?.AuditStatus==="wait"){
           auditUsers=res?.audit[0]?.Groups 
           setOwner(auditUsers)
-          console.log('---',auditUsers,)
+         
         // }
 
       }
