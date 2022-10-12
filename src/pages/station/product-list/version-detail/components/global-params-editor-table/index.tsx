@@ -137,14 +137,14 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-        <Button>批量添加</Button>
+        {/* <Button>批量添加</Button> */}
         </div>
       </div>
 
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
-        headerTitle="可编辑表格"
+        // headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮
         // recordCreatorProps={false}

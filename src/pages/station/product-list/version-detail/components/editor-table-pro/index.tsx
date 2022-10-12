@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import type { TableRowSelection } from 'antd/es/table/interface';
-import { Button, Input, Form, message,Alert } from 'antd';
+import { Button, Input, Form, message,Alert,Popconfirm } from 'antd';
 import { useQueryProductlineList } from '../../../../component-center/hook';
 import { createMiddlewareTableColumns } from './middle-ware-schema';
 import { PlusOutlined } from '@ant-design/icons';
@@ -79,6 +79,7 @@ export default (props: VersionDetailProps) => {
    
 
   }, [])
+  
 
 //createAppProTableColumns
   const middleColumns = useMemo(() => {
@@ -304,11 +305,13 @@ export default (props: VersionDetailProps) => {
         rowKey="id"
         actionRef={actionRef}
         formRef={ref}
-        headerTitle="可编辑表格"
+        // headerTitle="可编辑表格"
         loading={loading}
         rowSelection={rowSelection}
         toolBarRender={() => [
-          currentTabType === 'middleware' && <span>
+          
+          currentTabType === 'middleware' &&checkData!==""&&checkData&& <span>
+            
             <Alert message={`${checkData}依赖组件未编排！`} type="warning" showIcon/>
           {/* {`${checkData}依赖组件未编排！` } */}
           </span>
@@ -389,8 +392,10 @@ export default (props: VersionDetailProps) => {
         }}
       />
       <p className="compontents-delete-button">
-        <Button onClick={() => {
-        let ids: any = []
+      <Popconfirm
+            title="确定要批量删除吗？"
+            onConfirm={() => {
+              let ids: any = []
         selectedRows?.map((ele: any) => {
           ids.push(ele?.id)
         })
@@ -406,7 +411,12 @@ export default (props: VersionDetailProps) => {
           if(currentTab==="middleware"){
             checkComponentRely(versionId)
           }})
-      }}>删除选中</Button></p>
+             
+            }}
+          >
+             <Button >删除选中</Button>
+          </Popconfirm>
+       </p>
     </>
   );
 };

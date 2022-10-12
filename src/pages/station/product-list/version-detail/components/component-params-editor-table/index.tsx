@@ -128,7 +128,7 @@ export default (props: VersionDetailProps) => {
         }}
         pagination={false}
         scroll={{ y: window.innerHeight - 340 }}
-        headerTitle="可编辑表格"
+        // headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮
         columns={compontentsColumns}

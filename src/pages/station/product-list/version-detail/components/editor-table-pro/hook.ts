@@ -191,11 +191,16 @@ export function useBulkAdd() {
   },[]);
 
   return [loading,bulkadd];
+
+
 }
+
+
+
 //checkComponentRelyApi
 export function useCheckComponentRely() {
   const [data,setData]=useState<any>("")
-  const checkComponentRely = useCallback(async (versionId:number) => {
+  const checkComponentRely = async (versionId:number) => {
    
     await postRequest(`${APIS.checkComponentRelyApi}?versionId=${versionId}`)
       .then((res) => {
@@ -205,12 +210,14 @@ export function useCheckComponentRely() {
             const toolip= (data||[]).join(',')
             // message.success(`${toolip}依赖组件未编排！`)
             setData(toolip)
+          }else{
+            setData("")
           }
           
         } 
       })
      
-  },[]);
+  }
 
   return [data,checkComponentRely];
 }
