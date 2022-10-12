@@ -37,11 +37,12 @@
   const { keywords } = language
   
 export default function SqlEditor(props:Iprops){
+  const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange}=props;
     // const codeContainerRef = useRef(null) as any;
     const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
 
     const rootCls = 'monaco-sql-editor-title';
-    const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange}=props;
+    
     const [getVal,setGetVal]=useState<any>();
     let divNode:any;
     const codeContainerRef = useCallback((node:any) => {
@@ -100,7 +101,7 @@ export default function SqlEditor(props:Iprops){
             console.log('--------', getValue())
         }
         
-    },[instance,getVal,tableFields])
+    },[getVal])
     useEffect(()=>{
         if(instance){
             monaco.editor.setTheme(theme)
