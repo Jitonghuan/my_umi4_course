@@ -475,7 +475,7 @@ export default [
         hideInMenu:true
       },
       {
-        path: `${baseRoutePath}/DBMS/configuratio`,
+        path: `${baseRoutePath}/DBMS/configuration`,
         name: '配置项',
         key: 'configuration',
         component: '@/pages/DBMS/configuration',
