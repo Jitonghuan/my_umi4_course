@@ -81,7 +81,7 @@ export default function CreateArticle(props: CreateArticleProps) {
       ),
       onOk () {
         form.validateFields().then((remark)=>{
-          auditTicket({remark,auditType}).then(()=>{
+          auditTicket({remark,auditType,id:curRecord?.id}).then(()=>{
             getInfo()
           })
         })
@@ -155,7 +155,7 @@ export default function CreateArticle(props: CreateArticleProps) {
              <Spin spinning={auditLoading}>
                 <Space>
              {status==="wait"&&(<> <Tag color="geekblue" onClick={()=>{
-                auditTicket({auditType:"pass"}).then(()=>{
+                auditTicket({auditType:"pass",id:curRecord?.id}).then(()=>{
                   getInfo()
                 })
              }}>同意</Tag> <Tag color="volcano" onClick={()=>showConfirm("reject")}>拒绝</Tag>  </>)}

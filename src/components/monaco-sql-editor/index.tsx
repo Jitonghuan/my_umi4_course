@@ -120,8 +120,15 @@ export default function SqlEditor(props:Iprops){
         }
     },[instance])
     const getValue=()=> {
+      if(instance){
         setGetVal(instance?.getModel()?.getValue())
         return instance?.getModel()?.getValue()
+
+      }else{
+        setGetVal("")
+        return ""
+      }
+        
       };
      
       //获取选中代码

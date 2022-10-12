@@ -14,10 +14,10 @@ getRequest(APIS.getPrivInfoApi,{data:{id}}).then((res: any) => {
 //auditApi
 export function useAuditTicket(): [
   boolean,
-  (paramsObj: { auditType: string; remark?: string;}) => Promise<void>,
+  (paramsObj: { auditType: string; remark?: string;id:number}) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const auditTicket = async (paramsObj: { auditType: string; remark?: string }) => {
+  const auditTicket = async (paramsObj: { auditType: string; remark?: string;id:number }) => {
     setLoading(true);
     await postRequest(APIS.auditApi, { data: paramsObj })
       .then((result) => {
