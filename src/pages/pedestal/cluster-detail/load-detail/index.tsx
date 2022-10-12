@@ -217,6 +217,8 @@ export default function LoadDetail(props: any) {
       resourceType: 'pods',
       namespace: namespace || '',
       labelSelector: data?.info?.labelSelector || '',
+      parentName: data?.name || '',
+      parentType: data?.type || '',
     })
       .then((res: any) => {
         if (res?.success) {

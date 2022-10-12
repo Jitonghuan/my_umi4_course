@@ -46,20 +46,9 @@ export const resourceDetailTableSchema = ({
       ),
     },
     {
-      title: 'IP',
-      dataIndex: 'ip',
-      width: 100,
-      ellipsis: true,
-      render: (value) => (
-        <Tooltip placement="topLeft" title={value}>
-          {value}
-        </Tooltip>
-      ),
-    },
-    {
       title: '命名空间',
       dataIndex: 'namespace',
-      width: 180,
+      width: 170,
       ellipsis: {
         showTitle: false,
       },
@@ -71,9 +60,21 @@ export const resourceDetailTableSchema = ({
     },
 
     {
+      title: 'IP',
+      dataIndex: ['info', 'ip'],
+      width: 170,
+      ellipsis: true,
+      render: (value) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+
+    {
       title: '节点',
       dataIndex: ['info', 'nodeName'],
-      width: 200,
+      width: 140,
       ellipsis: true,
       render: (value) => (
         <Tooltip placement="topLeft" title={value}>

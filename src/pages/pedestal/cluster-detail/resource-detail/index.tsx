@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useContext, useRef } from 'react';
-import { Form, Button, Table, Select, message } from 'antd';
+import { Form, Button, Table, Select, message, Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { history, useLocation } from 'umi';
 import { resourceDetailTableSchema } from './schema';
 import clusterContext from '../context';
@@ -259,7 +260,8 @@ export default function ResourceDetail(props: any) {
     const data = JSON.parse(JSON.stringify(allData));
     const afterFilter: any = [];
     data.forEach((item: any) => {
-      if (item.name?.indexOf(value) !== -1) {
+      console.log((item?.type === 'pods' && item?.info?.ip?.indexOf(value) !== -1), 'judge')
+      if (item.name?.indexOf(value) !== -1 || (item?.type === 'pods' && item?.info?.ip?.indexOf(value) !== -1)) {
         afterFilter.push(item);
       }
     });
@@ -383,7 +385,11 @@ export default function ResourceDetail(props: any) {
           <h3>资源列表</h3>
         </div>
         <div className="caption-right">
-          搜索：
+          搜索
+          <Tooltip title='pods类型支持名称/IP搜索,其他类型只支持按名称搜索' placement="top">
+            <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
+          </Tooltip>
+          ：
           <input
             ref={searchValueInput}
             style={{ width: 200 }}
