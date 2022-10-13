@@ -6,14 +6,16 @@
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/approval-end/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Card,Descriptions,Space ,Tag,Table,Input,Modal,Popconfirm,Form,Spin,Radio} from 'antd';
+import { Card,Descriptions,Space ,Tag,Table,Input,Modal,Popconfirm,Form,Spin,Radio,DatePicker} from 'antd';
 import React,{useMemo,useState,useEffect} from 'react';
+import type { DatePickerProps } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
 import {createTableColumns} from './schema';
 import {history,useLocation} from 'umi';
 import './index.less';
+import { parse } from 'query-string';
 import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
 import {useGetSqlInfo,useAuditTicket,useRunSql} from './hook'
 const StatusMapping: Record<string, number> = {
@@ -44,15 +46,32 @@ export default function ApprovalEnd(){
   const [statusText,setStatusText]=useState<string>("");
   const [executeResultData,setExecuteResultData]=useState<any>([])
   const [reviewContentData,setReviewContentData]=useState<any>([])
+  const [dateString,setDateString]=useState<string>("");
   let location = useLocation();
+  const query = parse(location.search);
   const initInfo: any = location.state || {};
+  
   const { confirm } = Modal;
+  useEffect(()=>{
+    if(query?.detail==="true"&&query?.id){
+      const afferentId=Number(query?.id)
+      getInfo(afferentId)
+    }
+    return()=>{
+     
+    }
+
+  },[query])
 
   useEffect(()=>{
     if(!initInfo?.record?.id) return
 
     getInfo()
   },[])
+  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
+    setDateString(dateString)
+  };
   const showRunSqlConfirm = () => {
     confirm({
       title: '请选择执行方式',
@@ -63,12 +82,15 @@ export default function ApprovalEnd(){
           <Radio.Group options={runModeOptions} />
 
           </Form.Item>
+          <Form.Item>
+          <DatePicker onChange={onChange} />
+          </Form.Item>
         </Form>
       ),
       onOk () {
         form.validateFields().then((info)=>{
           
-          runSql({runMode:info?.runMode,runDate:"",id:initInfo?.record?.id}).then(()=>{
+          runSql({runMode:info?.runMode,runDate:dateString,id:initInfo?.record?.id}).then(()=>{
             getInfo()
           })
         })
@@ -105,9 +127,9 @@ export default function ApprovalEnd(){
       },
     });
   };
-  const getInfo=()=>{
+  const getInfo=(id?:number)=>{
     setLoading(true)
-    useGetSqlInfo(initInfo?.record?.id).then((res)=>{
+    useGetSqlInfo(initInfo?.record?.id||id).then((res)=>{
       setInfo(res)
       let auditUsers=[];
      
@@ -226,7 +248,7 @@ export default function ApprovalEnd(){
       {executeResultData?.length>0&&(
         Object.keys(executeResultData[0])?.map((item:any)=>{
           return(
-            <Table.Column title={item} dataIndex={item}   key={item}  />
+            <Table.Column title={item} dataIndex={item}  ellipsis={true}  key={item}  />
           )
         })
 

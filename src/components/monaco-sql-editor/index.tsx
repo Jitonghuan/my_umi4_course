@@ -54,7 +54,7 @@ export default function SqlEditor(props:Iprops){
         divNode = node;
     }, []);
     let completeProvider:any
-    console.log("tableFields",tableFields)
+   
     useEffect(() => {
      
         if (divNode) {
@@ -100,6 +100,14 @@ export default function SqlEditor(props:Iprops){
             getSelectionVal();
         }
     },[instance])
+    // useEffect(()=>{
+    //   if(instance&&initValue){
+    //     console.log('----',initValue)
+    //     instance?.getModel()?.setValue(initValue)
+
+    //   }
+
+    // },[initValue,instance])
     useEffect(()=>{
       
         if(instance){

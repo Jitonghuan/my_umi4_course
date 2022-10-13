@@ -14,8 +14,10 @@ import {CurrentStatusStatus,PrivWfType} from '../authority-apply/schema'
 export interface CreateArticleProps {
   mode?: EditorMode;
   curRecord?: any;
+  queryId?:any;
   onClose: () => any;
   onSave: () => any;
+  getList: () => any;
 }
 const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
@@ -24,7 +26,8 @@ const StatusMapping: Record<string, number> = {
   reject:2
 };
 export default function CreateArticle(props: CreateArticleProps) {
-  const { mode, curRecord, onClose, onSave } = props;
+  const { mode, curRecord, onClose, onSave,getList,queryId } = props;
+  const afferentId=Number(queryId)
   const { confirm } = Modal;
   const [form]=Form.useForm()
   const [info,setInfo]=useState<any>({});
@@ -43,10 +46,18 @@ export default function CreateArticle(props: CreateArticleProps) {
      
     };
   }, [mode]);
+  useEffect(()=>{
+    if(afferentId&&mode !== 'HIDE'){
+      getInfo(afferentId)
+
+    }
+
+  },[afferentId,mode])
  
-  const getInfo=()=>{
+  const getInfo=(id?:number)=>{
     setLoading(true)
-    useGetPrivInfo(curRecord?.id).then((res)=>{
+    let paramId=afferentId?afferentId:curRecord?.id
+    useGetPrivInfo(curRecord?.id||id).then((res)=>{
       setInfo(res)
       let auditUsers=[];
      
@@ -83,6 +94,7 @@ export default function CreateArticle(props: CreateArticleProps) {
         form.validateFields().then((remark)=>{
           auditTicket({remark,auditType,id:curRecord?.id}).then(()=>{
             getInfo()
+            getList()
           })
         })
       

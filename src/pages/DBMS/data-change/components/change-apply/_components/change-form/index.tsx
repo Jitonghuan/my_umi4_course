@@ -27,7 +27,9 @@ const runModeOptions=[
 ]
 export default forwardRef( function ChangeForm(props:any,ref:any){
   const [envOptionLoading,  envOptions, queryEnvList]=useEnvList();
+  const formRef=useRef<any>(null)
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
+  const [dataParams,setDataParams]=useState<any>({});
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [loading, tableFields,tableFieldsOptions, queryTableFields]=useQueryTableFieldsOptions();
@@ -39,7 +41,11 @@ export default forwardRef( function ChangeForm(props:any,ref:any){
       runEndTime:endTime,
       tableFields:tableFields
 
-    }
+    },
+    onFinish: () => {onFinish()},
+  
+    formRef:formRef
+
 
 
 }))
@@ -52,7 +58,7 @@ useEffect(()=>{
   }
   
 },[])
-  const [form]=Form.useForm();
+const [form]=Form.useForm();
   const [startTime,setStartTime]=useState<string>('')
   const [endTime,setEndTime]=useState<string>('')
    //选择时间间隔
@@ -65,9 +71,13 @@ useEffect(()=>{
    
   } 
 },[]);
+const onFinish=()=>{
+  return form?.getFieldsValue()
+}
+
 // const paramsvalue=form?.getFieldsValue()
       return(<>
-         <Form layout="vertical" form={form}>
+         <Form layout="vertical" form={form} ref={formRef} >
             <Form.Item name="title">
                 <Input   placeholder="标题" />
     
@@ -101,9 +111,9 @@ useEffect(()=>{
               <Form.Item name="remark">
               <Input  placeholder="上线理由"/>
               </Form.Item>
-              <Form.Item name="runMode">
+              {/* <Form.Item name="runMode">
               <Select  placeholder="执行方式" options={runModeOptions}/>
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item name="time">
               <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
            format="YYYY-MM-DD HH:mm:ss" showTime />

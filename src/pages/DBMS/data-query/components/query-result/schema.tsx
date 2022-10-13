@@ -1,10 +1,33 @@
-import { Space, Popconfirm, Tooltip } from 'antd';
+import { Space, Popconfirm, Tooltip,message } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
+import {SnippetsOutlined} from "@ant-design/icons"
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 
 // 列表页-表格
-export const createTableColumns = () => {
+export const createTableColumns = (
+  params: {
+    onCopy: (record: any, index: number) => void;
+  }
+) => {
+ 
   return [
+    {
+      title: '复制',
+      dataIndex: 'copy',
+      key: 'copy',
+      width: '8%',
+      align:"center",
+      render: (text,record,index) => (
+        <CopyToClipboard text={JSON.stringify(record||{})} onCopy={() =>{
+          message.success('已复制此条数据！')
+          params?.onCopy(record, index)
+        }}>
+          <SnippetsOutlined style={{color:"#3591ff"}} />
+      </CopyToClipboard>
+      
+      ),
+    },
     {
       title: '执行时间',
       dataIndex: 'startTime',
@@ -15,7 +38,7 @@ export const createTableColumns = () => {
       title: '用户',
       dataIndex: 'userName',
       key: 'userName',
-      width: '14%',
+      width: '10%',
     },
     {
       title: '实例',
@@ -45,7 +68,7 @@ export const createTableColumns = () => {
         title: '结果行数',
         dataIndex: 'affectedRow',
         key: 'affectedRow',
-        width: '10%',
+        width: '8%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
@@ -53,7 +76,7 @@ export const createTableColumns = () => {
         title: '耗时',
         dataIndex: 'costTime',
         key: 'costTime',
-        width: '10%',
+        width: '8%',
         ellipsis: true,
         render: (text) => <Tooltip title={`${parseInt(text)}s`}>{`${parseInt(text)}s`}</Tooltip>,
       },

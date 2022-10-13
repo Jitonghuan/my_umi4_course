@@ -8,11 +8,15 @@ import ApplyDetailDrawer from '../apply-detail'
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import useTable from '@/utils/useTable';
 import {queryWorkflowPrivListApi} from '../../../service'
-import {history} from 'umi';
+import {history,useLocation} from 'umi';
+import { parse } from 'query-string';
 import {useSearchUser} from '../../../common-hook'
 
 export default function AuthorityApply (){
     const [form] = Form.useForm();
+    let location = useLocation();
+    const query = parse(location.search);
+    console.log('query',query)
     const [mode,setMode]=useState<EditorMode>("HIDE");
     const [curRecord,setCurRecord]=useState<any>({});
     const [loading, userNameOptions, searchUser] =useSearchUser()
@@ -20,13 +24,32 @@ export default function AuthorityApply (){
     useEffect(()=>{
       searchUser()
     },[])
+    useEffect(() => {
+      let intervalId = setInterval(() => {
+        submit()
+      }, 10000*60);
+  
+      return () => {
+        clearInterval(intervalId);
+      };
+    }, []);
+    useEffect(()=>{
+      if(query?.detail==="true"&&query?.id){
+        setMode("VIEW")
+
+      }
+      return()=>{
+        setMode("HIDE")
+      }
+
+    },[query])
     const formOptions = useMemo(() => {
       return createFormItems({
-        currentStatusOptions,
+        // currentStatusOptions,
         userNameOptions,
        
       });
-    }, [userNameOptions,currentStatusOptions]);
+    }, [userNameOptions]);
     const {
         tableProps,
         search: { submit, reset },
@@ -90,8 +113,12 @@ export default function AuthorityApply (){
      <TicketDetail
        mode={mode}
        curRecord={curRecord}
+       queryId={query?.id||''}
        onClose={()=>{setMode("HIDE")}}
-       onSave={()=>{setMode("HIDE");reset()}}
+       onSave={()=>{setMode("HIDE");
+       reset()}}
+       getList={
+      ()=> reset()}
 
       />
       <ApplyDetailDrawer

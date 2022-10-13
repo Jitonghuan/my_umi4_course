@@ -2,8 +2,7 @@ import React, { useState, useMemo,useEffect } from 'react';
 import {Form, Button, Space } from 'antd';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { createTableColumns,createFormItems } from './schema';
-import {currentStatusOptions} from '../authority-manage/components/authority-apply/schema'
+import { createTableColumns,createDataFormItems } from './schema';
 import {querySqlListApi} from '../service';
 import {useSearchUser} from '../common-hook'
 
@@ -17,12 +16,12 @@ export default function AuthorityApply (){
       searchUser()
     },[])
     const formOptions = useMemo(() => {
-      return createFormItems({
-        currentStatusOptions,
+      return createDataFormItems({
+        // currentStatusOptions,
         userNameOptions,
        
       });
-    }, [userNameOptions,currentStatusOptions]);
+    }, [userNameOptions]);
     const {
         tableProps,
         search: { submit, reset },

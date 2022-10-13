@@ -1,33 +1,46 @@
-import React, { useState,useEffect,Component,useMemo,useRef,forwardRef,useImperativeHandle} from 'react';
+import React, { useState,useEffect,Component,useMemo,useRef,forwardRef,useImperativeHandle,useCallback} from 'react';
 import {  Tabs,Form,Space,Button,Select,message } from 'antd';
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 interface Iprops{
   tableFields:any;
   querySqlResult:(params:{sqlContent:string,sqlType:string})=>any
   sqlLoading:boolean;
-  
+  initSqlValue:string;
+  firstInitSqlValue:string;
 }
 export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
-  const {tableFields,querySqlResult}=props
+  const {tableFields,querySqlResult,initSqlValue,firstInitSqlValue}=props
     const { TabPane } = Tabs;
     useImperativeHandle(ref, () => ({
-        addSqlConsole: () => {add()},
+        addSqlConsole: add,
         sqlConsoleItems:items,
         sqlConsoleActiveKey:activeKey
         
 
 
     }))
+    useEffect(()=>{
+      if(firstInitSqlValue){
+       
+        setActiveKey(defaultPanes[0].key)
+        setItems(defaultPanes)
 
-    const defaultPanes = new Array(1).fill(null).map((_, index) => {
+      }
+
+    },[firstInitSqlValue])
+
+    const defaultPanes =
+      new Array(1).fill(null).map((_, index) => {
         const id = String(index + 1);
-        return { label: `SQL console ${id}`, 
+        console.log("接收默认",firstInitSqlValue)
+        return { label: `SQL console `, 
         children: 
         <MonacoSqlEditor 
         isSqlExecuteBtn={true} 
         isSqlBueatifyBtn={true} 
         isSqlExecutePlanBtn={true} 
         tableFields={tableFields} 
+        initValue={firstInitSqlValue||"select * from user limit 10"}
         subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
        
         />, 
@@ -41,26 +54,34 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
       setActiveKey(key);
     };
   
-    const add = () => {
-      const newActiveKey = `newTab${newTabIndex.current++}`;
-      let tabArry=[...items, { label: 'SQL console ', children: 'New Tab Pane', key: newActiveKey }]
-      if(tabArry.length<11){
-        setItems([...items, { label: 'SQL console ', children:
-         <MonacoSqlEditor 
-         isSqlExecuteBtn={true} 
-         isSqlBueatifyBtn={true} 
-         isSqlExecutePlanBtn={true} 
-         tableFields={tableFields} 
-         subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
-         />, key: newActiveKey }]);
-       
-        setActiveKey(newActiveKey);
-  
-      }else if(tabArry.length>10){
-        message.info("您已经打开太多页面，请关闭一些吧！")
-  
+    const add =useMemo(() => {
+      // debugger
+      if(initSqlValue&&initSqlValue!==""){
+        // debugger
+        const newActiveKey = `newTab${newTabIndex.current++}`;
+      
+        let tabArry=[...items, { label: 'SQL console ', children: 'New Tab Pane', key: newActiveKey }]
+        if(tabArry.length<11){
+          setItems([...items, { label: 'SQL console ', children:
+           <MonacoSqlEditor 
+           isSqlExecuteBtn={true} 
+           isSqlBueatifyBtn={true} 
+           isSqlExecutePlanBtn={true} 
+           tableFields={tableFields} 
+           initValue={initSqlValue}
+           subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
+           />, key: newActiveKey }]);
+         
+          setActiveKey(newActiveKey);
+    
+        }else if(tabArry.length>10){
+          message.info("您已经打开太多页面，请关闭一些吧！")
+    
+        }
+
       }
-    };
+     
+    },[initSqlValue])
   
     const remove = (targetKey: string) => {
       const targetIndex = items.findIndex(pane => pane.key === targetKey);
@@ -74,7 +95,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
   
     const onEdit = (targetKey: any, action: 'add' | 'remove') => {
       if (action === 'add') {
-        add();
+        add;
       } else {
         remove(targetKey);
       }

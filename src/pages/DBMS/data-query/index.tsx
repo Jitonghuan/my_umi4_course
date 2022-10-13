@@ -12,10 +12,13 @@ const { TabPane } = Tabs;
 export default function ResizeLayout() {
   const sqlConsoleRef = useRef<any>(null);
   const queryResultRef = useRef<any>(null);
+  const formRef=useRef<any>(null)
   const [form]=Form.useForm();
   const addQueryResult = () => queryResultRef?.current?.addQueryResult();
-  const addSqlConsole = () => sqlConsoleRef?.current?.addSqlConsole();
+  const addSqlConsole = () => sqlConsoleRef?.current?.addSqlConsole;
   const queryResultItems=queryResultRef?.current?.queryResultItems;
+  //curCopyRecord
+  const curCopyRecord=queryResultRef?.current?.curCopyRecord;
   const sqlConsoleItems=sqlConsoleRef?.current?.sqlConsoleItems;
   const queryResultActiveKey=queryResultRef?.current?.queryResultActiveKey;
   const sqlConsoleActiveKey=sqlConsoleRef?.current?.sqlConsoleActiveKey;
@@ -24,6 +27,10 @@ export default function ResizeLayout() {
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [loading, tableFields,tableFieldsOptions, queryTableFields,setOptions]=useQueryTableFieldsOptions();
+  const [initSqlValue,setInitSqlValue]=useState<string>("")
+  // const initSqlValue = useRef<any>(null);
+  const [firstInitSqlValue,setFirstInitSqlValue]=useState<string>("")
+  // const sqlValue= useRef<any>(null);
  
 
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
@@ -42,8 +49,6 @@ export default function ResizeLayout() {
 
         addQueryResult()
 
-      }else{
-        return
       }
 
     }).finally(()=>{
@@ -63,7 +68,15 @@ export default function ResizeLayout() {
       return(
         <li className="schema-li-map" style={{listStyle:"none"}}><Space><ZoomInOutlined   style={{color:'#3591ff'}} />
         <InsertRowAboveOutlined onDoubleClick={
-         ()=> addSqlConsole()
+         ()=> {
+           const table=form?.getFieldValue("tableCode")
+          //initValue
+          // initSqlValue.current=`select ${item||"*"} from ${table} limit 10`
+          let initsql= `select ${item||"*"} from ${table} limit 10`
+           addSqlConsole
+           setInitSqlValue(initsql)
+           
+        }
            }  style={{color:"#6495ED",fontSize:16}}/><span>{item}</span></Space></li>
       )
 
@@ -75,7 +88,7 @@ export default function ResizeLayout() {
       <>
       <div className="left-content-title">选择查询对象</div>
       <div className="left-content-form">
-        <Form layout="vertical" form={form}>
+        <Form layout="vertical" form={form} ref={formRef}>
           <Form.Item name="envCode">
            
             <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}onChange={()=>{
@@ -109,10 +122,12 @@ export default function ResizeLayout() {
             }}/>
           </Form.Item>
           <Form.Item name="tableCode">
-          <Select  placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={()=>{
+          <Select  placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={(table)=>{
             const values=form?.getFieldsValue();
             setOptions([])
             queryTableFields({...values})
+            setFirstInitSqlValue(`select * from ${table} limit 10`)
+            setInitSqlValue(`select * from ${table} limit 10`)
             
             } } />
           </Form.Item>
@@ -124,25 +139,26 @@ export default function ResizeLayout() {
       </div>
       </>
     )
-  },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesOptions,tableFieldsOptions])
+  },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesOptions,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
     
     const rightContent=useMemo(()=>{
       return(
         <>
           <div className="container-top">
-          <SqlConsole ref={sqlConsoleRef} tableFields={tableFields}  querySqlResult={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)} sqlLoading={sqlLoading} />
+            {console.log("初始值",initSqlValue)}
+          <SqlConsole ref={sqlConsoleRef} tableFields={tableFields}  querySqlResult={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)} sqlLoading={sqlLoading} firstInitSqlValue={firstInitSqlValue} initSqlValue={initSqlValue} />
           
           </div>
           <div className="container-bottom">
             
-            <QueryResult ref={queryResultRef} sqlResult={sqlResult} sqlLoading={sqlLoading} />
+            <QueryResult ref={queryResultRef} sqlResult={sqlResult} sqlLoading={sqlLoading} formRef={formRef} queryTableFields={queryTableFields} />
          
             
           </div>
 
         </>
       )
-    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,]);
+    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue]);
    
     return (
       // <PageContainer>

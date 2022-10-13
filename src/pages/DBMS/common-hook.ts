@@ -75,7 +75,8 @@ export function useSearchUser(): [boolean, any, () => Promise<void>] {
           let dataSource = result?.data?.dataSource;
           let data = dataSource?.map((item: any) => item.username);
 
-          const dataOptions = [...new Set(data)].map((item) => ({ label: item, value: item }));
+          const dataOptions = [...new Set(data)].map((item) => ({ label: item, value: item,key:item }));
+        
           setData(dataOptions);
         } else {
           return;

@@ -7,15 +7,35 @@ interface Iprops{
   sqlResult:any;
   
   sqlLoading:boolean;
+  formRef:any;
+  queryTableFields:(params:any)=>any;
   
 }
 export default forwardRef(function QueryResult(props:Iprops,ref:any){
+  const {sqlResult,sqlLoading,formRef,queryTableFields}=props;
   const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
-  const {sqlResult,sqlLoading}=props;
+
+  const [curRecord,setCurRecord]=useState<any>({});
   
     const { TabPane } = Tabs;
     const columns = useMemo(() => {
-      return createTableColumns() as any;
+      return createTableColumns(
+        {
+          onCopy: (record, index) => {
+           if(formRef){
+            console.log("formRef",formRef)
+            formRef.current.setFieldsValue({
+              ...record
+            })
+            queryTableFields({
+              ...record
+            })
+           }
+            setCurRecord(record)
+          },
+         
+        }
+      ) as any;
     }, []);
    
     const sqlResultSource=sqlResult?JSON.parse(sqlResult||"{}"):[]
@@ -34,7 +54,8 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
     useImperativeHandle(ref, () => ({
         addQueryResult: () => {add()},
         queryResultItems:items,
-        queryResultActiveKey:activeKey
+        queryResultActiveKey:activeKey,
+        curCopyRecord:curRecord
         
 
 
@@ -102,7 +123,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
         const newPanes = [...items];
         newPanes.push(
           { label: '查询结果', children: <div>
-        <Table dataSource={sqlResultSource} loading={sqlLoading}   scroll={{ x: '100%' }} >
+        <Table dataSource={sqlResultSource} loading={logsloading}   scroll={{ x: '100%' }} >
           {sqlResultSource?.length>0&&(
             Object.keys(sqlResultSource[0])?.map((item:any)=>{
               return(

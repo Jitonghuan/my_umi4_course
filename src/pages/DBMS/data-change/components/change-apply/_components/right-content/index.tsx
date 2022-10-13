@@ -15,13 +15,20 @@ export default function RightContent(props:Iprops){
   const [loading,setLoading]=useState<boolean>(false);
   const [executeResultData,setExecuteResultData]=useState<any>([])
 
+
   // const executeResult=JSON.parse(res?.executeResult||"{}")
   const getInfo=(sqlContent:string)=>{
     setLoading(true)
     checkSql({...createItems,sqlContent}).then((res)=>{
     
     if(res?.code===1000){
-      const executeResult=JSON.parse(res?.data||"{}")  
+      let executeResult:any=[]
+      try {
+       executeResult=JSON.parse(res?.data?.result||"{}")
+      } catch (error) {
+        console.log(error)
+      }
+       
       setExecuteResultData(executeResult)
     }else{
       setExecuteResultData([])
@@ -33,9 +40,9 @@ export default function RightContent(props:Iprops){
     })
 
   }
-    const columns = useMemo(() => {
-        return createTableColumns() as any;
-      }, []);
+    // const columns = useMemo(() => {
+    //     return createTableColumns() as any;
+    //   }, []);
     return(<div className="data-change-right-content">
       <div className="container-top">
         <MonacoSqlEditor

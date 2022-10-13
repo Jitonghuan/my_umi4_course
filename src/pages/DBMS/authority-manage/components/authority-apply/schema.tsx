@@ -20,42 +20,53 @@ export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "autoReviewWrong":{tagColor:"error",tagText:"自动审核不通过"},
   "exception":{tagColor:"volcano",tagText:"执行有异常"},
 }
+
 export const currentStatusOptions=[
   {
     label:"已正常结束",
-    value:"finish"
+    value:"finish",
+    key:"finish",
   },
   {
     label:"人工终止流程",
-    value:"abort"
+    value:"abort",
+    key:"abort",
   },
   {
     label:"待审核",
-    value:"manReviewing"
+    value:"manReviewing",
+    key:"manReviewing",
   },
   {
     label:"审核通过",
-    value:"reviewPass"
+    value:"reviewPass",
+    key:"reviewPass",
   },
   {
     label:"定时执行",
-    value:"timingTask"
+    value:"timingTask",
+    key:"timingTask"
+   
   },
   {
     label:"排队中",
-    value:"queuing"
+    value:"queuing",
+    key:"queuing"
   },
   {
     label:"执行中",
-    value:"executing"
+    value:"executing",
+    key:"executing",
   },
   {
     label:"自动审核不通过",
-    value:"autoReviewWrong"
+    value:"autoReviewWrong",
+    key:"autoReviewWrong",
   },
   {
     label:"执行有异常",
-    value:"exception"
+    value:"exception",
+    key:"exception",
   },
 
 
@@ -76,7 +87,7 @@ export const PrivWfType :Record<string, PrivWfTypeItem>={
 }
 
 export const createFormItems = (params: {
-  currentStatusOptions?: any[];
+ 
   userNameOptions?: any[];
   
 }) => {
@@ -89,9 +100,11 @@ export const createFormItems = (params: {
       width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,
-      option:params?.currentStatusOptions,
+      option:currentStatusOptions,
+      renderLabel:true,
      
     },
+
     {
       key: '2',
       type: 'select',
@@ -112,37 +125,6 @@ export const createFormItems = (params: {
   ] as FormProps[];
 };
 
-export const formOptions: FormProps[] = [
-   
-    {
-      key: '1',
-      type: 'select',
-      label: '工单状态',
-      dataIndex: 'currentStatus',
-      width: '160px',
-      placeholder: '请选择',
-      showSelectSearch: true,
-      option:[],
-     
-    },
-    {
-      key: '2',
-      type: 'select',
-      label: '申请人',
-      dataIndex: 'userName',
-      width: '160px',
-      showSelectSearch: true,
-      option:[],
-    },
-    {
-      key: '3',
-      type: 'input',
-      label: '标题',
-      dataIndex: 'title',
-      width: '160px',
-      placeholder: '请输入',
-    },
-  ];
 
 
 // 列表页-表格
@@ -152,9 +134,17 @@ export const createTableColumns = (params: {
   return [
     {
       title: '工单号',
-      dataIndex: 'InstanceId',
-      key: 'InstanceId',
+      dataIndex: 'id',
+      key: 'id',
       width: '7%',
+    },
+    {
+      title: '工单类别',
+      dataIndex: 'wfUserType',
+      key: 'wfUserType',
+      width: '10%',
+      //"我审批的"
+       render: (wfUserType) =>  <Tag color={wfUserType==="我审批的"?"#2db7f5":"pink"}>{wfUserType}</Tag>,
     },
     {
       title: '标题',
@@ -174,7 +164,7 @@ export const createTableColumns = (params: {
       key: 'privWfTypeDesc',
       width: '10%',
      
-      render: (text,record:any) => <Tooltip title={text}><Tag color={PrivWfType[record?.privWfType]?.tagColor||"default"}>{text}</Tag></Tooltip>,
+      //render: (text,record:any) => <Tooltip title={text}><Tag color={PrivWfType[record?.privWfType]?.tagColor||"default"}>{text}</Tag></Tooltip>,
     },
     {
       title: '当前状态',

@@ -13,6 +13,7 @@ interface createPrivItem{
     validStartTime?:string;
     validEndTime?:string;
     limitNum?:number;
+    title:string
 
 }
 //保存交付配置参数

@@ -15,7 +15,8 @@ import LibraryForm from '../apply-detail/_components/library-form';
 import TableForm from '../apply-detail/_components/table-form';
 import LimitForm from '../apply-detail/_components/limit-form';
 import LibraryOwnerForm from '../apply-detail/_components/library-owner-form';
-import {useCreatePriv} from './hook'
+import {useCreatePriv} from './hook';
+import moment from "moment";
 import {useEnvList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions} from '../../../common-hook'
 
 
@@ -40,21 +41,21 @@ export default function CreateArticle(props: CreateArticleProps) {
   const { mode, curRecord, onClose, onSave } = props;
   const [value, setValue] = useState("database");
   const [flag,setFlag]=useState<string>("");
-  const [instanceId,setInstanceId]=useState<any>()
-  
-  
-
- 
+  const [instanceId,setInstanceId]=useState<any>();
   useEffect(() => {
     if (mode === 'HIDE' ) return;
     queryEnvList()
     getInstanceList()
-    
-    return () => {
+    // setValue("")
+    setValue("database")
+    return()=>{
       setFlag("");
       createForm.resetFields()
       setSource([])
-    };
+      setValue("")
+  
+    }
+    
   }, [mode]);
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
     console.log('radio3 checked', value);
@@ -63,6 +64,7 @@ export default function CreateArticle(props: CreateArticleProps) {
 
 const submit=async(params:any)=>{
   const values=await createForm.validateFields();
+  console.log("params",params)
   
   createPriv({
     // ...values,
@@ -74,7 +76,11 @@ const submit=async(params:any)=>{
     instanceId:values?.instanceId,
     envCode:values?.envCode,
     tableList:values?.tableList,
-    ...params}).then(()=>{
+    title:values?.title,
+    ...params,
+    validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+    validEndTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+    }).then(()=>{
     onSave()
   })
 
@@ -102,8 +108,12 @@ const submit=async(params:any)=>{
     className="apply-detail-drawer"
     >
       <Form labelCol={{ flex: '110px' }} form ={createForm}  >
+       
         <Form.Item label="对象类型" name="privWfType" initialValue={options[0].value} rules={[{ required: true, message: '请选择' }]}>
         <Radio.Group options={options} onChange={onChange3} value={value} optionType="button" />
+        </Form.Item>
+        <Form.Item label="标题" name="title"  rules={[{ required: true, message: '请填写' }]}>
+        <Input style={{width:320}} />
         </Form.Item>
         <Form.Item label="环境" name="envCode" rules={[{ required: true, message: '请选择' }]}>
           <Select options={envOptions} allowClear showSearch loading={envOptionLoading} 

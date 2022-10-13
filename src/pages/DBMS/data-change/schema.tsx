@@ -3,9 +3,58 @@ import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { datetimeCellRender } from '@/utils';
 import {CurrentStatusStatus} from '../authority-manage/components/authority-apply/schema'
+const statusOptions=[
+  {
+    label:"已正常结束",
+    value:"finish",
+    key:"finish",
+  },
+  {
+    label:"人工终止流程",
+    value:"abort",
+    key:"abort",
+  },
+  {
+    label:"待审核",
+    value:"manReviewing",
+    key:"manReviewing",
+  },
+  {
+    label:"审核通过",
+    value:"reviewPass",
+    key:"reviewPass",
+  },
+  {
+    label:"定时执行",
+    value:"timingTask",
+    key:"timingTask"
+   
+  },
+  {
+    label:"排队中",
+    value:"queuing",
+    key:"queuing"
+  },
+  {
+    label:"执行中",
+    value:"executing",
+    key:"executing",
+  },
+  {
+    label:"自动审核不通过",
+    value:"autoReviewWrong",
+    key:"autoReviewWrong",
+  },
+  {
+    label:"执行有异常",
+    value:"exception",
+    key:"exception",
+  },
 
-export const createFormItems = (params: {
-  currentStatusOptions?: any[];
+
+]
+export const createDataFormItems = (params: {
+  // currentStatusOptions?: any[];
   userNameOptions?: any[];
   
 }) => {
@@ -18,7 +67,8 @@ export const createFormItems = (params: {
       width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,
-      option:params?.currentStatusOptions,
+      option:statusOptions,
+      renderLabel:true,
      
     },
     {
