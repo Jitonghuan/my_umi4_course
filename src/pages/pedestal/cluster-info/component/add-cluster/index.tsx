@@ -59,8 +59,8 @@ export default function AddDrawer(props: any) {
             maskClosable={false}
             footer={
                 <div className="drawer-footer">
-                    <Button type="primary" onClick={handleSubmit}>{mode === 'ADD' ? '导入' : '保存'}</Button>
                     <Button type="default" onClick={onClose}>取消</Button>
+                    <Button type="primary" onClick={handleSubmit}>{mode === 'ADD' ? '导入' : '保存'}</Button>
                 </div>
             }
         >
