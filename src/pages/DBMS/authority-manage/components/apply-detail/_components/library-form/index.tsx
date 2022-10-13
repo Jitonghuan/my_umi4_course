@@ -11,12 +11,13 @@ export interface IProps {
   databasesOptions:any[];
   submit: (params:any) => any;
   flag:string
+  instanceId:number
   
  
  
 }
 export default function LibraryForm (props:IProps,){
-  const {databasesOptions,submit,flag}=props;
+  const {databasesOptions,submit,flag,instanceId}=props;
   const [targetSource,setTargetSource]=useState<any>([]);
   const [type,setType]=useState<string>("time-interval");
   const [startTime,setStartTime]=useState<string>('')

@@ -11,10 +11,11 @@ export interface IProps {
   databasesOptionsLoading:boolean;
   submit: (params:any) => any;
   flag:string
+  instanceId:number
 
 }
 export default  function LibraryForm (props:IProps,ref:any){
-    const {databasesOptions,databasesOptionsLoading,submit,flag}=props
+    const {databasesOptions,databasesOptionsLoading,submit,flag,instanceId}=props
     const [type,setType]=useState<string>("time-interval")
     const [targetSource,setTargetSource]=useState<any>([]);
     const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
@@ -57,7 +58,12 @@ if (start !== 'NaN' && end !== 'NaN') {
     return <>
     {/* <Form labelCol={{ flex: '110px' }}> */}
     <Form.Item label="目标库" name="dbList" rules={[{ required: true, message: '请选择' }]}>
-          <Select options={databasesOptions} loading={databasesOptionsLoading} onChange={(dbCode)=>{queryTables({dbCode})}} allowClear showSearch  style={{width:220}}/>
+          <Select options={databasesOptions} loading={databasesOptionsLoading} onChange={(dbCode)=>{
+            queryTables({dbCode,instanceId}
+             
+            )
+            setTablesSource([])
+            }} allowClear showSearch  style={{width:220}}/>
           
         </Form.Item>
      <Form.Item label="目标表">

@@ -81,12 +81,12 @@ useEffect(()=>{
             
               <Form.Item name="instanceId">
               <Select  placeholder="选择实例" options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId)=>{
-            queryDatabases(instanceId)
+            queryDatabases({instanceId})
             
             }} />
               </Form.Item>
               <Form.Item name="dbCode">
-              <Select  placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{queryTables({dbCode})}}/>
+              <Select  placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})}}/>
               </Form.Item>
               <Form.Item name="tableCode">
               <Select  placeholder="选择表"  options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={()=>{

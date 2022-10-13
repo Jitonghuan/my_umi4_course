@@ -93,7 +93,7 @@ export function useQueryTablesOptions() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>([]);
 
-  const queryTables = async (params:{dbCode:string}) => {
+  const queryTables = async (params:{dbCode:string,instanceId:number}) => {
     setLoading(true);
     await getRequest(APIS.queryTablesApi, { data: params})
       .then((result) => {
@@ -187,7 +187,7 @@ export function useQueryTableFieldsOptions() {
       });
   };
 
-  return [loading, source,options, queryTableFields];
+  return [loading, source,options, queryTableFields,setOptions];
 }
 //querySqlApi
 interface querySqlItems{
@@ -264,6 +264,6 @@ export function useQueryLogsList() {
 //   return "";
 // });
 export const querySqlResultInfo = (params: querySqlItems) =>
-  getRequest(APIS.querySqlApi, {
+  postRequest(APIS.querySqlApi, {
     data: params,
   });

@@ -23,7 +23,7 @@ export default function ResizeLayout() {
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
-  const [loading, tableFields,tableFieldsOptions, queryTableFields]=useQueryTableFieldsOptions();
+  const [loading, tableFields,tableFieldsOptions, queryTableFields,setOptions]=useQueryTableFieldsOptions();
  
 
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
@@ -61,8 +61,9 @@ export default function ResizeLayout() {
   const tableMap=()=>{
    return( tableFieldsOptions?.map((item:string)=>{
       return(
-        <li className="schema-li-map" style={{listStyle:"none"}}><Space><ZoomInOutlined   style={{color:'#3591ff'}} /><InsertRowAboveOutlined onDoubleClick={
-          addSqlConsole()
+        <li className="schema-li-map" style={{listStyle:"none"}}><Space><ZoomInOutlined   style={{color:'#3591ff'}} />
+        <InsertRowAboveOutlined onDoubleClick={
+         ()=> addSqlConsole()
            }  style={{color:"#6495ED",fontSize:16}}/><span>{item}</span></Space></li>
       )
 
@@ -77,20 +78,40 @@ export default function ResizeLayout() {
         <Form layout="vertical" form={form}>
           <Form.Item name="envCode">
            
-            <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}/>
+            <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}onChange={()=>{
+               form?.setFieldsValue({
+                instanceId:"",
+                dbCode:"",
+                tableCode:""
+              })
+              setOptions([])
+            }} />
           </Form.Item>
           <Form.Item name="instanceId">
           <Select  placeholder="选择实例" options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId)=>{
-            queryDatabases(instanceId)
+            form?.setFieldsValue({
+              dbCode:"",
+              tableCode:""
+            })
+            queryDatabases({instanceId})
+            setOptions([])
             
             }}/>
           </Form.Item>
           <Form.Item name="dbCode">
-          <Select  placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{queryTables({dbCode})}}/>
+          <Select  placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{
+            queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
+            form?.setFieldsValue({
+             
+              tableCode:""
+            })
+            setOptions([])
+            }}/>
           </Form.Item>
           <Form.Item name="tableCode">
           <Select  placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={()=>{
             const values=form?.getFieldsValue();
+            setOptions([])
             queryTableFields({...values})
             
             } } />

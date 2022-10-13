@@ -15,11 +15,12 @@ export interface IProps {
   databasesOptionsLoading:boolean;
   submit: (params:any) => any;
   flag:string
+  instanceId:number
 
  
 }
 export default function LibraryForm (props:IProps,ref:any){
-  const {databasesOptions,databasesOptionsLoading,submit,flag}=props;
+  const {databasesOptions,databasesOptionsLoading,submit,flag,instanceId}=props;
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [targetSource,setTargetSource]=useState<any>([]);
   const [type,setType]=useState<string>("time-interval")
@@ -66,7 +67,9 @@ useEffect(()=>{
     return <>
     {/* <Form labelCol={{ flex: '110px' }}> */}
     <Form.Item label="目标库" name="dbList" rules={[{ required: true, message: '请选择' }]}>
-          <Select options={databasesOptions} loading={databasesOptionsLoading} allowClear showSearch onChange={(dbCode)=>{queryTables({dbCode})}} style={{width:220}}/>
+          <Select options={databasesOptions} loading={databasesOptionsLoading} allowClear showSearch onChange={(dbCode)=>{
+            queryTables({dbCode,instanceId:instanceId})
+            setTablesSource([])}} style={{width:220}}/>
           
         </Form.Item>
      <Form.Item label="目标表">
