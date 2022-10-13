@@ -47,6 +47,9 @@ useEffect(()=>{
   queryEnvList()
   getInstanceList()
   // queryLogsList()
+  return()=>{
+    setEndTime("")
+  }
   
 },[])
   const [form]=Form.useForm();

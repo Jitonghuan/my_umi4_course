@@ -100,7 +100,7 @@ if (start !== 'NaN' && end !== 'NaN') {
         </Form.Item>
        
         <Form.Item label="授权行数" name="limitNum" rules={[{ required: true, message: '请输入' }]}>
-          <InputNumber placeholder="请输入"  style={{width:220}}/>
+          <InputNumber placeholder="请输入" min={1}  style={{width:220}}/>
           
         </Form.Item>
     {/* </Form> */}

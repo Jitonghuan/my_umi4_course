@@ -26,7 +26,7 @@
     height?:number,
     theme?:string,
     subChange?:(params:{sqlContent:string,sqlType?:string})=>void;
-    subSqlChange?:(params:{sqlContent:string,sqlType?:string})=>void;
+    subSqlChange?:(params:{sqlContent:string})=>void;
     sqlCheck?:(sqlContent:string)=>void;
     isSubChangeBtn?:boolean;
     isSqlCheckBtn?:boolean;
@@ -38,11 +38,11 @@
     
   }
   const { keywords } = language
-  console.log('0')
+ 
 export default function SqlEditor(props:Iprops){
   const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,sqlCheck,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange,subSqlChange}=props;
     // const codeContainerRef = useRef(null) as any;
-    console.log('1')
+    
     const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
 
     const rootCls = 'monaco-sql-editor-title';
@@ -56,9 +56,9 @@ export default function SqlEditor(props:Iprops){
     let completeProvider:any
     console.log("tableFields",tableFields)
     useEffect(() => {
-      console.log("1.5")
+     
         if (divNode) {
-          console.log("1.6")
+          
             const monacoEditor = monaco.editor.create(divNode, {
                 autoIndent: "keep",
                 value: 'select * from user limit 10;', // 编辑器初始显示文字
@@ -72,7 +72,7 @@ export default function SqlEditor(props:Iprops){
                 },
                 tabSize: 2, // tab缩进长度
             });
-            console.log("1.7",monacoEditor)
+          
             setInstance(monacoEditor);
             registerCompletion();
             // 将 initValue Property 同步到编辑器中
@@ -95,36 +95,36 @@ export default function SqlEditor(props:Iprops){
     }, [codeContainerRef])
     
     useEffect(()=>{
-      console.log('2')
+      
         if(instance){
             getSelectionVal();
         }
     },[instance])
     useEffect(()=>{
-      console.log('3')
+      
         if(instance){
             
           getValue();
             
          
-            console.log('--------', getValue())
+           
         }
         
     },[instance,getVal])
     useEffect(()=>{
-      console.log('4')
+      
         if(instance){
             monaco.editor.setTheme(theme)
         }  
     },[instance,theme])
     useEffect(()=>{
-      console.log('5')
+      
         if(instance){
             instance.layout()
         }  
     },[instance])
     useEffect(()=>{ 
-      console.log('6')
+     
         return ()=>{
             if(instance){
                 instance?.dispose()
@@ -133,7 +133,7 @@ export default function SqlEditor(props:Iprops){
         }
     },[instance])
     const getValue=()=> {
-      console.log('7')
+     
       if(instance){
         setGetVal(instance?.getModel()?.getValue())
         return instance?.getModel()?.getValue()
@@ -247,21 +247,21 @@ export default function SqlEditor(props:Iprops){
             <div className="monaco-sql-editor-title">
                 <Space className={`${rootCls}-wrapper`}>
                    {isSqlExecuteBtn&&<span className={`${rootCls}-btn`} id="one" onClick={()=>{
-                       console.log('8')
+                        
                          subChange({sqlContent:instance?.getValue()||"",sqlType:"query"})
                          
                          
                     }}>执行</span> } 
                    {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two" onClick={()=>{
-                       console.log('10')
+                      
                        sqlCheck(instance?.getValue()||"")
                          
                          
                     }}>sql检测</span>}  
                    {isSqlBueatifyBtn&&<span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span>}  
-                   {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>} 
+                   {/* {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>}  */}
                    {isSubChangeBtn&&<span className={`${rootCls}-btn`} id="fifth" onClick={()=>{
-                       console.log('9')
+                     
                        subSqlChange({sqlContent:instance?.getValue()||""})
                          
                          
