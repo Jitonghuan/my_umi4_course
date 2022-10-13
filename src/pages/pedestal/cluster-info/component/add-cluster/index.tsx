@@ -1,4 +1,4 @@
-import { Drawer, message, Form, Button, Checkbox, Input, Upload, Radio } from 'antd';
+import { Drawer, message, Form, Button, Checkbox, Input, Popconfirm, Radio } from 'antd';
 import { useState, useEffect } from 'react';
 import { SketchSquareFilled, UploadOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
@@ -10,6 +10,7 @@ export default function AddDrawer(props: any) {
     const [form] = Form.useForm<Record<string, string>>();
     const [checked, setChecked] = useState<boolean>(false);
     const [configChecked, setConfigChecked] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     useEffect(() => {
         if (mode !== 'HIDE') {
             setChecked(false)
@@ -24,6 +25,7 @@ export default function AddDrawer(props: any) {
         }
     }, [mode])
     const handleSubmit = async () => {
+        setLoading(true);
         const value = await form.validateFields();
         if (value.kubeConfig === '******') {
             value.kubeConfig = ''
@@ -31,11 +33,17 @@ export default function AddDrawer(props: any) {
         if (value.prometheusPwd === '******') {
             value.prometheusPwd = ''
         }
-        const res = await (mode === 'ADD' ? importCluster({ ...value }) : updateCluster({ ...value }));
-        if (res?.success) {
-            message.success(`${mode === 'ADD' ? '导入' : '编辑'}成功`);
-            onClose();
-            onSave();
+        try {
+            const res = await (mode === 'ADD' ? importCluster({ ...value }) : updateCluster({ ...value }));
+            if (res?.success) {
+                message.success(`${mode === 'ADD' ? '导入' : '编辑'}成功`);
+                setLoading(false)
+                onClose();
+                onSave();
+            }
+        } catch (error) {
+            setLoading(false)
+
         }
     }
 
@@ -60,7 +68,8 @@ export default function AddDrawer(props: any) {
             footer={
                 <div className="drawer-footer">
                     <Button type="default" onClick={onClose}>取消</Button>
-                    <Button type="primary" onClick={handleSubmit}>{mode === 'ADD' ? '导入' : '保存'}</Button>
+                    {mode === 'ADD' && <Button type="primary" onClick={handleSubmit} loading={loading}>导入</Button>}
+                    {mode === 'EDIT' && <Popconfirm title='确定保存吗？' onConfirm={handleSubmit}><Button type="primary" loading={loading}>保存</Button></Popconfirm>}
                 </div>
             }
         >
