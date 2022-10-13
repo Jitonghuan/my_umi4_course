@@ -79,7 +79,7 @@ const submit=async(params:any)=>{
     title:values?.title,
     ...params,
     validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
-    validEndTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+    validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
     }).then(()=>{
     onSave()
   })

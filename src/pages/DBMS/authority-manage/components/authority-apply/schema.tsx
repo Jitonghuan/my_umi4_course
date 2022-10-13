@@ -20,7 +20,19 @@ export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "autoReviewWrong":{tagColor:"error",tagText:"自动审核不通过"},
   "exception":{tagColor:"volcano",tagText:"执行有异常"},
 }
-
+const privWfTypeOptions=[
+  {
+    label:"我发起的",
+    value:"creator",
+    key:"creator",
+  },
+  {
+    label:"我审批的",
+    value:"auditor",
+    key:"auditor",
+  },
+ 
+]
 export const currentStatusOptions=[
   {
     label:"已正常结束",
@@ -104,9 +116,22 @@ export const createFormItems = (params: {
       renderLabel:true,
      
     },
-
     {
       key: '2',
+      type: 'select',
+      label: '工单类别',
+      dataIndex: 'privWfType',
+      width: '160px',
+      placeholder: '请选择',
+      showSelectSearch: true,
+      option:privWfTypeOptions,
+      renderLabel:true,
+     
+    },
+
+
+    {
+      key: '3',
       type: 'select',
       label: '申请人',
       dataIndex: 'userName',
@@ -115,7 +140,7 @@ export const createFormItems = (params: {
       option:params?.userNameOptions,
     },
     {
-      key: '3',
+      key: '4',
       type: 'input',
       label: '标题',
       dataIndex: 'title',
@@ -215,7 +240,7 @@ export const createTableColumns = (params: {
         render: (value) => <><Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip> </>,
       },
       {
-        title: '时间',
+        title: '创建时间',
         dataIndex: 'startTime',
         key: 'startTime',
         width: '15%',

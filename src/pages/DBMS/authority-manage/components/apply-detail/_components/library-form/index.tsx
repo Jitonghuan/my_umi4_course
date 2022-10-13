@@ -58,6 +58,7 @@ useEffect(()=>{
     };
    
     const selectTimeInterval=useCallback((timeValue:number)=>{
+      const now = new Date().getTime();
       let start = Number((now - timeValue) / 1000).toString();
       let end = Number(now / 1000).toString();
       setStartTime(start)

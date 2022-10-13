@@ -7,8 +7,9 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { Card,Descriptions,Space ,Tag,Table,Input,Modal,Popconfirm,Form,Spin,Radio,DatePicker} from 'antd';
-import React,{useMemo,useState,useEffect} from 'react';
-import type { DatePickerProps } from 'antd';
+import React,{useMemo,useState,useEffect,useCallback} from 'react';
+import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
+
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import {ExclamationCircleOutlined} from '@ant-design/icons';
@@ -39,6 +40,7 @@ export default function ApprovalEnd(){
   const [runSqlform]=Form.useForm()
   const [loading,setLoading]=useState<boolean>(false);
   const [status,setstatus]=useState<string>("");
+  const [runMode,setRunMode]=useState<number>(1)
   const [owner,setOwner]=useState<any>([]);
   const [auditLoading, auditTicket]= useAuditTicket();
   //useRunSql
@@ -61,36 +63,53 @@ export default function ApprovalEnd(){
      
     }
 
-  },[query])
+  },[])
 
   useEffect(()=>{
     if(!initInfo?.record?.id) return
 
     getInfo()
   },[])
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChange = (
+    value: DatePickerProps['value'] | RangePickerProps['value'],
+    dateString: | string,
+  ) => {
+    console.log('Selected Time: ', value);
+    console.log('Formatted Selected Time: ', dateString);
     setDateString(dateString)
   };
-  const showRunSqlConfirm = () => {
+  
+  const onOk = (value: DatePickerProps['value'] | RangePickerProps['value']) => {
+    console.log('onOk: ', value);
+   
+  };
+  
+  const showRunSqlConfirm =() => {
+    runSqlform.resetFields()
     confirm({
       title: '请选择执行方式',
       icon: <ExclamationCircleOutlined />,
       content: (
         <Form form={runSqlform}>
-          <Form.Item name="runMode"   rules={[{ required: true, message: '请输入' }]}>
-          <Radio.Group options={runModeOptions} />
+          <Form.Item name="runMode" label="执行方式"  rules={[{ required: true, message: '请输入' }]}>
+          <Radio.Group options={runModeOptions} onChange={(e)=>setRunMode(e.target.value)} />
 
-          </Form.Item>
-          <Form.Item>
-          <DatePicker onChange={onChange} />
-          </Form.Item>
+          </Form.Item >
+          {runMode===2? <Form.Item label="执行时间" name="runTime" rules={[{ required: true, message: '请选择' }]}>
+          <DatePicker showTime onChange={onChange} format="YYYY-MM-DD HH:mm:ss" onOk={onOk} />
+          </Form.Item>:
+           <Form.Item label="执行时间" name="runTime" >
+           <DatePicker showTime onChange={onChange} format="YYYY-MM-DD HH:mm:ss" onOk={onOk} />
+           </Form.Item>
+          }
+        
+        
         </Form>
       ),
       onOk () {
-        form.validateFields().then((info)=>{
-          
-          runSql({runMode:info?.runMode,runDate:dateString,id:initInfo?.record?.id}).then(()=>{
+        runSqlform.validateFields().then((info)=>{
+         
+          runSql({runMode:info?.runMode,runDate:info?.runTime.format('YYYY-MM-DD HH:mm'),id:initInfo?.record?.id}).then(()=>{
             getInfo()
           })
         })
@@ -108,7 +127,7 @@ export default function ApprovalEnd(){
       icon: <ExclamationCircleOutlined />,
       content: (
         <Form form={form}>
-          <Form.Item name="remark"  rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item name="reason"  rules={[{ required: true, message: '请输入' }]}>
             <Input.TextArea></Input.TextArea>
 
           </Form.Item>
@@ -116,8 +135,9 @@ export default function ApprovalEnd(){
       ),
       onOk () {
         form.validateFields().then((info)=>{
-          auditTicket({remark:info?.remark,auditType,id:initInfo?.record?.id}).then(()=>{
+          auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id}).then(()=>{
             getInfo()
+            history.back()
           })
         })
       
@@ -132,6 +152,12 @@ export default function ApprovalEnd(){
     useGetSqlInfo(initInfo?.record?.id||id).then((res)=>{
       setInfo(res)
       let auditUsers=[];
+
+    const executeResult=JSON.parse(res?.executeResult||"{}")
+    //reviewContent
+    const reviewContent=JSON.parse(res?.reviewContent||"{}")
+    setReviewContentData(reviewContent)
+    setExecuteResultData(executeResult)
      
       if(res?.audit?.length>0){
         setstatus(res?.audit[0]?.AuditStatus)
@@ -140,13 +166,16 @@ export default function ApprovalEnd(){
           auditUsers=res?.audit[0]?.Groups 
           setOwner(auditUsers)
 
-    const executeResult=JSON.parse(res?.executeResult||"{}")
-    //reviewContent
-    const reviewContent=JSON.parse(res?.reviewContent||"{}")
-    setReviewContentData(reviewContent)
-    setExecuteResultData(executeResult)
         
         // }
+
+      }else{
+        setstatus("")
+        setStatusText("")
+        // if(res?.audit[0]?.AuditStatus==="wait"){
+          auditUsers=res?.audit[0]?.Groups 
+          setOwner([])
+
 
       }
       
@@ -185,6 +214,7 @@ export default function ApprovalEnd(){
        {status==="wait"&&    <Popconfirm  title="确认撤销该工单吗?"
             onConfirm={() => {
               showConfirm("abort")
+            
             }}>
          <Tag color="orange" >撤销工单</Tag>
          </Popconfirm>}
@@ -211,17 +241,18 @@ export default function ApprovalEnd(){
     size="small"
     labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap',width: 100 }}
     contentStyle={{ color: '#000' }}
-    column={2}
+    column={3}
     >
   <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
   <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
-  <Descriptions.Item label="变更库" span={2}>{info?.dbCode}</Descriptions.Item>
+  <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
   {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
-  <Descriptions.Item label="上线理由" span={2}>{info?.remark}</Descriptions.Item>
-  <Descriptions.Item label="变更sql"span={2} ><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.sqlContent}</span></Descriptions.Item>
+  <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
+  <Descriptions.Item label="变更sql"span={3} ><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.sqlContent}</span></Descriptions.Item>
   {/* <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item> */}
   {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
   {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
+  <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
 
   </Descriptions>
   </Spin>
@@ -239,7 +270,15 @@ export default function ApprovalEnd(){
       <div style={{marginBottom:10}}>
           <Space>
               <span><b>执行详情</b></span>&nbsp;&nbsp;
-             {info?.currentStatus==="manReviewing"&&<span><Spin spinning={runLoading}><Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag></Spin></span>} 
+              {info?.currentStatus==="reviewPass"&&<span>
+                <Spin spinning={runLoading}>
+                  <Space>
+                  <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>
+                
+
+                  </Space>
+                  
+                </Spin></span>} 
              
           </Space>
      </div>
@@ -248,7 +287,9 @@ export default function ApprovalEnd(){
       {executeResultData?.length>0&&(
         Object.keys(executeResultData[0])?.map((item:any)=>{
           return(
-            <Table.Column title={item} dataIndex={item}  ellipsis={true}  key={item}  />
+            <Table.Column title={item} dataIndex={item}    ellipsis={{
+              showTitle: true,
+            }}  key={item}  />
           )
         })
 
@@ -257,7 +298,9 @@ export default function ApprovalEnd(){
           {reviewContentData?.length>0&&(
             Object.keys(reviewContentData[0])?.map((item:any)=>{
               return(
-                <Table.Column title={item} dataIndex={item}   key={item}  />
+                <Table.Column title={item} dataIndex={item}  ellipsis={{
+                  showTitle: true,
+                }}  key={item}  />
               )
             })
 

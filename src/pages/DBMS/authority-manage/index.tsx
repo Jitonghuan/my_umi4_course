@@ -2,19 +2,36 @@
 import React, { useState,useEffect} from 'react';
 import {  Tabs } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history } from 'umi';
+import { history ,useLocation} from 'umi';
 import AuthorityApply from '../authority-manage/components/authority-apply';
 import MyAuthority from '../authority-manage/components/my-authority';
 import VCPermission from '@/components/vc-permission';
+import { parse ,stringify} from 'query-string';
 import './index.less'
 const { TabPane } = Tabs;
 export default function AuthorityManage(){
+    let location = useLocation();
+    const query = parse(location.search);
     const [tabKey, setTabKey] = useState<any>('authority-apply');
     useEffect(()=>{
-      history.push({
-        pathname:  `/matrix/DBMS/authority-manage/authority-apply`,
-        
-      });
+      if(query?.detail==="true"&&query?.id){
+        const info={...query}
+        history.push({
+          pathname:  `/matrix/DBMS/authority-manage/authority-apply`,
+          search:  stringify(info),
+          
+        });
+
+      }else{
+        history.push({
+          pathname:  `/matrix/DBMS/authority-manage/authority-apply`,
+          
+        });
+
+      }
+      
+
+      
     },[])
     
 

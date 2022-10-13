@@ -93,7 +93,11 @@ useEffect(()=>{
   const createSqlApply=useCallback(async(params:querySqlItems)=>{
     setSqlLoading(true)
     const createItems=form?.getFieldsValue()
-   console.log("startTime",startTime)
+    if(!end||!start||!createItems?.title||!createItems?.instanceId||!createItems?.dbCode||!createItems?.tableCode||!params?.sqlContent){
+      message.warning("请先进行信息且输入sql语句再提交变更！")
+      return
+
+    }
   
    await createSql({
       ...params,
@@ -101,8 +105,12 @@ useEffect(()=>{
       runEndTime:end,
       runStartTime:start,
     }).then((res)=>{
+      // if(res?.code===1000){
+      //   message.success("提交成功！")
+      // }
       if(res?.success){
        message.success("提交成功！")
+       history.back()
       }else{
         return
       }
@@ -122,7 +130,7 @@ useEffect(()=>{
     
               </Form.Item>
               <Form.Item name="sqlWfType">
-                <Select  placeholder="在线变更" options={sqlWfTypeOptions}/>
+                <Select  placeholder="普通变更" options={sqlWfTypeOptions}/>
     
               </Form.Item>
 
@@ -174,7 +182,7 @@ useEffect(()=>{
                <p>2.请不要编写对数据库不友好的SQL，以免影响线上业务运行。</p>
                <p>3. 表结构变更和数据订尽量分别提工单。</p>
                <p>4. <b>离线变更</b>指的是发布sql到不同外网的环境。</p>
-               <p>5. <b>在线变更</b>指的是发布sql到当前环境</p>
+               <p>5. <b>普通变更</b>指的是发布sql到当前环境</p>
 
 
              </div>}

@@ -15,10 +15,10 @@ getRequest(APIS.getSqlInfoApi,{data:{id}}).then((res: any) => {
 //auditApi
 export function useAuditTicket(): [
     boolean,
-    (paramsObj: { auditType: string; remark?: string;id:number}) => Promise<void>,
+    (paramsObj: { auditType: string; reason?: string;id:number}) => Promise<void>,
   ] {
     const [loading, setLoading] = useState<boolean>(false);
-    const auditTicket = async (paramsObj: { auditType: string; remark?: string;id:number }) => {
+    const auditTicket = async (paramsObj: { auditType: string; reason?: string;id:number }) => {
       setLoading(true);
       await postRequest(APIS.auditApi, { data: paramsObj })
         .then((result) => {
@@ -34,4 +34,28 @@ export function useAuditTicket(): [
     };
   
     return [loading, auditTicket];
+  }
+
+  //runSqlApi
+  export function useRunSql(): [
+    boolean,
+    (paramsObj: { runMode: number; runDate?: string;id:number}) => Promise<void>,
+  ] {
+    const [loading, setLoading] = useState<boolean>(false);
+    const runSql = async (paramsObj: { runMode: number; runDate?: string;id:number }) => {
+      setLoading(true);
+      await postRequest(APIS.runSqlApi, { data: paramsObj })
+        .then((result) => {
+          if (result.success) {
+            message.success('审批成功！');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+  
+    return [loading, runSql];
   }

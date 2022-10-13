@@ -74,14 +74,18 @@ export const createDataFormItems = (params: {
     {
       key: '2',
       type: 'select',
-      label: '变更库',
-      dataIndex: 'dbCode',
+      label: '工单类别',
+      dataIndex: 'privWfType',
       width: '160px',
+      placeholder: '请选择',
       showSelectSearch: true,
-      option:[],
+      option:privWfTypeOptions,
+      renderLabel:true,
+     
     },
+    
     {
-        key: '2',
+        key: '3',
         type: 'select',
         label: '申请人',
         dataIndex: 'userName',
@@ -90,10 +94,10 @@ export const createDataFormItems = (params: {
         option:params?.userNameOptions,
       },
     {
-      key: '3',
+      key: '4',
       type: 'input',
-      label: '申请原因',
-      dataIndex: 'remark',
+      label: '标题',
+      dataIndex: 'title',
       width: '160px',
       placeholder: '请输入',
     },
@@ -101,6 +105,19 @@ export const createDataFormItems = (params: {
 };
 
 
+const privWfTypeOptions=[
+  {
+    label:"我发起的",
+    value:"creator",
+    key:"creator",
+  },
+  {
+    label:"我审批的",
+    value:"auditor",
+    key:"auditor",
+  },
+ 
+]
 // 列表页-表格
 export const createTableColumns = (params: {
   onDetail: (record: any, index: number) => void;

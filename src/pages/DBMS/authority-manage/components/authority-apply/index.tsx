@@ -40,7 +40,7 @@ export default function AuthorityApply (){
       }
       
 
-    },[query])
+    },[])
     const formOptions = useMemo(() => {
       return createFormItems({
         // currentStatusOptions,

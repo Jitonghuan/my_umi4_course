@@ -26,7 +26,7 @@ export default function LibraryForm (props:IProps,ref:any){
   const [type,setType]=useState<string>("time-interval")
   const [startTime,setStartTime]=useState<string>('')
   const [endTime,setEndTime]=useState<string>('')
-  const now = new Date().getTime();
+ 
 
       
 useEffect(()=>{
@@ -49,6 +49,7 @@ useEffect(()=>{
     };
    
     const selectTimeInterval=(timeValue:number)=>{
+      const now = new Date().getTime();
       let start = Number((now - timeValue) / 1000).toString();
       let end = Number(now / 1000).toString();
       setStartTime(start)

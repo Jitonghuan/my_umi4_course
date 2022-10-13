@@ -9,10 +9,11 @@ interface Iprops{
   sqlLoading:boolean;
   formRef:any;
   queryTableFields:(params:any)=>any;
+  copyAdd:(sqlContent:string)=>any;
   
 }
 export default forwardRef(function QueryResult(props:Iprops,ref:any){
-  const {sqlResult,sqlLoading,formRef,queryTableFields}=props;
+  const {sqlResult,sqlLoading,formRef,queryTableFields,copyAdd}=props;
   const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
 
   const [curRecord,setCurRecord]=useState<any>({});
@@ -23,7 +24,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
         {
           onCopy: (record, index) => {
            if(formRef){
-            console.log("formRef",formRef)
+         
             formRef.current.setFieldsValue({
               ...record
             })
@@ -32,6 +33,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
             })
            }
             setCurRecord(record)
+            copyAdd(record?.sqlContent)
           },
          
         }
@@ -55,7 +57,8 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
         addQueryResult: () => {add()},
         queryResultItems:items,
         queryResultActiveKey:activeKey,
-        curCopyRecord:curRecord
+       
+        // copyAdd
         
 
 
@@ -127,7 +130,9 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
           {sqlResultSource?.length>0&&(
             Object.keys(sqlResultSource[0])?.map((item:any)=>{
               return(
-                <Table.Column title={item} dataIndex={item}   key={item}  />
+                <Table.Column title={item}  ellipsis={{
+                  showTitle: true,
+                }} dataIndex={item}   key={item}  />
               )
             })
 

@@ -17,8 +17,6 @@ export default function ResizeLayout() {
   const addQueryResult = () => queryResultRef?.current?.addQueryResult();
   const addSqlConsole = () => sqlConsoleRef?.current?.addSqlConsole;
   const queryResultItems=queryResultRef?.current?.queryResultItems;
-  //curCopyRecord
-  const curCopyRecord=queryResultRef?.current?.curCopyRecord;
   const sqlConsoleItems=sqlConsoleRef?.current?.sqlConsoleItems;
   const queryResultActiveKey=queryResultRef?.current?.queryResultActiveKey;
   const sqlConsoleActiveKey=sqlConsoleRef?.current?.sqlConsoleActiveKey;
@@ -28,6 +26,7 @@ export default function ResizeLayout() {
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [loading, tableFields,tableFieldsOptions, queryTableFields,setOptions]=useQueryTableFieldsOptions();
   const [initSqlValue,setInitSqlValue]=useState<string>("")
+  const [implementDisabled,setImplementDisabled]=useState<boolean>(true);
   // const initSqlValue = useRef<any>(null);
   const [firstInitSqlValue,setFirstInitSqlValue]=useState<string>("")
   // const sqlValue= useRef<any>(null);
@@ -35,12 +34,17 @@ export default function ResizeLayout() {
 
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
   const [sqlResult,setSqlResult]=useState<any>("")
-
+ 
  
 
   const querySqlResult=(params:{sqlContent:string,sqlType:string})=>{
     setSqlLoading(true)
     const values=form?.getFieldsValue();
+    if(!values?.instanceId||!values?.dbCode||!values?.tableCode||!params?.sqlContent){
+      message.warning("请先进行信息选择并且输入sql语句再查询！")
+      return
+
+    }
     querySqlResultInfo({...params,... values}).then((res)=>{
       if(res?.success){
        
@@ -82,6 +86,14 @@ export default function ResizeLayout() {
 
     })
    )
+  }
+  const copyAdd=(sqlContent:string)=>{
+    debugger
+    //curCopyRecord
+    let initsql= sqlContent||"select * from user limit 10"
+    addSqlConsole
+    setInitSqlValue(initsql)
+    setImplementDisabled(false)
   }
   const leftContent=useMemo(()=>{
     return(
@@ -128,6 +140,11 @@ export default function ResizeLayout() {
             queryTableFields({...values})
             setFirstInitSqlValue(`select * from ${table} limit 10`)
             setInitSqlValue(`select * from ${table} limit 10`)
+            if(!values?.instanceId||!values?.dbCode||!values?.tableCode){
+              setImplementDisabled(true)
+            }else if(values?.instanceId&&values?.dbCode&&values?.tableCode){
+              setImplementDisabled(false)
+            }
             
             } } />
           </Form.Item>
@@ -145,20 +162,34 @@ export default function ResizeLayout() {
       return(
         <>
           <div className="container-top">
-            {console.log("初始值",initSqlValue)}
-          <SqlConsole ref={sqlConsoleRef} tableFields={tableFields}  querySqlResult={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)} sqlLoading={sqlLoading} firstInitSqlValue={firstInitSqlValue} initSqlValue={initSqlValue} />
+          
+          <SqlConsole 
+          ref={sqlConsoleRef} 
+          tableFields={tableFields} 
+          querySqlResult={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)} 
+          sqlLoading={sqlLoading} 
+          firstInitSqlValue={firstInitSqlValue} 
+          initSqlValue={initSqlValue}
+          implementDisabled={implementDisabled} />
           
           </div>
           <div className="container-bottom">
             
-            <QueryResult ref={queryResultRef} sqlResult={sqlResult} sqlLoading={sqlLoading} formRef={formRef} queryTableFields={queryTableFields} />
+            <QueryResult 
+            ref={queryResultRef} 
+            sqlResult={sqlResult} 
+            sqlLoading={sqlLoading} 
+            formRef={formRef} 
+            queryTableFields={queryTableFields}
+            copyAdd={(sqlContent:string)=>copyAdd(sqlContent)}
+             />
          
             
           </div>
 
         </>
       )
-    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue]);
+    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue,implementDisabled]);
    
     return (
       // <PageContainer>

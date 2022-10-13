@@ -7,13 +7,16 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 
-import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin} from 'antd';
+import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin,Table,DatePicker,Radio} from 'antd';
 import React,{useMemo,useState,useEffect} from 'react';
+import type { DatePickerProps } from 'antd';
+import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import {ExclamationCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
 import {history,useLocation} from 'umi';
+
 import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
-import {useGetSqlInfo,useAuditTicket} from './hook';
+import {useGetSqlInfo,useAuditTicket,useRunSql} from './hook';
 import { parse } from 'query-string';
 
 import './index.less'
@@ -23,14 +26,28 @@ const StatusMapping: Record<string, number> = {
   pass:2,
   reject:2
 };
+const runModeOptions=[
+  {
+    label:"立即执行",
+    value:1
+  },
+  {
+    label:"定时执行",
+    value:2
+  }
+]
 export default function TicketApproval(){
   const [info,setInfo]=useState<any>({});
+  const [dateString,setDateString]=useState<string>("");
   const [form]=Form.useForm()
+  const [runSqlform]=Form.useForm()
   const [loading,setLoading]=useState<boolean>(false);
   const [status,setstatus]=useState<string>("");
   const [statusText,setStatusText]=useState<string>("");
   const [owner,setOwner]=useState<any>([]);
+  const [reviewContentData,setReviewContentData]=useState<any>([])
   const [auditLoading, auditTicket]= useAuditTicket();
+  const [runLoading, runSql]= useRunSql();
   let location = useLocation();
   const initInfo: any = location.state || {};
   const { confirm } = Modal;
@@ -45,7 +62,40 @@ export default function TicketApproval(){
      
     }
 
-  },[query])
+  },[])
+  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(date, dateString);
+    setDateString(dateString)
+  };
+  const showRunSqlConfirm = () => {
+    confirm({
+      title: '请选择执行方式',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <Form form={runSqlform}>
+          <Form.Item name="runMode" label="执行方式"  rules={[{ required: true, message: '请输入' }]}>
+          <Radio.Group options={runModeOptions} />
+
+          </Form.Item >
+          <Form.Item label="执行时间" name="runTime" rules={[{ required: true, message: '请选择' }]}>
+          <DatePicker onChange={onChange} />
+          </Form.Item>
+        </Form>
+      ),
+      onOk () {
+        form.validateFields().then((info)=>{
+          
+          runSql({runMode:info?.runMode,runDate:dateString,id:initInfo?.record?.id}).then(()=>{
+            getInfo()
+          })
+        })
+      
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
 
  
   
@@ -61,16 +111,17 @@ export default function TicketApproval(){
       icon: <ExclamationCircleOutlined />,
       content: (
         <Form form={form}>
-          <Form.Item name="remark"  rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item name="reason"  rules={[{ required: true, message: '请输入' }]}>
             <Input.TextArea></Input.TextArea>
 
           </Form.Item>
         </Form>
       ),
       onOk () {
-        form.validateFields().then((remark)=>{
-          auditTicket({remark,auditType,id:initInfo?.record?.id}).then(()=>{
-            getInfo()
+        form.validateFields().then((info)=>{
+          auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id}).then(()=>{
+            getInfo();
+            history.back()
           })
         })
       
@@ -84,6 +135,14 @@ export default function TicketApproval(){
     setLoading(true)
     useGetSqlInfo(initInfo?.record?.id||id).then((res)=>{
       setInfo(res)
+      let reviewContent=[]
+      try {
+        reviewContent=JSON.parse(res?.reviewContent||"{}")
+      } catch (error) {
+        
+      }
+      
+setReviewContentData(reviewContent)
       let auditUsers=[];
      
       if(res?.audit?.length>0){
@@ -92,6 +151,7 @@ export default function TicketApproval(){
         // if(res?.audit[0]?.AuditStatus==="wait"){
           auditUsers=res?.audit[0]?.Groups 
           setOwner(auditUsers)
+        
         
         // }
 
@@ -107,6 +167,7 @@ export default function TicketApproval(){
   
    
     return(<PageContainer className="ticket-approval-detail">
+      <ContentCard>
      {/* ------------------------------- */}
      <Spin spinning={loading}>
      <div className="ticket-detail-title">
@@ -121,6 +182,7 @@ export default function TicketApproval(){
         {status==="wait"&&    <Popconfirm  title="确认撤销该工单吗?"
             onConfirm={() => {
               showConfirm("abort")
+             
             }}>
          <Tag color="orange" >撤销工单</Tag>
          </Popconfirm>}
@@ -168,7 +230,7 @@ export default function TicketApproval(){
     </Spin>
    
     {/* ------------------------------- */}
-  <Card style={{ width: "100%" ,marginTop:16 }} size="small" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
+  <Card style={{ width: "100%" ,marginTop:12 }} size="small" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
   <Spin spinning={auditLoading}>
           <Steps direction="vertical" current={StatusMapping[status] || -1} size="small">
             <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
@@ -180,12 +242,34 @@ export default function TicketApproval(){
                {status==="wait"&&( <Tag color="success" onClick={()=>{
                 auditTicket({auditType:"pass",id:initInfo?.record?.id}).then(()=>{
                   getInfo()
+                  history.back()
                 })
-             }}>审批通过</Tag> )}
+             }}>审批通过</Tag> 
+             
+             )}
+           {status==="wait"&&(  <Tag color="volcano" onClick={()=>showConfirm("reject")}>拒绝</Tag> )}
             </Space>} />
          </Steps>
 
-</Spin>
+       </Spin>
           </Card>
+          <div  style={{marginTop:12 }} >
+         
+          <Table   scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
+          {reviewContentData?.length>0&&(
+            Object.keys(reviewContentData[0])?.map((item:any)=>{
+              return(
+                <Table.Column title={item}  ellipsis={{
+                  showTitle: true,
+                }} dataIndex={item}   key={item}  />
+              )
+            })
+
+          )}
+        </Table>
+
+          </div>
+         
+        </ContentCard>
     </PageContainer>)
 }

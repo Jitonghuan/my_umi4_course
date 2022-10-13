@@ -84,17 +84,18 @@ export default function CreateArticle(props: CreateArticleProps) {
       icon: <ExclamationCircleOutlined />,
       content: (
         <Form form={form}>
-          <Form.Item name="remark"  rules={[{ required: true, message: '请输入' }]}>
+          <Form.Item name="reason"  rules={[{ required: true, message: '请输入' }]}>
             <Input.TextArea></Input.TextArea>
 
           </Form.Item>
         </Form>
       ),
       onOk () {
-        form.validateFields().then((remark)=>{
-          auditTicket({remark,auditType,id:curRecord?.id}).then(()=>{
+        form.validateFields().then((info)=>{
+          auditTicket({reason:info?.reason,auditType,id:curRecord?.id}).then(()=>{
             getInfo()
             getList()
+            
           })
         })
       
@@ -169,6 +170,8 @@ export default function CreateArticle(props: CreateArticleProps) {
              {status==="wait"&&(<> <Tag color="geekblue" onClick={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id}).then(()=>{
                   getInfo()
+                
+                  getList()
                 })
              }}>同意</Tag> <Tag color="volcano" onClick={()=>showConfirm("reject")}>拒绝</Tag>  </>)}
             

@@ -19,6 +19,11 @@ export default function RightContent(props:Iprops){
   // const executeResult=JSON.parse(res?.executeResult||"{}")
   const getInfo=(sqlContent:string)=>{
     setLoading(true)
+    if(!createItems?.instanceId||!createItems?.dbCode||!sqlContent){
+      message.warning("请先进行信息且输入sql语句再进行sql检测！")
+      return
+
+    }
     checkSql({...createItems,sqlContent}).then((res)=>{
     
     if(res?.code===1000){
@@ -51,6 +56,7 @@ export default function RightContent(props:Iprops){
         tableFields={tableFields} 
         subSqlChange={(params:{sqlContent:string})=>createSql(params)}
         sqlCheck={(sqlContent:string)=>getInfo(sqlContent)}
+        isGoback={true}
 
         />
       </div>
@@ -64,7 +70,9 @@ export default function RightContent(props:Iprops){
       {executeResultData?.length>0&&(
         Object.keys(executeResultData[0])?.map((item:any)=>{
           return(
-            <Table.Column title={item} dataIndex={item}   key={item}  />
+            <Table.Column title={item}  ellipsis={{
+              showTitle: true,
+            }} dataIndex={item}   key={item}  />
           )
         })
 

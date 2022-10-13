@@ -13,6 +13,7 @@
  import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
  import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql';
  import { format } from 'sql-formatter';
+ import {history} from 'umi'
  import './index.less'
  export const hintData:any = {
     adbs: ['dim_realtime_recharge_paycfg_range', 'dim_realtime_recharge_range'],
@@ -34,13 +35,18 @@
     isSqlExecuteBtn?:boolean;
     isSqlExecutePlanBtn?:boolean;
     tableFields?:any;
+    implementDisabled:boolean;
+    isGoback?:boolean;
    
     
   }
   const { keywords } = language
  
 export default function SqlEditor(props:Iprops){
-  const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,sqlCheck,isSqlExecuteBtn,initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange,subSqlChange}=props;
+  const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,sqlCheck,isSqlExecuteBtn,
+    isGoback,
+    implementDisabled=false,
+    initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange,subSqlChange}=props;
     // const codeContainerRef = useRef(null) as any;
     
     const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
@@ -254,12 +260,18 @@ export default function SqlEditor(props:Iprops){
         <div className="monaco-sql-editor-content">
             <div className="monaco-sql-editor-title">
                 <Space className={`${rootCls}-wrapper`}>
-                   {isSqlExecuteBtn&&<span className={`${rootCls}-btn`} id="one" onClick={()=>{
+                   {isSqlExecuteBtn&&!implementDisabled&&<span className={`${rootCls}-btn`} id="one" onClick={()=>{
                         
                          subChange({sqlContent:instance?.getValue()||"",sqlType:"query"})
                          
                          
                     }}>执行</span> } 
+                     {isSqlExecuteBtn&&implementDisabled&&<span className={`${rootCls}-btn-disabled`} id="one-disabled" onClick={()=>{
+                        
+                      
+                        
+                        
+                   }}>执行</span> } 
                    {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two" onClick={()=>{
                       
                        sqlCheck(instance?.getValue()||"")
@@ -274,6 +286,13 @@ export default function SqlEditor(props:Iprops){
                          
                          
                     }}>提交变更</span> } 
+                    {isGoback&&<span className={`${rootCls}-btn`} id="back" onClick={()=>{
+                      history.push(
+                        {
+                          pathname:"/matrix/DBMS/data-change"
+                        }
+                      )
+                    }}>返回</span>}
                 </Space>
             </div>
             {/* calc(100vh - 566px */}

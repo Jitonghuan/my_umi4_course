@@ -7,9 +7,10 @@ interface Iprops{
   sqlLoading:boolean;
   initSqlValue:string;
   firstInitSqlValue:string;
+  implementDisabled:boolean
 }
 export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
-  const {tableFields,querySqlResult,initSqlValue,firstInitSqlValue}=props
+  const {tableFields,querySqlResult,initSqlValue,firstInitSqlValue,implementDisabled}=props
     const { TabPane } = Tabs;
     useImperativeHandle(ref, () => ({
         addSqlConsole: add,
@@ -42,6 +43,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
         tableFields={tableFields} 
         initValue={firstInitSqlValue||"select * from user limit 10"}
         subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
+        implementDisabled={implementDisabled}
        
         />, 
         key: id };
