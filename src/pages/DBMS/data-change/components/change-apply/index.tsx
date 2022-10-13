@@ -1,6 +1,6 @@
 import React, { useState,useEffect,Component,useMemo,useRef,useCallback} from 'react';
 import {  Tabs,Form,Space,Button,Select,message,DatePicker,Input,Alert,Divider } from 'antd';
-import {RightCircleFilled,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
+import {InfoCircleOutlined,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
 import {useEnvList,querySqlResultInfo,useQueryLogsList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../../../common-hook'
@@ -24,11 +24,11 @@ const sqlWfTypeOptions=[
 const runModeOptions=[
   {
     label:"立即执行",
-    value:1
+    value:"now"
   },
   {
     label:"定时执行",
-    value:2
+    value:"timing"
   }
 ]
 // import './index.less';
@@ -170,7 +170,21 @@ useEffect(()=>{
               </Form.Item> */}
            </Form>
            <Divider/>
-           <Alert 
+           <div className="info-alert">
+           <p><InfoCircleOutlined style={{color:"#6495ED",fontSize:24}} />&nbsp;<span style={{color:"#6495ED",fontSize:20}}><b>说明</b></span></p>
+           <p>  
+                1.多条SQL, 请用英文分号隔开。
+               </p>
+               <p>2.请不要编写对数据库不友好的SQL，以免</p>
+                <p> 影响线上业务运行。</p>
+               <p>3. 表结构变更和数据订尽量分别提工单。</p>
+               <p>4. <b>离线变更</b>指的是发布sql到不同外网的环境。</p>
+               <p>5. <b>普通变更</b>指的是发布sql到当前环境</p>
+
+
+
+           </div>
+           {/* <Alert 
              message="说明" 
              type="info" 
              showIcon 
@@ -187,7 +201,7 @@ useEffect(()=>{
 
              </div>}
 
-           />
+           /> */}
         </>
       
     )
@@ -207,7 +221,8 @@ useEffect(()=>{
         leftContent={leftContent}
         rightContent={rightContent}
         showIcon={false}
-        initWidth={150}
+        // initWidth={400}
+        dataChangeinitWidth={325}
         />
       //  </PageContainer>
      

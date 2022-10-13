@@ -88,7 +88,7 @@ export default function ResizeLayout() {
    )
   }
   const copyAdd=(sqlContent:string)=>{
-    debugger
+   
     //curCopyRecord
     let initsql= sqlContent||"select * from user limit 10"
     addSqlConsole

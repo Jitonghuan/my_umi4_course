@@ -179,6 +179,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
          onChange={onChange}
          activeKey={activeKey}
          type="editable-card"
+         className="query-result-tabs"
          onEdit={onEdit}
          // items={items}
          tabBarExtraContent={

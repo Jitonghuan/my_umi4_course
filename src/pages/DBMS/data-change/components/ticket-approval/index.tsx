@@ -29,11 +29,11 @@ const StatusMapping: Record<string, number> = {
 const runModeOptions=[
   {
     label:"立即执行",
-    value:1
+    value:"now"
   },
   {
     label:"定时执行",
-    value:2
+    value:"timing"
   }
 ]
 export default function TicketApproval(){

@@ -9,13 +9,16 @@ export interface Iprops{
     showIcon:boolean;//是否显示Icon；
     initWidth?:number;//左边内容初始宽度；
     least?:number//左边内容可以拖拽的最小宽度；
+    dataChangeinitWidth?:number
 }
 
 export default function ResizeLayout(props:Iprops) {
-    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150} =props
+    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150,dataChangeinitWidth} =props
     const [siderWidth, setSiderWidth] = useState<any>(
-        //@ts-ignore
-      parseInt(localStorage.getItem('siderWidth')) || initWidth,
+       //@ts-ignore
+      dataChangeinitWidth?dataChangeinitWidth: parseInt(localStorage.getItem('siderWidth')) ? parseInt(localStorage.getItem('siderWidth')):initWidth
+       
+      // parseInt(localStorage.getItem('siderWidth')) || initWidth,
     );
     const [dragging, setDragging] = useState(false);
     const [startPageX, setStartPageX] = useState(0);

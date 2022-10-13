@@ -39,10 +39,10 @@ export function useAuditTicket(): [
   //runSqlApi
   export function useRunSql(): [
     boolean,
-    (paramsObj: { runMode: number; runDate?: string;id:number}) => Promise<void>,
+    (paramsObj: { runMode: string; runDate?: string;id:number}) => Promise<void>,
   ] {
     const [loading, setLoading] = useState<boolean>(false);
-    const runSql = async (paramsObj: { runMode: number; runDate?: string;id:number }) => {
+    const runSql = async (paramsObj: { runMode: string; runDate?: string;id:number }) => {
       setLoading(true);
       await postRequest(APIS.runSqlApi, { data: paramsObj })
         .then((result) => {

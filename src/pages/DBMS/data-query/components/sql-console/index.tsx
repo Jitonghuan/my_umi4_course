@@ -1,6 +1,7 @@
 import React, { useState,useEffect,Component,useMemo,useRef,forwardRef,useImperativeHandle,useCallback} from 'react';
 import {  Tabs,Form,Space,Button,Select,message } from 'antd';
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
+import './index.less'
 interface Iprops{
   tableFields:any;
   querySqlResult:(params:{sqlContent:string,sqlType:string})=>any
@@ -106,11 +107,15 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
     return(
         <Tabs
         size="small"
+        // animated={{ inkBar: true, tabPane: false }}
          hideAdd
          onChange={onChange}
          activeKey={activeKey}
+        //  tabPosition="top"
          type="editable-card"
+         className="sql-console-tabs"
          onEdit={onEdit}
+        
          // items={items}
        >
         {items?.map((item: any) => (
