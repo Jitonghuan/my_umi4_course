@@ -38,9 +38,7 @@ export default function AuthorityApply (){
         setMode("VIEW")
 
       }
-      return()=>{
-        setMode("HIDE")
-      }
+      
 
     },[query])
     const formOptions = useMemo(() => {
