@@ -39,10 +39,10 @@ export const getSqlInfoApi = `${dmpApiPrefix}/dmp/workflow/sql/info`;
 export const createSqlApi = `${dmpApiPrefix}/dmp/workflow/sql/create`;
 
 /* POST 10、sql检测 */
-export const checkSqlApi = `${dmpApiPrefix}/dmp/workflow/sql/run`;
+export const runSqlApi  = `${dmpApiPrefix}/dmp/workflow/sql/run`;
 
 /* POST 11、sql执行 */
-export const runSqlApi = `${dmpApiPrefix}/dmp/sql/check`;
+export const checkSqlApi = `${dmpApiPrefix}/dmp/sql/check`;
 
 
 /* POST 6、 新增用户信息 */
