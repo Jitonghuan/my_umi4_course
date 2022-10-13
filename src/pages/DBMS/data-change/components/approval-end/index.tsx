@@ -216,12 +216,12 @@ export default function ApprovalEnd(){
   <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
   <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
   <Descriptions.Item label="变更库" span={2}>{info?.dbCode}</Descriptions.Item>
-  <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item>
+  {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
   <Descriptions.Item label="上线理由" span={2}>{info?.remark}</Descriptions.Item>
   <Descriptions.Item label="变更sql"span={2} ><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.sqlContent}</span></Descriptions.Item>
-  <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item>
-  <Descriptions.Item label="sql审核">通过</Descriptions.Item>
-  <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item>
+  {/* <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item> */}
+  {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
+  {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
 
   </Descriptions>
   </Spin>

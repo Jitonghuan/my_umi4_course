@@ -13,7 +13,9 @@ import PageContainer from '@/components/page-container';
 import {ExclamationCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
 import {history,useLocation} from 'umi';
 import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
-import {useGetSqlInfo,useAuditTicket} from './hook'
+import {useGetSqlInfo,useAuditTicket} from './hook';
+import { parse } from 'query-string';
+
 import './index.less'
 const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
@@ -32,6 +34,19 @@ export default function TicketApproval(){
   let location = useLocation();
   const initInfo: any = location.state || {};
   const { confirm } = Modal;
+
+  const query = parse(location.search);
+  useEffect(()=>{
+    if(query?.detail==="true"&&query?.id){
+      const afferentId=Number(query?.id)
+      getInfo(afferentId)
+    }
+    return()=>{
+     
+    }
+
+  },[query])
+
  
   
   useEffect(()=>{
@@ -65,9 +80,9 @@ export default function TicketApproval(){
       },
     });
   };
-  const getInfo=()=>{
+  const getInfo=(id?:number)=>{
     setLoading(true)
-    useGetSqlInfo(initInfo?.record?.id).then((res)=>{
+    useGetSqlInfo(initInfo?.record?.id||id).then((res)=>{
       setInfo(res)
       let auditUsers=[];
      
@@ -142,12 +157,12 @@ export default function TicketApproval(){
   <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
   <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
   <Descriptions.Item label="变更库" span={2}>{info?.dbCode}</Descriptions.Item>
-  <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item>
+  {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
   <Descriptions.Item label="上线理由" span={2}>{info?.remark}</Descriptions.Item>
   <Descriptions.Item label="变更sql"span={2}>{info?.sqlContent}</Descriptions.Item>
-  <Descriptions.Item label="sql检测结果">{}</Descriptions.Item>
-  <Descriptions.Item label="sql审核">{}</Descriptions.Item>
-  <Descriptions.Item label="风险项">{}</Descriptions.Item>
+  {/* <Descriptions.Item label="sql检测结果">{}</Descriptions.Item> */}
+  {/* <Descriptions.Item label="sql审核">{}</Descriptions.Item> */}
+  {/* <Descriptions.Item label="风险项">{}</Descriptions.Item> */}
 
   </Descriptions>
     </Spin>
