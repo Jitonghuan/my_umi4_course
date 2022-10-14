@@ -222,7 +222,7 @@ useEffect(()=>{
         rightContent={rightContent}
         showIcon={false}
         // initWidth={400}
-        dataChangeinitWidth={325}
+        dataChangeinitWidth={330}
         />
       //  </PageContainer>
      
