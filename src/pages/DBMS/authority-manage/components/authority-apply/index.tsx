@@ -7,10 +7,11 @@ import TicketDetail from '../../components/ticket-detail';
 import ApplyDetailDrawer from '../apply-detail'
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import useTable from '@/utils/useTable';
-import {queryWorkflowPrivListApi} from '../../../service'
+import {queryWorkflowPrivListApi,currentAuditsApi} from '../../../service'
 import {history,useLocation} from 'umi';
 import { parse } from 'query-string';
 import {useSearchUser} from '../../../common-hook'
+
 
 export default function AuthorityApply (){
     const [form] = Form.useForm();
@@ -21,6 +22,7 @@ export default function AuthorityApply (){
     const [curRecord,setCurRecord]=useState<any>({});
     const [loading, userNameOptions, searchUser] =useSearchUser()
     const [applyDetailMode,setApplyDetailMode]=useState<EditorMode>("HIDE");
+    
     useEffect(()=>{
       searchUser()
     },[])
@@ -48,6 +50,15 @@ export default function AuthorityApply (){
        
       });
     }, [userNameOptions]);
+    const columns = useMemo(() => {
+      return createTableColumns({
+        onDetail: (record, index) => {
+          setMode("VIEW")
+          setCurRecord(record)
+        },
+       
+      }) as any;
+    }, []);
     const {
         tableProps,
         search: { submit, reset },
@@ -61,7 +72,6 @@ export default function AuthorityApply (){
           };
         },
         formatResult: (result) => {
-          
           return {
             total: result.data?.pageInfo?.total,
             list: result.data?.dataSource || [],
@@ -69,16 +79,27 @@ export default function AuthorityApply (){
           };
         },
       });
-      const columns = useMemo(() => {
-        return createTableColumns({
-          onDetail: (record, index) => {
-            setMode("VIEW")
-            setCurRecord(record)
-          },
-         
-        }) as any;
-      }, []);
-    return(<PageContainer>
+     
+    return(<>
+    
+
+      
+       <TicketDetail
+       mode={mode}
+       curRecord={curRecord}
+       queryId={query?.id||''}
+       onClose={()=>{setMode("HIDE")}}
+       onSave={()=>{setMode("HIDE");
+       reset()}}
+       getList={
+      ()=> reset()}
+
+      />
+      <ApplyDetailDrawer
+      mode={applyDetailMode}
+      onClose={()=>{setApplyDetailMode("HIDE")}}
+      onSave={()=>{setApplyDetailMode("HIDE");reset()}}
+      />
       <TableSearch
         form={form}
         bordered
@@ -108,21 +129,6 @@ export default function AuthorityApply (){
         reset={reset}
         searchText="查询"
       />
-     <TicketDetail
-       mode={mode}
-       curRecord={curRecord}
-       queryId={query?.id||''}
-       onClose={()=>{setMode("HIDE")}}
-       onSave={()=>{setMode("HIDE");
-       reset()}}
-       getList={
-      ()=> reset()}
-
-      />
-      <ApplyDetailDrawer
-      mode={applyDetailMode}
-      onClose={()=>{setApplyDetailMode("HIDE")}}
-      onSave={()=>{setApplyDetailMode("HIDE");reset()}}
-      />
-    </PageContainer>)
+    
+    </>)
 }

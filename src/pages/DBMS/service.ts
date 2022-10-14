@@ -43,6 +43,7 @@ export const runSqlApi  = `${dmpApiPrefix}/dmp/workflow/sql/run`;
 
 /* POST 11、sql执行 */
 export const checkSqlApi = `${dmpApiPrefix}/dmp/sql/check`;
-
-
-/* POST 6、 新增用户信息 */
+//dmp/workflow/log
+export const workflowLogApi = `${dmpApiPrefix}/dmp/workflow/logs`;
+//dmp/workflow/audit/currentAudits
+export const currentAuditsApi = `${dmpApiPrefix}/dmp/workflow/audit/currentAudits`;

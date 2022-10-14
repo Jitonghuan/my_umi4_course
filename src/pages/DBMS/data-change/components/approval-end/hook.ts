@@ -58,3 +58,29 @@ export function useAuditTicket(): [
   
     return [loading, runSql];
   }
+  export function useworkflowLog(): [
+    boolean,
+    any,
+    (id:number) => Promise<void>,
+  ] {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [data,setData]=useState<any>([])
+    const getWorkflowLog = async (id:number ) => {
+      setLoading(true);
+      await getRequest(`${APIS.workflowLogApi}?id=${id}`)
+        .then((result) => {
+          if (result?.success) {
+            let data=result?.data?.workflowLogs||[]
+            setData(data)
+           
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+  
+    return [loading,data, getWorkflowLog];
+  }

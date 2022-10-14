@@ -11,74 +11,36 @@ import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 
 // 列表页-表格
-export const createTableColumns = (params: {
-  onDetail: (record: any, index: number) => void;
-}) => {
+export const createTableColumns = () => {
   return [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: '操作类型',
+      dataIndex: 'operationType',
+      key: 'operationType',
       width: 120,
     },
     {
-      title: 'Sql语句',
-      dataIndex: 'name',
-      key: 'name',
+      title: '操作人',
+      dataIndex: 'operator',
+      key: 'operator',
       width: '14%',
     },
     {
-      title: '执行状态',
-      dataIndex: 'email',
-      key: 'email',
+      title: '操作时间',
+      dataIndex: 'operatorTime',
+      key: 'operatorTime',
       width: '30%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
-      title: '影响函数',
-      dataIndex: 'mobile',
-      key: 'mobile',
-      width: '28%',
+      title: '操作信息',
+      dataIndex: 'operationInfo',
+      key: 'operationInfo',
+      width: '50%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
-    {
-        title: '执行时间',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
-        ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
-      },
-      {
-        title: '备份耗时',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
-        ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
-      },
-      {
-        title: '当前阶段',
-        dataIndex: 'mobile',
-        key: 'mobile',
-        width: '28%',
-        ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
-      },
-    
-    {
-      title: '操作',
-      dataIndex: 'option',
-      key: 'option',
-      width: '14%',
-      render: (_: string, record, index: number) => (
-        //根据不同类型跳转
-        <Space>
-          <a onClick={() => params.onDetail(record, index)}>详情</a>
-        </Space>
-      ),
-    },
+   
   ] as ColumnsType<any>;
 };

@@ -3,6 +3,7 @@ import React, { useState,useEffect} from 'react';
 import {  Tabs } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history ,useLocation} from 'umi';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import AuthorityApply from '../authority-manage/components/authority-apply';
 import MyAuthority from '../authority-manage/components/my-authority';
 import VCPermission from '@/components/vc-permission';
@@ -35,7 +36,10 @@ export default function AuthorityManage(){
     },[])
     
 
-    return(<PageContainer className="authority-manage-page">
+    return(<PageContainer    >
+      <ContentCard noPadding className="authority-manage-page">
+
+     
          <Tabs
         activeKey={tabKey}
         onChange={(val) => {
@@ -62,6 +66,6 @@ export default function AuthorityManage(){
        
         </TabPane>
       </Tabs>
-
+      </ContentCard>
     </PageContainer>)
 }

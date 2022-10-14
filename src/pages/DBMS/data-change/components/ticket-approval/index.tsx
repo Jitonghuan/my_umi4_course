@@ -7,14 +7,16 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 
-import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin,Table} from 'antd';
-import React,{useState,useEffect} from 'react';
+import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin,Table,} from 'antd';
+import React,{useState,useEffect,useMemo} from 'react';
 import { ContentCard, } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import {ExclamationCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
 import {history,useLocation} from 'umi';
+import {createTableColumns} from '../approval-end/schema';
 import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
 import {useGetSqlInfo,useAuditTicket} from './hook';
+import {useworkflowLog} from '../approval-end/hook'
 import { parse } from 'query-string';
 
 import './index.less'
@@ -27,6 +29,7 @@ const StatusMapping: Record<string, number> = {
 
 export default function TicketApproval(){
   const [info,setInfo]=useState<any>({});
+  const [tableLoading,logData, getWorkflowLog]=useworkflowLog()
   const [form]=Form.useForm()
   const [loading,setLoading]=useState<boolean>(false);
   const [status,setstatus]=useState<string>("");
@@ -44,6 +47,7 @@ export default function TicketApproval(){
   useEffect(()=>{
     if(query?.detail==="true"&&query?.id){
       getInfo(afferentId)
+      getWorkflowLog(afferentId)
     }
 
   },[afferentId])
@@ -53,7 +57,12 @@ export default function TicketApproval(){
   useEffect(()=>{
     if(!initInfo?.record?.id) return
     getInfo()
+    getWorkflowLog(initInfo?.record?.id)
   },[])
+  const columns = useMemo(() => {
+       
+    return createTableColumns() as any;
+  }, []);
 
   const showConfirm = (auditType:string) => {
     confirm({
@@ -210,6 +219,11 @@ export default function TicketApproval(){
           )}
         </Table>
        </div> 
+      
+       <div  style={{marginTop:12 }}>
+     <Table columns={columns} dataSource={logData} loading={tableLoading}/>
+      </div>
+      
       </ContentCard>
     </PageContainer>)
 }

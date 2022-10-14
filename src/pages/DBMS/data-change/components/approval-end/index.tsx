@@ -8,6 +8,7 @@
  */
 import { Card,Descriptions,Space ,Tag,Table,Input,Modal,Popconfirm,Form,Spin,Radio,DatePicker} from 'antd';
 import React,{useMemo,useState,useEffect,useCallback} from 'react';
+import TableSearch from '@/components/table-search';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
@@ -18,7 +19,7 @@ import moment from 'moment';
 import './index.less';
 import { parse } from 'query-string';
 import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
-import {useGetSqlInfo,useAuditTicket,useRunSql} from './hook'
+import {useGetSqlInfo,useAuditTicket,useRunSql,useworkflowLog} from './hook'
 
 const runModeOptions=[
   {
@@ -32,6 +33,7 @@ const runModeOptions=[
 ]
 export default function ApprovalEnd(){
   const [info,setInfo]=useState<any>({});
+  const [tableLoading,logData, getWorkflowLog]=useworkflowLog()
   const [form]=Form.useForm()
   const [runSqlform]=Form.useForm()
   const [loading,setLoading]=useState<boolean>(false);
@@ -55,12 +57,14 @@ export default function ApprovalEnd(){
   useEffect(()=>{
     if(query?.detail==="true"&&query?.id){
       getInfo(afferentId)
+      getWorkflowLog(afferentId)
     }
   },[afferentId])
 
   useEffect(()=>{
     if(!initInfo?.record?.id) return
     getInfo()
+    getWorkflowLog(initInfo?.record?.id)
   },[])
   const onChange = (
     value: DatePickerProps['value'] | RangePickerProps['value'],
@@ -197,16 +201,12 @@ export default function ApprovalEnd(){
       
   };
  
-
-  
-    const columns = useMemo(() => {
+  const columns = useMemo(() => {
        
-        return createTableColumns(
-            {onDetail: (record: any, index: number) => {
-             
-              },
-             } ) as any;
-      }, []);
+    return createTableColumns() as any;
+  }, []);
+  
+  
     return(
     <PageContainer className="approval-end">
       <ContentCard>
@@ -369,6 +369,10 @@ export default function ApprovalEnd(){
       </span> 
     </div>
   {/* ------------------------------- */}
+  <div>
+  <Table columns={columns} dataSource={logData} loading={tableLoading}/>
+  </div>
+  
   {/* <div className="ticket-detail-footer">
       <span className="ticket-detail-title-left">
       <span><Space><span>回滚:</span><span><Tag color="geekblue">下载回滚SQL</Tag></span></Space></span>
