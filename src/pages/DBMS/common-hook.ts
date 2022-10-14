@@ -71,7 +71,7 @@ export function useSearchUser(): [boolean, any, () => Promise<void>] {
     setLoading(true);
     await getRequest(APIS.searchUserUrl, { data: { pageIndex: -1, pageSize: -1 } })
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           let dataSource = result?.data?.dataSource;
           let data = dataSource?.map((item: any) => item.username);
 
@@ -139,6 +139,7 @@ export function useQueryDatabasesOptions() {
              label:item,
              value:item,
              title: item,
+             key:item
             });
           });
          

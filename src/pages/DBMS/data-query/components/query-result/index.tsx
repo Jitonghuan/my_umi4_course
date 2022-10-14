@@ -130,9 +130,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
           {sqlResultSource?.length>0&&(
             Object.keys(sqlResultSource[0])?.map((item:any)=>{
               return(
-                <Table.Column title={item}  ellipsis={{
-                  showTitle: true,
-                }} dataIndex={item}   key={item}  />
+                <Table.Column title={item}  dataIndex={item}   key={item}  />
               )
             })
 

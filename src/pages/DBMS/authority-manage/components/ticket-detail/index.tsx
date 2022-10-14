@@ -91,11 +91,12 @@ export default function CreateArticle(props: CreateArticleProps) {
           </Form.Item>
         </Form>
       ),
-      onOk () {
+      onOk (close) {
         form.validateFields().then((info)=>{
           auditTicket({reason:info?.reason,auditType,id:curRecord?.id||afferentId}).then(()=>{
             afferentId?getInfo(afferentId):getInfo()
             getList()
+            close()
             
           })
         })

@@ -2,21 +2,19 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-09-18 21:43:51
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-10-14 08:47:20
+ * @LastEditTime: 2022-10-14 11:44:34
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/ticket-approval/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 
-import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin,Table,DatePicker,Radio} from 'antd';
-import React,{useMemo,useState,useEffect} from 'react';
-import type { DatePickerProps } from 'antd';
-import { ContentCard, FilterCard, CardRowGroup } from '@/components/vc-page-content';
+import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin,Table} from 'antd';
+import React,{useState,useEffect} from 'react';
+import { ContentCard, } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import {ExclamationCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
 import {history,useLocation} from 'umi';
-
 import {CurrentStatusStatus,PrivWfType} from '../../../authority-manage/components/authority-apply/schema'
-import {useGetSqlInfo,useAuditTicket,useRunSql} from './hook';
+import {useGetSqlInfo,useAuditTicket} from './hook';
 import { parse } from 'query-string';
 
 import './index.less'
@@ -26,28 +24,16 @@ const StatusMapping: Record<string, number> = {
   pass:2,
   reject:2
 };
-const runModeOptions=[
-  {
-    label:"立即执行",
-    value:"now"
-  },
-  {
-    label:"定时执行",
-    value:"timing"
-  }
-]
+
 export default function TicketApproval(){
   const [info,setInfo]=useState<any>({});
-  const [dateString,setDateString]=useState<string>("");
   const [form]=Form.useForm()
-  const [runSqlform]=Form.useForm()
   const [loading,setLoading]=useState<boolean>(false);
   const [status,setstatus]=useState<string>("");
   const [statusText,setStatusText]=useState<string>("");
   const [owner,setOwner]=useState<any>([]);
   const [reviewContentData,setReviewContentData]=useState<any>([])
   const [auditLoading, auditTicket]= useAuditTicket();
-  const [runLoading, runSql]= useRunSql();
   let location = useLocation();
   const initInfo: any = location.state || {};
   const { confirm } = Modal;
@@ -57,53 +43,15 @@ export default function TicketApproval(){
 
   useEffect(()=>{
     if(query?.detail==="true"&&query?.id){
-     
       getInfo(afferentId)
-    }
-    return()=>{
-     
     }
 
   },[afferentId])
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-    setDateString(dateString)
-  };
-  const showRunSqlConfirm = () => {
-    confirm({
-      title: '请选择执行方式',
-      icon: <ExclamationCircleOutlined />,
-      content: (
-        <Form form={runSqlform}>
-          <Form.Item name="runMode" label="执行方式"  rules={[{ required: true, message: '请输入' }]}>
-          <Radio.Group options={runModeOptions} />
-
-          </Form.Item >
-          <Form.Item label="执行时间" name="runTime" rules={[{ required: true, message: '请选择' }]}>
-          <DatePicker onChange={onChange} />
-          </Form.Item>
-        </Form>
-      ),
-      onOk () {
-        form.validateFields().then((info)=>{
-          
-          runSql({runMode:info?.runMode,runDate:dateString,id:initInfo?.record?.id||afferentId}).then(()=>{
-            afferentId?getInfo(afferentId):getInfo()
-          })
-        })
-      
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-  };
 
  
   
   useEffect(()=>{
     if(!initInfo?.record?.id) return
-
     getInfo()
   },[])
 
@@ -119,11 +67,14 @@ export default function TicketApproval(){
           </Form.Item>
         </Form>
       ),
-      onOk () {
+      onOk (close) {
+       
         form.validateFields().then((info)=>{
+          
           auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id||afferentId}).then(()=>{
             afferentId?getInfo(afferentId):getInfo()
             history.back()
+            close()
           })
         })
       
@@ -140,11 +91,9 @@ export default function TicketApproval(){
       let reviewContent=[]
       try {
         reviewContent=JSON.parse(res?.reviewContent||"{}")
-      } catch (error) {
-        
+      } catch (error) {    
       }
-      
-setReviewContentData(reviewContent)
+       setReviewContentData(reviewContent)
       let auditUsers=[];
      
       if(res?.audit?.length>0){
@@ -153,14 +102,7 @@ setReviewContentData(reviewContent)
         // if(res?.audit[0]?.AuditStatus==="wait"){
           auditUsers=res?.audit[0]?.Groups 
           setOwner(auditUsers)
-        
-        
-        // }
-
       }
-      
-     
-      
     }).finally(()=>{
       setLoading(false)
     })
@@ -216,14 +158,14 @@ setReviewContentData(reviewContent)
     size="small"
     labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap',width: 100 }}
     contentStyle={{ color: '#000' }}
-    column={2}
+    column={3}
     >
   <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
   <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
-  <Descriptions.Item label="变更库" span={2}>{info?.dbCode}</Descriptions.Item>
+  <Descriptions.Item label="变更库" >{info?.dbCode}</Descriptions.Item>
   {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
-  <Descriptions.Item label="上线理由" span={2}>{info?.remark}</Descriptions.Item>
-  <Descriptions.Item label="变更sql"span={2}>{info?.sqlContent}</Descriptions.Item>
+  <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
+  <Descriptions.Item label="变更sql"span={3}>{info?.sqlContent}</Descriptions.Item>
   {/* <Descriptions.Item label="sql检测结果">{}</Descriptions.Item> */}
   {/* <Descriptions.Item label="sql审核">{}</Descriptions.Item> */}
   {/* <Descriptions.Item label="风险项">{}</Descriptions.Item> */}
@@ -261,17 +203,13 @@ setReviewContentData(reviewContent)
           {reviewContentData?.length>0&&(
             Object.keys(reviewContentData[0])?.map((item:any)=>{
               return(
-                <Table.Column title={item}  ellipsis={{
-                  showTitle: true,
-                }} dataIndex={item}   key={item}  />
+                <Table.Column title={item}   dataIndex={item}   key={item}  />
               )
             })
 
           )}
         </Table>
-
-          </div>
-         
-        </ContentCard>
+       </div> 
+      </ContentCard>
     </PageContainer>)
 }
