@@ -3,7 +3,8 @@ import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import { Button, Input, Form, message,Alert,Popconfirm } from 'antd';
-import { useQueryProductlineList } from '../../../../component-center/hook';
+// import { useQueryProductlineList } from '../../../../component-center/hook';
+import {useQueryProductlineList} from './hook'
 import { createMiddlewareTableColumns } from './middle-ware-schema';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ProFormInstance } from '@ant-design/pro-form';
@@ -68,9 +69,7 @@ export default (props: VersionDetailProps) => {
     if(currentTab==="middleware"){
       checkComponentRely(versionId)
     }
-    if(currentTab==="app"){
-      getProductlineList();
-    }
+   
     
   }, [currentTab]);
   useEffect(() => {
@@ -148,6 +147,9 @@ export default (props: VersionDetailProps) => {
       },
       onChange: (param: any, config: any) => {
         queryProductVersionOptions(param.value, currentTabType);
+        if(currentTab==="app"){
+          getProductlineList(param.value);
+        }
         componentOptions.filter((item: any) => {
           if (item.label === param.label) {
             updateRow(config.recordKey, {
@@ -312,7 +314,7 @@ export default (props: VersionDetailProps) => {
           
           currentTabType === 'middleware' &&checkData!==""&&checkData&& <span>
             
-            <Alert message={`${checkData}依赖组件未编排！`} type="warning" showIcon/>
+            <Alert message={`被依赖组件${checkData}未编排！`} type="warning" showIcon/>
           {/* {`${checkData}依赖组件未编排！` } */}
           </span>
         ]}

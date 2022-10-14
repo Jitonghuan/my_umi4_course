@@ -175,10 +175,11 @@ export default function TmplEditor(props: AppComponentProps) {
           }
           help={type === 'success' ? '版本号检查通过' : type === 'error' ? errorMessage : '等待检查版本号'}
         >
-          <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>
+          <Input style={{ width: 320 }} placeholder="请按照 2022.10.13 的格式输入版本号！" onBlur={onVersionChange}></Input>
         </Form.Item>
       </Form>
       <Divider />
+      <div style={{marginLeft:50}}>
       {applicationOptions?.length > 0 && (
         <p className="app-list-show">
           <span> 应用列表:</span>
@@ -203,6 +204,7 @@ export default function TmplEditor(props: AppComponentProps) {
           treeData={applicationOptions}
         />
       </Spin>
+    </div>
     </Drawer>
   );
 }

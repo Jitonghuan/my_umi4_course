@@ -89,7 +89,7 @@ export const createMiddlewareTableColumns = (params: {
         },
       },
       {
-        title: 'Realease名称',
+        title: 'Release名称',
         key: 'componentReleaseName',
         dataIndex: 'componentReleaseName',
         valueType: 'select',

@@ -70,7 +70,7 @@ export const createCompontentsTableColumns = (params: {
             },
           },
           {
-            title: 'release选择',
+            title: 'release名称',
             key: 'paramComponentReleaseName',
             dataIndex: 'paramComponentReleaseName',
             valueType: 'select',

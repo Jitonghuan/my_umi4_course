@@ -164,7 +164,7 @@ export default function BasicModal(props: DetailProps) {
           }
           help={type === 'success' ? '版本号检查通过' : type === 'error' ? errorMessage : '等待检查版本号'}
         >
-          <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>
+          <Input style={{ width: 320 }} placeholder="请按照 2022.10.13 的格式输入版本号！" onBlur={onVersionChange}></Input>
         </Form.Item>
         {/* <Form.Item label="组件描述" name="componentDescription">
           <Input.TextArea style={{ width: 320 }}></Input.TextArea>

@@ -6,6 +6,7 @@ export const compontentsSchema = ({ onEditClick }: { onEditClick: (record: any, 
       dataIndex: 'paramComponent',
       key: 'paramComponent',
     },
+   
     {
       title: '参数名称',
       dataIndex: 'paramName',
@@ -13,6 +14,14 @@ export const compontentsSchema = ({ onEditClick }: { onEditClick: (record: any, 
     {
       title: '参数值',
       dataIndex: 'paramValue',
+    },
+    {
+      title: 'release名称',
+      dataIndex: 'paramComponentReleaseName',
+    },
+    {
+      title: 'NameSpace',
+      dataIndex: 'paramComponentNamespace',
     },
     {
       title: '描述',

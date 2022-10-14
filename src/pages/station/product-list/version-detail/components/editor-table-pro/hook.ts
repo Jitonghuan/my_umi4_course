@@ -2,6 +2,47 @@ import { useState,useCallback } from 'react';
 import * as APIS from '../../../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
+//productLine
+//产品线分类
+
+export function useQueryProductlineList(): [boolean, any, (componentName:string) => Promise<void>] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<any>([]);
+
+  const getProductlineList = async (componentName:string) => {
+    setLoading(true);
+    try {
+      await getRequest(APIS.productLine,{data:{componentName}})
+        .then((res) => {
+          if (res?.success) {
+            let data = res.data;
+            let option: any = [];
+            data?.map((item: any) => {
+              option.push({
+                label: item.categoryCode || '',
+                value: item.categoryCode || '',
+              });
+            });
+            //  data?.map((item: any) => ({
+            //     label: item.categoryCode || '',
+            //     value: item.categoryCode || '',
+            //   }));
+            setDataSource(option);
+          } else {
+            setDataSource([]);
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, dataSource, getProductlineList];
+}
+
 
 
 //获取queryFrontbucketList
