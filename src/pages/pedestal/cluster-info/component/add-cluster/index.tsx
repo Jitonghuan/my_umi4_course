@@ -69,7 +69,7 @@ export default function AddDrawer(props: any) {
                 <div className="drawer-footer">
                     <Button type="default" onClick={onClose}>取消</Button>
                     {mode === 'ADD' && <Button type="primary" onClick={handleSubmit} loading={loading}>导入</Button>}
-                    {mode === 'EDIT' && <Popconfirm title='确定保存吗？' onConfirm={handleSubmit}><Button type="primary" loading={loading}>保存</Button></Popconfirm>}
+                    {mode === 'EDIT' && <Popconfirm title='确定保存所做的修改吗？？' onConfirm={handleSubmit}><Button type="primary" loading={loading}>保存</Button></Popconfirm>}
                 </div>
             }
         >
