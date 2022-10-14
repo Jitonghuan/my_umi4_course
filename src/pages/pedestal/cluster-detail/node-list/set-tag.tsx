@@ -150,10 +150,10 @@ export default function SetTag(props: any) {
         {showForm &&
           <>
             <div style={{ marginBottom: '10px' }}>
-              标签类型：{' '}
+              类型：{' '}
               <Radio.Group value={tagType} onChange={onTypeChange}>
-                <Radio value="base">基础标签 </Radio>
-                <Radio value="dirty"> 污点标签 </Radio>
+                <Radio value="base">标签 </Radio>
+                <Radio value="dirty"> 污点 </Radio>
               </Radio.Group>
             </div>
             <div className="form-wrapper">
