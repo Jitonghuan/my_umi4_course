@@ -35,6 +35,13 @@ export default function CreateArticle(props: CreateArticleProps) {
   const [owner,setOwner]=useState<any>([]);
   const [status,setstatus]=useState<string>("");
   const [auditLoading, auditTicket]= useAuditTicket();
+  useEffect(()=>{
+    if(afferentId&&mode !== 'HIDE'){
+      getInfo(afferentId)
+
+    }
+
+  },[afferentId,mode])
  
   useEffect(() => {
     if (mode === 'HIDE' || !curRecord?.id) return;
@@ -46,13 +53,7 @@ export default function CreateArticle(props: CreateArticleProps) {
      
     };
   }, [mode]);
-  useEffect(()=>{
-    if(afferentId&&mode !== 'HIDE'){
-      getInfo(afferentId)
-
-    }
-
-  },[afferentId,mode])
+  
  
   const getInfo=(id?:number)=>{
     setLoading(true)
@@ -92,8 +93,8 @@ export default function CreateArticle(props: CreateArticleProps) {
       ),
       onOk () {
         form.validateFields().then((info)=>{
-          auditTicket({reason:info?.reason,auditType,id:curRecord?.id}).then(()=>{
-            getInfo()
+          auditTicket({reason:info?.reason,auditType,id:curRecord?.id||afferentId}).then(()=>{
+            afferentId?getInfo(afferentId):getInfo()
             getList()
             
           })
@@ -168,8 +169,8 @@ export default function CreateArticle(props: CreateArticleProps) {
              <Spin spinning={auditLoading}>
                 <Space>
              {status==="wait"&&(<> <Tag color="geekblue" onClick={()=>{
-                auditTicket({auditType:"pass",id:curRecord?.id}).then(()=>{
-                  getInfo()
+                auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
+                  afferentId?getInfo(afferentId):  getInfo()
                 
                   getList()
                 })

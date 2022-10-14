@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-09-18 21:43:42
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-09-19 01:13:53
+ * @LastEditTime: 2022-10-14 08:43:52
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/approval-end/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -52,18 +52,19 @@ export default function ApprovalEnd(){
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
+  const afferentId=Number(query?.id)
   
   const { confirm } = Modal;
   useEffect(()=>{
     if(query?.detail==="true"&&query?.id){
-      const afferentId=Number(query?.id)
+     
       getInfo(afferentId)
     }
     return()=>{
      
     }
 
-  },[])
+  },[afferentId])
 
   useEffect(()=>{
     if(!initInfo?.record?.id) return
@@ -109,8 +110,8 @@ export default function ApprovalEnd(){
       onOk () {
         runSqlform.validateFields().then((info)=>{
          
-          runSql({runMode:info?.runMode,runDate:info?.runTime.format('YYYY-MM-DD HH:mm'),id:initInfo?.record?.id}).then(()=>{
-            getInfo()
+          runSql({runMode:info?.runMode,runDate:info?.runTime.format('YYYY-MM-DD HH:mm'),id:initInfo?.record?.id||afferentId}).then(()=>{
+            afferentId?getInfo(afferentId):getInfo()
           })
         })
       
@@ -135,8 +136,8 @@ export default function ApprovalEnd(){
       ),
       onOk () {
         form.validateFields().then((info)=>{
-          auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id}).then(()=>{
-            getInfo()
+          auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id||afferentId}).then(()=>{
+            afferentId?getInfo(afferentId):getInfo()
             history.back()
           })
         })

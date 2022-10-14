@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-09-18 21:43:51
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-09-19 01:18:24
+ * @LastEditTime: 2022-10-14 08:47:20
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/ticket-approval/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -53,16 +53,18 @@ export default function TicketApproval(){
   const { confirm } = Modal;
 
   const query = parse(location.search);
+  const afferentId=Number(query?.id)
+
   useEffect(()=>{
     if(query?.detail==="true"&&query?.id){
-      const afferentId=Number(query?.id)
+     
       getInfo(afferentId)
     }
     return()=>{
      
     }
 
-  },[])
+  },[afferentId])
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
     console.log(date, dateString);
     setDateString(dateString)
@@ -85,8 +87,8 @@ export default function TicketApproval(){
       onOk () {
         form.validateFields().then((info)=>{
           
-          runSql({runMode:info?.runMode,runDate:dateString,id:initInfo?.record?.id}).then(()=>{
-            getInfo()
+          runSql({runMode:info?.runMode,runDate:dateString,id:initInfo?.record?.id||afferentId}).then(()=>{
+            afferentId?getInfo(afferentId):getInfo()
           })
         })
       
@@ -119,8 +121,8 @@ export default function TicketApproval(){
       ),
       onOk () {
         form.validateFields().then((info)=>{
-          auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id}).then(()=>{
-            getInfo();
+          auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id||afferentId}).then(()=>{
+            afferentId?getInfo(afferentId):getInfo()
             history.back()
           })
         })
@@ -240,8 +242,8 @@ setReviewContentData(reviewContent)
            description={
            <Space>
                {status==="wait"&&( <Tag color="success" onClick={()=>{
-                auditTicket({auditType:"pass",id:initInfo?.record?.id}).then(()=>{
-                  getInfo()
+                auditTicket({auditType:"pass",id:initInfo?.record?.id||afferentId}).then(()=>{
+                  afferentId?getInfo(afferentId):getInfo()
                   history.back()
                 })
              }}>审批通过</Tag> 

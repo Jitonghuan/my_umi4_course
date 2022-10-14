@@ -16,7 +16,7 @@ export default function AuthorityApply (){
     const [form] = Form.useForm();
     let location = useLocation();
     const query = parse(location.search);
-    console.log('query',query)
+  
     const [mode,setMode]=useState<EditorMode>("HIDE");
     const [curRecord,setCurRecord]=useState<any>({});
     const [loading, userNameOptions, searchUser] =useSearchUser()
