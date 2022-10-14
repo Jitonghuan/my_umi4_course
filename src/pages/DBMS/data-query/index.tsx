@@ -41,7 +41,7 @@ export default function ResizeLayout() {
     setSqlLoading(true)
     const values=form?.getFieldsValue();
     if(!values?.instanceId||!values?.dbCode||!values?.tableCode||!params?.sqlContent){
-      message.warning("请先进行信息选择并且输入sql语句再查询！")
+      message.warning("请先进行信息填写并且输入sql语句再查询！")
       return
 
     }

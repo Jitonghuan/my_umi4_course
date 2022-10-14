@@ -93,7 +93,7 @@ useEffect(()=>{
   const createSqlApply=useCallback(async(params:querySqlItems)=>{
     const createItems=form?.getFieldsValue()
     if(!end||!start||!createItems?.title||!createItems?.instanceId||!createItems?.dbCode||!createItems?.tableCode||!params?.sqlContent){
-      message.warning("请先进行信息且输入sql语句再提交变更！")
+      message.warning("请先进行信息填写且输入sql语句再提交变更！")
       return
 
     }

@@ -20,7 +20,7 @@ export default function RightContent(props:Iprops){
   const getInfo=(sqlContent:string)=>{
    
     if(!createItems?.instanceId||!createItems?.dbCode||!sqlContent){
-      message.warning("请先进行信息且输入sql语句再进行sql检测！")
+      message.warning("请先进行信息填写且输入sql语句再进行sql检测！")
       return
 
     }
