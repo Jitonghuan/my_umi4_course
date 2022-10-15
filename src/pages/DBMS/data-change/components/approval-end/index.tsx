@@ -249,6 +249,7 @@ export default function ApprovalEnd(){
           onChange={onChange} 
           format="YYYY-MM-DD HH:mm:ss" 
           onOk={onOk} 
+          showNow={false}
           disabledDate={disabledDate}
           disabledTime={disabledDateTime}
           placeholder="请选择执行时间"

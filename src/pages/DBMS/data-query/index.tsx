@@ -24,7 +24,7 @@ export default function ResizeLayout() {
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
-  const [loading, tableFields,tableFieldsOptions, queryTableFields,setOptions]=useQueryTableFieldsOptions();
+  const [fieldsLoading, tableFields,tableFieldsOptions, queryTableFields,setOptions]=useQueryTableFieldsOptions();
   const [initSqlValue,setInitSqlValue]=useState<string>("")
   const [implementDisabled,setImplementDisabled]=useState<boolean>(true);
   // const initSqlValue = useRef<any>(null);
@@ -156,7 +156,7 @@ export default function ResizeLayout() {
       </div>
       </>
     )
-  },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesOptions,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
+  },[queryResultItems,sqlConsoleItems,fieldsLoading,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesOptions,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
     
     const rightContent=useMemo(()=>{
       return(
