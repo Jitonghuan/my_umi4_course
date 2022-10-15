@@ -1,11 +1,10 @@
-import React, { useState,useEffect,Component,useMemo,useRef,} from 'react';
+import React, { useState,useEffect,useMemo,useRef,} from 'react';
 import {  Tabs,Form,Space,Button,Select,message } from 'antd';
 import {RightCircleFilled,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
-import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
 import QueryResult from "./components/query-result";
 import SqlConsole from "./components/sql-console";
-import {useEnvList,querySqlResultInfo,useQueryLogsList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../common-hook'
+import {useEnvList,querySqlResultInfo,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../common-hook'
 
 import './index.less';
 const { TabPane } = Tabs;
@@ -31,6 +30,7 @@ export default function ResizeLayout() {
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
   const [sqlResult,setSqlResult]=useState<any>("");
   const [addCount,setAddCount]=useState<number>(0)
+  //sql console 页面的新增按钮方法
   const onAdd=()=>{
     const values=form?.getFieldsValue();
     let initsql="select * from user limit 10"
@@ -40,46 +40,35 @@ export default function ResizeLayout() {
     }else if(!values?.tableCode){
       setImplementDisabled(true)
     }
-   
     addSqlConsole
     setInitSqlValue(initsql)
     setAddCount(count=>count+1)
-   
-
   }
- 
- 
-
+ //查询sql结果
   const querySqlResult=(params:{sqlContent:string,sqlType:string})=>{
     const values=form?.getFieldsValue();
     if(!values?.instanceId||!values?.dbCode||!values?.tableCode||!params?.sqlContent){
       message.warning("请先进行信息填写并且输入sql语句再查询！")
       return
-
     }
     setSqlLoading(true)
     querySqlResultInfo({...params,... values}).then((res)=>{
-      if(res?.success){
-       
+      if(res?.success){ 
         const dataSource =   res?.data?.result|| "";
         setSqlResult(dataSource)
-
         addQueryResult()
-
       }
-
     }).finally(()=>{
       setSqlLoading(false)
     })
   }
-
   useEffect(()=>{
     queryEnvList()
     getInstanceList()
-    // queryLogsList()
-    
   },[])
 
+
+  //表字段渲染
   const tableMap=()=>{
    return( tableFieldsOptions?.map((item:string)=>{
       return(
@@ -148,7 +137,7 @@ export default function ResizeLayout() {
             setOptions([])
             queryTableFields({...values})
             setFirstInitSqlValue(`select * from ${table} limit 10`)
-            setInitSqlValue(`select * from ${table} limit 10`)
+            // setInitSqlValue(`select * from ${table} limit 10`)
             if(!values?.instanceId||!values?.dbCode||!values?.tableCode){
               setImplementDisabled(true)
             }else if(values?.instanceId&&values?.dbCode&&values?.tableCode){

@@ -1,8 +1,9 @@
 import React, { useState,useEffect,useMemo,useRef,forwardRef,useImperativeHandle,} from 'react';
-import {  Tabs,Tag,message } from 'antd';
-import {PlusOutlined,PlusCircleOutlined} from '@ant-design/icons'
+import {Tabs,message } from 'antd';
+import {PlusCircleOutlined} from '@ant-design/icons'
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import './index.less'
+const { TabPane } = Tabs;
 interface Iprops{
   tableFields:any;
   querySqlResult:(params:{sqlContent:string,sqlType:string})=>any
@@ -15,30 +16,14 @@ interface Iprops{
 }
 export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
   const {tableFields,querySqlResult,initSqlValue,firstInitSqlValue,implementDisabled,onAdd,addCount}=props
-    const { TabPane } = Tabs;
-    useImperativeHandle(ref, () => ({
-        addSqlConsole: add,
-        sqlConsoleItems:items,
-        sqlConsoleActiveKey:activeKey
-        
-
-
-    }))
-    useEffect(()=>{
-      if(firstInitSqlValue){
-       
-        setActiveKey(defaultPanes[0].key)
-        setItems(defaultPanes)
-
-      }
-
-    },[firstInitSqlValue])
-
-    const defaultPanes =
+  
+  const defaultPanes =useMemo(()=>{
+    return(
       new Array(1).fill(null).map((_, index) => {
         const id = String(index + 1);
-        console.log("接收默认",firstInitSqlValue)
-        return { label: `SQL console `, 
+        console.log("接收默认",tableFields,)
+        return { 
+        label: `SQL console `, 
         children: 
         <MonacoSqlEditor 
         isSqlExecuteBtn={true} 
@@ -48,14 +33,27 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
         initValue={firstInitSqlValue||"select * from user limit 10"}
         subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
         implementDisabled={implementDisabled}
-       
         />, 
         key: id };
-      });
+      })
+    )
+  },[tableFields,firstInitSqlValue,implementDisabled]);
+
     const [activeKey, setActiveKey] = useState(defaultPanes[0].key);
     const [items, setItems] = useState(defaultPanes);
     const newTabIndex = useRef(0);
-  
+    useImperativeHandle(ref, () => ({
+        addSqlConsole: add,
+        sqlConsoleItems:items,
+        sqlConsoleActiveKey:activeKey
+    }))
+    useEffect(()=>{
+      if(firstInitSqlValue){
+        setActiveKey(defaultPanes[0].key)
+        setItems(defaultPanes)
+      }
+    },[firstInitSqlValue])
+
     const onChange = (key: string) => {
       setActiveKey(key);
     };

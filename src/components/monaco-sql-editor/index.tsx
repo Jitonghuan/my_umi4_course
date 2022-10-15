@@ -43,16 +43,26 @@
   const { keywords } = language
  
 export default function SqlEditor(props:Iprops){
-  const {isSqlExecutePlanBtn,isSqlBueatifyBtn,tableFields,sqlCheck,isSqlExecuteBtn,
+  const {
+    isSqlExecutePlanBtn,
+    isSqlBueatifyBtn,
+    tableFields,
+    sqlCheck,
+    isSqlExecuteBtn,
     isGoback,
     implementDisabled=false,
-    initValue="select * from user limit 10",readOnly,language="sql",height=500,theme='vs',isSubChangeBtn,isSqlCheckBtn,subChange,subSqlChange}=props;
-    // const codeContainerRef = useRef(null) as any;
-    
+    initValue="select * from user limit 10",
+    readOnly,
+    language="sql",
+    height=500,
+    theme='vs',
+    isSubChangeBtn,
+    isSqlCheckBtn,
+    subChange,
+    subSqlChange
+  }=props;
     const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
-
     const rootCls = 'monaco-sql-editor-title';
-    
     const [getVal,setGetVal]=useState<any>();
     let divNode:any;
     const codeContainerRef = useCallback((node:any) => {
@@ -62,9 +72,7 @@ export default function SqlEditor(props:Iprops){
     let completeProvider:any
    
     useEffect(() => {
-     
-        if (divNode) {
-          
+        if (divNode) {   
             const monacoEditor = monaco.editor.create(divNode, {
                 autoIndent: "keep",
                 value: 'select * from user limit 10;', // 编辑器初始显示文字
@@ -80,6 +88,7 @@ export default function SqlEditor(props:Iprops){
             });
           
             setInstance(monacoEditor);
+            console.log('---sql编辑器接受到字段值-',tableFields)
             registerCompletion();
             // 将 initValue Property 同步到编辑器中
             monacoEditor.setValue(initValue);
@@ -106,24 +115,21 @@ export default function SqlEditor(props:Iprops){
             getSelectionVal();
         }
     },[instance])
-    // useEffect(()=>{
-    //   if(instance&&initValue){
-    //     console.log('----',initValue)
-    //     instance?.getModel()?.setValue(initValue)
-
-    //   }
-
-    // },[initValue,instance])
     useEffect(()=>{
-      
-        if(instance){
-            
-          getValue();
-            
-         
-           
-        }
-        
+      if(instance&&initValue){
+        instance?.getModel()?.setValue(initValue)
+      }
+    },[initValue,instance])
+    useEffect(()=>{
+      if(instance&&tableFields){
+        console.log('---重新重置字段值-',tableFields)
+        registerCompletion()
+      }
+    },[initValue,tableFields])
+    useEffect(()=>{
+        if(instance){    
+          getValue(); 
+        } 
     },[instance,getVal])
     useEffect(()=>{
       
@@ -218,7 +224,6 @@ export default function SqlEditor(props:Iprops){
         return instance?.getPosition()
       }
       //自定义 SQL 库表提示，并保留原有 SQL 提示
-
       // 获取 SQL 语法提示
      const getSQLSuggest=()=>{
           return keywords.map((key:any) => ({
