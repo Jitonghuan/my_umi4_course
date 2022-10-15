@@ -27,24 +27,34 @@ export default function ResizeLayout() {
   const [fieldsLoading, tableFields,tableFieldsOptions, queryTableFields,setOptions]=useQueryTableFieldsOptions();
   const [initSqlValue,setInitSqlValue]=useState<string>("")
   const [implementDisabled,setImplementDisabled]=useState<boolean>(true);
-  // const initSqlValue = useRef<any>(null);
   const [firstInitSqlValue,setFirstInitSqlValue]=useState<string>("")
-  // const sqlValue= useRef<any>(null);
- 
-
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
-  const [sqlResult,setSqlResult]=useState<any>("")
+  const [sqlResult,setSqlResult]=useState<any>("");
+  const [addCount,setAddCount]=useState<number>(0)
+  const onAdd=()=>{
+    const values=form?.getFieldsValue();
+    let initsql="select * from user limit 10"
+    if(values?.tableCode){
+      initsql= `select * from ${values?.tableCode} limit 10`
+
+    }
+   
+    addSqlConsole
+    setInitSqlValue(initsql)
+    setAddCount(count=>count+1)
+
+  }
  
  
 
   const querySqlResult=(params:{sqlContent:string,sqlType:string})=>{
-    setSqlLoading(true)
     const values=form?.getFieldsValue();
     if(!values?.instanceId||!values?.dbCode||!values?.tableCode||!params?.sqlContent){
       message.warning("请先进行信息填写并且输入sql语句再查询！")
       return
 
     }
+    setSqlLoading(true)
     querySqlResultInfo({...params,... values}).then((res)=>{
       if(res?.success){
        
@@ -74,8 +84,6 @@ export default function ResizeLayout() {
         <InsertRowAboveOutlined onDoubleClick={
          ()=> {
            const table=form?.getFieldValue("tableCode")
-          //initValue
-          // initSqlValue.current=`select ${item||"*"} from ${table} limit 10`
           let initsql= `select ${item||"*"} from ${table} limit 10`
            addSqlConsole
            setInitSqlValue(initsql)
@@ -88,8 +96,6 @@ export default function ResizeLayout() {
    )
   }
   const copyAdd=(sqlContent:string)=>{
-   
-    //curCopyRecord
     let initsql= sqlContent||"select * from user limit 10"
     addSqlConsole
     setInitSqlValue(initsql)
@@ -170,6 +176,8 @@ export default function ResizeLayout() {
           sqlLoading={sqlLoading} 
           firstInitSqlValue={firstInitSqlValue} 
           initSqlValue={initSqlValue}
+          onAdd={onAdd}
+          addCount={addCount}
           implementDisabled={implementDisabled} />
           
           </div>
@@ -189,7 +197,7 @@ export default function ResizeLayout() {
 
         </>
       )
-    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue,implementDisabled]);
+    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue,implementDisabled,addCount]);
    
     return (
       // <PageContainer>

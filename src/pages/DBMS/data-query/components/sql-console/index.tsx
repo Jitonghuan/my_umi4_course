@@ -1,5 +1,6 @@
-import React, { useState,useEffect,Component,useMemo,useRef,forwardRef,useImperativeHandle,useCallback} from 'react';
-import {  Tabs,Form,Space,Button,Select,message } from 'antd';
+import React, { useState,useEffect,useMemo,useRef,forwardRef,useImperativeHandle,} from 'react';
+import {  Tabs,Tag,message } from 'antd';
+import {PlusOutlined,PlusCircleOutlined} from '@ant-design/icons'
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import './index.less'
 interface Iprops{
@@ -9,9 +10,11 @@ interface Iprops{
   initSqlValue:string;
   firstInitSqlValue:string;
   implementDisabled:boolean
+  onAdd:()=>any;
+  addCount:number
 }
 export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
-  const {tableFields,querySqlResult,initSqlValue,firstInitSqlValue,implementDisabled}=props
+  const {tableFields,querySqlResult,initSqlValue,firstInitSqlValue,implementDisabled,onAdd,addCount}=props
     const { TabPane } = Tabs;
     useImperativeHandle(ref, () => ({
         addSqlConsole: add,
@@ -58,9 +61,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
     };
   
     const add =useMemo(() => {
-      // debugger
       if(initSqlValue&&initSqlValue!==""){
-        // debugger
         const newActiveKey = `newTab${newTabIndex.current++}`;
       
         let tabArry=[...items, { label: 'SQL console ', children: 'New Tab Pane', key: newActiveKey }]
@@ -84,7 +85,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
 
       }
      
-    },[initSqlValue])
+    },[initSqlValue,addCount])
   
     const remove = (targetKey: string) => {
       const targetIndex = items.findIndex(pane => pane.key === targetKey);
@@ -103,18 +104,19 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
         remove(targetKey);
       }
     };
+   
     
     return(
         <Tabs
         size="small"
-        // animated={{ inkBar: true, tabPane: false }}
          hideAdd
          onChange={onChange}
          activeKey={activeKey}
-        //  tabPosition="top"
          type="editable-card"
          className="sql-console-tabs"
          onEdit={onEdit}
+         tabBarExtraContent={
+         <span className="add-btn" ><a><PlusCircleOutlined style={{fontSize:20}} onClick={onAdd} /></a></span>}
         
          // items={items}
        >
