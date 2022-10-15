@@ -36,12 +36,15 @@ export default function ResizeLayout() {
     let initsql="select * from user limit 10"
     if(values?.tableCode){
       initsql= `select * from ${values?.tableCode} limit 10`
-
+      setImplementDisabled(false)
+    }else if(!values?.tableCode){
+      setImplementDisabled(true)
     }
    
     addSqlConsole
     setInitSqlValue(initsql)
     setAddCount(count=>count+1)
+   
 
   }
  
