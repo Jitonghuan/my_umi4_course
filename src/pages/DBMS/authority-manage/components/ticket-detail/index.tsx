@@ -141,11 +141,11 @@ export default function CreateArticle(props: CreateArticleProps) {
           <Descriptions column={2} size="small" >
                     <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
                     
-                    <Descriptions.Item label="实例"><Tag>{info?.InstanceName}</Tag></Descriptions.Item>
+                    <Descriptions.Item label="实例"><Tag>{info?.instanceName}</Tag></Descriptions.Item>
                     <Descriptions.Item label="对象类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.privWfTypeDesc}</Tag></Descriptions.Item>
                     
                     <Descriptions.Item label="有效期">{info?.validEndTime}</Descriptions.Item>
-                    <Descriptions.Item label="库表对象" span={2}>{info?.tableList?.length>0?info?.tableList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
+                    <Descriptions.Item label="库表对象" span={2}>{info?.dbList?.length>0?info?.dbList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
                     
                   
                    
