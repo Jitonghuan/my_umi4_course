@@ -16,7 +16,6 @@ interface Iprops{
 }
 export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
   const {tableFields,querySqlResult,initSqlValue,firstInitSqlValue,implementDisabled,onAdd,addCount}=props
-  
   const defaultPanes =useMemo(()=>{
     return(
       new Array(1).fill(null).map((_, index) => {
@@ -73,16 +72,11 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
            initValue={initSqlValue}
            subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
            />, key: newActiveKey }]);
-         
           setActiveKey(newActiveKey);
-    
         }else if(tabArry.length>10){
           message.info("您已经打开太多页面，请关闭一些吧！")
-    
         }
-
       }
-     
     },[initSqlValue,addCount])
   
     const remove = (targetKey: string) => {
@@ -115,8 +109,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
          onEdit={onEdit}
          tabBarExtraContent={
          <span className="add-btn" ><a><PlusCircleOutlined style={{fontSize:20}} onClick={onAdd} /></a></span>}
-        
-         // items={items}
+
        >
         {items?.map((item: any) => (
          <TabPane tab={item.label} key={item.key} >

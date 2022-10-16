@@ -7,7 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 
-import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin,Table,} from 'antd';
+import { Card,Descriptions,Space ,Tag,Modal,Input,Steps,Popconfirm,Form,Spin,Table,Tooltip} from 'antd';
 import React,{useState,useEffect,useMemo} from 'react';
 import { ContentCard, } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
@@ -207,12 +207,19 @@ export default function TicketApproval(){
        </Spin>
           </Card>
           <div  style={{marginTop:12 }} >
+          <div className="ticket-detail-title"><b>执行详情</b></div>
          
-          <Table   scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
+          <Table bordered  scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
           {reviewContentData?.length>0&&(
             Object.keys(reviewContentData[0])?.map((item:any)=>{
               return(
-                <Table.Column title={item}   dataIndex={item}   key={item}  />
+                <Table.Column title={item}   dataIndex={item}   key={item} 
+                render={(value) => (
+                  <Tooltip placement="topLeft" title={value}>
+                    {value}
+                  </Tooltip>
+                )}
+                 />
               )
             })
 
@@ -220,8 +227,9 @@ export default function TicketApproval(){
         </Table>
        </div> 
       
-       <div  style={{marginTop:12 }}>
-     <Table columns={columns} dataSource={logData} loading={tableLoading}/>
+       <div  >
+       <div className="ticket-detail-title"><b>操作日志</b></div>
+     <Table columns={columns} bordered dataSource={logData} loading={tableLoading}/>
       </div>
       
       </ContentCard>

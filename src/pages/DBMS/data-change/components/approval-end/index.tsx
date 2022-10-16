@@ -7,8 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { Card,Descriptions,Space ,Tag,Table,Input,Modal,Popconfirm,Form,Spin,Radio,DatePicker} from 'antd';
-import React,{useMemo,useState,useEffect,useCallback} from 'react';
-import TableSearch from '@/components/table-search';
+import React,{useMemo,useState,useEffect} from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
@@ -70,13 +69,11 @@ export default function ApprovalEnd(){
     value: DatePickerProps['value'] | RangePickerProps['value'],
     dateString: | string,
   ) => {
-    console.log('Selected Time: ', value);
-    console.log('Formatted Selected Time: ', dateString);
     setDateString(dateString)
   };
   
   const onOk = (value: DatePickerProps['value'] | RangePickerProps['value']) => {
-    console.log('onOk: ', value);
+    
    
   };
 
@@ -89,7 +86,6 @@ export default function ApprovalEnd(){
   }
 
   const showConfirm = (auditType:string) => {
-   
     confirm({
       title: '请填写理由',
       icon: <ExclamationCircleOutlined />,
@@ -103,7 +99,6 @@ export default function ApprovalEnd(){
       ),
       onOk (close) {
         form.validateFields().then((info)=>{
-          
           auditTicket({reason:info?.reason,auditType,id:initInfo?.record?.id||afferentId}).then(()=>{
             afferentId?getInfo(afferentId):getInfo()
             history.back()
@@ -132,29 +127,17 @@ export default function ApprovalEnd(){
       if(res?.audit?.length>0){
         setstatus(res?.audit[0]?.AuditStatus)
         setStatusText(res?.audit[0]?.AuditStatusDesc)
-        // if(res?.audit[0]?.AuditStatus==="wait"){
           auditUsers=res?.audit[0]?.Groups 
           setOwner(auditUsers)
-
-        
-        // }
-
       }else{
         setstatus("")
         setStatusText("")
-        // if(res?.audit[0]?.AuditStatus==="wait"){
-          auditUsers=res?.audit[0]?.Groups 
-          setOwner([])
-
-
-      }
-      
-     
-      
+        auditUsers=res?.audit[0]?.Groups 
+        setOwner([])
+      }   
     }).finally(()=>{
       setLoading(false)
     })
-
   }
   const range = (start: number, end: number) => {
     const result = [];
@@ -167,7 +150,6 @@ export default function ApprovalEnd(){
   const disabledDate: RangePickerProps['disabledDate'] = (current:any) => {
     // Can not select days before today and today
     // return current && current < moment().endOf('day');
-    
     //当前时间小于开始时间，当前时间大于结束时间
     return current<moment(info?.runStartTime).startOf("days")||current> moment(info?.runEndTime).endOf("days")
   };
@@ -193,20 +175,14 @@ export default function ApprovalEnd(){
             return {
               disabledHours: () => range(0, endHours),
               disabledMinutes: () => range(0, endMinutes),
-              disabledSeconds: () => range(0, endSeconds),}
-          
+              disabledSeconds: () => range(0, endSeconds),}     
           }
-
-        }
-      
+        }  
   };
  
   const columns = useMemo(() => {
-       
     return createTableColumns() as any;
   }, []);
-  
-  
     return(
     <PageContainer className="approval-end">
       <ContentCard>
@@ -223,25 +199,18 @@ export default function ApprovalEnd(){
             afferentId?getInfo(afferentId):getInfo()
             setVisible(false)
           })
-
-         }
-         
+         }  
         })
-      
-
         }
       }>
         <Form form={runSqlform} labelCol={{ flex: '140px' }}>
           <Form.Item name="runMode" label="执行方式"  rules={[{ required: true, message: '请输入' }]}>
           <Radio.Group options={runModeOptions} onChange={(e)=>setRunMode(e.target.value)} />
-        
           </Form.Item >
-         
-        
           {runMode==="timing"&& (
           <>
           <Form.Item label="sql可执行时间范围:">
-        <span>{info?.runStartTime}--{info?.runEndTime}</span>
+          <span>{info?.runStartTime}--{info?.runEndTime}</span>
           </Form.Item>
           <Form.Item label="执行时间" name="runTime" rules={[{ required: true, message: '请选择' }]}>
           <DatePicker 
@@ -255,13 +224,10 @@ export default function ApprovalEnd(){
           placeholder="请选择执行时间"
           />
           </Form.Item>
-         
           </>)
           }   
         </Form>
-
       </Modal>
-      
        {/* ------------------------------- */}
        <Spin spinning={loading}>
     <div className="ticket-detail-title">
@@ -269,7 +235,6 @@ export default function ApprovalEnd(){
       <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
       <span><Space><span>工单类型:</span><span><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>暂无</Tag></span></Space></span>
       <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
-
       </span>
       <span className="ticket-detail-title-right">
        <Space>
@@ -279,6 +244,7 @@ export default function ApprovalEnd(){
             }}>
          <Tag color="orange" >撤销工单</Tag>
          </Popconfirm>}
+         
          <Tag className="back-go" onClick={()=>{
           history.push({
            pathname:"/matrix/DBMS/data-change",
@@ -286,11 +252,9 @@ export default function ApprovalEnd(){
          })
         }}>
           返回
-
         </Tag>
        </Space>
-      </span>
-      
+      </span>  
     </div>
     </Spin>
      {/* ------------------------------- */}
@@ -323,56 +287,54 @@ export default function ApprovalEnd(){
       </span>
     </div>
    {/* ------------------------------- */}
-  <Card bordered style={{marginBottom:12}}>
-      <div style={{marginBottom:10}}>
+  {/* <Card bordered style={{marginBottom:12}}> */}
+  <div >
+      <div style={{marginBottom:8}}>
           <Space>
               <span><b>执行详情</b></span>&nbsp;&nbsp;
               {info?.currentStatus==="reviewPass"&&<span>
                 <Spin spinning={runLoading}>
                   <Space>
                   <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>
-                
-
-                  </Space>
-                  
-                </Spin></span>} 
-             
+                  </Space>             
+                </Spin></span>}    
           </Space>
      </div>
      {executeResultData?.length>0?
-      <Table   scroll={{ x: '100%' }} dataSource={executeResultData} loading={loading} >
+      <Table  bordered  scroll={{ x: '100%' }} dataSource={executeResultData} loading={loading} >
       {executeResultData?.length>0&&(
         Object.keys(executeResultData[0])?.map((item:any)=>{
           return(
             <Table.Column title={item} dataIndex={item}    key={item}  />
           )
         })
-
       )}
-    </Table>: <Table   scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
+    </Table>: <Table  bordered  scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
           {reviewContentData?.length>0&&(
             Object.keys(reviewContentData[0])?.map((item:any)=>{
               return(
-                <Table.Column title={item} dataIndex={item}   key={item}  />
+                <Table.Column  title={item} dataIndex={item}   key={item}  />
               )
             })
 
           )}
         </Table>
      }
-    
-  </Card>
+     </div>
+  {/* </Card> */}
 
  {/* ------------------------------- */}
   <div className="ticket-detail-title">
       <span className="ticket-detail-title-left">
-      <span><Space><span>工单结束</span></Space></span>
+      <span><Space><span>工单结束:</span></Space></span>
       </span> 
     </div>
   {/* ------------------------------- */}
+  <div style={{marginBottom:8}} ><b>操作日志</b></div>
   <div>
-  <Table columns={columns} dataSource={logData} loading={tableLoading}/>
+  <Table columns={columns} bordered dataSource={logData} loading={tableLoading}/>
   </div>
+  {/* </div> */}
   
   {/* <div className="ticket-detail-footer">
       <span className="ticket-detail-title-left">

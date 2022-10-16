@@ -271,19 +271,16 @@ export default function SqlEditor(props:Iprops){
                          
                          
                     }}>执行</span> } 
-                     {isSqlExecuteBtn&&implementDisabled&&<span className={`${rootCls}-btn-disabled`} id="one-disabled" onClick={()=>{
-                        
-                      
-                        
-                        
-                   }}>执行</span> } 
+                     {isSqlExecuteBtn&&implementDisabled&&<span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span> } 
+                  
+                     {isSqlBueatifyBtn&&<span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span>} 
                    {isSqlCheckBtn&&<span className={`${rootCls}-btn`} id="two" onClick={()=>{
                       
                        sqlCheck(instance?.getValue()||"")
                          
                          
                     }}>sql检测</span>}  
-                   {isSqlBueatifyBtn&&<span className={`${rootCls}-btn`} id="three" onClick={ formatSql}>sql美化</span>}  
+                 
                    {/* {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>}  */}
                    {isSubChangeBtn&&<span className={`${rootCls}-btn`} id="fifth" onClick={()=>{
                      
@@ -291,7 +288,7 @@ export default function SqlEditor(props:Iprops){
                          
                          
                     }}>提交变更</span> } 
-                    {isGoback&&<span className={`${rootCls}-btn`} id="back" onClick={()=>{
+                    {isGoback&&<span className={`${rootCls}-back-btn`} id="back" onClick={()=>{
                       history.push(
                         {
                           pathname:"/matrix/DBMS/data-change"

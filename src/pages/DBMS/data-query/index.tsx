@@ -2,6 +2,7 @@ import React, { useState,useEffect,useMemo,useRef,} from 'react';
 import {  Tabs,Form,Space,Button,Select,message } from 'antd';
 import {RightCircleFilled,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
+import { ContentCard } from '@/components/vc-page-content';
 import QueryResult from "./components/query-result";
 import SqlConsole from "./components/sql-console";
 import {useEnvList,querySqlResultInfo,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../common-hook'
@@ -192,14 +193,14 @@ export default function ResizeLayout() {
     },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue,implementDisabled,addCount]);
    
     return (
-      // <PageContainer>
+      // <ContentCard>
         <LightDragable
         leftContent={leftContent}
         rightContent={rightContent}
         showIcon={false}
         initWidth={150}
         />
-      // </PageContainer>
+    //  </ContentCard>
      
 
     );

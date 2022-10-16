@@ -1,10 +1,8 @@
-import React, { useState,useEffect,Component,useMemo,useRef,useCallback} from 'react';
-import {  Tabs,Form,Space,Button,Select,message,DatePicker,Input,Alert,Divider } from 'antd';
-import {InfoCircleOutlined,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
-import PageContainer from '@/components/page-container';
+import React, { useState,useEffect,useMemo,useRef,useCallback} from 'react';
+import {  Tabs,Form,Select,message,DatePicker,Input,Divider } from 'antd';
+import {InfoCircleOutlined,} from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
-import {useEnvList,querySqlResultInfo,useQueryLogsList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../../../common-hook'
-import ChangeForm from "./_components/change-form";
+import {useEnvList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../../../common-hook'
 import RightContent from "./_components/right-content"
 import {createSql} from './hook';
 import './index.less'
@@ -51,9 +49,6 @@ export default function ResizeLayout() {
 
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
   const [form]=Form.useForm();
-  // const changeFormRef = useRef<any>(null);
-  // const createItems=changeFormRef?.current?.createItems;
-  // const onFinish = () => changeFormRef?.current?.onFinish();
   const [envOptionLoading,  envOptions, queryEnvList]=useEnvList();
   const formRef=useRef<any>(null)
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
@@ -67,7 +62,6 @@ export default function ResizeLayout() {
   const [end,setEnd]=useState<string>("")
    //选择时间间隔
  const selectTime =useCallback((time: any, timeString: any) => {
-  
   let start = moment(timeString[0]).unix().toString();
   let end = moment(timeString[1]).unix().toString();
   setStart(timeString[0])
@@ -75,21 +69,17 @@ export default function ResizeLayout() {
   if (start !== 'NaN' && end !== 'NaN') {
     setStartTime(start);
     setEndTime(end);
-   
   } 
 },[]);
 useEffect(()=>{
   queryEnvList()
   getInstanceList()
-  // queryLogsList()
   return()=>{
     setEndTime("")
   }
   
 },[])
 
- 
- 
   const createSqlApply=useCallback(async(params:querySqlItems)=>{
     const createItems=form?.getFieldsValue()
     if(!end||!start||!createItems?.title||!createItems?.instanceId||!createItems?.dbCode||!createItems?.tableCode||!params?.sqlContent){
@@ -98,9 +88,6 @@ useEffect(()=>{
 
     }
     setSqlLoading(true)
-    
-    
-  
    await createSql({
       ...params,
       ...createItems,
@@ -124,23 +111,17 @@ useEffect(()=>{
   
   const leftContent=useMemo(()=>{
     return(
-    
       <>
          <Form layout="vertical" form={form} ref={formRef} >
             <Form.Item name="title">
                 <Input   placeholder="标题" />
-    
               </Form.Item>
               <Form.Item name="sqlWfType">
                 <Select  placeholder="普通变更" options={sqlWfTypeOptions}/>
-    
               </Form.Item>
-
               <Form.Item  name="envCode">
               <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}/>
               </Form.Item>
-
-            
               <Form.Item name="instanceId">
               <Select  placeholder="选择实例" options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId)=>{
             queryDatabases({instanceId})

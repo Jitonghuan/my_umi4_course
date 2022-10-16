@@ -1,6 +1,7 @@
 import React, { useState,useEffect,forwardRef,Component,useMemo,useRef,useImperativeHandle} from 'react';
 import {  Tabs,Form,Space,Button,Select,message,Table } from 'antd';
 import {createTableColumns} from './schema';
+import { ContentCard } from '@/components/vc-page-content';
 import {useQueryLogsList} from '../../../common-hook';
 import './index.less'
 interface Iprops{
@@ -23,8 +24,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
       return createTableColumns(
         {
           onCopy: (record, index) => {
-           if(formRef){
-         
+           if(formRef){  
             formRef.current.setFieldsValue({
               ...record
             })
@@ -41,27 +41,10 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
     }, []);
    
     const sqlResultSource=sqlResult?JSON.parse(sqlResult||"{}"):[]
-   
-  
-    // useEffect(()=>{
-    //   if(sqlResultSource?.length>0){
-    //     setActiveKey(initialItems[0].key)
-    //     setItems(initialItems)
-
-    //   }
-
-    // },
-    // [sqlResultSource,sqlLoading,])
-   
     useImperativeHandle(ref, () => ({
         addQueryResult: () => {add()},
         queryResultItems:items,
         queryResultActiveKey:activeKey,
-       
-        // copyAdd
-        
-
-
     }))
     useEffect(()=>{
       queryLogsList()
@@ -171,6 +154,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
     };
     
     return(
+      <div style={{height:"100%",overflow:"auto"}}>
         <Tabs
         size="small"
          hideAdd
@@ -193,6 +177,6 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
          </TabPane>
          ))}
          </Tabs>
-
+    </div>
     )
 })
