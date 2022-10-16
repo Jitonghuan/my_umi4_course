@@ -171,6 +171,9 @@ export default function ResizeLayout() {
     addSqlConsole
     setInitSqlValue(initsql)
     setImplementDisabled(false)
+    const dbCode=form?.getFieldsValue()?.dbCode
+    queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
+    
   }
   const reset=()=>{
     //一进页面就点重置
@@ -183,6 +186,7 @@ export default function ResizeLayout() {
     }
     
   }
+  
   const leftContent=useMemo(()=>{
     return(
       <>
