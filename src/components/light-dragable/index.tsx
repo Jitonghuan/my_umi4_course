@@ -1,4 +1,4 @@
-import React, { useState,useEffect,Component} from 'react';
+import React, { useState} from 'react';
 import {  Tabs,Form,Space,Button } from 'antd';
 import {RightCircleFilled} from '@ant-design/icons'
 import './index.less';

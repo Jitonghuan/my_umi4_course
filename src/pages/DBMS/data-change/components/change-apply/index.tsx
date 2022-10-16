@@ -1,6 +1,7 @@
 import React, { useState,useEffect,useMemo,useRef,useCallback} from 'react';
 import {  Tabs,Form,Select,message,DatePicker,Input,Divider } from 'antd';
 import {InfoCircleOutlined,} from '@ant-design/icons';
+import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
 import {useEnvList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../../../common-hook'
 import RightContent from "./_components/right-content"
@@ -19,17 +20,7 @@ const sqlWfTypeOptions=[
     value:"offline"
   }
 ]
-const runModeOptions=[
-  {
-    label:"立即执行",
-    value:"now"
-  },
-  {
-    label:"定时执行",
-    value:"timing"
-  }
-]
-// import './index.less';
+
 const { TabPane } = Tabs;
 interface querySqlItems{
   sqlContent?:string;
@@ -52,7 +43,6 @@ export default function ResizeLayout() {
   const [envOptionLoading,  envOptions, queryEnvList]=useEnvList();
   const formRef=useRef<any>(null)
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
-  const [dataParams,setDataParams]=useState<any>({});
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [loading, tableFields,tableFieldsOptions, queryTableFields]=useQueryTableFieldsOptions();
@@ -199,7 +189,7 @@ useEffect(()=>{
     },[tableFields,formRef,form?.getFieldsValue()]);
    
     return (
-      // <PageContainer>
+      <PageContainer>
         <LightDragable
         leftContent={leftContent}
         rightContent={rightContent}
@@ -207,7 +197,7 @@ useEffect(()=>{
         // initWidth={400}
         dataChangeinitWidth={330}
         />
-      //  </PageContainer>
+       </PageContainer>
      
 
     );
