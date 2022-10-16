@@ -5,24 +5,26 @@ import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import {ScheduleOutlined,} from '@ant-design/icons';
 import {Form,Select,Steps, Space,Checkbox,DatePicker} from 'antd';
 import moment from "moment";
+import '../../index.less'
 const { RangePicker } = DatePicker;
 const CheckboxGroup = Checkbox.Group;
 export interface IProps {
   databasesOptions:any[];
   submit: (params:any) => any;
   flag:string
-  instanceId:number
+  instanceId:number;
+  createFormRef:any
+  count:number
   
  
  
 }
 export default function LibraryForm (props:IProps,){
-  const {databasesOptions,submit,flag,instanceId}=props;
+  const {databasesOptions,submit,flag,instanceId,createFormRef,count}=props;
   const [targetSource,setTargetSource]=useState<any>([]);
   const [type,setType]=useState<string>("time-interval");
-  const [startTime,setStartTime]=useState<string>('')
-  const [endTime,setEndTime]=useState<string>('')
-  const now = new Date().getTime();
+  const [startTime,setStartTime]=useState<string|null>(null)
+  const [endTime,setEndTime]=useState<string|null>(null)
   
 useEffect(()=>{
   if(flag==="submit"){
@@ -38,7 +40,7 @@ useEffect(()=>{
  return()=>{
   
  }
-},[flag])
+},[flag,count])
 
 
  //选择时间间隔
@@ -51,6 +53,10 @@ useEffect(()=>{
    
   } 
 },[]);
+const onClear=()=>{
+  setStartTime(null)
+  setEndTime(null)
+}
 
 
     const onChange = (list: CheckboxValueType[]) => {
@@ -58,6 +64,7 @@ useEffect(()=>{
     };
    
     const selectTimeInterval=useCallback((timeValue:number)=>{
+      
       const now = new Date().getTime();
       let start = Number((now - timeValue) / 1000).toString();
       let end = Number(now / 1000).toString();
@@ -66,20 +73,20 @@ useEffect(()=>{
     },[])
     return <>
     {/* <Form labelCol={{ flex: '110px' }}> */}
-     <Form.Item label="目标库"  >
+     <Form.Item label="目标库" className="nesting-form-item"  >
         <ShuttleFrame  
            showSearch 
            title={["可选项","已选择"]}
            canAddSource={databasesOptions}
            alreadyAddTargets={[]}
-           onOk={(targetSource:any)=>{ setTargetSource(targetSource);console.info("targetSource",targetSource)}}
+           onOk={(targetSource:any)=>{ setTargetSource(targetSource);}}
          />
           
         </Form.Item>
-        <Form.Item label="有效期" >
+        <Form.Item label="有效期" className="nesting-form-item" >
           <Space style={{height:20}}>
             {type==="time-interval"?( <Form.Item name="versionRangeOne" rules={[{ required: true, message: '请选择' }]} >
-             <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval}  style={{width:220}}/>
+             <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval} onClear={onClear}  style={{width:220}}/>
            </Form.Item>):
            ( <Form.Item name="validTimeRange" rules={[{ required: true, message: '请选择' }]} >
            <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
@@ -87,12 +94,27 @@ useEffect(()=>{
          </Form.Item>)}
          {type==="time-interval"?(
            <Form.Item>
-           <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{setType("time-ranger")}} />&nbsp;<span style={{color:'gray'}}>自定义选择时间范围</span>
+           <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{
+             setType("time-ranger")
+             setEndTime(null)
+             setStartTime(null)
+             createFormRef.current.setFieldsValue({
+              validTimeRange:null,
+              versionRangeOne:null
+             })
+             }} />&nbsp;<span style={{color:'gray'}}>自定义选择时间范围</span>
            </Form.Item>
 
          ):(
           <Form.Item>
-          <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{setType("time-interval")}} />&nbsp;<span style={{color:'gray'}}>切换时间段选择</span>
+          <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{setType("time-interval")
+        
+        setEndTime(null)
+        setStartTime(null)
+        createFormRef.current.setFieldsValue({
+         validTimeRange:null,
+         versionRangeOne:null
+        })}} />&nbsp;<span style={{color:'gray'}}>切换时间段选择</span>
           </Form.Item>
          )}
           
@@ -100,7 +122,7 @@ useEffect(()=>{
           </Space>
         </Form.Item>
        
-        <Form.Item label="授权功能" name="privList">
+        <Form.Item label="授权功能"  name="privList" rules={[{ required: true, message: '请选择' }]}>
         <CheckboxGroup options={checkOptions} onChange={onChange}  />
 
           

@@ -2,45 +2,36 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/09/8 14:50
 
-import React, { useState, useEffect, useRef } from 'react';
-import PageContainer from '@/components/page-container';
+import React, { useState, useEffect,useCallback,useRef } from 'react';
 import type { RadioChangeEvent } from 'antd';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
-import type { CheckboxValueType } from 'antd/es/checkbox/Group';
-import {options,checkOptions,START_TIME_ENUMS} from './schema';
-import { Drawer, Form, Button, Select, Radio,Steps, Card ,Tag,Space,Input,Checkbox,DatePicker} from 'antd';
-import {ScheduleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons';
-import ShuttleFrame from '@/components/shuttle-frame';
+import {options,} from './schema';
+import { Drawer, Form, Button, Select, Radio,message,Input} from 'antd';
 import LibraryForm from '../apply-detail/_components/library-form';
 import TableForm from '../apply-detail/_components/table-form';
 import LimitForm from '../apply-detail/_components/limit-form';
 import LibraryOwnerForm from '../apply-detail/_components/library-owner-form';
 import {useCreatePriv} from './hook';
 import moment from "moment";
-import {useEnvList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions} from '../../../common-hook'
-
-
-const { RangePicker } = DatePicker;
+import {useEnvList,useInstanceList,useQueryDatabasesOptions} from '../../../common-hook'
 export interface CreateArticleProps {
   mode?: EditorMode;
   curRecord?: any;
   onClose: () => any;
   onSave: () => any;
 }
-const { Step } = Steps;
-const CheckboxGroup = Checkbox.Group;
 
 export default function CreateArticle(props: CreateArticleProps) {
   const [createForm]=Form.useForm();
+  const  createFormRef= useRef<any>(null);
   const [createLoading, createPriv]=useCreatePriv()
   const [envOptionLoading,  envOptions, queryEnvList]=useEnvList();
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
- 
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
 
   const { mode, curRecord, onClose, onSave } = props;
   const [value, setValue] = useState("database");
   const [flag,setFlag]=useState<string>("");
+  const [count,setCount]=useState<number>(0)
   const [instanceId,setInstanceId]=useState<any>();
   useEffect(() => {
     if (mode === 'HIDE' ) return;
@@ -53,36 +44,122 @@ export default function CreateArticle(props: CreateArticleProps) {
       createForm.resetFields()
       setSource([])
       setValue("")
+      setCount(0)
   
     }
     
   }, [mode]);
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
-    console.log('radio3 checked', value);
+    const values = createForm.getFieldsValue() || {};
+    const valueList = Object.keys(values).map((v) => v);
+    createForm.resetFields([...valueList.filter((v) => v !== 'privWfType')]);
     setValue(value);
+    setSource([])
   };
-
+  
 const submit=async(params:any)=>{
   const values=await createForm.validateFields();
-  console.log("params",params)
+  if(value==="database"){
+   //1970-01-01 08:00:00
+    if(params?.dbList.length<1||!params?.validStartTime||!params?.validEndTime ){
+      message.warning("请先把必填信息填写完整！")
+    
+    }else{
+      createPriv({
+        // ...values,
+        remark:values?.remark,
+        limitNum:values?.limitNum,
+        privList:  values?.privList,
+        dbList:Array.isArray( values?.dbList)? values?.dbList:[ values?.dbList], 
+        privWfType:values?.privWfType,
+        instanceId:values?.instanceId,
+        envCode:values?.envCode,
+        tableList:values?.tableList,
+        title:values?.title,
+        ...params,
+        validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        }).then(()=>{
+        onSave()
+      })
+    } 
+  }
+  if(value==="table"){
+    if(params?.tableList<1||!params?.validStartTime||!params?.validEndTime){
+      message.warning("请先把必填信息填写完整！")
+     
+    }else{
+      createPriv({
+        // ...values,
+        remark:values?.remark,
+        limitNum:values?.limitNum,
+        privList:  values?.privList,
+        dbList:Array.isArray( values?.dbList)? values?.dbList:[ values?.dbList], 
+        privWfType:values?.privWfType,
+        instanceId:values?.instanceId,
+        envCode:values?.envCode,
+        tableList:values?.tableList,
+        title:values?.title,
+        ...params,
+        validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        }).then(()=>{
+        onSave()
+      })
+    
+    }
+  }
+  if(value==="owner"){
+    if(params?.dbList<1||!params?.validStartTime||!params?.validEndTime){
+      message.warning("请先把必填信息填写完整！")
+    
+    }else{
+      createPriv({
+        // ...values,
+        remark:values?.remark,
+        limitNum:values?.limitNum,
+        privList:  values?.privList,
+        dbList:Array.isArray( values?.dbList)? values?.dbList:[ values?.dbList], 
+        privWfType:values?.privWfType,
+        instanceId:values?.instanceId,
+        envCode:values?.envCode,
+        tableList:values?.tableList,
+        title:values?.title,
+        ...params,
+        validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        }).then(()=>{
+        onSave()
+      })
+    }
+  }
+  if(value==="limit"){
+    if(params?.tableList<1||!params?.validStartTime||!params?.validEndTime){
+      message.warning("请先把必填信息填写完整！")
+      
+    }else{
+      createPriv({
+        // ...values,
+        remark:values?.remark,
+        limitNum:values?.limitNum,
+        privList:  values?.privList,
+        dbList:Array.isArray( values?.dbList)? values?.dbList:[ values?.dbList], 
+        privWfType:values?.privWfType,
+        instanceId:values?.instanceId,
+        envCode:values?.envCode,
+        tableList:values?.tableList,
+        title:values?.title,
+        ...params,
+        validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
+        }).then(()=>{
+        onSave()
+      })
+    }
+  }
+ 
+
   
-  createPriv({
-    // ...values,
-    remark:values?.remark,
-    limitNum:values?.limitNum,
-    privList:  values?.privList,
-    dbList:Array.isArray( values?.dbList)? values?.dbList:[ values?.dbList], 
-    privWfType:values?.privWfType,
-    instanceId:values?.instanceId,
-    envCode:values?.envCode,
-    tableList:values?.tableList,
-    title:values?.title,
-    ...params,
-    validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
-    validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
-    }).then(()=>{
-    onSave()
-  })
 
 }
   
@@ -97,7 +174,10 @@ const submit=async(params:any)=>{
     maskClosable={false}
     footer={
       <div className="drawer-footer">
-      <Button type="primary" loading={createLoading} onClick={()=>{setFlag("submit")}}>
+      <Button type="primary" loading={createLoading} onClick={()=>{
+        setFlag("submit")
+        setCount(count=>count+1)
+        }}>
         提交申请
       </Button>
       <Button type="default" onClick={onClose}>
@@ -107,7 +187,7 @@ const submit=async(params:any)=>{
     }
     className="apply-detail-drawer"
     >
-      <Form labelCol={{ flex: '110px' }} form ={createForm}  >
+      <Form labelCol={{ flex: '110px' }} form ={createForm} ref={createFormRef} >
        
         <Form.Item label="对象类型" name="privWfType" initialValue={options[0].value} rules={[{ required: true, message: '请选择' }]}>
         <Radio.Group options={options} onChange={onChange3} value={value} optionType="button" />
@@ -142,19 +222,21 @@ const submit=async(params:any)=>{
           
         </Form.Item>
         {/* 库权限 */}
-        {value==="database"&&<LibraryForm  instanceId={instanceId} flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions}  />}
+        {value==="database"&&<LibraryForm  createFormRef={createFormRef} count={count} instanceId={instanceId} flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions}  />}
         {/* 表权限 */}
         {value==="table"&&<TableForm  
          instanceId={instanceId}
         databasesOptions={databasesOptions} 
+        count={count}
         databasesOptionsLoading={databasesOptionsLoading}
         flag={flag} submit={(params:any)=>submit(params)}
+        createFormRef={createFormRef}
       
         />}
         {/* 库owner权限 */}
-        {value==="owner"&&<LibraryOwnerForm  instanceId={instanceId}  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions} />}
+        {value==="owner"&&<LibraryOwnerForm createFormRef={createFormRef}  count={count}  instanceId={instanceId}  flag={flag} submit={(params:any)=>submit(params)} databasesOptions={databasesOptions} />}
         {/* limit限制 */}
-        {value==="limit"&&<LimitForm flag={flag}  instanceId={instanceId} submit={(params:any)=>submit(params)}   databasesOptions={databasesOptions} databasesOptionsLoading={databasesOptionsLoading}/>}
+        {value==="limit"&&<LimitForm flag={flag} createFormRef={createFormRef}  count={count}  instanceId={instanceId} submit={(params:any)=>submit(params)}   databasesOptions={databasesOptions} databasesOptionsLoading={databasesOptionsLoading}/>}
 
      
         <Form.Item label="理由" name="remark">
