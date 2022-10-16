@@ -348,14 +348,10 @@ export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
             let option: any = [];
             data?.map((item: any) => {
               option.push({
-                label: item.categoryCode || '',
-                value: item.categoryCode || '',
+                label: item || '',
+                value: item || '',
               });
             });
-            //  data?.map((item: any) => ({
-            //     label: item.categoryCode || '',
-            //     value: item.categoryCode || '',
-            //   }));
             setDataSource(option);
           } else {
             setDataSource([]);

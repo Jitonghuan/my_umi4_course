@@ -2,7 +2,7 @@ import { useState,useCallback } from 'react';
 import * as APIS from '../../../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
-//productLine
+//新的productLine接口
 //产品线分类
 
 export function useQueryProductlineList(): [boolean, any, (componentName:string) => Promise<void>] {
@@ -19,8 +19,8 @@ export function useQueryProductlineList(): [boolean, any, (componentName:string)
             let option: any = [];
             data?.map((item: any) => {
               option.push({
-                label: item.categoryCode || '',
-                value: item.categoryCode || '',
+                label: item || '',
+                value: item || '',
               });
             });
             //  data?.map((item: any) => ({

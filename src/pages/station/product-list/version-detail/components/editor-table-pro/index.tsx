@@ -148,7 +148,7 @@ export default (props: VersionDetailProps) => {
       onChange: (param: any, config: any) => {
         queryProductVersionOptions(param.value, currentTabType);
         if(currentTab==="app"){
-          getProductlineList(param.value);
+          getProductlineList(param.label);
         }
         componentOptions.filter((item: any) => {
           if (item.label === param.label) {
