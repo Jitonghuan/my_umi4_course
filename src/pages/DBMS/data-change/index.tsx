@@ -75,6 +75,7 @@ export default function AuthorityApply (){
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
+        scroll={{ x: '100%' }}
         {...tableProps}
         //@ts-ignore
         pagination={{

@@ -17,7 +17,6 @@ export default function AuthorityApply (){
     const [form] = Form.useForm();
     let location = useLocation();
     const query = parse(location.search);
-  
     const [mode,setMode]=useState<EditorMode>("HIDE");
     const [curRecord,setCurRecord]=useState<any>({});
     const [loading, userNameOptions, searchUser] =useSearchUser()
@@ -81,9 +80,6 @@ export default function AuthorityApply (){
       });
      
     return(<>
-    
-
-      
        <TicketDetail
        mode={mode}
        curRecord={curRecord}
@@ -106,7 +102,7 @@ export default function AuthorityApply (){
         formOptions={formOptions}
         formLayout="inline"
         columns={columns}
-        // scroll={{ x: '100%' }}
+        scroll={{ x: '100%' }}
         {...tableProps}
         //@ts-ignore
         pagination={{

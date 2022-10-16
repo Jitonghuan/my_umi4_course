@@ -1,6 +1,6 @@
-import { Space, Popconfirm, Tooltip ,Tag} from 'antd';
+import { Space,  Tooltip ,Tag} from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { FormProps, OptionProps } from '@/components/table-search/typing';
+import { FormProps, } from '@/components/table-search/typing';
 import { datetimeCellRender } from '@/utils';
 
 type CurrentStatusStatusTypeItem = {
@@ -161,13 +161,15 @@ export const createTableColumns = (params: {
       title: '工单号',
       dataIndex: 'id',
       key: 'id',
-      width: '7%',
+      // width: '7%',
+      width: 80,
     },
     {
       title: '工单类别',
       dataIndex: 'wfUserType',
       key: 'wfUserType',
-      width: '10%',
+      // width: '10%',
+      width: 120,
       //"我审批的"
        render: (wfUserType) =>  <Tag color={wfUserType==="我审批的"?"#2db7f5":"pink"}>{wfUserType}</Tag>,
     },
@@ -175,19 +177,15 @@ export const createTableColumns = (params: {
       title: '标题',
       dataIndex: 'title',
       key: 'title',
-      width: '13%',
-    },
-    {
-      title: '申请原因',
-      dataIndex: 'remark',
-      key: 'remark',
-      width: '10%',
+      // width: '13%',
+      width: 280,
     },
     {
       title: '对象类型',
       dataIndex: 'privWfTypeDesc',
       key: 'privWfTypeDesc',
-      width: '10%',
+      // width: '10%',
+      width: 160,
      
       //render: (text,record:any) => <Tooltip title={text}><Tag color={PrivWfType[record?.privWfType]?.tagColor||"default"}>{text}</Tag></Tooltip>,
     },
@@ -195,24 +193,40 @@ export const createTableColumns = (params: {
       title: '当前状态',
       dataIndex: 'currentStatusDesc',
       key: 'currentStatusDesc',
-      width: '12%',
+      // width: '12%',
+      width: 180,
      
       render: (text,record:any) => <Tooltip title={text}><Tag color={CurrentStatusStatus[record?.currentStatus]?.tagColor||"default"}>{text}</Tag></Tooltip>,
     },
     {
+      title: '申请原因',
+      dataIndex: 'remark',
+      key: 'remark',
+      // width: '10%',
+      width: 320,
+    },
+   
+   
+    {
         title: '申请人',
         dataIndex: 'userName',
         key: 'userName',
-        width: '10%',
-        ellipsis: true,
+        // width: '10%',
+        width: 120,
+        ellipsis: {
+          showTitle: false,
+        },
         render: (user) =>  <Tag color="#2db7f5">{user}</Tag>,
       },
       {
         title: '当前处理人',
         dataIndex: 'audit',
         key: 'audit',
-        width: '10%',
-        ellipsis: true,
+        // width: '10%',
+        width: 280,
+        ellipsis: {
+          showTitle: false,
+        },
         render: (users,record) => {
           let auditUsers=[];
           if(record?.audit?.length>0&&record?.audit[0]?.AuditStatus==="wait"){
@@ -235,16 +249,22 @@ export const createTableColumns = (params: {
         title: '最后操作时间',
         dataIndex: 'endTime',
         key: 'endTime',
-        width: '15%',
-        ellipsis: true,
+        // width: '15%',
+        width: 200,
+        ellipsis: {
+          showTitle: false,
+        },
         render: (value) => <><Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip> </>,
       },
       {
         title: '创建时间',
         dataIndex: 'startTime',
         key: 'startTime',
-        width: '15%',
-        ellipsis: true,
+        // width: '15%',
+        width: 200,
+        ellipsis: {
+          showTitle: false,
+        },
         render: (value) => <><Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip></>,
       },
 
@@ -253,8 +273,8 @@ export const createTableColumns = (params: {
       fixed: 'right',
       dataIndex: 'option',
       key: 'option',
-     
-      width: 100,
+      align: 'center',
+      width: 90,
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>

@@ -127,13 +127,13 @@ export const createTableColumns = (params: {
       title: '工单号',
       dataIndex: 'id',
       key: 'id',
-      width: '10%',
+      width: 80,
     },
     {
       title: '工单类别',
       dataIndex: 'wfUserType',
       key: 'wfUserType',
-      width: '14%',
+      width: 120,
       //"我审批的"
        render: (wfUserType) =>  <Tag color={wfUserType==="我审批的"?"#2db7f5":"pink"}>{wfUserType}</Tag>,
     },
@@ -141,8 +141,10 @@ export const createTableColumns = (params: {
       title: '标题',
       dataIndex: 'title',
       key: 'title',
-      width: '13%',
-      ellipsis: true,
+      width: 280,
+      ellipsis: {
+        showTitle: false,
+      },
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     // {
@@ -155,7 +157,7 @@ export const createTableColumns = (params: {
       title: '变更库',
       dataIndex: 'dbCode',
       key: 'dbCode',
-      width: '18%',
+      width:180,
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
@@ -163,7 +165,7 @@ export const createTableColumns = (params: {
       title: '当前状态',
       dataIndex: 'currentStatusDesc',
       key: 'currentStatusDesc',
-      width: '16%',
+      width: 180,
       ellipsis: true,
       render: (text,record:any) => <Tooltip title={text}><Tag color={CurrentStatusStatus[record?.currentStatus]?.tagColor||"default"}>{text}</Tag></Tooltip>
     },
@@ -171,9 +173,9 @@ export const createTableColumns = (params: {
         title: '申请人',
         dataIndex: 'userName',
         key: 'userName',
-        width: '16%',
+        width: 120,
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (user) =>  <Tag color="#2db7f5">{user}</Tag>,
       },
       // {
       //   title: '当前处理人',
@@ -203,7 +205,7 @@ export const createTableColumns = (params: {
         title: '创建时间',
         dataIndex: 'startTime',
         key: 'startTime',
-        width: '28%',
+        width: 200,
         ellipsis: true,
         render: (value) => <>{datetimeCellRender(value)} </>,
       },
@@ -211,7 +213,7 @@ export const createTableColumns = (params: {
         title: '最后操作时间',
         dataIndex: 'endTime',
         key: 'endTime',
-        width: '28%',
+        width: 200,
         ellipsis: true,
         render: (value) => <>{datetimeCellRender(value)} </>,
       },
@@ -221,7 +223,9 @@ export const createTableColumns = (params: {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '14%',
+      fixed: 'right',
+      align: 'center',
+      width: 90,
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
