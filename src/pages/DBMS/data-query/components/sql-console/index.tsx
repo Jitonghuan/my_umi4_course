@@ -20,7 +20,6 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
     return(
       new Array(1).fill(null).map((_, index) => {
         const id = String(index + 1);
-        console.log("接收默认",tableFields,)
         return { 
         label: `SQL console `, 
         children: 
@@ -70,6 +69,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
            isSqlExecutePlanBtn={true} 
            tableFields={tableFields} 
            initValue={initSqlValue}
+           implementDisabled={implementDisabled}
            subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
            />, key: newActiveKey }]);
           setActiveKey(newActiveKey);
@@ -77,7 +77,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
           message.info("您已经打开太多页面，请关闭一些吧！")
         }
       }
-    },[initSqlValue,addCount])
+    },[initSqlValue,addCount,implementDisabled])
   
     const remove = (targetKey: string) => {
       const targetIndex = items.findIndex(pane => pane.key === targetKey);

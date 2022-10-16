@@ -1,14 +1,14 @@
 import React, { useState,useEffect,useMemo,useRef,} from 'react';
-import {  Tabs,Form,Space,Button,Select,message } from 'antd';
-import {RightCircleFilled,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
+import {  Tabs,Form,Space,Select,message,Collapse,Spin,Input } from 'antd';
+import {CaretRightOutlined,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
-import { ContentCard } from '@/components/vc-page-content';
 import QueryResult from "./components/query-result";
 import SqlConsole from "./components/sql-console";
 import {useEnvList,querySqlResultInfo,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../common-hook'
 
 import './index.less';
 const { TabPane } = Tabs;
+const { Panel } = Collapse;
 export default function ResizeLayout() {
   const sqlConsoleRef = useRef<any>(null);
   const queryResultRef = useRef<any>(null);
@@ -30,15 +30,18 @@ export default function ResizeLayout() {
   const [firstInitSqlValue,setFirstInitSqlValue]=useState<string>("")
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
   const [sqlResult,setSqlResult]=useState<any>("");
-  const [addCount,setAddCount]=useState<number>(0)
+  const [addCount,setAddCount]=useState<number>(0);
+  const [tableCode,setTableCode]=useState<string>("");
+  const [originData,setOriginData]=useState<any>([]);
+  const [filterFlag,setFilterFlag]=useState('');
   //sql console 页面的新增按钮方法
   const onAdd=()=>{
     const values=form?.getFieldsValue();
     let initsql="select * from user limit 10"
-    if(values?.tableCode){
-      initsql= `select * from ${values?.tableCode} limit 10`
+    if(tableCode){
+      initsql= `select * from ${tableCode} limit 10`
       setImplementDisabled(false)
-    }else if(!values?.tableCode){
+    }else if(!tableCode){
       setImplementDisabled(true)
     }
     addSqlConsole
@@ -48,12 +51,13 @@ export default function ResizeLayout() {
  //查询sql结果
   const querySqlResult=(params:{sqlContent:string,sqlType:string})=>{
     const values=form?.getFieldsValue();
-    if(!values?.instanceId||!values?.dbCode||!values?.tableCode||!params?.sqlContent){
+    if(!values?.instanceId||!values?.dbCode||!tableCode||!params?.sqlContent){
       message.warning("请先进行信息填写并且输入sql语句再查询！")
       return
     }
     setSqlLoading(true)
-    querySqlResultInfo({...params,... values}).then((res)=>{
+    console.log("----tableCode",tableCode)
+    querySqlResultInfo({...params,... values,tableCode}).then((res)=>{
       if(res?.success){ 
         const dataSource =   res?.data?.result|| "";
         setSqlResult(dataSource)
@@ -66,23 +70,97 @@ export default function ResizeLayout() {
   useEffect(()=>{
     queryEnvList()
     getInstanceList()
+    return()=>{
+      setFilterFlag('')
+    }
   },[])
+  const onFilterChange = (e:any) => {
+    setFilterFlag('filter')
+    let data=tablesOptions?.map((item:any)=>({
+      ...item
+
+    }))
+    setOriginData(data)
+
+    const newKeys = tablesOptions?.map((item:any) => {
+        if (item.value.indexOf(e) > -1) {
+          return ({
+            ...item
+          });
+        }
+        return null;
+      }).filter((item:any, i:any, self:any) => item && self.indexOf(item) === i);
+   
+  
+
+    
+    setTablesSource(newKeys)
+    
+  };
+
+  const tabelMap=()=>{
+    return(
+      <Collapse 
+      accordion
+      bordered={false} 
+      // defaultActiveKey={-1}
+      expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} 
+      className="site-collapse-custom-collapse"
+      onChange={(value)=>{
+        if(value){
+          setTableCode(value)
+          const values=form?.getFieldsValue();
+          setOptions([])
+          queryTableFields({...values,tableCode:value})
+          setFirstInitSqlValue(`select * from ${value} limit 10`)
+          // setInitSqlValue(`select * from ${table} limit 10`)
+          if(!values?.instanceId||!values?.dbCode||!value){
+            setImplementDisabled(true)
+          }else if(values?.instanceId&&values?.dbCode&&value){
+            setImplementDisabled(false)
+          }
+        } 
+      }}
+      >
+     {tablesOptions?.map((item:any)=>{
+        return(
+          <Panel 
+            header={item?.value} 
+            key={item?.value} 
+            className="site-collapse-custom-panel"
+            >
+               <Spin spinning={fieldsLoading}>
+             {tableFieldsOptions?.length>0&&<p className="site-collapse-custom-panel-content"> {tableFilesMap()}</p>}  
+               </Spin>
+          
+          </Panel>
+         
+        )
+      })}
+       </Collapse>
+
+     
+    )
+  }
 
 
   //表字段渲染
-  const tableMap=()=>{
+  const tableFilesMap=()=>{
    return( tableFieldsOptions?.map((item:string)=>{
       return(
-        <li className="schema-li-map" style={{listStyle:"none"}}><Space><ZoomInOutlined   style={{color:'#3591ff'}} />
-        <InsertRowAboveOutlined onDoubleClick={
-         ()=> {
-           const table=form?.getFieldValue("tableCode")
-          let initsql= `select ${item||"*"} from ${table} limit 10`
+       
+            <li className="schema-li-map" style={{listStyle:"none"}}><Space>
+           <InsertRowAboveOutlined onDoubleClick={
+            ()=> {
+          //  const table=form?.getFieldValue("tableCode")
+          let initsql= `select ${item||"*"} from ${tableCode} limit 10`
            addSqlConsole
            setInitSqlValue(initsql)
-           
         }
-           }  style={{color:"#6495ED",fontSize:16}}/><span>{item}</span></Space></li>
+      }  style={{color:"#6495ED",fontSize:16}}/><span>{item}</span></Space></li>
+
+      
+      
       )
 
     })
@@ -93,6 +171,17 @@ export default function ResizeLayout() {
     addSqlConsole
     setInitSqlValue(initsql)
     setImplementDisabled(false)
+  }
+  const reset=()=>{
+    //一进页面就点重置
+    if(tablesOptions.length>0&&filterFlag!=="filter"){
+      setTablesSource(tablesOptions)
+    }else{
+      //正常筛选数据
+    setTablesSource(originData)
+      
+    }
+    
   }
   const leftContent=useMemo(()=>{
     return(
@@ -106,34 +195,54 @@ export default function ResizeLayout() {
                form?.setFieldsValue({
                 instanceId:"",
                 dbCode:"",
-                tableCode:""
+                searchFileds:""
+                // tableCode:""
               })
+              setTableCode("")
+              setImplementDisabled(false)
+              setTablesSource([])
               setOptions([])
             }} />
           </Form.Item>
           <Form.Item name="instanceId">
-          <Select  placeholder="选择实例" options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId)=>{
+          <Select  placeholder="选择实例" options={instanceOptions}  showSearch loading={instanceLoading} onChange={(instanceId)=>{
             form?.setFieldsValue({
               dbCode:"",
-              tableCode:""
+              searchFileds:""
+              // tableCode:""
             })
+            setTableCode("")
+            setTablesSource([])
             queryDatabases({instanceId})
             setOptions([])
+            setImplementDisabled(false)
             
             }}/>
           </Form.Item>
           <Form.Item name="dbCode">
-          <Select  placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{
+          <Select  placeholder="选择库" options={databasesOptions}  showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{
             queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
             form?.setFieldsValue({
              
-              tableCode:""
+              searchFileds:""
             })
+            setTableCode("")
             setOptions([])
+            setTablesSource([])
+            setImplementDisabled(false)
             }}/>
           </Form.Item>
+          <Form.Item name="searchFileds" style={{display:"flex",alignItems:"center"}}>
+            <Input.Search placeholder="请输入表名进行搜索" style={{width:'86%'}} onSearch={onFilterChange} ></Input.Search>
+           &nbsp; <span className="rest-btn" onClick={reset}>重置</span>
+          </Form.Item>
           <Form.Item name="tableCode">
-          <Select  placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={(table)=>{
+            <Spin spinning={tablesOptionsLoading}>
+            {tabelMap()}
+              
+            </Spin>
+           
+          {/* <Select  placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={(table)=>{
             const values=form?.getFieldsValue();
             setOptions([])
             queryTableFields({...values})
@@ -145,17 +254,17 @@ export default function ResizeLayout() {
               setImplementDisabled(false)
             }
             
-            } } />
+            } } /> */}
           </Form.Item>
         </Form>
         {/* ----表字段展示----- */}
       
-        {tableMap()}
+       
 
       </div>
       </>
     )
-  },[queryResultItems,sqlConsoleItems,fieldsLoading,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesOptions,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
+  },[queryResultItems,implementDisabled,sqlConsoleItems,fieldsLoading,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesOptions,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
     
     const rightContent=useMemo(()=>{
       return(
@@ -190,7 +299,7 @@ export default function ResizeLayout() {
 
         </>
       )
-    },[queryResultItems,sqlConsoleItems,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue,implementDisabled,addCount]);
+    },[queryResultItems,sqlConsoleItems,implementDisabled,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue,implementDisabled,addCount]);
    
     return (
       // <ContentCard>
