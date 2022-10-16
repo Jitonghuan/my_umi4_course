@@ -245,7 +245,7 @@ export default function ApprovalEnd(){
          <Tag color="orange" >撤销工单</Tag>
          </Popconfirm>}
          
-         <Tag className="back-go" onClick={()=>{
+         <Tag className="back-go" color="geekblue" onClick={()=>{
           history.push({
            pathname:"/matrix/DBMS/data-change",
            

@@ -142,7 +142,7 @@ export default function TicketApproval(){
 
        {/* <Tag color="geekblue">复制工单</Tag> */}
      
-         <Tag className="back-go" onClick={()=>{
+         <Tag className="back-go" color="geekblue" onClick={()=>{
           
            history.push({
             pathname:"/matrix/DBMS/data-change",
