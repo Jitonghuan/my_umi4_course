@@ -418,7 +418,6 @@ export default function ResourceDetail(props: any) {
           loading={loading || updateLoading || allLoading}
           bordered
           rowKey="id"
-          size='small'
           pagination={false}
           columns={tableColumns}
         // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}
