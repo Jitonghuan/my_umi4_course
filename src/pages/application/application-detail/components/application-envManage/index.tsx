@@ -415,7 +415,7 @@ export default function appEnvPageList() {
               <div className="action-cell">
                 {/* <Popconfirm title={`确定要${record.isAppNeedCR ? '关闭' : '开启'}CodeReview吗？`} onConfirm={() => handleDelEnv(record)}> */}
                 <Switch
-                  disabled={record?.proEnvType !== 'benchmark' || microFeType === 'subProject'}
+                  // disabled={record?.proEnvType !== 'benchmark' || microFeType === 'subProject'}
                   checked={record?.isAppNeedCR}
                   className="switch"
                   onChange={() => {
@@ -432,7 +432,7 @@ export default function appEnvPageList() {
             width={110}
             render={(value, record, index) => (
               <>
-                <Switch className="switch" disabled={microFeType === 'subProject'} onChange={() => handleNeedApplyChange(value, record)} checked={value} />
+                <Switch className="switch" onChange={() => handleNeedApplyChange(value, record)} checked={value} />
               </>
             )}
           />

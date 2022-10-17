@@ -140,7 +140,7 @@ const APIError = (props: IProps) => {
             {detail.d1}
           </Descriptions.Item>
           <Descriptions.Item label="traceId" span={2}>
-            {detail.d3?.split('-')[1] || '-'}
+            {detail.d3}
           </Descriptions.Item>
           <Descriptions.Item label="页面" span={2}>
             {detail.url}
