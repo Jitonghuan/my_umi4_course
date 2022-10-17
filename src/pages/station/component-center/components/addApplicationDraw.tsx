@@ -38,12 +38,6 @@ export default function TmplEditor(props: AppComponentProps) {
   const handleSubmit = () => {
     if (type === 'success') {
       addForm.validateFields().then((params) => {
-        // let componentName;
-        // if (!Array.isArray(params.componentName)) {
-        //   componentName = [params.componentName];
-        // } else {
-        //   componentName = params.componentName;
-        // }
         addApplication({ ...params, componentName: curComponentName, componentType: tabActiveKey }).then(() => {
           onSave();
         });
@@ -165,9 +159,6 @@ export default function TmplEditor(props: AppComponentProps) {
         <Form.Item label="产品线" name="productLine" rules={[{ required: true, message: '请选择产品线' }]}>
           <Select style={{ width: 320 }} options={productLineOptions || []} disabled={isDisabled}></Select>
         </Form.Item>
-        {/* <Form.Item label="组件名称" name="componentName" rules={[{ required: true, message: '请选择组件名称' }]}>
-          <Select style={{ width: 320 }} mode="multiple" options={applicationOptions} disabled={isDisabled}></Select>
-        </Form.Item> */}
         <Form.Item
           label="组件版本"
           name="componentVersion"
@@ -184,10 +175,11 @@ export default function TmplEditor(props: AppComponentProps) {
           }
           help={type === 'success' ? '版本号检查通过' : type === 'error' ? errorMessage : '等待检查版本号'}
         >
-          <Input style={{ width: 320 }} placeholder="请按照 1.0.0 的格式输入版本号！" onBlur={onVersionChange}></Input>
+          <Input style={{ width: 320 }} placeholder="请按照 2022.10.13 的格式输入版本号！" onBlur={onVersionChange}></Input>
         </Form.Item>
       </Form>
       <Divider />
+      <div style={{marginLeft:50}}>
       {applicationOptions?.length > 0 && (
         <p className="app-list-show">
           <span> 应用列表:</span>
@@ -212,6 +204,7 @@ export default function TmplEditor(props: AppComponentProps) {
           treeData={applicationOptions}
         />
       </Spin>
+    </div>
     </Drawer>
   );
 }

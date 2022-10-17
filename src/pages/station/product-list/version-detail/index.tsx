@@ -4,10 +4,11 @@ import { Tabs, Descriptions, Button, Typography, Divider } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { history,useLocation } from 'umi';
 import moment from 'moment';
-import EditorTablePro from './Editor-Table-Pro';
-import GlobalParamsEditorTable from './GlobalParamsEditorTable';
-import ComponentParamsEditorTable from './ComponentParamsEditorTable';
-import { productionTabsConfig, deliveryTabsConfig, productionPageTypes } from './tab-config';
+import EditorTablePro from './components/editor-table-pro';
+import GlobalParamsEditorTable from './components/global-params-editor-table';
+import ComponentParamsEditorTable from './components/component-params-editor-table';
+import ServiceConfig from './components/service-config'
+import { productionTabsConfig, deliveryTabsConfig} from './tab-config';
 import { useVersionDescriptionInfo, useEditProductVersionDescription } from './hooks';
 import './index.less';
 import { useQueryDeliveryParamList, useQueryDeliveryGloableParamList } from './hooks';
@@ -27,7 +28,6 @@ export default function VersionDetail() {
 
   useEffect(() => {
     if (!descriptionInfoData.versionId) {
-      debugger;
       return;
     }
     if (descriptionInfoData?.optType === 'componentDetail') {
@@ -90,8 +90,6 @@ export default function VersionDetail() {
                   title="基本信息"
                   column={2}
                   className="basic-info-description"
-                  // labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' }}
-                  // contentStyle={{ color: '#000' }}
                   bordered={true}
                 >
                   <Descriptions.Item label="产品名称:">{descriptionInfoData?.productName || '--'}</Descriptions.Item>
@@ -157,6 +155,16 @@ export default function VersionDetail() {
                     {item.value === 'componentParameters' && (
                       <div>
                         <ComponentParamsEditorTable
+                          currentTab={item.value}
+                          versionId={descriptionInfoData.versionId}
+                          initDataSource={gloableTableDataSource}
+                          isEditable={isEditable}
+                        />
+                      </div>
+                    )}
+                     {item.value === 'server' && (
+                      <div>
+                        <ServiceConfig
                           currentTab={item.value}
                           versionId={descriptionInfoData.versionId}
                           initDataSource={gloableTableDataSource}

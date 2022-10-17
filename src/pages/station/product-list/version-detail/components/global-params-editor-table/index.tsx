@@ -3,27 +3,8 @@ import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import { Button, Input, Form, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import {
-  useQueryDeliveryParamList,
-  useSaveParam,
-  useQueryDeliveryGloableParamList,
-  useDeleteDeliveryParam,
-  useEditVersionParam,
-} from './hooks';
-
-type DataSourceType = {
-  id: any;
-  title?: string;
-  labels?: {
-    key: string;
-    label: string;
-  }[];
-  state?: string;
-  created_at?: string;
-  children?: DataSourceType[];
-};
-
+import {DataSourceType} from '../editor-table-pro/schema'
+import {useQueryDeliveryParamList,useSaveParam,useQueryDeliveryGloableParamList,useDeleteDeliveryParam,useEditVersionParam} from '../../hooks';
 export interface VersionDetailProps {
   currentTab: string;
   versionId: any;
@@ -43,6 +24,7 @@ export default (props: VersionDetailProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const [type, setType] = useState<string>('');
   const [form] = Form.useForm();
+  const [record,setRecord]=useState<any>({})
   const [searchForm] = Form.useForm();
   useEffect(() => {
     //查询建站配置参数
@@ -104,7 +86,7 @@ export default (props: VersionDetailProps) => {
     {
       title: '操作',
       valueType: 'option',
-      width: 250,
+      width: 150,
       render: (text, record: any, _, action) => [
         <a
           key="editable"
@@ -114,6 +96,7 @@ export default (props: VersionDetailProps) => {
             // } else {
             action?.startEditable?.(record.id);
             setType('edit');
+            setRecord(record)
             // }
           }}
         >
@@ -154,26 +137,14 @@ export default (props: VersionDetailProps) => {
           </Form>
         </div>
         <div className="caption-right">
-          {/* <Button
-            type="primary"
-            // disabled={isEditable}
-            onClick={() => {
-              setType('add');
-              actionRef.current?.addEditRecord?.({
-                id: (Math.random() * 1000000).toFixed(0),
-              });
-            }}
-            icon={<PlusOutlined />}
-          >
-            添加全局参数
-          </Button> */}
+        {/* <Button>批量添加</Button> */}
         </div>
       </div>
 
       <EditableProTable<DataSourceType>
         rowKey="id"
         actionRef={actionRef}
-        headerTitle="可编辑表格"
+        // headerTitle="可编辑表格"
         // maxLength={5}
         // 关闭默认的新建按钮
         // recordCreatorProps={false}
@@ -196,6 +167,7 @@ export default (props: VersionDetailProps) => {
         editable={{
           form,
           editableKeys,
+          onCancel:async()=>{setType("")} ,
           onSave: async () => {
             let value = form.getFieldsValue();
             let objKey = Object.keys(value);
@@ -205,8 +177,11 @@ export default (props: VersionDetailProps) => {
                 queryDeliveryGloableParamList(versionId, 'global');
               });
             } else if (type === 'edit') {
-              editVersionParam({ ...params, id: parseInt(objKey[0]) }).then(() => {
+              setType("")
+              
+              editVersionParam({ ...params,versionId: versionId,paramName:record?.paramName, paramComponent: 'global', id: parseInt(objKey[0]) }).then(() => {
                 queryDeliveryGloableParamList(versionId, 'global');
+               
               });
             }
           },

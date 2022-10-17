@@ -6,7 +6,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Drawer, message, Form, Button, Table, Input, Card, Select, Space } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history, useLocation} from 'umi';
-import { parse } from 'query-string';
 import { ContentCard } from '@/components/vc-page-content';
 import { roleTableColumns } from '../schema';
 import {

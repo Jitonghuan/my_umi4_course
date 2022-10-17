@@ -14,6 +14,11 @@ export const productionTabsConfig: any = [
     value: 'sql',
     type: 'sql',
   },
+  {
+    label: '前端资源',
+    value: 'feResources',
+    type: 'feResources',
+  },
 ];
 export const componentTypeOptions = [
   {

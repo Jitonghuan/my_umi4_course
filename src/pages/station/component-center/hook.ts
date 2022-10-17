@@ -76,14 +76,17 @@ export function useQueryComponentList(): [
     pageIndex?: number;
     pageSize?: number;
   }) => Promise<void>,
+ any
 ] {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState([]);
+  const [options, setOptions] = useState([]);
   const [pageInfo, setPageInfo] = useState({
     pageIndex: 1,
     pageSize: 20,
     total: 0,
   });
+  let optionsArry:any=[]
   const queryComponentList = async (paramsObj: {
     componentType: string;
     productLine?: string;
@@ -106,6 +109,15 @@ export function useQueryComponentList(): [
           if (res.success) {
             let dataSource = res.data.dataSource;
             let pageInfo = res.data.pageInfo;
+           
+            dataSource?.map((item:any)=>{
+              optionsArry.push({
+                label:item?.componentName,
+                value:item?.componentName,
+              })
+
+            })
+            setOptions(optionsArry)
             setDataSource(dataSource);
             setPageInfo({
               pageIndex: pageInfo.pageIndex,
@@ -123,8 +135,10 @@ export function useQueryComponentList(): [
       console.log(error);
     }
   };
-  return [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList];
+  return [loading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList,options];
 }
+
+
 
 //用户组件接入
 export function useAddApplication(): [
@@ -228,36 +242,51 @@ export function useAddMiddleware(): [
   };
   return [loading, addMiddleware];
 }
-
+export interface AddComponentItems{
+  filePath?: string;
+  componentName: string;
+  componentVersion: string;
+  componentType: string;
+  componentDescription: string;
+  componentUrl: string;
+  componentSourceEnv?: string;
+  componentExplanation: string;
+  componentConfiguration: string;
+  productLine?: string;
+}
+//前端资源接入 addFrontComponentApi
+export function useAddFrontComponent(): [
+  boolean,
+  (paramsObj:AddComponentItems) => Promise<void>,
+] {
+  const [loading, setLoading] = useState<boolean>(false);
+  const addFrontComponent = async (paramsObj: AddComponentItems) => {
+    setLoading(true);
+    try {
+      await postRequest(`${APIS.addFrontComponentApi}?filePath=${paramsObj.filePath}`, { data: paramsObj })
+        .then((res) => {
+          if (res.success) {
+            message.success('新增成功！');
+          } else {
+            return;
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, addFrontComponent];
+}
 //基础数据接入
 export function useAddBasicdata(): [
   boolean,
-  (paramsObj: {
-    filePath: string;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
-    componentDescription: string;
-    componentUrl: string;
-    componentSource_env: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    productLine: string;
-  }) => Promise<void>,
+  (paramsObj:AddComponentItems) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const addBasicdata = async (paramsObj: {
-    filePath: string;
-    componentName: string;
-    componentVersion: string;
-    componentType: string;
-    componentDescription: string;
-    componentUrl: string;
-    componentSource_env: string;
-    componentExplanation: string;
-    componentConfiguration: string;
-    productLine: string;
-  }) => {
+  const addBasicdata = async (paramsObj:AddComponentItems) => {
     setLoading(true);
     try {
       await postRequest(`${APIS.addBasicdata}?filePath=${paramsObj.filePath}`, { data: paramsObj })
@@ -319,14 +348,10 @@ export function useQueryProductlineList(): [boolean, any, () => Promise<void>] {
             let option: any = [];
             data?.map((item: any) => {
               option.push({
-                label: item.categoryCode || '',
-                value: item.categoryCode || '',
+                label: item || '',
+                value: item || '',
               });
             });
-            //  data?.map((item: any) => ({
-            //     label: item.categoryCode || '',
-            //     value: item.categoryCode || '',
-            //   }));
             setDataSource(option);
           } else {
             setDataSource([]);

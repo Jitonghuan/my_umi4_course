@@ -8,7 +8,6 @@
 
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { RedoOutlined } from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';

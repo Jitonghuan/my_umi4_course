@@ -61,7 +61,7 @@ export default function ticketAlarm() {
     })
       .then((res: any) => {
         if (res.success) {
-          // console.log('.......', res.data);
+       
           const alertData = res.data.dataSource;
           let pageTotal = res.data.pageInfo.total;
           let pageIndex = res.data.pageInfo.pageIndex;

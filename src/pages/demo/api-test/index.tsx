@@ -25,7 +25,6 @@ export default function PageApiTest() {
   const [resultData, setResultData] = useState('');
 
   const handleSubmit = useCallback(async (values: any) => {
-    console.log('> handleSubmit: ', values);
 
     const { api, method, data, headers } = values;
     let promise: Promise<any>;

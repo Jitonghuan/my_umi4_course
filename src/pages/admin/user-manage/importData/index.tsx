@@ -55,7 +55,6 @@ export default function addEnvData(props: importDataProps) {
     onChange(info: any) {
       const { status } = info.file;
       if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
       }
       if (status === 'done' && info.file?.response.success) {
         message.success(`${info.file.name} 上传成功.`);

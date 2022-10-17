@@ -7,6 +7,7 @@ import moment from 'moment';
 import { queryComponentInfoApi, queryComponentVersionList, deletVersionApi } from '../../service';
 import { getRequest, postRequest } from '@/utils/request';
 import AceEditor from '@/components/ace-editor';
+import { PlusCircleOutlined} from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import UserModal from '../components/UserModal';
 import BasicDataModal from '../components/basicDataModal';
@@ -17,7 +18,7 @@ import {
   Button,
   Descriptions,
   Typography,
-  Divider,
+  Tag,
   Spin,
   Modal,
   Table,
@@ -26,8 +27,7 @@ import {
 } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { useQueryComponentList, useQueryProductlineList } from '../hook';
-import { useUpdateDescription, useUpdateConfiguration } from './hooks';
-
+import { useUpdateDescription, useUpdateConfiguration,useAddRely,deleteRely } from './hooks';
 import './index.less';
 export default function ComponentDetail() {
   let location:any = useLocation();
@@ -57,6 +57,9 @@ export default function ComponentDetail() {
   const [componentInfo, setComponentInfo] = useState<any>({});
   const [editableStr, setEditableStr] = useState('');
   const [editLoading, updateDescription] = useUpdateDescription();
+  const [addLoading, addRely]=useAddRely();
+  // const [delLoading, deleteRely]=useDeleteRely();
+  const [delLoading,setDelLoading]=useState(false);
   const [updateLoading, updateConfiguration] = useUpdateConfiguration();
   const [loading, setLoading] = useState(false);
   const [versionOptions, setVersionOptions] = useState<any>([]);
@@ -66,17 +69,22 @@ export default function ComponentDetail() {
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
-  const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList] = useQueryComponentList();
-  // console.log('productVersionId', productVersionId);
+  const [mode,setMode]=useState<EditorMode>("HIDE");
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [tableLoading, dataSource, pageInfo, setPageInfo, setDataSource, queryComponentList,options] = useQueryComponentList();
+  
   const deletVersion = async (id: number) => {
+    setDelLoading(true)
     await postRequest(`${deletVersionApi}?id=${id}`).then((res) => {
       if (res.success) {
         message.success(res.data);
         getComponentVersionList(initRecord.id);
-        // queryComponentInfo(componentName, curVersion?.version, componentType, curVersion.componentId);
+       
       } else {
         return;
       }
+    }).finally(()=>{
+      setDelLoading(false)
     });
   };
   const getComponentVersionList = async (componentId: string) => {
@@ -133,6 +141,7 @@ export default function ComponentDetail() {
         .then((res) => {
           if (res.success) {
             let dataSource = res.data;
+            
             setComponentInfo(dataSource);
             setEditableStr(dataSource.componentDescription);
             configForm.setFieldsValue({
@@ -153,22 +162,12 @@ export default function ComponentDetail() {
     if (!initRecord.id) {
       return;
     }
-    // if(componentVersion && componentName&&optType==='versionDetail'){
-    //   //componentId
-    //   console.log('进入这里1111')
-    //   queryComponentInfo(componentName, componentVersion, componentType, componentId);
-    //   getComponentVersionList(initRecord.id);
-    //   setCurVersion({
-    //     version: componentVersion,
-    //     componentId: componentId,
-    //   });
-
-    // }componentVersion
+   
+    queryComponentList({ componentType: componentType,pageIndex:-1,
+      pageSize:-1 })
     if (componentVersion && componentName) {
       getComponentVersionList(initRecord.id);
-
       queryComponentInfo(componentName, componentVersion, componentType, componentId);
-
       setCurVersion({
         version: componentVersion,
         componentId: componentId,
@@ -176,7 +175,7 @@ export default function ComponentDetail() {
     } else {
       getComponentVersionList(initRecord.id);
     }
-  }, [componentName, componentVersion]);
+  }, [componentName, componentVersion,]);
 
   const changeVersion = (versionInfo: any) => {
     setCurVersion({
@@ -185,6 +184,10 @@ export default function ComponentDetail() {
     });
 
     queryComponentInfo(componentName, versionInfo.value, componentType, initRecord.id);
+  };
+  const preventDefault = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    console.log('Clicked! But prevent default.');
   };
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
@@ -286,9 +289,6 @@ export default function ComponentDetail() {
                   if (componentType === 'app') {
                     setUserModalVisiable(true);
                   }
-                  //  if (componentType === 'middleware') {
-                  //    // setMiddlewareModalVisibale(true);
-                  //  }
                   if (componentType === 'sql') {
                     setBasicDataModalVisiable(true);
                   }
@@ -339,10 +339,8 @@ export default function ComponentDetail() {
             </Button>
           </div>
         </div>
-        <Tabs defaultActiveKey="1" onChange={tabOnclick} >
-          <TabPane tab="组件信息" key="component-info">
-            <div>
-              <Spin spinning={infoLoading}>
+        <div style={{paddingBottom:14}}>
+        <Spin spinning={infoLoading}>
                 <Descriptions title="基本信息" column={2} bordered={true} className="component-info-description">
                   <Descriptions.Item label="组件名称">{componentInfo?.componentName || '--'}</Descriptions.Item>
                   <Descriptions.Item label="组件描述">
@@ -362,17 +360,58 @@ export default function ComponentDetail() {
                   <Descriptions.Item label="创建时间">
                     {moment(componentInfo?.gmtCreate).format('YYYY-MM-DD HH:mm:ss') || '--'}{' '}
                   </Descriptions.Item>
-                  <Descriptions.Item label="更新时间">
-                    {moment(componentInfo?.gmtModify).format('YYYY-MM-DD HH:mm:ss') || '--'}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="组件地址" span={2}>
-                    {componentInfo?.componentUrl || '--'}
-                  </Descriptions.Item>
+              
+                  {componentType==="middleware"&&
+                   <Descriptions.Item label="依赖组件" span={2}>
+                   <Spin spinning={delLoading} > 
+                  
+                   {componentInfo?.componentDependency!==""?componentInfo?.componentDependency?.split(',')?.map((item:any)=>{
+                   return(
+                     <>
+                     <Tag  closable={true} onClose={(e) =>{
+                       e.preventDefault();
+                    deleteRely(initRecord.id,item).then((res)=>{
+                      if (res.success) {
+                        message.success("删除依赖成功！");  
+                        queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);  
+                        } else{
+                        queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);
+                        }
+                      })
+                     }}>{item}</Tag>
+                   
+</>
+                   )
+
+                   }) :"--"} 
+                   </Spin>
+                  
+                   {/* <MinusCircleOutlined onClick={()=>{setMode("EDIT");}} style={{fontSize:16,color:"#3591ff"}} />&nbsp; */}
+                   <span style={{float:"right"}}><PlusCircleOutlined onClick={()=>{setMode("ADD")}}   style={{fontSize:16,color:"#3591ff"}}/></span>
+                 </Descriptions.Item> }
+                 
                 </Descriptions>
               </Spin>
-              <Divider />
+              {/* <Divider /> */}
+        </div>
+        <Tabs defaultActiveKey="1" onChange={tabOnclick}  type="card">
+          <TabPane tab="版本信息" key="component-info">
               <div>
-                <h3 style={{ borderLeft: '4px solid #3591ff', paddingLeft: 8, height: 20, fontSize: 16 }}>组件说明:</h3>
+                <div >
+                  <div style={{paddingLeft:10,display:"flex"}}>
+                     <span>
+                       <b>版本号：</b>
+                       <Tag color="geekblue">{componentInfo?.componentVersion}</Tag>
+                     </span>
+                     <span style={{paddingLeft:18,display:"flex"}}>
+                       <b>版本地址：</b>
+                       <Paragraph copyable>{componentInfo?.componentUrl}</Paragraph>
+                     </span>
+                  </div> 
+                <div style={{paddingLeft:10,display:"flex"}}>
+                  <b>版本说明:</b>
+                  {/* <span>{componentInfo?.componentExplanation}</span> */}
+                </div>
                 <div className="instruction">
                   <div className="instruction-info">
                     <Spin spinning={infoLoading}>
@@ -388,10 +427,11 @@ export default function ComponentDetail() {
               </div>
             </div>
           </TabPane>
-          <TabPane tab="组件配置" key="component-config">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 2 }}>
+          <TabPane tab="版本配置" key="component-config">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
               <p>
-                <Button
+                {type !== 'componentCenter'&&(
+                  <Button
                   type={buttonText === '编辑' ? 'primary' : 'default'}
                   disabled={type === 'componentCenter'}
                   onClick={() => {
@@ -406,6 +446,9 @@ export default function ComponentDetail() {
                 >
                   {buttonText}
                 </Button>
+
+                )}
+                
               </p>
             </div>
             <div>
@@ -427,6 +470,18 @@ export default function ComponentDetail() {
           </TabPane>
         </Tabs>
       </ContentCard>
+      <Modal destroyOnClose title={mode==="ADD"?"选择要新增的依赖组件":"选择要删除的依赖组件"} visible={mode!=="HIDE"} onCancel={()=>{ setMode("HIDE")}} confirmLoading={addLoading} onOk={()=>{
+        if(mode==="ADD"){
+          // receiver: (values.receiver || []).join(','),
+          addRely(initRecord.id,(selectedItems||[]).join(',')).then(()=>{
+            setMode("HIDE")
+            queryComponentInfo(componentName, curVersion.version, componentType, curVersion.componentId);
+          })
+        }
+      }}>
+        依赖组件： <Select style={{width:300}} mode="tags" allowClear  onChange={setSelectedItems} showSearch options={options} />
+
+      </Modal>
     </PageContainer>
   );
 }

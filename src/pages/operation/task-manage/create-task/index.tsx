@@ -79,7 +79,7 @@ export default function CreatTask(props: RecordEditDataProps) {
     }
   }, []);
   useEffect(() => {
-    console.log('initData?.appCode&&mode!=="HIDE"&&mode!=="VIEW"', initData?.appCode, mode !== 'HIDE', mode !== 'VIEW');
+  
 
     if (initData?.appCode && mode !== 'HIDE' && mode !== 'VIEW') {
     

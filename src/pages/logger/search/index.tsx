@@ -259,7 +259,6 @@ export default function LoggerSearch(props: any) {
       appCodeArry.push('envCode:' + envCode);
       setAppCodeValue(appCodeArry);
       const now = new Date().getTime();
-      console.info('now',now)
       //默认传最近5分钟，处理为秒级的时间戳
       let start = Number((now - startTime) / 1000).toString();
       let end = Number(now / 1000).toString();

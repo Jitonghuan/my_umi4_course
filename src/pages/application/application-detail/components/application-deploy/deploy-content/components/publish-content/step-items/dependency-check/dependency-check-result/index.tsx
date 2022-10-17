@@ -52,7 +52,6 @@ export default function QualityCheckResult(props: QualityCheckResultProps) {
           deployId: deployInfo?.metadata?.id,
         },
       });
-      console.log('result.data', result.data);
       if (result.data?.includes('不满足校验规则')) {
         setFailPass(true);
       }

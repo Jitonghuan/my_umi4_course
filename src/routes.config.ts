@@ -816,7 +816,7 @@ export default [
         "path": `${baseRoutePath}/station/version-detail`,
         "name": "版本详情",
         "key": "product-list",
-        "component": "@/pages/station/version-detail",
+        "component": "@/pages/station/product-list/version-detail",
         "hideInMenu": true
       },
       {
