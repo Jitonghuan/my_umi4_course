@@ -5,20 +5,23 @@ import Count from './component/count';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import ProgessComponent from './component/progress';
+import AddCluster from './component/add-cluster';
 import { history } from 'umi';
 import { STATUS_COLOR, STATUS_TEXT } from './type';
 import { useClusterListData } from './hook';
 import { getCluster } from './service';
+import { EditOutlined } from '@ant-design/icons';
 import './index.less';
 
 export default function clusterInfo() {
-  const [visible, setVisble] = useState(false);
   const [form] = Form.useForm();
   const [searchCode, setSearchCode] = useState<string>('');
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [clusterDatas, total, loading, loadData] = useClusterListData({ pageIndex, pageSize });
   const [data, setData] = useState([]); //数据合集
+  const [mode, setMode] = useState<EditorMode>('HIDE');
+  const [initData, setInitData] = useState<any>({});
   useEffect(() => {
     if (clusterDatas && clusterDatas.length !== 0) {
       setData(clusterDatas);
@@ -57,6 +60,7 @@ export default function clusterInfo() {
   };
   return (
     <PageContainer className="cluster-info">
+      <AddCluster mode={mode} onClose={() => { setMode('HIDE') }} initData={initData} onSave={handleSearch}></AddCluster>
       <ContentCard>
         <div className="search-wrapper">
           <Form layout="inline" form={form}>
@@ -70,8 +74,8 @@ export default function clusterInfo() {
         </div>
         <div className="flex-space-between" style={{ margin: '5px 0px' }}>
           <h3>集群概览</h3>
-          <Button type="primary" disabled>
-            新增集群
+          <Button type="primary" onClick={() => { setMode('ADD') }}>
+            导入集群
           </Button>
         </div>
         {data.length > 0 || loading ? (
@@ -80,23 +84,23 @@ export default function clusterInfo() {
               <div className="list-wrapper">
                 {/* 第一个单元格 */}
                 <div className="list-wrapper-item">
-                  <a
-                    className="item-top"
-                    style={{ color: '#5183e7' }}
-                    onClick={() => {
-                      // let clusterName = decodeURIComponent(escape(item.clusterName));
-                      // console.log("encodeURIComponent(item.clusterName)",clusterName)
-                      history.push({
-                        pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
-                        search: `clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,
-                      },
-                        {
-                          clusterInfo: item
-                        });
-                    }}
-                  >
-                    {item.clusterName || '----'}
-                  </a>
+                  <div className="item-top">
+                    <a
+                      style={{ color: '#5183e7', marginRight: '10px' }}
+                      onClick={() => {
+                        history.push({
+                          pathname: `/matrix/pedestal/cluster-detail/resource-detail`,
+                          search: `clusterCode=${item.clusterCode}&clusterName=${item.clusterName}`,
+                        },
+                          {
+                            clusterInfo: item
+                          });
+                      }}
+                    >
+                      {item.clusterName || '----'}
+                    </a>
+                    <EditOutlined style={{ color: '#3591ff' }} onClick={() => { setInitData(item); setMode('EDIT') }} />
+                  </div>
                   <div className="display-item" style={{ justifyContent: 'flex-start' }}>
                     节点数：{item?.items?.length || 0}
                     <Count data={item?.items || []}></Count>

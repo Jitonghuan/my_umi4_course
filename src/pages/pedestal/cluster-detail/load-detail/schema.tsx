@@ -55,7 +55,7 @@ export const PodsDetailColumn = ({
           <Button size="small" type="link" onClick={() => viewLog(record, index)}>
             查看日志
           </Button>
-          {record?.status === 'Running' && (
+          {record?.status !== 'Terminated' && (
             <Button size="small" type="link" onClick={() => shell(record, index)}>
               登陆shell
             </Button>
