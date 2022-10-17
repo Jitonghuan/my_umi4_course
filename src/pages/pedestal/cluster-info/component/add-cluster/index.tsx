@@ -37,10 +37,10 @@ export default function AddDrawer(props: any) {
             const res = await (mode === 'ADD' ? importCluster({ ...value }) : updateCluster({ ...value }));
             if (res?.success) {
                 message.success(`${mode === 'ADD' ? '导入' : '编辑'}成功`);
-                setLoading(false)
                 onClose();
                 onSave();
             }
+            setLoading(false)
         } catch (error) {
             setLoading(false)
 
