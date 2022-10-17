@@ -3,38 +3,44 @@ import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { datetimeCellRender } from '@/utils';
 
-export const formOptions: FormProps[] = [
+// export const formOptions: FormProps[] = [
+  
    
-    {
-      key: '1',
-      type: 'select',
-      label: '用户',
-      dataIndex: 'userName',
-      width: '160px',
-      placeholder: '请选择',
-      showSelectSearch: true,
-      option:[],
+//     {
+//       key: '1',
+//       type: 'select',
+//       label: '用户',
+//       dataIndex: 'userName',
+//       width: '160px',
+//       placeholder: '请选择',
+//       showSelectSearch: true,
+//       option:params?.userNameOptions,
      
-    },
-    {
-      key: '2',
-      type: 'select',
-      label: '实例',
-      dataIndex: 'instanceName',
-      width: '160px',
-      showSelectSearch: true,
-      option:[],
-    },
-    {
-        key: '3',
+//     },
+   
+//   ];
+  export const createFormItems = (params: {
+ 
+    userNameOptions?: any[];
+    
+  }) => {
+    return [
+      
+  
+  
+      {
+        key: '1',
         type: 'select',
-        label: '数据库',
-        dataIndex: 'dbCode',
+        label: '申请人',
+        dataIndex: 'userName',
         width: '160px',
         showSelectSearch: true,
-        option:[],
+        option:params?.userNameOptions,
       },
-  ];
+     
+    ] as FormProps[];
+  };
+  
 
 
 // 列表页-表格
@@ -58,7 +64,7 @@ export const createTableColumns = (params: {
       title: '实例',
       dataIndex: 'instanceName',
       key: 'instanceName',
-      width: '26%',
+      width: '14%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
@@ -66,7 +72,15 @@ export const createTableColumns = (params: {
       title: '数据库',
       dataIndex: 'dbCode',
       key: 'dbCode',
-      width: '28%',
+      width: '20%',
+      ellipsis: true,
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+    },
+    {
+      title: '表',
+      dataIndex: 'tableCode',
+      key: 'tableCode',
+      width: '20%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },

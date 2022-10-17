@@ -1,13 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {Form, Space } from 'antd';
 import TableSearch from '@/components/table-search';
-import { createTableColumns,formOptions } from './schema';
+import { createTableColumns,createFormItems } from './schema';
 import useTable from '@/utils/useTable';
 import {queryPrivListApi} from '../../../service'
 import {  useDeletePriv} from './hook';
+import {useSearchUser} from '../../../common-hook'
 export default function MyAuthority (){
     const [loading, deletePriv]=useDeletePriv()
     const [form] = Form.useForm();
+    const [userLoading, userNameOptions, searchUser] =useSearchUser()
+     
+    useEffect(()=>{
+      searchUser()
+    },[])
+    const formOptions = useMemo(() => {
+      return createFormItems({
+        // currentStatusOptions,
+        userNameOptions,
+       
+      });
+    }, [userNameOptions]);
     const {
         tableProps,
         search: { submit, reset },
@@ -32,7 +45,9 @@ export default function MyAuthority (){
       const columns = useMemo(() => {
         return createTableColumns({
           onDelete: (record, index) => {
-            deletePriv(record)
+            deletePriv(record).then(()=>{
+              reset()
+            })
             
           },
          
