@@ -51,7 +51,7 @@ export default function UpdateDeploy(props: ReleaseProps) {
             
           })
           if(version&&version!==""){
-            console.log(version)
+           
             setHasVersion(true)
 
           }
@@ -108,7 +108,7 @@ export default function UpdateDeploy(props: ReleaseProps) {
       </h3>
       <Divider />
      <Spin spinning={infoLoading}>
-       {console.log(hasVersion,'---')}
+     
      {!hasVersion&&( 
           <Alert type="info" showIcon message="当前的版本已下架" style={{ marginBottom: 16 }} />
      )}

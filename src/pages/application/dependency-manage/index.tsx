@@ -120,7 +120,6 @@ export default function RelyMangement() {
 
                 curEnvCode = curEnvCodeString.substring(0, curEnvCodeString.length - 1);
               }
-              console.log('values', values);
               getRuleList({
                 ...values,
                 envCode: curEnvCode,

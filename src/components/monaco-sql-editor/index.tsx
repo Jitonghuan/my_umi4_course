@@ -93,7 +93,7 @@ export default function SqlEditor(props:Iprops){
         if(editorInstance){
             
             getValue();
-            console.log('--------', getValue())
+          
         }
         
     },[editorInstance,getVal])

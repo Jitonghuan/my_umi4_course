@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
 import { getRequest, postRequest, delRequest } from '@/utils/request';
-type AnyObject = Record<string, any>;
 //编辑产品描述
 export function useEditProductDescription(): [boolean, (id: number, productDescription: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
@@ -27,22 +26,30 @@ export function useEditProductDescription(): [boolean, (id: number, productDescr
   };
   return [loading, editProductDescription];
 }
+interface createProductVersion{
+ productId: number,
+ versionName: string,
+ versionDescription: string,
+ baseStatus:boolean,
+ copyName:string
+
+}
 
 // 创建产品版本
 export function useCreateProductVersion(): [
   boolean,
-  (productId: number, versionName: string, versionDescription: string) => Promise<void>,
+  (params:createProductVersion) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
-  const createProductVersion = async (productId: number, versionName: string, versionDescription: string) => {
+  const createProductVersion = async (params:createProductVersion) => {
     setLoading(true);
     try {
-      await postRequest(APIS.createProductVersion, { data: { productId, versionName, versionDescription } })
+      await postRequest(APIS.createProductVersion, { data: params })
         .then((res) => {
           if (res.success) {
             message.success('创建产品版本成功!');
           } else {
-            message.error('创建产品失败！');
+           
             return;
           }
         })
@@ -148,4 +155,33 @@ export function usePublishProductVersion(): [boolean, (id: number) => Promise<vo
     }
   };
   return [loading, publishProductVersion];
+}
+
+
+// 查询当前产品版本号
+export function useQueryVersionNameList(): [boolean,any, (productId: number) => Promise<void>] {
+  const [loading, setLoading] = useState(false);
+  const [options,setOptions] =useState<any>([]);
+  const queryVersionNameList = async (productId: number) => {
+    setLoading(true);
+    try {
+      await getRequest(`${APIS.queryVersionNameList}?productId=${productId}`)
+        .then((res) => {
+          if (res?.success) {
+           const data= res?.data?.map((item:string)=>({
+             label:item,
+             value:item
+           }))
+           setOptions(data)
+          }
+
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return [loading, options,queryVersionNameList];
 }

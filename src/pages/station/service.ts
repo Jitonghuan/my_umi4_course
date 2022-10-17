@@ -9,6 +9,8 @@ import { addAPIPrefix } from '@/utils';
 export const envList = addAPIPrefix('/appManage/env/list');
 
 /* 一、产品 */
+//deliveryManage/product/version/component/productLine
+export const productLine = addAPIPrefix('/deliveryManage/product/version/component/productLine');
 /*1、  GET  根据产品线获取版本 */
 export const getProductlineVersion = addAPIPrefix('/deliveryManage/component/productline/version');
 /*2、 GET 获取应用组件 */
@@ -168,3 +170,102 @@ export const editIndentConfig = addAPIPrefix('/deliveryManage/indent/config/edit
 export const getPackageStatus = addAPIPrefix('/deliveryManage/indent/package/status');
 /*59、 POST 更新建站参数 */
 export const updateParamIndent = addAPIPrefix('/deliveryManage/indent/param/update');
+
+/* ---------------------------------------建站管理二期------------------------------------ */
+/*1、 GET 查询当前产品版本号 */
+export const queryVersionNameList = addAPIPrefix('/deliveryManage/product/versionName/list');
+
+/*2、 GET 获取bucket列表 */
+export const queryFrontbucketList = addAPIPrefix('/deliveryManage/product/version/frontbucket/list');
+
+/*3、 GET 获取belong列表 */
+export const queryBelongList = addAPIPrefix('/deliveryManage/product/version/belong/list');
+
+
+/*4、 GET 获取基础组件列表 */
+export const queryBasecomponentList = addAPIPrefix('/deliveryManage/product/version/basecomponent/list');
+
+
+/*5、 GET 获取中间件组件的命名空间 */
+export const queryNamespaceList = addAPIPrefix('/deliveryManage/product/version/namespace/list');
+
+
+/*6、 GET 获取组件ReleaseName */
+export const queryReleaseList = addAPIPrefix('/deliveryManage/product/version/param/releaselist');
+
+
+/*7、DELETE 组件版本删除 */
+export const bulkdeleteApi = addAPIPrefix('/deliveryManage/product/version/component/bulkdelete');
+
+/*8、POST 批量添加中间件 */
+export const bulkaddApi = addAPIPrefix('/deliveryManage/product/version/middleware/bulkadd');
+
+/*9、 POST 上传前端资源文件 */
+
+export const uploadFrontfile = addAPIPrefix('/deliveryManage/component/frontfile/upload');
+
+
+/*10、 POST 上传前端资源文件 */
+
+export const addFrontComponentApi = addAPIPrefix('/deliveryManage/component/front/add');
+
+/*11、 GET 获取配置中心 */
+
+export const paramtypeListApi = addAPIPrefix('/deliveryManage/product/version/paramtype/list');
+
+/*12、 POST 新增依赖组件 */
+
+export const addRelyApi = addAPIPrefix('/deliveryManage/component/rely/add');
+
+
+/*13、 DELETE 删除依赖组件 */
+
+export const deleteRelyApi = addAPIPrefix('/deliveryManage/component/rely/delete');
+
+/*14、 POST 保存基础配置 */
+
+export const saveBasicInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/saveBasicInfo');
+
+/*15、 POST 保存节点配置 */
+
+export const saveServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/saveServerInfo');
+
+/*16、 POST 保存数据库信息 */
+
+export const saveDatabaseInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/saveDatabaseInfo');
+
+/*17、 GET 查看节点配置---已弃用 */
+
+export const listServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listServerInfo');
+
+/*18、 GET 校验主机ip唯一性 ---已弃用 */
+
+export const checkServerIpApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerIp');
+
+/*19、 GET 校验主机名称唯一性 ---已弃用*/
+
+export const checkServerNameApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerName');
+
+
+export const checkServerInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/checkServerInfo');
+//deliveryManage/indent/arrangement/deleteServer
+/*20、 DELETE 节点多选删除 */
+
+export const deleteServerApi = addAPIPrefix('/deliveryManage/indent/arrangement/deleteServer');
+/*21、 GET 查看出包详情 */
+
+export const packageListApi = addAPIPrefix('/deliveryManage/indent/package/list');
+
+/*22、 GET 获取主机角色和主机用途 分类 */
+
+export const listNacosInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listNacosInfo');
+
+/*23、 GET 查看基础配置信息 */
+
+export const listBasicInfoApi = addAPIPrefix('/deliveryManage/indent/arrangement/listBasicInfo');
+/* 24、GET 查看建站规划相关信息 */
+
+export const getInfoApi=addAPIPrefix('deliveryManage/indent/arrangement/getInfo')
+/* 25、POST 校验产品版本组件依赖是否编排 */
+
+export const checkComponentRelyApi=addAPIPrefix('deliveryManage/product/version/componentRely/check')

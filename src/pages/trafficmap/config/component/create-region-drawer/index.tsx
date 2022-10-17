@@ -141,9 +141,7 @@ const CreateRegionDrawer = React.forwardRef((props: any, ref) => {
    * @param moveKeys 移动的选项
    */
   const onChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
-    console.log('targetKeys:', nextTargetKeys);
-    console.log('direction:', direction);
-    console.log('moveKeys:', moveKeys);
+   
     const data = JSON.parse(JSON.stringify(appList));
     const dataFilter = data.map((item: any) => {
       if (nextTargetKeys.includes(item.appCode)) {
@@ -151,7 +149,7 @@ const CreateRegionDrawer = React.forwardRef((props: any, ref) => {
       }
       return item;
     });
-    console.log('dataFilter', dataFilter);
+  
     setAppList(dataFilter);
     setTargetKeys(nextTargetKeys);
   };

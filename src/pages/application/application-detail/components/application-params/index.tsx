@@ -346,7 +346,6 @@ export default function ApplicationParams(props: any) {
     }
     if (id) {
       deleteTempl(id).then(() => {
-        console.log('selectEnvData, selectTmpl', selectEnvData, selectTmpl);
         showAppList(selectEnvData, selectTmpl);
       });
     }

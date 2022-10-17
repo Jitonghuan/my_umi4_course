@@ -1,7 +1,6 @@
 //创建制品
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Modal, Button, Form, Select, message, Popconfirm, Input, Upload } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React, { useEffect,} from 'react';
+import { Modal, Button, Form, Select, Input,} from 'antd';
 import { useQueryProductList, useQueryProductVersionList, useCreateIndent } from './hook';
 export interface ProductListProps {
   visable?: boolean;

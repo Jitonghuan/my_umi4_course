@@ -11,7 +11,7 @@ const EditFunction: React.FC = (props) => {
   const query:any = parse(location.search);
   //@ts-ignore
   const { id } = query;
-  console.log("id--->",id)
+
   const [detailInfo, setDetailInfo] = useState<any>({});
   const [initData, setInitData] = useState<IFuncItem[]>([]);
 

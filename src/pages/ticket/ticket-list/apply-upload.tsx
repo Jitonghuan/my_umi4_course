@@ -30,7 +30,7 @@ const funcName = (props: IProps) => {
     },
     onChange: (info: any) => {
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
+    
       }
       if (info.file.status === 'done') {
         message.success('上传成功');

@@ -26,7 +26,7 @@ export default function ComponentTmpl() {
   const [optionLoading, typeOption] = useGetTypeListOption();
   const [tmplEditMode, setTmplEditMode] = useState<EditorMode>('HIDE');
   const [tmplateData, setTmplateData] = useState<TmplEdit>();
-  const handleEditTask = useCallback((record: TmplEdit, index: number, type) => {
+  const handleEditTask = useCallback((record: TmplEdit, index: number, type:any) => {
     setTmplateData(record);
     setTmplEditMode(type);
   }, []);

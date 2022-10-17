@@ -17,6 +17,8 @@ export default function ClusteLoginShell(props: any) {
   const [viewLogform] = Form.useForm();
   let location: any = useLocation();
   const query = parse(location.search);
+
+
   const { type, name, namespace, clusterCode, containerName, clusterName } = query || {};
   const { matrixConfigData } = useContext(FeContext);
   const [container, setContainer] = useState<any>([]);
@@ -79,6 +81,7 @@ export default function ClusteLoginShell(props: any) {
   }, [type, name, namespace, matrixConfigData?.wsPrefixName]);
 
   const initWS = (value: string) => {
+
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(getUrl(value)); //建立通道
     //初始化terminal

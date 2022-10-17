@@ -148,7 +148,7 @@ const Coms: React.FC<IProps> = ({ initValueObj, type }) => {
   const submit = () => {
     form.validateFields().then((value) => {
       const { configs, DDL, DML } = value;
-      console.log('validateFields', value);
+   
       if (!tableData.length && !configs && !DDL && !DML) {
         message.error('至少配置一种变更内容！');
         return;

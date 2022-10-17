@@ -30,7 +30,6 @@ export default function InstanceInfo(props: instanceInfoProps) {
           },
           name: 'rect-shape',
         });
-        console.log('cfg.name', cfg.name, cfg?.name?.includes('当前实例'), cfg.name?.slice(5));
         const content = cfg?.name?.includes('当前实例')
           ? cfg.name?.slice(5).replace(/(.{19})/g, '$1\n')
           : cfg.name.replace(/(.{19})/g, '$1\n');

@@ -26,7 +26,7 @@ export default function LogDetail(props: ReleaseProps) {
         clusterName: curClusterName,
         revision: curRecord?.revision,
       }).then((res) => {
-        console.log('res---->', res);
+     
         form.setFieldsValue({ values: res || '' });
       });
     }

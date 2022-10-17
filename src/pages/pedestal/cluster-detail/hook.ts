@@ -156,7 +156,7 @@ export function useNameSpace(props: any) {
       try {
         const result = await getResourceList({ ...props });
         if (result?.success) {
-          console.log(11);
+         
           const res = result?.data?.items?.map((item: any) => ({ label: item.name, value: item.name }));
           res.unshift({ label: 'AllNamespaces', value: '' });
           setData(res);

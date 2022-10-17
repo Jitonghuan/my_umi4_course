@@ -19,7 +19,6 @@ export function useCreateProjectEnv(): [boolean, (creatParamsObj: any) => Promis
           setEnsureLoading(false);
         });
     } catch (error) {
-      // console.log(`新增项目环境失败！${error}`)
       message.error(`新增项目环境失败！${error}`);
     }
   };
@@ -35,7 +34,6 @@ export function useUpdateProjectEnv() {
         }
       });
     } catch (error) {
-      // console.log(`编辑项目环境失败！${error}`)
       message.error(`编辑项目环境失败！${error}`);
     }
   };

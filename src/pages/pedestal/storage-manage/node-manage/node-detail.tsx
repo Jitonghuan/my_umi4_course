@@ -28,7 +28,7 @@ export default function NodeDetail(props: nodeListProps) {
   const [deviceOption, setDeviceOption] = useState<string>();
 
   const onChange = (e: any) => {
-    console.log(`checked = ${e.target.checked}`);
+  
     setIsWipe(e.target.checked);
   };
   const selectDevice = (value: string) => {

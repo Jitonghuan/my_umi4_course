@@ -106,16 +106,6 @@ export default function Application() {
                   });
                 });
             }
-            // const res = await postRequest(APIS.syncSingleApp, {
-
-            //   data: { appCode, envCode: commonEnvCode },
-            // });
-            // console.log('commonEnvCode111',commonEnvCode)
-
-            // if (res.success) {
-
-            // }
-            // message.success('应用同步成功！');
           } finally {
             setPending(false);
           }

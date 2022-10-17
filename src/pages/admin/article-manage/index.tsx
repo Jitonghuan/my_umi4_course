@@ -50,7 +50,6 @@ export default function AdminList() {
     method: 'GET',
     form,
     formatter: (params) => {
-      console.log('params', params);
       return {
         ...params,
       };

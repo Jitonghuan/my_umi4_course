@@ -4,7 +4,7 @@
 
 import { useEffect } from 'react';
 import { Modal, Input, Form } from 'antd';
-import { useSaveIndentParam } from '../hook';
+import { useSaveIndentParam } from '../../../hook';
 
 export interface IProps {
   visible: boolean;
@@ -39,7 +39,7 @@ export default function EditorModal(props: IProps) {
     <Modal
       destroyOnClose
       width={800}
-      title={type === 'config' ? '编辑全局建站可变参数值' : '编辑组件建站态可变参数值'}
+      title={type === 'config' ? '编辑全局建站可变参数值' :type === 'compontent'? '编辑组件建站态可变参数值':"编辑服务配置可变参数值"}
       visible={visible}
       onOk={handleSubmit}
       onCancel={onClose}
@@ -48,17 +48,17 @@ export default function EditorModal(props: IProps) {
     >
       <Form form={form} labelCol={{ flex: '120px' }}>
         {type !== 'config' && (
-          <Form.Item label="参数来源组件" name="paramComponent">
+          <Form.Item label={type==="server"?"基准配置值":"参数来源组件"} name="paramComponent">
             <Input disabled={true} />
           </Form.Item>
         )}
-        <Form.Item label="参数名称" name="paramName">
+        <Form.Item label={type==="server"?"目标配置值":"参数名称"} name="paramName">
           <Input disabled={true} />
         </Form.Item>
-        <Form.Item label="参数值" name="paramValue" rules={[{ required: true, message: '请填写参数值' }]}>
+        <Form.Item label={type==="server"?"配置中心":"参数值" }name="paramValue" rules={[{ required: true, message: '请填写参数值' }]}>
           <Input />
         </Form.Item>
-        <Form.Item label="填写说明" name="paramDescription">
+        <Form.Item label={type==="server"?"配置说明":"填写说明"} name="paramDescription">
           <Input.TextArea placeholder="填写说明" rows={3} disabled={true} />
         </Form.Item>
       </Form>

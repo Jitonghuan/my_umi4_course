@@ -1,21 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState,} from 'react';
 import * as APIS from '../../service';
 import { message } from 'antd';
-import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
+import {postRequest, putRequest } from '@/utils/request';
 
 //创建应用Chart模板
+interface chartsItems{
+  id?: number;
+  tempName: string;
+  productLine: string;
+  tempType: string;
+  tempConfiguration: string 
+
+}
 
 export function useCreateComponentTmpl(): [
   boolean,
-  (params: { tempName: string; productLine: string; tempType: string; tempConfiguration: string }) => Promise<void>,
+  (params: chartsItems) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const createComponentTmpl = async (params: {
-    tempName: string;
-    productLine: string;
-    tempType: string;
-    tempConfiguration: string;
-  }) => {
+  const createComponentTmpl = async (params:chartsItems) => {
     setLoading(true);
     try {
       await postRequest(APIS.createComponentTmpl, { data: params })
@@ -40,22 +43,10 @@ export function useCreateComponentTmpl(): [
 
 export function useUpdateComponentTmpl(): [
   boolean,
-  (params: {
-    id: number;
-    tempName: string;
-    productLine: string;
-    tempType: string;
-    tempConfiguration: string;
-  }) => Promise<void>,
+  (params: chartsItems) => Promise<void>,
 ] {
   const [loading, setLoading] = useState<boolean>(false);
-  const updateComponentTmpl = async (params: {
-    id: number;
-    tempName: string;
-    productLine: string;
-    tempType: string;
-    tempConfiguration: string;
-  }) => {
+  const updateComponentTmpl = async (params: chartsItems) => {
     setLoading(true);
     try {
       await putRequest(APIS.updateComponentTmpl, { data: params })

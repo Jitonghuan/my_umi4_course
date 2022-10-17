@@ -91,7 +91,7 @@ export default function VolumeDetail() {
   const [deactivateSnapshot] = useDeactivateSnapshot();
 
   const onChange = (e: any) => {
-    // console.log(`checked = ${e.target.checked}`);
+  
     setUseTimestamp(e.target.checked);
   };
 

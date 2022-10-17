@@ -3,9 +3,10 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useQueryProductlineList } from '../component-center/hook';
+import { useQueryProductlineList } from '../../../../component-center/hook';
 import { Drawer, Button, Form, Tree, Spin, Select, Space, Divider } from 'antd';
-import { useGetProductlineVersion, useGetAppList, useBulkadd } from './hooks';
+import { useGetProductlineVersion, useGetAppList, useBulkadd } from '../../hooks';
+
 import './index.less';
 export interface AppComponentProps {
   mode: EditorMode;
@@ -79,7 +80,7 @@ export default function TmplEditor(props: AppComponentProps) {
       title="添加应用"
       // maskClosable={false}
       onClose={onClose}
-      width={'50%'}
+      width={'40%'}
       footer={
         <div className="drawer-footer">
           <Button type="primary" disabled={isDisabled} loading={saveLoading} onClick={handleSubmit}>
@@ -94,7 +95,7 @@ export default function TmplEditor(props: AppComponentProps) {
       <Form layout="horizontal" form={addForm} labelCol={{ flex: '100px' }}>
         <Form.Item label="产品线" name="productLine">
           <Select
-            style={{ width: 300 }}
+            style={{ width: 280 }}
             options={productLineOptions || []}
             loading={selectLoading}
             onChange={changeProductLine}
@@ -104,7 +105,7 @@ export default function TmplEditor(props: AppComponentProps) {
         </Form.Item>
         <Form.Item label="添加应用版本" name="componentVersion">
           <Select
-            style={{ width: 300 }}
+            style={{ width: 280 }}
             options={versionOptions || []}
             loading={versionLoading}
             allowClear
@@ -114,30 +115,35 @@ export default function TmplEditor(props: AppComponentProps) {
         </Form.Item>
       </Form>
       <Divider />
+      <div style={{marginLeft:50}}>
       {appOptions.length > 0 && (
-        <p className="app-list-show">
-          <span> 应用列表:</span>
-          <Space style={{ marginLeft: 12 }}>
-            <Button size="small" type="primary" onClick={allCheck}>
-              全选
-            </Button>
-            <Button size="small" onClick={unAllCheck}>
-              全不选
-            </Button>
-          </Space>
-        </p>
-      )}
+       
+       <p className="app-list-show">
+         <span> 应用列表:</span>
+         <Space style={{ marginLeft: 12 }}>
+           <span  className="all-select-btn" onClick={allCheck}>
+             全选
+           </span>
+           <span className="not-all-select-btn"  onClick={unAllCheck}>
+             全不选
+           </span>
+         </Space>
+       </p>
+     )}
 
-      <Spin spinning={appListLoading}>
-        <Tree
-          checkable
-          rootClassName="app-list-tree"
-          checkedKeys={selectedKeys}
-          onCheck={onCheck}
-          height={495}
-          treeData={appOptions}
-        />
-      </Spin>
+     <Spin spinning={appListLoading}>
+       <Tree
+         checkable
+         rootClassName="app-list-tree"
+         checkedKeys={selectedKeys}
+         onCheck={onCheck}
+         height={495}
+         treeData={appOptions}
+       />
+     </Spin>
+
+      </div>
+    
     </Drawer>
   );
 }
