@@ -120,7 +120,7 @@ export const createFormItems = (params: {
       key: '2',
       type: 'select',
       label: '工单类别',
-      dataIndex: 'privWfType',
+      dataIndex: 'wfUserType',
       width: '160px',
       placeholder: '请选择',
       showSelectSearch: true,

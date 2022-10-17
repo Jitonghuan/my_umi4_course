@@ -38,6 +38,7 @@ export default function ResizeLayout() {
   const [activePanel,setActivePanel]=useState<string>("");
   const [tablesSource,setTablesSource]=useState<any>([])
   const [filterValue,setFilterValue]=useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const queryTablesOptions=(params:{dbCode:string,instanceId:number})=>{
     setTablesOptionsLoading(true)
     queryTables(params).then((res:any)=>{
@@ -96,7 +97,6 @@ export default function ResizeLayout() {
     
   },[])
   const onFilterChange = (e:any) => {
-    console.log('111111',e)
     if(!e){
       // debugger
       setTablesSource(originData)  
@@ -175,7 +175,8 @@ export default function ResizeLayout() {
 
   //表字段渲染
   const tableFilesMap=()=>{
-   return( tableFieldsOptions?.map((item:string)=>{
+   return(tableFieldsOptions?.length>0?
+     tableFieldsOptions?.map((item:string)=>{
       return(
             <li className="schema-li-map" style={{listStyle:"none"}}><Space>
            <BarsOutlined  onDoubleClick={
@@ -191,7 +192,7 @@ export default function ResizeLayout() {
       
       )
 
-    })
+    }):<span className="schema-li-map">该表下未查询到字段</span>
    )
   }
   const copyAdd=(sqlContent:string,tableCode?:string)=>{
@@ -252,6 +253,7 @@ export default function ResizeLayout() {
              
               searchFileds:""
             })
+           
             setTableCode("")
             setActivePanel("")
             setOptions([])
@@ -259,10 +261,17 @@ export default function ResizeLayout() {
             setImplementDisabled(false)
             }}/>
           </Form.Item>
-          <Form.Item name="searchFileds" style={{display:"flex",alignItems:"center",marginBottom:0}}>
-            <Input.Search placeholder="支持模糊搜索表名" allowClear  onSearch={onFilterChange} ></Input.Search>
-           &nbsp; <span className="rest-btn" onClick={reset}><ReloadOutlined style={{fontSize:16,fontWeight:"bold" ,color:"#2487eb",cursor:"pointer"}} /></span>
+          <Space style={{marginBottom:0,width:'100%'}}>
+          <Form.Item name="searchFileds" >
+            <Input.Search placeholder="支持模糊搜索表名" style={{width:'100%'}}  allowClear  onSearch={onFilterChange} ></Input.Search>
+
           </Form.Item>
+          <Form.Item>
+          <span className="rest-btn" onClick={reset}><ReloadOutlined style={{fontSize:16,fontWeight:"bold" ,color:"#2487eb",cursor:"pointer"}} /></span>
+          </Form.Item>
+
+          </Space>
+         
           <Form.Item name="tableCode" style={{marginTop:0}}>
             <Spin spinning={tablesOptionsLoading}>
             {tabelMap()}
