@@ -201,9 +201,11 @@ export default function ResizeLayout() {
     setInitSqlValue(initsql)
     setImplementDisabled(false)
     const dbCode=form?.getFieldsValue()?.dbCode
+    getInstanceList(form?.getFieldsValue()?.envCode)
     queryTablesOptions({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
     //tableCode
     setActivePanel(tableCode)
+    queryDatabases({instanceId:form?.getFieldsValue()?.instanceId})
     
   }
   

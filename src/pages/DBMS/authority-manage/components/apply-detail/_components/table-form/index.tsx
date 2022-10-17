@@ -1,6 +1,6 @@
 import React, { useState,useEffect} from 'react';
 import ShuttleFrame from '@/components/shuttle-frame';
-import {checkOptions,START_TIME_ENUMS} from '../../schema';
+import {tableCheckOptions,START_TIME_ENUMS} from '../../schema';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import {ScheduleOutlined} from '@ant-design/icons';
 import {Form, Select,  Space,Checkbox,DatePicker} from 'antd';
@@ -128,7 +128,7 @@ const onClear=()=>{
         </Form.Item>
        
         <Form.Item label="授权功能" name="privList" rules={[{ required: true, message: '请选择' }]}>
-        <CheckboxGroup options={checkOptions} onChange={onChange}  />
+        <CheckboxGroup options={tableCheckOptions} onChange={onChange}  />
 
           
         </Form.Item>

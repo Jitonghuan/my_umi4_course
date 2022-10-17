@@ -17,6 +17,10 @@ export const options = [
     { label: '查询', value: "query" },
     { label: '变更', value: "exec" },
   ];
+  export const tableCheckOptions = [
+    { label: '查询', value: "query" },
+    // { label: '变更', value: "exec" },
+  ];
   // 时间枚举
 
 
