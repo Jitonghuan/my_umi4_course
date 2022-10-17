@@ -10,7 +10,7 @@ interface Iprops{
   sqlLoading:boolean;
   formRef:any;
   queryTableFields:(params:any)=>any;
-  copyAdd:(sqlContent:string)=>any;
+  copyAdd:(sqlContent:string,tableCode?:string)=>any;
   
 }
 export default forwardRef(function QueryResult(props:Iprops,ref:any){
@@ -33,7 +33,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
             })
            }
             setCurRecord(record)
-            copyAdd(record?.sqlContent)
+            copyAdd(record?.sqlContent,record?.tableCode)
           },
          
         }
@@ -81,6 +81,8 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
             columns={columns} 
             dataSource={logsSource} 
             loading={logsloading}  
+            scroll={{ x: '100%' }}
+            bordered
             pagination={{
             current: pageInfo.pageIndex,
             total: pageInfo.total,
@@ -109,7 +111,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
         const newPanes = [...items];
         newPanes.push(
           { label: '查询结果', children: <div>
-        <Table dataSource={sqlResultSource} loading={logsloading}   scroll={{ x: '100%' }} >
+        <Table dataSource={sqlResultSource} loading={logsloading}  bordered  scroll={{ x: '100%' }} >
           {sqlResultSource?.length>0&&(
             Object.keys(sqlResultSource[0])?.map((item:any)=>{
               return(

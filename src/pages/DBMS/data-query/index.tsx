@@ -1,6 +1,6 @@
 import React, { useState,useEffect,useMemo,useRef,} from 'react';
 import {  Tabs,Form,Space,Select,message,Collapse,Spin,Input } from 'antd';
-import {CaretRightOutlined,InsertRowAboveOutlined,ZoomInOutlined} from '@ant-design/icons';
+import {CaretRightOutlined,BarsOutlined,ReloadOutlined,InsertRowAboveOutlined,ZoomInOutlined,PlusSquareOutlined,MinusSquareOutlined} from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import QueryResult from "./components/query-result";
 import SqlConsole from "./components/sql-console";
@@ -34,6 +34,7 @@ export default function ResizeLayout() {
   const [tableCode,setTableCode]=useState<string>("");
   const [originData,setOriginData]=useState<any>([]);
   const [filterFlag,setFilterFlag]=useState('');
+  const [activePanel,setActivePanel]=useState<string>("")
   //sql console 页面的新增按钮方法
   const onAdd=()=>{
     const values=form?.getFieldsValue();
@@ -56,7 +57,6 @@ export default function ResizeLayout() {
       return
     }
     setSqlLoading(true)
-    console.log("----tableCode",tableCode)
     querySqlResultInfo({...params,... values,tableCode}).then((res)=>{
       if(res?.success){ 
         const dataSource =   res?.data?.result|| "";
@@ -103,12 +103,15 @@ export default function ResizeLayout() {
       <Collapse 
       accordion
       bordered={false} 
-      // defaultActiveKey={-1}
-      expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} 
+      // defaultActiveKey={-1} 
+      activeKey={activePanel}
+      // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} 
+      expandIcon={({ isActive }) =>isActive ?<MinusSquareOutlined /> :<PlusSquareOutlined />} 
       className="site-collapse-custom-collapse"
       onChange={(value)=>{
         if(value){
           setTableCode(value)
+          setActivePanel(value)
           const values=form?.getFieldsValue();
           setOptions([])
           queryTableFields({...values,tableCode:value})
@@ -125,7 +128,7 @@ export default function ResizeLayout() {
      {tablesOptions?.map((item:any)=>{
         return(
           <Panel 
-            header={item?.value} 
+            header={<span><InsertRowAboveOutlined/>&nbsp;{item?.value}</span>} 
             key={item?.value} 
             className="site-collapse-custom-panel"
             >
@@ -148,16 +151,15 @@ export default function ResizeLayout() {
   const tableFilesMap=()=>{
    return( tableFieldsOptions?.map((item:string)=>{
       return(
-       
             <li className="schema-li-map" style={{listStyle:"none"}}><Space>
-           <InsertRowAboveOutlined onDoubleClick={
+           <BarsOutlined  onDoubleClick={
             ()=> {
           //  const table=form?.getFieldValue("tableCode")
           let initsql= `select ${item||"*"} from ${tableCode} limit 10`
            addSqlConsole
            setInitSqlValue(initsql)
         }
-      }  style={{color:"#6495ED",fontSize:16}}/><span>{item}</span></Space></li>
+      }  style={{color:"#6495ED",fontSize:16,cursor:"pointer"}}/><span>{item}</span></Space></li>
 
       
       
@@ -166,13 +168,15 @@ export default function ResizeLayout() {
     })
    )
   }
-  const copyAdd=(sqlContent:string)=>{
+  const copyAdd=(sqlContent:string,tableCode?:string)=>{
     let initsql= sqlContent||"select * from user limit 10"
     addSqlConsole
     setInitSqlValue(initsql)
     setImplementDisabled(false)
     const dbCode=form?.getFieldsValue()?.dbCode
     queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
+    //tableCode
+    setActivePanel(tableCode)
     
   }
   const reset=()=>{
@@ -206,6 +210,7 @@ export default function ResizeLayout() {
               setImplementDisabled(false)
               setTablesSource([])
               setOptions([])
+              setActivePanel("")
             }} />
           </Form.Item>
           <Form.Item name="instanceId">
@@ -216,6 +221,7 @@ export default function ResizeLayout() {
               // tableCode:""
             })
             setTableCode("")
+            setActivePanel("")
             setTablesSource([])
             queryDatabases({instanceId})
             setOptions([])
@@ -231,21 +237,20 @@ export default function ResizeLayout() {
               searchFileds:""
             })
             setTableCode("")
+            setActivePanel("")
             setOptions([])
             setTablesSource([])
             setImplementDisabled(false)
             }}/>
           </Form.Item>
-          <Form.Item name="searchFileds" style={{display:"flex",alignItems:"center"}}>
-            <Input.Search placeholder="请输入表名进行搜索" style={{width:'86%'}} onSearch={onFilterChange} ></Input.Search>
-           &nbsp; <span className="rest-btn" onClick={reset}>重置</span>
+          <Form.Item name="searchFileds" style={{display:"flex",alignItems:"center",marginBottom:0}}>
+            <Input.Search placeholder="支持模糊搜索表名"  onSearch={onFilterChange} ></Input.Search>
+           &nbsp; <span className="rest-btn" onClick={reset}><ReloadOutlined style={{fontSize:16,fontWeight:"bold" ,color:"#2487eb",cursor:"pointer"}} /></span>
           </Form.Item>
-          <Form.Item name="tableCode">
+          <Form.Item name="tableCode" style={{marginTop:0}}>
             <Spin spinning={tablesOptionsLoading}>
             {tabelMap()}
-              
             </Spin>
-           
           {/* <Select  placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={(table)=>{
             const values=form?.getFieldsValue();
             setOptions([])
@@ -295,7 +300,7 @@ export default function ResizeLayout() {
             sqlLoading={sqlLoading} 
             formRef={formRef} 
             queryTableFields={queryTableFields}
-            copyAdd={(sqlContent:string)=>copyAdd(sqlContent)}
+            copyAdd={(sqlContent:string,tableCode?:string)=>copyAdd(sqlContent,tableCode)}
              />
          
             
