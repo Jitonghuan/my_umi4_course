@@ -35,7 +35,7 @@ export default function ResizeLayout() {
   const [addCount,setAddCount]=useState<number>(0);
   const [tableCode,setTableCode]=useState<string>("");
   const [originData,setOriginData]=useState<any>([]);
-  const [activePanel,setActivePanel]=useState<string>("");
+  const [activePanel,setActivePanel]=useState<string|undefined>(undefined);
   const [tablesSource,setTablesSource]=useState<any>([])
   const [filterValue,setFilterValue]=useState<string>("");
   const [searchText, setSearchText] = useState<string>('');
@@ -129,11 +129,9 @@ export default function ResizeLayout() {
       activeKey={activePanel}
       //destroyInactivePanel
       // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} 
-      expandIcon={({ isActive }) =>isActive ?<MinusSquareOutlined onClick={()=>{
-          setActivePanel("")
-      }} /> :<PlusSquareOutlined />} 
+      expandIcon={({ isActive }) =>isActive ?<MinusSquareOutlined  /> :<PlusSquareOutlined />} 
       className="site-collapse-custom-collapse"
-      onChange={(value)=>{
+      onChange={(value:any)=>{
         if(value){
           setTableCode(value)
           setActivePanel(value)
@@ -141,12 +139,15 @@ export default function ResizeLayout() {
           setOptions([])
           queryTableFields({...values,tableCode:value})
           setFirstInitSqlValue(`select * from ${value} limit 10`)
+         
           // setInitSqlValue(`select * from ${table} limit 10`)
           if(!values?.instanceId||!values?.dbCode||!value){
             setImplementDisabled(true)
           }else if(values?.instanceId&&values?.dbCode&&value){
             setImplementDisabled(false)
           }
+        }else{
+          setActivePanel('')
         }
       }}
       >
@@ -300,7 +301,7 @@ export default function ResizeLayout() {
       </div>
       </>
     )
-  },[queryResultItems,implementDisabled,sqlConsoleItems,fieldsLoading,tablesSource,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesSource,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
+  },[queryResultItems,implementDisabled,activePanel,sqlConsoleItems,fieldsLoading,tablesSource,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesSource,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
     
     const rightContent=useMemo(()=>{
       return(
