@@ -11,7 +11,7 @@ type CurrentStatusStatusTypeItem = {
 
 export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "finish":{tagColor:"success",tagText:"已正常结束"},
-  "abort":{tagColor:"warning",tagText:"人工终止流程"},
+  "abort":{tagColor:"gray",tagText:"人工终止流程"},
   "manReviewing":{tagColor:"processing",tagText:"待审核"},
   "reviewPass":{tagColor:"green",tagText:"审核通过"},
   "timingTask":{tagColor:"cyan",tagText:"定时执行"},  
