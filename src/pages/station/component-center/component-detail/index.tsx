@@ -292,6 +292,9 @@ export default function ComponentDetail() {
                   if (componentType === 'sql') {
                     setBasicDataModalVisiable(true);
                   }
+                  if (componentType === 'sql') {
+                    setBasicDataModalVisiable(true);
+                  }
                 }}
               >
                 添加版本
