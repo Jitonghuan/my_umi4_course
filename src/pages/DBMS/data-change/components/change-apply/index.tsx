@@ -27,7 +27,7 @@ interface querySqlItems{
   dbCode?:string;
   tableCode?:string;
   title?:string;
-  sqlWfType?:string;
+  // sqlWfType?:string;
   envCode?:string;
   instanceId?:number;
   runStartTime?:string;
@@ -63,7 +63,7 @@ export default function ResizeLayout() {
 },[]);
 useEffect(()=>{
   queryEnvList()
-  getInstanceList()
+  // getInstanceList()
   return()=>{
     setEndTime("")
   }
@@ -106,11 +106,11 @@ useEffect(()=>{
             <Form.Item name="title">
                 <Input   placeholder="标题" />
               </Form.Item>
-              <Form.Item name="sqlWfType">
+              {/* <Form.Item name="sqlWfType">
                 <Select  placeholder="普通变更" options={sqlWfTypeOptions}/>
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item  name="envCode">
-              <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}/>
+              <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions} onChange={(value)=>{getInstanceList(value)}}/>
               </Form.Item>
               <Form.Item name="instanceId">
               <Select  placeholder="选择实例" options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId)=>{
@@ -178,7 +178,7 @@ useEffect(()=>{
         </>
       
     )
-  },[formRef,databasesOptions,tablesOptions,instanceOptions,sqlWfTypeOptions,envOptions,envOptionLoading,tablesOptionsLoading,databasesOptionsLoading,instanceLoading,startTime,endTime])
+  },[formRef,databasesOptions,tablesOptions,instanceOptions,envOptions,envOptionLoading,tablesOptionsLoading,databasesOptionsLoading,instanceLoading,startTime,endTime])
   
     const rightContent=useMemo(()=>{
       return(

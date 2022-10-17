@@ -145,10 +145,11 @@ export default function CreateArticle(props: CreateArticleProps) {
                     <Descriptions.Item label="对象类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.privWfTypeDesc}</Tag></Descriptions.Item>
                     
                     <Descriptions.Item label="有效期">{info?.validEndTime}</Descriptions.Item>
-                    <Descriptions.Item label="库表对象" span={2}>{info?.dbList?.length>0?info?.dbList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
+                    <Descriptions.Item label="库对象" span={2}>{info?.dbList?.length>0?info?.dbList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
+                    <Descriptions.Item label="表对象" span={2}>{info?.tableList?.length>0?info?.tableList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
                     
                   
-                   
+                   {info?.privWfType==="limit"&& <Descriptions.Item span={2} label="授权行数">{info?.limitNum||"--"}</Descriptions.Item>}
                     <Descriptions.Item span={2} label="授权功能">{info?.privList?.length>1?info?.privList?.map((item:string)=>{return(<span style={{padding:2}}>{item}｜</span>)}):info?.privList?.length===1?info?.privList[0]:'--'}</Descriptions.Item>
                     <Descriptions.Item span={2} label="理由">{info?.remark}</Descriptions.Item>
                     

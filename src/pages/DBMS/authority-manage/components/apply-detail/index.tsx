@@ -36,7 +36,7 @@ export default function CreateArticle(props: CreateArticleProps) {
   useEffect(() => {
     if (mode === 'HIDE' ) return;
     queryEnvList()
-    getInstanceList()
+    // getInstanceList()
     // setValue("")
     setValue("database")
     return()=>{
@@ -204,6 +204,7 @@ const submit=async(params:any)=>{
               tableCode:""
             })
             setSource([])
+            getInstanceList(envCode)
 
           }}
            style={{width:220}}/>

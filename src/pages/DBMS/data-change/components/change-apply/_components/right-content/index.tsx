@@ -43,6 +43,7 @@ export default function RightContent(props:Iprops){
         isSqlBueatifyBtn={true} 
         isSubChangeBtn={true}
         tableFields={tableFields} 
+        initValue={""}
         subSqlChange={(params:{sqlContent:string})=>createSql(params)}
         sqlCheck={(sqlContent:string)=>getInfo(sqlContent)}
         isGoback={true}

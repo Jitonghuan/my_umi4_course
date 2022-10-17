@@ -4,7 +4,7 @@ import {CaretRightOutlined,BarsOutlined,ReloadOutlined,InsertRowAboveOutlined,Zo
 import LightDragable from "@/components/light-dragable";
 import QueryResult from "./components/query-result";
 import SqlConsole from "./components/sql-console";
-import {useEnvList,querySqlResultInfo,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../common-hook'
+import {useEnvList,querySqlResultInfo,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,queryTables} from '../common-hook'
 
 import './index.less';
 const { TabPane } = Tabs;
@@ -23,18 +23,41 @@ export default function ResizeLayout() {
   const [envOptionLoading,  envOptions, queryEnvList]=useEnvList();
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
-  const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
+  // const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [fieldsLoading, tableFields,tableFieldsOptions, queryTableFields,setOptions]=useQueryTableFieldsOptions();
   const [initSqlValue,setInitSqlValue]=useState<string>("")
   const [implementDisabled,setImplementDisabled]=useState<boolean>(true);
   const [firstInitSqlValue,setFirstInitSqlValue]=useState<string>("")
+  //tablesOptionsLoading
+  const [tablesOptionsLoading,setTablesOptionsLoading]=useState<boolean>(false);
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
   const [sqlResult,setSqlResult]=useState<any>("");
   const [addCount,setAddCount]=useState<number>(0);
   const [tableCode,setTableCode]=useState<string>("");
   const [originData,setOriginData]=useState<any>([]);
-  const [filterFlag,setFilterFlag]=useState('');
-  const [activePanel,setActivePanel]=useState<string>("")
+  const [activePanel,setActivePanel]=useState<string>("");
+  const [tablesSource,setTablesSource]=useState<any>([])
+  const [filterValue,setFilterValue]=useState<string>("");
+  const queryTablesOptions=(params:{dbCode:string,instanceId:number})=>{
+    setTablesOptionsLoading(true)
+    queryTables(params).then((res:any)=>{
+      setTablesSource(res)
+      if(res?.length>0){
+        let data=res?.map((item:any)=>({
+          ...item
+        }))
+        setOriginData(data)
+      }else{
+        setOriginData([])
+      }
+    
+     
+  
+
+    }).finally(()=>{
+      setTablesOptionsLoading(false)
+    })
+  }
   //sql console 页面的新增按钮方法
   const onAdd=()=>{
     const values=form?.getFieldsValue();
@@ -69,20 +92,17 @@ export default function ResizeLayout() {
   }
   useEffect(()=>{
     queryEnvList()
-    getInstanceList()
-    return()=>{
-      setFilterFlag('')
-    }
+    // getInstanceList()
+    
   },[])
   const onFilterChange = (e:any) => {
-    setFilterFlag('filter')
-    let data=tablesOptions?.map((item:any)=>({
-      ...item
-
-    }))
-    setOriginData(data)
-
-    const newKeys = tablesOptions?.map((item:any) => {
+    console.log('111111',e)
+    if(!e){
+      // debugger
+      setTablesSource(originData)  
+    }else{
+      setFilterValue(e)
+    const newKeys = tablesSource?.map((item:any) => {
         if (item.value.indexOf(e) > -1) {
           return ({
             ...item
@@ -90,13 +110,15 @@ export default function ResizeLayout() {
         }
         return null;
       }).filter((item:any, i:any, self:any) => item && self.indexOf(item) === i);
-   
-  
+    setTablesSource(newKeys)  
 
-    
-    setTablesSource(newKeys)
+    }
     
   };
+  const reset=()=>{
+    setTablesSource(originData) 
+  }
+  
 
   const tabelMap=()=>{
     return(
@@ -105,8 +127,11 @@ export default function ResizeLayout() {
       bordered={false} 
       // defaultActiveKey={-1} 
       activeKey={activePanel}
+      //destroyInactivePanel
       // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} 
-      expandIcon={({ isActive }) =>isActive ?<MinusSquareOutlined /> :<PlusSquareOutlined />} 
+      expandIcon={({ isActive }) =>isActive ?<MinusSquareOutlined onClick={()=>{
+          setActivePanel("")
+      }} /> :<PlusSquareOutlined />} 
       className="site-collapse-custom-collapse"
       onChange={(value)=>{
         if(value){
@@ -122,12 +147,13 @@ export default function ResizeLayout() {
           }else if(values?.instanceId&&values?.dbCode&&value){
             setImplementDisabled(false)
           }
-        } 
+        }
       }}
       >
-     {tablesOptions?.map((item:any)=>{
+     {tablesSource?.map((item:any)=>{
         return(
           <Panel 
+         
             header={<span><InsertRowAboveOutlined/>&nbsp;{item?.value}</span>} 
             key={item?.value} 
             className="site-collapse-custom-panel"
@@ -174,20 +200,9 @@ export default function ResizeLayout() {
     setInitSqlValue(initsql)
     setImplementDisabled(false)
     const dbCode=form?.getFieldsValue()?.dbCode
-    queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
+    queryTablesOptions({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
     //tableCode
     setActivePanel(tableCode)
-    
-  }
-  const reset=()=>{
-    //一进页面就点重置
-    if(tablesOptions.length>0&&filterFlag!=="filter"){
-      setTablesSource(tablesOptions)
-    }else{
-      //正常筛选数据
-    setTablesSource(originData)
-      
-    }
     
   }
   
@@ -199,13 +214,14 @@ export default function ResizeLayout() {
         <Form layout="vertical" form={form} ref={formRef}>
           <Form.Item name="envCode">
            
-            <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}onChange={()=>{
+            <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}onChange={(value)=>{
                form?.setFieldsValue({
                 instanceId:"",
                 dbCode:"",
                 searchFileds:""
                 // tableCode:""
               })
+              getInstanceList(value)
               setTableCode("")
               setImplementDisabled(false)
               setTablesSource([])
@@ -231,7 +247,7 @@ export default function ResizeLayout() {
           </Form.Item>
           <Form.Item name="dbCode">
           <Select  placeholder="选择库" options={databasesOptions}  showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{
-            queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
+            queryTablesOptions({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
             form?.setFieldsValue({
              
               searchFileds:""
@@ -244,7 +260,7 @@ export default function ResizeLayout() {
             }}/>
           </Form.Item>
           <Form.Item name="searchFileds" style={{display:"flex",alignItems:"center",marginBottom:0}}>
-            <Input.Search placeholder="支持模糊搜索表名"  onSearch={onFilterChange} ></Input.Search>
+            <Input.Search placeholder="支持模糊搜索表名" allowClear  onSearch={onFilterChange} ></Input.Search>
            &nbsp; <span className="rest-btn" onClick={reset}><ReloadOutlined style={{fontSize:16,fontWeight:"bold" ,color:"#2487eb",cursor:"pointer"}} /></span>
           </Form.Item>
           <Form.Item name="tableCode" style={{marginTop:0}}>
@@ -273,7 +289,7 @@ export default function ResizeLayout() {
       </div>
       </>
     )
-  },[queryResultItems,implementDisabled,sqlConsoleItems,fieldsLoading,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesOptions,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
+  },[queryResultItems,implementDisabled,sqlConsoleItems,fieldsLoading,tablesSource,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesSource,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
     
     const rightContent=useMemo(()=>{
       return(

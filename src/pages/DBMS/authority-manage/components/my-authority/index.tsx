@@ -32,7 +32,7 @@ export default function MyAuthority (){
       const columns = useMemo(() => {
         return createTableColumns({
           onDelete: (record, index) => {
-            deletePriv(record?.id)
+            deletePriv(record)
             
           },
          

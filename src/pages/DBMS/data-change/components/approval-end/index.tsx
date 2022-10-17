@@ -195,7 +195,7 @@ export default function ApprovalEnd(){
             setVisible(false)
           })
          }else{
-          runSql({runMode:"timing",runDate:info?.runTime.format('YYYY-MM-DD HH:mm'),id:initInfo?.record?.id||afferentId}).then(()=>{
+          runSql({runMode:"timing",runDate:info?.runTime.format('YYYY-MM-DD HH:mm:ss'),id:initInfo?.record?.id||afferentId}).then(()=>{
             afferentId?getInfo(afferentId):getInfo()
             setVisible(false)
           })

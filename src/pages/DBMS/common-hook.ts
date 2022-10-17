@@ -37,9 +37,9 @@ export function useInstanceList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>([]);
 
-  const getInstanceList = async () => {
+  const getInstanceList = async (envCode:string) => {
     setLoading(true);
-    await getRequest(APIS.getInstanceList, { data: {pageIndex:-1,pageSize:-1} })
+    await getRequest(APIS.getInstanceList, { data: {pageIndex:-1,pageSize:-1,envCode} })
       .then((result) => {
         if (result?.success) {
           let dataSource = result.data?.dataSource;
@@ -89,7 +89,23 @@ export function useSearchUser(): [boolean, any, () => Promise<void>] {
 
   return [loading, data, searchUser];
 }
-
+export const queryTables = async(params:{dbCode:string,instanceId:number}) =>
+await getRequest(APIS.queryTablesApi,{data:{...params}}).then((res: any) => {
+  if (res?.success) {
+    let dataSource = res?.data?.tables;
+          let dataArry: any = [];
+          dataSource?.map((item: any) => {
+            dataArry.push({
+             label:item,
+             value:item,
+             title: item,
+            });
+          });
+         
+    return dataArry;
+  }
+  return [];
+});
 export function useQueryTablesOptions() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>([]);

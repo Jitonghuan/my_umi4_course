@@ -21,8 +21,8 @@ export const createTableColumns = () => {
     },
     {
       title: '操作人',
-      dataIndex: 'operator',
-      key: 'operator',
+      dataIndex: 'operatorDisplay',
+      key: 'operatorDisplay',
       width: '14%',
     },
     {
