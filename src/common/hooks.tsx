@@ -324,7 +324,7 @@ export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
       if (result?.success) {
         setConfigData(result?.data);
         // @ts-ignore
-        window.matrixConfigData = result?.data 
+        window.matrixConfigData = result?.data
       } else {
         return;
       }
@@ -355,6 +355,10 @@ export const getMatrixEnvConfig = () =>
 
       })
 
+      Object.assign(envConfigInfo, {
+        isSkipLogin: res?.data?.isSkipLogin || false
+      })
+
       return envConfigInfo;
     }
     return {};
@@ -377,7 +381,7 @@ export function usegetLatestChangelog(): [any,(version: string) => Promise<void>
     await getRequest(APIS.getLatestChangelog,{data:{version}}).then((result) => {
       if (result?.success) {
         setChangeLog(result?.data)
-        
+
       }
     });
   }, []);
