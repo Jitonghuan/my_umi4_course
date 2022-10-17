@@ -17,8 +17,6 @@ export default function ClusteLoginShell(props: any) {
   const [viewLogform] = Form.useForm();
   let location: any = useLocation();
   const query = parse(location.search);
-  console.log(query, 'query')
-
   const { type, name, namespace, clusterCode, containerName, clusterName } = query || {};
   const { matrixConfigData } = useContext(FeContext);
   const [container, setContainer] = useState<any>([]);
@@ -60,7 +58,7 @@ export default function ClusteLoginShell(props: any) {
           if (items && items[0]) {
             let containerData = [];
             containerData = (items[0]?.info?.containers || [])
-              .filter((item: any) => item?.status === 'Running')
+              .filter((item: any) => item?.status !== 'Terminated')
               .map((item: any) => ({ label: item.name, value: item.name }));
             setContainer(containerData);
           }
@@ -81,7 +79,6 @@ export default function ClusteLoginShell(props: any) {
   }, [type, name, namespace, matrixConfigData?.wsPrefixName]);
 
   const initWS = (value: string) => {
-    console.log(111)
     let dom: any = document?.getElementById('terminal');
     ws.current = new WebSocket(getUrl(value)); //建立通道
     //初始化terminal
@@ -157,8 +154,8 @@ export default function ClusteLoginShell(props: any) {
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.back();
     }
+    history.back();
   };
   //选择容器
   const selectListContainer = (c: string) => {
