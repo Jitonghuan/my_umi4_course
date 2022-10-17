@@ -165,7 +165,7 @@ export default function StationPlan(props:Iprops) {
                         </Row>
                         <Row gutter={16}>
                             <Col >
-                                <Form.Item name="k8SVersion" label="k8s版本" >
+                                <Form.Item name="k8sVersion" label="k8s版本" >
                                     <Input style={{ width: 260 }} />
                                 </Form.Item>
                             </Col >
