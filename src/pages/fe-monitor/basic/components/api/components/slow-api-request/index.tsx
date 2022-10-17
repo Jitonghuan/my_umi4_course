@@ -90,16 +90,13 @@ const SlowApiRequest = (props: IProps) => {
             {detail.d1}
           </Descriptions.Item>
           <Descriptions.Item label="traceId" span={2}>
-            {detail.d3?.split('-')[1] || '-'}
+            {detail.d3}
           </Descriptions.Item>
           <Descriptions.Item label="页面" span={2}>
             {detail.url}
           </Descriptions.Item>
           <Descriptions.Item label="入参" span={2}>
             {detail.d5}
-          </Descriptions.Item>
-          <Descriptions.Item label="出参" span={2}>
-            {detail.d4}
           </Descriptions.Item>
         </Descriptions>
       </Drawer>
