@@ -102,7 +102,7 @@ useEffect(()=>{
   const leftContent=useMemo(()=>{
     return(
       <div className="change-apply-form">
-         <Form layout="vertical" form={form} ref={formRef} >
+         <Form layout="vertical" form={form} ref={formRef}  >
             <Form.Item name="title" label="标题：" rules={[{ required: true, message: '请填写' }]}>
                 <Input   placeholder="标题" />
               </Form.Item>
@@ -136,14 +136,14 @@ useEffect(()=>{
               tableCode:""
             })}}/>
               </Form.Item>
-              <Form.Item name="tableCode" label="表：" rules={[{ required: true, message: '请填写' }]}>
+              <Form.Item name="tableCode" label="表：" >
               <Select  placeholder="选择表"  options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={()=>{
             const values=form?.getFieldsValue();
             queryTableFields({...values})
             
             } }/>
               </Form.Item>
-              <Form.Item name="remark" label="理由：" rules={[{ required: true, message: '请填写' }]}>
+              <Form.Item name="remark" label="理由：" >
               <Input  placeholder="上线理由"/>
               </Form.Item>
               {/* <Form.Item name="runMode">
@@ -160,36 +160,12 @@ useEffect(()=>{
            <Divider/>
            <div className="info-alert">
            <p><InfoCircleOutlined style={{color:"#6495ED",fontSize:24}} />&nbsp;<span style={{color:"#6495ED",fontSize:20}}><b>说明</b></span></p>
-           <p>  
-                1.多条SQL, 请用英文分号隔开。
-               </p>
-               <p>2.请不要编写对数据库不友好的SQL，以免</p>
-                <p> 影响线上业务运行。</p>
-               <p>3. 表结构变更和数据订尽量分别提工单。</p>
+           <p> 1.多条SQL, 请用英文分号隔开。</p>
+           <p style={{whiteSpace:"break-spaces"}}>2.请不要编写对数据库不友好的SQL，以免影响线上业务运行。</p>
+           <p>3. 表结构变更和数据订尽量分别提工单。</p>
                {/* <p>4. <b>离线变更</b>指的是发布sql到不同外网的环境。</p>
                <p>5. <b>普通变更</b>指的是发布sql到当前环境</p> */}
-
-
-
            </div>
-           {/* <Alert 
-             message="说明" 
-             type="info" 
-             showIcon 
-             description={
-             <div className="info-alert">
-               <p>  
-                1.多条SQL, 请用英文分号隔开。
-               </p>
-               <p>2.请不要编写对数据库不友好的SQL，以免影响线上业务运行。</p>
-               <p>3. 表结构变更和数据订尽量分别提工单。</p>
-               <p>4. <b>离线变更</b>指的是发布sql到不同外网的环境。</p>
-               <p>5. <b>普通变更</b>指的是发布sql到当前环境</p>
-
-
-             </div>}
-
-           /> */}
         </div>
       
     )

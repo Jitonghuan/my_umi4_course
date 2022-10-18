@@ -123,7 +123,7 @@ export default function CreateArticle(props: CreateArticleProps) {
             <Descriptions column={2} size="small" >
                     <Descriptions.Item label="工单号">{info?.id}</Descriptions.Item>
                     
-                    <Descriptions.Item label="工单类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>暂无</Tag></Descriptions.Item>
+                    {/* <Descriptions.Item label="工单类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>暂无</Tag></Descriptions.Item> */}
                    
                     <Descriptions.Item  label="工单状态"><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </Descriptions.Item>
                     <Descriptions.Item label="">

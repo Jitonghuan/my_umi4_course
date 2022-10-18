@@ -99,8 +99,9 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
    
     
     return(
+      <div style={{height:'100%'}}>
         <Tabs
-        size="small"
+         size="small"
          hideAdd
          onChange={onChange}
          activeKey={activeKey}
@@ -109,7 +110,6 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
          onEdit={onEdit}
          tabBarExtraContent={
          <span className="add-btn" ><a><PlusCircleOutlined style={{fontSize:20}} onClick={onAdd} /></a></span>}
-
        >
         {items?.map((item: any) => (
          <TabPane tab={item.label} key={item.key} >
@@ -117,6 +117,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
          </TabPane>
          ))}
          </Tabs>
+         </div>
 
     )
 })
