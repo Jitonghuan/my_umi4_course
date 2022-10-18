@@ -1,25 +1,50 @@
 .ticket-detail-title{
-    display: flex;
-    width: 100%;
     background-color:#eeeeee;
-    justify-content: space-between;
-    // border: 1px solid gainsboro;
     padding: 10px;
     margin-bottom: 12px;
-    overflow: hidden;
-    &-left{
-        width: 94%;
-        span + span {
-            margin-left: 40px;
-          }
-
+    .first-info{
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        overflow: auto;
+        &-left{
+            width: 95%;
+            span + span {
+                margin-left: 80px;
+              }
+    
+        }
+        &-right{
+            width: 5%;
+        }
     }
-    &-right{
-        width: 6%;
+    .second-info{
+        display: flex;
+        width: 100%;
+        margin-top: 8px;
+        // background-color:#eeeeee;
+        justify-content: space-between;
+        // border: 1px solid gainsboro;
+        // padding: 10px;
+        // margin-bottom: 12px;
+        overflow: hidden;
+        &-left{
+            width: 95%;
+            span + span {
+                margin-left: 40px;
+              }
+    
+        }
+        &-right{
+            width: 5%;
+        }
+       
+
     }
    
 }
 .back-go{
+    font-size: 12px;
     .ant-tag-geekblue:hover {
         cursor: pointer;
       }
@@ -45,3 +70,57 @@
 //     height: 100%;
 //     overflow: scroll;
 // }
+// .ticket-detail-title{
+//     display: flex;
+//     width: 100%;
+//     background-color:#eeeeee;
+//     justify-content: space-between;
+//     // border: 1px solid gainsboro;
+//     padding: 10px;
+//     margin-bottom: 12px;
+//     overflow: hidden;
+//     &-left{
+//         width: 88%;
+//         span + span {
+//             margin-left: 40px;
+//           }
+
+//     }
+//     &-right{
+//         width: 12%;
+//     }
+   
+// }
+.ticket-detail-footer{
+    display: flex;
+    width: 100%;
+    background-color:#ffffff;
+    justify-content: space-between;
+    // border: 1px solid gainsboro;
+    padding: 10px;
+    margin-bottom: 12px;
+    &-left{
+        width: 80%;
+        span + span {
+            margin-left: 40px;
+          }
+
+    }
+}
+.ticket-approval-detail{
+    .ant-tag-volcano:hover {
+        cursor: pointer;
+      }
+      .ant-tag-success:hover {
+        cursor: pointer;
+      }
+      .ant-tag-orange:hover {
+        cursor: pointer;
+      }
+      .back-go{
+        .ant-tag-geekblue:hover {
+            cursor: pointer;
+          }
+      }
+
+}

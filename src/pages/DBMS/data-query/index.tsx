@@ -137,6 +137,7 @@ export default function ResizeLayout() {
             setActivePanel(value)
             const values = form?.getFieldsValue();
             setOptions([])
+            setSource([])
             queryTableFields({ ...values, tableCode: value })
             setFirstInitSqlValue(`select * from ${value} limit 10`)
             if (!values?.instanceId || !values?.dbCode || !value) {
@@ -218,6 +219,7 @@ export default function ResizeLayout() {
                 setImplementDisabled(false)
                 setTablesSource([])
                 setOptions([])
+                setSource([])
                 setActivePanel("")
               }} />
             </Form.Item>
@@ -233,6 +235,7 @@ export default function ResizeLayout() {
                 setTablesSource([])
                 queryDatabases({ instanceId })
                 setOptions([])
+                setSource([])
                 setImplementDisabled(false)
 
               }} />
@@ -247,6 +250,7 @@ export default function ResizeLayout() {
                 setTableCode("")
                 setActivePanel("")
                 setOptions([])
+                // setSource([])
                 setTablesSource([])
                 setImplementDisabled(false)
               }} />
@@ -289,6 +293,7 @@ export default function ResizeLayout() {
     implementDisabled,
     activePanel,
     sqlConsoleItems,
+    databasesOptions,
     fieldsLoading,
     tablesSource,
     tablesOptionsLoading,
@@ -353,6 +358,7 @@ export default function ResizeLayout() {
     initSqlValue,
     firstInitSqlValue,
     implementDisabled,
+    databasesOptions,
     addCount]);
 
   return (

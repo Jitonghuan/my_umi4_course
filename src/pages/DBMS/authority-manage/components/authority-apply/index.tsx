@@ -28,7 +28,7 @@ export default function AuthorityApply (){
     useEffect(() => {
       let intervalId = setInterval(() => {
         submit()
-      }, 10000*60);
+      }, 10000*20);
   
       return () => {
         clearInterval(intervalId);

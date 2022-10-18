@@ -2,12 +2,14 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/09/8 14:50
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal} from 'antd';
+import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table} from 'antd';
 import {SendOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons'
 import './index.less';
+import {createTableColumns} from './schema';
 import {useGetPrivInfo,useAuditTicket} from './hook';
+import {useworkflowLog} from '../../../data-change/components/approval-end/hook'
 import {CurrentStatusStatus,PrivWfType} from '../authority-apply/schema'
 
 
@@ -28,6 +30,7 @@ const StatusMapping: Record<string, number> = {
 export default function CreateArticle(props: CreateArticleProps) {
   const { mode, curRecord, onClose, onSave,getList,queryId } = props;
   const afferentId=Number(queryId)
+  const [tableLoading,logData, getWorkflowLog]=useworkflowLog()
   const { confirm } = Modal;
   const [form]=Form.useForm()
   const [info,setInfo]=useState<any>({});
@@ -38,14 +41,19 @@ export default function CreateArticle(props: CreateArticleProps) {
   useEffect(()=>{
     if(afferentId&&mode !== 'HIDE'){
       getInfo(afferentId)
+      getWorkflowLog(afferentId)
 
     }
 
   },[afferentId,mode])
+
+ 
+
  
   useEffect(() => {
     if (mode === 'HIDE' || !curRecord?.id) return;
     getInfo()
+    getWorkflowLog(curRecord?.id)
    
 
    
@@ -54,7 +62,11 @@ export default function CreateArticle(props: CreateArticleProps) {
     };
   }, [mode]);
   
- 
+  const columns = useMemo(() => {
+       
+    return createTableColumns() as any;
+  }, []);
+
   const getInfo=(id?:number)=>{
     setLoading(true)
     let paramId=afferentId?afferentId:curRecord?.id
@@ -122,9 +134,7 @@ export default function CreateArticle(props: CreateArticleProps) {
             <Spin spinning={loading}>
             <Descriptions column={2} size="small" >
                     <Descriptions.Item label="工单号">{info?.id}</Descriptions.Item>
-                    
-                    {/* <Descriptions.Item label="工单类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>暂无</Tag></Descriptions.Item> */}
-                   
+                    <Descriptions.Item label="标题"><span style={{width:220,overflow:"auto",textOverflow:"ellipsis"}}>{info?.title}</span></Descriptions.Item>
                     <Descriptions.Item  label="工单状态"><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </Descriptions.Item>
                     <Descriptions.Item label="">
                       {status==="wait"&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
@@ -145,10 +155,16 @@ export default function CreateArticle(props: CreateArticleProps) {
                     <Descriptions.Item label="对象类型"><Tag color={PrivWfType[info?.privWfType]?.tagColor||"default"}>{info?.privWfTypeDesc}</Tag></Descriptions.Item>
                     
                     <Descriptions.Item label="有效期">{info?.validEndTime}</Descriptions.Item>
-                    <Descriptions.Item label="库对象" span={2}>{info?.dbList?.length>0?info?.dbList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
-                    <Descriptions.Item label="表对象" span={2}>{info?.tableList?.length>0?info?.tableList?.map((item:string)=>{return(<span style={{padding:2}}>{item},</span>)}):"--"}</Descriptions.Item>
-                    
-                  
+                    <Descriptions.Item label="库对象" span={2}>
+                     <div > {info?.dbList?.length>0?
+                      info?.dbList?.map((item:string)=>{
+                        return(<p style={{marginBottom:2}}>{item},</p>)}):"--"}</div>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="表对象" span={2}>
+                      <div>
+                      {info?.tableList?.length>0?info?.tableList?.map((item:string)=>{return(<p style={{marginBottom:2}}>{item},</p>)}):"--"}
+                      </div>
+                    </Descriptions.Item>
                    {info?.privWfType==="limit"&& <Descriptions.Item span={2} label="授权行数">{info?.limitNum||"--"}</Descriptions.Item>}
                     <Descriptions.Item span={2} label="授权功能">{info?.privList?.length>1?info?.privList?.map((item:string)=>{return(<span style={{padding:2}}>{item}｜</span>)}):info?.privList?.length===1?info?.privList[0]:'--'}</Descriptions.Item>
                     <Descriptions.Item span={2} label="理由">{info?.remark}</Descriptions.Item>
@@ -189,6 +205,10 @@ export default function CreateArticle(props: CreateArticleProps) {
         
 
           </Card>
+          <div>
+          <div className="ticket-detail-title" style={{marginTop:14}}><b>操作日志</b></div>
+          <Table columns={columns} bordered dataSource={logData} loading={tableLoading}/>
+          </div>
  
 
 

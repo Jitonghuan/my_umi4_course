@@ -1,27 +1,16 @@
 import React, { useState,useEffect,useMemo,useRef,useCallback} from 'react';
-import {  Tabs,Form,Select,message,DatePicker,Input,Divider } from 'antd';
+import {  Tabs,Form,Select,message,DatePicker,Input,Divider,Space } from 'antd';
 import {InfoCircleOutlined,} from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
+import {ScheduleOutlined,} from '@ant-design/icons';
+import {START_TIME_ENUMS} from "./schema"
 import {useEnvList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../../../common-hook'
 import RightContent from "./_components/right-content"
 import {createSql} from './hook';
 import './index.less'
 import moment from "moment";
 const { RangePicker } = DatePicker;
-
-const sqlWfTypeOptions=[
-  {
-    label:"普通变更",
-    value:"normal"
-  },
-  {
-    label:"离线变更",
-    value:"offline"
-  }
-]
-
-const { TabPane } = Tabs;
 interface querySqlItems{
   sqlContent?:string;
   dbCode?:string;
@@ -37,7 +26,9 @@ interface querySqlItems{
 
 }
 export default function ResizeLayout() {
-
+  const [type,setType]=useState<string>("time-interval");
+  const [startTime,setStartTime]=useState<string|null>(null)
+  const [endTime,setEndTime]=useState<string|null>(null)
   const [sqlLoading,setSqlLoading]=useState<boolean>(false);
   const [form]=Form.useForm();
   const [envOptionLoading,  envOptions, queryEnvList]=useEnvList();
@@ -46,8 +37,6 @@ export default function ResizeLayout() {
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [loading, tableFields,tableFieldsOptions, queryTableFields]=useQueryTableFieldsOptions();
-  const [startTime,setStartTime]=useState<string>('')
-  const [endTime,setEndTime]=useState<string>('')
   const [start,setStart]=useState<string>("")
   const [end,setEnd]=useState<string>("")
    //选择时间间隔
@@ -61,6 +50,15 @@ export default function ResizeLayout() {
     setEndTime(end);
   } 
 },[]);
+
+const selectTimeInterval=useCallback((timeValue:number)=>{
+      
+  const now = new Date().getTime();
+  let end = Number((now + timeValue) / 1000).toString();
+  let start = Number(now / 1000).toString();
+  setStartTime(start)
+  setEndTime(end)
+},[])
 useEffect(()=>{
   queryEnvList()
   // getInstanceList()
@@ -69,10 +67,14 @@ useEffect(()=>{
   }
   
 },[])
+const onClear=()=>{
+  setStartTime(null)
+  setEndTime(null)
+}
 
   const createSqlApply=useCallback(async(params:querySqlItems)=>{
     const createItems=form?.getFieldsValue()
-    if(!end||!start||!createItems?.title||!createItems?.instanceId||!createItems?.dbCode||!createItems?.tableCode||!params?.sqlContent){
+    if(!end||!start||!createItems?.title||!createItems?.instanceId||!createItems?.dbCode||!params?.sqlContent){
       message.warning("请先进行信息填写且输入sql语句再提交变更！")
       return
 
@@ -150,8 +152,44 @@ useEffect(()=>{
               <Select  placeholder="执行方式" options={runModeOptions}/>
               </Form.Item> */}
               <Form.Item name="time" label="时间：" rules={[{ required: true, message: '请填写' }]}>
-              <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
-               format="YYYY-MM-DD HH:mm:ss" showTime />
+              <Space style={{height:20}}>
+            {type==="time-interval"?( <Form.Item name="versionRangeOne" rules={[{ required: true, message: '请选择' }]} >
+             <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval} onClear={onClear}  style={{width:220}}/>
+           </Form.Item>):
+           ( <Form.Item name="validTimeRange" rules={[{ required: true, message: '请选择' }]} >
+           <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
+           style={{ marginLeft: '5px', width: 260 }}  format="YYYY-MM-DD HH:mm:ss" showTime />
+         </Form.Item>)}
+         {type==="time-interval"?(
+           <Form.Item>
+           <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{
+             setType("time-ranger")
+             setEndTime(null)
+             setStartTime(null)
+             form.setFieldsValue({
+              validTimeRange:null,
+              versionRangeOne:null
+             })
+             }} />
+           </Form.Item>
+
+         ):(
+          <Form.Item>
+          <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{setType("time-interval")
+        
+        setEndTime(null)
+        setStartTime(null)
+        form.setFieldsValue({
+         validTimeRange:null,
+         versionRangeOne:null
+        })}} />
+          </Form.Item>
+         )}
+          
+           
+          </Space>
+              {/* <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
+               format="YYYY-MM-DD HH:mm:ss" showTime /> */}
               </Form.Item>
               {/* <Form.Item name="dbCode">
               <Select  placeholder="关联发布计划"/>

@@ -10,7 +10,6 @@ import useTable from '@/utils/useTable';
 import {history} from 'umi';
 export default function AuthorityApply (){
     const [form] = Form.useForm();
-    const [curRecord,setCurRecord]=useState<any>({});
     const [loading, userNameOptions, searchUser] =useSearchUser()
     useEffect(()=>{
       searchUser()
@@ -45,8 +44,6 @@ export default function AuthorityApply (){
       const columns = useMemo(() => {
         return createTableColumns({
           onDetail: (record, index) => {
-            setCurRecord(record)
-            if(record?.currentStatus!=="manReviewing"){
               history.push({
                 pathname:"/matrix/DBMS/approval-end",
                 
@@ -54,15 +51,7 @@ export default function AuthorityApply (){
               },{
                 record
               })
-            }
-            if(record?.currentStatus==="manReviewing"){
-              history.push({
-                pathname:"/matrix/DBMS/ticket-approval",
-                
-              },{
-                record
-              })
-            }
+            
            
           },
          
