@@ -1,20 +1,21 @@
-import React, { useState,useEffect,forwardRef,Component,useMemo,useRef,useImperativeHandle} from 'react';
-import {  Tabs,Form,Space,Button,Select,message,Table } from 'antd';
+import React, { useState,useEffect,forwardRef,useCallback,useMemo,useRef,useImperativeHandle} from 'react';
+import {  Tabs,Form,Space,Button,Select,Card,Table } from 'antd';
 import {createTableColumns} from './schema';
 import { ContentCard } from '@/components/vc-page-content';
 import {useQueryLogsList} from '../../../common-hook';
 import './index.less'
 interface Iprops{
   sqlResult:any;
-  
+  errorMsg:string;
   sqlLoading:boolean;
   formRef:any;
+  costTime:string;
   queryTableFields:(params:any)=>any;
   copyAdd:(sqlContent:string,tableCode?:string)=>any;
   
 }
 export default forwardRef(function QueryResult(props:Iprops,ref:any){
-  const {sqlResult,sqlLoading,formRef,queryTableFields,copyAdd}=props;
+  const {sqlResult,sqlLoading,formRef,queryTableFields,copyAdd,errorMsg,costTime}=props;
   const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
 
   const [curRecord,setCurRecord]=useState<any>({});
@@ -106,12 +107,21 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
       setActiveKey(key);
     };
    
-    const add = () => {
+    const add =useCallback (() => {
         const newActiveKey = `newTab${newTabIndex.current++}`;
         const newPanes = [...items];
         newPanes.push(
-          { label: '查询结果', children: <div>
-        <Table dataSource={sqlResultSource} loading={logsloading}  bordered  scroll={{ x: '100%' }} >
+          { label: '查询结果', children: 
+          errorMsg?<div>
+           
+            <Card title="Error" size="small">
+              <p>{errorMsg}</p>
+            </Card>
+
+          </div>:
+          <div>
+           <p style={{paddingLeft:10}}>查询时间：{`${costTime} sec`}</p>
+           <Table dataSource={sqlResultSource} loading={logsloading}  bordered  scroll={{ x: '100%' }} >
           {sqlResultSource?.length>0&&(
             Object.keys(sqlResultSource[0])?.map((item:any)=>{
               return(
@@ -133,7 +143,7 @@ export default forwardRef(function QueryResult(props:Iprops,ref:any){
   
     //   }
        
-      };
+      },[errorMsg,sqlResultSource,logsloading,costTime]);
   
    
   

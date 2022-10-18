@@ -147,17 +147,30 @@ export const createTableColumns = (params: {
       },
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
-    // {
-    //   title: '申请原因',
-    //   dataIndex: 'remark',
-    //   key: 'remark',
-    //   width: '14%',
-    // },
+    {
+      title: '实例',
+      dataIndex: 'instanceName',
+      key: 'instanceName',
+      width: 170,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+    },
     {
       title: '变更库',
       dataIndex: 'dbCode',
       key: 'dbCode',
       width:180,
+      ellipsis: true,
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+    },
+    //syntaxType
+    {
+      title: '类型',
+      dataIndex: 'syntaxType',
+      key: 'syntaxType',
+      width:110,
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },

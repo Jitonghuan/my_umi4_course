@@ -36,9 +36,9 @@ export default function ResizeLayout() {
   const [tableCode,setTableCode]=useState<string>("");
   const [originData,setOriginData]=useState<any>([]);
   const [activePanel,setActivePanel]=useState<string|undefined>(undefined);
-  const [tablesSource,setTablesSource]=useState<any>([])
-  const [filterValue,setFilterValue]=useState<string>("");
-  const [searchText, setSearchText] = useState<string>('');
+  const [tablesSource,setTablesSource]=useState<any>([]);
+  const [errorMsg,setErrorMsg]=useState<string>("");
+  const [costTime,setCostTime]=useState<string>("");
   const queryTablesOptions=(params:{dbCode:string,instanceId:number})=>{
     setTablesOptionsLoading(true)
     queryTables(params).then((res:any)=>{
@@ -51,10 +51,6 @@ export default function ResizeLayout() {
       }else{
         setOriginData([])
       }
-    
-     
-  
-
     }).finally(()=>{
       setTablesOptionsLoading(false)
     })
@@ -84,8 +80,18 @@ export default function ResizeLayout() {
     querySqlResultInfo({...params,... values,tableCode}).then((res)=>{
       if(res?.success){ 
         const dataSource =   res?.data?.result|| "";
+        const costTime=res?.data?.costTime||"" 
         setSqlResult(dataSource)
+        setCostTime(costTime)
+        setErrorMsg("")
         addQueryResult()
+      }
+      if(res?.errorMsg){
+        setErrorMsg(res?.errorMsg)
+        setCostTime("")
+        addQueryResult()
+       
+
       }
     }).finally(()=>{
       setSqlLoading(false)
@@ -101,7 +107,7 @@ export default function ResizeLayout() {
       // debugger
       setTablesSource(originData)  
     }else{
-      setFilterValue(e)
+    
     const newKeys = tablesSource?.map((item:any) => {
         if (item.value.indexOf(e) > -1) {
           return ({
@@ -154,22 +160,17 @@ export default function ResizeLayout() {
      {tablesSource?.map((item:any)=>{
         return(
           <Panel 
-         
             header={<span><InsertRowAboveOutlined/>&nbsp;{item?.value}</span>} 
             key={item?.value} 
             className="site-collapse-custom-panel"
             >
-               <Spin spinning={fieldsLoading}>
+             <Spin spinning={fieldsLoading}>
              {tableFieldsOptions?.length>0&&<p className="site-collapse-custom-panel-content"> {tableFilesMap()}</p>}  
-               </Spin>
-          
+             </Spin>
           </Panel>
-         
         )
       })}
-       </Collapse>
-
-     
+    </Collapse> 
     )
   }
 
@@ -180,19 +181,14 @@ export default function ResizeLayout() {
      tableFieldsOptions?.map((item:string)=>{
       return(
             <li className="schema-li-map" style={{listStyle:"none"}}><Space>
-           <BarsOutlined  onDoubleClick={
-            ()=> {
+           <BarsOutlined  onDoubleClick={()=> {
           //  const table=form?.getFieldValue("tableCode")
           let initsql= `select ${item||"*"} from ${tableCode} limit 10`
            addSqlConsole
            setInitSqlValue(initsql)
         }
       }  style={{color:"#6495ED",fontSize:16,cursor:"pointer"}}/><span>{item}</span></Space></li>
-
-      
-      
       )
-
     }):<span className="schema-li-map">该表下未查询到字段</span>
    )
   }
@@ -206,6 +202,7 @@ export default function ResizeLayout() {
     queryTablesOptions({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
     //tableCode
     setActivePanel(tableCode)
+    setTableCode(tableCode)
     queryDatabases({instanceId:form?.getFieldsValue()?.instanceId})
     
   }
@@ -216,7 +213,7 @@ export default function ResizeLayout() {
       <div className="left-content-title">选择查询对象</div>
       <div className="left-content-form">
         <Form layout="vertical" form={form} ref={formRef}>
-          <Form.Item name="envCode">
+          <Form.Item name="envCode" label="环境：" rules={[{ required: true, message: '请填写' }]}>
            
             <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions}onChange={(value)=>{
                form?.setFieldsValue({
@@ -233,7 +230,7 @@ export default function ResizeLayout() {
               setActivePanel("")
             }} />
           </Form.Item>
-          <Form.Item name="instanceId">
+          <Form.Item name="instanceId" label="实例：" rules={[{ required: true, message: '请填写' }]}>
           <Select  placeholder="选择实例" options={instanceOptions}  showSearch loading={instanceLoading} onChange={(instanceId)=>{
             form?.setFieldsValue({
               dbCode:"",
@@ -249,14 +246,13 @@ export default function ResizeLayout() {
             
             }}/>
           </Form.Item>
-          <Form.Item name="dbCode">
+          <Form.Item name="dbCode" label="库：" rules={[{ required: true, message: '请填写' }]}>
           <Select  placeholder="选择库" options={databasesOptions}  showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{
             queryTablesOptions({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
             form?.setFieldsValue({
              
               searchFileds:""
             })
-           
             setTableCode("")
             setActivePanel("")
             setOptions([])
@@ -264,17 +260,17 @@ export default function ResizeLayout() {
             setImplementDisabled(false)
             }}/>
           </Form.Item>
-          <Space style={{marginBottom:0,width:'100%'}}>
+          <Space style={{marginBottom:0,width:'100%',marginTop:10}}>
           <Form.Item name="searchFileds" >
             <Input.Search placeholder="支持模糊搜索表名" style={{width:'100%'}}  allowClear  onSearch={onFilterChange} ></Input.Search>
-
-          </Form.Item>
+          </Form.Item> 
           <Form.Item>
           <span className="rest-btn" onClick={reset}><ReloadOutlined style={{fontSize:16,fontWeight:"bold" ,color:"#2487eb",cursor:"pointer"}} /></span>
           </Form.Item>
-
           </Space>
-         
+          <p style={{marginTop:8,width:"100%",marginBottom:0}}>
+            <li style={{width:"100%",listStyleType:"disc",color:"rgb(39,93,124)",whiteSpace:"break-spaces"}}>查询结果行数限制见权限管理，会选择查询涉及表的最小limit值</li>
+          </p>
           <Form.Item name="tableCode" style={{marginTop:0}}>
             <Spin spinning={tablesOptionsLoading}>
             {tabelMap()}
@@ -301,13 +297,34 @@ export default function ResizeLayout() {
       </div>
       </>
     )
-  },[queryResultItems,implementDisabled,activePanel,sqlConsoleItems,fieldsLoading,tablesSource,tablesOptionsLoading,instanceLoading,databasesOptionsLoading,envOptionLoading,queryResultActiveKey,sqlConsoleActiveKey,envOptions,instanceOptions,databasesOptions,tablesSource,tableFieldsOptions,initSqlValue,firstInitSqlValue,sqlLoading])
+  },[
+    queryResultItems,
+    implementDisabled,
+    activePanel,
+    sqlConsoleItems,
+    fieldsLoading,
+    tablesSource,
+    tablesOptionsLoading,
+    instanceLoading,
+    databasesOptionsLoading,
+    envOptionLoading,
+    queryResultActiveKey,
+    sqlConsoleActiveKey,
+    envOptions,
+    instanceOptions,
+    databasesOptions,
+    tablesSource,
+    tableFieldsOptions,
+    initSqlValue,
+    firstInitSqlValue,
+    errorMsg,
+    costTime,
+    sqlLoading])
     
     const rightContent=useMemo(()=>{
       return(
         <>
           <div className="container-top">
-          
           <SqlConsole 
           ref={sqlConsoleRef} 
           tableFields={tableFields} 
@@ -328,27 +345,36 @@ export default function ResizeLayout() {
             sqlLoading={sqlLoading} 
             formRef={formRef} 
             queryTableFields={queryTableFields}
+            errorMsg={errorMsg}
+            costTime={costTime}
             copyAdd={(sqlContent:string,tableCode?:string)=>copyAdd(sqlContent,tableCode)}
-             />
-         
-            
+             />    
           </div>
-
         </>
       )
-    },[queryResultItems,sqlConsoleItems,implementDisabled,queryResultActiveKey,sqlConsoleActiveKey,tableFields,sqlResult,sqlLoading,initSqlValue,firstInitSqlValue,implementDisabled,addCount]);
+    },[
+      queryResultItems,
+      errorMsg,
+      costTime,
+      sqlConsoleItems,
+      implementDisabled,
+      queryResultActiveKey,
+      sqlConsoleActiveKey,
+      tableFields,
+      sqlResult,
+      sqlLoading,
+      initSqlValue,
+      firstInitSqlValue,
+      implementDisabled,
+      addCount]);
    
     return (
-      // <ContentCard>
         <LightDragable
         leftContent={leftContent}
         rightContent={rightContent}
         showIcon={false}
         initWidth={150}
         />
-    //  </ContentCard>
-     
-
     );
   }
   

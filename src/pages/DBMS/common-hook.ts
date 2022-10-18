@@ -284,4 +284,5 @@ export function useQueryLogsList() {
 export const querySqlResultInfo = (params: querySqlItems) =>
   postRequest(APIS.querySqlApi, {
     data: params,
+    hideToast: true,
   });

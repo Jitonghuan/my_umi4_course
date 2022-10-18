@@ -31,13 +31,15 @@ export const createTableColumns = (
       title: '执行时间',
       dataIndex: 'startTime',
       key: 'startTime',
-      width: '18%',
+      width: '12%',
+      ellipsis: true,
+      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
       title: '用户',
       dataIndex: 'userName',
       key: 'userName',
-      width: '10%',
+      width: '8%',
     },
     {
       title: '实例',
@@ -75,9 +77,18 @@ export const createTableColumns = (
         title: '耗时',
         dataIndex: 'costTime',
         key: 'costTime',
-        width: '8%',
+        width: '10%',
         ellipsis: true,
-        render: (text) => <Tooltip title={`${parseInt(text)}s`}>{`${parseInt(text)}s`}</Tooltip>,
+        render: (text) => <Tooltip title={`${text} s`}>{`${text} s`}</Tooltip>,
+      },
+      //sqlOriginalContent
+      {
+        title: 'sql原语句',
+        dataIndex: 'sqlOriginalContent',
+        key: 'sqlOriginalContent',
+        width: '14%',
+        ellipsis: true,
+        render: (text) => <Tooltip title={`${text} s`}>{`${text} s`}</Tooltip>,
       },
      
   ] as ColumnsType<any>;

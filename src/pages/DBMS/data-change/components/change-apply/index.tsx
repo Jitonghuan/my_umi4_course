@@ -101,42 +101,57 @@ useEffect(()=>{
   
   const leftContent=useMemo(()=>{
     return(
-      <>
+      <div className="change-apply-form">
          <Form layout="vertical" form={form} ref={formRef} >
-            <Form.Item name="title">
+            <Form.Item name="title" label="标题：" rules={[{ required: true, message: '请填写' }]}>
                 <Input   placeholder="标题" />
               </Form.Item>
               {/* <Form.Item name="sqlWfType">
                 <Select  placeholder="普通变更" options={sqlWfTypeOptions}/>
               </Form.Item> */}
-              <Form.Item  name="envCode">
-              <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions} onChange={(value)=>{getInstanceList(value)}}/>
+              <Form.Item  name="envCode" label="环境：" rules={[{ required: true, message: '请填写' }]}>
+              <Select  placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions} onChange={(value)=>{
+                getInstanceList(value)
+                form?.setFieldsValue({
+                  instanceId:"",
+                  dbCode:"",
+                  tableCode:""
+                })
+                }}/>
               </Form.Item>
-              <Form.Item name="instanceId">
+              <Form.Item name="instanceId" label="实例：" rules={[{ required: true, message: '请填写' }]}>
               <Select  placeholder="选择实例" options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId)=>{
             queryDatabases({instanceId})
+            form?.setFieldsValue({
+              dbCode:"",
+              tableCode:""
+            })
+            
             
             }} />
               </Form.Item>
-              <Form.Item name="dbCode">
-              <Select  placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})}}/>
+              <Form.Item name="dbCode" label="库：" rules={[{ required: true, message: '请填写' }]}>
+              <Select  placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode)=>{queryTables({dbCode,instanceId:form?.getFieldsValue()?.instanceId})
+             form?.setFieldsValue({
+              tableCode:""
+            })}}/>
               </Form.Item>
-              <Form.Item name="tableCode">
+              <Form.Item name="tableCode" label="表：" rules={[{ required: true, message: '请填写' }]}>
               <Select  placeholder="选择表"  options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={()=>{
             const values=form?.getFieldsValue();
             queryTableFields({...values})
             
             } }/>
               </Form.Item>
-              <Form.Item name="remark">
+              <Form.Item name="remark" label="理由：" rules={[{ required: true, message: '请填写' }]}>
               <Input  placeholder="上线理由"/>
               </Form.Item>
               {/* <Form.Item name="runMode">
               <Select  placeholder="执行方式" options={runModeOptions}/>
               </Form.Item> */}
-              <Form.Item name="time">
+              <Form.Item name="time" label="时间：" rules={[{ required: true, message: '请填写' }]}>
               <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
-           format="YYYY-MM-DD HH:mm:ss" showTime />
+               format="YYYY-MM-DD HH:mm:ss" showTime />
               </Form.Item>
               {/* <Form.Item name="dbCode">
               <Select  placeholder="关联发布计划"/>
@@ -175,7 +190,7 @@ useEffect(()=>{
              </div>}
 
            /> */}
-        </>
+        </div>
       
     )
   },[formRef,databasesOptions,tablesOptions,instanceOptions,envOptions,envOptionLoading,tablesOptionsLoading,databasesOptionsLoading,instanceLoading,startTime,endTime])
