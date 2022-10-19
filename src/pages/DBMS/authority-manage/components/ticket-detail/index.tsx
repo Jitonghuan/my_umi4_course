@@ -197,8 +197,7 @@ export default function CreateArticle(props: CreateArticleProps) {
                     <Descriptions.Item label="有效期">{info?.validEndTime}</Descriptions.Item>
                     <Descriptions.Item label="库对象" span={2}>
                      <div > {info?.dbList?.length>0?
-                      info?.dbList?.map((item:string)=>{
-                        return(<p style={{marginBottom:2}}>{item},</p>)}):"--"}</div>
+                    info?.dbList?.join(',') :"--"}</div>
                     </Descriptions.Item>
                     <Descriptions.Item label="表对象" span={2}>
                       <div>
