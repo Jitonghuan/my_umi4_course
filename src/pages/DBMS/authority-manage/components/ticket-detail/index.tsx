@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table} from 'antd';
-import {SendOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons'
+import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons'
 import './index.less';
 import {createTableColumns} from './schema';
 import {useGetPrivInfo,useAuditTicket} from './hook';
@@ -25,7 +25,8 @@ const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
   wait:1,
   pass:2,
-  reject:2
+  reject:2,
+  abort:2
 };
 export default function CreateArticle(props: CreateArticleProps) {
   const { mode, curRecord, onClose, onSave,getList,queryId } = props;
@@ -183,7 +184,10 @@ export default function CreateArticle(props: CreateArticleProps) {
            ${owner?.join(',') || ''}
          `} />
            
-           <Step title="完成" icon={<CheckCircleTwoTone />} description={
+           <Step title={info?.currentStatusDesc} icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
+              info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
+              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:
+              <CheckCircleTwoTone />} description={
              <Spin spinning={auditLoading}>
                 <Space>
              {status==="wait"&&(<> <Tag color="geekblue" onClick={()=>{
@@ -206,7 +210,7 @@ export default function CreateArticle(props: CreateArticleProps) {
 
           </Card>
           <div>
-          <div className="ticket-detail-title" style={{marginTop:14}}><b>操作日志</b></div>
+          <div className="ticket-detail-title" style={{marginTop:14,paddingBottom:8}}><b>操作日志</b></div>
           <Table columns={columns} bordered dataSource={logData} loading={tableLoading}/>
           </div>
  

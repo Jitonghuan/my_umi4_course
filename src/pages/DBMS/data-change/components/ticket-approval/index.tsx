@@ -216,7 +216,8 @@ export default function TicketApproval(){
                 <Table.Column title={item}   dataIndex={item}   key={item} 
                 render={(value) => (
                   <Tooltip placement="topLeft" title={value}>
-                    {value}
+                    {value?.replace(/\\n/g, '<br/>')}
+                    
                   </Tooltip>
                 )}
                  />

@@ -1,4 +1,4 @@
-import { Space, Popconfirm, Tooltip } from 'antd';
+import { Space, Popconfirm, Tooltip,Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { datetimeCellRender } from '@/utils';
@@ -59,7 +59,9 @@ export const createTableColumns = (params: {
       dataIndex: 'privType',
       key: 'privType',
       width: '18%',
+      render: (text) => <span><Tag color={text==="query"?"green":text==="exec"?"blue":"default"}>{text==="query"?"查询":text==="exec"?"变更":text}</Tag></span>,
     },
+
     {
       title: '实例',
       dataIndex: 'instanceName',

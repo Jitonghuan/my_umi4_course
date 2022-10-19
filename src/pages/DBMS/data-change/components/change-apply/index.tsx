@@ -4,10 +4,12 @@ import {InfoCircleOutlined,} from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
 import {ScheduleOutlined,} from '@ant-design/icons';
+import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import {START_TIME_ENUMS} from "./schema"
 import {useEnvList,useInstanceList,useQueryDatabasesOptions,useQueryTableFieldsOptions,useQueryTablesOptions} from '../../../common-hook'
 import RightContent from "./_components/right-content"
 import {createSql} from './hook';
+import {history} from 'umi';
 import './index.less'
 import moment from "moment";
 const { RangePicker } = DatePicker;
@@ -71,6 +73,50 @@ const onClear=()=>{
   setStartTime(null)
   setEndTime(null)
 }
+const range = (start: number, end: number) => {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+};
+
+const disabledDate: RangePickerProps['disabledDate'] = (current: any) => {
+  // Can not select days before today and today
+  // return current && current < moment().endOf('day');
+  //当前时间小于开始时间，当前时间大于结束时间
+  return current && current < moment().endOf('day');
+};
+
+const disabledDateTime = (current: any) => {
+  const now = new Date().getTime();
+  console.log('----now-----',now)
+  const startHours = Number(moment(now).hours());
+  const endHours = Number(moment(now).hours());
+  const startMinutes = Number(moment(now).minutes());
+  const endMinutes = Number(moment(now).minutes());
+  const startSeconds = Number(moment(now).seconds());
+  const endSeconds = Number(moment(now).seconds());
+  if (current) {
+    const startDate = moment(now).endOf("days").date();
+    const endDate = moment(now).endOf("days").date();
+    if (current.date() === startDate) {
+      return {
+        disabledHours: () => range(0, startHours),
+        disabledMinutes: () => range(0, startMinutes),
+        disabledSeconds: () => range(0, startSeconds),
+      }
+    }
+
+    if (current.date() === endDate) {
+      return {
+        disabledHours: () => range(0, endHours),
+        disabledMinutes: () => range(0, endMinutes),
+        disabledSeconds: () => range(0, endSeconds),
+      }
+    }
+  }
+};
 
   const createSqlApply=useCallback(async(params:querySqlItems)=>{
     const createItems=form?.getFieldsValue()
@@ -91,7 +137,10 @@ const onClear=()=>{
       // }
       if(res?.success){
        message.success("提交成功！")
-       history.back()
+       history.push({
+         pathname:"/matrix/DBMS/data-change"
+       })
+     
       }else{
         return
       }
@@ -152,24 +201,23 @@ const onClear=()=>{
               <Select  placeholder="执行方式" options={runModeOptions}/>
               </Form.Item> */}
               <Form.Item name="time" label="时间：" rules={[{ required: true, message: '请填写' }]}>
-              <Space style={{height:20}}>
+              {/* <Space style={{height:20}}>
             {type==="time-interval"?( <Form.Item name="versionRangeOne" rules={[{ required: true, message: '请选择' }]} >
              <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval} onClear={onClear}  style={{width:220}}/>
            </Form.Item>):
-           ( <Form.Item name="validTimeRange" rules={[{ required: true, message: '请选择' }]} >
-           <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
-           style={{ marginLeft: '5px', width: 260 }}  format="YYYY-MM-DD HH:mm:ss" showTime />
-         </Form.Item>)}
-         {type==="time-interval"?(
+          
+         type==="time-interval"?(
            <Form.Item>
            <ScheduleOutlined style={{ marginLeft: '5px',fontSize:18 }}  onClick={()=>{
-             setType("time-ranger")
+             debugger 
              setEndTime(null)
              setStartTime(null)
              form.setFieldsValue({
               validTimeRange:null,
               versionRangeOne:null
              })
+             setType("time-ranger")
+            
              }} />
            </Form.Item>
 
@@ -187,9 +235,9 @@ const onClear=()=>{
          )}
           
            
-          </Space>
-              {/* <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
-               format="YYYY-MM-DD HH:mm:ss" showTime /> */}
+          </Space> */}
+              <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
+               format="YYYY-MM-DD HH:mm:ss" showTime />
               </Form.Item>
               {/* <Form.Item name="dbCode">
               <Select  placeholder="关联发布计划"/>

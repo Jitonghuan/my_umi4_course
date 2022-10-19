@@ -10,7 +10,7 @@ import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm,Button,
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
-import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
@@ -34,7 +34,8 @@ const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
   wait: 1,
   pass: 2,
-  reject: 2
+  reject: 2,
+  abort:2
 };
 
 export default function ApprovalEnd() {
@@ -252,16 +253,27 @@ export default function ApprovalEnd() {
             }
           </Form>
         </Modal>
-        <h3>工单标题：{info?.title}</h3>
+        <div>
+        <h3>工单标题：{info?.title}<span style={{float:"right"}}>
+        <Button  type="primary" className="back-go" onClick={() => {
+                  history.push({
+                    pathname: "/matrix/DBMS/data-change",
+
+                  })
+                }}>
+                  返回
+              </Button>
+
+        </span></h3>
+        
+      
+
+        </div>
+       
         {/* ------------------------------- */}
         <Spin spinning={loading}>
           <div className="ticket-detail-title">
-            {/* <div>
-           
-           </div> */}
            <div>
-
-        
             <div className="second-info">
             <span className="second-info-left">
               {/* <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span> */}
@@ -277,15 +289,9 @@ export default function ApprovalEnd() {
                   }}>
                   <Tag color="orange" >撤销工单</Tag>
                 </Popconfirm>}
+               
 
-                <Button  type="primary" className="back-go" onClick={() => {
-                  history.push({
-                    pathname: "/matrix/DBMS/data-change",
-
-                  })
-                }}>
-                  返回
-              </Button>
+               
               </Space>
             </span>
           
@@ -310,7 +316,7 @@ export default function ApprovalEnd() {
             <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
             {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
             <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
-            <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>{info?.sqlContent}</span></Descriptions.Item>
+            <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</span></Descriptions.Item>
             {/* <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item> */}
             {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
             {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
@@ -319,24 +325,28 @@ export default function ApprovalEnd() {
           </Descriptions>
         </Spin>
         {/* ------------------------------- */}
-        <Card style={{ width: "100%", marginTop: 12 }} size="small" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
+        <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
           <Spin spinning={auditLoading}>
             <Steps direction="vertical" current={StatusMapping[status] || -1} size="small">
               <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
               <Step title="库Owner" icon={<DingdingOutlined />} description={`当前审批人:
               ${owner?.join(',') || ''}`} />
-              <Step title="完成" icon={<CheckCircleTwoTone />}
+              <Step title={info?.currentStatusDesc} 
+              icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
+              info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
+              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:
+              <CheckCircleTwoTone />}
                 description={
-                  <Space>
-                    {status === "wait" && (<Tag color="success" onClick={() => {
+                  status === "wait"&& <Space>
+                   <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         afferentId ? getInfo(afferentId) : getInfo()
                         // history.back()
                       })
                     }}>审批通过</Tag>
 
-                    )}
-                    {status === "wait" && (<Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>)}
+                  
+                   <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
                   </Space>} />
             </Steps>
 
@@ -359,13 +369,21 @@ export default function ApprovalEnd() {
             {reviewContentData?.length > 0 && (
               Object.keys(reviewContentData[0])?.map((item: any) => {
                 return (
-                  <Table.Column title={item} dataIndex={item} key={item}
-                    render={(value) => (
-                      <Tooltip placement="topLeft" title={value}>
-                        {value}
+                  item==="审核/执行信息"?
+                    <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
+                        
+                          {value?.replace(/\\n/g, '<br/>')}
                       </Tooltip>
-                    )}
-                  />
+                    )}/>:item==="完整SQL内容"? <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
+                        
+                          {value?.replace(/\\n/g, '<br/>')}
+                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value}>
+                       
+                          {value}
+                      </Tooltip>)}/>
                 )
               })
 
@@ -376,7 +394,21 @@ export default function ApprovalEnd() {
               {executeResultData?.length > 0 && (
                 Object.keys(executeResultData[0])?.map((item: any) => {
                   return (
-                    <Table.Column title={item} dataIndex={item} key={item} />
+                    item==="审核/执行信息"?
+                    <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
+                        
+                          {value?.replace(/\\n/g, '<br/>')}
+                      </Tooltip>
+                    )}/>:item==="完整SQL内容"? <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
+                        
+                          {value?.replace(/\\n/g, '<br/>')}
+                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value}>
+                       
+                          {value}
+                      </Tooltip>)}/>
                   )
                 })
               )}
@@ -384,7 +416,21 @@ export default function ApprovalEnd() {
               {reviewContentData?.length > 0 && (
                 Object.keys(reviewContentData[0])?.map((item: any) => {
                   return (
-                    <Table.Column title={item} dataIndex={item} key={item} />
+                    item==="审核/执行信息"?
+                    <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
+                        
+                          {value?.replace(/\\n/g, '<br/>')}
+                      </Tooltip>
+                    )}/>:item==="完整SQL内容"? <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
+                        
+                          {value?.replace(/\\n/g, '<br/>')}
+                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                      <Tooltip placement="topLeft" title= {value}>
+                       
+                          {value}
+                      </Tooltip>)}/>
                   )
                 })
 

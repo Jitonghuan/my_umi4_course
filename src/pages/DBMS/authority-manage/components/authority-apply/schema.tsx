@@ -11,14 +11,14 @@ type CurrentStatusStatusTypeItem = {
 
 export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "finish":{tagColor:"success",tagText:"已正常结束"},
-  "abort":{tagColor:"#A9A9A9",tagText:"人工终止流程"},
+  "abort":{tagColor:"red",tagText:"审批拒绝"},
   "manReviewing":{tagColor:"processing",tagText:"待审核"},
   "reviewPass":{tagColor:"green",tagText:"审核通过"},
   "timingTask":{tagColor:"cyan",tagText:"定时执行"},  
   "queuing":{tagColor:"blue",tagText:"排队中"},
   "executing":{tagColor:"geekblue",tagText:"执行中"},
   "autoReviewWrong":{tagColor:"error",tagText:"自动审核不通过"},
-  "exception":{tagColor:"volcano",tagText:"执行有异常"},
+  "exception":{tagColor:"lime",tagText:"执行有异常"},
 }
 const privWfTypeOptions=[
   {
