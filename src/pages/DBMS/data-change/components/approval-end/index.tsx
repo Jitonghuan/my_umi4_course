@@ -340,7 +340,7 @@ export default function ApprovalEnd() {
           <Spin spinning={auditLoading}>
             <Steps direction="vertical" current={StatusMapping[status] || -1} size="small">
               <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
-              <Step title="库Owner" icon={<DingdingOutlined />} description={`当前审批人:
+              <Step title="库Owner" icon={<DingdingOutlined />} description={`审批人:
               ${owner?.join(',') || ''}`} />
               <Step title={info?.currentStatusDesc} 
               icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:

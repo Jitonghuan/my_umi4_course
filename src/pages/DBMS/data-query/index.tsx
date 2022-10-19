@@ -137,7 +137,7 @@ export default function ResizeLayout() {
             setActivePanel(value)
             const values = form?.getFieldsValue();
             setOptions([])
-            setSource([])
+            // setSource([])
             queryTableFields({ ...values, tableCode: value })
             setFirstInitSqlValue(`select * from ${value} limit 10`)
             if (!values?.instanceId || !values?.dbCode || !value) {

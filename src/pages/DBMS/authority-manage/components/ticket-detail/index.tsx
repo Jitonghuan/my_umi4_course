@@ -41,6 +41,7 @@ export default function CreateArticle(props: CreateArticleProps) {
   const [status,setstatus]=useState<string>("");
   const [auditLoading, auditTicket]= useAuditTicket();
   const [auditStatusDesc,setAuditStatusDesc]=useState<string>("")
+  const [privWfType,setPrivWfType]=useState<any>([]);
   let userInfo: any = localStorage.getItem('USER_INFO');
   let userName=""
   if (userInfo) {
@@ -92,11 +93,24 @@ export default function CreateArticle(props: CreateArticleProps) {
     setLoading(true)
     let paramId=afferentId?afferentId:curRecord?.id
     useGetPrivInfo(curRecord?.id||id).then((res)=>{
-      console.log("res",res)
       if(Object.keys(res)?.length<1) return
       setInfo(res)
       let auditUsers=[];
-     
+      let privList:any=[]
+      res?.privList?.map((item:any)=>{
+        if(item==="query"){
+          privList.push("查询")
+
+        }
+        if(item==="exec"){
+          privList.push("变更")
+        }
+        if(item==="owner"){
+          privList.push("owner")
+        }
+
+      })
+      setPrivWfType(privList)
       if(res?.audit?.length>0){
         setstatus(res?.audit[0]?.AuditStatus)
         // if(res?.audit[0]?.AuditStatus==="wait"){
@@ -188,15 +202,13 @@ export default function CreateArticle(props: CreateArticleProps) {
                     </Descriptions.Item>
                     <Descriptions.Item label="表对象" span={2}>
                       <div>
-                      {info?.tableList?.length>0?info?.tableList?.map((item:string)=>{return(<p style={{marginBottom:2}}>{item},</p>)}):"--"}
+                      {info?.tableList?.length>0?info?.tableList?.join(','):"--"}
                       </div>
                     </Descriptions.Item>
                    {info?.privWfType==="limit"&& <Descriptions.Item span={2} label="授权行数">{info?.limitNum||"--"}</Descriptions.Item>}
                     <Descriptions.Item span={2} label="授权功能">
-                      {info?.privList?.length>1?
-                      info?.privList?.map((item:string)=>{
-                        return(<span style={{padding:2}}>{item==="query"?"查询":"变更"}｜</span>)})
-                        :info?.privList?.length===1?info?.privList[0]:'--'}
+                      {info?.privList?.length>0?
+                      privWfType?.join('|'):'--'}
                       </Descriptions.Item>
                     <Descriptions.Item span={2} label="理由">{info?.remark}</Descriptions.Item>
                     
@@ -210,7 +222,7 @@ export default function CreateArticle(props: CreateArticleProps) {
           <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
            <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
            <Step title="库Owner" icon={<DingdingOutlined />} 
-           description={`当前审批人:
+           description={`审批人:
            ${owner?.join(',') || ''}
          `} />
            

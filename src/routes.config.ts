@@ -453,13 +453,13 @@ export default [
         key: 'data-change',
         component: '@/pages/DBMS/data-change',
       },
-      {
-        path: `${baseRoutePath}/DBMS/ticket-approval`,
-        name: '工单详情-审批中',
-        key: 'data-change',
-        component: '@/pages/DBMS/data-change/components/ticket-approval',
-        hideInMenu: true,
-      },
+      // {
+      //   path: `${baseRoutePath}/DBMS/ticket-approval`,
+      //   name: '工单详情-审批中',
+      //   key: 'data-change',
+      //   component: '@/pages/DBMS/data-change/components/ticket-approval',
+      //   hideInMenu: true,
+      // },
       {
         path:`${baseRoutePath}/DBMS/approval-end`,
         name: '工单详情-审批结束',
