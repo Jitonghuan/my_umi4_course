@@ -47,32 +47,41 @@ export default function CreateArticle(props: CreateArticleProps) {
     userInfo = JSON.parse(userInfo);
     userName= userInfo ? userInfo.name : ''
   }
-  useEffect(()=>{
-    if(afferentId&&mode !== 'HIDE'){
-      getInfo(afferentId)
-      getWorkflowLog(afferentId)
+  // useEffect(()=>{
+  //   //&&mode !== 'HIDE'
+  //   if(afferentId){
+  //     getInfo(afferentId)
+  //     getWorkflowLog(afferentId)
 
-    }
+  //   }
    
      
    
 
-  },[afferentId,mode])
+  // },[afferentId,mode])
 
  
 
  
   useEffect(() => {
-    if (mode === 'HIDE' || !curRecord?.id) return;
-    getInfo()
-    getWorkflowLog(curRecord?.id)
+    //mode === 'HIDE' ||
+    // if ( !curRecord?.id) return;
+    if(curRecord?.id){
+      getInfo()
+      getWorkflowLog(curRecord?.id)
+
+    }else if(afferentId&&!curRecord?.id){
+      getInfo(afferentId)
+      getWorkflowLog(afferentId)
+    }
+   
    
 
    
     return () => {
      
     };
-  }, [mode]);
+  }, [mode,afferentId]);
   
   const columns = useMemo(() => {
        
@@ -89,7 +98,8 @@ export default function CreateArticle(props: CreateArticleProps) {
       if(res?.audit?.length>0){
         setstatus(res?.audit[0]?.AuditStatus)
         // if(res?.audit[0]?.AuditStatus==="wait"){
-          auditUsers=res?.audit[0]?.Groups 
+          auditUsers=res?.audit[0]?.Groups||[] 
+          console.log("---auditUsers---",auditUsers,res?.audit[0])
           setOwner(auditUsers)
           setAuditStatusDesc(res?.audit[0]?.AuditStatusDesc)
          
@@ -139,7 +149,7 @@ export default function CreateArticle(props: CreateArticleProps) {
           title="工单详情"
           placement="right"
           visible={mode !== 'HIDE'}
-          onClose={()=>{onClose; }}
+          onClose={onClose}
           maskClosable={false}
           footer={null}
           className="ticket-detail-drawer"
@@ -204,7 +214,8 @@ export default function CreateArticle(props: CreateArticleProps) {
               <CheckCircleTwoTone />} description={
              <Spin spinning={auditLoading}>
                 <Space>
-             {status==="wait"&&userName&&owner?.inclues(userName)&&(<> <Tag color="geekblue" onClick={()=>{
+                  {console.log("----owner---",owner)}
+             {status==="wait"&&userName&&owner?.join(',')&&owner||[]?.join(',')?.includes(userName)&&(<> <Tag color="geekblue" onClick={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
                   afferentId?getInfo(afferentId):  getInfo()
                 

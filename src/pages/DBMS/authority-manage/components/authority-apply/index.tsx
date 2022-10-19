@@ -118,7 +118,11 @@ return(<>
     mode={mode}
     curRecord={curRecord}
     queryId={query?.id||''}
-    onClose={()=>{setMode("HIDE")}}
+    onClose={()=>{setMode("HIDE");
+    // history.push({
+    //     pathname:"/matrix/DBMS/authority-manage/authority-apply"
+    //   })
+    }}
     onSave={()=>{setMode("HIDE");
     queryList()
   }

@@ -346,7 +346,7 @@ export default function ApprovalEnd() {
               info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />: info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
               <CheckCircleTwoTone />}
                 description={
-                  status === "wait"&&userName&&owner?.inclues(userName)&& <Space>
+                  status === "wait"&&userName&&owner?.join(',')&&owner?.join(',')?.includes(userName)&& <Space>
                    <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         afferentId ? getInfo(afferentId) : getInfo()
