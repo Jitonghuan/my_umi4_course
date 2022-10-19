@@ -99,7 +99,6 @@ export default function CreateArticle(props: CreateArticleProps) {
         setstatus(res?.audit[0]?.AuditStatus)
         // if(res?.audit[0]?.AuditStatus==="wait"){
           auditUsers=res?.audit[0]?.Groups||[] 
-          console.log("---auditUsers---",auditUsers,res?.audit[0])
           setOwner(auditUsers)
           setAuditStatusDesc(res?.audit[0]?.AuditStatusDesc)
          
@@ -158,9 +157,9 @@ export default function CreateArticle(props: CreateArticleProps) {
             <Spin spinning={loading}>
             <Descriptions column={2} size="small" >
                     <Descriptions.Item label="工单号">{info?.id}</Descriptions.Item>
-                    <Descriptions.Item label="标题"><span style={{width:220,overflow:"auto",textOverflow:"ellipsis"}}>{info?.title}</span></Descriptions.Item>
+                    <Descriptions.Item label="申请人" >{info?.userName}</Descriptions.Item>
+                    <Descriptions.Item label="标题" span={2}><span style={{width:320,overflow:"auto",textOverflow:"ellipsis"}}>{info?.title}</span></Descriptions.Item>
                     <Descriptions.Item  label="工单状态"><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </Descriptions.Item>
-                    <Descriptions.Item label="申请人">{info?.userName}</Descriptions.Item>
                     <Descriptions.Item label="">
                       {status==="wait"&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
                     
@@ -191,7 +190,12 @@ export default function CreateArticle(props: CreateArticleProps) {
                       </div>
                     </Descriptions.Item>
                    {info?.privWfType==="limit"&& <Descriptions.Item span={2} label="授权行数">{info?.limitNum||"--"}</Descriptions.Item>}
-                    <Descriptions.Item span={2} label="授权功能">{info?.privList?.length>1?info?.privList?.map((item:string)=>{return(<span style={{padding:2}}>{item}｜</span>)}):info?.privList?.length===1?info?.privList[0]:'--'}</Descriptions.Item>
+                    <Descriptions.Item span={2} label="授权功能">
+                      {info?.privList?.length>1?
+                      info?.privList?.map((item:string)=>{
+                        return(<span style={{padding:2}}>{item==="query"?"查询":"变更"}｜</span>)})
+                        :info?.privList?.length===1?info?.privList[0]:'--'}
+                      </Descriptions.Item>
                     <Descriptions.Item span={2} label="理由">{info?.remark}</Descriptions.Item>
                     
              </Descriptions>
@@ -214,7 +218,7 @@ export default function CreateArticle(props: CreateArticleProps) {
               <CheckCircleTwoTone />} description={
              <Spin spinning={auditLoading}>
                 <Space>
-                  {console.log("----owner---",owner)}
+                 
              {status==="wait"&&userName&&owner?.join(',')&&owner||[]?.join(',')?.includes(userName)&&(<> <Tag color="geekblue" onClick={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
                   afferentId?getInfo(afferentId):  getInfo()

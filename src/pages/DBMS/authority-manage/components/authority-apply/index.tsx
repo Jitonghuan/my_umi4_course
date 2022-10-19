@@ -12,7 +12,8 @@ import useTable from '@/utils/useTable';
 import {queryWorkflowPrivListApi,currentAuditsApi} from '../../../service'
 import {useLocation} from 'umi';
 import { parse } from 'query-string';
-import {useSearchUser} from '../../../common-hook'
+import {useSearchUser} from '../../../common-hook';
+import './index.less'
 export default function AuthorityApply (){
 const [form] = Form.useForm();
 let location = useLocation();
@@ -50,10 +51,10 @@ useEffect(()=>{
   
 
 },[])
-const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:string,wfUserType?:string}) => {
+const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:string,wfUserType?:string,userName?:string,title?:string}) => {
     setTableLoading(true)
     getRequest(queryWorkflowPrivListApi, {
-      data: { pageIndex:obj?.pageIndex|| 1, pageSize:obj?.pageSize|| 20 },
+      data: {...obj, pageIndex:obj?.pageIndex|| 1, pageSize:obj?.pageSize|| 20, },
     })
       .then((result) => {
         if (result.success) {
@@ -113,7 +114,7 @@ const columns = useMemo(() => {
    
   }) as any;
 }, [dataSource]);
-return(<>
+return(<div className="authority-apply">
     <TicketDetail
     mode={mode}
     curRecord={curRecord}
@@ -160,7 +161,7 @@ return(<>
               placeholder="请输入"
               showSearch
               allowClear
-              style={{ width: 290 }}
+              style={{ width: 200 }}
               options={currentApplyStatusOptions}
              
             />
@@ -170,7 +171,7 @@ return(<>
               placeholder="请输入"
               showSearch
               allowClear
-              style={{ width: 290 }}
+              style={{ width: 200 }}
               options={privWfTypeOptions}
              
             />
@@ -180,7 +181,7 @@ return(<>
               placeholder="请输入"
               showSearch
               allowClear
-              style={{ width: 290 }}
+              style={{ width: 200 }}
               options={userNameOptions}
              
             />
@@ -189,7 +190,7 @@ return(<>
           <Input
               placeholder="请输入"
              
-              style={{ width: 290 }}
+              style={{ width: 260 }}
              
              
             />
@@ -238,5 +239,5 @@ return(<>
         </div>
       </ContentCard>
  
- </>)
+ </div>)
 }
