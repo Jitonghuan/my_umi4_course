@@ -7,6 +7,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table} from 'antd';
 import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons'
 import './index.less';
+import { history } from 'umi';
 import {createTableColumns} from './schema';
 import {useGetPrivInfo,useAuditTicket} from './hook';
 import {useworkflowLog} from '../../../data-change/components/approval-end/hook'
@@ -39,12 +40,22 @@ export default function CreateArticle(props: CreateArticleProps) {
   const [owner,setOwner]=useState<any>([]);
   const [status,setstatus]=useState<string>("");
   const [auditLoading, auditTicket]= useAuditTicket();
+  const [auditStatusDesc,setAuditStatusDesc]=useState<string>("")
+  let userInfo: any = localStorage.getItem('USER_INFO');
+  let userName=""
+  if (userInfo) {
+    userInfo = JSON.parse(userInfo);
+    userName= userInfo ? userInfo.name : ''
+  }
   useEffect(()=>{
     if(afferentId&&mode !== 'HIDE'){
       getInfo(afferentId)
       getWorkflowLog(afferentId)
 
     }
+   
+     
+   
 
   },[afferentId,mode])
 
@@ -80,6 +91,7 @@ export default function CreateArticle(props: CreateArticleProps) {
         // if(res?.audit[0]?.AuditStatus==="wait"){
           auditUsers=res?.audit[0]?.Groups 
           setOwner(auditUsers)
+          setAuditStatusDesc(res?.audit[0]?.AuditStatusDesc)
          
         // }
 
@@ -93,6 +105,7 @@ export default function CreateArticle(props: CreateArticleProps) {
 
   }
   const showConfirm = (auditType:string) => {
+    form.resetFields()
     confirm({
       title: '请填写理由',
       icon: <ExclamationCircleOutlined />,
@@ -126,7 +139,7 @@ export default function CreateArticle(props: CreateArticleProps) {
           title="工单详情"
           placement="right"
           visible={mode !== 'HIDE'}
-          onClose={onClose}
+          onClose={()=>{onClose; }}
           maskClosable={false}
           footer={null}
           className="ticket-detail-drawer"
@@ -137,6 +150,7 @@ export default function CreateArticle(props: CreateArticleProps) {
                     <Descriptions.Item label="工单号">{info?.id}</Descriptions.Item>
                     <Descriptions.Item label="标题"><span style={{width:220,overflow:"auto",textOverflow:"ellipsis"}}>{info?.title}</span></Descriptions.Item>
                     <Descriptions.Item  label="工单状态"><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </Descriptions.Item>
+                    <Descriptions.Item label="申请人">{info?.userName}</Descriptions.Item>
                     <Descriptions.Item label="">
                       {status==="wait"&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
                     
@@ -175,7 +189,7 @@ export default function CreateArticle(props: CreateArticleProps) {
             </Spin>
              
           </Card>
-          <Card size="small" style={{ width: "90%" ,marginTop:16 }} title={<span>审批进度：<span className="processing-title">{status==="wait"?"等待审批":status==="pass"?"审批通过":"已拒绝"}</span></span>}>
+          <Card size="small" style={{ width: "90%" ,marginTop:16 }} title={<span>审批进度：<span className="processing-title">{auditStatusDesc}</span></span>}>
           <Spin spinning={loading}>
           <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
            <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
@@ -186,11 +200,11 @@ export default function CreateArticle(props: CreateArticleProps) {
            
            <Step title={info?.currentStatusDesc} icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
               info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
-              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:
+              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:  info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
               <CheckCircleTwoTone />} description={
              <Spin spinning={auditLoading}>
                 <Space>
-             {status==="wait"&&(<> <Tag color="geekblue" onClick={()=>{
+             {status==="wait"&&userName&&owner?.inclues(userName)&&(<> <Tag color="geekblue" onClick={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
                   afferentId?getInfo(afferentId):  getInfo()
                 

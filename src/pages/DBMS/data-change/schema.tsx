@@ -10,7 +10,7 @@ const statusOptions=[
     key:"finish",
   },
   {
-    label:"人工终止流程",
+    label:"审批取消",
     value:"abort",
     key:"abort",
   },
@@ -18,6 +18,11 @@ const statusOptions=[
     label:"待审核",
     value:"manReviewing",
     key:"manReviewing",
+  },
+  {
+    label:"审批拒绝",
+    value:"reject",
+    key:"reject",
   },
   {
     label:"审核通过",

@@ -1,130 +1,238 @@
 import React, { useState, useMemo,useEffect } from 'react';
-import {Form, Button, Space } from 'antd';
-import PageContainer from '@/components/page-container';
+import {Form, Button, Space,Table,Select,Input } from 'antd';
+import { getRequest } from '@/utils/request';
 import TableSearch from '@/components/table-search';
-import { createTableColumns,createFormItems,currentStatusOptions } from './schema';
+import { history } from 'umi';
+import PageContainer from '@/components/page-container';
+import { ContentCard, FilterCard } from '@/components/vc-page-content';
+import { createTableColumns,createFormItems,currentStatusOptions ,privWfTypeOptions,currentApplyStatusOptions} from './schema';
 import TicketDetail from '../../components/ticket-detail';
 import ApplyDetailDrawer from '../apply-detail'
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import useTable from '@/utils/useTable';
 import {queryWorkflowPrivListApi,currentAuditsApi} from '../../../service'
-import {history,useLocation} from 'umi';
+import {useLocation} from 'umi';
 import { parse } from 'query-string';
 import {useSearchUser} from '../../../common-hook'
-
-
 export default function AuthorityApply (){
-    const [form] = Form.useForm();
-    let location = useLocation();
-    const query = parse(location.search);
-    const [mode,setMode]=useState<EditorMode>("HIDE");
-    const [curRecord,setCurRecord]=useState<any>({});
-    const [loading, userNameOptions, searchUser] =useSearchUser()
-    const [applyDetailMode,setApplyDetailMode]=useState<EditorMode>("HIDE");
-    
-    useEffect(()=>{
-      searchUser()
-    },[])
-    useEffect(() => {
-      let intervalId = setInterval(() => {
-        submit()
-      }, 10000*20);
+const [form] = Form.useForm();
+let location = useLocation();
+const query = parse(location.search);
+const [mode,setMode]=useState<EditorMode>("HIDE");
+const [tableLoading, setTableLoading] = useState<any>(false);
+const [curRecord,setCurRecord]=useState<any>({});
+const [loading, userNameOptions, searchUser] =useSearchUser()
+const [applyDetailMode,setApplyDetailMode]=useState<EditorMode>("HIDE");
+const [dataSource,setDataSource]=useState<any>([]);
+const [total, setTotal] = useState<number>(0);
+const [pageSize, setPageSize] = useState<number>(20);
+const [audit,setaudit]=useState<any>([]);
+
+useEffect(()=>{
+    queryList()
+},[])
+useEffect(()=>{
+  searchUser()
+},[])
+useEffect(() => {
+  let intervalId = setInterval(() => {
+    queryList()
+  }, 10000*20);
+
+  return () => {
+    clearInterval(intervalId);
+  };
+}, []);
+useEffect(()=>{
+  if(query?.detail==="true"&&query?.id){
+    setMode("VIEW")
+
+  }
   
-      return () => {
-        clearInterval(intervalId);
-      };
-    }, []);
-    useEffect(()=>{
-      if(query?.detail==="true"&&query?.id){
-        setMode("VIEW")
 
-      }
-      
-
-    },[])
-    const formOptions = useMemo(() => {
-      return createFormItems({
-        // currentStatusOptions,
-        userNameOptions,
-       
+},[])
+const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:string,wfUserType?:string}) => {
+    setTableLoading(true)
+    getRequest(queryWorkflowPrivListApi, {
+      data: { pageIndex:obj?.pageIndex|| 1, pageSize:obj?.pageSize|| 20 },
+    })
+      .then((result) => {
+        if (result.success) {
+          let data = result?.data?.dataSource;
+          let list=result.data?.dataSource || []
+          if(list?.length>0){
+            list?.map((item:any)=>{
+              getRequest(currentAuditsApi,{data:{id:item?.id}}).then((res)=>{
+                if(res?.success){
+                  let data=res?.data?.audits;
+                  setaudit(data)
+                  setDataSource([...new Set([...list,Object.assign(item, {
+                    audit: data,
+                  })])])
+                }
+              })
+            })}  
+          let pageInfo=result?.data?.pageInfo
+          setTotal(pageInfo?.total);
+          setPageSize(pageInfo?.pageSize);
+        }
+      })
+      .finally(() => {
+        setTableLoading(false)
       });
-    }, [userNameOptions]);
-    const columns = useMemo(() => {
-      return createTableColumns({
-        onDetail: (record, index) => {
-          setMode("VIEW")
-          setCurRecord(record)
-        },
-       
-      }) as any;
-    }, []);
-    const {
-        tableProps,
-        search: { submit, reset },
-      } = useTable({
-        url: queryWorkflowPrivListApi,
-        method: 'GET',
-        form,
-        formatter: (params) => {
-          return {
-            ...params,
-          };
-        },
-        formatResult: (result) => {
-          return {
-            total: result.data?.pageInfo?.total,
-            list: result.data?.dataSource || [],
-            
-          };
-        },
-      });
-     
-    return(<>
-       <TicketDetail
-       mode={mode}
-       curRecord={curRecord}
-       queryId={query?.id||''}
-       onClose={()=>{setMode("HIDE")}}
-       onSave={()=>{setMode("HIDE");
-       reset()}}
-       getList={
-      ()=> reset()}
+  };
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    let obj = {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    setPageSize(pagination.pageSize);
 
-      />
-      <ApplyDetailDrawer
-      mode={applyDetailMode}
-      onClose={()=>{setApplyDetailMode("HIDE")}}
-      onSave={()=>{setApplyDetailMode("HIDE");reset()}}
-      />
-      <TableSearch
-        form={form}
-        bordered
-        formOptions={formOptions}
-        formLayout="inline"
-        columns={columns}
-        scroll={{ x: '100%' }}
-        {...tableProps}
-        //@ts-ignore
-        pagination={{
-          ...tableProps.pagination,
-          showTotal: (total) => `共 ${total} 条`,
-          showSizeChanger: true,
-          // size: 'small',
-          defaultPageSize: 20,
-        }}
-        extraNode={
-          <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <h3>权限申请列表</h3>
+    loadListData(obj);
+  };
+
+  const loadListData = (params: any) => {
+    let value = form.getFieldsValue();
+    queryList({ ...params, ...value,});
+  };
+const formOptions = useMemo(() => {
+
+  return createFormItems({
+    // currentStatusOptions,
+    userNameOptions,
+   
+  });
+}, [userNameOptions]);
+const columns = useMemo(() => {
+  return createTableColumns({
+    dataSource:dataSource,
+    onDetail: (record, index) => {
+      setMode("VIEW")
+      setCurRecord(record)
+    },
+   
+  }) as any;
+}, [dataSource]);
+return(<>
+    <TicketDetail
+    mode={mode}
+    curRecord={curRecord}
+    queryId={query?.id||''}
+    onClose={()=>{setMode("HIDE")}}
+    onSave={()=>{setMode("HIDE");
+    queryList()
+  }
+}
+    getList={
+   ()=>{
+    queryList()
+   }
+}
+
+   />
+   <ApplyDetailDrawer
+   mode={applyDetailMode}
+   onClose={()=>{setApplyDetailMode("HIDE")}}
+   onSave={()=>{setApplyDetailMode("HIDE");
+   queryList()
+}}
+
+   />
+   <FilterCard>
+        <Form
+          layout="inline"
+          form={form}
+          onFinish={(values: any) => {
+            queryList({...values})
+          }}
+          onReset={() => {
+            form.resetFields();
+            queryList()
+          }}
+        >
+       
+          <Form.Item label="工单状态" name="currentStatus">
+            <Select
+              placeholder="请输入"
+              showSearch
+              allowClear
+              style={{ width: 290 }}
+              options={currentApplyStatusOptions}
+             
+            />
+          </Form.Item>
+          <Form.Item label="工单类别" name="wfUserType">
+          <Select
+              placeholder="请输入"
+              showSearch
+              allowClear
+              style={{ width: 290 }}
+              options={privWfTypeOptions}
+             
+            />
+          </Form.Item>
+          <Form.Item label="申请人" name="userName">
+          <Select
+              placeholder="请输入"
+              showSearch
+              allowClear
+              style={{ width: 290 }}
+              options={userNameOptions}
+             
+            />
+          </Form.Item>
+          <Form.Item label="标题" name="title">
+          <Input
+              placeholder="请输入"
+             
+              style={{ width: 290 }}
+             
+             
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button type="ghost" htmlType="reset">
+              重置
+            </Button>
+          </Form.Item>
+        </Form>
+      </FilterCard>
+      <ContentCard>
+        <div className="table-caption">
+          <div className="caption-left">
+            <h3>发布列表</h3>
+          </div>
+          <div className="caption-right">
+            <Space>
             <Button type="primary" onClick={()=>{
                setApplyDetailMode("ADD")
             }}>申请权限</Button>
-          </Space>
-        }
-        className="table-form"
-        onSearch={submit}
-        reset={reset}
-        searchText="查询"
-      />
-    
-    </>)
+            </Space>
+          </div>
+        </div>
+
+        <div>
+          <Table
+            columns={columns}
+            dataSource={dataSource}
+            loading={!dataSource?tableLoading:false}
+            bordered
+            pagination={{
+              // current: taskTablePageInfo.pageIndex,
+              total: total,
+              pageSize: pageSize,
+              showSizeChanger: true,
+              showTotal: () => `总共 ${total} 条数据`,
+            }}
+            onChange={pageSizeClick}
+          ></Table>
+        </div>
+      </ContentCard>
+ 
+ </>)
 }

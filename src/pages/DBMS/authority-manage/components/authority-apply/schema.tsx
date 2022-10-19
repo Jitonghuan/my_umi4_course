@@ -11,7 +11,8 @@ type CurrentStatusStatusTypeItem = {
 
 export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "finish":{tagColor:"success",tagText:"已正常结束"},
-  "abort":{tagColor:"red",tagText:"审批拒绝"},
+  "abort":{tagColor:"yellow",tagText:"审批撤销"},
+  "reject":{tagColor:"red",tagText:"审批拒绝"},
   "manReviewing":{tagColor:"processing",tagText:"待审核"},
   "reviewPass":{tagColor:"green",tagText:"审核通过"},
   "timingTask":{tagColor:"cyan",tagText:"定时执行"},  
@@ -20,7 +21,7 @@ export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "autoReviewWrong":{tagColor:"error",tagText:"自动审核不通过"},
   "exception":{tagColor:"lime",tagText:"执行有异常"},
 }
-const privWfTypeOptions=[
+export const privWfTypeOptions=[
   {
     label:"我发起的",
     value:"creator",
@@ -40,7 +41,12 @@ export const currentStatusOptions=[
     key:"finish",
   },
   {
-    label:"人工终止流程",
+    label:"审批拒绝",
+    value:"reject",
+    key:"reject",
+  },
+  {
+    label:"审批撤销",
     value:"abort",
     key:"abort",
   },
@@ -80,6 +86,32 @@ export const currentStatusOptions=[
     value:"exception",
     key:"exception",
   },
+
+
+]
+export const currentApplyStatusOptions=[
+ 
+  {
+    label:"审批拒绝",
+    value:"reject",
+    key:"reject",
+  },
+  {
+    label:"审批撤销",
+    value:"abort",
+    key:"abort",
+  },
+  {
+    label:"待审核",
+    value:"manReviewing",
+    key:"manReviewing",
+  },
+  {
+    label:"审核通过",
+    value:"reviewPass",
+    key:"reviewPass",
+  },
+  
 
 
 ]
@@ -154,6 +186,7 @@ export const createFormItems = (params: {
 
 // 列表页-表格
 export const createTableColumns = (params: {
+  dataSource:any
   onDetail: (record: any, index: number) => void;
 }) => {
   return [
@@ -227,17 +260,16 @@ export const createTableColumns = (params: {
         ellipsis: {
           showTitle: false,
         },
-        render: (users,record) => {
-          let auditUsers=[];
-          if(record?.audit?.length>0&&record?.audit[0]?.AuditStatus==="wait"){
-            auditUsers=record?.audit?.AuditStatus?.Groups 
-          }
-          // auditUsers?.length>0?auditUsers?.map():"暂无",
+        render: (users,record,index) => {
+         
           return (
             <>
-            {auditUsers?.length>0?auditUsers?.map((item:string)=>{
-             <Tag color="#108ee9">{item}</Tag>
-            }):"暂无"}
+            {users?.map((item:any)=>{
+              return( <Tag color="#108ee9">{item} {console.log("---item",item)}</Tag>)
+            })}
+            {/* {params?.dataSource?.audit?.map((item:string)=>{
+             <Tag color="#108ee9">{item} {console.log("---item",item)}</Tag>
+            })} */}
 
             </>
             

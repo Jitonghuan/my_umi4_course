@@ -200,7 +200,7 @@ const disabledDateTime = (current: any) => {
               {/* <Form.Item name="runMode">
               <Select  placeholder="执行方式" options={runModeOptions}/>
               </Form.Item> */}
-              <Form.Item name="time" label="时间：" rules={[{ required: true, message: '请填写' }]}>
+              <Form.Item name="time" label="执行时间：" rules={[{ required: true, message: '请填写' }]}>
               {/* <Space style={{height:20}}>
             {type==="time-interval"?( <Form.Item name="versionRangeOne" rules={[{ required: true, message: '请选择' }]} >
              <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval} onClear={onClear}  style={{width:220}}/>

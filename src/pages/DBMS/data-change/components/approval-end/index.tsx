@@ -58,6 +58,12 @@ export default function ApprovalEnd() {
   const query = parse(location.search);
   const initInfo: any = location.state || {};
   const afferentId = Number(query?.id)
+  let userInfo: any = localStorage.getItem('USER_INFO');
+  let userName=""
+  if (userInfo) {
+    userInfo = JSON.parse(userInfo);
+    userName= userInfo ? userInfo.name : ''
+  }
   const [visible, setVisible] = useState<boolean>(false)
 
   const { confirm } = Modal;
@@ -65,6 +71,9 @@ export default function ApprovalEnd() {
     if (query?.detail === "true" && query?.id) {
       getInfo(afferentId)
       getWorkflowLog(afferentId)
+    }
+    return()=>{
+      // history.push(location.pathname)
     }
   }, [afferentId])
   useEffect(() => {
@@ -334,10 +343,10 @@ export default function ApprovalEnd() {
               <Step title={info?.currentStatusDesc} 
               icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
               info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
-              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:
+              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />: info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
               <CheckCircleTwoTone />}
                 description={
-                  status === "wait"&& <Space>
+                  status === "wait"&&userName&&owner?.inclues(userName)&& <Space>
                    <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         afferentId ? getInfo(afferentId) : getInfo()
@@ -370,12 +379,12 @@ export default function ApprovalEnd() {
               Object.keys(reviewContentData[0])?.map((item: any) => {
                 return (
                   item==="审核/执行信息"?
-                    <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                    <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
                           {value?.replace(/\\n/g, '<br/>')}
                       </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                    )}/>:item==="完整SQL内容"? <Table.Column width={400} title={item} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
                           {value?.replace(/\\n/g, '<br/>')}
@@ -395,12 +404,12 @@ export default function ApprovalEnd() {
                 Object.keys(executeResultData[0])?.map((item: any) => {
                   return (
                     item==="审核/执行信息"?
-                    <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                    <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
                           {value?.replace(/\\n/g, '<br/>')}
                       </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                    )}/>:item==="完整SQL内容"? <Table.Column width={400} title={item} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
                           {value?.replace(/\\n/g, '<br/>')}
@@ -417,12 +426,12 @@ export default function ApprovalEnd() {
                 Object.keys(reviewContentData[0])?.map((item: any) => {
                   return (
                     item==="审核/执行信息"?
-                    <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                    <Table.Column title={item} dataIndex={item} key={item} width={400}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
                           {value?.replace(/\\n/g, '<br/>')}
                       </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                    )}/>:item==="完整SQL内容"? <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
                           {value?.replace(/\\n/g, '<br/>')}

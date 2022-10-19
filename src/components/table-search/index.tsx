@@ -45,7 +45,8 @@ const TableSearch: React.FC<TableSearchProps> = ({
           {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
           <>{extraNode}</>
         </div>
-        <Table className={className} columns={columns} {...rest} rowKey={rest.rowKey || 'id'} />
+       
+        <Table className={className} columns={columns} loading={!rest?.dataSource}  {...rest} rowKey={rest.rowKey || 'id'} />
       </ContentCard>
     </>
   );
