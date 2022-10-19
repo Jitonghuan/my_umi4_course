@@ -60,6 +60,7 @@ export default (props: VersionDetailProps) => {
   const [curRecord,setCurRecord]=useState<any>({})
   const [batchMiddlewareMode, setBatchMiddlewareMode] = useState<EditorMode>('HIDE');
   const [form] = Form.useForm();
+  const [componentId,setComponentId]=useState<number>()
   const updateRow = (rowKey: string, row: any) => {
     form.setFieldsValue({ [rowKey]: row });
   };
@@ -84,6 +85,8 @@ export default (props: VersionDetailProps) => {
   const middleColumns = useMemo(() => {
     return createMiddlewareTableColumns({
       nameOnchange: (param, config: any) => {
+      
+        setComponentId(param.value)
         queryProductVersionOptions(param.value, currentTabType);
         queryNamespaceList(param.label)
         componentOptions.filter((item: any) => {
@@ -104,6 +107,7 @@ export default (props: VersionDetailProps) => {
         action?.startEditable?.(record.id);
         setType('edit');
         setCurRecord(record)
+        queryProductVersionOptions(record?.componentId, currentTabType);
         queryNamespaceList(record.componentName)
       },
      
@@ -113,6 +117,8 @@ export default (props: VersionDetailProps) => {
         } else {
           deleteVersionComponent(record.id).then(() => {
             setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+            queryVersionComponentList(versionId, currentTab);
+            checkComponentRely(versionId)
           });
         }
       },
@@ -142,6 +148,7 @@ export default (props: VersionDetailProps) => {
         } else {
           deleteVersionComponent(record.id).then(() => {
             setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+            queryVersionComponentList(versionId, currentTab);
           });
         }
       },
@@ -186,6 +193,7 @@ export default (props: VersionDetailProps) => {
         } else {
           deleteVersionComponent(record.id).then(() => {
             setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+            queryVersionComponentList(versionId, currentTab);
           });
         }
       },

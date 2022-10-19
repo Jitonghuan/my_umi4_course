@@ -82,6 +82,7 @@ export default (props: VersionDetailProps) => {
       onDelete:(record:any)=>{
         deleteDeliveryParam(record.id).then(() => {
           setDataSource(tableDataSource.filter((item: any) => item.id !== record.id));
+          queryDeliveryParamList(versionId);
         });
       }  
     }) as any;

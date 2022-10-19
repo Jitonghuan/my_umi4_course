@@ -107,6 +107,7 @@ export default (props: VersionDetailProps) => {
           onConfirm={() => {
             deleteDeliveryParam(record.id).then(() => {
               setGloableDataSource(gloableTableDataSource.filter((item: any) => item.id !== record.id));
+              queryDeliveryGloableParamList(versionId, 'global');
             });
           }}
         >
