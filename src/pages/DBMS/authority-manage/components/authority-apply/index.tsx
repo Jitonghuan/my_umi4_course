@@ -161,7 +161,7 @@ return(<div className="authority-apply">
               placeholder="请输入"
               showSearch
               allowClear
-              style={{ width: 200 }}
+              style={{ width: 160 }}
               options={currentApplyStatusOptions}
              
             />
@@ -171,7 +171,7 @@ return(<div className="authority-apply">
               placeholder="请输入"
               showSearch
               allowClear
-              style={{ width: 200 }}
+              style={{ width: 160 }}
               options={privWfTypeOptions}
              
             />
@@ -181,7 +181,7 @@ return(<div className="authority-apply">
               placeholder="请输入"
               showSearch
               allowClear
-              style={{ width: 200 }}
+              style={{ width: 150 }}
               options={userNameOptions}
              
             />
@@ -190,7 +190,7 @@ return(<div className="authority-apply">
           <Input
               placeholder="请输入"
              
-              style={{ width: 260 }}
+              style={{ width: 180 }}
              
              
             />
