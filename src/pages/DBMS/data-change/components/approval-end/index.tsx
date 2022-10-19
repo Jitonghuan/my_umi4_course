@@ -10,7 +10,7 @@ import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm,Button,
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
-import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined ,LoadingOutlined} from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
@@ -345,7 +345,7 @@ export default function ApprovalEnd() {
               <Step title={info?.currentStatusDesc} 
               icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
               info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
-              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />: info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
+              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />: info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />: status==="wait"?<LoadingOutlined style={{color:"#2db7f5"}} />:
               <CheckCircleTwoTone />}
                 description={
                   status === "wait"&&owner?.join(',')?.includes(userName)? <Space>
@@ -380,7 +380,7 @@ export default function ApprovalEnd() {
             {reviewContentData?.length > 0 && (
               Object.keys(reviewContentData[0])?.map((item: any) => {
                 return (
-                  item==="审核/执行信息"?
+                  item==="审批/执行信息"?
                     <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
@@ -405,7 +405,7 @@ export default function ApprovalEnd() {
               {executeResultData?.length > 0 && (
                 Object.keys(executeResultData[0])?.map((item: any) => {
                   return (
-                    item==="审核/执行信息"?
+                    item==="审批/执行信息"?
                     <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         
@@ -427,7 +427,7 @@ export default function ApprovalEnd() {
               {reviewContentData?.length > 0 && (
                 Object.keys(reviewContentData[0])?.map((item: any) => {
                   return (
-                    item==="审核/执行信息"?
+                    item==="审批/执行信息"?
                     <Table.Column title={item} dataIndex={item} key={item} width={400}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
                         

@@ -15,7 +15,7 @@ const statusOptions=[
     key:"abort",
   },
   {
-    label:"待审核",
+    label:"待审批",
     value:"manReviewing",
     key:"manReviewing",
   },
@@ -25,7 +25,7 @@ const statusOptions=[
     key:"reject",
   },
   {
-    label:"审核通过",
+    label:"审批通过",
     value:"reviewPass",
     key:"reviewPass",
   },
@@ -46,7 +46,7 @@ const statusOptions=[
     key:"executing",
   },
   {
-    label:"自动审核不通过",
+    label:"自动审批不通过",
     value:"autoReviewWrong",
     key:"autoReviewWrong",
   },

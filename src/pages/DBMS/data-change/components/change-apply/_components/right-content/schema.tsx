@@ -29,7 +29,7 @@ export const createTableColumns = () => {
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
       {
-        title: '审核状态',
+        title: '审批状态',
         dataIndex: 'mobile',
         key: 'mobile',
         width: '28%',
@@ -38,7 +38,7 @@ export const createTableColumns = () => {
       },
      
       {
-        title: '审核结果',
+        title: '审批结果',
         dataIndex: 'mobile',
         key: 'mobile',
         width: '28%',

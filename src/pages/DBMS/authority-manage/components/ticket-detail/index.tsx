@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table} from 'antd';
-import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined} from '@ant-design/icons'
+import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined,LoadingOutlined} from '@ant-design/icons'
 import './index.less';
 import { history } from 'umi';
 import {createTableColumns} from './schema';
@@ -224,16 +224,14 @@ export default function CreateArticle(props: CreateArticleProps) {
            description={`审批人:
            ${owner?.join(',') || ''}
          `} />
-           
+           {/* LoadingOutlined */}
            <Step title={info?.currentStatusDesc} icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
               info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
               info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:  info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
+              status==="wait"?<LoadingOutlined style={{color:"#2db7f5"}} />:
               <CheckCircleTwoTone />} 
-              
               description={
              <Spin spinning={auditLoading}>
-               
-               
              {status==="wait"&&owner?.join(',')?.includes(userName)?(
                 <Space> 
                 <Tag color="geekblue" onClick={()=>{

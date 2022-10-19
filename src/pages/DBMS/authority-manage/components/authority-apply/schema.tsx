@@ -13,12 +13,12 @@ export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "finish":{tagColor:"success",tagText:"已正常结束"},
   "abort":{tagColor:"yellow",tagText:"审批撤销"},
   "reject":{tagColor:"red",tagText:"审批拒绝"},
-  "manReviewing":{tagColor:"processing",tagText:"待审核"},
-  "reviewPass":{tagColor:"green",tagText:"审核通过"},
+  "manReviewing":{tagColor:"processing",tagText:"待审批"},
+  "reviewPass":{tagColor:"green",tagText:"审批通过"},
   "timingTask":{tagColor:"cyan",tagText:"定时执行"},  
   "queuing":{tagColor:"blue",tagText:"排队中"},
   "executing":{tagColor:"geekblue",tagText:"执行中"},
-  "autoReviewWrong":{tagColor:"error",tagText:"自动审核不通过"},
+  "autoReviewWrong":{tagColor:"error",tagText:"自动审批不通过"},
   "exception":{tagColor:"lime",tagText:"执行有异常"},
 }
 export const privWfTypeOptions=[
@@ -51,12 +51,12 @@ export const currentStatusOptions=[
     key:"abort",
   },
   {
-    label:"待审核",
+    label:"待审批",
     value:"manReviewing",
     key:"manReviewing",
   },
   {
-    label:"审核通过",
+    label:"审批通过",
     value:"reviewPass",
     key:"reviewPass",
   },
@@ -77,7 +77,7 @@ export const currentStatusOptions=[
     key:"executing",
   },
   {
-    label:"自动审核不通过",
+    label:"自动审批不通过",
     value:"autoReviewWrong",
     key:"autoReviewWrong",
   },
@@ -102,12 +102,12 @@ export const currentApplyStatusOptions=[
     key:"abort",
   },
   {
-    label:"待审核",
+    label:"待审批",
     value:"manReviewing",
     key:"manReviewing",
   },
   {
-    label:"审核通过",
+    label:"审批通过",
     value:"reviewPass",
     key:"reviewPass",
   },
