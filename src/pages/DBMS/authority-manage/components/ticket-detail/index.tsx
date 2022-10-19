@@ -65,7 +65,7 @@ export default function CreateArticle(props: CreateArticleProps) {
  
   useEffect(() => {
     //mode === 'HIDE' ||
-    // if ( !curRecord?.id) return;
+    if ( !curRecord?.id&&!afferentId) return;
     if(curRecord?.id){
       getInfo()
       getWorkflowLog(curRecord?.id)
@@ -92,6 +92,8 @@ export default function CreateArticle(props: CreateArticleProps) {
     setLoading(true)
     let paramId=afferentId?afferentId:curRecord?.id
     useGetPrivInfo(curRecord?.id||id).then((res)=>{
+      console.log("res",res)
+      if(Object.keys(res)?.length<1) return
       setInfo(res)
       let auditUsers=[];
      
@@ -215,19 +217,25 @@ export default function CreateArticle(props: CreateArticleProps) {
            <Step title={info?.currentStatusDesc} icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
               info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
               info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:  info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
-              <CheckCircleTwoTone />} description={
+              <CheckCircleTwoTone />} 
+              
+              description={
              <Spin spinning={auditLoading}>
-                <Space>
-                 
-             {status==="wait"&&userName&&owner?.join(',')&&owner||[]?.join(',')?.includes(userName)&&(<> <Tag color="geekblue" onClick={()=>{
+               
+               
+             {status==="wait"&&owner?.join(',')?.includes(userName)?(
+                <Space> 
+                <Tag color="geekblue" onClick={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
                   afferentId?getInfo(afferentId):  getInfo()
                 
                   getList()
                 })
-             }}>同意</Tag> <Tag color="volcano" onClick={()=>showConfirm("reject")}>拒绝</Tag>  </>)}
+             }}>同意</Tag> 
+             <Tag color="volcano" onClick={()=>showConfirm("reject")}>拒绝</Tag>   
+             </Space>):null}
             
-            </Space>
+          
 
              </Spin>
           } />

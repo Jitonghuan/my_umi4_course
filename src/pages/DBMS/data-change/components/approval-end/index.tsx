@@ -147,6 +147,8 @@ export default function ApprovalEnd() {
   const getInfo = (id?: number) => {
     setLoading(true)
     useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
+      console.log("res",res)
+      if(Object.keys(res)?.length<1) return
       setInfo(res)
       let auditUsers = [];
 
@@ -346,7 +348,7 @@ export default function ApprovalEnd() {
               info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />: info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
               <CheckCircleTwoTone />}
                 description={
-                  status === "wait"&&userName&&owner?.join(',')&&owner?.join(',')?.includes(userName)&& <Space>
+                  status === "wait"&&owner?.join(',')?.includes(userName)? <Space>
                    <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         afferentId ? getInfo(afferentId) : getInfo()
@@ -356,7 +358,7 @@ export default function ApprovalEnd() {
 
                   
                    <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
-                  </Space>} />
+                  </Space>:null} />
             </Steps>
 
           </Spin>

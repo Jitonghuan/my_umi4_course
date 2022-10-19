@@ -11,7 +11,7 @@ export function useEnvList() {
    
     const queryEnvList = async () => {
       setLoading(true);
-      await getRequest(APIS.queryEnvList, { data:{pageIndex:-1,pageSize:-1} })
+      await getRequest(APIS.queryEnvList, { data:{pageIndex:-1,pageSize:-1,envModel:"currency-deploy"} })
         .then((result) => {
           if (result?.success) {
             const dataSource = result.data.dataSource || [];

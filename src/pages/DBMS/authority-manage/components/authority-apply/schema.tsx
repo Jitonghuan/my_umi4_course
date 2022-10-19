@@ -265,7 +265,7 @@ export const createTableColumns = (params: {
           return (
             <>
             {users?.map((item:any)=>{
-              return( <Tag color="#108ee9">{item} {console.log("---item",item)}</Tag>)
+              return( <Tag color="#108ee9">{item} </Tag>)
             })}
             {/* {params?.dataSource?.audit?.map((item:string)=>{
              <Tag color="#108ee9">{item} {console.log("---item",item)}</Tag>
