@@ -147,7 +147,7 @@ export default function ApprovalEnd() {
   const getInfo = (id?: number) => {
     setLoading(true)
     useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
-      console.log("res",res)
+   
       if(Object.keys(res)?.length<1) return
       setInfo(res)
       let auditUsers = [];

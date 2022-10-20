@@ -90,7 +90,6 @@ const disabledDate: RangePickerProps['disabledDate'] = (current: any) => {
 
 const disabledDateTime = (current: any) => {
   const now = new Date().getTime();
-  console.log('----now-----',now)
   const startHours = Number(moment(now).hours());
   const endHours = Number(moment(now).hours());
   const startMinutes = Number(moment(now).minutes());

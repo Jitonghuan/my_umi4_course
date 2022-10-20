@@ -38,12 +38,15 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
   },[tableFields,firstInitSqlValue,implementDisabled]);
 
     const [activeKey, setActiveKey] = useState(defaultPanes[0].key);
+    const [nextKey, setNextKey] = useState("newTab0");
     const [items, setItems] = useState(defaultPanes);
     const newTabIndex = useRef(0);
+    const nextTabIndex= useRef(1);
     useImperativeHandle(ref, () => ({
         addSqlConsole: add,
         sqlConsoleItems:items,
         sqlConsoleActiveKey:activeKey,
+        nextKey:nextKey,
     }))
     useEffect(()=>{
       if(firstInitSqlValue){
@@ -57,9 +60,10 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
     };
   
     const add =useMemo(() => {
-      if(initSqlValue&&initSqlValue!==""&&!implementDisabled){
+      if(initSqlValue&&initSqlValue!==""){
         const newActiveKey = `newTab${newTabIndex.current++}`;
-      
+       
+      debugger
         let tabArry=[...items, { label: 'SQL console ', children: 'New Tab Pane', key: newActiveKey }]
         if(tabArry.length<11){
           setItems([...items, { label: 'SQL console ', children:
@@ -73,11 +77,12 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
            subChange={(params:{sqlContent:string,sqlType:string})=>querySqlResult(params)}
            />, key: newActiveKey }]);
           setActiveKey(newActiveKey);
+          setNextKey( `newTab${nextTabIndex.current++}`)
         }else if(tabArry.length>10){
           message.info("您已经打开太多页面，请关闭一些吧！")
         }
       }
-    },[initSqlValue,addCount,implementDisabled])
+    },[initSqlValue,addCount,])
   
     const remove = (targetKey: string) => {
       const targetIndex = items.findIndex(pane => pane.key === targetKey);

@@ -4,21 +4,18 @@ import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined, PlusSquareOutline
 import LightDragable from "@/components/light-dragable";
 import QueryResult from "./components/query-result";
 import SqlConsole from "./components/sql-console";
+import RightContent from "./components/right-content"
 import { useEnvList, querySqlResultInfo, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, queryTables } from '../common-hook'
 import './index.less';
 const { Panel } = Collapse;
 export default function ResizeLayout() {
-  const sqlConsoleRef = useRef<any>(null);
-  const queryResultRef = useRef<any>(null);
+  const rightContentRef = useRef<any>(null);
   const formRef = useRef<any>(null)
   const [form] = Form.useForm();
-  const addQueryResult = () => queryResultRef?.current?.addQueryResult();
-  const addSqlConsole = () => sqlConsoleRef?.current?.addSqlConsole;
-  const action = (value: boolean) => queryResultRef?.current?.action(value);
-  const queryResultItems = queryResultRef?.current?.queryResultItems;
-  const sqlConsoleItems = sqlConsoleRef?.current?.sqlConsoleItems;
-  const queryResultActiveKey = queryResultRef?.current?.queryResultActiveKey;
-  const sqlConsoleActiveKey = sqlConsoleRef?.current?.sqlConsoleActiveKey;
+  const addSqlConsole = () => rightContentRef?.current?.addSqlConsole;
+  //getFirstInitSqlValue
+  const getFirstInitSqlValue = (value: string) => rightContentRef?.current?.getFirstInitSqlValue(value);
+  const updateData = (value: any,error?:string,time?:string) => rightContentRef?.current?.updateData(value,error,time);
   const [envOptionLoading, envOptions, queryEnvList] = useEnvList();
   const [instanceLoading, instanceOptions, getInstanceList] = useInstanceList();
   const [databasesOptionsLoading, databasesOptions, queryDatabases, setSource] = useQueryDatabasesOptions()
@@ -36,6 +33,9 @@ export default function ResizeLayout() {
   const [tablesSource, setTablesSource] = useState<any>([]);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [costTime, setCostTime] = useState<string>("");
+  const [envCode,setEnvCode]=useState<string>("")
+  const [instance,setInstance]=useState<number>()
+  const [dbCode,setDBCode]=useState<string>("")
 
   const queryTablesOptions = (params: { dbCode: string, instanceId: number }) => {
     setTablesOptionsLoading(true)
@@ -50,10 +50,7 @@ export default function ResizeLayout() {
         setOriginData([])
       }
 
-    }).then(() => {
-      action(false)
     }).finally(() => {
-      action(false)
       setTablesOptionsLoading(false)
     })
   }
@@ -71,6 +68,7 @@ export default function ResizeLayout() {
     setInitSqlValue(initsql)
     setAddCount(count => count + 1)
   }
+  
   //查询sql结果
   const querySqlResult = (params: { sqlContent: string, sqlType: string }) => {
     const values = form?.getFieldsValue();
@@ -84,21 +82,18 @@ export default function ResizeLayout() {
       if (res?.success) {
         const dataSource = res?.data?.result || "";
         const costTime = res?.data?.costTime || ""
-        //判断 queryResultItems sqlConsoleItems
-        
-
-
         setSqlResult(dataSource)
+        const sqlResultSource = dataSource ? JSON.parse(dataSource || "{}") : []
         setImplementDisabled(false)
         setCostTime(costTime)
         setErrorMsg("")
-        //addQueryResult()
+        updateData(sqlResultSource,"",costTime)
       }
       if (res?.errorMsg) {
+       
         setErrorMsg(res?.errorMsg)
         setCostTime("")
-        //addQueryResult()
-        setImplementDisabled(true)
+        updateData([],res?.errorMsg,"")
       
       }
     }).finally(() => {
@@ -152,6 +147,7 @@ export default function ResizeLayout() {
             // setSource([])
             queryTableFields({ ...values, tableCode: value })
             setFirstInitSqlValue(`select * from ${value} limit 10`)
+            getFirstInitSqlValue(`select * from ${value} limit 10`)
             if (!values?.instanceId || !values?.dbCode || !value) {
               setImplementDisabled(true)
             } else if (values?.instanceId && values?.dbCode && value) {
@@ -200,8 +196,8 @@ export default function ResizeLayout() {
   const copyAdd = (sqlContent: string, tableCode?: string) => {
 
     let initsql = sqlContent || "select * from user limit 10"
-    addSqlConsole
-    setInitSqlValue(initsql)
+   
+   
     setImplementDisabled(false)
     const dbCode = form?.getFieldsValue()?.dbCode
     getInstanceList(form?.getFieldsValue()?.envCode)
@@ -210,6 +206,8 @@ export default function ResizeLayout() {
     setActivePanel(tableCode)
     setTableCode(tableCode)
     queryDatabases({ instanceId: form?.getFieldsValue()?.instanceId })
+    addSqlConsole
+    setInitSqlValue(initsql)
 
 
   }
@@ -228,6 +226,8 @@ export default function ResizeLayout() {
                   searchFileds: ""
                   // tableCode:""
                 })
+                setInitSqlValue("")
+                setEnvCode(value)
                 getInstanceList(value)
                 setTableCode("")
                 setImplementDisabled(false)
@@ -244,6 +244,8 @@ export default function ResizeLayout() {
                   searchFileds: ""
                   // tableCode:""
                 })
+                setInitSqlValue("")
+                setInstance(instanceId)
                 setTableCode("")
                 setActivePanel("")
                 setTablesSource([])
@@ -261,6 +263,8 @@ export default function ResizeLayout() {
 
                   searchFileds: ""
                 })
+                setInitSqlValue("")
+                setDBCode(dbCode)
                 setTableCode("")
                 setActivePanel("")
                 setOptions([])
@@ -284,29 +288,14 @@ export default function ResizeLayout() {
               <Spin spinning={tablesOptionsLoading}>
                 {tabelMap()}
               </Spin>
-              {/* <Select  placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={(table)=>{
-            const values=form?.getFieldsValue();
-            setOptions([])
-            queryTableFields({...values})
-            setFirstInitSqlValue(`select * from ${table} limit 10`)
-            // setInitSqlValue(`select * from ${table} limit 10`)
-            if(!values?.instanceId||!values?.dbCode||!values?.tableCode){
-              setImplementDisabled(true)
-            }else if(values?.instanceId&&values?.dbCode&&values?.tableCode){
-              setImplementDisabled(false)
-            }
-            
-            } } /> */}
             </Form.Item>
           </Form>
         </div>
       </>
     )
   }, [
-    queryResultItems,
     implementDisabled,
     activePanel,
-    sqlConsoleItems,
     databasesOptions,
     fieldsLoading,
     tablesSource,
@@ -314,8 +303,6 @@ export default function ResizeLayout() {
     instanceLoading,
     databasesOptionsLoading,
     envOptionLoading,
-    queryResultActiveKey,
-    sqlConsoleActiveKey,
     envOptions,
     instanceOptions,
     databasesOptions,
@@ -330,9 +317,33 @@ export default function ResizeLayout() {
   const rightContent = useMemo(() => {
     return (
       <>
-        <div className="container-top">
+     < RightContent 
+      ref={rightContentRef}
+      tableFields={tableFields}
+      querySqlResult={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
+      sqlLoading={sqlLoading}
+      firstInitSqlValue={firstInitSqlValue}
+      initSqlValue={initSqlValue}
+      onAdd={onAdd}
+      addCount={addCount}
+      sqlResult={sqlResult}
+      formRef={formRef}
+      queryTableFields={queryTableFields}
+      errorMsg={errorMsg}
+      costTime={costTime}
+      copyAdd={(sqlContent: string, tableCode?: string) => copyAdd(sqlContent, tableCode)}
+      implementDisabled={implementDisabled}
+      relayInfo={
+        {envCode,
+        instance,
+        dbCode
+      }}
+
+
+     />
+        {/* <div className="container-top">
           <SqlConsole
-            ref={sqlConsoleRef}
+            ref={rightContentRef}
             tableFields={tableFields}
             querySqlResult={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
             sqlLoading={sqlLoading}
@@ -340,40 +351,42 @@ export default function ResizeLayout() {
             initSqlValue={initSqlValue}
             onAdd={onAdd}
             addCount={addCount}
+            
             implementDisabled={implementDisabled} />
 
-        </div>
-        <div className="container-bottom">
+        </div> */}
+        {/* <div className="container-bottom">
 
           <QueryResult
             ref={queryResultRef}
             sqlResult={sqlResult}
             sqlLoading={sqlLoading}
             formRef={formRef}
+            nextKey={nextKey}
             queryTableFields={queryTableFields}
+            sqlConsoleActiveKey={sqlConsoleActiveKey}
             errorMsg={errorMsg}
             costTime={costTime}
+            sqlConsoleItems={sqlConsoleItems}
             copyAdd={(sqlContent: string, tableCode?: string) => copyAdd(sqlContent, tableCode)}
           />
-        </div>
+        </div> */}
       </>
     )
   }, [
-    queryResultItems,
     errorMsg,
     costTime,
-    sqlConsoleItems,
     implementDisabled,
-    queryResultActiveKey,
-    sqlConsoleActiveKey,
     tableFields,
     sqlResult,
     sqlLoading,
     initSqlValue,
     firstInitSqlValue,
-    implementDisabled,
     databasesOptions,
-    addCount]);
+    addCount,
+    envCode,
+    instance,
+    dbCode]);
 
   return (
     <LightDragable

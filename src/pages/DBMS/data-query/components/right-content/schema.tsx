@@ -6,7 +6,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 // 列表页-表格
 export const createTableColumns = (
   params: {
-    disabled:boolean
+    //disabled:boolean
     onCopy: (record: any, index: number,) => void;
    
   }
@@ -53,8 +53,8 @@ export const createTableColumns = (
         ellipsis: true,
         render: (text,record,index) =>(
         <> 
-          {params?.disabled?<span>{text}</span>: <a  onClick={()=>{
-             params?.onCopy(record, index)}}>{text}</a>}
+       <a  onClick={()=>{
+             params?.onCopy(record, index)}}>{text}</a>
        
           
         </>)},

@@ -107,7 +107,7 @@ export default function AuthorityApply (){
 
           }
           setDataSource(list)
-          console.log("---list",list)
+        
           return {
             total: result.data?.pageInfo?.total,
             list: list || [],

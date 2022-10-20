@@ -9,12 +9,15 @@ interface Iprops {
   sqlLoading: boolean;
   formRef: any;
   costTime: string;
+  sqlConsoleActiveKey:string;
+  sqlConsoleItems:any;
+  nextKey:string;
   queryTableFields: (params: any) => any;
   copyAdd: (sqlContent: string, tableCode?: string) => any;
 
 }
 export default forwardRef(function QueryResult(props: Iprops, ref: any) {
-  const { sqlResult, sqlLoading, formRef, queryTableFields, copyAdd, errorMsg, costTime } = props;
+  const { sqlResult, sqlLoading, formRef, queryTableFields,nextKey, copyAdd,sqlConsoleActiveKey, errorMsg, costTime ,sqlConsoleItems} = props;
   const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
 
   const disabled = useRef<boolean>(false)
@@ -120,37 +123,77 @@ export default forwardRef(function QueryResult(props: Iprops, ref: any) {
   const onChange = (key: string) => {
     setActiveKey(key);
   };
-
-  const add = useCallback(() => {
-    const newActiveKey = `newTab${newTabIndex.current++}`;
-    const newPanes = [...items];
-    newPanes.push(
-      {
-        label: '查询结果', children:
-          errorMsg ? <div>
-
-            <Card title="Error" size="small">
-              <p>{errorMsg}</p>
-            </Card>
-
-          </div> :
-            <div>
-              <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`}</p>
-              <Table dataSource={sqlResultSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
-                {sqlResultSource?.length > 0 && (
-                  Object.keys(sqlResultSource[0])?.map((item: any) => {
-                    return (
-                      <Table.Column title={item} dataIndex={item} key={item} />
-                    )
-                  })
-
-                )}
-              </Table>
-            </div>, key: newActiveKey, closable: true,
+  function findValue(arr:any, checkKey:string, value:any){
+    let Tvalue = null;
+     // 如果是初始值的1和1，返回该对象，可以新增
+    if( arr.length===1&&arr[0][checkKey]==="1"&& value==="1"){
+      debugger
+         
+         
+         Tvalue = arr[0];
+         // 如果不是初始值的1和1，且能匹配到key值，则不可以新增，返回null
+     }
+     if(arr.length>1){
+       let newArr=arr.slice(0)
+      // newArr.splice(0,1)
+       let  result= newArr .findIndex((item:any) => {
+        return item.key ===  value;//return v.id ===  '9'  返回-1
       });
-    setItems(newPanes);
-    setActiveKey(newActiveKey);
-  }, [errorMsg, sqlResultSource, logsloading, costTime]);
+      console.log("result",result,value)
+      if(result!==-1){
+        Tvalue =  null; 
+      }else{
+        Tvalue = arr[0];
+      }
+    
+     }
+  
+    return Tvalue;
+}
+  const add =() => {
+   
+    const newPanes = [...items];
+    console.log("----queryResultItems----",newPanes,"---sqlConsoleItems--",sqlConsoleItems)
+    console.log("nextKey",nextKey)
+     let Tvalue=findValue(newPanes,"key",sqlConsoleActiveKey==="1"?sqlConsoleActiveKey:nextKey)
+     if(Tvalue){
+       debugger
+       const newActiveKey = `newTab${newTabIndex.current++}`;
+      newPanes.push(
+        {
+          label: '查询结果', children:
+            errorMsg ? <div>
+  
+              <Card title="Error" size="small">
+                <p>{errorMsg}</p>
+              </Card>
+  
+            </div> :
+              <div>
+                <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`}</p>
+                <Table dataSource={sqlResultSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
+                  {sqlResultSource?.length > 0 && (
+                    Object.keys(sqlResultSource[0])?.map((item: any) => {
+                      return (
+                        <Table.Column title={item} dataIndex={item} key={item} />
+                      )
+                    })
+  
+                  )}
+                </Table>
+              </div>, key: newActiveKey, closable: true,
+        });
+       setItems(newPanes);
+       setActiveKey(newActiveKey);
+       
+     }else{
+      setItems(newPanes);
+      setActiveKey(activeKey);
+     }
+   
+    
+    
+  };
 
 
 
