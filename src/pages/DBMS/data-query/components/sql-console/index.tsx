@@ -43,7 +43,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
     useImperativeHandle(ref, () => ({
         addSqlConsole: add,
         sqlConsoleItems:items,
-        sqlConsoleActiveKey:activeKey
+        sqlConsoleActiveKey:activeKey,
     }))
     useEffect(()=>{
       if(firstInitSqlValue){
@@ -57,7 +57,7 @@ export default  forwardRef(function SqlConsole(props:Iprops,ref:any){
     };
   
     const add =useMemo(() => {
-      if(initSqlValue&&initSqlValue!==""){
+      if(initSqlValue&&initSqlValue!==""&&!implementDisabled){
         const newActiveKey = `newTab${newTabIndex.current++}`;
       
         let tabArry=[...items, { label: 'SQL console ', children: 'New Tab Pane', key: newActiveKey }]

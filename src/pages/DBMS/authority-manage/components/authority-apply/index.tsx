@@ -188,11 +188,8 @@ return(<div className="authority-apply">
           </Form.Item>
           <Form.Item label="标题" name="title">
           <Input
-              placeholder="请输入"
-             
+              placeholder="请输入"  
               style={{ width: 180 }}
-             
-             
             />
           </Form.Item>
           <Form.Item>

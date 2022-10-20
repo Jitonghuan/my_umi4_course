@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, } from 'react';
 import { Tabs, Form, Space, Select, message, Collapse, Spin, Input } from 'antd';
-import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined,  PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
+import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined, PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import QueryResult from "./components/query-result";
 import SqlConsole from "./components/sql-console";
@@ -14,6 +14,7 @@ export default function ResizeLayout() {
   const [form] = Form.useForm();
   const addQueryResult = () => queryResultRef?.current?.addQueryResult();
   const addSqlConsole = () => sqlConsoleRef?.current?.addSqlConsole;
+  const action = (value: boolean) => queryResultRef?.current?.action(value);
   const queryResultItems = queryResultRef?.current?.queryResultItems;
   const sqlConsoleItems = sqlConsoleRef?.current?.sqlConsoleItems;
   const queryResultActiveKey = queryResultRef?.current?.queryResultActiveKey;
@@ -35,6 +36,7 @@ export default function ResizeLayout() {
   const [tablesSource, setTablesSource] = useState<any>([]);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [costTime, setCostTime] = useState<string>("");
+
   const queryTablesOptions = (params: { dbCode: string, instanceId: number }) => {
     setTablesOptionsLoading(true)
     queryTables(params).then((res: any) => {
@@ -47,7 +49,11 @@ export default function ResizeLayout() {
       } else {
         setOriginData([])
       }
+
+    }).then(() => {
+      action(false)
     }).finally(() => {
+      action(false)
       setTablesOptionsLoading(false)
     })
   }
@@ -73,21 +79,27 @@ export default function ResizeLayout() {
       return
     }
     setSqlLoading(true)
+    setImplementDisabled(true)
     querySqlResultInfo({ ...params, ...values, tableCode }).then((res) => {
       if (res?.success) {
         const dataSource = res?.data?.result || "";
         const costTime = res?.data?.costTime || ""
+        //判断 queryResultItems sqlConsoleItems
+        
+
+
         setSqlResult(dataSource)
+        setImplementDisabled(false)
         setCostTime(costTime)
         setErrorMsg("")
-        addQueryResult()
+        //addQueryResult()
       }
       if (res?.errorMsg) {
         setErrorMsg(res?.errorMsg)
         setCostTime("")
-        addQueryResult()
-
-
+        //addQueryResult()
+        setImplementDisabled(true)
+      
       }
     }).finally(() => {
       setSqlLoading(false)
@@ -95,12 +107,12 @@ export default function ResizeLayout() {
   }
   useEffect(() => {
     queryEnvList()
-    // getInstanceList()
+
 
   }, [])
   const onFilterChange = (e: any) => {
     if (!e) {
-      // debugger
+
       setTablesSource(originData)
     } else {
 
@@ -186,6 +198,7 @@ export default function ResizeLayout() {
     )
   }
   const copyAdd = (sqlContent: string, tableCode?: string) => {
+
     let initsql = sqlContent || "select * from user limit 10"
     addSqlConsole
     setInitSqlValue(initsql)
@@ -197,6 +210,7 @@ export default function ResizeLayout() {
     setActivePanel(tableCode)
     setTableCode(tableCode)
     queryDatabases({ instanceId: form?.getFieldsValue()?.instanceId })
+
 
   }
 
@@ -266,7 +280,7 @@ export default function ResizeLayout() {
             <p style={{ marginTop: 8, width: "100%", marginBottom: 0 }}>
               <li style={{ width: "100%", listStyleType: "disc", color: "rgb(39,93,124)", whiteSpace: "break-spaces" }}>查询结果行数限制见权限管理，会选择查询涉及表的最小limit值</li>
             </p>
-            <Form.Item name="tableCode" style={{ marginTop: 0,height:'100%',paddingBottom: 18 }}>
+            <Form.Item name="tableCode" style={{ marginTop: 0, height: '100%', paddingBottom: 18 }}>
               <Spin spinning={tablesOptionsLoading}>
                 {tabelMap()}
               </Spin>
@@ -363,10 +377,11 @@ export default function ResizeLayout() {
 
   return (
     <LightDragable
+      showIcon={true}
       leftContent={leftContent}
       rightContent={rightContent}
-      showIcon={false}
       initWidth={150}
+      least={20}
     />
   );
 }

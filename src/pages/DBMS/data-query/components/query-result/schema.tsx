@@ -6,27 +6,15 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 // 列表页-表格
 export const createTableColumns = (
   params: {
-    onCopy: (record: any, index: number) => void;
+    disabled:boolean
+    onCopy: (record: any, index: number,) => void;
+   
   }
+
 ) => {
+  console.log("-----disabled----",params?.disabled)
  
   return [
-    // {
-    //   title: '复制',
-    //   dataIndex: 'copy',
-    //   key: 'copy',
-    //   width: '8%',
-    //   align:"center",
-    //   render: (text,record,index) => (
-    //     <CopyToClipboard text={JSON.stringify(record||{})} onCopy={() =>{
-    //       message.success('已复制此条数据！')
-    //       params?.onCopy(record, index)
-    //     }}>
-    //       <SnippetsOutlined style={{color:"#3591ff"}} />
-    //   </CopyToClipboard>
-      
-    //   ),
-    // },
     {
       title: '执行时间',
       dataIndex: 'startTime',
@@ -63,8 +51,13 @@ export const createTableColumns = (
         key: 'sqlContent',
         width: '22%',
         ellipsis: true,
-        render: (text,record,index) =><Tooltip title={text}> <a onClick={()=>{ params?.onCopy(record, index)}}>{text}</a></Tooltip>,
-      },
+        render: (text,record,index) =>(
+        <> {console.log("=======flag=====",params?.disabled)}
+          {params?.disabled?<span>{text}</span>: <a  onClick={()=>{
+             params?.onCopy(record, index)}}>{text}</a>}
+       
+          
+        </>)},
       {
         title: '结果行数',
         dataIndex: 'affectedRow',

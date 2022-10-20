@@ -1,7 +1,6 @@
 import React, { useState, useEffect, forwardRef, useCallback, useMemo, useRef, useImperativeHandle } from 'react';
 import { Tabs, Card, Table } from 'antd';
 import { createTableColumns } from './schema';
-import { ContentCard } from '@/components/vc-page-content';
 import { useQueryLogsList } from '../../../common-hook';
 import './index.less'
 interface Iprops {
@@ -18,14 +17,25 @@ export default forwardRef(function QueryResult(props: Iprops, ref: any) {
   const { sqlResult, sqlLoading, formRef, queryTableFields, copyAdd, errorMsg, costTime } = props;
   const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
 
-  const [curRecord, setCurRecord] = useState<any>({});
+  const disabled = useRef<boolean>(false)
+
+  const action = (value: boolean) => {
+    disabled.current = value
+  }
 
   const { TabPane } = Tabs;
   const columns = useMemo(() => {
     return createTableColumns(
       {
+        disabled: disabled.current,
+
+
         onCopy: (record, index) => {
+
+          action(true)
+
           if (formRef) {
+
             formRef.current.setFieldsValue({
               ...record
             })
@@ -33,32 +43,36 @@ export default forwardRef(function QueryResult(props: Iprops, ref: any) {
               ...record
             })
           }
-          setCurRecord(record)
+
           copyAdd(record?.sqlContent, record?.tableCode)
         },
 
       }
     ) as any;
-  }, []);
+  }, [
+    disabled.current
+  ]
+  )
 
   const sqlResultSource = sqlResult ? JSON.parse(sqlResult || "{}") : []
   useImperativeHandle(ref, () => ({
     addQueryResult: () => { add() },
     queryResultItems: items,
     queryResultActiveKey: activeKey,
+    action: (value: boolean) => action(value)
   }))
   useEffect(() => {
     queryLogsList()
   }, [])
   useEffect(() => {
-    if (logsSource?.length > 0) {
-      setActiveKey(initialItems[0].key)
-      setItems(initialItems)
+    // if (logsSource?.length > 0) {
+    setActiveKey(initialItems[0].key)
+    setItems(initialItems)
 
-    }
+    // }
 
   },
-    [logsSource, logsloading, pageInfo])
+    [logsSource, logsloading, pageInfo, disabled.current])
   const pageSizeClick = (pagination: any) => {
     setPageInfo({
       pageIndex: pagination.current,
@@ -136,15 +150,6 @@ export default forwardRef(function QueryResult(props: Iprops, ref: any) {
       });
     setItems(newPanes);
     setActiveKey(newActiveKey);
-    //     let length=newPanes.length;
-    //       if(length<11){
-    //         setItems(newPanes);
-    //         setActiveKey(newActiveKey);
-    //     }else if(length>10){
-    //     message.info("您已经打开太多页面，请关闭一些吧！")
-
-    //   }
-
   }, [errorMsg, sqlResultSource, logsloading, costTime]);
 
 
@@ -168,7 +173,7 @@ export default forwardRef(function QueryResult(props: Iprops, ref: any) {
   };
 
   return (
-    <div style={{paddingBottom:38}}>
+    <div style={{ paddingBottom: 38 }}>
       <Tabs
         size="small"
         hideAdd

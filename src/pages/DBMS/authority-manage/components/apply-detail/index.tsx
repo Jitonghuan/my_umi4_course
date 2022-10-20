@@ -240,7 +240,7 @@ const submit=async(params:any)=>{
         {value==="limit"&&<LimitForm flag={flag} createFormRef={createFormRef}  count={count}  instanceId={instanceId} submit={(params:any)=>submit(params)}   databasesOptions={databasesOptions} databasesOptionsLoading={databasesOptionsLoading}/>}
 
      
-        <Form.Item label="理由" name="remark">
+        <Form.Item label="理由" name="remark" rules={[{ required: true, message: '请填写' }]}>
           <Input.TextArea  style={{width:320}} placeholder="说明理由和用途"></Input.TextArea>
           
         </Form.Item>

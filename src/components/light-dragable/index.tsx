@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import {  Tabs,Form,Space,Button } from 'antd';
-import {RightCircleFilled} from '@ant-design/icons'
+import {RightCircleFilled,LeftCircleFilled} from '@ant-design/icons'
 import './index.less';
 export interface Iprops{
     // resizeIcon:React.ReactNode;
@@ -22,6 +22,7 @@ export default function ResizeLayout(props:Iprops) {
     );
     const [dragging, setDragging] = useState(false);
     const [startPageX, setStartPageX] = useState(0);
+    const [close, setClose] = useState(false);
     const pxWidth = `${siderWidth}px`;
     const handleMouseDown = (event:any) => {
       setStartPageX(event.pageX);
@@ -32,13 +33,26 @@ export default function ResizeLayout(props:Iprops) {
     //   setSiderWidth(currentSiderWidth>150?currentSiderWidth:150);
     //小于150px|最小宽度，则是最小宽度
     //大于1080px。则是1080
-    setSiderWidth(currentSiderWidth<least?least:currentSiderWidth>1080?1080:currentSiderWidth);
+    //setSiderWidth(currentSiderWidth)
+      setSiderWidth(currentSiderWidth<least?least:currentSiderWidth>1080?1080:currentSiderWidth);
       setStartPageX(event.pageX);
+    
+   
     };
     const handleMouseUp = () => {
       setDragging(false);
       localStorage.setItem('siderWidth', siderWidth);
     };
+    const onIconClick=(e:any)=>{
+      e.stopPropagation();
+     
+      setClose(!close);
+
+//debugger
+      setSiderWidth(close?initWidth:least)
+      setStartPageX(e.pageX);
+      setDragging(false);
+    }
     return (
      
         <div className="dragger-layout-page" style={{ paddingLeft: pxWidth }}>
@@ -53,8 +67,12 @@ export default function ResizeLayout(props:Iprops) {
           style={{ left: pxWidth }}
           onMouseDown={handleMouseDown}
         >
-         {showIcon&& <RightCircleFilled  style={{color:'#3591ff',fontSize:16}}/>}
-
+         {/* {showIcon&& <RightCircleFilled  onClick={(e)=>{ onIconClick(e)}} style={{color:'#3591ff',fontSize:26,position:"absolute",zIndex:9999}}/>} */}
+         {showIcon&&close ? (
+                <RightCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:9999}} />
+              ) : (
+                <LeftCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:9999}} />
+              )}
           
           {dragging && (
             <div

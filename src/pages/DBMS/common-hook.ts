@@ -185,20 +185,11 @@ export function useQueryTableFieldsOptions() {
           let dataSource = result.data?.fields||[];
           let dataObject: any = {};
           setOptions(dataSource)
-        //  dimi: ['ads_adid', 'ads_spec_adid_category'],
           dataSource?.map((item: any) => {
-            // dataArry.push({
-            //  label:item,
-            //  value:item,
-            //  title: item,
-            // });
             dataObject[item]=item
           });
-       
-          setSource(dataObject);
-         
+          setSource(dataObject); 
         }
-      
       })
       .finally(() => {
         setLoading(false);
