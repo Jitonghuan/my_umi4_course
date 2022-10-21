@@ -338,39 +338,7 @@ export default function ResizeLayout() {
         instance,
         dbCode
       }}
-
-
      />
-        {/* <div className="container-top">
-          <SqlConsole
-            ref={rightContentRef}
-            tableFields={tableFields}
-            querySqlResult={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
-            sqlLoading={sqlLoading}
-            firstInitSqlValue={firstInitSqlValue}
-            initSqlValue={initSqlValue}
-            onAdd={onAdd}
-            addCount={addCount}
-            
-            implementDisabled={implementDisabled} />
-
-        </div> */}
-        {/* <div className="container-bottom">
-
-          <QueryResult
-            ref={queryResultRef}
-            sqlResult={sqlResult}
-            sqlLoading={sqlLoading}
-            formRef={formRef}
-            nextKey={nextKey}
-            queryTableFields={queryTableFields}
-            sqlConsoleActiveKey={sqlConsoleActiveKey}
-            errorMsg={errorMsg}
-            costTime={costTime}
-            sqlConsoleItems={sqlConsoleItems}
-            copyAdd={(sqlContent: string, tableCode?: string) => copyAdd(sqlContent, tableCode)}
-          />
-        </div> */}
       </>
     )
   }, [

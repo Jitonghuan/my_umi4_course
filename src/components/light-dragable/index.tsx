@@ -69,9 +69,9 @@ export default function ResizeLayout(props:Iprops) {
         >
          {/* {showIcon&& <RightCircleFilled  onClick={(e)=>{ onIconClick(e)}} style={{color:'#3591ff',fontSize:26,position:"absolute",zIndex:9999}}/>} */}
          {showIcon&&close ? (
-                <RightCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:9999}} />
+                <RightCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:1000}} />
               ) : (
-                <LeftCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:9999}} />
+                <LeftCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:1000}} />
               )}
           
           {dragging && (

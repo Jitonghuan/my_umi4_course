@@ -19,7 +19,7 @@ export const CurrentStatusStatus :Record<string, CurrentStatusStatusTypeItem>={
   "queuing":{tagColor:"blue",tagText:"排队中"},
   "executing":{tagColor:"geekblue",tagText:"执行中"},
   "autoReviewWrong":{tagColor:"error",tagText:"自动审批不通过"},
-  "exception":{tagColor:"lime",tagText:"执行有异常"},
+  "exception":{tagColor:"#f50",tagText:"执行有异常"},
 }
 export const privWfTypeOptions=[
   {

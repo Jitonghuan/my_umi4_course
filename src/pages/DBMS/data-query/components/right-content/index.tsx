@@ -206,7 +206,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                 </div> :
                     <div>
-                        <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`}</p>
+                        <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
                         <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                             {dataSource?.length > 0 && (
                                 Object.keys(dataSource[0])?.map((item: any) => {
@@ -240,7 +240,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                         label: '查询结果', children:
                            
                                 <div>
-                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`}</p>
+                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
                                     <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                         {dataSource?.length > 0 && (
                                             Object.keys(dataSource[0])?.map((item: any) => {
@@ -283,7 +283,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                     </div> :
                         <div>
-                            <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`}</p>
+                            <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
                             <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                 {dataSource?.length > 0 && (
                                     Object.keys(dataSource[0])?.map((item: any) => {
@@ -426,7 +426,7 @@ const updateData=(value:any,error?:string,time?:string)=>{
         
                             </div>) :
                                 <div>
-                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${resultCountTime} sec`}</p>
+                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${resultCountTime} sec`} {!resultCountTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
                                     <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                         {dataSource?.length > 0 && (
                                             Object.keys(dataSource[0])?.map((item: any) => {

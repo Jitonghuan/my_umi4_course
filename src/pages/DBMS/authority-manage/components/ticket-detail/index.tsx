@@ -7,11 +7,13 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table} from 'antd';
 import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined,LoadingOutlined} from '@ant-design/icons'
 import './index.less';
+import { getRequest, postRequest, } from '@/utils/request';
 import { history } from 'umi';
 import {createTableColumns} from './schema';
 import {useGetPrivInfo,useAuditTicket} from './hook';
 import {useworkflowLog} from '../../../data-change/components/approval-end/hook'
-import {CurrentStatusStatus,PrivWfType} from '../authority-apply/schema'
+import {CurrentStatusStatus,PrivWfType} from '../authority-apply/schema';
+import {getPrivInfoApi} from  '../../../service'
 
 
 export interface CreateArticleProps {
@@ -48,37 +50,22 @@ export default function CreateArticle(props: CreateArticleProps) {
     userInfo = JSON.parse(userInfo);
     userName= userInfo ? userInfo.name : ''
   }
-  // useEffect(()=>{
-  //   //&&mode !== 'HIDE'
-  //   if(afferentId){
-  //     getInfo(afferentId)
-  //     getWorkflowLog(afferentId)
-
-  //   }
-   
-     
-   
-
-  // },[afferentId,mode])
-
  
 
  
   useEffect(() => {
-    //mode === 'HIDE' ||
     if ( !curRecord?.id&&!afferentId) return;
-    if(curRecord?.id){
-      getInfo()
-      getWorkflowLog(curRecord?.id)
+    if(mode!=="HIDE"){
+      if(curRecord?.id){
+        getInfo()
+        getWorkflowLog(curRecord?.id)
+  
+      }else if(afferentId&&!curRecord?.id){
+        getInfo(afferentId)
+        getWorkflowLog(afferentId)
+      }
 
-    }else if(afferentId&&!curRecord?.id){
-      getInfo(afferentId)
-      getWorkflowLog(afferentId)
     }
-   
-   
-
-   
     return () => {
      
     };
@@ -92,41 +79,47 @@ export default function CreateArticle(props: CreateArticleProps) {
   const getInfo=(id?:number)=>{
     setLoading(true)
     let paramId=afferentId?afferentId:curRecord?.id
-    useGetPrivInfo(curRecord?.id||id).then((res)=>{
-      if(Object.keys(res)?.length<1) return
-      setInfo(res)
-      let auditUsers=[];
-      let privList:any=[]
-      res?.privList?.map((item:any)=>{
-        if(item==="query"){
-          privList.push("查询")
-
+    getRequest(getPrivInfoApi,{data:{id:curRecord?.id||id}}).then((res: any) => {
+      if (res?.success){
+        setInfo(res)
+        let auditUsers=[];
+        let privList:any=[]
+        res?.privList?.map((item:any)=>{
+          if(item==="query"){
+            privList.push("查询")
+  
+          }
+          if(item==="exec"){
+            privList.push("变更")
+          }
+          if(item==="owner"){
+            privList.push("owner")
+          }
+  
+        })
+        setPrivWfType(privList)
+        if(res?.audit?.length>0){
+          setstatus(res?.audit[0]?.AuditStatus)
+          // if(res?.audit[0]?.AuditStatus==="wait"){
+            auditUsers=res?.audit[0]?.Groups||[] 
+            setOwner(auditUsers)
+            setAuditStatusDesc(res?.audit[0]?.AuditStatusDesc)
+           
+          // }
+  
         }
-        if(item==="exec"){
-          privList.push("变更")
-        }
-        if(item==="owner"){
-          privList.push("owner")
-        }
+        
+       
 
-      })
-      setPrivWfType(privList)
-      if(res?.audit?.length>0){
-        setstatus(res?.audit[0]?.AuditStatus)
-        // if(res?.audit[0]?.AuditStatus==="wait"){
-          auditUsers=res?.audit[0]?.Groups||[] 
-          setOwner(auditUsers)
-          setAuditStatusDesc(res?.audit[0]?.AuditStatusDesc)
-         
-        // }
-
+      }else{
+        setTimeout(() => {
+          onClose();
+        }, 3000);    
       }
-      
-     
-      
     }).finally(()=>{
-      setLoading(false)
-    })
+        setLoading(false)
+      })
+    
 
   }
   const showConfirm = (auditType:string) => {
