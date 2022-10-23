@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState,useEffect} from 'react';
 import {  Tabs,Form,Space,Button } from 'antd';
 import {RightCircleFilled,LeftCircleFilled} from '@ant-design/icons'
 import './index.less';
@@ -10,7 +10,7 @@ export interface Iprops{
     initWidth?:number;//左边内容初始宽度；
     least?:number//左边内容可以拖拽的最小宽度；
     dataChangeinitWidth?:number;
-    getIconAction:(close:boolean)=>void;
+    getIconAction?:(close:boolean)=>void;
 }
 
 export default function ResizeLayout(props:Iprops) {
@@ -45,15 +45,20 @@ export default function ResizeLayout(props:Iprops) {
       setDragging(false);
       localStorage.setItem('siderWidth', siderWidth);
     };
+    useEffect(()=>{
+      setDragging(false);
+
+    },[])
     const onIconClick=(e:any)=>{
       e.stopPropagation();
-      getIconAction(!close)
       setClose(!close);
-
-//debugger
       setSiderWidth(close?initWidth:least)
       setStartPageX(e.pageX);
       setDragging(false);
+      if(getIconAction){
+        getIconAction(!close)
+      }
+     
     }
     return (
      
@@ -70,10 +75,10 @@ export default function ResizeLayout(props:Iprops) {
           onMouseDown={handleMouseDown}
         >
          {/* {showIcon&& <RightCircleFilled  onClick={(e)=>{ onIconClick(e)}} style={{color:'#3591ff',fontSize:26,position:"absolute",zIndex:9999}}/>} */}
-         {showIcon&&close ? (
-                <RightCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:1000}} />
+         {showIcon===true&&close ? (
+                <RightCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:20}} />
               ) : (
-                <LeftCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:1000}} />
+                showIcon===true&&  <LeftCircleFilled  onClick={onIconClick} style={{color:'#3591ff',fontSize:16,position:"absolute",zIndex:20}} />
               )}
           
           {dragging && (
