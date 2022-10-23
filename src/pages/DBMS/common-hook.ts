@@ -196,7 +196,7 @@ export function useQueryTableFieldsOptions() {
       });
   };
 
-  return [loading, source,options, queryTableFields,setOptions];
+  return [loading, source,options, queryTableFields,setOptions,setSource];
 }
 //querySqlApi
 interface querySqlItems{

@@ -3,7 +3,7 @@ import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, OptionProps } from '@/components/table-search/typing';
 import { datetimeCellRender } from '@/utils';
 import {CurrentStatusStatus} from '../authority-manage/components/authority-apply/schema'
-const statusOptions=[
+export const statusOptions=[
   {
     label:"已正常结束",
     value:"finish",
@@ -110,7 +110,7 @@ export const createDataFormItems = (params: {
 };
 
 
-const privWfTypeOptions=[
+export const privWfTypeOptions=[
   {
     label:"我发起的",
     value:"creator",
@@ -125,6 +125,7 @@ const privWfTypeOptions=[
 ]
 // 列表页-表格
 export const createTableColumns = (params: {
+  dataSource:any,
   onDetail: (record: any, index: number) => void;
 }) => {
   return [
@@ -188,6 +189,29 @@ export const createTableColumns = (params: {
       render: (text,record:any) => <Tooltip title={text}><Tag color={CurrentStatusStatus[record?.currentStatus]?.tagColor||"default"}>{text}</Tag></Tooltip>
     },
     {
+      title: '当前处理人',
+      dataIndex: 'audit',
+      key: 'audit',
+      // width: '10%',
+      width: 280,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (users,record,index) => {
+       
+        return (
+          <>
+          {users?.map((item:any)=>{
+            return( <Tag color="#108ee9">{item} </Tag>)
+          })}
+        
+          </>
+          
+          
+        )
+      }
+    },
+    {
         title: '申请人',
         dataIndex: 'userName',
         key: 'userName',
@@ -195,30 +219,7 @@ export const createTableColumns = (params: {
         ellipsis: true,
         render: (user) =>  <Tag color="#2db7f5">{user}</Tag>,
       },
-      // {
-      //   title: '当前处理人',
-      //   dataIndex: 'audit',
-      //   key: 'audit',
-      //   width: '28%',
-      //   ellipsis: true,
-      //   render: (users,record) => {
-      //     let auditUsers=[];
-      //     if(record?.audit?.AuditStatus==="wait"){
-      //       auditUsers=record?.audit?.AuditStatus?.Groups 
-      //     }
-      //     // auditUsers?.length>0?auditUsers?.map():"暂无",
-      //     return (
-      //       <>
-      //       {auditUsers?.length>0?auditUsers?.map((item:string)=>{
-      //         <Tag>{item}</Tag>
-      //       }):"暂无"}
-
-      //       </>
-            
-            
-      //     )
-      //   }
-      // },
+     
       {
         title: '创建时间',
         dataIndex: 'startTime',

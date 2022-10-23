@@ -13,6 +13,7 @@ interface querySqlItems{
     instanceId?:number;
     runStartTime?:string;
     runEndTime?:string;
+    allowTiming:boolean;
    
 
   }

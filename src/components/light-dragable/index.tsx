@@ -9,11 +9,12 @@ export interface Iprops{
     showIcon:boolean;//是否显示Icon；
     initWidth?:number;//左边内容初始宽度；
     least?:number//左边内容可以拖拽的最小宽度；
-    dataChangeinitWidth?:number
+    dataChangeinitWidth?:number;
+    getIconAction:(close:boolean)=>void;
 }
 
 export default function ResizeLayout(props:Iprops) {
-    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150,dataChangeinitWidth} =props
+    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150,dataChangeinitWidth,getIconAction} =props
     const [siderWidth, setSiderWidth] = useState<any>(
        //@ts-ignore
       dataChangeinitWidth?dataChangeinitWidth: parseInt(localStorage.getItem('siderWidth')) ? parseInt(localStorage.getItem('siderWidth')):initWidth
@@ -28,6 +29,7 @@ export default function ResizeLayout(props:Iprops) {
       setStartPageX(event.pageX);
       setDragging(true);
     };
+    
     const handleMouseMove = (event:any) => {
       const currentSiderWidth = siderWidth + event.pageX - startPageX;
     //   setSiderWidth(currentSiderWidth>150?currentSiderWidth:150);
@@ -45,7 +47,7 @@ export default function ResizeLayout(props:Iprops) {
     };
     const onIconClick=(e:any)=>{
       e.stopPropagation();
-     
+      getIconAction(!close)
       setClose(!close);
 
 //debugger

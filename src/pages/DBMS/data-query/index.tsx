@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo, useRef, } from 'react';
 import { Tabs, Form, Space, Select, message, Collapse, Spin, Input } from 'antd';
 import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined, PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
-import QueryResult from "./components/query-result";
-import SqlConsole from "./components/sql-console";
-import RightContent from "./components/right-content"
+import RightContent from "./components/right-content";
+import {queryTableFieldsApi} from '../common-service';
+import { getRequest} from '@/utils/request';
 import { useEnvList, querySqlResultInfo, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, queryTables } from '../common-hook'
 import './index.less';
 const { Panel } = Collapse;
@@ -19,7 +19,7 @@ export default function ResizeLayout() {
   const [envOptionLoading, envOptions, queryEnvList] = useEnvList();
   const [instanceLoading, instanceOptions, getInstanceList] = useInstanceList();
   const [databasesOptionsLoading, databasesOptions, queryDatabases, setSource] = useQueryDatabasesOptions()
-  const [fieldsLoading, tableFields, tableFieldsOptions, queryTableFields, setOptions] = useQueryTableFieldsOptions();
+  const [fieldsLoading, tableFields, tableFieldsOptions, queryTableFields, setOptions,setFeildsSource] = useQueryTableFieldsOptions();
   const [initSqlValue, setInitSqlValue] = useState<string>("")
   const [implementDisabled, setImplementDisabled] = useState<boolean>(true);
   const [firstInitSqlValue, setFirstInitSqlValue] = useState<string>("")
@@ -36,6 +36,23 @@ export default function ResizeLayout() {
   const [envCode,setEnvCode]=useState<string>("")
   const [instance,setInstance]=useState<number>()
   const [dbCode,setDBCode]=useState<string>("")
+  const [close,setClose] = useState<boolean>();
+
+  useEffect(()=>{
+    if(tableFieldsOptions&&tablesSource){
+      let dataObject: any = {};
+      tablesSource?.map((ele:any)=>{
+        dataObject[ele?.value]=ele?.value
+      })
+      tableFieldsOptions?.map((item: any) => {
+        dataObject[item]=item
+      });
+
+     setFeildsSource(dataObject)
+
+    }
+
+  },[tableFieldsOptions,tablesSource])
 
   const queryTablesOptions = (params: { dbCode: string, instanceId: number }) => {
     setTablesOptionsLoading(true)
@@ -144,8 +161,8 @@ export default function ResizeLayout() {
             setActivePanel(value)
             const values = form?.getFieldsValue();
             setOptions([])
-            // setSource([])
             queryTableFields({ ...values, tableCode: value })
+            //queryTableFieldsMethods({ ...values, tableCode: value})
             setFirstInitSqlValue(`select * from ${value} limit 10`)
             getFirstInitSqlValue(`select * from ${value} limit 10`)
             if (!values?.instanceId || !values?.dbCode || !value) {
@@ -282,7 +299,8 @@ export default function ResizeLayout() {
               </Form.Item>
             </Space>
             <p style={{ marginTop: 8, width: "100%", marginBottom: 0 }}>
-              <li style={{ width: "100%", listStyleType: "disc", color: "rgb(39,93,124)", whiteSpace: "break-spaces" }}>查询结果行数限制见权限管理，会选择查询涉及表的最小limit值</li>
+          
+              <li className={close?"close-tooltip-content":"tooltip-content"} >查询结果行数限制见权限管理，会选择查询涉及表的最小limit值</li>
             </p>
             <Form.Item name="tableCode" style={{ marginTop: 0, height: '100%', paddingBottom: 18 }}>
               <Spin spinning={tablesOptionsLoading}>
@@ -296,6 +314,7 @@ export default function ResizeLayout() {
   }, [
     implementDisabled,
     activePanel,
+    close,
     databasesOptions,
     fieldsLoading,
     tablesSource,
@@ -329,6 +348,7 @@ export default function ResizeLayout() {
       sqlResult={sqlResult}
       formRef={formRef}
       queryTableFields={queryTableFields}
+      //queryTableFieldsMethods={queryTableFieldsMethods}
       errorMsg={errorMsg}
       costTime={costTime}
       copyAdd={(sqlContent: string, tableCode?: string) => copyAdd(sqlContent, tableCode)}
@@ -336,7 +356,8 @@ export default function ResizeLayout() {
       relayInfo={
         {envCode,
         instance,
-        dbCode
+        dbCode,
+        tableCode
       }}
      />
       </>
@@ -363,6 +384,10 @@ export default function ResizeLayout() {
       rightContent={rightContent}
       initWidth={150}
       least={20}
+      getIconAction={(close:boolean)=>{
+      
+        setClose(close)
+      }}
     />
   );
 }

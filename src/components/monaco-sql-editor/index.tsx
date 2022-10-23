@@ -73,6 +73,8 @@ export default function SqlEditor(props: Iprops) {
   let completeProvider: any
   useEffect(() => {
     if (divNode) {
+      console.log("-----第三个页面filedsvalue------",tableFields,"000000", registerCompletion())
+      registerCompletion();
       const monacoEditor = monaco.editor.create(divNode, {
         autoIndent: "keep",
         value: 'select * from user limit 10;', // 编辑器初始显示文字
@@ -87,12 +89,13 @@ export default function SqlEditor(props: Iprops) {
         tabSize: 2, // tab缩进长度
       });
       setInstance(monacoEditor);
-      registerCompletion();
+    
       // 将 initValue Property 同步到编辑器中
       monacoEditor.setValue(initValue);
       monacoEditor.focus();
       monacoEditor.layout();
       monaco.editor.setTheme(theme);
+    
     }
     return () => {
       if (completeProvider) {
@@ -114,9 +117,12 @@ export default function SqlEditor(props: Iprops) {
   }, [initValue, instance])
   useEffect(() => {
     if (instance && tableFields) {
+      console.log("第三个页面监听位置")
+    
       registerCompletion()
     }
   }, [initValue, tableFields])
+ 
   useEffect(() => {
     if (instance) {
       getValue();
@@ -251,7 +257,16 @@ export default function SqlEditor(props: Iprops) {
       <div className="monaco-sql-editor-title">
         <Space className={`${rootCls}-wrapper`}>
           {isSqlExecuteBtn && !implementDisabled && <span className={`${rootCls}-btn`} id="one" onClick={() => {
-            subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
+              getSelectionVal();
+              if( getSelectionVal()){
+                subChange({ sqlContent:  getSelectionVal() || "", sqlType: "query" })
+                console.log("---- getSelectionVal()", getSelectionVal())
+
+              }else{
+                subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
+              }
+             
+           // subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
           }}>执行</span>}
           {isSqlExecuteBtn && implementDisabled && <span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>}
           {isSqlBueatifyBtn && <span className={`${rootCls}-btn`} id="three" onClick={formatSql}>sql美化</span>}

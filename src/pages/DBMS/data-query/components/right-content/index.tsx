@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef, forwardRef, useImperativeHandle, } from 'react';
-import { Tabs, message, Table, Card } from 'antd';
+import { Tabs, message, Table, Card, } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { createTableColumns } from './schema';
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import { useQueryLogsList } from '../../../common-hook';
+import {history } from 'umi'
 import './index.less'
 const { TabPane } = Tabs;
 interface Iprops {
@@ -20,6 +21,7 @@ interface Iprops {
     formRef: any;
     costTime: string;
     queryTableFields: (params: any) => any;
+  //  queryTableFieldsMethods:(params:any)=>any;
     copyAdd: (sqlContent: string, tableCode?: string) => any;
     relayInfo:any;
 }
@@ -35,6 +37,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
     const nextTabIndex = useRef(1);
     /* ----------------------------------------SQL Console--------------------------------------------- */
     const defaultPanes = useMemo(() => {
+     
         return (
             new Array(1).fill(null).map((_, index) => {
                 const id = String(index + 1);
@@ -55,6 +58,15 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
             })
         )
     }, [tableFields, firstInitSqlValue,implementDisabled]);
+    useEffect(()=>{
+        if(sqlItems?.length===1){
+         
+            setSqlConsoleActiveKey(defaultPanes[0].key)
+            setSqlItems(defaultPanes)
+        }
+       
+
+    },[tableFields])
 
     const [sqlConsoleActiveKey, setSqlConsoleActiveKey] = useState(defaultPanes[0].key);
     const [sqlItems, setSqlItems] = useState(defaultPanes);
@@ -148,13 +160,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
     const columns = useMemo(() => {
         return createTableColumns(
             {
-                //disabled: disabled.current,
-
-
                 onCopy: (record, index) => {
-
-                    //action(true)
-
                     if (formRef) {
 
                         formRef.current.setFieldsValue({
@@ -163,6 +169,9 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                         queryTableFields({
                             ...record
                         })
+                        // queryTableFieldsMethods({
+                        //     ...record
+                        // })
                     }
 
                     copyAdd(record?.sqlContent, record?.tableCode)
@@ -206,7 +215,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                 </div> :
                     <div>
-                        <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
+                        <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
                         <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                             {dataSource?.length > 0 && (
                                 Object.keys(dataSource[0])?.map((item: any) => {
@@ -224,10 +233,19 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
     const [resultActiveKey, setResultActiveKey] = useState(initialItems[1].key);
     const [resultItems, setResultItems] = useState(initialItems);
     const onResultChange = (key: string) => {
+     
         setResultActiveKey(key);
         if(key==="1"){
             queryLogsList()
         }
+        let sqlKey=Number(key.substring(6))-1
+        if(key==="newTab0"){
+            setSqlConsoleActiveKey("1")
+        }
+        if(key!=="newTab0"&&key!=="1"){
+            setSqlConsoleActiveKey(`newTab${sqlKey}`)
+        }
+
     };
     const getFirstInitSqlValue=(value:string)=>{
         setCurFirstInitSqlValue(value)
@@ -240,7 +258,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                         label: '查询结果', children:
                            
                                 <div>
-                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
+                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
                                     <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                         {dataSource?.length > 0 && (
                                             Object.keys(dataSource[0])?.map((item: any) => {
@@ -283,7 +301,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                     </div> :
                         <div>
-                            <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
+                            <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
                             <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                 {dataSource?.length > 0 && (
                                     Object.keys(dataSource[0])?.map((item: any) => {
@@ -420,13 +438,18 @@ const updateData=(value:any,error?:string,time?:string)=>{
                         label: '查询结果', children:
                         resultErrorMsg ?( <div>
         
-                                <Card title={ <><span>Error</span><a>点击快速申请权限</a></>} size="small">
+                                <Card title={ <><span>Error</span>
+                                    {resultErrorMsg===`你没有[${relayInfo?.tableCode}]表的查询权限`&&<a onClick={()=>{
+                                    history.push({
+                                        pathname:"/matrix/DBMS/authority-manage/authority-apply",
+                                    },{applyDetail:true})
+                                }}>点击快速申请权限</a>}</>} size="small">
                                     <p>{resultErrorMsg}<span></span></p>
                                 </Card>
         
                             </div>) :
                                 <div>
-                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${resultCountTime} sec`} {!resultCountTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请点击执行进行结果查询</span>}</p>
+                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${resultCountTime} sec`} {!resultCountTime&&  <span style={{marginLeft:10,color: "rgb(39,93,124)",background:"#E1FFFF",padding:5,borderRadius:4}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
                                     <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                         {dataSource?.length > 0 && (
                                             Object.keys(dataSource[0])?.map((item: any) => {

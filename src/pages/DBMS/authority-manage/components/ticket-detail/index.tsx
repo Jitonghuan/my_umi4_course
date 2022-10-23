@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table} from 'antd';
+import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table,Empty} from 'antd';
 import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined,LoadingOutlined} from '@ant-design/icons'
 import './index.less';
 import { getRequest, postRequest, } from '@/utils/request';
@@ -39,12 +39,15 @@ export default function CreateArticle(props: CreateArticleProps) {
   const [form]=Form.useForm()
   const [info,setInfo]=useState<any>({});
   const [loading,setLoading]=useState<boolean>(false);
+ 
   const [owner,setOwner]=useState<any>([]);
   const [status,setstatus]=useState<string>("");
   const [auditLoading, auditTicket]= useAuditTicket();
   const [auditStatusDesc,setAuditStatusDesc]=useState<string>("")
   const [privWfType,setPrivWfType]=useState<any>([]);
+  const [idActive,setIdActive]=useState<boolean>(true)
   let userInfo: any = localStorage.getItem('USER_INFO');
+  
   let userName=""
   if (userInfo) {
     userInfo = JSON.parse(userInfo);
@@ -54,6 +57,7 @@ export default function CreateArticle(props: CreateArticleProps) {
 
  
   useEffect(() => {
+   // debugger
     if ( !curRecord?.id&&!afferentId) return;
     if(mode!=="HIDE"){
       if(curRecord?.id){
@@ -67,7 +71,7 @@ export default function CreateArticle(props: CreateArticleProps) {
 
     }
     return () => {
-     
+      setIdActive(true)
     };
   }, [mode,afferentId]);
   
@@ -78,13 +82,14 @@ export default function CreateArticle(props: CreateArticleProps) {
 
   const getInfo=(id?:number)=>{
     setLoading(true)
+   
     let paramId=afferentId?afferentId:curRecord?.id
     getRequest(getPrivInfoApi,{data:{id:curRecord?.id||id}}).then((res: any) => {
       if (res?.success){
-        setInfo(res)
+        setInfo(res?.data)
         let auditUsers=[];
         let privList:any=[]
-        res?.privList?.map((item:any)=>{
+        res?.data?.privList?.map((item:any)=>{
           if(item==="query"){
             privList.push("查询")
   
@@ -98,23 +103,29 @@ export default function CreateArticle(props: CreateArticleProps) {
   
         })
         setPrivWfType(privList)
-        if(res?.audit?.length>0){
-          setstatus(res?.audit[0]?.AuditStatus)
+        if(res?.data?.audit?.length>0){
+          setstatus(res?.data?.audit[0]?.AuditStatus)
           // if(res?.audit[0]?.AuditStatus==="wait"){
-            auditUsers=res?.audit[0]?.Groups||[] 
+            auditUsers=res?.data?.audit[0]?.Groups||[] 
             setOwner(auditUsers)
-            setAuditStatusDesc(res?.audit[0]?.AuditStatusDesc)
+           
+            setAuditStatusDesc(res?.data?.audit[0]?.AuditStatusDesc)
            
           // }
   
         }
         
        
-
+        setIdActive(true)
       }else{
+        setIdActive(false)
+        setInfo({})
+        
+       
         setTimeout(() => {
           onClose();
-        }, 3000);    
+        }, 3000);  
+        history.replace("/matrix/DBMS/authority-manage/authority-apply")  
       }
     }).finally(()=>{
         setLoading(false)
@@ -162,15 +173,18 @@ export default function CreateArticle(props: CreateArticleProps) {
           footer={null}
           className="ticket-detail-drawer"
       >
-          <Card style={{ width: "90%" }} >
+       {/* {!idActive&& <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />} */}
+    <>
+        <Card style={{ width: "90%" }} >
             <Spin spinning={loading}>
             <Descriptions column={2} size="small" >
+            
                     <Descriptions.Item label="工单号">{info?.id}</Descriptions.Item>
                     <Descriptions.Item label="申请人" >{info?.userName}</Descriptions.Item>
                     <Descriptions.Item label="标题" span={2}><span style={{width:320,overflow:"auto",textOverflow:"ellipsis"}}>{info?.title}</span></Descriptions.Item>
                     <Descriptions.Item  label="工单状态"><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </Descriptions.Item>
                     <Descriptions.Item label="">
-                      {status==="wait"&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
+                      {status==="wait"&&info?.userName===userName&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
                     
                     </Descriptions.Item>
                     
@@ -253,8 +267,8 @@ export default function CreateArticle(props: CreateArticleProps) {
           <Table columns={columns} bordered dataSource={logData} loading={tableLoading}/>
           </div>
  
-
-
+     
+</>
       </Drawer>
   );
 }

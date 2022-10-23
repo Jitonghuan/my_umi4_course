@@ -1,14 +1,10 @@
 import React, { useState, useMemo,useEffect } from 'react';
 import {Form, Button, Space,Table,Select,Input } from 'antd';
 import { getRequest } from '@/utils/request';
-import TableSearch from '@/components/table-search';
-import { history } from 'umi';
-import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { createTableColumns,createFormItems,currentStatusOptions ,privWfTypeOptions,currentApplyStatusOptions} from './schema';
 import TicketDetail from '../../components/ticket-detail';
 import ApplyDetailDrawer from '../apply-detail'
-import useTable from '@/utils/useTable';
 import {queryWorkflowPrivListApi,currentAuditsApi} from '../../../service'
 import {useLocation} from 'umi';
 import { parse } from 'query-string';
@@ -18,6 +14,7 @@ export default function AuthorityApply (){
 const [form] = Form.useForm();
 let location = useLocation();
 const query = parse(location.search);
+const initInfo: any = location.state || {};
 const [mode,setMode]=useState<EditorMode>("HIDE");
 const [tableLoading, setTableLoading] = useState<any>(false);
 const [curRecord,setCurRecord]=useState<any>({});
@@ -26,7 +23,6 @@ const [applyDetailMode,setApplyDetailMode]=useState<EditorMode>("HIDE");
 const [dataSource,setDataSource]=useState<any>([]);
 const [total, setTotal] = useState<number>(0);
 const [pageSize, setPageSize] = useState<number>(20);
-const [audit,setaudit]=useState<any>([]);
 
 useEffect(()=>{
     queryList()
@@ -51,6 +47,12 @@ useEffect(()=>{
   
 
 },[])
+useEffect(()=>{
+  if(initInfo?.applyDetail){
+
+ setApplyDetailMode("ADD")
+  }
+},[])
 const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:string,wfUserType?:string,userName?:string,title?:string}) => {
     setTableLoading(true)
     getRequest(queryWorkflowPrivListApi, {
@@ -65,7 +67,6 @@ const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:strin
               getRequest(currentAuditsApi,{data:{id:item?.id}}).then((res)=>{
                 if(res?.success){
                   let data=res?.data?.audits;
-                  setaudit(data)
                   setDataSource([...new Set([...list,Object.assign(item, {
                     audit: data,
                   })])])
@@ -96,14 +97,7 @@ const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:strin
     let value = form.getFieldsValue();
     queryList({ ...params, ...value,});
   };
-const formOptions = useMemo(() => {
 
-  return createFormItems({
-    // currentStatusOptions,
-    userNameOptions,
-   
-  });
-}, [userNameOptions]);
 const columns = useMemo(() => {
   return createTableColumns({
     dataSource:dataSource,
@@ -206,16 +200,16 @@ return(<div className="authority-apply">
       </FilterCard>
       <ContentCard>
         <div className="table-caption">
-          <div className="caption-left">
-            <h3>发布列表</h3>
-          </div>
-          <div className="caption-right">
-            <Space>
+          {/* <div className="caption-left"> */}
+            <h3>权限列表</h3>
+          {/* </div> */}
+          {/* <div className="caption-right"> */}
+          
             <Button type="primary" onClick={()=>{
                setApplyDetailMode("ADD")
             }}>申请权限</Button>
-            </Space>
-          </div>
+         
+          {/* </div> */}
         </div>
 
         <div>
@@ -224,6 +218,7 @@ return(<div className="authority-apply">
             dataSource={dataSource}
             loading={!dataSource?tableLoading:false}
             bordered
+            scroll={{ x: '100%' }}
             pagination={{
               // current: taskTablePageInfo.pageIndex,
               total: total,

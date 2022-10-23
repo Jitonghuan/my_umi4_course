@@ -30,6 +30,13 @@ const runModeOptions = [
     value: "timing"
   }
 ]
+const runModeOnlyOptions = [
+  {
+    label: "立即执行",
+    value: "now"
+  },
+ 
+]
 const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
   wait: 1,
@@ -241,7 +248,7 @@ export default function ApprovalEnd() {
         }>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
             <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]}>
-              <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
+              <Radio.Group options={info?.allowTiming ?runModeOptions:runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} />
             </Form.Item >
             {runMode === "timing" && (
               <>
@@ -294,7 +301,7 @@ export default function ApprovalEnd() {
             </span>
             <span className="second-info-right">
               <Space>
-                {status === "wait" && <Popconfirm title="确认撤销该工单吗?"
+                {status === "wait" &&info?.userName===userName&& <Popconfirm title="确认撤销该工单吗?"
                   onConfirm={() => {
                     showConfirm("abort")
                   }}>
@@ -332,6 +339,7 @@ export default function ApprovalEnd() {
             {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
             {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
             <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
+            <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming?"是":"否"}</Descriptions.Item>
 
           </Descriptions>
         </Spin>
@@ -367,7 +375,7 @@ export default function ApprovalEnd() {
         <div style={{ marginTop: 12 }} >
           <div className="ticket-detail-title">
             <Space>
-              <span><b>{(status === "wait"&&reviewContentData?.length > 0)?"执行详情":(status !== "wait" && executeResultData?.length > 0)?"检测详情":"执行详情"}</b></span>
+              <span><b>{(status === "wait"&&reviewContentData?.length > 0)?"检测详情":(status !== "wait" && executeResultData?.length > 0)?"执行详情":"检测详情"}</b></span>
               {info?.currentStatus === "reviewPass" && <span>
                 <Spin spinning={runLoading}>
                   <Space>
