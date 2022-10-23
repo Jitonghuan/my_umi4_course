@@ -4,10 +4,8 @@
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
-import { Tabs,Modal } from 'antd';
+import { Tabs, Modal } from 'antd';
 import appConfig from '@/app.config';
-import { useLocation } from 'umi';
-import { parse } from 'query-string';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '@/pages/application/application-detail/context';
 import { useAppDeployInfo, useAppChangeOrder } from './hooks';
@@ -15,28 +13,43 @@ import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
 import DeployInfoContent from './deployInfo-content';
+import { history, useLocation } from 'umi';
+import { parse, stringify } from 'query-string';
 import './index.less';
 const { TabPane } = Tabs;
 export default function AppDeployInfo(props: any) {
   let location = useLocation();
   const query = parse(location.search);
-  const type=query?.type||"";
-  const viewLogEnv=query?.viewLogEnv||"";
-  const viewLogEnvType=query?.viewLogEnvType||"";
+  const type = query?.type || "";
+  const viewLogEnv = query?.viewLogEnv || "";
+  const viewLogEnvType = query?.viewLogEnvType || "";
   const { appData } = useContext(DetailContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
   let env = appConfig.IS_Matrix === 'public' ? '' : 'prod';
-  try {
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
-  } catch (error) {
-    localStorage.setItem('__init_env_tab__', env);
-  }
+  // try {
+  //   localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
+  // } catch (error) {
+  //   localStorage.setItem('__init_env_tab__', query.activeTab||env);
+  // }
   const [tabActive, setTabActive] = useState<any>(
-    localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
+    // localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
+    query.activeTab || localStorage.getItem('__init_env_tab__') || env,
   );
+  useEffect(() => {
+    localStorage.setItem('__init_env_tab__', tabActive || env);
+    const newQuery = {
+      ...query,
+      activeTab: tabActive
+    }
+    history.replace({
+      pathname: location.pathname,
+      search: stringify(newQuery),
+    },
+    );
+  }, [tabActive])
 
   const [changeOrderData, changeOrderDataLoading, reloadChangeOrderData] = useAppChangeOrder(
     currEnvCode,
@@ -45,7 +58,7 @@ export default function AppDeployInfo(props: any) {
 
   const changeTab = (value: any) => {
     setTabActive(value);
-    localStorage.setItem('__init_env_tab__', value || env);
+    // localStorage.setItem('__init_env_tab__', value || env);
   };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
@@ -63,11 +76,11 @@ export default function AppDeployInfo(props: any) {
     await getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
-      if(result?.success){
+      if (result?.success) {
         const { data } = result || [];
         envTypeDataSource = result?.data;
-      
-        if(result?.data?.length<1||!result?.data?.length){
+
+        if (result?.data?.length < 1 || !result?.data?.length) {
           warning()
           return
 
@@ -93,13 +106,13 @@ export default function AppDeployInfo(props: any) {
         setEnvTypeData(next);
         let currentTabActive =
           localStorage.__init_env_tab__ &&
-          envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
+            envTypeDataSource.some((item: any) => item.typeCode === localStorage.__init_env_tab__)
             ? localStorage.getItem('__init_env_tab__')
             : next[0]?.typeCode || env;
         setTabActive(currentTabActive);
 
       }
-     
+
     });
 
   };
