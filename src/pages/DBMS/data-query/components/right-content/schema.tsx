@@ -81,7 +81,7 @@ export const createTableColumns = (
         key: 'sqlOriginalContent',
         width: '14%',
         ellipsis: true,
-        render: (text) => <Tooltip title={`${text} s`}>{`${text} s`}</Tooltip>,
+        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
      
   ] as ColumnsType<any>;

@@ -301,12 +301,9 @@ export default function ApprovalEnd() {
             </span>
             <span className="second-info-right">
               <Space>
-                {status === "wait" &&info?.userName===userName&& <Popconfirm title="确认撤销该工单吗?"
-                  onConfirm={() => {
-                    showConfirm("abort")
-                  }}>
-                  <Tag color="orange" >撤销工单</Tag>
-                </Popconfirm>}
+                {status === "wait" &&info?.userName===userName&& 
+                  <Tag color="orange" onClick={()=>{ showConfirm("abort")}} >撤销工单</Tag>
+            }
                
 
                
