@@ -17,6 +17,7 @@ export type DataSourceType = {
 // 列表页-表格
 export const createAppProTableColumns = (params: {
 //   currentTabType:string,
+  type:string
   componentOptions:any,
   componentVersionOptions:any,
   productLineOptions:any,
@@ -55,6 +56,7 @@ export const createAppProTableColumns = (params: {
                 showSearch
                 allowClear
                 labelInValue
+                disabled={params?.type==="edit"}
                 optionFilterProp="label"
                 onChange={(param: any) => {
                     params?.onChange(param,config)

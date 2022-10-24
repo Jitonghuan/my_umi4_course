@@ -125,10 +125,11 @@ export default (props: VersionDetailProps) => {
       componentOptions,
       componentVersionOptions,
       namespaceOption,
+      type
     
 
     }) as any;
-  }, [componentOptions, componentVersionOptions, namespaceOption,]);
+  }, [componentOptions, componentVersionOptions, namespaceOption,type]);
 
 
   const appColumns = useMemo(() => {
@@ -137,6 +138,7 @@ export default (props: VersionDetailProps) => {
       componentOptions,
       componentVersionOptions,
       productLineOptions,
+      type,
       onEdit:(text: React.ReactNode, record: any, _: any, action: any)=>{
         action?.startEditable?.(record.id);
         setType('edit');
@@ -170,7 +172,7 @@ export default (props: VersionDetailProps) => {
       },
 
     }) as any;
-  }, [componentOptions, componentVersionOptions,productLineOptions]);
+  }, [componentOptions,type, componentVersionOptions,productLineOptions]);
 
   const columns = useMemo(() => {
 
@@ -182,6 +184,7 @@ export default (props: VersionDetailProps) => {
       belongOption,
       bucketLoading,
       belongLoading,
+      type,
       onEdit:(text: React.ReactNode, record: any, _: any, action: any)=>{
         action?.startEditable?.(record.id);
         setType('edit');
@@ -212,7 +215,7 @@ export default (props: VersionDetailProps) => {
       },
 
     }) as any;
-  }, [currentTabType, componentOptions, componentVersionOptions, bucketsOption, belongOption, belongLoading]);
+  }, [currentTabType,type, componentOptions, componentVersionOptions, bucketsOption, belongOption, belongLoading]);
 
 
   const onSelectChange = (newSelectedRowKeys: React.Key[], selectedRows: any) => {
@@ -354,6 +357,7 @@ export default (props: VersionDetailProps) => {
             let params = value[objKey[0]];
             if(parseInt(params?.componentPriority)<1||parseInt(params?.componentPriority)>100||parseInt(params?.componentPriority)===NaN){
               message.warning("请输入1-100之间的值")
+              setType("")
               return
 
             }
@@ -376,7 +380,7 @@ export default (props: VersionDetailProps) => {
                   checkComponentRely(versionId)
                 }
                
-              });
+              })
 
             }else if(type!=="edit"){
              
