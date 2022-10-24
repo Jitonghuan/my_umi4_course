@@ -110,7 +110,7 @@ export default [
     redirect: `${baseRoutePath}/test/quality-control-new/overview`,
   },
   {
-    path: `${baseRoutePath}/DBMS`,
+    path: `${baseRoutePath}/DBMS/authority-manage`,
     redirect: `${baseRoutePath}/DBMS/authority-manage/authority-apply`,
   },
   {
@@ -411,6 +411,75 @@ export default [
           },
         ],
       },
+    ],
+  },
+  {
+    path: `${baseRoutePath}/DBMS`,
+    name: '数据管理',
+    icon: 'icon-Detail',
+    routes: [
+      {
+        path:  `${baseRoutePath}/DBMS/authority-manage`,
+        name: '权限管理',
+        key: 'authority-manage',
+        component: '@/pages/DBMS/authority-manage',
+        routes:[
+          {
+            path:`${baseRoutePath}/DBMS/authority-manage/authority-apply` ,
+            name: '权限申请',
+            key: 'authority-manage',
+            component: '@/pages/DBMS/authority-manage/components/authority-apply',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/DBMS/authority-manage/my-authority`,
+            name: '我的权限',
+            key: 'authority-manage',
+            component: '@/pages/DBMS/authority-manage/components/my-authority',
+            hideInMenu: true,
+          }
+        ]
+      },
+      {
+        path: `${baseRoutePath}/DBMS/data-query`,
+        name: '数据查询',
+        key: 'data-query',
+        component: '@/pages/DBMS/data-query',
+      },
+
+      {
+        path:`${baseRoutePath}/DBMS/data-change` ,
+        name: '数据变更',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change',
+      },
+      // {
+      //   path: `${baseRoutePath}/DBMS/ticket-approval`,
+      //   name: '工单详情-审批中',
+      //   key: 'data-change',
+      //   component: '@/pages/DBMS/data-change/components/ticket-approval',
+      //   hideInMenu: true,
+      // },
+      {
+        path:`${baseRoutePath}/DBMS/approval-end`,
+        name: '工单详情-审批结束',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/approval-end',
+        hideInMenu: true,
+      },
+      {
+        path: `${baseRoutePath}/DBMS/change-apply`,
+        name: '数据变更申请',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/change-apply',
+        hideInMenu:true
+      },
+      // {
+      //   path: `${baseRoutePath}/DBMS/configuration`,
+      //   name: '配置项',
+      //   key: 'configuration',
+      //   component: '@/pages/DBMS/configuration',
+      // },
     ],
   },
   {

@@ -80,9 +80,14 @@ export default function CreatTask(props: RecordEditDataProps) {
   }, []);
   useEffect(() => {
   
+<<<<<<< HEAD
 
     if (initData?.appCode && mode !== 'HIDE' && mode !== 'VIEW') {
     
+=======
+    if (initData?.appCode && mode !== 'HIDE' && mode !== 'VIEW') {
+     
+>>>>>>> origin/feature_data_management_20220908105323
       queryAppEnvData({ appCode: initData?.appCode });
     }
   }, [mode]);

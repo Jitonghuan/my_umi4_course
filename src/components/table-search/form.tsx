@@ -22,6 +22,7 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
       showTime,
       width,
       key,
+      renderLabel=false,
       showSelectSearch,
       disable,
       extraForm,
@@ -74,11 +75,17 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                 mode={mode}
                 id={id}
               >
-                {option?.map((item) => (
+                {renderLabel?option?.map((item) => (
+                  <Option key={item.key} value={item.key}>
+                    {item.label}
+                  </Option>
+                )):option?.map((item) => (
                   <Option key={item.key} value={item.key}>
                     {item.value}
                   </Option>
                 ))}
+                
+              
               </Select>
             </Item>
             {extraForm}
