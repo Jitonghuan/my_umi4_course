@@ -130,7 +130,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             placeholder="搜索分支"
             value={searchText}
             onChange={(e) => {
-              setSearchText(e.target.value), changeBranchName(e.target.value), console.log(e.target.value, 888);
+              setSearchText(e.target.value), changeBranchName(e.target.value);
             }}
             onPressEnter={() => onSearch?.(searchText)}
             onSearch={() => onSearch?.(searchText)}

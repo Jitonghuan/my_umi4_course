@@ -557,7 +557,7 @@ const Coms = (props: any) => {
                 current: pageIndex,
                 showSizeChanger: true,
                 onShowSizeChange: (_, next) => {
-                  // debugger
+                 
                   setPageIndex(1);
                   setPageSize(next);
                   // queryPodData(currentCluster, 1, next, searchKeyWords?.keyword);

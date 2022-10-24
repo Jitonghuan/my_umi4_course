@@ -187,7 +187,7 @@ export default function ComponentDetail() {
   };
   const preventDefault = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    console.log('Clicked! But prevent default.');
+  
   };
   const saveConfig = () => {
     const configuration = configForm.getFieldsValue();
