@@ -50,10 +50,7 @@ export default function ComponentCenter() {
     if (tabActiveKey === 'app') {
       getProductlineList();
     }
-    // return () => {
-    //   debugger
-    //   setTabActiveKey('app');
-    // };
+   
   }, [tabActiveKey]);
   useEffect(() => {
     if (identification?.identification) {

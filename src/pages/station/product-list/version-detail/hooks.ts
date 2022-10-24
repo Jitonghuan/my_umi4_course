@@ -124,13 +124,7 @@ export function useQueryComponentOptions(): [ any, (componentType: string) => Pr
               });
             });
             setDataSource(options);
-            // dataSource?.map((item: any, index: number) => {
-            //     options[item.componentName] = {
-            //       text: item.componentName,
-            //     };
-            //   });
-            // console.log('options11111', options);
-            // setDataSource(options);
+          
           } else {
             return [];
           }
