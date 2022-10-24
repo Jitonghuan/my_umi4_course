@@ -263,14 +263,7 @@ export default function DNSManageList(props: any) {
               total: pageInfo.total,
               pageSize: pageInfo.pageSize,
               showSizeChanger: true,
-              // onChange: (next) => setPageIndex(next),
-              // onShowSizeChange: (_, size) => {
-              //   debugger
-              //   setPageInfo({
-              //     pageIndex: 1,
-              //     pageSize: size,
-              //   });
-              // },
+             
               showTotal: () => `总共 ${pageInfo.total} 条数据`,
             }}
             onChange={pageSizeClick}

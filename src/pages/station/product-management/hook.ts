@@ -80,42 +80,6 @@ export function useDeleteIndent(): [boolean, (id: number) => Promise<void>] {
   return [loading, deleteIndent];
 }
 
-// 制品详情
-// export function useQueryIndentInfo(): [boolean, any, (id: number) => Promise<void>] {
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const [info, setInfo] = useState<any>({});
-//   const queryIndentInfo = async (id: number) => {
-//     setLoading(true);
-//     try {
-// await getRequest(`${APIS.queryIndentInfo}?id=${id}`)
-//         .then((res) => {
-//           if (res.success) {
-//             setInfo(
-//               res.data || {
-//                 indentName: '',
-//                 indentDescription: '',
-//                 productName: '',
-//                 productVersion: '',
-//                 deliveryProject: '',
-//                 indentPackageStatus: '',
-//                 indentPackageUrl: '',
-//                 gmtCreate: '',
-//               },
-//             );
-//           } else {
-//             return;
-//           }
-//         })
-//         .finally(() => {
-//           setLoading(false);
-//         });
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-//   return [loading, info, queryIndentInfo];
-// }
-
 // 制品描述编辑
 export function useEditDescription(): [boolean, (id: number, indentDescription: string) => Promise<void>] {
   const [loading, setLoading] = useState(false);
