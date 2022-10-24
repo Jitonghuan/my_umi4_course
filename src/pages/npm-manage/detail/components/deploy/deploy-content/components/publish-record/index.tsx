@@ -114,8 +114,8 @@ export default function PublishRecord(props: IProps) {
                 <div>
                   <label>发布状态: </label>
                   {
-                    <Tag color={recordDisplayMap[item?.deployStatus]?.color}>
-                      {recordDisplayMap[item?.deployStatus]?.text}
+                    <Tag color={recordDisplayMap[item?.deployStatus]?.color||"red"}>
+                      {recordDisplayMap[item?.deployStatus]?.text||"--"}
                     </Tag>
                   }
                 </div>
@@ -149,8 +149,8 @@ export default function PublishRecord(props: IProps) {
           </Descriptions.Item>
           <Descriptions.Item label="发布状态">
             {
-              <Tag color={recordDisplayMap[curRecord?.deployStatus]?.color}>
-                {recordDisplayMap[curRecord?.deployStatus]?.text}
+              <Tag color={recordDisplayMap[curRecord?.deployStatus]?.color||"red"}>
+                {recordDisplayMap[curRecord?.deployStatus]?.text||"--"}
               </Tag>
             }
           </Descriptions.Item>
