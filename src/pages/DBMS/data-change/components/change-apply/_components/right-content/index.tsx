@@ -3,7 +3,6 @@ import React, { useState} from 'react';
 import {  Tabs,message,Table, } from 'antd';
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import {checkSql} from '../../hook'
-import './index.less'
 interface Iprops{
   tableFields:any;
   createItems:any;
