@@ -1,0 +1,40 @@
+.info-alert{
+    width: 100%;
+    background-color: rgb(229, 243, 248);
+    padding: 4px;
+    >p{
+        width: 100%;
+        padding-left: 6px;
+      
+     }
+    p:nth-child(2), p:nth-child(4){
+        width: 100%;
+        overflow:hidden; 
+        padding-left: 6px;
+     //    white-space: nowrap;
+        text-overflow: ellipsis;
+    }   
+}
+.change-apply-form{
+    .ant-form-item{
+        margin-bottom: 4px;
+    }
+   .ant-form-item-label{
+        padding-bottom: 0px;
+    }
+
+}
+.nesting-form-item {
+    .ant-form-item-label > {
+      ::before {
+        display: inline-block;
+        margin-right: 4px;
+        color: #ff4d4f;
+        font-size: 14px;
+        font-family: SimSun, sans-serif;
+        line-height: 1;
+        content: '*';
+      }
+    }
+  }
+  

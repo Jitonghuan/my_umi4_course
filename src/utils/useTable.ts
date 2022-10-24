@@ -9,6 +9,7 @@ interface UseTableProps {
   form?: FormInstance;
   formatResult?: (result: any) => { total: number; list: any[] };
   formatter?: (record: any) => any;
+  setDataSource?: (record: any) => any;
 }
 
 const useTable = (props: UseTableProps) => {

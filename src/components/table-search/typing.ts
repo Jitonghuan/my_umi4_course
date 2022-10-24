@@ -24,6 +24,7 @@ export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
   key: any;
   type: TypeProps;
   dataIndex?: any;
+  renderLabel?:boolean;
   label?: string;
   option?: OptionProps[];
   checkboxOption?: CheckboxOptionProps[];
