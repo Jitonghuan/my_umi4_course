@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, List, Tooltip, message, Popconfirm } from 'antd';
 import { CheckCircleTwoTone, QuestionCircleFilled } from '@ant-design/icons';
-import CodeMirrorEditor from './CodeMirrorEditor';
-import MonacoEditorMerge from './MonacoEditorMerge';
 import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
@@ -97,6 +95,7 @@ export default function MergeConflict(prop: MergeProp) {
     <>
       <Modal
         title="冲突详情"
+        className="monaco-edit-dialog"
         visible={visible}
         onCancel={handleCancel}
         closable={!loading}
