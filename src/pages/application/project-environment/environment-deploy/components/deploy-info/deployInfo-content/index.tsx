@@ -23,7 +23,7 @@ import RollbackModal from '../components/rollback-modal';
 import { listAppEnvType } from '@/common/apis';
 import { LIST_STATUS_TYPE } from './schema';
 import DeploymentList from '../components/deployment-list';
-import {OPERATE_TYPE} from './schema'
+import { OPERATE_TYPE } from './schema'
 import './index.less';
 const rootCls = 'deploy-content-Info';
 export interface DeployContentProps {
@@ -64,7 +64,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [downloadLogform] = Form.useForm();
   const [isLogModalVisible, setIsLogModalVisible] = useState<boolean>(false);
   const [formInstance] = Form.useForm();
-  const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
+  const { appData, projectEnvCode, projectEnvName, benchmarkEnvCode } = useContext(DetailContext);
   const [appEnvCodeData, isLoading] = useAppEnvCodeData(appData?.appCode);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [envDatas, setEnvDatas] = useState<any[]>([]); //环境
@@ -364,7 +364,7 @@ export default function DeployContent(props: DeployContentProps) {
                         </Popconfirm> */}
               <div className="caption-right">
                 <Popconfirm title={`确定重启 ${appData?.appName}吗？`} onConfirm={restartEnsure}>
-                  <Button ghost>
+                  <Button >
                     重启
                   </Button>
                 </Popconfirm>
@@ -401,7 +401,7 @@ export default function DeployContent(props: DeployContentProps) {
                     onClick={() => {
                       history.replace({
                         pathname: 'container-info',
-                        search:`appCode=${appCode}&projectEnvCode=${currentEnvData}&projectEnvName=${projectEnvName}`
+                        search: `appCode=${appCode}&projectEnvCode=${currentEnvData}&projectEnvName=${projectEnvName}&benchmarkEnvCode=${benchmarkEnvCode}`
                         // query: {
                         //   appCode: appCode,
                         //   // envCode: currentEnvData,
@@ -410,14 +410,16 @@ export default function DeployContent(props: DeployContentProps) {
                         //   // viewLogEnvType: envTypeCode,
                         //   // initRecord:JSON.stringify(record)
                         // },
-                      },{
-                        infoRecord:{ appCode: appCode,
+                      }, {
+                        infoRecord: {
+                          appCode: appCode,
                           // envCode: currentEnvData,
                           projectEnvName: projectEnvName,
                           projectEnvCode: currentEnvData,
                           // viewLogEnvType: envTypeCode,
                           infoRecord: record,
                           id: appData?.id,
+                          benchmarkEnvCode: benchmarkEnvCode
                         }
                       });
                     }}
@@ -489,13 +491,13 @@ export default function DeployContent(props: DeployContentProps) {
                           history.push(
                             {
                               pathname: '/matrix/application/environment-deploy/viewLog',
-                              search:`appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`
-                            
-                            },{
-                                infoRecord: record,
-                              },
-                            
-                           
+                              search: `appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}&optType=deployInfo&deploymentName=${appData?.deploymentName}&benchmarkEnvCode=${benchmarkEnvCode}`
+
+                            }, {
+                            infoRecord: record,
+                          },
+
+
                           )
                         }
                       >
@@ -506,7 +508,7 @@ export default function DeployContent(props: DeployContentProps) {
                         type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/environment-deploy/loginShell?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
+                            `/matrix/application/environment-deploy/loginShell?appCode=${appData?.appCode}&projectEnvCode=${currentEnvData}&instName=${record?.instName}&projectEnvName=${projectEnvName}&optType=deployInfo&deploymentName=${appData?.deploymentName}&benchmarkEnvCode=${benchmarkEnvCode}`,
                           );
                         }}
                       >
@@ -527,11 +529,11 @@ export default function DeployContent(props: DeployContentProps) {
                       <Popconfirm
                         title="确定要删除该信息吗？"
                         onConfirm={() => {
-                          deleteInstance(appData?.appCode, currentEnvData, record.instName).then(()=>{
+                          deleteInstance(appData?.appCode, currentEnvData, record.instName).then(() => {
                             queryInstanceList(appData?.appCode, currentEnvData);
                             queryAppOperateLog(currentEnvData);
                           });
-                         
+
                         }}
                       >
                         <Button size="small" type="default" >
@@ -574,8 +576,8 @@ export default function DeployContent(props: DeployContentProps) {
                   <p>
                     <span>操作事件：</span>
                     <b>
-                    <Tag color= {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.color||"default"}>
-                        {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.tagText||"--"}
+                      <Tag color={OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.color || "default"}>
+                        {OPERATE_TYPE[item.operateEvent?.toLowerCase()]?.tagText || "--"}
                       </Tag>
                     </b>
                   </p>

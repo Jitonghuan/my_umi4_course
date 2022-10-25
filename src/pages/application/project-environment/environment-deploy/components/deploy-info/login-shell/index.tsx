@@ -6,7 +6,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Select, Form, Button, message, Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from '../deployInfo-content/service';
-import { history ,useLocation} from 'umi';
+import { history, useLocation } from 'umi';
 import { getRequest } from '@/utils/request';
 import { Terminal } from 'xterm';
 import { parse } from 'query-string';
@@ -16,8 +16,8 @@ import { FeContext } from '@/common/hooks';
 import './index.less';
 
 export default function loginShell(props: any) {
-  let location:any = useLocation();
-  const query :any= parse(location.search);
+  let location: any = useLocation();
+  const query: any = parse(location.search);
   const { appCode, projectEnvCode, envCode, optType, containerName, deploymentName } = query;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const instName = query.instName;
@@ -134,7 +134,7 @@ export default function loginShell(props: any) {
   // 关闭页面时注销掉监听事件
   useEffect(() => {
     return () => {
-      window.removeEventListener('resize', function () {});
+      window.removeEventListener('resize', function () { });
     };
   }, []);
   const closeSocket = () => {

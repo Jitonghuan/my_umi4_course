@@ -4,14 +4,14 @@ import { columns, creatContainerColumns } from '../components/deployment-list/co
 import { ContentCard } from '@/components/vc-page-content';
 import { LIST_STATUS_TYPE } from '../deployInfo-content/schema';
 import { useGetPodEventList, useListContainer } from './hook';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import { parse } from 'query-string';
 import './index.less';
 
 export default function ContainerInfo(props: any) {
-  let location:any = useLocation();
+  let location: any = useLocation();
   const query = parse(location.search);
-  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id, projectEnvName } =location.state?.infoRecord || {};
+  const { infoRecord, appCode, projectEnvCode, viewLogEnvType, id, projectEnvName, benchmarkEnvCode } = location.state?.infoRecord || {};
   const [podLoading, podListSource, setPodListSource, getPodEventList] = useGetPodEventList();
   const [queryContainer, queryContainerData, loading] = useListContainer();
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function ContainerInfo(props: any) {
         // );
         history.push({
           pathname: `/matrix/application/environment-deploy/viewLog`,
-          search:`appCode=${appCode}&projectEnvCode=${projectEnvCode}&instName=${infoRecord?.instName}&projectEnvName=${projectEnvName}&optType=containerInfo&containerName=${record?.containerName}`
+          search: `appCode=${appCode}&projectEnvCode=${projectEnvCode}&instName=${infoRecord?.instName}&projectEnvName=${projectEnvName}&optType=containerInfo&containerName=${record?.containerName}&benchmarkEnvCode=${benchmarkEnvCode}`
           // query: {
           //   appCode: appCode,
           //   projectEnvCode: projectEnvCode,
@@ -57,12 +57,12 @@ export default function ContainerInfo(props: any) {
         },
           {
             infoRecord: infoRecord,
-        
-        });
+
+          });
       },
       onLoginShellClick: (record, index) => {
         history.push(
-          `/matrix/application/environment-deploy/loginShell?appCode=${appCode}&projectEnvCode=${projectEnvCode}&instName=${infoRecord?.instName}&containerName=${record?.containerName}&projectEnvName=${projectEnvName}&optType=containerInfo`,
+          `/matrix/application/environment-deploy/loginShell?appCode=${appCode}&projectEnvCode=${projectEnvCode}&instName=${infoRecord?.instName}&containerName=${record?.containerName}&projectEnvName=${projectEnvName}&optType=containerInfo&benchmarkEnvCode=${benchmarkEnvCode}`,
         );
       },
     }) as any;
@@ -81,7 +81,7 @@ export default function ContainerInfo(props: any) {
             onClick={() => {
               history.replace({
                 pathname: `deployInfo`,
-                search:`viewLogEnv=${projectEnvCode || ''}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}&type=viewLog_goBack&id=${id}&appCode=${appCode}`,
+                search: `viewLogEnv=${projectEnvCode || ''}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}&type=viewLog_goBack&id=${id}&appCode=${appCode}&benchmarkEnvCode=${benchmarkEnvCode}`,
                 // query: {
                 //   viewLogEnv: projectEnvCode || '',
                 //   projectEnvCode: projectEnvCode,
