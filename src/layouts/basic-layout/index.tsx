@@ -82,17 +82,8 @@ export default function Layout(props: any) {
   const [initFlg, setInitFlg] = useState(false);
   const isPageInIFrame = () => window.self !== window.top;
   const rootCls = 'header-version-info';
-  const BrowserLogger = require('alife-logger');
-  const __bl = BrowserLogger.singleton(
-  {
-    pid:"as3svidxph@1d112f901021e56",
-    appType:"web",
-    imgUrl:"https://arms-retcode.aliyuncs.com/r.png?",
-    sendResource:true,
-    enableLinkTrace:true,
-    behavior:true
-  }
-);
+ 
+
 
 
   const oneKeyRead = (idsArry: any) => {
@@ -134,9 +125,20 @@ export default function Layout(props: any) {
       routes: [...routelist],
     },
   ]
-  
-  // 遍历所有路由
-  const getRouterList = (item: any, list: any) => {
+  if(appConfig.BUILD_ENV==="prod"&&appConfig.IS_Matrix==="public"){
+    const BrowserLogger = require('alife-logger');
+    const __bl = BrowserLogger.singleton(
+    {
+      pid:"as3svidxph@1d112f901021e56",
+      appType:"web",
+      imgUrl:"https://arms-retcode.aliyuncs.com/r.png?",
+      sendResource:true,
+      enableLinkTrace:true,
+      behavior:true
+    }
+  );
+   // 遍历所有路由
+   const getRouterList = (item: any, list: any) => {
     item.routes.map((data: any) => {
       if (data.routes) {
         getRouterList(data, list);
@@ -163,7 +165,7 @@ export default function Layout(props: any) {
     const routeList = list.find(
       (res: any) => location.pathname.indexOf(res.label) != -1
     );
-
+  
     __bl.setConfig({
       uid:userInfo?.staffId,
       page:routeList?.name,
@@ -174,6 +176,11 @@ export default function Layout(props: any) {
   
   
   }
+  
+  
+  }
+  
+ 
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
