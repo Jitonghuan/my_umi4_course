@@ -46,7 +46,7 @@ export function useAuditTicket(): [
       await postRequest(APIS.runSqlApi, { data: paramsObj })
         .then((result) => {
           if (result?.success) {
-            message.success('审批成功！');
+            message.success('执行成功！');
           } else {
             return;
           }

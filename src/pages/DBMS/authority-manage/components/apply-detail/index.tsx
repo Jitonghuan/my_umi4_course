@@ -11,6 +11,7 @@ import TableForm from '../apply-detail/_components/table-form';
 import LimitForm from '../apply-detail/_components/limit-form';
 import LibraryOwnerForm from '../apply-detail/_components/library-owner-form';
 import {useCreatePriv} from './hook';
+import { history } from 'umi';
 import moment from "moment";
 import {useEnvList,useInstanceList,useQueryDatabasesOptions} from '../../../common-hook'
 export interface CreateArticleProps {
@@ -18,6 +19,7 @@ export interface CreateArticleProps {
   curRecord?: any;
   onClose: () => any;
   onSave: () => any;
+  noPowerData:any;
 }
 
 export default function CreateArticle(props: CreateArticleProps) {
@@ -28,33 +30,59 @@ export default function CreateArticle(props: CreateArticleProps) {
   const [instanceLoading, instanceOptions, getInstanceList]=useInstanceList();
   const [databasesOptionsLoading,databasesOptions,queryDatabases,setSource]=useQueryDatabasesOptions()
 
-  const { mode, curRecord, onClose, onSave } = props;
+  const { mode, curRecord, onClose, onSave,noPowerData } = props;
   const [value, setValue] = useState("database");
   const [flag,setFlag]=useState<string>("");
   const [count,setCount]=useState<number>(0)
   const [instanceId,setInstanceId]=useState<any>();
+  const [dbCode,setDBCode]=useState<any>();
   useEffect(() => {
     if (mode === 'HIDE' ) return;
+
     queryEnvList()
     // getInstanceList()
     // setValue("")
-    setValue("database")
+    if(Object.keys(noPowerData)?.length>0){
+      setValue("table")
+
+      createForm?.setFieldsValue({
+        ...noPowerData,
+        instanceId:noPowerData?.instance,
+        dbList:noPowerData?.dbCode,
+        privWfType:"table"
+
+      })
+      getInstanceList(noPowerData?.envCode)
+      queryDatabases({instanceId:noPowerData?.instance})
+      setDBCode(noPowerData?.dbCode)
+      setInstanceId(noPowerData?.instance)
+
+
+
+    }else{
+      setValue("database")
+    }
+
     return()=>{
       setFlag("");
       createForm.resetFields()
       setSource([])
       setValue("")
       setCount(0)
+      setDBCode("")
   
     }
     
   }, [mode]);
+
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
     const values = createForm.getFieldsValue() || {};
     const valueList = Object.keys(values).map((v) => v);
     createForm.resetFields([...valueList.filter((v) => v !== 'privWfType')]);
     setValue(value);
     setSource([])
+    setDBCode("")
+   
   };
   
 const submit=async(params:any)=>{
@@ -104,7 +132,7 @@ const submit=async(params:any)=>{
         validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
         validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
         }).then(()=>{
-        onSave()
+        onSave()  
       })
     
     }
@@ -177,10 +205,12 @@ const submit=async(params:any)=>{
       <Button type="primary" loading={createLoading} onClick={()=>{
         setFlag("submit")
         setCount(count=>count+1)
+        
         }}>
         提交申请
       </Button>
-      <Button type="default" onClick={onClose}>
+      <Button type="default" onClick={()=>{
+        onClose();}}>
         取消
       </Button>
     </div>
@@ -232,6 +262,8 @@ const submit=async(params:any)=>{
         databasesOptionsLoading={databasesOptionsLoading}
         flag={flag} submit={(params:any)=>submit(params)}
         createFormRef={createFormRef}
+        dbCode={dbCode}
+        formType={value}
       
         />}
         {/* 库owner权限 */}
