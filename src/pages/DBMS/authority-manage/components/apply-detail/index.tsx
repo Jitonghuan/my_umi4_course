@@ -73,14 +73,14 @@ export default function CreateArticle(props: CreateArticleProps) {
     }
     
   }, [mode]);
-const [chanegTab,setChanegTab]=useState<any>("")
+
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
     const values = createForm.getFieldsValue() || {};
     const valueList = Object.keys(values).map((v) => v);
     createForm.resetFields([...valueList.filter((v) => v !== 'privWfType')]);
     setValue(value);
     setSource([])
-    setChanegTab(value)
+   
   };
   
 const submit=async(params:any)=>{
