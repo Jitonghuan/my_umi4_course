@@ -82,6 +82,17 @@ export default function Layout(props: any) {
   const [initFlg, setInitFlg] = useState(false);
   const isPageInIFrame = () => window.self !== window.top;
   const rootCls = 'header-version-info';
+  const BrowserLogger = require('alife-logger');
+  const __bl = BrowserLogger.singleton(
+  {
+    pid:"as3svidxph@1d112f901021e56",
+    appType:"web",
+    imgUrl:"https://arms-retcode.aliyuncs.com/r.png?",
+    sendResource:true,
+    enableLinkTrace:true,
+    behavior:true
+  }
+);
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
       loadUnreadNum();
