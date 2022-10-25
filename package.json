@@ -57,6 +57,7 @@
     "@umijs/hooks": "~1.9.3",
     "ace-diff": "^3.0.3",
     "ahooks": "~2.10.8",
+    "alife-logger": "^1.8.30",
     "ansi-up": "^1.0.0",
     "bizcharts": "^4.1.16",
     "classnames": "~2.3.1",
