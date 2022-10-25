@@ -309,14 +309,28 @@ export default function LoggerSearch(props: any) {
           let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
 
           setLogSearchTableInfo(logSearchTableInfodata);
+          let newArryData:any=[]
+          let mapArry=viewLogSearchTabInfo?.slice(0)
+          console.log("----mapArry----",mapArry)
+          mapArry?.map((element:any)=>{
+            let newInfo=element?.slice(0)//对象
+            let index= newInfo?.indexOf("traceId")
+            console.log("----element----",element)
+            if(element.hasOwnProperty("traceId")){
+              element.splice(index,1)
+              element.unshift(newInfo[index])
+  
+            }
+           
+            newArryData.push(element)
 
-          let newInfo=viewLogSearchTabInfo?.slice(0)
-          let index= newInfo?.indexOf("traceId")
-          if(index!==-1){
-            viewLogSearchTabInfo
+           
 
-          }
-          setViewlogSeaechTabInfo(viewLogSearchTabInfo);
+          })
+
+         
+
+          setViewlogSeaechTabInfo(newArryData);
           //命中率
           let hitNumber = resp.data.total;
           setHitInfo(hitNumber);
