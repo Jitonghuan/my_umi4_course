@@ -11,6 +11,7 @@ import TableForm from '../apply-detail/_components/table-form';
 import LimitForm from '../apply-detail/_components/limit-form';
 import LibraryOwnerForm from '../apply-detail/_components/library-owner-form';
 import {useCreatePriv} from './hook';
+import { history } from 'umi';
 import moment from "moment";
 import {useEnvList,useInstanceList,useQueryDatabasesOptions} from '../../../common-hook'
 export interface CreateArticleProps {
@@ -80,6 +81,7 @@ export default function CreateArticle(props: CreateArticleProps) {
     createForm.resetFields([...valueList.filter((v) => v !== 'privWfType')]);
     setValue(value);
     setSource([])
+    setDBCode("")
    
   };
   
@@ -130,7 +132,7 @@ const submit=async(params:any)=>{
         validStartTime:moment(params?.validStartTime*1000).format('YYYY-MM-DD HH:mm:ss'),
         validEndTime:moment(params?.validEndTime*1000).format('YYYY-MM-DD HH:mm:ss'),
         }).then(()=>{
-        onSave()
+        onSave()  
       })
     
     }
@@ -203,10 +205,12 @@ const submit=async(params:any)=>{
       <Button type="primary" loading={createLoading} onClick={()=>{
         setFlag("submit")
         setCount(count=>count+1)
+        
         }}>
         提交申请
       </Button>
-      <Button type="default" onClick={onClose}>
+      <Button type="default" onClick={()=>{
+        onClose();}}>
         取消
       </Button>
     </div>

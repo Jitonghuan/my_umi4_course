@@ -1,6 +1,7 @@
 import React, { useState, useMemo,useEffect } from 'react';
 import {Form, Button, Space,Table,Select,Input } from 'antd';
 import { getRequest } from '@/utils/request';
+import { history} from 'umi';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { createTableColumns,createFormItems,currentStatusOptions ,privWfTypeOptions,currentApplyStatusOptions} from './schema';
 import TicketDetail from '../../components/ticket-detail';
@@ -132,9 +133,27 @@ return(<div className="authority-apply">
  
    <ApplyDetailDrawer
    mode={applyDetailMode}
-   onClose={()=>{setApplyDetailMode("HIDE")}}
-   onSave={()=>{setApplyDetailMode("HIDE");
+   onClose={()=>{setApplyDetailMode("HIDE");  if(Object.keys(initInfo?.noPowerData)?.length>0){
+    // setTimeout(() => {
+   
+      history.push({
+        pathname:"/matrix/DBMS/authority-manage/authority-apply",
+        
+
+      },{}) }}}
+   onSave={()=>{
+     setApplyDetailMode("HIDE");
+     if(Object.keys(initInfo?.noPowerData)?.length>0){
+      // setTimeout(() => {
+     
+        history.push({
+          pathname:"/matrix/DBMS/authority-manage/authority-apply",
+          
+
+        },{}) }
+
    queryList();
+   
    }}
    noPowerData={initInfo?.noPowerData||{}}
 

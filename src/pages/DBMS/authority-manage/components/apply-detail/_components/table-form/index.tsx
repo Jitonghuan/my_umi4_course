@@ -55,16 +55,16 @@ useEffect(()=>{
     queryTables({dbCode:dbCode,instanceId:instanceId})
   }
   return()=>{
-    console.log("formType000",formType)
+ 
     setTablesSource([])
   }
 
 },[])
 
 useEffect(()=>{
-  console.log("11111",formType)
+ 
  if(formType!=="table"){
-  console.log("formType",formType)
+
   setTablesSource([])
  } 
 },[formType])
