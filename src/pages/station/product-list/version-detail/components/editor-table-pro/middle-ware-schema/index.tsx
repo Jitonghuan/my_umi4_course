@@ -20,6 +20,7 @@ export const createMiddlewareTableColumns = (params: {
     componentOptions:any;
     componentVersionOptions:any
     namespaceOption:any;
+    type:string;
   }) => {
     return [
       {
@@ -49,6 +50,7 @@ export const createMiddlewareTableColumns = (params: {
                 options={ params?.componentOptions}
                 showSearch
                 allowClear
+                disabled={params?.type==="edit"}
                 labelInValue
                 optionFilterProp="label"
                 onChange={(param: any) => {

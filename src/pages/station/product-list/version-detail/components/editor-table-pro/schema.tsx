@@ -22,7 +22,8 @@ export const createProTableColumns = (params: {
   bucketsOption:any,
   belongOption:any,
   bucketLoading:boolean,
-  belongLoading:boolean
+  belongLoading:boolean,
+  type:string
   onEdit: (text:React.ReactNode, record: any, _:any, action:any) => void;
   onDelete: (text:React.ReactNode, record: any, _:any, action:any) => void;
   onChange:(param:any,config:any)=>void;
@@ -58,6 +59,7 @@ export const createProTableColumns = (params: {
               showSearch
               allowClear
               labelInValue
+              disabled={params?.type==="edit"}
               optionFilterProp="label"
               onChange={(param: any) => {
                 params?.onChange(param,config)

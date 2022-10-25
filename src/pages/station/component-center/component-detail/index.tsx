@@ -11,6 +11,7 @@ import { PlusCircleOutlined} from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import UserModal from '../components/UserModal';
 import BasicDataModal from '../components/basicDataModal';
+import FrontAddModal from '../components/frontAddModal';
 import {
   Form,
   Tabs,
@@ -67,6 +68,7 @@ export default function ComponentDetail() {
   const [curVersion, setCurVersion] = useState<any>({});
   const [userModalVisiable, setUserModalVisiable] = useState<boolean>(false);
   const [basicDataModalVisiable, setBasicDataModalVisiable] = useState<boolean>(false);
+  const [feModalVisiable, setFeModalVisiable] = useState<boolean>(false);
   const [selectLoading, productLineOptions, getProductlineList] = useQueryProductlineList();
   const [addVersionDisabled, setAddVersionDisabled] = useState<boolean>(false);
   const [mode,setMode]=useState<EditorMode>("HIDE");
@@ -267,7 +269,20 @@ export default function ComponentDetail() {
           getComponentVersionList(initRecord.id);
         }}
       />
+      <FrontAddModal
+        visable={feModalVisiable}
+        tabActiveKey={componentType}
+        curProductLine={initRecord.productLine}
+        curVersion={curVersion.version}
+        initData={initRecord || {}}
+        queryComponentList={({ componentType: componentType }) => queryComponentList({ componentType: componentType })}
+        onClose={() => {
+          setFeModalVisiable(false);
+          getComponentVersionList(initRecord.id);
+        }}
 
+      />
+  
       <ContentCard className="component-detail">
         <div className="table-caption">
           <div className="caption-left">
@@ -291,6 +306,9 @@ export default function ComponentDetail() {
                   }
                   if (componentType === 'sql') {
                     setBasicDataModalVisiable(true);
+                  }
+                  if (componentType === 'feResources') {
+                    setFeModalVisiable(true);
                   }
                 }}
               >
