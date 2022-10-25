@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useEffect, useRef,useCallback } from 'react';
-import { Transfer,Form} from 'antd';
+import { Transfer,Form,message} from 'antd';
 import type { TransferDirection } from 'antd/es/transfer';
 import './index.less'
 export interface ShuttleFrameProps {
@@ -19,6 +19,7 @@ export interface ShuttleFrameProps {
     canAddSource:RecordType[];
     alreadyAddTargets:RecordType[];
     onOk:(targetSource:any)=>any;
+    limit?:number
 
   }
 export interface RecordType {
@@ -27,13 +28,14 @@ export interface RecordType {
     description?: string;
     chosen?: boolean;
     value?:string;
+    limit:number
   }
 
 
   
 export default function ShuttleFrame(props:ShuttleFrameProps){
     const [addForm] = Form.useForm();
-    const {showSearch,title,render,disabled,canAddSource,alreadyAddTargets,onOk} =props;
+    const {showSearch,title,render,disabled,canAddSource,alreadyAddTargets,onOk,limit} =props;
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<any>([]); //已经选择的key值
     const [alreadyAddDatas, setAlreadyAddDatas] = useState<any>([]); //已选择数据
@@ -109,8 +111,21 @@ export default function ShuttleFrame(props:ShuttleFrameProps){
   
   const getfilterOption = (inputValue: string, option: any) => option?.title?.indexOf(inputValue) > -1;
   const handleChange = (newTargetKeys: string[],direction: any, moveKeys: any) => {
-    setTargetKeys(newTargetKeys);
-    handleOk()
+   
+    if(limit&&limit>0){
+      if(newTargetKeys?.length>limit){
+        message.warning("请不要选择超过20条数据！")
+      }else{
+        setTargetKeys(newTargetKeys);
+        handleOk()
+      }
+
+
+    }else{
+      setTargetKeys(newTargetKeys);
+      handleOk()
+    }
+   
   };
 
   const handleSearch = (dir: TransferDirection, value: string) => {
@@ -119,6 +134,7 @@ export default function ShuttleFrame(props:ShuttleFrameProps){
   
 
   const onSelectChange = (sourceSelectedKeys: any, targetSelectedKeys: any) => {
+  
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
   };
   useEffect(()=>{
@@ -151,6 +167,7 @@ export default function ShuttleFrame(props:ShuttleFrameProps){
 
     return(<>
       <Form form={addForm}>
+        <p style={{color:"#A9A9A9"}} >{limit&&limit>0?`请不要选择超过${limit}条数据！`:null}</p>
         <Form.Item  name="transferItem" noStyle>
           <Transfer
             dataSource={sourceListData}

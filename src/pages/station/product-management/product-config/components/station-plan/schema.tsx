@@ -42,7 +42,9 @@ export const nodesSchema = ({ onEditClick }: { onEditClick: (record: any, index:
     },
     {
         title: '用途',
-        dataIndex: 'dataDisk',
+        dataIndex: 'nodePurpose',
+        render: (data: any, record: any, index: number) => <span>{data?.join(',')||"--"}</span>,
+
       },
     {
       title: '操作',

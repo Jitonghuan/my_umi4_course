@@ -13,6 +13,7 @@ const { TabPane } = Tabs;
 export default function AuthorityManage(){
     let location = useLocation();
     const query = parse(location.search);
+    const initInfo: any = location.state || {};
     const [tabKey, setTabKey] = useState<any>('authority-apply');
     useEffect(()=>{
       if(query?.detail==="true"&&query?.id){
@@ -23,12 +24,23 @@ export default function AuthorityManage(){
           
         });
 
+      }else if(initInfo?.applyDetail){
+        history.push({
+          pathname:  `/matrix/DBMS/authority-manage/authority-apply`,
+          
+        },{
+          applyDetail:true,
+          noPowerData:{
+                                            ...initInfo?.noPowerData
+                          }
+
+        });
+
       }else{
         history.push({
           pathname:  `/matrix/DBMS/authority-manage/authority-apply`,
           
         });
-
       }
       
 

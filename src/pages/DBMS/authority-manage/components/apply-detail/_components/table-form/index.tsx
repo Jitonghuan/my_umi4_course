@@ -19,11 +19,13 @@ export interface IProps {
   instanceId:number
   count:number
   createFormRef:any
+  dbCode:string
+  formType:string
 
  
 }
 export default function LibraryForm (props:IProps,ref:any){
-  const {databasesOptions,databasesOptionsLoading,submit,flag,instanceId,count,createFormRef}=props;
+  const {databasesOptions,databasesOptionsLoading,submit,flag,dbCode,instanceId,count,createFormRef,formType}=props;
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [targetSource,setTargetSource]=useState<any>([]);
   const [type,setType]=useState<string>("time-interval")
@@ -43,10 +45,29 @@ useEffect(()=>{
    
 
   }
+
  return()=>{
   
  }
 },[flag,count])
+useEffect(()=>{
+  if(dbCode){
+    queryTables({dbCode:dbCode,instanceId:instanceId})
+  }
+  return()=>{
+ 
+    setTablesSource([])
+  }
+
+},[])
+
+useEffect(()=>{
+ 
+ if(formType!=="table"){
+
+  setTablesSource([])
+ } 
+},[formType])
 const onClear=()=>{
   setStartTime(null)
   setEndTime(null)
@@ -76,7 +97,7 @@ const onClear=()=>{
     {/* <Form labelCol={{ flex: '110px' }}> */}
     <Form.Item label="目标库" name="dbList" rules={[{ required: true, message: '请选择' }]}>
           <Select options={databasesOptions} loading={databasesOptionsLoading} allowClear showSearch onChange={(dbCode)=>{
-            queryTables({dbCode,instanceId:instanceId})
+           queryTables({dbCode,instanceId:instanceId})
             setTablesSource([])}} style={{width:220}}/>
           
         </Form.Item>
@@ -87,6 +108,7 @@ const onClear=()=>{
            canAddSource={tablesOptions}
            alreadyAddTargets={[]}
            onOk={(targetSource:any)=>{ setTargetSource(targetSource)}}
+           limit={20}
          />
           
         </Form.Item>

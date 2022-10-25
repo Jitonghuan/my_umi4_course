@@ -145,7 +145,7 @@ export default function ResizeLayout() {
   };
   const createSqlApply = useCallback(async (params: querySqlItems) => {
     const createItems = form?.getFieldsValue()
-    if (!endTime || !startTime || !createItems?.title || !createItems?.instanceId || !createItems?.dbCode || !params?.sqlContent||!value) {
+    if (!endTime || !startTime || !createItems?.title || !createItems?.instanceId || !createItems?.dbCode || !params?.sqlContent) {
       message.warning("请先进行信息填写且输入sql语句再提交变更！")
       return
 
