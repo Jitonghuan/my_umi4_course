@@ -133,7 +133,7 @@ return(<div className="authority-apply">
  
    <ApplyDetailDrawer
    mode={applyDetailMode}
-   onClose={()=>{setApplyDetailMode("HIDE");  if(Object.keys(initInfo?.noPowerData)?.length>0){
+   onClose={()=>{setApplyDetailMode("HIDE");  if(initInfo?.noPowerData&&Object.keys(initInfo?.noPowerData)?.length>0){
     // setTimeout(() => {
    
       history.push({
@@ -143,16 +143,15 @@ return(<div className="authority-apply">
       },{}) }}}
    onSave={()=>{
      setApplyDetailMode("HIDE");
-     if(Object.keys(initInfo?.noPowerData)?.length>0){
-      // setTimeout(() => {
-     
+     queryList();
+     if(initInfo?.noPowerData&&Object.keys(initInfo?.noPowerData)?.length>0){
         history.push({
           pathname:"/matrix/DBMS/authority-manage/authority-apply",
           
 
         },{}) }
 
-   queryList();
+    
    
    }}
    noPowerData={initInfo?.noPowerData||{}}

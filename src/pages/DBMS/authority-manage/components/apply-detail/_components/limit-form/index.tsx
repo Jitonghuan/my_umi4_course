@@ -79,6 +79,7 @@ const onClear=()=>{
            canAddSource={tablesOptions}
            alreadyAddTargets={[]}
            onOk={(targetSource:any)=>{setTargetSource(targetSource)}}
+           limit={20}
          />
           
         </Form.Item>
