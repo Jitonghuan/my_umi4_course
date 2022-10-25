@@ -307,7 +307,15 @@ export default function LoggerSearch(props: any) {
           //手风琴下拉框数据 hits
           let logSearchTableInfodata = resp.data.logs;
           let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
+
           setLogSearchTableInfo(logSearchTableInfodata);
+
+          let newInfo=viewLogSearchTabInfo?.slice(0)
+          let index= newInfo?.indexOf("traceId")
+          if(index!==-1){
+            viewLogSearchTabInfo
+
+          }
           setViewlogSeaechTabInfo(viewLogSearchTabInfo);
           //命中率
           let hitNumber = resp.data.total;
@@ -638,8 +646,9 @@ export default function LoggerSearch(props: any) {
                                       }}
                                 >
                                   <TabPane tab="表" key="1">
+                                
                                     {Object.keys(item)?.map((key: any) => {
-                                      return key === '@timestamp' ? (
+                                      return(  key === '@timestamp' ? (
                                         <p className="tab-header">
                                           <span className="tab-left">@timestamp:</span>
                                           <span
@@ -672,7 +681,7 @@ export default function LoggerSearch(props: any) {
                                             }}
                                           ></span>
                                         </p>
-                                      );
+                                      ))
                                     })}
                                   </TabPane>
                                   <TabPane tab="JSON" key="2">
