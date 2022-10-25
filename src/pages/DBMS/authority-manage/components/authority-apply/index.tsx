@@ -129,6 +129,7 @@ return(<div className="authority-apply">
 }
 
    />
+ 
    <ApplyDetailDrawer
    mode={applyDetailMode}
    onClose={()=>{setApplyDetailMode("HIDE")}}

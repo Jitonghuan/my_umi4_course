@@ -20,11 +20,12 @@ export interface IProps {
   count:number
   createFormRef:any
   dbCode:string
+  formType:string
 
  
 }
 export default function LibraryForm (props:IProps,ref:any){
-  const {databasesOptions,databasesOptionsLoading,submit,flag,dbCode,instanceId,count,createFormRef}=props;
+  const {databasesOptions,databasesOptionsLoading,submit,flag,dbCode,instanceId,count,createFormRef,formType}=props;
   const [tablesOptionsLoading,tablesOptions, queryTables,setTablesSource]=useQueryTablesOptions();
   const [targetSource,setTargetSource]=useState<any>([]);
   const [type,setType]=useState<string>("time-interval")
@@ -53,8 +54,19 @@ useEffect(()=>{
   if(dbCode){
     queryTables({dbCode:dbCode,instanceId:instanceId})
   }
+  return()=>{
+    setTablesSource([])
+  }
 
 },[])
+console.log("formType000",formType)
+useEffect(()=>{
+  console.log("11111",formType)
+ if(formType!=="table"){
+  console.log("formType",formType)
+  setTablesSource([])
+ } 
+},[formType])
 const onClear=()=>{
   setStartTime(null)
   setEndTime(null)

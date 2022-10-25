@@ -43,14 +43,18 @@ export default function CreateArticle(props: CreateArticleProps) {
     // setValue("")
     if(Object.keys(noPowerData)?.length>0){
       setValue("table")
+
       createForm?.setFieldsValue({
         ...noPowerData,
         instanceId:noPowerData?.instance,
-        dbList:noPowerData?.dbCode
+        dbList:noPowerData?.dbCode,
+        privWfType:"table"
+
       })
       getInstanceList(noPowerData?.envCode)
       queryDatabases({instanceId:noPowerData?.instance})
       setDBCode(noPowerData?.dbCode)
+      setInstanceId(noPowerData?.instance)
 
 
 
@@ -69,13 +73,14 @@ export default function CreateArticle(props: CreateArticleProps) {
     }
     
   }, [mode]);
-
+const [chanegTab,setChanegTab]=useState<any>("")
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
     const values = createForm.getFieldsValue() || {};
     const valueList = Object.keys(values).map((v) => v);
     createForm.resetFields([...valueList.filter((v) => v !== 'privWfType')]);
     setValue(value);
     setSource([])
+    setChanegTab(value)
   };
   
 const submit=async(params:any)=>{
@@ -254,6 +259,7 @@ const submit=async(params:any)=>{
         flag={flag} submit={(params:any)=>submit(params)}
         createFormRef={createFormRef}
         dbCode={dbCode}
+        formType={value}
       
         />}
         {/* 库owner权限 */}
