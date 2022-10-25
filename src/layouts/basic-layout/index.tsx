@@ -129,6 +129,13 @@ export default function Layout(props: any) {
     const BrowserLogger = require('alife-logger');
     const __bl = BrowserLogger.singleton(
     {
+      //忽略报错信息
+      ignore: {
+        ignoreErrors: [
+          'ResizeObserver loop limit exceeded',
+          'ResizeObserver loop completed with undelivered notifications.',
+        ],
+      },
       pid:"as3svidxph@1d112f901021e56",
       appType:"web",
       imgUrl:"https://arms-retcode.aliyuncs.com/r.png?",
