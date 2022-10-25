@@ -442,7 +442,11 @@ const updateData=(value:any,error?:string,time?:string)=>{
                                     {resultErrorMsg===`你没有[${relayInfo?.tableCode}]表的查询权限`&&<a onClick={()=>{
                                     history.push({
                                         pathname:"/matrix/DBMS/authority-manage/authority-apply",
-                                    },{applyDetail:true})
+                                    },{applyDetail:true,
+                                        noPowerData:{
+                                            ...relayInfo
+                                        }
+                                    })
                                 }}>点击快速申请权限</a>}</>} size="small">
                                     <p>{resultErrorMsg}<span></span></p>
                                 </Card>

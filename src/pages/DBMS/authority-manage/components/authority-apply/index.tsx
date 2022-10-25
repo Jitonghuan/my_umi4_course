@@ -133,8 +133,9 @@ return(<div className="authority-apply">
    mode={applyDetailMode}
    onClose={()=>{setApplyDetailMode("HIDE")}}
    onSave={()=>{setApplyDetailMode("HIDE");
-   queryList()
-}}
+   queryList();
+   }}
+   noPowerData={initInfo?.noPowerData||{}}
 
    />
    <FilterCard>
