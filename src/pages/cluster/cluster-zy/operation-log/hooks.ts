@@ -19,7 +19,7 @@ export function useLogSource(searchParams: any, pageIndex: number, pageSize: num
         data: { ...searchParams, pageIndex, pageSize },
       });
 
-      let resultData = result.data || {};
+      let resultData = result?.data || {};
       if (Array.isArray(resultData)) {
         resultData = { dataSource: resultData, pageInfo: { total: resultData.length } };
       }

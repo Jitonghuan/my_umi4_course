@@ -17,7 +17,7 @@ export function useABHistogram(): [AnyObject, boolean, (showLoading?: boolean) =
     showLoading && setLoading(true);
     return getRequest(APIS.getClustersEsData)
       .then((result) => {
-        setHistogramData(result.data || {});
+        setHistogramData(result?.data || {});
       })
       .finally(() => {
         setLoading(false);
@@ -64,7 +64,7 @@ export function useClusterA(): [any, boolean, (showLoading?: boolean) => Promise
 
     return getRequest(APIS.getAClusterEsData)
       .then((result) => {
-        let dataList = result.data;
+        let dataList = result?.data;
         let timeStampList = [];
         let clusterADataList = [];
         let clusterAZJ = [];
@@ -138,7 +138,7 @@ export function useClusterB(): [any, boolean, (showLoading?: boolean) => Promise
 
     return getRequest(APIS.getBClusterEsData)
       .then((result) => {
-        let dataList = result.data;
+        let dataList = result?.data;
         let timeStampList = [];
         let clusterBDataList = [];
         let clusterAZJ = [];
