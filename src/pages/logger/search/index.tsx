@@ -21,6 +21,7 @@ import { history,useLocation } from 'umi';
 import { parse } from 'query-string';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
+import _ from 'lodash';
 import { postRequest } from '@/utils/request';
 import { QuestionCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
@@ -71,7 +72,7 @@ export default function LoggerSearch(props: any) {
   }
   const [stowCondition, setStowCondition] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
-  const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
+  const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>([]); //手风琴下拉框数据 hits
   const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
   const [hitInfo, setHitInfo] = useState<string>(''); //命中次数
   const [envCode, setEnvCode] = useState<string>(''); //环境envcode选择
@@ -208,7 +209,7 @@ export default function LoggerSearch(props: any) {
     setLogStore(undefined);
     setIndexModeData([]);
     setHitInfo('');
-    setLogSearchTableInfo('');
+    setLogSearchTableInfo([]);
     setLogHistormData([]);
     setViewlogSeaechTabInfo([]);
   };
@@ -307,8 +308,23 @@ export default function LoggerSearch(props: any) {
           //手风琴下拉框数据 hits
           let logSearchTableInfodata = resp.data.logs;
           let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
+
           setLogSearchTableInfo(logSearchTableInfodata);
-          setViewlogSeaechTabInfo(viewLogSearchTabInfo);
+          let newArryData:any=[]
+          let mapArry=viewLogSearchTabInfo?.slice(0)
+          mapArry?.map((element:any)=>{
+            let newInfo=Object.assign({},element)
+            if(element.hasOwnProperty("traceId")){
+             let  objItem=Object.assign({traceId:newInfo["traceId"]}, _.omit(element,["traceId"]))
+              newArryData.push(objItem)
+            }else{
+              newArryData.push(element)
+            }
+          })
+
+         
+
+          setViewlogSeaechTabInfo(newArryData);
           //命中率
           let hitNumber = resp.data.total;
           setHitInfo(hitNumber);
@@ -328,10 +344,10 @@ export default function LoggerSearch(props: any) {
   //切换日志库
   const chooseIndexMode = (n: any) => {
     setLogStore(n);
-    subInfoForm.resetFields();
+    //subInfoForm.resetFields();
     setIndexModeData([]);
     setHitInfo('');
-    setLogSearchTableInfo('');
+    setLogSearchTableInfo([]);
     setLogHistormData([]);
     setViewlogSeaechTabInfo([]);
   };
@@ -451,8 +467,8 @@ export default function LoggerSearch(props: any) {
         </div>
       </FilterCard>
       <ContentCard className="page-logger-search-content">
-        {!envCode && !logStore ? <div className="empty-holder">请选择环境和日志库</div> : null}
-        {envCode && logStore ? (
+        {/* {!envCode && !logStore ? <div className="empty-holder">请选择环境和日志库</div> : null} */}
+        {/* {envCode && logStore ? ( */}
           <div>
             <div style={{ marginBottom: 10, width: '100%' }}>
               <div>
@@ -638,8 +654,29 @@ export default function LoggerSearch(props: any) {
                                       }}
                                 >
                                   <TabPane tab="表" key="1">
+                                
                                     {Object.keys(item)?.map((key: any) => {
-                                      return key === '@timestamp' ? (
+                                      return( key === 'traceId' ? (
+                                        <p className="tab-header">
+                                          <span className="tab-left">traceId:</span>
+                                          <span
+                                            className="tab-right"
+                                           // dangerouslySetInnerHTML={{ __html: item?.[key] }}
+                                          >
+                                            <a onClick={()=>{history.push({
+                                              pathname:"/matrix/trafficmap/tracking"
+
+                                            },{
+                                              entry:"logSearch",
+                                              envCode:envCode,
+                                             // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
+                                              traceId:item?.traceId,
+                                              startTime:startTimestamp,
+                                              endTime:endTimestamp
+                                            })}}>{item?.[key]}</a>
+                                          </span>
+                                        </p>
+                                      ) :  key === '@timestamp' ? (
                                         <p className="tab-header">
                                           <span className="tab-left">@timestamp:</span>
                                           <span
@@ -672,7 +709,7 @@ export default function LoggerSearch(props: any) {
                                             }}
                                           ></span>
                                         </p>
-                                      );
+                                      ))
                                     })}
                                   </TabPane>
                                   <TabPane tab="JSON" key="2">
@@ -695,7 +732,7 @@ export default function LoggerSearch(props: any) {
               param={sourceInfo}
             />
           </div>
-        ) : null}
+        {/* ) : null} */}
       </ContentCard>
     </PageContainer>
   );
