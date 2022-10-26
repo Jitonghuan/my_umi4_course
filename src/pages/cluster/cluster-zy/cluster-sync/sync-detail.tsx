@@ -81,16 +81,16 @@ export default function ClusterSyncDetail(props: any) {
     setPending(true);
     try {
       const result = await getRequest(APIS.queryWorkState);
-      const initState = result.data.category;
+      const initState = result?.data?.category;
 
       if (initState === 'DeployClusterApp') {
-        updateResultLog(result.data.log || '<no initial log>');
+        updateResultLog(result?.data?.log || '<no initial log>');
         return await getClusterApp();
       } else if (initState === 'DeployClusterWebSource') {
         setCurrState('DeployClusterApp');
         await getFESourceDeployProcess();
       } else {
-        updateResultLog(result.data.log || '<no initial log>');
+        updateResultLog(result?.data?.log || '<no initial log>');
         setCurrState(initState);
       }
     } catch (ex) {
@@ -104,7 +104,7 @@ export default function ClusterSyncDetail(props: any) {
     try {
       setPending(true);
       const result = await promise;
-      let addon = result.data;
+      let addon = result?.data;
 
       if (typeof addon === 'object' && 'appCode' in addon) {
         addon = addon.appCode === 'Pass' ? '应用同步完成' : `下一个要同步的应用: ${addon.appCode || '--'}`;
@@ -201,14 +201,14 @@ export default function ClusterSyncDetail(props: any) {
       try {
         const result = await getRequest(APIS.queryFrontendSource);
         // 没有数据表示已经结束
-        if (!result.data || result.data === 'Pass') {
+        if (!result?.data || result?.data === 'Pass') {
           updateResultLog(addonLog);
           updateResultLog('前端资源同步完成！');
           setPending(false);
           return setCurrState('DeployClusterWebSource');
         }
 
-        addonLog = result.data;
+        addonLog = result?.data;
         const nextLog = logCache + addonLog;
         setResultLog(nextLog);
       } catch (ex) {

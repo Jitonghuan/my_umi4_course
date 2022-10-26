@@ -11,7 +11,7 @@ export function useAppOptions() {
 
   useEffect(() => {
     getRequest(APIS.queryAppList).then((result) => {
-      const next = (result.data || []).map((item: any) => {
+      const next = (result?.data || []).map((item: any) => {
         return { label: item.appCode, value: item.appCode };
       });
       setData(next);
