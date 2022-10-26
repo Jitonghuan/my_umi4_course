@@ -30,7 +30,7 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
     if (fromCache) {
       const cache = getCacheData('DIFF_CLUSTER_APP', 20 * 60 * 1000);
       if (cache) {
-        setData(cache.data);
+        setData(cache?.data);
         setFromCache(moment(cache.timestamp).format('HH:mm:ss'));
         setCompleted(true);
       } else {
@@ -42,7 +42,7 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
     setLoading(true);
     try {
       const result = await getRequest(APIS.diffClusterApp);
-      const resultData = result.data || {};
+      const resultData = result?.data || {};
       const next = Object.keys(resultData).map((appName: string) => {
         return {
           appName,

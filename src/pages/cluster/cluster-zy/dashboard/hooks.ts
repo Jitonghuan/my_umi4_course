@@ -16,7 +16,7 @@ export function useFrameURL(key: number): [string, boolean] {
 
     try {
       const result = await getRequest(APIS.getDashboardUrl);
-      setUrl(result.data || '');
+      setUrl(result?.data || '');
     } finally {
       setLoading(false);
     }

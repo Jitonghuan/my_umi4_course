@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { ConfigProvider,Divider} from '@cffe/h2o-design';
+import { ConfigProvider, Divider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
 import 'antd/dist/antd.variable.min.css';
@@ -66,8 +66,8 @@ export default function Layout(props: any) {
   const [staffOrgData, loadStaffOrgData] = useStaffOrgData();
   const [chooseDept] = useChooseDept();
   const [staffDepData, loadStaffDepData] = useStaffDepData();
-  const [versionData,setVersionData]=useState<any>([])
-  const [changeLog,getLatestChangelog]=usegetLatestChangelog();
+  const [versionData, setVersionData] = useState<any>([])
+  const [changeLog, getLatestChangelog] = usegetLatestChangelog();
   const [unreadNum, loadUnreadNum] = useQueryUnreadNum();
   const [stemNoticeListData, loadStemNoticeList] = useQueryStemNoticeList();
   const [getReadList] = useReadList();
@@ -82,10 +82,6 @@ export default function Layout(props: any) {
   const [initFlg, setInitFlg] = useState(false);
   const isPageInIFrame = () => window.self !== window.top;
   const rootCls = 'header-version-info';
- 
-
-
-
   const oneKeyRead = (idsArry: any) => {
     getReadList(idsArry).then((res) => {
       loadUnreadNum();
@@ -96,26 +92,26 @@ export default function Layout(props: any) {
   async function getConfig() {
     const res = await getMatrixEnvConfig();
     setMatrixConfigInfo(res);
-     // @ts-ignore
-     window.matrixConfigData = res
+    // @ts-ignore
+    window.matrixConfigData = res
     setInitFlg(true);
   }
 
   useEffect(() => {
     getConfig();
   }, []);
-  useEffect(()=>{
-    useGetInfoList({ type: 'versionInfo' }).then((result)=>{
+  useEffect(() => {
+    useGetInfoList({ type: 'versionInfo' }).then((result) => {
       setVersionData(result)
-      let version=""
-      result?.map((item:any)=>{
-        if(item?.title?.includes("Matrix")){
-          version=item?.content
+      let version = ""
+      result?.map((item: any) => {
+        if (item?.title?.includes("Matrix")) {
+          version = item?.content
         }
       })
       getLatestChangelog(version)
     })
-  },[])
+  }, [])
 
   const route = [
     {
@@ -125,69 +121,65 @@ export default function Layout(props: any) {
       routes: [...routelist],
     },
   ]
-  if(appConfig.BUILD_ENV==="prod"&&appConfig.IS_Matrix==="public"){
+  if (appConfig.BUILD_ENV === "prod" && appConfig.IS_Matrix === "public") {
     const BrowserLogger = require('alife-logger');
     const __bl = BrowserLogger.singleton(
-    {
-      //忽略报错信息
-      ignore: {
-        ignoreErrors: [
-          'ResizeObserver loop limit exceeded',
-          'ResizeObserver loop completed with undelivered notifications.',
-        ],
-      },
-      pid:"as3svidxph@1d112f901021e56",
-      appType:"web",
-      imgUrl:"https://arms-retcode.aliyuncs.com/r.png?",
-      sendResource:true,
-      enableLinkTrace:true,
-      behavior:true
-    }
-  );
-   // 遍历所有路由
-   const getRouterList = (item: any, list: any) => {
-    item.routes.map((data: any) => {
-      if (data.routes) {
-        getRouterList(data, list);
+      {
+        //忽略报错信息
+        ignore: {
+          ignoreErrors: [
+            'ResizeObserver loop limit exceeded',
+            'ResizeObserver loop completed with undelivered notifications.',
+            "Cannot read properties of undefined (reading 'envCode')",
+
+          ],
+        },
+        pid: "as3svidxph@1d112f901021e56",
+        appType: "web",
+        imgUrl: "https://arms-retcode.aliyuncs.com/r.png?",
+        sendResource: true,
+        enableLinkTrace: true,
+        behavior: true
       }
-      if (data.label) {
-        list.push(data);
-      }
-    });
-  };
-  if(Object.keys(userInfo)?.length>0){
-    const list: any = [];
-    route?.map((res: any) => {
-      if (res.path === "/") {
-        res.routes.map((data: any) => {
-          if (data.name == "首页") {
-            list.push(data);
-          }
-          if (data.routes) {
-            getRouterList(data, list);
-          }
-        });
-      }
-    });
-    const routeList = list.find(
-      (res: any) => location.pathname.indexOf(res.label) != -1
     );
-  
-    __bl.setConfig({
-      uid:userInfo?.staffId,
-      page:routeList?.name,
-      setUsername:()=>{
-        return userInfo.name||null
-      }
-    })
-  
-  
+    // 遍历所有路由
+    const getRouterList = (item: any, list: any) => {
+      item.routes.map((data: any) => {
+        if (data.routes) {
+          getRouterList(data, list);
+        }
+        if (data.label) {
+          list.push(data);
+        }
+      });
+    };
+    if (Object.keys(userInfo)?.length > 0) {
+      const list: any = [];
+      route?.map((res: any) => {
+        if (res.path === "/") {
+          res.routes.map((data: any) => {
+            if (data.name == "首页") {
+              list.push(data);
+            }
+            if (data.routes) {
+              getRouterList(data, list);
+            }
+          });
+        }
+      });
+      const routeList = list.find(
+        (res: any) => location.pathname.indexOf(res.label) != -1
+      );
+
+      __bl.setConfig({
+        uid: userInfo?.staffId,
+        page: routeList?.name,
+        setUsername: () => {
+          return userInfo.name || null
+        }
+      })
+    }
   }
-  
-  
-  }
-  
- 
 
   // 处理 breadcrumb, 平铺所有的路由
   const breadcrumbMap = useMemo(() => {
@@ -260,9 +252,9 @@ export default function Layout(props: any) {
   return (
     <ConfigProvider locale={zhCN} >
       <ChangeLog
-      mode={changeLogMode}
-      infoData={changeLog}
-      onClose={()=>{setChangeLogMode("HIDE")}}
+        mode={changeLogMode}
+        infoData={changeLog}
+        onClose={() => { setChangeLogMode("HIDE") }}
       />
       <AllMessage
         mode={allMessageMode}
@@ -320,7 +312,7 @@ export default function Layout(props: any) {
                         <img src={appConfig.logo}
                           style={{ marginRight: '5px', height: 45, width: 45 }}
                           onClick={() => {
-                           history.push('/matrix/index');
+                            history.push('/matrix/index');
                           }}
                         />
                         <div className='matrix-title-matrix'>{appConfig.title}</div>
@@ -337,7 +329,7 @@ export default function Layout(props: any) {
                   tokenInvalidNotRedirect: matrixConfigInfo?.isSkipLogin,
                   userApi: `${matrixConfigInfo?.domainName}/kapi/apex-sso/getLoginUserInfo`,
                   logoutApi: `${matrixConfigInfo?.domainName}/kapi/apex-sso/logout`,
-                  loginUrl:  `${matrixConfigInfo?.domainName}/login`,
+                  loginUrl: `${matrixConfigInfo?.domainName}/login`,
                   onClickPosition: () => {
                     setPosVisible(true);
                     // @ts-ignore
@@ -371,20 +363,20 @@ export default function Layout(props: any) {
                       iconName: 'SettingOutlined',
                       iconType: 'antd',
                       type: 'popup',
-                      content: ()=>{
-                        return(
+                      content: () => {
+                        return (
                           <div className={rootCls}>
                             <p className={`${rootCls}-title`}><b>Matrix当前版本信息</b></p>
-                            <Divider className={`${rootCls}-divider`}/>
-                          {versionData?.map((item: any) => {
-                            return (<div >
+                            <Divider className={`${rootCls}-divider`} />
+                            {versionData?.map((item: any) => {
+                              return (<div >
 
-                              <li ><span className={`${rootCls}-left`}>{item?.title}</span>:<span>{item?.content}</span></li>
-                            </div>
+                                <li ><span className={`${rootCls}-left`}>{item?.title}</span>:<span>{item?.content}</span></li>
+                              </div>
 
-                            )
-                          })}
-                          <li className={`${rootCls}-change-log`}><a onClick={()=>{setChangeLogMode("VIEW")}}>查看ChangeLog</a></li>
+                              )
+                            })}
+                            <li className={`${rootCls}-change-log`}><a onClick={() => { setChangeLogMode("VIEW") }}>查看ChangeLog</a></li>
                           </div>
                         )
                       }
