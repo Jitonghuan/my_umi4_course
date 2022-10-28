@@ -16,6 +16,7 @@ import {
   Tabs,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
+import htmr from 'htmr';
 import ReactJson from 'react-json-view';
 import { history,useLocation } from 'umi';
 import { parse } from 'query-string';
@@ -70,6 +71,7 @@ export default function LoggerSearch(props: any) {
   if (receiveInfo.startTime || receiveInfo.endTime) {
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
+
   const [stowCondition, setStowCondition] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
   const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>([]); //手风琴下拉框数据 hits
@@ -216,19 +218,6 @@ export default function LoggerSearch(props: any) {
 
   const callback = (key: any) => { };
 
-  function range(start: any, end: any) {
-    const result = [];
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
-    return result;
-  }
-
-  const PickerWithType = (type: any, onChange: any) => {
-    if (type === 'time') return <TimePicker onChange={onChange} />;
-    if (type === 'date') return <DatePicker onChange={onChange} />;
-    return <DatePicker picker={type} onChange={onChange} />;
-  };
   let fiterArry: any = [];
   fiterArry.push('envCode:' + envCode);
   //查询
@@ -361,16 +350,10 @@ export default function LoggerSearch(props: any) {
     setMessageValue('');
     setPodName('');
     const now = new Date().getTime();
-    //默认传最近30分钟，处理为秒级的时间戳
-    let start = Number((now - startTime) / 1000).toString();
-    let end = Number(now / 1000).toString();
-    if (startTimestamp !== start) {
-      setStartTimestamp(start);
-      setEndTimestamp(end);
-      loadMoreData(logStore, start, end, '', '');
-    } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
-    }
+    //submitEditScreen()
+    console.log("---shijian--",startTimestamp,endTimestamp)
+    loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
+    
   };
   // 无限滚动下拉事件
   const ScrollMore = () => {
@@ -398,6 +381,29 @@ export default function LoggerSearch(props: any) {
       setEndRangePicker('');
     }
   };
+  const ComponentWithSibling=(content:string)=>{
+    // if using react 16, simply use the return value because
+    // v16 can render array
+    let data:any
+    if(Array.isArray(htmr(content))){
+      htmr(content)?.map((reactElement:any, k:number) => {
+      
+        // 需要处理的元素，通过jsx语法展开渲染，方便添加事件和子元素
+        // return (
+              
+               data=   reactElement.props.children.join("")
+                 
+              // );
+      })
+
+
+    }else{
+      data=htmr(content)?.props?.children[0]
+    }
+   
+    // if using react 15 and below, wrap in another component
+    return data;
+  }
 
 
   //实现无限加载滚动
@@ -534,7 +540,7 @@ export default function LoggerSearch(props: any) {
                       查询
                     </Button>
                   </Form.Item>
-                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo} >
+                  <Button type="default" style={{ marginLeft: 2 }} disabled={!envCode||!logStore} onClick={resetQueryInfo} >
                     重置
                   </Button>
                   {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
@@ -661,9 +667,22 @@ export default function LoggerSearch(props: any) {
                                           <span className="tab-left">traceId:</span>
                                           <span
                                             className="tab-right"
-                                           // dangerouslySetInnerHTML={{ __html: item?.[key] }}
+                                          // dangerouslySetInnerHTML={{ __html: item?.[key] }}
                                           >
-                                            <a onClick={()=>{history.push({
+                                            {item?.[key]?.includes('span')?<a dangerouslySetInnerHTML={{ __html: item?.[key] }} onClick={()=>{history.push({
+                                              pathname:"/matrix/trafficmap/tracking"
+                                              
+
+                                            },{
+                                              entry:"logSearch",
+                                              envCode:envCode,
+                                             // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
+                                              traceId:ComponentWithSibling(item?.[key]),
+                                              startTime:startTimestamp,
+                                              endTime:endTimestamp
+                                            })}}>
+                                              
+                                            </a> : <a  onClick={()=>{history.push({
                                               pathname:"/matrix/trafficmap/tracking"
 
                                             },{
@@ -673,7 +692,10 @@ export default function LoggerSearch(props: any) {
                                               traceId:item?.traceId,
                                               startTime:startTimestamp,
                                               endTime:endTimestamp
-                                            })}}>{item?.[key]}</a>
+                                            })}}>
+                                             {item?.[key]}
+                                              </a>}
+                                          
                                           </span>
                                         </p>
                                       ) :  key === '@timestamp' ? (
