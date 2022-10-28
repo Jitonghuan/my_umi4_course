@@ -2,12 +2,14 @@ import React, { useState, useCallback, useEffect, useContext, useMemo } from 're
 import { Form, Input, Select, Button ,Space,Table} from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
-import DetailContext from '../../../context'
+import DetailContext from '../../context'
+
 import PageContainer from '@/components/page-container';
 import './index.less';
 
 export default function Nacos() {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const {envCode} =useContext(DetailContext)
     const columns = useMemo(() => {
         return createTableColumns({
           onEdit: (record, index) => {
