@@ -2,11 +2,11 @@
 // @author JITONGHUAN <moyan@come-future.com>
 // @create 2021/11/12 17:35
 
-import React, { useState,  useContext, useRef, useLayoutEffect } from 'react';
+import React, { useState, useContext, useRef, useLayoutEffect } from 'react';
 import { Select, message, Form, Tag, Button, Checkbox } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import { AnsiUp } from 'ansi-up';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
 import DetailContext from '../../../context';
@@ -17,15 +17,15 @@ import './index.less';
 
 export default function ViewLog(props: any) {
   const [previous, setPrevious] = useState<boolean>(false);
-  let location:any = useLocation();
+  let location: any = useLocation();
   const { infoRecord } = location?.state;
-  const query :any= parse(location.search);
+  const query: any = parse(location.search);
   const [viewLogform] = Form.useForm();
-  const { appData } = useContext(DetailContext);
+  const { appData, benchmarkEnvCode } = useContext(DetailContext);
   const [log, setLog] = useState<string>('');
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [currentContainer, setCurrentContainer] = useState<string>('');
-  const { appCode, envCode, instName, projectEnvCode, projectEnvName, optType, containerName, deploymentName } =query;
+  const { appCode, envCode, instName, projectEnvCode, projectEnvName, optType, containerName, deploymentName } = query;
   const logData = useRef<string>('');
   let currentContainerName = '';
   let ansi_up = new AnsiUp();
@@ -135,21 +135,24 @@ export default function ViewLog(props: any) {
       if (optType && optType === 'containerInfo') {
         history.push({
           pathname: `/matrix/application/environment-deploy/container-info`,
-          search:`appCode=${appCode}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`
+          search: `appCode=${appCode}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}&benchmarkEnvCode=${benchmarkEnvCode}`
         },
           {
-            infoRecord:{  appCode: appCode,
-            projectEnvCode: projectEnvCode,
-            projectEnvName: projectEnvName,
-            // viewLogEnvType: viewLogEnvType,
-            infoRecord: infoRecord,
-            id: appData?.id,
-          }},
+            infoRecord: {
+              appCode: appCode,
+              projectEnvCode: projectEnvCode,
+              projectEnvName: projectEnvName,
+              // viewLogEnvType: viewLogEnvType,
+              infoRecord: infoRecord,
+              id: appData?.id,
+              benchmarkEnvCode: benchmarkEnvCode
+            }
+          },
         );
       } else {
         history.push({
           pathname: `/matrix/application/environment-deploy/deployInfo`,
-          search:`appCode=${appCode}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}&viewLogEnv=${projectEnvCode}&id=${id+""}&type=viewLog_goBack`
+          search: `appCode=${appCode}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}&viewLogEnv=${projectEnvCode}&id=${id + ""}&type=viewLog_goBack&benchmarkEnvCode=${benchmarkEnvCode}`
         });
       }
     }

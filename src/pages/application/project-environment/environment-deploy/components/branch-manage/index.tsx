@@ -200,9 +200,9 @@ export default function BranchManage() {
           align="center"
           render={(_, record: any, index) => (
             <div className="action-cell">
-              <Button type="primary" size="small" onClick={() => creatReviewUrl(record)}>
+              <a onClick={() => creatReviewUrl(record)}>
                 创建Review
-              </Button>
+              </a>
               <Popconfirm title="确定要作废该项吗？" onConfirm={() => handleDelBranch(record)}>
                 <a style={{ color: 'red' }}>
                   作废

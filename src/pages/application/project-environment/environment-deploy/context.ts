@@ -8,6 +8,7 @@ export interface ContextTypes {
   queryAppData?: () => void;
   projectEnvCode?: string;
   projectEnvName?: string;
+  benchmarkEnvCode?: string;
 }
 
 export default createContext<ContextTypes>({});
