@@ -149,6 +149,7 @@ export default function RulesTable(props: RulesTableProps) {
       dataIndex: 'option',
       key: 'news',
       width: 150,
+      fixed:"right",
       render: (_: string, record: Item) => (
         <Space>
           <a

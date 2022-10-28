@@ -381,7 +381,7 @@ export default function LoggerSearch(props: any) {
       let vivelist = viewLogSearchTabInfo.concat(moreList);
       setViewlogSeaechTabInfo(vivelist);
       setScrollLoading(false);
-    }, 1500);
+    }, 800);
   };
 
   const getSelectOption = (type: string) => {
@@ -530,7 +530,7 @@ export default function LoggerSearch(props: any) {
                   ) : null}
 
                   <Form.Item>
-                    <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
+                    <Button htmlType="submit" type="primary" disabled={!envCode||!logStore} onClick={submitEditScreen}>
                       查询
                     </Button>
                   </Form.Item>
