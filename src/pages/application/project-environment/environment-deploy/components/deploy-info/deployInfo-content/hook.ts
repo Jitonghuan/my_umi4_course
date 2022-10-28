@@ -33,7 +33,7 @@ export function useInstanceList(appCode: any, envCode: any) {
     getRequest(APIS.queryInstanceListApi, { data: { appCode, envCode } })
       .then((result) => {
         setInstanceLoading(true);
-        let data = result.data;
+        let data = result?.data;
         setInstanceListData(data);
       })
       .finally(() => {
