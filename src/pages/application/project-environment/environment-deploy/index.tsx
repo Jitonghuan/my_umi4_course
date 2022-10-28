@@ -192,7 +192,7 @@ export default function ApplicationDetail(props: IProps) {
           ))}
         </Tabs>
       </FilterCard>
-      <DetailContext.Provider value={{ appData, queryAppData, projectEnvCode, projectEnvName }}>
+      <DetailContext.Provider value={{ appData, queryAppData, projectEnvCode, projectEnvName, benchmarkEnvCode }}>
         <VCPermission code={window.location.pathname} isShowErrorPage>
           <Outlet />
         </VCPermission>

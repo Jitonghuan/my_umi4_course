@@ -19,7 +19,7 @@ export default function PublishDetail(props: IProps) {
   let { deployInfo, envTypeCode, onOperate, pipelineCode, envCode } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
-  const { appData, projectEnvCode, projectEnvName } = useContext(DetailContext);
+  const { appData, projectEnvCode, projectEnvName, benchmarkEnvCode } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [deployEnv, setDeployEnv] = useState<string[]>();
@@ -186,7 +186,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
   let envDataOption: any = []; //重启时选择环境option
@@ -293,9 +293,11 @@ export default function PublishDetail(props: IProps) {
                       if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
                         goToJenkins(err);
                       }
-                      if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1 && appData?.appType !== 'frontend') {
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') === -1 &&
+                        err?.key !== 'dependencyCheck' &&
+                        appData?.appType !== 'frontend') {
                         history.push(
-                          `/matrix/application/environment-deploy/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`,
+                          `/matrix/application/environment-deploy/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}&benchmarkEnvCode=${benchmarkEnvCode}`,
                         );
                       }
                     }}

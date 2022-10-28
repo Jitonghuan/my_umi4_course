@@ -16,7 +16,7 @@ export default function MonacoEditor(prop: any) {
       var editor = monaco.editor.create(node, {
         automaticLayout: true,
       });
-
+      editor.layout();
       setInstance(editor);
     }
   }, []);
@@ -263,10 +263,8 @@ export default function MonacoEditor(prop: any) {
   };
 
   return (
-    <div>
-      <div style={{ height: '100%', minHeight: '63vh', overflow: 'auto' }}>
-        <div style={{ height: '63vh' }} ref={codeContainer}></div>
-      </div>
+    <div className="editor-warp">
+      <div style={{ height: '99%' }} ref={codeContainer}></div>
     </div>
   );
 }

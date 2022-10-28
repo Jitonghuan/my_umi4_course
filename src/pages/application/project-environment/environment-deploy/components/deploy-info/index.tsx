@@ -2,14 +2,14 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/08/18 09:45
 
-import React, { useState, useEffect, useContext,useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import useInterval from '@/pages/application/application-detail/components/application-deploy/deploy-content/useInterval';
 import { Tabs } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
-import { useLocation} from 'umi';
+import { useLocation } from 'umi';
 import { parse } from 'query-string';
-import { useAppDeployInfo,} from './hooks';
+import { useAppDeployInfo, } from './hooks';
 import { useAppEnvCodeData } from '@/pages/application/hooks';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
@@ -17,8 +17,8 @@ import DeployInfoContent from './deployInfo-content';
 import './index.less';
 const { TabPane } = Tabs;
 export default function AppDeployInfo(props: any) {
-  let location:any = useLocation();
-  const query :any= parse(location.search);
+  let location: any = useLocation();
+  const query: any = parse(location.search);
   const { type, viewLogEnv, viewLogEnvType } = query;
   const { appData } = useContext(DetailContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
@@ -30,7 +30,7 @@ export default function AppDeployInfo(props: any) {
   } catch (error) {
     localStorage.setItem('__init_env_tab__', 'dev');
   }
- 
+
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
   useEffect(() => {
     queryData();
