@@ -186,7 +186,7 @@ export default function PublishDetail(props: IProps) {
             setRestartEnv([]);
           });
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
   let envDataOption: any = []; //重启时选择环境option
@@ -293,7 +293,9 @@ export default function PublishDetail(props: IProps) {
                       if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1) {
                         goToJenkins(err);
                       }
-                      if (err?.errorMessage.indexOf('请查看jenkins详情') !== -1 && appData?.appType !== 'frontend') {
+                      if (err?.errorMessage.indexOf('请查看jenkins详情') === -1 &&
+                        err?.key !== 'dependencyCheck' &&
+                        appData?.appType !== 'frontend') {
                         history.push(
                           `/matrix/application/environment-deploy/deployInfo?appCode=${metadata?.appCode}&id=${appData?.id}&projectEnvCode=${projectEnvCode}&projectEnvName=${projectEnvName}`,
                         );
