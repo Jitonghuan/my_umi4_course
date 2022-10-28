@@ -1,0 +1,48 @@
+.nacos-content-top-wrap{
+    .namespace-items{
+        display: flex;
+        height: 44px;
+        background-color: rgba(233,233,233,0.6)
+ }
+}
+.nacos-content-bottom-wrap{
+  .namesapce-title{
+   // position: relative;
+   padding-top: 14px;
+   display: flex;
+   align-items: center;
+   font-size: larger;
+   font-weight: bold;
+   >span + span{
+       margin-left: 12px;
+   }
+  
+   
+    height: 28px;
+    &::before {
+        display: inline-block;
+        content: '';
+        margin-right: 8px;
+        width: 4px;
+        height: 18px;
+        background: #1973cc;
+      }
+
+  }  
+  .search-form{
+      padding-top: 14px;
+  }
+  .nacos-table{
+    padding-top: 14px;
+      &-header{
+          display: flex;
+          justify-content: space-between;
+      }
+      &-footer{
+        display: flex;
+        justify-content: space-between;
+        height: 46px;
+        margin-top: 10px;
+      }
+  }
+}
