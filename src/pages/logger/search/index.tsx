@@ -71,6 +71,8 @@ export default function LoggerSearch(props: any) {
   if (receiveInfo.startTime || receiveInfo.endTime) {
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
+  console.log("kaishi",start,new Date(receiveInfo.startTime).getTime())
+  console.log("end",end)
 
   const [stowCondition, setStowCondition] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
@@ -181,6 +183,7 @@ export default function LoggerSearch(props: any) {
 
   //选择时间间隔
   const selectTime = (time: any, timeString: string) => {
+    
     let start = moment(timeString[0]).unix().toString();
     let end = moment(timeString[1]).unix().toString();
     if (start !== 'NaN' && end !== 'NaN') {
