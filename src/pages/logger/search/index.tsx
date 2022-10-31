@@ -112,7 +112,7 @@ export default function LoggerSearch(props: any) {
         setEnvCode(receiveInfo.envCode);
         appCodeArry.push('envCode:' + receiveInfo.envCode);
       }
-      setLogStore(receiveInfo.indexMode || 'app-log');
+      setLogStore(receiveInfo.indexMode || 'app_log');
       if (messageInfo['message']) {
         let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
         setQuerySql(messageDecodedData);
