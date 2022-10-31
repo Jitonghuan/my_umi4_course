@@ -2,8 +2,27 @@
     .namespace-items{
         display: flex;
         height: 44px;
-        background-color: rgba(233,233,233,0.6)
- }
+        background-color: rgba(233,233,233,0.6);
+        padding: 8px 10px;
+        overflow: auto;
+        //align-items: center;
+      
+      .all-namespaces__onClick{
+        color: #00CED1;
+        margin-left: 10px;
+        &:hover{
+        cursor: pointer;
+       } 
+      }
+      .all-namespaces__unClick{
+        margin-left: 10px;
+        &:hover{
+          cursor: pointer;
+         } 
+      }
+
+      
+    }
 }
 .nacos-content-bottom-wrap{
   .namesapce-title{

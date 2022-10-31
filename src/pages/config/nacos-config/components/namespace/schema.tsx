@@ -42,16 +42,24 @@ export const createTableColumns = (params: {
           //根据不同类型跳转
           <Space>
             <a onClick={() => params.onView(record, index)} >详情</a>
-            <a onClick={() => params.onEdit(record, index)} style={{cursor:record?.type===0?'no-drop':'pointer',color:record?.type===0?'gray':'#3591ff'}}>编辑</a>
+            <a onClick={() =>{
+              if(record?.type!==0){
+                params.onEdit(record, index)
+              }
+             
+            } } style={{cursor:record?.type===0?'no-drop':'pointer',color:record?.type===0?'gray':'#3591ff'}}>编辑</a>
             <Popconfirm
             title="确认删除吗?"
             disabled={record?.type===0}
             onConfirm={() => {
+              params?.onDelete(record, index)
+
+
 
              
             }}
           >
-            <a style={{cursor:record?.type===0?'no-drop':'pointer',color:record?.type===0?'gray':'#3591ff'}}>删除</a>
+            <a style={{cursor:record?.type===0?'no-drop':'pointer',color:record?.type===0?'gray':'red'}}>删除</a>
           </Popconfirm>
           </Space>
         ),
