@@ -147,7 +147,7 @@ export const createTableSchema = ({
             placement="topLeft"
           > */}
           <a
-            // style={{ color: 'rgb(255, 48, 3)' }}
+            style={{ color: 'rgb(255, 48, 3)' }}
             onClick={() => {
               onDelClick(record, index);
             }}
