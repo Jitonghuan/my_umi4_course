@@ -16,11 +16,13 @@ import {
   Tabs,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
+import htmr from 'htmr';
 import ReactJson from 'react-json-view';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import { parse } from 'query-string';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import * as APIS from './service';
+import _ from 'lodash';
 import { postRequest } from '@/utils/request';
 import { QuestionCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
@@ -34,8 +36,8 @@ import './index.less';
 export default function LoggerSearch(props: any) {
   const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false)
   const [sourceInfo, setSourceInfo] = useState<any>({})
-  let location:any = useLocation();
-  const query :any= parse(location.search);
+  let location: any = useLocation();
+  const query: any = parse(location.search);
   const receiveInfo = query;
   const showWindowHref = () => {
     var sHref = window.location.href;
@@ -69,9 +71,11 @@ export default function LoggerSearch(props: any) {
   if (receiveInfo.startTime || receiveInfo.endTime) {
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
+  
+
   const [stowCondition, setStowCondition] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
-  const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>(); //手风琴下拉框数据 hits
+  const [logSearchTableInfo, setLogSearchTableInfo] = useState<any>([]); //手风琴下拉框数据 hits
   const [viewLogSearchTabInfo, setViewlogSeaechTabInfo] = useState<any>(); //手风琴展示数据
   const [hitInfo, setHitInfo] = useState<string>(''); //命中次数
   const [envCode, setEnvCode] = useState<string>(''); //环境envcode选择
@@ -107,7 +111,7 @@ export default function LoggerSearch(props: any) {
         setEnvCode(receiveInfo.envCode);
         appCodeArry.push('envCode:' + receiveInfo.envCode);
       }
-      setLogStore(receiveInfo.indexMode || 'app-log');
+      setLogStore(receiveInfo.indexMode || 'app_log');
       if (messageInfo['message']) {
         let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
         setQuerySql(messageDecodedData);
@@ -118,6 +122,7 @@ export default function LoggerSearch(props: any) {
       if (receiveInfo.traceId) {
         subInfoForm.setFieldsValue({ traceId: receiveInfo.traceId });
         appCodeArry.push('traceId:' + receiveInfo.traceId);
+        setAppCodeValue(appCodeArry);
       }
       if (receiveInfo.appCode && receiveInfo.indexMode !== 'frontend_log') {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
@@ -168,9 +173,9 @@ export default function LoggerSearch(props: any) {
     let start = Number((now - startTime) / 1000).toString();
     let end = Number(now / 1000).toString();
     if (selectOptionType === 'lastTime') {
-        setStartTimestamp(start);
-        setEndTimestamp(end);
-        loadMoreData(logStore, start, end, values.querySql, messageInfo, appCodeArry);
+      setStartTimestamp(start);
+      setEndTimestamp(end);
+      loadMoreData(logStore, start, end, values.querySql, messageInfo, appCodeArry);
     } else {
       loadMoreData(logStore, startRangePicker, endRangePicker, values.querySql, messageInfo, appCodeArry);
     }
@@ -178,6 +183,7 @@ export default function LoggerSearch(props: any) {
 
   //选择时间间隔
   const selectTime = (time: any, timeString: string) => {
+    
     let start = moment(timeString[0]).unix().toString();
     let end = moment(timeString[1]).unix().toString();
     if (start !== 'NaN' && end !== 'NaN') {
@@ -208,26 +214,13 @@ export default function LoggerSearch(props: any) {
     setLogStore(undefined);
     setIndexModeData([]);
     setHitInfo('');
-    setLogSearchTableInfo('');
+    setLogSearchTableInfo([]);
     setLogHistormData([]);
     setViewlogSeaechTabInfo([]);
   };
 
   const callback = (key: any) => { };
 
-  function range(start: any, end: any) {
-    const result = [];
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
-    return result;
-  }
-
-  const PickerWithType = (type: any, onChange: any) => {
-    if (type === 'time') return <TimePicker onChange={onChange} />;
-    if (type === 'date') return <DatePicker onChange={onChange} />;
-    return <DatePicker picker={type} onChange={onChange} />;
-  };
   let fiterArry: any = [];
   fiterArry.push('envCode:' + envCode);
   //查询
@@ -262,11 +255,11 @@ export default function LoggerSearch(props: any) {
       //默认传最近5分钟，处理为秒级的时间戳
       let start = Number((now - startTime) / 1000).toString();
       let end = Number(now / 1000).toString();
-      if ( selectOptionType === 'lastTime') {
+      if (selectOptionType === 'lastTime') {
         setStartTimestamp(start);
         setEndTimestamp(end);
         loadMoreData(logStore, start, end, querySql, messageInfo, appCodeArry);
-      } else if (selectOptionType==="rangePicker") {
+      } else if (selectOptionType === "rangePicker") {
         loadMoreData(logStore, startRangePicker, endRangePicker, querySql, messageInfo, appCodeArry);
       } else {
         loadMoreData(logStore, startTimestamp, endTimestamp, querySql, messageInfo, appCodeArry);
@@ -307,13 +300,28 @@ export default function LoggerSearch(props: any) {
           //手风琴下拉框数据 hits
           let logSearchTableInfodata = resp.data.logs;
           let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
+
           setLogSearchTableInfo(logSearchTableInfodata);
-          setViewlogSeaechTabInfo(viewLogSearchTabInfo);
+          let newArryData: any = []
+          let mapArry = viewLogSearchTabInfo?.slice(0)
+          mapArry?.map((element: any) => {
+            let newInfo = Object.assign({}, element)
+            if (element.hasOwnProperty("traceId")) {
+              let objItem = Object.assign({ traceId: newInfo["traceId"] }, _.omit(element, ["traceId"]))
+              newArryData.push(objItem)
+            } else {
+              newArryData.push(element)
+            }
+          })
+
+
+
+          setViewlogSeaechTabInfo(newArryData);
           //命中率
           let hitNumber = resp.data.total;
           setHitInfo(hitNumber);
           // setLoading(false);
-          setInfoLoading(false);
+          //setInfoLoading(false);
         }
       })
       .catch(() => {
@@ -328,10 +336,10 @@ export default function LoggerSearch(props: any) {
   //切换日志库
   const chooseIndexMode = (n: any) => {
     setLogStore(n);
-    subInfoForm.resetFields();
+    //subInfoForm.resetFields();
     setIndexModeData([]);
     setHitInfo('');
-    setLogSearchTableInfo('');
+    setLogSearchTableInfo([]);
     setLogHistormData([]);
     setViewlogSeaechTabInfo([]);
   };
@@ -345,16 +353,10 @@ export default function LoggerSearch(props: any) {
     setMessageValue('');
     setPodName('');
     const now = new Date().getTime();
-    //默认传最近30分钟，处理为秒级的时间戳
-    let start = Number((now - startTime) / 1000).toString();
-    let end = Number(now / 1000).toString();
-    if (startTimestamp !== start) {
-      setStartTimestamp(start);
-      setEndTimestamp(end);
-      loadMoreData(logStore, start, end, '', '');
-    } else {
-      loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
-    }
+    //submitEditScreen()
+   
+    loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
+
   };
   // 无限滚动下拉事件
   const ScrollMore = () => {
@@ -365,7 +367,7 @@ export default function LoggerSearch(props: any) {
       let vivelist = viewLogSearchTabInfo.concat(moreList);
       setViewlogSeaechTabInfo(vivelist);
       setScrollLoading(false);
-    }, 1500);
+    }, 800);
   };
 
   const getSelectOption = (type: string) => {
@@ -451,77 +453,77 @@ export default function LoggerSearch(props: any) {
         </div>
       </FilterCard>
       <ContentCard className="page-logger-search-content">
-        {!envCode && !logStore ? <div className="empty-holder">请选择环境和日志库</div> : null}
-        {envCode && logStore ? (
-          <div>
-            <div style={{ marginBottom: 10, width: '100%' }}>
-              <div>
-                <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
-                  <p style={{ display: 'flex', width: '100%', marginBottom: 0 }}>
-                    <Form.Item label="appCode" name="appCode">
-                      <Input style={{ width: '11vw' }}></Input>
-                    </Form.Item>
-                    <Form.Item label="podName" name="podName">
-                      <Input style={{ width: '14vw' }}></Input>
-                    </Form.Item>
+        {/* {!envCode && !logStore ? <div className="empty-holder">请选择环境和日志库</div> : null} */}
+        {/* {envCode && logStore ? ( */}
+        <div>
+          <div style={{ marginBottom: 10, width: '100%' }}>
+            <div>
+              <Form form={subInfoForm} layout="inline" labelCol={{ flex: 4 }}>
+                <p style={{ display: 'flex', width: '100%', marginBottom: 0 }}>
+                  <Form.Item label="appCode" name="appCode">
+                    <Input style={{ width: '11vw' }}></Input>
+                  </Form.Item>
+                  <Form.Item label="podName" name="podName">
+                    <Input style={{ width: '14vw' }}></Input>
+                  </Form.Item>
 
-                    {/* <Form.Item label="level" name="level">
+                  {/* <Form.Item label="level" name="level">
                     <Input style={{ width: '11vw' }}></Input>
                   </Form.Item> */}
-                    <Form.Item label="traceId" name="traceId">
-                      <Input style={{ width: '36vw' }} placeholder="单行输入"></Input>
-                    </Form.Item>
-                  </p>
-
-                  <p className={editScreenVisible ? 'message-input-lucene' : 'message-input'}>
-                    <Form.Item label="message" name="message">
-                      <Input style={{ width: '28vw' }} placeholder="仅支持精准匹配"></Input>
-                    </Form.Item>
-                  </p>
-
-                  {editScreenVisible === true ? (
-                    <p>
-                      <Form form={sqlForm} layout="inline">
-                        <Popover
-                          title="查看lucene语法"
-                          placement="topLeft"
-                          content={
-                            <a
-                              target="_blank"
-                              href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
-                            >
-                              lucene语法网址
-                            </a>
-                          }
-                        >
-                          <Button>
-                            lucene
-                            <QuestionCircleOutlined />
-                          </Button>
-                        </Popover>
-                        <Form.Item name="querySql">
-                          <Input
-                            placeholder="搜索"
-                            style={{ width: 758 }}
-                            onPressEnter={submitEditScreen}
-                          />
-                        </Form.Item>
-                        <Form.Item name="moreInput">
-                          <Input placeholder="搜索" className="moreInput" style={{ width: 0 }} />
-                        </Form.Item>
-                      </Form>
-                    </p>
-                  ) : null}
-
-                  <Form.Item>
-                    <Button htmlType="submit" type="primary" onClick={submitEditScreen}>
-                      查询
-                    </Button>
+                  <Form.Item label="traceId" name="traceId">
+                    <Input style={{ width: '36vw' }} placeholder="单行输入"></Input>
                   </Form.Item>
-                  <Button type="default" style={{ marginLeft: 2 }} onClick={resetQueryInfo} >
-                    重置
+                </p>
+
+                <p className={editScreenVisible ? 'message-input-lucene' : 'message-input'}>
+                  <Form.Item label="message" name="message">
+                    <Input style={{ width: '28vw' }} placeholder="仅支持精准匹配"></Input>
+                  </Form.Item>
+                </p>
+
+                {editScreenVisible === true ? (
+                  <p>
+                    <Form form={sqlForm} layout="inline">
+                      <Popover
+                        title="查看lucene语法"
+                        placement="topLeft"
+                        content={
+                          <a
+                            target="_blank"
+                            href="https://lucene.apache.org/core/8_5_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html"
+                          >
+                            lucene语法网址
+                            </a>
+                        }
+                      >
+                        <Button>
+                          lucene
+                            <QuestionCircleOutlined />
+                        </Button>
+                      </Popover>
+                      <Form.Item name="querySql">
+                        <Input
+                          placeholder="搜索"
+                          style={{ width: 758 }}
+                          onPressEnter={submitEditScreen}
+                        />
+                      </Form.Item>
+                      <Form.Item name="moreInput">
+                        <Input placeholder="搜索" className="moreInput" style={{ width: 0 }} />
+                      </Form.Item>
+                    </Form>
+                  </p>
+                ) : null}
+
+                <Form.Item>
+                  <Button htmlType="submit" type="primary" disabled={!envCode || !logStore} onClick={submitEditScreen}>
+                    查询
+                    </Button>
+                </Form.Item>
+                <Button type="default" style={{ marginLeft: 2 }} disabled={!envCode || !logStore} onClick={resetQueryInfo} >
+                  重置
                   </Button>
-                  {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
+                {/* <span style={{ paddingLeft: 10, display: 'flex', alignItems: 'center' }}>
                     <a
                       onClick={() => {
                         if (showMore) {
@@ -535,167 +537,214 @@ export default function LoggerSearch(props: any) {
                     </a>
                   </span> */}
 
-                  <Button
-                    type="primary"
-                    style={{ marginLeft: '2vw' }}
-                    onClick={() => {
-                      // subInfoForm.resetFields();
-                      if (!editScreenVisible) {
-                        setEditScreenVisible(true);
-                      } else {
-                        setEditScreenVisible(false);
-                        setQuerySql('');
-                      }
-                    }}
+                <Button
+                  type="primary"
+                  style={{ marginLeft: '2vw' }}
+                  onClick={() => {
+                    // subInfoForm.resetFields();
+                    if (!editScreenVisible) {
+                      setEditScreenVisible(true);
+                    } else {
+                      setEditScreenVisible(false);
+                      setQuerySql('');
+                    }
+                  }}
 
-                  >
-                    高级搜索
+                >
+                  高级搜索
                   </Button>
-                </Form>
-              </div>
+              </Form>
             </div>
-            <div className="close-button">
-              <a
-                onClick={() => {
-                  if (stowCondition) {
-                    setStowCondition(false);
-                  } else {
-                    setStowCondition(true);
-                  }
-                }}
-              >
-                {stowCondition ? '收起命中图表' : '展开命中图表'}
-                {stowCondition ? <UpOutlined /> : <DownOutlined />}
-              </a>
-            </div>
-            <Divider style={{ height: 6, marginTop: 0, marginBottom: 0 }} />
-            {stowCondition && (
-              <Spin size="large" spinning={infoLoading}>
-                <div style={{ marginBottom: 4 }}>
-                  <ChartCaseList data={logHistormData} loading={infoLoading} hitsData={hitInfo} />
-                </div>
-              </Spin>
-            )}
-
-            <div>
-              <div
-                id="scrollableDiv"
-                style={{
-                  height: 940,
-                  overflow: 'auto',
-                  padding: '0 16px',
-                  border: '1px solid rgba(140, 140, 140, 0.35)',
-                }}
-              >
-                <Spin spinning={infoLoading}>
-                  <InfiniteScroll
-                    dataLength={viewLogSearchTabInfo?.length || 0}
-                    next={ScrollMore}
-                    hasMore={viewLogSearchTabInfo?.length < 500}
-                    loader={<Skeleton paragraph={{ rows: 1 }} />}
-                    endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
-                    scrollableTarget="scrollableDiv"
-                  >
-                    <List
-                      dataSource={viewLogSearchTabInfo}
-                      loading={srollLoading}
-                      renderItem={(item: any, index) => (
-                        <List.Item key={index}>
-                          <Collapse onChange={callback}>
-                            {
-                              <Panel
-                                className="panelInfo"
-                                style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
-                                header={
-                                  <div style={{ display: 'flex', maxHeight: 138, overflow: 'hidden' }}>
-                                    <div style={{ width: '14%', color: '#6495ED' }}>
-                                      {moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss')}
-                                    </div>
-                                    <div
-                                      style={{ width: '86%', fontSize: 10 }}
-                                      dangerouslySetInnerHTML={{ __html: `${JSON.stringify(item)}` }}
-                                      className="detailInfo"
-                                    />
-                                  </div>
-                                }
-                                key={index}
-                              >
-                                <Tabs defaultActiveKey="1"
-                                      onChange={callback}
-                                      tabBarExtraContent={{
-                                        right: logStore === 'frontend_log' ? (
-                                          <Button
-                                            type="link"
-                                            onClick={() => {
-                                              setSourceInfo({
-                                                ...item,
-                                                filePath: item.d2,
-                                                envCode
-                                              });
-                                              setSourceMapVisible(true);
-                                            }}
-                                          >sourceMap 还原</Button>) : null
-                                      }}
-                                >
-                                  <TabPane tab="表" key="1">
-                                    {Object.keys(item)?.map((key: any) => {
-                                      return key === '@timestamp' ? (
-                                        <p className="tab-header">
-                                          <span className="tab-left">@timestamp:</span>
-                                          <span
-                                            className="tab-right"
-                                            dangerouslySetInnerHTML={{
-                                              __html: moment(item?.['@timestamp']).format('YYYY-MM-DD,HH:mm:ss'),
-                                            }}
-                                          ></span>
-                                        </p>
-                                      ) : key === '__time__' ? (
-                                        <p className="tab-header">
-                                          <span className="tab-left">time:</span>
-                                          <span
-                                            className="tab-right"
-                                            dangerouslySetInnerHTML={{
-                                              __html: moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss'),
-                                            }}
-                                          ></span>
-                                        </p>
-                                      ) : (
-                                        <p className="tab-header">
-                                          <span
-                                            className="tab-left"
-                                            dangerouslySetInnerHTML={{ __html: `${key}:` }}
-                                          ></span>
-                                          <span
-                                            className="tab-right"
-                                            dangerouslySetInnerHTML={{
-                                              __html: item?.[key],
-                                            }}
-                                          ></span>
-                                        </p>
-                                      );
-                                    })}
-                                  </TabPane>
-                                  <TabPane tab="JSON" key="2">
-                                    <ReactJson src={item} name={false} />
-                                  </TabPane>
-                                </Tabs>
-                              </Panel>
-                            }
-                          </Collapse>
-                        </List.Item>
-                      )}
-                    />
-                  </InfiniteScroll>
-                </Spin>
-              </div>
-            </div>
-            <SourceMapModal
-              visible={sourceMapVisible}
-              onClose={() => setSourceMapVisible(false)}
-              param={sourceInfo}
-            />
           </div>
-        ) : null}
+          <div className="close-button">
+            <a
+              onClick={() => {
+                if (stowCondition) {
+                  setStowCondition(false);
+                } else {
+                  setStowCondition(true);
+                }
+              }}
+            >
+              {stowCondition ? '收起命中图表' : '展开命中图表'}
+              {stowCondition ? <UpOutlined /> : <DownOutlined />}
+            </a>
+          </div>
+          <Divider style={{ height: 6, marginTop: 0, marginBottom: 0 }} />
+          {stowCondition && (
+            <Spin size="large" spinning={infoLoading}>
+              <div style={{ marginBottom: 4 }}>
+                <ChartCaseList data={logHistormData} loading={infoLoading} hitsData={hitInfo} />
+              </div>
+            </Spin>
+          )}
+
+          <div>
+            <div
+              id="scrollableDiv"
+              style={{
+                height: 940,
+                overflow: 'auto',
+                padding: '0 16px',
+                border: '1px solid rgba(140, 140, 140, 0.35)',
+              }}
+            >
+              <Spin spinning={infoLoading}>
+                <InfiniteScroll
+                  dataLength={viewLogSearchTabInfo?.length || 0}
+                  next={ScrollMore}
+                  hasMore={viewLogSearchTabInfo?.length < 500}
+                  loader={<Skeleton paragraph={{ rows: 1 }} />}
+                  endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+                  scrollableTarget="scrollableDiv"
+                >
+                  <List
+                    dataSource={viewLogSearchTabInfo}
+                    loading={srollLoading}
+                    renderItem={(item: any, index) => (
+                      <List.Item key={index}>
+                        <Collapse onChange={callback}>
+                          {
+                            <Panel
+                              className="panelInfo"
+                              style={{ whiteSpace: 'pre-line', lineHeight: 2, fontSize: 14, wordBreak: 'break-word' }}
+                              header={
+                                <div style={{ display: 'flex', maxHeight: 138, overflow: 'hidden' }}>
+                                  <div style={{ width: '14%', color: '#6495ED' }}>
+                                    {moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss')}
+                                  </div>
+                                  <div
+                                    style={{ width: '86%', fontSize: 10 }}
+                                    dangerouslySetInnerHTML={{ __html: `${JSON.stringify(item)}` }}
+                                    className="detailInfo"
+                                  />
+                                </div>
+                              }
+                              key={index}
+                            >
+                              <Tabs defaultActiveKey="1"
+                                onChange={callback}
+                                tabBarExtraContent={{
+                                  right: logStore === 'frontend_log' ? (
+                                    <Button
+                                      type="link"
+                                      onClick={() => {
+                                        setSourceInfo({
+                                          ...item,
+                                          filePath: item.d2,
+                                          envCode
+                                        });
+                                        setSourceMapVisible(true);
+                                      }}
+                                    >sourceMap 还原</Button>) : null
+                                }}
+                              >
+                                <TabPane tab="表" key="1">
+
+                                  {Object.keys(item)?.map((key: any) => {
+                                    return (key === 'traceId' ? (
+                                      <p className="tab-header">
+                                        <span className="tab-left">traceId:</span>
+                                        <span
+                                          className="tab-right"
+
+                                        >
+                                          {item?.[key]?.includes('span') ? <a dangerouslySetInnerHTML={{ __html: item?.[key] }}
+                                            onClick={() => {
+                                              var doc: any = new DOMParser().parseFromString(item?.[key], "text/html");              
+                                              history.push({
+                                                pathname: "/matrix/trafficmap/tracking"
+
+                                              }, {
+                                                entry: "logSearch",
+                                                envCode: envCode,
+                                                // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
+                                                traceId: doc.body.innerText,
+                                                startTime: startTimestamp,
+                                                endTime: endTimestamp
+                                              })
+                                            }} >
+
+
+                                          </a>
+
+
+                                            : <a onClick={() => {
+                                              history.push({
+                                                pathname: "/matrix/trafficmap/tracking"
+
+                                              }, {
+                                                entry: "logSearch",
+                                                envCode: envCode,
+                                                // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
+                                                traceId: item?.traceId,
+                                                startTime: startTimestamp,
+                                                endTime: endTimestamp
+                                              })
+                                            }}>
+                                              {item?.[key]}
+                                            </a>}
+
+                                        </span>
+
+                                      </p>
+                                    ) : key === '@timestamp' ? (
+                                      <p className="tab-header">
+                                        <span className="tab-left">@timestamp:</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{
+                                            __html: moment(item?.['@timestamp']).format('YYYY-MM-DD,HH:mm:ss'),
+                                          }}
+                                        ></span>
+                                      </p>
+                                    ) : key === '__time__' ? (
+                                      <p className="tab-header">
+                                        <span className="tab-left">time:</span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{
+                                            __html: moment(item?.['__time__'] * 1000).format('YYYY-MM-DD,HH:mm:ss'),
+                                          }}
+                                        ></span>
+                                      </p>
+                                    ) : (
+                                      <p className="tab-header">
+                                        <span
+                                          className="tab-left"
+                                          dangerouslySetInnerHTML={{ __html: `${key}:` }}
+                                        ></span>
+                                        <span
+                                          className="tab-right"
+                                          dangerouslySetInnerHTML={{
+                                            __html: item?.[key],
+                                          }}
+                                        ></span>
+                                      </p>
+                                    ))
+                                  })}
+                                </TabPane>
+                                <TabPane tab="JSON" key="2">
+                                  <ReactJson src={item} name={false} />
+                                </TabPane>
+                              </Tabs>
+                            </Panel>
+                          }
+                        </Collapse>
+                      </List.Item>
+                    )}
+                  />
+                </InfiniteScroll>
+              </Spin>
+            </div>
+          </div>
+          <SourceMapModal
+            visible={sourceMapVisible}
+            onClose={() => setSourceMapVisible(false)}
+            param={sourceInfo}
+          />
+        </div>
+        {/* ) : null} */}
       </ContentCard>
     </PageContainer>
   );
