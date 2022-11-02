@@ -83,6 +83,7 @@ export default function CreateNacos(props: CreateNacosProps) {
     return () => {
       setViewDisabled(false);
       editForm.resetFields();
+      setFormatType("yaml")
      
     };
   }, [mode]);
@@ -170,7 +171,9 @@ export default function CreateNacos(props: CreateNacosProps) {
           <Input disabled={viewDisabled} style={{ width: 320 }} />
         </Form.Item>}
        {mode!=="VIEW"&&(<Form.Item label="配置格式" name="formatType" initialValue={"yaml"}>
-        <Radio.Group options={formatTypeOptions} defaultValue={"yaml"} disabled={viewDisabled} />
+        <Radio.Group options={formatTypeOptions} defaultValue={"yaml"} onChange={(e)=>{
+          setFormatType(e.target.value)
+        }} disabled={viewDisabled} />
         </Form.Item>)} 
        
         <Form.Item label="配置内容" name="content" rules={[{ required: true, message: '这是必填项' }]}>

@@ -43,7 +43,7 @@ export default function AuthorityManage() {
 
   return (<PageContainer className="nacos-config-wrap">
     {/* <ContentCard noPadding className="nacos-manage-page"> */}
-    <FilterCard className="nacos-config-filter">
+    {/* <FilterCard className="nacos-config-filter">
       <div style={{ display: 'flex', height: 24, alignItems: "center", }}>
         <b>选择环境：</b> <Select style={{ width: 210 }} value={curEnvCode} showSearch  loading={loading} options={envOptions} onChange={(value: string) => {
           setCurEnvCode(value)
@@ -51,7 +51,7 @@ export default function AuthorityManage() {
       </div>
 
 
-    </FilterCard>
+    </FilterCard> */}
     <ContentCard>
     <div className="nacos-manage-page">
       <Tabs
@@ -64,6 +64,13 @@ export default function AuthorityManage() {
 
           });
         }}
+        tabBarExtraContent={
+          <div style={{ display: 'flex', height: 24, alignItems: "center", }}>
+          <b>选择环境：</b> <Select style={{ width: 210 }} value={curEnvCode} showSearch  loading={loading} options={envOptions} onChange={(value: string) => {
+            setCurEnvCode(value)
+          }} />
+        </div>
+        }
       >
         <TabPane tab="nacos配置" key="nacos">
           <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>

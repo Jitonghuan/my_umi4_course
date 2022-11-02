@@ -38,6 +38,9 @@ export default function Nacos() {
         }).then((result:any)=>{
             setTableSource(result?.dataSource||[])
             setTotal(result?.pageInfo?.total);
+            setPageIndex(result?.pageInfo?.pageIndex);
+            setPageSize(result?.pageInfo?.pageSize)
+
         }).finally(()=>{
             setTableLoading(false)
         })
@@ -185,7 +188,8 @@ export default function Nacos() {
         onClose={() => setMode('HIDE')}
         onSave={() => {
             let params=form.getFieldsValue()
-          getNacosConfigDataSource({...params, namespaceId:curNamespaceData?.namespaceId})
+          getNacosConfigDataSource({...params, namespaceId:curNamespaceData?.namespaceId, pageSize:pageSize,
+            pageIndex:pageIndex})
           setMode('HIDE')
         }}
 
@@ -255,15 +259,19 @@ setImportVisible(false)
                 </div>
                 <div className="search-form">
                     <Form layout="inline" form={form} onFinish={(values)=>{
+                        setPageIndex(pageIndex);
                         getNacosConfigDataSource({
                             ...values,
                             namespaceId:curNamespaceData?.namespaceId,
-                            pageSize:pageSize
+                            pageSize:pageSize,
+                            pageIndex:pageIndex
                             
 
                         })
 
                     }} onReset={()=>{
+                        //setPageIndex(1);
+                       // setPageSize(20)
                         form.resetFields()
                         getNacosConfigDataSource({
                             namespaceId:curNamespaceData?.namespaceId
@@ -309,7 +317,7 @@ setImportVisible(false)
                       dataSource={tableSource} 
                       loading={tabelLoading||delLoading}  
                       bordered
-                      scroll={{ y: window.innerHeight - 458  }}
+                      scroll={{ y: window.innerHeight - 440  }}
                       pagination={{
                         current: pageIndex,
                         total,
