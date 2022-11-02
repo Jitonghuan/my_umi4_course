@@ -71,8 +71,7 @@ export default function LoggerSearch(props: any) {
   if (receiveInfo.startTime || receiveInfo.endTime) {
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
-  console.log("kaishi",start,new Date(receiveInfo.startTime).getTime())
-  console.log("end",end)
+  
 
   const [stowCondition, setStowCondition] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
@@ -321,7 +320,7 @@ export default function LoggerSearch(props: any) {
           let hitNumber = resp.data.total;
           setHitInfo(hitNumber);
           // setLoading(false);
-          setInfoLoading(false);
+          //setInfoLoading(false);
         }
       })
       .catch(() => {
@@ -354,7 +353,7 @@ export default function LoggerSearch(props: any) {
     setPodName('');
     const now = new Date().getTime();
     //submitEditScreen()
-    console.log("---shijian--", startTimestamp, endTimestamp)
+   
     loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
 
   };
