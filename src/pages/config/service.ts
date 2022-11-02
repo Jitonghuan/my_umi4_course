@@ -22,3 +22,13 @@ export const getConfigVersionsApi = `${appConfig.apiPrefix}/configManage/nacos/c
 export const getNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config`;
 /* 4、POST 新增配置 */
 export const createNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/create`;
+/* 5、POST 更新配置 */
+export const updateNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/update`;
+/* 6、POST 回滚配置 */
+export const rollbackNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/rollback`;
+/* 7、POST 批量导出配置 */
+export const exportNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/export`;
+/* 8、POST 批量导入配置 */
+export const importNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/import`;
+/* 9、 DELETE 删除namespace */
+export const deleteNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/delete`;

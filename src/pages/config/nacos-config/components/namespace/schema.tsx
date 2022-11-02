@@ -13,13 +13,13 @@ export const createTableColumns = (params: {
         title: '命名空间名称',
         dataIndex: 'namespaceShowName',
         key: 'namespaceShowName',
-        width: 280,
+        width: '30%',
       },
       {
         title: '命名空间ID',
         dataIndex: 'namespaceId',
         key: 'namespaceId',
-        width: 160,
+        width: '28%',
         
       },
       {
@@ -27,7 +27,7 @@ export const createTableColumns = (params: {
         dataIndex: 'configCount',
         key: 'configCount',
         // width: '13%',
-        width: 280,
+        width: '28%',
       },
      
   
@@ -37,7 +37,7 @@ export const createTableColumns = (params: {
         dataIndex: 'option',
         key: 'option',
         align: 'center',
-        width: 90,
+        width: '14%',
         render: (_: string, record, index: number) => (
           //根据不同类型跳转
           <Space>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo,useCallback } from 'react';
 import { Button, Space, Table } from 'antd';
 import { RedoOutlined } from '@ant-design/icons'
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
@@ -10,20 +10,18 @@ import CreateNamespace from './create-namespace';
 
 import './index.less'
 export default function namespace() {
-  const { envCode } = useContext(DetailContext);
+  const { envCode,tabKey } = useContext(DetailContext);
   const [dataSource, setDataSource] = useState<any>([]);
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false)
   const [delLoading, deleteNamespace] = useDeleteNamespace()
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const [pageTotal, setPageTotal] = useState<number>();
   useEffect(() => {
-    getTableSource()
-
-  }, [])
-  const getTableSource = () => {
+    if(envCode){
+      getTableSource()
+    }
+  }, [envCode,tabKey])
+  const getTableSource = useCallback(() => {
     setLoading(true)
     getNacosNamespaces(envCode || "").then((res) => {
       let data = res?.slice(0)
@@ -43,7 +41,7 @@ export default function namespace() {
     }).finally(() => {
       setLoading(false)
     })
-  }
+  },[envCode])
   const columns = useMemo(() => {
     return createTableColumns({
       onEdit: (record, index) => {
@@ -56,11 +54,13 @@ export default function namespace() {
 
       },
       onDelete: (record, index) => {
-        deleteNamespace({ envCode: envCode || "", namespaceId: record?.namespaceId })
+        deleteNamespace({ envCode: envCode || "", namespaceId: record?.namespaceId }).then(()=>{
+          getTableSource()
+        })
       }
 
     }) as any;
-  }, []);
+  }, [envCode]);
   return (<div >
     <CreateNamespace
       mode={mode}
@@ -73,7 +73,7 @@ export default function namespace() {
       }}
     />
 
-    <ContentCard >
+    <div className="namespace-wrapper" >
       <div className="namespace-table">
         <div className="namespace-table-header">
           <h3>命名空间列表</h3>
@@ -100,6 +100,6 @@ export default function namespace() {
 
 
       </div>
-    </ContentCard >
+    </div >
   </div>)
 }

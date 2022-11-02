@@ -3,7 +3,7 @@
         display: flex;
         height: 44px;
         background-color: rgba(233,233,233,0.6);
-        padding: 8px 10px;
+        padding: 6px 6px;
         overflow: auto;
         //align-items: center;
       
@@ -27,7 +27,8 @@
 .nacos-content-bottom-wrap{
   .namesapce-title{
    // position: relative;
-   padding-top: 14px;
+   //padding-top: 14px;
+   margin-top: 12px;
    display: flex;
    align-items: center;
    font-size: larger;
@@ -38,18 +39,20 @@
   
    
     height: 28px;
+    //background-color: rgba(233,233,233,0.6);
+    background-color: rgba(173, 215, 250, 0.6);
     &::before {
         display: inline-block;
         content: '';
         margin-right: 8px;
         width: 4px;
-        height: 18px;
+        height: 28px;
         background: #1973cc;
       }
 
   }  
   .search-form{
-      padding-top: 14px;
+      padding-top: 18px;
   }
   .nacos-table{
     padding-top: 14px;
@@ -60,8 +63,28 @@
       &-footer{
         display: flex;
         justify-content: space-between;
-        height: 46px;
-        margin-top: 10px;
+       height: 46px;
+        //margin-top: 10px;
       }
+      padding-bottom: 30px;
   }
+}
+.nacos-wrapper{
+  display: flex;
+  flex-direction: column;
+  padding: 0px 12px;
+  height: 100%;
+}
+.target-namespace{
+  padding: 0px 12px;
+  &-name{
+    color: #00CED1;
+  }
+}
+
+.upload-config-opt,.same-config{
+  padding: 0px 12px;
+}
+.upload-config-tooltip{
+  padding: 12px 12px;
 }

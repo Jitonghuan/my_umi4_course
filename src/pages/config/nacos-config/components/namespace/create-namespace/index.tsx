@@ -57,7 +57,7 @@ export default function CreateNamespace(props: CreateArticleProps) {
     const handleSubmit = () => {
         const params = editForm.getFieldsValue();
         if (mode === 'EDIT') {
-            updateNamespace({ ...params, envCode }).then(() => {
+            updateNamespace({ ...params, envCode,namespaceId:initData?.namespaceId }).then(() => {
                 onSave()
             })
 
@@ -92,7 +92,7 @@ export default function CreateNamespace(props: CreateArticleProps) {
             }
         ><Spin spinning={loading}>
               <Form form={editForm} labelCol={{ flex: '150px' }} labelWrap colon={false}>
-                {mode === "ADD" && <Form.Item label="命名空间ID（不填则自动生成）" name="namespaceId" >
+                {mode === "ADD" && <Form.Item label="命名空间ID" name="namespaceId" rules={[{ required: true, message: '请填写' }]} >
                     <Input  style={{ width: 400 }} />
                 </Form.Item>}
                 {mode === "VIEW" && <Form.Item label="命名空间ID" name="namespaceId" >

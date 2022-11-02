@@ -2,6 +2,23 @@ import { Space,  Tooltip ,Tag,Popconfirm} from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { FormProps, } from '@/components/table-search/typing';
 import { datetimeCellRender } from '@/utils';
+export const formatTypeOptions=[
+  { label: 'TEXT', value:"text"  },
+  { label: 'JSON', value: "json" },
+  { label: 'XML', value: "xml" },
+  { label: 'YAML', value: "yaml"},
+  { label: 'HTML', value: "html" },
+ 
+]
+export const policyTypeOptions=[
+  { label: '终止导入', value: "ABORT" },
+  { label: '跳过', value: "SKIP" },
+  { label: '覆盖', value:"OVERWRITE"  },
+ 
+ 
+  
+ 
+]
 // 列表页-表格
 export const createTableColumns = (params: {
     onEdit: (record: any, index: number) => void;
@@ -11,26 +28,25 @@ export const createTableColumns = (params: {
     return [
       {
         title: 'Data Id',
-        dataIndex: 'id',
-        key: 'id',
-        // width: '7%',
-        width: 80,
+        dataIndex: 'dataId',
+        key: 'dataId',
+        width: '30%',
+       // width: 80,
       },
       {
         title: 'Group',
-        dataIndex: 'wfUserType',
-        key: 'wfUserType',
-        // width: '10%',
-        width: 120,
-        //"我审批的"
-         render: (wfUserType) =>  <Tag color={wfUserType==="我审批的"?"#2db7f5":"pink"}>{wfUserType}</Tag>,
+        dataIndex: 'groupId',
+        key: 'groupId',
+         width: '28%',
+        //width: 120,
+       
       },
       {
         title: '归属应用',
-        dataIndex: 'title',
-        key: 'title',
-        // width: '13%',
-        width: 280,
+        dataIndex: 'appName',
+        key: 'appName',
+         width: '28%',
+        //width: 280,
       },
      
   
@@ -40,7 +56,7 @@ export const createTableColumns = (params: {
         dataIndex: 'option',
         key: 'option',
         align: 'center',
-        width: 90,
+        width: '14%',
         render: (_: string, record, index: number) => (
           //根据不同类型跳转
           <Space>
@@ -49,10 +65,11 @@ export const createTableColumns = (params: {
             <Popconfirm
             title="确认删除吗?"
             onConfirm={() => {
+              params?.onDelete(record, index)
              
             }}
           >
-            <a>删除</a>
+            <a style={{color:"red"}}>删除</a>
           </Popconfirm>
           </Space>
         ),

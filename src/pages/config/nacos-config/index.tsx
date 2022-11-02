@@ -41,17 +41,18 @@ export default function AuthorityManage() {
     getEnvOptions()
   }, [])
 
-  return (<PageContainer>
+  return (<PageContainer className="nacos-config-wrap">
     {/* <ContentCard noPadding className="nacos-manage-page"> */}
     <FilterCard className="nacos-config-filter">
       <div style={{ display: 'flex', height: 24, alignItems: "center", }}>
-        <b>选择环境：</b> <Select style={{ width: 210 }} value={curEnvCode} showSearch allowClear loading={loading} options={envOptions} onChange={(value: string) => {
+        <b>选择环境：</b> <Select style={{ width: 210 }} value={curEnvCode} showSearch  loading={loading} options={envOptions} onChange={(value: string) => {
           setCurEnvCode(value)
         }} />
       </div>
 
 
     </FilterCard>
+    <ContentCard>
     <div className="nacos-manage-page">
       <Tabs
         activeKey={tabKey}
@@ -65,7 +66,7 @@ export default function AuthorityManage() {
         }}
       >
         <TabPane tab="nacos配置" key="nacos">
-          <DetailContext.Provider value={{ envCode: curEnvCode }}>
+          <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>
             <VCPermission code={window.location.pathname} isShowErrorPage >
               <NacosPage />
             </VCPermission>
@@ -73,7 +74,7 @@ export default function AuthorityManage() {
 
         </TabPane>
         <TabPane tab="命名空间" key="namespace">
-          <DetailContext.Provider value={{ envCode: curEnvCode }}>
+          <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>
             <VCPermission code={window.location.pathname} isShowErrorPage>
 
               <NamespacePage />
@@ -84,6 +85,7 @@ export default function AuthorityManage() {
         </TabPane>
       </Tabs>
     </div>
+    </ContentCard>
     {/* </ContentCard> */}
   </PageContainer>)
 }
