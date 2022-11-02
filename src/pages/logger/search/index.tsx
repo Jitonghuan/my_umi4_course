@@ -122,6 +122,7 @@ export default function LoggerSearch(props: any) {
       if (receiveInfo.traceId) {
         subInfoForm.setFieldsValue({ traceId: receiveInfo.traceId });
         appCodeArry.push('traceId:' + receiveInfo.traceId);
+        setAppCodeValue(appCodeArry);
       }
       if (receiveInfo.appCode && receiveInfo.indexMode !== 'frontend_log') {
         appCodeArry.push('appCode:' + receiveInfo.appCode);
