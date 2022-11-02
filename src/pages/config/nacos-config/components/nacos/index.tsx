@@ -257,7 +257,9 @@ setImportVisible(false)
                     <Form layout="inline" form={form} onFinish={(values)=>{
                         getNacosConfigDataSource({
                             ...values,
-                            namespaceId:curNamespaceData?.namespaceId
+                            namespaceId:curNamespaceData?.namespaceId,
+                            pageSize:pageSize
+                            
 
                         })
 

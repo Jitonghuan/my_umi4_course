@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2022/11/1 14:05
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Drawer, Form, Button, Select, Input, Radio ,Spin} from 'antd';
 import AceEditor from '@/components/ace-editor';
 import type{AceDataType} from '@/components/ace-editor';
