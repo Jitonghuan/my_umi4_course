@@ -166,12 +166,14 @@ export default function Nacos() {
             getNacosConfigDataSource({...params, namespaceId:curNamespaceData?.namespaceId})
           } else if (info.file.status === 'error') {
             message.error(`${info.file.name} 上传失败`);
+            
           } else if (info.file?.response?.success === false) {
             message.error({
               content: <>{info.file.response?.errorMsg}<CloseOutlined onClick={() => { message.destroy('upload') }} style={{ marginLeft: '10px', color: '#c6c4c4' }} /></>,
               duration: 0,
               key: 'upload',
             })
+            setImportVisible(false)
     
           } else if (info.file.status === 'removed') {
             message.warning('上传取消！');
