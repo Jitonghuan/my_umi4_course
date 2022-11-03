@@ -51,6 +51,8 @@ export const FeContext = createContext({
   envTypeData: [] as IOption[],
   /* matrix 接口获取配置信息数据 */
   matrixConfigData: {} as matrixConfigProps,
+  /* matrix 按钮权限*/
+  btnPermission: [] as any
 });
 
 /** 修改标题和 favicon */
@@ -335,8 +337,8 @@ export function useGetMatrixEnvConfig(): [any, () => Promise<void>] {
 export const getMatrixEnvConfig = () =>
   getRequest(APIS.getMatrixEnvConfig).then((res: any) => {
     if (res?.success) {
-      let hostAdress= window.location.origin;
-      let envConfigInfo={
+      let hostAdress = window.location.origin;
+      let envConfigInfo = {
         LogoName: "测试",
         curEnvType: "dev",
         domainName: "http://c2f.apex-dev.cfuture.shop",
@@ -346,9 +348,9 @@ export const getMatrixEnvConfig = () =>
         wsPrefixName: "ws://matrix-api-test.cfuture.shop",
       };
       const dataSource = res?.data?.matrixEnvConfigs || {};
-      dataSource?.map((item:any)=>{
-        if(item?.key==hostAdress){
-          envConfigInfo=item
+      dataSource?.map((item: any) => {
+        if (item?.key == hostAdress) {
+          envConfigInfo = item
         }
 
       })
@@ -361,8 +363,8 @@ export const getMatrixEnvConfig = () =>
     }
     return {};
   });
-  export const useGetInfoList = (paramsObj: { type: string}) =>
-  getRequest(APIS.getInfoList,{data:{...paramsObj,pageIndex: -1, pageSize: -1 }}).then((res: any) => {
+export const useGetInfoList = (paramsObj: { type: string }) =>
+  getRequest(APIS.getInfoList, { data: { ...paramsObj, pageIndex: -1, pageSize: -1 } }).then((res: any) => {
     if (res?.success) {
       const dataSource = res?.data?.dataSource || [];
       return dataSource;
@@ -373,10 +375,10 @@ export const getMatrixEnvConfig = () =>
 
 
 
-export function usegetLatestChangelog(): [any,(version: string) => Promise<void>] {
-  const [changeLog,setChangeLog]=useState<any>("")
+export function usegetLatestChangelog(): [any, (version: string) => Promise<void>] {
+  const [changeLog, setChangeLog] = useState<any>("")
   const getLatestChangelog = useCallback(async (version: string) => {
-    await getRequest(APIS.getLatestChangelog,{data:{version}}).then((result) => {
+    await getRequest(APIS.getLatestChangelog, { data: { version } }).then((result) => {
       if (result?.success) {
         setChangeLog(result?.data)
 
@@ -384,5 +386,5 @@ export function usegetLatestChangelog(): [any,(version: string) => Promise<void>
     });
   }, []);
 
-  return [changeLog,getLatestChangelog];
+  return [changeLog, getLatestChangelog];
 }

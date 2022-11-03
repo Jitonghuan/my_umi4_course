@@ -12,6 +12,8 @@ import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../ser
 import { useResourceType, useNameSpace } from '../hook';
 import debounce from 'lodash/debounce';
 import { parse, stringify } from 'query-string';
+import { FeContext } from '@/common/hooks';
+
 
 import './index.less';
 export default function ResourceDetail(props: any) {
@@ -20,6 +22,7 @@ export default function ResourceDetail(props: any) {
   // const { location, children } = props;
   let sessionData = sessionStorage.getItem('cluster_resource_params') || '{}';
   const { clusterCode } = useContext(clusterContext);
+  const { btnPermission } = useContext(FeContext);
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
   const [yamlDetailVisible, setYamlDetailVisible] = useState(false);
@@ -50,6 +53,8 @@ export default function ResourceDetail(props: any) {
     const dataList = data.map((item: any) => ({ label: item.nodeName, value: item.nodeName }));
     setNodeList(dataList);
   }, [data]);
+
+  const canAdd = useMemo(() => btnPermission.includes('matrix:cluster:resource:add'), [btnPermission])
 
   const searchValueInput = useRef(null) as any;
   // 表格列配置
@@ -399,7 +404,7 @@ export default function ResourceDetail(props: any) {
             }}
             disabled={!allData?.length}
           ></input>
-          <Button
+          {canAdd && <Button
             type="primary"
             onClick={() => {
               setCreateYamlVisbile(true);
@@ -408,7 +413,7 @@ export default function ResourceDetail(props: any) {
             style={{ marginLeft: '10px' }}
           >
             创建资源
-          </Button>
+          </Button>}
         </div>
       </div>
       <div className="table-wrapper">
