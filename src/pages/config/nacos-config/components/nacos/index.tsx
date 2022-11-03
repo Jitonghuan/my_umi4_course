@@ -210,7 +210,7 @@ setImportVisible(false)
                </div>
                <div className="upload-config-tooltip"><InfoCircleOutlined style={{color:"orange"}}/>文件上传后将直接导入配置，请务必谨慎操作！</div>
                <div className="upload-config-opt">
-               <Upload {...uploadProps} accept=".tgz,.gz,.zip">
+               <Upload {...uploadProps} accept=".zip">
                 <Button icon={<UploadOutlined />} type="primary" ghost>
                  上传文件
                   </Button>
