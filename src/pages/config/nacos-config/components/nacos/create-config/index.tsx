@@ -156,10 +156,10 @@ export default function CreateNacos(props: CreateNacosProps) {
         )}
         <Spin spinning={detailLoading}>
         <Form.Item label="Data ID" name="dataId" rules={[{ required: true, message: '请输入' }]}>
-          <Input disabled={viewDisabled} style={{ width: 320 }} />
+          <Input disabled={mode!=="ADD"} style={{ width: 320 }} />
         </Form.Item>
         <Form.Item label="Group" name="groupId" rules={[{ required: true, message: '请输入' }]}>
-          <Input disabled={viewDisabled} style={{ width: 320 }} />
+          <Input disabled={mode!=="ADD"} style={{ width: 320 }} />
         </Form.Item>
         <Form.Item label="归属应用" name="appName" >
           <Input disabled={viewDisabled} style={{ width: 320 }} />

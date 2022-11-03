@@ -56,6 +56,9 @@
   }
   .nacos-table{
     padding-top: 14px;
+    .ant-table-wrapper{
+      position: relative;
+    }
       &-header{
           display: flex;
           justify-content: space-between;
@@ -63,6 +66,8 @@
       &-footer{
         display: flex;
         justify-content: space-between;
+        position:absolute;
+        bottom: 12px;
        //height: 46px;
         //margin-top: 10px;
       }
@@ -87,4 +92,16 @@
 }
 .upload-config-tooltip{
   padding: 12px 12px;
+}
+.import-result-count{
+  margin-left: 10px;
+  &-sucess{
+    color: rgb(36, 145, 85);
+  }
+  &-skip{
+    color: rgb(243, 177, 63);
+  }
+  &-unrecognized{
+    color: rgb(190, 66, 66);
+  }
 }
