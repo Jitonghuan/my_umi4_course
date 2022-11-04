@@ -37,7 +37,7 @@ export default function ResourceDetail(props: any) {
   const [loading, setLoading] = useState<boolean>(false);
   const [continueList, setContinueList] = useState<string[]>(['']);
   const [total, setTotal] = useState<number>(0);
-  const [typeData] = useResourceType({});
+  const [typeData] = useResourceType({ clusterCode });
   const [typeOptions, setTypeOptions] = useState<any>([]);
   const [nameSpaceData] = useNameSpace({ clusterCode, resourceType: 'namespaces' });
   const [currentRecord, setCurrentRecord] = useState<any>({});
