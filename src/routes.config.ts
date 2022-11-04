@@ -648,6 +648,11 @@ export default [
         "component": "@/pages/logger/search"
       },
       {
+        "path": `${baseRoutePath}/logger/search-new`,
+        "name": "日志检索新",
+        "component": "@/pages/logger/search-new"
+      },
+      {
         "path": `${baseRoutePath}/logger/index-manage`,
         "name": "索引管理",
         "component": "@/pages/logger/index-manage"
