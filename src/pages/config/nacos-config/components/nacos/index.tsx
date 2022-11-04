@@ -6,7 +6,7 @@ import DetailContext from '../../context';
 import { getNacosNamespaces } from '../namespace/hook';
 import { getConfigList, useDeleteNamespace } from './hook';
 import CreateConfig from './create-config';
-import { importNacosConfigApi, exportNacosConfigApi } from '../../../service'
+import { importNacosConfigApi, exportNacosConfigApi,exportAllNacosConfigApi } from '../../../service'
 import './index.less';
 
 export default function Nacos() {
@@ -29,6 +29,7 @@ export default function Nacos() {
   const [importVisible, setImportVisible] = useState(false);
   const [policyType, setPolicyType] = useState<string>(policyTypeOptions[0].value);
   const [downloadDisabled, setDownloadDisabled] = useState<boolean>(false);
+  const [downloadAllDisabled, setDownloadAllDisabled] = useState<boolean>(false);
   const [importResult,setImportResult]=useState<any>({})
   const getNacosConfigDataSource = (params: { namespaceId: string, dataId?: string, groupId?: string, pageIndex?: number, pageSize?: number }) => {
     setTableLoading(true)
@@ -119,7 +120,7 @@ export default function Nacos() {
 
   };
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+  
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -219,10 +220,6 @@ export default function Nacos() {
         getNacosConfigDataSource({ ...params, namespaceId: curNamespaceData?.namespaceId })
           },
         });
-        //message.success(`${info.file.name} 上传成功`);
-        //setImportVisible(false);
-        //let params = form.getFieldsValue()
-        //getNacosConfigDataSource({ ...params, namespaceId: curNamespaceData?.namespaceId })
       } else if (info.file.status === 'error') {
         message.error(`${info.file.name} 上传失败`);
 
@@ -359,6 +356,14 @@ export default function Nacos() {
               </Form.Item>
               <Form.Item>
                 <Button htmlType="reset" > 重置</Button>
+              </Form.Item>
+              <Form.Item>
+                <Button  type="primary"  disabled={downloadAllDisabled} onClick={() => {
+                  setDownloadAllDisabled(true)
+                  setTimeout(() => {
+                    setDownloadAllDisabled(false)
+                  }, 2000);
+                }} href={`${exportAllNacosConfigApi}?envCode=${envCode}&namespaceId=${curNamespaceData?.namespaceId}&dataId=${form.getFieldsValue()?.dataId||""}&groupId=${form.getFieldsValue()?.groupId||""}`}> 导出查询结果</Button>
               </Form.Item>
 
             </Form>

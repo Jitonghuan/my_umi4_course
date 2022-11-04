@@ -28,6 +28,8 @@ export const updateNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/c
 export const rollbackNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/rollback`;
 /* 7、POST 批量导出配置 */
 export const exportNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/export`;
+/* 10、POST 批量导出配置 */
+export const exportAllNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/export/query`;
 /* 8、POST 批量导入配置 */
 export const importNacosConfigApi = `${appConfig.apiPrefix}/configManage/nacos/config/import`;
 /* 9、 DELETE 删除namespace */
