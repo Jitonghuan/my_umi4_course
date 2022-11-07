@@ -60,3 +60,12 @@ export const START_TIME_ENUMS = [
       value: 'lastTime',
     },
   ];
+  export  interface queryLogResultItems{
+    envCode:string	
+    indexMode:string	
+    startTime:string	
+    endTime:string	
+    message?:string	
+    querySql?:string	
+    filterIs:any	
+  }

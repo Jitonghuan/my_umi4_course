@@ -642,13 +642,13 @@ export default [
     "name": "日志管理",
     "icon": "icon-diagnose",
     "routes": [
+      // {
+      //   "path": `${baseRoutePath}/logger/search`,
+      //   "name": "日志检索",
+      //   "component": "@/pages/logger/search"
+      // },
       {
         "path": `${baseRoutePath}/logger/search`,
-        "name": "日志检索",
-        "component": "@/pages/logger/search"
-      },
-      {
-        "path": `${baseRoutePath}/logger/search-new`,
         "name": "日志检索新",
         "component": "@/pages/logger/search-new"
       },
