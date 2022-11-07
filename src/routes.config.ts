@@ -649,7 +649,7 @@ export default [
       // },
       {
         "path": `${baseRoutePath}/logger/search`,
-        "name": "日志检索新",
+        "name": "日志检索",
         "component": "@/pages/logger/search-new"
       },
       {
