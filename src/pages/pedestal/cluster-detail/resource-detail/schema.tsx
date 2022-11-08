@@ -137,7 +137,7 @@ export const resourceDetailTableSchema = ({
               <a >{record?.info?.paused ? '恢复编排' : '停止编排'}</a>
             </Popconfirm>
           )}
-          <a onClick={() => handleYaml(record, index)}>YAML</a>
+          {record.type !== 'namespaces' && <a onClick={() => handleYaml(record, index)}>YAML</a>}
           <Popconfirm
             title="确定要删除该资源吗？"
             onConfirm={() => {

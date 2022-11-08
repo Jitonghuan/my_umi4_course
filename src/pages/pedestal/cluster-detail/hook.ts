@@ -143,8 +143,7 @@ export function useResourceType(props: any) {
 
   useEffect(() => {
     loadData({});
-  }, []);
-
+  }, Object.values(props));
   return [data];
 }
 
@@ -156,7 +155,7 @@ export function useNameSpace(props: any) {
       try {
         const result = await getResourceList({ ...props });
         if (result?.success) {
-         
+
           const res = result?.data?.items?.map((item: any) => ({ label: item.name, value: item.name }));
           res.unshift({ label: 'AllNamespaces', value: '' });
           setData(res);

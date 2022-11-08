@@ -33,7 +33,8 @@ import './index.less';
 import 'antd/dist/antd.variable.min.css';
 import { parse } from 'querystring';
 import { Outlet, useLocation, history } from 'umi';
-import routelist, { baseRoutePath } from '@/routes.config'
+import routelist, { baseRoutePath } from '@/routes.config';
+import { getBtnPermission } from '@/common/apis'
 
 // 屏蔽掉 React Development 模式下红色的警告
 if (appConfig.isLocal) {
@@ -80,6 +81,7 @@ export default function Layout(props: any) {
   const [allMessageMode, setAllMessageMode] = useState<EditorMode>('HIDE');
   const [changeLogMode, setChangeLogMode] = useState<EditorMode>('HIDE');
   const [initFlg, setInitFlg] = useState(false);
+  const [btnPermission, setBtnPermission] = useState<any>([]);
   const isPageInIFrame = () => window.self !== window.top;
   const rootCls = 'header-version-info';
   const oneKeyRead = (idsArry: any) => {
@@ -99,6 +101,7 @@ export default function Layout(props: any) {
 
   useEffect(() => {
     getConfig();
+    getBtnData();
   }, []);
   useEffect(() => {
     useGetInfoList({ type: 'versionInfo' }).then((result) => {
@@ -207,6 +210,14 @@ export default function Layout(props: any) {
 
   }, [])
 
+  const getBtnData = () => {
+    getBtnPermission({}).then((res) => {
+      if (res?.success) {
+        setBtnPermission(res?.data || [])
+      }
+    })
+  }
+
   //切换所属机构
   const onOrgChange = (orgId: any, defaultCampusId?: any, defaultDeptId?: any) => {
     //请求所属部门数据
@@ -289,6 +300,7 @@ export default function Layout(props: any) {
             businessData,
             categoryData,
             matrixConfigData: matrixConfigInfo,
+            btnPermission,
           }}
         >
           <ChartsContext.Provider value={{ effectResize }}>
