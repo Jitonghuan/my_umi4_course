@@ -681,7 +681,13 @@ export default [
         "name": "应用流量",
         "key": "trafficmap-app",
         "component": "@/pages/trafficmap/app-traffic",
-        "hideInMenu": false
+      },
+      {
+        "path": `${baseRoutePath}/trafficmap/traffic-detail`,
+        "name": "流量详情",
+        "key": "trafficmap-app",
+        "component": "@/pages/trafficmap/app-traffic/traffic-detail",
+        "hideInMenu": true,
       },
       {
         "path": `${baseRoutePath}/trafficmap/tracking`,

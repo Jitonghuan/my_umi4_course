@@ -11,10 +11,11 @@ export interface Iprops{
     least?:number//左边内容可以拖拽的最小宽度；
     dataChangeinitWidth?:number;
     getIconAction?:(close:boolean)=>void;
+    isSonPage?:boolean
 }
 
 export default function ResizeLayout(props:Iprops) {
-    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150,dataChangeinitWidth,getIconAction} =props
+    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150,dataChangeinitWidth,getIconAction,isSonPage=false} =props
     const [siderWidth, setSiderWidth] = useState<any>(
        //@ts-ignore
       dataChangeinitWidth?dataChangeinitWidth: parseInt(localStorage.getItem('siderWidth')) ? parseInt(localStorage.getItem('siderWidth')):initWidth
@@ -62,7 +63,7 @@ export default function ResizeLayout(props:Iprops) {
     }
     return (
      
-        <div className="dragger-layout-page" style={{ paddingLeft: pxWidth }}>
+        <div className="dragger-layout-page" style={{ paddingLeft: pxWidth,height:isSonPage?'calc(100vh - 124px)' :"100vh"}}>
         <div className="dragger-sider" style={{ width: pxWidth }}>
          {leftContent}
         </div>
