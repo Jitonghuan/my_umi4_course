@@ -8,7 +8,7 @@ export default function Count(props: any) {
     } else if (item.status && item.status[0] === 'health') {
       return '#58ce6b';
     } else {
-      return STATUS_COLOR[status[0]] || '#dae0da';
+      return STATUS_COLOR[item?.status[0]] || '#dae0da';
     }
   };
   return (
