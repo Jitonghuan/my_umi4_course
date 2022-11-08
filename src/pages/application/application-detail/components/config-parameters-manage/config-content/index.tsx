@@ -6,11 +6,10 @@
  */
 
 import React, { useEffect, useState, useContext } from 'react';
-import { history } from 'umi';
 import { Form, Select, Popconfirm, Button, message } from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import AceEditor from '@/components/ace-editor';
-import { queryConfigList, envList } from '@/pages/application/service';
+import { queryConfigList} from '@/pages/application/service';
 import { IProps } from './types';
 import { queryVersionApi, doRestoreVersionApi, configAdd, configUpdate } from './service';
 import { listAppEnv } from '@/pages/application/service';
@@ -139,7 +138,6 @@ export default function ConfigContent({ env, configType }: IProps) {
             value: el.id,
             isLatest: el.isLatest,
           });
-          // if (el.isLatest === 0 && !isOnchange)
           if (el.isLatest === 0) {
             currentVersionId = el.id;
             currentVersionNumber = el.versionNumber;
