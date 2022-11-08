@@ -1,104 +1,104 @@
-import React, { useState, useMemo,useEffect,useCallback } from 'react';
-import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select,Spin,Popconfirm} from 'antd';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { Divider, Button, Table, Steps, message, Row, Col, Switch, Form, Input, Select, Spin, Popconfirm } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { nodesSchema, DbUsageOptions } from './schema';
-import { saveBasicInfo, saveDatabaseInfo,getNodeList,useDeleteServer ,useGetDatabaseInfo} from './hook';
+import { saveBasicInfo, saveDatabaseInfo, getNodeList, useDeleteServer, useGetDatabaseInfo } from './hook';
 import EditNodeDraw from './edit-node-draw';
-import {useBelongList} from '../../../../product-list/version-detail/components/editor-table-pro/hook'
+import { useBelongList } from '../../../../product-list/version-detail/components/editor-table-pro/hook'
 import './index.less'
 
-interface Iprops{
-    indentId:number;
-    onUpdate:()=>void;
+interface Iprops {
+    indentId: number;
+    onUpdate: () => void;
 }
 
-export default function StationPlan(props:Iprops) {
-    const {indentId,onUpdate} =props;
-    const [databaseData,setDatabaseData]=useState<any>([])
-    const [basicInfoData,setBasicInfoData]=useState<any>([])
-    const [dataBaseLoading,setDataBaseLoading]=useState<boolean>(false)
-    const [loading, options,queryBelongList]=useBelongList()
+export default function StationPlan(props: Iprops) {
+    const { indentId, onUpdate } = props;
+    const [databaseData, setDatabaseData] = useState<any>([])
+    const [basicInfoData, setBasicInfoData] = useState<any>([])
+    const [dataBaseLoading, setDataBaseLoading] = useState<boolean>(false)
+    const [loading, options, queryBelongList] = useBelongList()
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const { Step } = Steps;
     const [form] = Form.useForm();
     const [baseInfoForm] = Form.useForm();
-    const [delLoading, deleteServer]=useDeleteServer()
+    const [delLoading, deleteServer] = useDeleteServer()
     const [current, setCurrent] = useState(0);
     const [disabled, setDisabled] = useState<boolean>(false);
-    const [nodeMode,setNodeMode]=useState<EditorMode>("HIDE");
-    const [curRecord,setCurRecord]=useState<any>({});
-    const [dataSource,setDataSource]=useState<any>([]);
+    const [nodeMode, setNodeMode] = useState<EditorMode>("HIDE");
+    const [curRecord, setCurRecord] = useState<any>({});
+    const [dataSource, setDataSource] = useState<any>([]);
     const [isClusterChecked, setIsClusterChecked] = useState<boolean>(false);
-    useEffect(()=>{
+    useEffect(() => {
         if (!indentId) return;
         getNodeListData();
         queryBelongList();
-        
+
         getListBasicInfo(indentId,)
         getDatabaseInfo(indentId,)
-    },[indentId]);
-    const getDatabaseInfo=(indentId:number)=>{
+    }, [indentId]);
+    const getDatabaseInfo = (indentId: number) => {
         setDataBaseLoading(true)
-        useGetDatabaseInfo(indentId,'database').then((result)=>{
+        useGetDatabaseInfo(indentId, 'database').then((result) => {
             setDatabaseData(result);
-            if(result?.length>0){
-                let databaseDataOne=result[0];
+            if (result?.length > 0) {
+                let databaseDataOne = result[0];
                 //深拷贝
-                let data:any=JSON.parse(JSON.stringify(result))||[]
+                let data: any = JSON.parse(JSON.stringify(result)) || []
                 data.shift();//26
                 form.setFieldsValue({
-                   ...databaseDataOne,
-                   more:data
-                   
-                }) 
-    
+                    ...databaseDataOne,
+                    more: data
+
+                })
+
             }
-          }).finally(()=>{
+        }).finally(() => {
             setDataBaseLoading(false)
-          })
+        })
     }
-    const getListBasicInfo=(indentId:number)=>{
-        useGetDatabaseInfo(indentId,'basic').then((result)=>{
+    const getListBasicInfo = (indentId: number) => {
+        useGetDatabaseInfo(indentId, 'basic').then((result) => {
             setBasicInfoData(result);
-            if(Object.keys(result)?.length>0){
+            if (Object.keys(result)?.length > 0) {
                 baseInfoForm.setFieldsValue({
                     ...result
-                }) 
-                setIsClusterChecked(result?.enableMutiCluster?true:false)
-    
+                })
+                setIsClusterChecked(result?.enableMutiCluster ? true : false)
+
             }
-          })
+        })
     }
-    
-    const getNodeListData=useCallback(()=>{
-       getNodeList(indentId,'server').then((res)=>{
-           if(res?.success){
-            let dataSource=[]
-               if(res?.data?.length>0){
-               dataSource= res?.data?.map((ele:any,index:number)=>({
-                   key:index,
-                   ...ele
-               })
 
-                )
+    const getNodeListData = useCallback(() => {
+        getNodeList(indentId, 'server').then((res) => {
+            if (res?.success) {
+                let dataSource = []
+                if (res?.data?.length > 0) {
+                    dataSource = res?.data?.map((ele: any, index: number) => ({
+                        key: index,
+                        ...ele
+                    })
 
-               }
-            setDataSource(dataSource||[]) 
-           }
+                    )
 
-           
-       })
+                }
+                setDataSource(dataSource || [])
+            }
 
-    },[indentId])
-    const onClusterSwitchChange=(checked: boolean)=>{
+
+        })
+
+    }, [indentId])
+    const onClusterSwitchChange = (checked: boolean) => {
         if (checked === true) {
             setIsClusterChecked(true);
-            
-          } else {
+
+        } else {
             setIsClusterChecked(false);
-            
-          }
+
+        }
 
     }
 
@@ -203,40 +203,40 @@ export default function StationPlan(props:Iprops) {
                 <div style={{ padding: 10 }}>
                     <div style={{ marginBottom: 16, display: "flex", justifyContent: 'space-between' }}>
                         <div >
-                        <Popconfirm
-              title="确定要删除吗？"
-              onConfirm={() => {
-               
-                let ips: any = []
-                               
-                selectedRows?.map((ele: any) => {
-                 ips.push(ele?.serverIp)
+                            <Popconfirm
+                                title="确定要删除吗？"
+                                onConfirm={() => {
 
-                    })
-                deleteServer(indentId,ips).then(()=>{
-                    getNodeListData();
-                    setSelectedRowKeys([])
-                    setSelectedRows([])
-                })
-              }}
-            >
-                            <Button type="primary" onClick={() => { 
-                           
-                            }} disabled={!hasSelected} loading={delLoading} >
-                                删除选中
+                                    let ips: any = []
+
+                                    selectedRows?.map((ele: any) => {
+                                        ips.push(ele?.serverIp)
+
+                                    })
+                                    deleteServer(indentId, ips).then(() => {
+                                        getNodeListData();
+                                        setSelectedRowKeys([])
+                                        setSelectedRows([])
+                                    })
+                                }}
+                            >
+                                <Button type="primary" onClick={() => {
+
+                                }} disabled={!hasSelected} loading={delLoading} >
+                                    删除选中
                              </Button>
-</Popconfirm>
+                            </Popconfirm>
                             <span style={{ marginLeft: 8 }}>
                                 {hasSelected ? `选中 ${selectedRowKeys.length} 条数据` : ''}
                             </span>
 
                         </div>
                         <div>
-                            <Button type="primary" onClick={()=>{setNodeMode("ADD")}}>新增节点</Button>
+                            <Button type="primary" onClick={() => { setNodeMode("ADD") }}>新增节点</Button>
                         </div>
 
                     </div>
-                    <Table style={{ paddingBottom: 10 }} pagination={false}   scroll={{ y: window.innerHeight - 545 }} rowSelection={rowSelection} columns={nodesTableColumns} dataSource={dataSource} />
+                    <Table style={{ paddingBottom: 10 }} pagination={false} scroll={{ y: window.innerHeight - 545 }} rowSelection={rowSelection} columns={nodesTableColumns} dataSource={dataSource} />
                 </div>
 
 
@@ -247,106 +247,106 @@ export default function StationPlan(props:Iprops) {
             content: (<div style={{ display: 'flex', width: '100%', justifyContent: "center", height: "100%", overflow: "scroll" }}>
                 <div>
                     <Spin spinning={dataBaseLoading}>
-                    <p><b>数据库信息</b></p>
-                    <p className="third-step-content">
-                        <Form form={form} layout="horizontal" labelCol={{ flex: '120px' }} name="dynamic_form_nest_item" onFinish={() => { }} >
-                            <Form.Item name="dbType" label="数据库类型" rules={[{ required: true, message: '请填写' }]}>
-                                <Select options={DbUsageOptions} style={{ width: 220 }} onChange={() => { }} />
-                            </Form.Item>
-                            <Form.Item name="dbAddress" label="地址" rules={[{ required: true, message: '请填写' }]}>
-                                <Input style={{ width: 220 }} onChange={() => { }} />
-                            </Form.Item>
-                            <Form.Item name="dbPort" label="端口" rules={[{ required: true, message: '请填写' }]}>
-                                <Input style={{ width: 220 }} onChange={() => { }} />
-                            </Form.Item>
-                            <Form.Item name="dbUser" label="用户名" rules={[{ required: true, message: '请填写' }]}>
-                                <Input style={{ width: 220 }} onChange={() => { }} />
-                            </Form.Item>
-                            <Form.Item name="dbPassword" label="密码" rules={[{ required: true, message: '请填写' }]}>
-                                <Input style={{ width: 220 }} onChange={() => { }} />
-                            </Form.Item>
-                            <Form.Item name="dbUsage" label="类别" rules={[{ required: true, message: '请填写' }]}>
-                                <Select options={options} loading={loading} style={{ width: 220 }}  />
-                            </Form.Item>
-                            < Divider />
-                            <Form.List name="more" >
-                                {(fields, { add, remove }) => (
-                                    <>
-                                        {fields.map(field => (
-                                            // <Space key={field.key} align="start">
-                                            <>
-                                                <Form.Item
-                                                    {...field}
-                                                    label="数据库类型"
-                                                    name={[field.name, 'dbType']}
-                                                    rules={[{ required: true, message: '请填写' }]}
-                                                >
-                                                    <Select options={DbUsageOptions} style={{ width: 242 }} onChange={() => { }} />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...field}
-                                                    label="地址"
-                                                    name={[field.name, 'dbAddress']}
-                                                    rules={[{ required: true, message: '请填写' }]}
-                                                >
-                                                    <Input />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...field}
-                                                    label="端口"
-                                                    name={[field.name, 'dbPort']}
-                                                    rules={[{ required: true, message: '请填写' }]}
-                                                >
-                                                    <Input />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...field}
-                                                    label="用户名"
-                                                    name={[field.name, 'dbUser']}
-                                                    rules={[{ required: true, message: '请填写' }]}
-                                                >
-                                                    <Input />
-                                                </Form.Item>
-                                                <Form.Item
-                                                    {...field}
-                                                    label="密码"
-                                                    name={[field.name, 'dbPassword']}
-                                                    rules={[{ required: true, message: '请填写' }]}
-                                                >
-                                                    <Input />
-                                                </Form.Item>
-
-                                                <div style={{ display: "flex" }}>
+                        <p><b>数据库信息</b></p>
+                        <p className="third-step-content">
+                            <Form form={form} layout="horizontal" labelCol={{ flex: '120px' }} name="dynamic_form_nest_item" onFinish={() => { }} >
+                                <Form.Item name="dbType" label="数据库类型" rules={[{ required: true, message: '请填写' }]}>
+                                    <Select options={DbUsageOptions} style={{ width: 220 }} onChange={() => { }} />
+                                </Form.Item>
+                                <Form.Item name="dbAddress" label="地址" rules={[{ required: true, message: '请填写' }]}>
+                                    <Input style={{ width: 220 }} onChange={() => { }} />
+                                </Form.Item>
+                                <Form.Item name="dbPort" label="端口" rules={[{ required: true, message: '请填写' }]}>
+                                    <Input style={{ width: 220 }} onChange={() => { }} />
+                                </Form.Item>
+                                <Form.Item name="dbUser" label="用户名" rules={[{ required: true, message: '请填写' }]}>
+                                    <Input style={{ width: 220 }} onChange={() => { }} />
+                                </Form.Item>
+                                <Form.Item name="dbPassword" label="密码" rules={[{ required: true, message: '请填写' }]}>
+                                    <Input style={{ width: 220 }} onChange={() => { }} />
+                                </Form.Item>
+                                <Form.Item name="dbUsage" label="类别" rules={[{ required: true, message: '请填写' }]}>
+                                    <Select options={options} loading={loading} style={{ width: 220 }} />
+                                </Form.Item>
+                                < Divider />
+                                <Form.List name="more" >
+                                    {(fields, { add, remove }) => (
+                                        <>
+                                            {fields.map(field => (
+                                                // <Space key={field.key} align="start">
+                                                <>
                                                     <Form.Item
                                                         {...field}
-                                                        label="类别"
-                                                        name={[field.name, 'dbUsage']}
+                                                        label="数据库类型"
+                                                        name={[field.name, 'dbType']}
                                                         rules={[{ required: true, message: '请填写' }]}
                                                     >
-                                                        <Select options={options} style={{ width: 220 }} onChange={() => { }} />
+                                                        <Select options={DbUsageOptions} style={{ width: 242 }} onChange={() => { }} />
                                                     </Form.Item>
-                                                    <Form.Item style={{ marginLeft: 80 }}><MinusCircleOutlined onClick={() => remove(field.name)} /></Form.Item>
-                                                </div>
-                                                < Divider />
-                                            </>
-                                            //    </Space>
-                                        ))}
+                                                    <Form.Item
+                                                        {...field}
+                                                        label="地址"
+                                                        name={[field.name, 'dbAddress']}
+                                                        rules={[{ required: true, message: '请填写' }]}
+                                                    >
+                                                        <Input />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...field}
+                                                        label="端口"
+                                                        name={[field.name, 'dbPort']}
+                                                        rules={[{ required: true, message: '请填写' }]}
+                                                    >
+                                                        <Input />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...field}
+                                                        label="用户名"
+                                                        name={[field.name, 'dbUser']}
+                                                        rules={[{ required: true, message: '请填写' }]}
+                                                    >
+                                                        <Input />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        {...field}
+                                                        label="密码"
+                                                        name={[field.name, 'dbPassword']}
+                                                        rules={[{ required: true, message: '请填写' }]}
+                                                    >
+                                                        <Input />
+                                                    </Form.Item>
 
-                                        <Form.Item>
-                                            <Button type="primary" onClick={() => add()} block icon={<PlusOutlined />}>
-                                                新增
+                                                    <div style={{ display: "flex" }}>
+                                                        <Form.Item
+                                                            {...field}
+                                                            label="类别"
+                                                            name={[field.name, 'dbUsage']}
+                                                            rules={[{ required: true, message: '请填写' }]}
+                                                        >
+                                                            <Select options={options} style={{ width: 220 }} onChange={() => { }} />
+                                                        </Form.Item>
+                                                        <Form.Item style={{ marginLeft: 80 }}><MinusCircleOutlined onClick={() => remove(field.name)} /></Form.Item>
+                                                    </div>
+                                                    < Divider />
+                                                </>
+                                                //    </Space>
+                                            ))}
+
+                                            <Form.Item>
+                                                <Button type="primary" onClick={() => add()} block icon={<PlusOutlined />}>
+                                                    新增
                                                       </Button>
-                                        </Form.Item>
-                                    </>
-                                )}
-                            </Form.List>
+                                            </Form.Item>
+                                        </>
+                                    )}
+                                </Form.List>
 
-                        </Form>
+                            </Form>
 
-                    </p>
+                        </p>
 
                     </Spin>
-                   
+
                 </div>
 
             </div>),
@@ -355,17 +355,17 @@ export default function StationPlan(props:Iprops) {
 
     return (
         <div className="station-plan-content">
-            <EditNodeDraw 
-            indentId={indentId}
-            mode={nodeMode}
-            curRecord={curRecord}
-            onSave={()=>{
-                setNodeMode("HIDE")
-                getNodeListData();
-            }}
-            onClose={()=>{
-                setNodeMode("HIDE")
-            }}
+            <EditNodeDraw
+                indentId={indentId}
+                mode={nodeMode}
+                curRecord={curRecord}
+                onSave={() => {
+                    setNodeMode("HIDE")
+                    getNodeListData();
+                }}
+                onClose={() => {
+                    setNodeMode("HIDE")
+                }}
             />
             <Steps current={current}>
                 {steps.map(item => (
@@ -378,8 +378,8 @@ export default function StationPlan(props:Iprops) {
                     <Button type="primary" onClick={async () => {
                         if (current === 0) {
                             const params = await baseInfoForm.validateFields()
-                           //enableMutiCluster
-                            saveBasicInfo({ ...params,indentId:indentId, enableMutiCluster:params?.enableMutiCluster===true?true:false }).then((res) => {
+                            //enableMutiCluster
+                            saveBasicInfo({ ...params, indentId: indentId, enableMutiCluster: params?.enableMutiCluster === true ? true : false }).then((res) => {
                                 if (res?.code === 1000) {
                                     next()
                                 }
@@ -390,7 +390,7 @@ export default function StationPlan(props:Iprops) {
                         if (current === 1) {
                             next()
                         }
-                        
+
                     }}>
                         下一步
                     </Button>
@@ -399,45 +399,45 @@ export default function StationPlan(props:Iprops) {
                     <Button type="primary" onClick={async () => {
                         if (current === 2) {
                             const params = await form.validateFields()
-                            let dataParams:any=[]
-                            let objectData:any={};
+                            let dataParams: any = []
+                            let objectData: any = {};
                             for (const key in params) {
                                 if (Object.prototype.hasOwnProperty.call(params, key)) {
                                     const element = params[key];
-                                    if(key !=="more"){
-                                        objectData[key]=element
+                                    if (key !== "more") {
+                                        objectData[key] = element
 
                                     }
-                                    if(key==="dbPort"){
-                                        objectData[key]=Number(element)
+                                    if (key === "dbPort") {
+                                        objectData[key] = Number(element)
 
                                     }
-                                    
+
                                 }
                             }
-                            dataParams=[objectData]
-                           if(params?.more?.length>0){
-                          const paramsData=  params?.more?.map((ele:any)=>(
-                              {
-                                  ...ele,
-                                  dbPort:Number(ele?.dbPort)
-                              }
-                          )
+                            dataParams = [objectData]
+                            if (params?.more?.length > 0) {
+                                const paramsData = params?.more?.map((ele: any) => (
+                                    {
+                                        ...ele,
+                                        dbPort: Number(ele?.dbPort)
+                                    }
+                                )
 
 
-                            )
-                             dataParams=[objectData].concat(paramsData)
-                           }
-                          
-                            saveDatabaseInfo({indentId:indentId,databases:dataParams }).then((res) => {
-                                if(res?.success){
+                                )
+                                dataParams = [objectData].concat(paramsData)
+                            }
+
+                            saveDatabaseInfo({ indentId: indentId, databases: dataParams }).then((res) => {
+                                if (res?.success) {
                                     message.success(res?.data)
                                     setDisabled(true)
                                     // onUpdate()
-                                    
+
                                 }
-                               
-                              
+
+
                             })
 
                         }

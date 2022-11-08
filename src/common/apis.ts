@@ -3,6 +3,8 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/07/24 14:32
 import appConfig from '@/app.config';
+import { addAPIPrefix } from '@/utils';
+import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
 
 /* 用户退出接口 */
 export const doLogoutApi = '/user_backend/v1/logout';
@@ -62,7 +64,15 @@ export const deleteSystemNoticeApi = `${appConfig.apiPrefix}/adminManage/systemN
 export const getMatrixEnvConfig = `${appConfig.apiPrefix}/adminManage/matrixEnvConfig`;
 
 /* GET 获取CHANGE LOG */
-export const getLatestChangelog =`${appConfig.apiPrefix}/adminManage/changelog/latest`;
+export const getLatestChangelog = `${appConfig.apiPrefix}/adminManage/changelog/latest`;
 /* GET 查询文章  */
 
-export const getInfoList = `${appConfig.apiPrefix}/adminManage/post/list`; 
+export const getInfoList = `${appConfig.apiPrefix}/adminManage/post/list`;
+
+// 当前页面按钮权限
+export const getBtnPermission = (data: any) => {
+    const url = addAPIPrefix('/rightManage/getUserPermissions');
+    return getRequest(url, { data: data });
+};
+
+

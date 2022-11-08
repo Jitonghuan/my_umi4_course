@@ -114,7 +114,9 @@
   "resolutions": {
     "@cffe/h2o-design": "css-var",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "antd": "4.23.6"
+
   },
   "__npminstall_done": false
 }

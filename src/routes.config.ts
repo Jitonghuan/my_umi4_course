@@ -114,6 +114,10 @@ export default [
     redirect: `${baseRoutePath}/DBMS/authority-manage/authority-apply`,
   },
   {
+    path: `${baseRoutePath}/config/nacos-config`,
+    redirect: `${baseRoutePath}/config/nacos-config/nacos`,
+  },
+  {
    
     "path": `${baseRoutePath}/application`,
     "name": "应用管理",
@@ -480,6 +484,36 @@ export default [
       //   key: 'configuration',
       //   component: '@/pages/DBMS/configuration',
       // },
+    ],
+  },
+  {
+    path: `${baseRoutePath}/config`,
+    name: '配置中心',
+    icon: 'icon-Time',
+    routes: [
+      {
+        path:  `${baseRoutePath}/config/nacos-config`,
+        name: 'nacos配置',
+        key: 'nacos-config',
+        component: '@/pages/config/nacos-config',
+        routes:[
+          {
+            path:`${baseRoutePath}/config/nacos-config/nacos` ,
+            name: 'nacos配置',
+            key: 'nacos-config',
+            component: '@/pages/config/nacos-config/components/nacos',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/config/nacos-config/namespace`,
+            name: '命名空间',
+            key: 'nacos-config',
+            component: '@/pages/config/nacos-config/components/namespace',
+            hideInMenu: true,
+          }
+        ]
+      },
+    
     ],
   },
   {
