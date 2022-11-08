@@ -12,6 +12,8 @@ import { getResourceList, resourceDel, resourceUpdate, searchYaml } from '../ser
 import { useResourceType, useNameSpace } from '../hook';
 import debounce from 'lodash/debounce';
 import { parse, stringify } from 'query-string';
+import { FeContext } from '@/common/hooks';
+
 
 import './index.less';
 export default function ResourceDetail(props: any) {
@@ -20,6 +22,7 @@ export default function ResourceDetail(props: any) {
   // const { location, children } = props;
   let sessionData = sessionStorage.getItem('cluster_resource_params') || '{}';
   const { clusterCode } = useContext(clusterContext);
+  const { btnPermission } = useContext(FeContext);
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
   const [yamlDetailVisible, setYamlDetailVisible] = useState(false);
@@ -34,7 +37,7 @@ export default function ResourceDetail(props: any) {
   const [loading, setLoading] = useState<boolean>(false);
   const [continueList, setContinueList] = useState<string[]>(['']);
   const [total, setTotal] = useState<number>(0);
-  const [typeData] = useResourceType({});
+  const [typeData] = useResourceType({ clusterCode });
   const [typeOptions, setTypeOptions] = useState<any>([]);
   const [nameSpaceData] = useNameSpace({ clusterCode, resourceType: 'namespaces' });
   const [currentRecord, setCurrentRecord] = useState<any>({});
@@ -50,6 +53,8 @@ export default function ResourceDetail(props: any) {
     const dataList = data.map((item: any) => ({ label: item.nodeName, value: item.nodeName }));
     setNodeList(dataList);
   }, [data]);
+
+  const canAdd = useMemo(() => btnPermission.includes('matrix:cluster:resource:add'), [btnPermission])
 
   const searchValueInput = useRef(null) as any;
   // 表格列配置
@@ -153,47 +158,59 @@ export default function ResourceDetail(props: any) {
 
   useEffect(() => {
     if (nameSpaceData?.length !== 0 && typeData?.length !== 0) {
+      // 判断之前缓存的数据是否还存在 存在则用 不存在默认取第一个
+      const namespaceList = nameSpaceData.map((item: any) => item.value)
+      const typeValueList = typeData.map((item: any) => item.value);
+      const currentType = typeValueList.includes(storeParams?.resourceType) ? storeParams?.resourceType : typeData[0].value;
+      const currentNamespace = namespaceList.includes(storeParams?.namespace) ? storeParams?.namespace : nameSpaceData[0].value;
       form.setFieldsValue({
-        namespace: storeParams?.namespace || nameSpaceData[0].value,
-        resourceType: storeParams?.resourceType || 'deployments',
+        namespace: currentNamespace,
+        resourceType: currentType,
         node: storeParams?.node || '',
       });
-      setSelectType(storeParams?.resourceType || 'deployments');
-      queryList(undefined, storeParams);
-      queryAll(storeParams);
+      const newValue = { namespace: currentNamespace, resourceType: currentType, node: storeParams?.node || '' }
+      sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: newValue } || {}));
+      setStoreParams(newValue);
+      setSelectType(currentType);
+      queryList(undefined, newValue);
+      queryAll(newValue);
     } else {
       setDataSource([])
     }
   }, [nameSpaceData, typeData]);
 
-  // useEffect(() => {
-  //     const interVal = setInterval(() => { initialSearch() }, 1000 * 60)
-  //     return () => { clearInterval(interVal) }
-  // }, [])
-
+  // 请求列表的分页数据 资源类型为namespaces的不分页 其他的分页要带上一页的continue值
   const queryList = (index = pageIndex, values = form.getFieldsValue()) => {
     if (!values.resourceType) {
       return;
     }
     setLoading(true);
-    let a = index === 1 ? '' : continueList[index - 2];
-    getResourceList({ ...values, index, nodeName: values.node, limit: limit, continue: a, clusterCode })
-      .then((res: any) => {
-        if (res?.success) {
-          setDataSource(res?.data?.items || []);
-          setOriginData(res?.data?.items || []);
-          if (index === 1) {
-            setTotal(res?.data?.total || 0);
-          }
-          continueList[index - 1] = res?.data?.continue || '';
-          setContinueList([...continueList]);
-        } else {
-          setDataSource([]);
-          setOriginData([]);
-          setTotal(0);
-          setPageIndex(1);
+    let continueValue = index === 1 ? '' : continueList[index - 2];
+    getResourceList(
+      {
+        ...values,
+        index: values.resourceType === 'namespaces' ? undefined : index,
+        nodeName: values.node,
+        limit: values.resourceType === 'namespaces' ? '' : limit,
+        continue: values.resourceType === 'namespaces' ? undefined : continueValue,
+        clusterCode
+      }
+    ).then((res: any) => {
+      if (res?.success) {
+        setDataSource(res?.data?.items || []);
+        setOriginData(res?.data?.items || []);
+        if (index === 1) {
+          setTotal(res?.data?.total || 0);
         }
-      })
+        continueList[index - 1] = res?.data?.continue || '';
+        setContinueList([...continueList]);
+      } else {
+        setDataSource([]);
+        setOriginData([]);
+        setTotal(0);
+        setPageIndex(1);
+      }
+    })
       .finally(() => {
         setLoading(false);
       });
@@ -260,7 +277,6 @@ export default function ResourceDetail(props: any) {
     const data = JSON.parse(JSON.stringify(allData));
     const afterFilter: any = [];
     data.forEach((item: any) => {
-      console.log((item?.type === 'pods' && item?.info?.ip?.indexOf(value) !== -1), 'judge')
       if (item.name?.indexOf(value) !== -1 || (item?.type === 'pods' && item?.info?.ip?.indexOf(value) !== -1)) {
         afterFilter.push(item);
       }
@@ -399,7 +415,7 @@ export default function ResourceDetail(props: any) {
             }}
             disabled={!allData?.length}
           ></input>
-          <Button
+          {canAdd && <Button
             type="primary"
             onClick={() => {
               setCreateYamlVisbile(true);
@@ -408,7 +424,7 @@ export default function ResourceDetail(props: any) {
             style={{ marginLeft: '10px' }}
           >
             创建资源
-          </Button>
+          </Button>}
         </div>
       </div>
       <div className="table-wrapper">
@@ -423,7 +439,7 @@ export default function ResourceDetail(props: any) {
         // scroll={dataSource.length > 0 ? { x: 18000 } : undefined}
         ></Table>
         <div className="flex-end" style={{ marginTop: '10px' }}>
-          {showPage && <Page
+          {(showPage && selectType !== 'namespaces') && <Page
             continueList={continueList}
             clickLeft={clickLeft}
             total={total}
