@@ -42,8 +42,8 @@ export default defineConfig({
       changeOrigin: true,
     },
     '/v1': {
-      target: 'http://matrix-test.cfuture.shop/',
-      // target: 'http://matrix.cfuture.shop/',
+      // target: 'http://matrix-test.cfuture.shop/',
+      target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.129.38:8081',//青枫本地
       // target: 'http://10.10.129.128:8080/', // 羁绊本地

@@ -8,6 +8,8 @@ export const STATUS_COLOR: statusInterface = {
   health: '#65ca75',
 };
 
+console.log(STATUS_COLOR['risk'], 'rish')
+
 export const STATUS_TEXT: statusInterface = {
   risk: '风险',
   offline: '离线',
