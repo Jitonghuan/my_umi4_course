@@ -5,16 +5,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Drawer, Form, Button, Radio, Input, Switch } from 'antd';
 import type { RadioChangeEvent } from 'antd';
+import CallInfo from './call-info';
+import InstanceMonitor from './instance-monitor';
+import JvmMonitor from './jvm-monitor'
 
 
-type TabPosition = 'left' | 'right' | 'top' | 'bottom';
+type TabPosition = 'instance' | 'jvm' | 'call' ;
 export interface ListDetailProps {
  
 }
 
 export default function CreateArticle(props: ListDetailProps) {
   const {  } = props;
-  const [filterMode, setFilterMode] = useState<TabPosition>('top');
+  const [filterMode, setFilterMode] = useState<TabPosition>('instance');
   
   const handleModeChange = (e: RadioChangeEvent) => {
     setFilterMode(e.target.value);
@@ -28,13 +31,16 @@ export default function CreateArticle(props: ListDetailProps) {
         <div>
             <div>
             <Radio.Group onChange={handleModeChange} value={filterMode} style={{ marginBottom: 8 }}>
-               <Radio.Button value="top">实例监控</Radio.Button>
-               <Radio.Button value="left">JVM监控</Radio.Button>
-               <Radio.Button value="left">调用信息</Radio.Button>
+               <Radio.Button value="instance">实例监控</Radio.Button>
+               <Radio.Button value="jvm">JVM监控</Radio.Button>
+               <Radio.Button value="call">调用信息</Radio.Button>
            </Radio.Group>
 
             </div>
             <div>
+              {filterMode==="instance"&&<InstanceMonitor/>}
+              {filterMode==="jvm"&&<JvmMonitor/>}
+              {filterMode==="call"&&<CallInfo/>}
 
             </div>
         </div>
