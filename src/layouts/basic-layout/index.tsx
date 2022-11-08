@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { ConfigProvider, Divider } from '@cffe/h2o-design';
 import zhCN from 'antd/lib/locale/zh_CN';
 import { BasicLayout } from '@cffe/layout';
+import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import 'antd/dist/antd.variable.min.css';
 import PositionSwitcher, { UserPositionProps } from '@hbos/component-position-switcher';
 import { ChartsContext } from '@cffe/fe-datav-components';
@@ -261,7 +262,7 @@ export default function Layout(props: any) {
     }
   };
   return (
-    <ConfigProvider locale={zhCN} >
+    <ConfigProvider locale={zhCN}  componentSize={"small"}>
       <ChangeLog
         mode={changeLogMode}
         infoData={changeLog}

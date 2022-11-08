@@ -5,6 +5,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import Editor, { IAnnotation } from 'react-ace';
+//searchbox过滤框，快捷键ctrl+F
+import 'brace/ext/searchbox';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/mode-json';

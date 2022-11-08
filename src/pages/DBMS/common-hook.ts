@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import * as APIS from './common-service';
-import { message } from 'antd';
-//queryEnvList
 
 //环境列表查询
 export function useEnvList() {
