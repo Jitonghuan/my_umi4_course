@@ -102,10 +102,11 @@ export default function RrightTrace(props: any) {
       title: 'Start Time',
       dataIndex: 'startTime',
       key: 'startTime',
+      width: 160,
       ellipsis: true,
       render: (value: string) => (
         <Tooltip placement="topLeft" title={moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}>
-          {`${moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}ms`}
+          {`${moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}`}
         </Tooltip>
       ),
     },
@@ -220,7 +221,7 @@ export default function RrightTrace(props: any) {
                 onClick={() => {
                   history.push({
                     pathname: '/matrix/logger/search',
-                    search:`envCode=${envCode}&startTime=${moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss')}&traceId=${selectTraceId}`
+                    search: `envCode=${envCode}&startTime=${moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss')}&traceId=${selectTraceId}`
                     // query: {
                     //   envCode,
                     //   startTime: moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss'),
