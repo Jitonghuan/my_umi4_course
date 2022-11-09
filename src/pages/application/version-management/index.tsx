@@ -51,7 +51,7 @@ export default function VersionList() {
         setType('bindApp');
       },
       onDisable: (record: any, index: any) => {
-        let editParams = { id: record.id, disable: record.diable ? 0 : 1, versionName: record.versionName, desc: record.desc };
+        let editParams = { id: record.id, disable: record.disable ? 0 : 1, versionName: record.versionName, desc: record.desc };
         editVersion(editParams).then(() => {
           loadVersionListData();
         });
