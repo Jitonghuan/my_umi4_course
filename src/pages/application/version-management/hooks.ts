@@ -118,16 +118,16 @@ export function useCreateVersion(): [
 // 编辑版本
 export function useUpdateVersion(): [
   boolean,
-  (paramsObj: { id: number; versionName: string; desc?: string }) => Promise<void>,
+  (paramsObj: { id: number; disable: number, versionName: string; desc?: string }) => Promise<void>,
 ] {
   const [loading, setLoading] = useState(false);
-  const editVersion = async (paramsObj: { id: number; versionName: string; desc?: string }) => {
+  const editVersion = async (paramsObj: { id: number; disable: number, versionName: string; desc?: string }) => {
     setLoading(true);
     try {
       await putRequest(updateVersion, { data: paramsObj })
         .then((res) => {
           if (res.success) {
-            message.success('编辑版本成功!');
+            message.success('操作成功!');
           } else {
             // message.error('编辑版本失败！');
             return;

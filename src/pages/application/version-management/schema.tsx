@@ -1,4 +1,4 @@
-import { Tooltip } from 'antd';
+import { Tooltip, Popconfirm } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 
 export type AppType = 'frontend' | 'backend';
@@ -7,10 +7,12 @@ export const createTableSchema = ({
   onEditClick,
   onVeiwClick,
   onBindClick,
+  onDisable
 }: {
   onEditClick: (record: any, index: number) => void;
   onVeiwClick: (record: any, index: number) => void;
   onBindClick: (record: any, index: number) => void;
+  onDisable: (record: any, index: number) => void;
 }) =>
   [
     {
@@ -55,7 +57,7 @@ export const createTableSchema = ({
       },
     },
     {
-      width: 120,
+      width: 150,
       title: '操作',
       fixed: 'right',
       dataIndex: 'operate',
@@ -65,6 +67,14 @@ export const createTableSchema = ({
           <a onClick={() => onVeiwClick(record, index)}>查看</a>
           <a onClick={() => onEditClick(record, index)}>编辑</a>
           <a onClick={() => onBindClick(record, index)}>关联应用</a>
+          <Popconfirm
+            title={`确定要${record.disable ? '启用' : '禁用'}吗？`}
+            onConfirm={() => {
+              onDisable(record, index);
+            }}
+          >
+            <a>{record.disable ? '启用' : '禁用'}</a>
+          </Popconfirm>
         </div>
       ),
     },

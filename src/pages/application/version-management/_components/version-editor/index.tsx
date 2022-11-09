@@ -45,7 +45,7 @@ export default function VersionEditor(props: IProps) {
           onSubmit();
         });
       } else {
-        let editParams = { id: initData.id, versionName: values.versionName, desc: values.desc };
+        let editParams = { id: initData.id, disable: initData.disable, versionName: values.versionName, desc: values.desc };
         editVersion(editParams).then(() => {
           onSubmit();
         });
