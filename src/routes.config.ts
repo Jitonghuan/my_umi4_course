@@ -118,7 +118,6 @@ export default [
     redirect: `${baseRoutePath}/config/nacos-config/nacos`,
   },
   {
-   
     "path": `${baseRoutePath}/application`,
     "name": "应用管理",
     "icon": "icon-poc_maindata",
@@ -418,18 +417,37 @@ export default [
     ],
   },
   {
+    "path": `${baseRoutePath}/version-manage`,
+    "name": "版本管理",
+    "icon": "icon-exit",
+    "routes": [
+      {
+        'path': `${baseRoutePath}/version-manage/list`,
+        'key': "version-list",
+        "name": "版本列表",
+        "component": "@/pages/version-manage/version-list",
+      },
+      {
+        "path": `${baseRoutePath}/version-manage/detail`,
+        "name": "版本详情",
+        "key": "version-detail",
+        "component": "@/pages/version-manage/version-detail",
+      },
+    ]
+  },
+  {
     path: `${baseRoutePath}/DBMS`,
     name: '数据管理',
     icon: 'icon-Detail',
     routes: [
       {
-        path:  `${baseRoutePath}/DBMS/authority-manage`,
+        path: `${baseRoutePath}/DBMS/authority-manage`,
         name: '权限管理',
         key: 'authority-manage',
         component: '@/pages/DBMS/authority-manage',
-        routes:[
+        routes: [
           {
-            path:`${baseRoutePath}/DBMS/authority-manage/authority-apply` ,
+            path: `${baseRoutePath}/DBMS/authority-manage/authority-apply`,
             name: '权限申请',
             key: 'authority-manage',
             component: '@/pages/DBMS/authority-manage/components/authority-apply',
@@ -452,7 +470,7 @@ export default [
       },
 
       {
-        path:`${baseRoutePath}/DBMS/data-change` ,
+        path: `${baseRoutePath}/DBMS/data-change`,
         name: '数据变更',
         key: 'data-change',
         component: '@/pages/DBMS/data-change',
@@ -465,7 +483,7 @@ export default [
       //   hideInMenu: true,
       // },
       {
-        path:`${baseRoutePath}/DBMS/approval-end`,
+        path: `${baseRoutePath}/DBMS/approval-end`,
         name: '工单详情-审批结束',
         key: 'data-change',
         component: '@/pages/DBMS/data-change/components/approval-end',
@@ -476,7 +494,7 @@ export default [
         name: '数据变更申请',
         key: 'data-change',
         component: '@/pages/DBMS/data-change/components/change-apply',
-        hideInMenu:true
+        hideInMenu: true
       },
       // {
       //   path: `${baseRoutePath}/DBMS/configuration`,
@@ -492,13 +510,13 @@ export default [
     icon: 'icon-Time',
     routes: [
       {
-        path:  `${baseRoutePath}/config/nacos-config`,
+        path: `${baseRoutePath}/config/nacos-config`,
         name: 'nacos配置',
         key: 'nacos-config',
         component: '@/pages/config/nacos-config',
-        routes:[
+        routes: [
           {
-            path:`${baseRoutePath}/config/nacos-config/nacos` ,
+            path: `${baseRoutePath}/config/nacos-config/nacos`,
             name: 'nacos配置',
             key: 'nacos-config',
             component: '@/pages/config/nacos-config/components/nacos',
@@ -513,7 +531,7 @@ export default [
           }
         ]
       },
-    
+
     ],
   },
   {
@@ -781,7 +799,7 @@ export default [
             "component": "@/pages/operation/app-tmpl/tmpl-create",
             "hideInMenu": true
           },
-          
+
           {
             "path": `${baseRoutePath}/operation/app-tmpl/push`,
             "name": "推送模版",
@@ -789,7 +807,7 @@ export default [
             "component": "@/pages/operation/app-tmpl/push",
             "hideInMenu": true
           },
-         
+
         ]
       },
       {

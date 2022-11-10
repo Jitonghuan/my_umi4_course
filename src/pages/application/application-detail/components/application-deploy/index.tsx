@@ -3,7 +3,7 @@
 // @create 2021/08/25 16:21
 
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Tabs, Select, Tag,Modal } from 'antd';
+import { Tabs, Select, Tag, Modal } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
@@ -11,8 +11,8 @@ import SecondPartyPkg from '../second-party-pkg';
 import DeployContent from './deploy-content';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
-import { history, useLocation} from 'umi';
-import { parse,stringify } from 'query-string';
+import { history, useLocation } from 'umi';
+import { parse, stringify } from 'query-string';
 import './index.less';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl } from '@/pages/application/service';
@@ -42,8 +42,8 @@ export default function ApplicationDeploy(props: any) {
   );
 
   useEffect(() => {
-    sessionStorage.setItem('__init_env_tab__', tabActive+"");
-    const newQuery={
+    sessionStorage.setItem('__init_env_tab__', tabActive + "");
+    const newQuery = {
       ...query,
       activeTab: tabActive
     }
@@ -51,11 +51,11 @@ export default function ApplicationDeploy(props: any) {
       //  query: 
       //  { ...props.location.query, 
       //   activeTab: tabActive } 
-      pathname:location.pathname,
+      pathname: location.pathname,
       search: stringify(newQuery),
-      }, 
-      );
-    
+    },
+    );
+
     if (tabActive && +appData?.isClient! === 0) {
       getPipeline(tabActive);
     }
@@ -87,10 +87,10 @@ export default function ApplicationDeploy(props: any) {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
-      if(result?.success){
+      if (result?.success) {
         const { data } = result || [];
-       
-        if(data?.length<1||!data?.length){
+
+        if (data?.length < 1 || !data?.length) {
           warning()
           return
         }
@@ -112,6 +112,7 @@ export default function ApplicationDeploy(props: any) {
         next.sort((a: any, b: any) => {
           return a.sortType - b.sortType;
         }); //升序
+        next.push({ label: '版本发布', typeCode: 'version', typeName: '版本发布', value: 'version' })
         const currentTab = sessionStorage.getItem('__init_env_tab__') || next[0]?.typeCode || env;
         setTabActive(currentTab);
         let pipelineObj: any = {};
@@ -125,7 +126,7 @@ export default function ApplicationDeploy(props: any) {
         setEnvTypeData(next);
 
       }
-     
+
     });
   };
 
