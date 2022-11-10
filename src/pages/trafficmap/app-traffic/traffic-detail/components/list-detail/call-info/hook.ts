@@ -8,6 +8,8 @@ interface queryCountDetailParams{
     envCode:string;
     appId?:string;
     instanceIDs?:string[];
+    deployName?:string;
+    isTotal?:boolean
     
   }
   //getCountOverview
@@ -18,7 +20,7 @@ interface queryCountDetailParams{
       return dataSource
       
     }
-    return {};
+    return [];
   });
 
 

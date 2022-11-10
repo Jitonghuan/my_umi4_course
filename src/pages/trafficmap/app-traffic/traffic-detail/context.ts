@@ -12,6 +12,8 @@ export interface ContextTypes {
   hostName?:string
   currentTableData?:any;
   deployName?:string;
+  count?:number;
+  isClick?:string|number
   /** 请求应用数据 */
   //queryAppData?: () => void;
 }

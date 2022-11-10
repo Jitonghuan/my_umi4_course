@@ -26,7 +26,7 @@ const layoutGrid = {
     xxxl: 2,
   };
 export default function InstanceMonitor(){
-    const {appCode,envCode,startTime,hostName,hostIP} =useContext(DetailContext);
+    const {appCode,envCode,startTime,hostName,hostIP,count} =useContext(DetailContext);
     const appConfig = [
         {
           title: 'GC瞬时次数/每分钟',
@@ -59,7 +59,7 @@ export default function InstanceMonitor(){
                     <AppCard
                       key={index}
                       {...el}
-                      requestParams={{envCode,appCode,  ip: hostIP, startTime:startTime, hostName:hostName }}
+                      requestParams={{envCode,appCode,  ip: hostIP, startTime:startTime, hostName:hostName,count }}
                     />
                   ))}
                 </VCCardLayout>

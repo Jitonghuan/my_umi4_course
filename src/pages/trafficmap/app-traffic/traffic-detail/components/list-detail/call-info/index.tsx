@@ -5,11 +5,12 @@ import moment from 'moment'
 import {createStatisticsTableColumns,createQueryTableColumns} from './schema'
 import {getCountDetail,getTrace} from './hook'
 import DetailContext from '../../../context';
+import {history} from 'umi'
 
 
 import './index.less'
 export  default function InstanceMonitor(){
-  const {appCode,envCode,startTime,appId,deployName} =useContext(DetailContext);
+  const {appCode,envCode,startTime,appId,deployName,count,isClick} =useContext(DetailContext);
   const [statisticsData,setStatisticsData]=useState<any>([])
   const [statisticsLoading,setStatisticsLoading]=useState<boolean>(false)
   const [traceLoading,setTraceLoading]=useState<boolean>(false)
@@ -20,19 +21,25 @@ export  default function InstanceMonitor(){
   const [nowSearchEndpoint,setNowSearchEndpoint]=useState<string>("")
   useEffect(()=>{
     if(!envCode||!startTime||!appId||!deployName)return
-    getCountDetailTable()
+    if(isClick&&isClick===appCode){
+      getCountDetailTable(true)
+    }else{
+      getCountDetailTable(false)
+    }
+  
    
-  },[envCode,startTime,deployName,appId,])
+  },[envCode,startTime,deployName,appId,count,isClick])
   useEffect(()=>{
     getTraceTable()
-  },[startTime,appId])
-  const getCountDetailTable=()=>{
+  },[startTime,appId,count])
+  const getCountDetailTable=(isTotal?:boolean)=>{
     setStatisticsLoading(true)
     const now = new Date().getTime();
     //@ts-ignore
     getCountDetail({envCode,
       deployName,
       appId,
+      isTotal,
       //isTotal:true,
        //@ts-ignore
       start:moment(new Date(Number(now- startTime ))).format('YYYY-MM-DD HH:mm:ss'),
@@ -66,21 +73,40 @@ export  default function InstanceMonitor(){
     })
   }
     const statisticsColumns = useMemo(() => {
+      console.log("startTime",startTime)
         return createStatisticsTableColumns({
+
           onView: (record, index) => {
+            const now = new Date().getTime();
+            history.push({
+              pathname: "/matrix/trafficmap/tracking"
+
+            }, {
+              entry: "logSearch",
+              envCode: envCode,
+              //traceId: record?.,
+              appId:appId,
+              startTime: Number((now - startTime) / 1000),
+              endTime: Number(now / 1000),
+            })
+          
           
           },
         
         }) as any;
-      }, []);
+      }, [startTime,envCode,appId]);
       const queryColumns = useMemo(() => {
+        const now = new Date().getTime();
         return createQueryTableColumns({
           onView: (record, index) => {
-          
-          },
+            history.push({
+              pathname: '/matrix/logger/search',
+              search:`envCode=${envCode}&startTime=${moment(now- startTime).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(now).format('YYYY-MM-DD HH:mm:ss')}&traceId=${record?.traceIds[0]}`
+          })
         
-        }) as any;
-      }, []);
+        }
+      }) as any;
+      }, [startTime,envCode]);
       const pageSizeClick = (pagination: any) => {
         setPageIndex(pagination.current);
         let obj = {

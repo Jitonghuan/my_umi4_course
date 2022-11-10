@@ -62,7 +62,7 @@ export default function DiskIOLine(props: ChartCaseListProps) {
       <header style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h3>fs writes/reads</h3>
         <span>
-          <Select options={fsOption} style={{ width: 180 }} onChange={getData} value={option}></Select>
+          <Select options={fsOption} style={{ width: "10vw" }} onChange={getData} value={option}></Select>
         </span>
       </header>
 

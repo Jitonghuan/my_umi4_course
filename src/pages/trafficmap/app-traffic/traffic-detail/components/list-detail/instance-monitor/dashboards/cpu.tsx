@@ -65,7 +65,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
       <header style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h3>Pods CPU usage</h3>
         <span>
-          <Select options={podsCpuOption} style={{ width: 180 }} onChange={getData} value={option}></Select>
+          <Select options={podsCpuOption} style={{ width: "10vw" }} onChange={getData} value={option}></Select>
         </span>
       </header>
       <div>

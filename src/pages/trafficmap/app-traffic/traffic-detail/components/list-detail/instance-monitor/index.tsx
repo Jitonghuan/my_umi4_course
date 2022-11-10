@@ -17,7 +17,7 @@ import './index.less'
 export default function InstanceMonitor(){
  
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
-  const {appCode,envCode,startTime,endTime,currentTableData,hostIP,hostName} =useContext(DetailContext);
+  const {appCode,envCode,startTime,endTime,currentTableData,hostIP,hostName,count} =useContext(DetailContext);
   const [podCpuData, podCpuLoading, queryPodCpu] = useQueryPodCpu();
   const [podMemData, podMemLoading, queryPodMem] = usequeryPodMem();
   const [fsData, fsLoading, queryFs] = useQueryFs();
@@ -37,7 +37,7 @@ export default function InstanceMonitor(){
           })
         
        }
-   },[envCode,appCode,hostIP,hostName,startTime])
+   },[envCode,appCode,hostIP,hostName,startTime,count])
    useEffect(()=>{
      if(Object.keys(currentTableData||{})?.length>0){
       getNodeDataSource()
@@ -45,7 +45,7 @@ export default function InstanceMonitor(){
       setNodeDataSource([])
      }
     
-   },[currentTableData])
+   },[currentTableData,count])
 
    const getChartsDataSource=(params:queryItems)=>{
     queryPodCpu(params)

@@ -66,7 +66,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
       <header style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h3>Pods memory usage</h3>
         <span>
-          <Select options={podsMemoryOption} style={{ width: 180 }} onChange={getData} value={option}></Select>
+          <Select options={podsMemoryOption} style={{ width: "10vw" }} onChange={getData} value={option}></Select>
         </span>
       </header>
       <div>

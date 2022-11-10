@@ -13,7 +13,7 @@ import './index.less'
 
 type TabPosition = 'instance' | 'jvm' | 'call' ;
 export default function CreateArticle() {
- const {appCode,hostIP} =useContext(DetailContext);
+ const {appCode,hostIP,isClick} =useContext(DetailContext);
   const [filterMode, setFilterMode] = useState<TabPosition>('instance');
   const handleModeChange = (e: RadioChangeEvent) => {
     setFilterMode(e.target.value);
@@ -29,7 +29,8 @@ export default function CreateArticle() {
                <Radio.Button value="jvm">JVM监控</Radio.Button>
                <Radio.Button value="call">调用信息</Radio.Button>
            </Radio.Group>
-              <span>{appCode}  |  {hostIP}</span>
+           {isClick===appCode?<span>{appCode}</span>: <span>{appCode}  |  {hostIP}</span>}
+             
 
             </div>
             <div>

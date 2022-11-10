@@ -55,7 +55,7 @@ export default function NetWorkLine(props: ChartCaseListProps) {
       <header style={{ display: 'flex', justifyContent: 'space-between' }}>
         <h3>Network I/O pressure</h3>
         <span>
-          <Select options={networkOption} style={{ width: 180 }} onChange={getData} value={option}></Select>
+          <Select options={networkOption} style={{ width: "10vw" }} onChange={getData} value={option}></Select>
         </span>
       </header>
       <div>

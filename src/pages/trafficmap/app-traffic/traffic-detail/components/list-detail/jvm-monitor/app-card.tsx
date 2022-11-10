@@ -29,6 +29,7 @@ export interface IProps {
 
   /** 瞬时值、累计值的初始值 */
   initialRadio?: string;
+  count?:number
 }
 
 type IEchartResp = {
@@ -53,7 +54,7 @@ const typeEnum = [
  * @create 2021-04-14 15:40
  */
 const Coms = (props: IProps) => {
-  const { title, getOption = () => {}, hasRadio = false, initialRadio = '1', queryFn, requestParams = {} } = props;
+  const { title, getOption = () => {}, hasRadio = false, initialRadio = '1', queryFn, requestParams = {},count } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [curtRadio, setCurtRadio] = useState<string>(initialRadio || '1');
   const [curOptions, setCurOptions] = useState<any>({});
