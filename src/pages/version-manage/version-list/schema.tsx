@@ -1,81 +1,74 @@
 import { Popconfirm } from 'antd';
-export const listSchema = () => {
+export const listSchema = ({ toDetail }) => {
     return [
         {
             title: '序号',
             dataIndex: 'id',
             width: 120,
-            fixed: 'left',
         },
         {
             title: '版本号',
-            dataIndex: 'id',
-            width: 120,
-            fixed: 'left',
+            dataIndex: 'version',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'list') }}>{value}</a>
         },
         {
             title: '变更应用数',
-            dataIndex: 'id',
-            width: 120,
-            fixed: 'left',
+            dataIndex: 'version',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'app') }}>{value}</a>
         },
         {
             title: '变更配置项',
-            dataIndex: 'id',
-            width: 120,
-            fixed: 'left',
+            dataIndex: 'version',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'config') }}>{value}</a>
         },
         {
             title: 'SQL脚本',
-            dataIndex: 'id',
-            width: 120,
-            fixed: 'left',
+            dataIndex: 'version',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'sql') }}>{value}</a>
         },
         {
             title: '关联内容',
-            dataIndex: 'id',
-            width: 120,
-            fixed: 'left',
+            dataIndex: 'content',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'list') }}>{value}</a>
         },
         {
             title: '版本简述',
             dataIndex: 'id',
-            width: 120,
-            fixed: 'left',
+            width: 150,
         },
         {
             title: '状态',
             dataIndex: 'id',
             width: 120,
-            fixed: 'left',
         },
         {
             title: '下载次数',
             dataIndex: 'id',
             width: 120,
-            fixed: 'left',
         },
         {
             title: '版本负责人',
             dataIndex: 'id',
             width: 120,
-            fixed: 'left',
         },
         {
             title: '发版时间',
             dataIndex: 'id',
             width: 120,
-            fixed: 'left',
         },
         {
             title: '操作',
             dataIndex: 'id',
-            fix: 'right',
-            width: 120,
-            fixed: 'left',
+            width: 240,
+            fixed: 'right',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
-                    <a onClick={() => { }}>
+                    <a onClick={() => { toDetail(record.version) }}>
                         详情
                   </a>
                     <a onClick={() => { }}>
@@ -90,19 +83,9 @@ export const listSchema = () => {
                     <a onClick={() => { }}>
                         合并
                   </a>
-                    <Popconfirm
-                        title="确定要禁用吗？"
-                        onConfirm={() => {
-
-                        }}
-                    >
-                        <a onClick={() => { }}>
-                            禁用
-                  </a>
-                    </Popconfirm>
-                    <a onClick={() => { }}>
+                    {/* <a onClick={() => { }}>
                         启用版本
-                  </a>
+                  </a> */}
                     {/* <Button size="small" type="primary" onClick={() => download(record, index)}>下载文件</Button> */}
                     {/* <Popconfirm
                         title="确定要删除该信息吗？"

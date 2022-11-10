@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Select, Descriptions, Tabs, DatePicker, Space } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
@@ -12,16 +12,31 @@ import ModifyApp from './component/modify-app';
 import ContentList from './component/content-list';
 import ModifyConfig from './component/modify-config';
 import ModifySql from './component/modify-sql';
+import { useAppGroupData, useVersion } from '../hook'
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
 export default function VersionDetail() {
     const query: any = parse(location.search);
-    const { key } = query || {};
+    const { key, version, groupName, groupCode } = query || {};
     const [seletAppType, setSelectAppType] = useState<any>({})
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
+    const [appGroup, setAppGroup] = useState<any>({ value: groupCode || '', label: groupName || '' });
+    const [appGroupOptions] = useAppGroupData({});
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
+    const [selectVersion, setSelectVersion] = useState<string>(version || '');
+    const [versionOptions] = useVersion({});
+
+    useEffect(() => {
+        if (versionOptions && !selectVersion) {
+            setSelectVersion(versionOptions[0].value)
+        }
+    }, [versionOptions])
+
+    useEffect(() => {
+
+    }, [appGroupOptions])
 
     const TabList = [
         { label: '内容列表', key: 'list', component: ContentList },
@@ -52,8 +67,13 @@ export default function VersionDetail() {
                          <Select
                                 style={{ width: 180 }}
                                 size="small"
-                                options={[]}
+                                value={appGroup}
+                                options={appGroupOptions}
                                 labelInValue
+                                showSearch
+                                onChange={(v) => {
+                                    setAppGroup({ label: v.label, value: v.value });
+                                }}
                             ></Select>
                         </div>
                         <div>
@@ -61,12 +81,9 @@ export default function VersionDetail() {
                          <Select
                                 style={{ width: 160 }}
                                 size="small"
-                                options={[]}
+                                options={versionOptions}
+                                value={selectVersion}
                             ></Select>
-                        </div>
-                        <div>
-                            发版时间：
-                         <DatePicker showTime />
                         </div>
                     </Space>
                     <div>

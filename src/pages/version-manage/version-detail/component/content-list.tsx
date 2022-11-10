@@ -1,9 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import { Input, Button, Table, Space, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-
+const mockData = [
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' },
+    { title: '应用管理：版本发布' }
+]
 export default function ContentList() {
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<any>(mockData);
     const [visible, setVisible] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>('')
     const columns = [
@@ -14,7 +28,7 @@ export default function ContentList() {
         },
         {
             title: '标题',
-            dataIndex: 'id',
+            dataIndex: 'title',
             width: 200,
         },
         {

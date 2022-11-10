@@ -3,7 +3,7 @@ import { Input, Button, Table, Space, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 export default function ModifyApp() {
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<any>([{ content: '10' }]);
     const [visible, setVisible] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>('')
     const columns = [
@@ -15,22 +15,25 @@ export default function ModifyApp() {
         {
             title: '应用类型',
             dataIndex: 'id',
-            width: 120,
+            width: 80,
         },
         {
             title: '变更内容',
-            dataIndex: 'id',
-            width: 120,
+            dataIndex: 'content',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { }}>{value}</a>
         },
         {
             title: '变更配置',
-            dataIndex: 'id',
-            width: 120,
+            dataIndex: 'content',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { }}>{value}</a>
         },
         {
             title: '变更SQL',
-            dataIndex: 'id',
-            width: 120,
+            dataIndex: 'content',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { }}>{value}</a>
         },
         {
             title: '应用版本状态',

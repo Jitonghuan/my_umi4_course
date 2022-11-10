@@ -1,47 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getNode, getResourceList, getResourceType } from './service';
-const mockdata = [
-  {
-    nodeName: '11',
-    memoryInfo: { total: '100' },
-    labels: {
-      key1: 'key1',
-      key2: 'key2',
-      key3: 'jldafldjfldjfldf',
-      key4: 'jsdkjfkdjflfdfdfdfdnvnjdhfdkhfkdsdsj',
-      key5: 'jsdkjfasjfldjfldfhdfdfdjfdjfdjfkdjfldjfldjfjdfkdjfldsj',
-    },
-    tags: ['111', '222', '2333'],
-    taints: [
-      {
-        key: 'key',
-        value: 'value',
-        effect: 'NoSchedule',
-      },
-    ],
-    unschedulable: true,
-  },
-  {
-    nodeName: '11',
-    memoryInfo: { total: '100' },
-    labels: {
-      key1: 'key1',
-      key2: 'key2',
-      key3: 'jldafldjfldjfldf',
-      key4: 'jsdkjfkdjflfdfdfdfdnvnjdhfdkhfkdsdsj',
-      key5: 'jsdkjfasjfldjfldfhdfdfdjfdjfdjfkdjfldjfldjfjdfkdjfldsj',
-    },
-    tags: ['111', '222', '2333'],
-    taints: [
-      {
-        key: 'key',
-        value: 'value',
-        effect: 'NoSchedule',
-      },
-    ],
-    unschedulable: true,
-  },
-];
 
 // 获取节点列表
 export function useNodeListData(props: any) {
