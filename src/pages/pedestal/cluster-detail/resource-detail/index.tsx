@@ -13,9 +13,8 @@ import { useResourceType, useNameSpace } from '../hook';
 import debounce from 'lodash/debounce';
 import { parse, stringify } from 'query-string';
 import { FeContext } from '@/common/hooks';
-
-
 import './index.less';
+
 export default function ResourceDetail(props: any) {
   let location: any = useLocation();
   const query = parse(location.search);
@@ -197,8 +196,14 @@ export default function ResourceDetail(props: any) {
       }
     ).then((res: any) => {
       if (res?.success) {
-        setDataSource(res?.data?.items || []);
-        setOriginData(res?.data?.items || []);
+        let data = [];
+        if (values.resourceType === 'namespaces') {
+          data = res?.data?.items.filter((item: any) => item.name);
+        } else {
+          data = res?.data?.items
+        }
+        setDataSource(data || []);
+        setOriginData(data || []);
         if (index === 1) {
           setTotal(res?.data?.total || 0);
         }
@@ -224,7 +229,13 @@ export default function ResourceDetail(props: any) {
     getResourceList({ ...values, nodeName: values.node, limit: '', clusterCode })
       .then((res: any) => {
         if (res?.success) {
-          setAllData(res?.data?.items || []);
+          let data = [];
+          if (values.resourceType === 'namespaces') {
+            data = res?.data?.items.filter((item: any) => item.name);
+          } else {
+            data = res?.data?.items
+          }
+          setAllData(data || []);
         } else {
           setAllData([]);
         }
@@ -356,7 +367,7 @@ export default function ResourceDetail(props: any) {
               }}
             ></Select>
           </Form.Item>
-          {selectType !== 'namespaces' && (
+          {selectType !== 'namespaces' && selectType !== 'persistentvolumes' && (
             <Form.Item label="命名空间" name="namespace">
               <Select
                 style={{ width: 200 }}
