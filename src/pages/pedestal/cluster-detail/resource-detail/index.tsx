@@ -339,7 +339,6 @@ export default function ResourceDetail(props: any) {
         <Form
           layout="inline"
           onFinish={(value) => {
-            console.log(value, 'vlaue')
             sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: value } || {}));
             setStoreParams(value);
             initialSearch();
