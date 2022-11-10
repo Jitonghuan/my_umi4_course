@@ -160,13 +160,13 @@ export default function ResourceDetail(props: any) {
       const namespaceList = nameSpaceData.map((item: any) => item.value)
       const typeValueList = typeData.map((item: any) => item.value);
       const currentType = typeValueList.includes(storeParams?.resourceType) ? storeParams?.resourceType : typeData[0].value;
-      const currentNamespace = namespaceList.includes(storeParams?.namespace) ? storeParams?.namespace : nameSpaceData[0].value;
+      const currentNamespace = storeParams?.namespace && namespaceList.includes(storeParams?.namespace) ? storeParams?.namespace : nameSpaceData[0].value;
       form.setFieldsValue({
         namespace: currentNamespace,
         resourceType: currentType,
         node: storeParams?.node || '',
       });
-      const newValue = { namespace: storeParams.namespace ? currentNamespace : undefined, resourceType: currentType, node: storeParams?.node || '' }
+      const newValue = { namespace: storeParams?.namespace ? currentNamespace : undefined, resourceType: currentType, node: storeParams?.node || '' }
       sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: newValue } || {}));
       setStoreParams(newValue);
       setSelectType(currentType);
