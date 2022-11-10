@@ -2,9 +2,21 @@ import { datetimeCellRender } from '@/utils';
 import { FormProps } from '@/components/table-search/typing';
 import { Space, Popconfirm, Tooltip, Switch } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import JavaLogo from '@/assets/imgs/Python-logo.svg';
-import PythonLogo from '@/assets/imgs/java-logo.png';
+import JavaLogo from '@/assets/imgs/java-logo.png';
+import PythonLogo from '@/assets/imgs/Python-logo.svg';
 import GolangLogo from '@/assets/imgs/go-logo.svg';
+type languageTypeItem = {
+  icon:React.ReactNode;
+  text: string;
+};
+const LANGUAGE_TYPE: Record<string, [React.ReactNode]> = {
+  java: [ <img src={JavaLogo} alt="" />],
+  python: [<img src={PythonLogo} alt="" />],
+  golang:[ <img src={GolangLogo} alt="" />],
+};
+
+
+
 // 列表页-表格
 export const createTableColumns = (params: {
   
@@ -24,63 +36,95 @@ export const createTableColumns = (params: {
         dataIndex: 'appName',
         key: 'appName',
         width: 200,
+        sorter: {
+          compare: (a: any, b: any) => a.appName.localeCompare(b.appName),
+        },
+        render: (text,record) => {return <>
+        <span >
+          {
+          record?.language==="java"? <img src={JavaLogo} height={18} width={18} alt="" />
+         : record?.language==="python"?<img src={PythonLogo} height={18} width={18} alt="" />:
+         record?.language==="golang"?<img src={GolangLogo} height={18} width={18} alt="" />:null
+           }</span><span style={{marginLeft:8}}>{text}</span> </>}, 
+
       },
       {
-        title: 'appCode',
+        title: 'AppCode',
         dataIndex: 'appCode',
-        key: 'title',
+        key: 'appCode',
         width: 200,
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        sorter: {
+          compare: (a: any, b: any) => a.appCode.localeCompare(b.appCode),
+        },
       },
       {
         title: 'CPU',
-        dataIndex: 'cpu',
-        key: 'cpu',
+        dataIndex: 'instanceCpuRate',
+        key: 'instanceCpuRate',
         width: 200,
-        render: (value) => <>{} </>,
+        //render: (value) => <>{} </>,
+        sorter: {
+          compare: (a: any, b: any) => a.instanceCpuRate - b.instanceCpuRate,
+        },
       },
       {
         title: '内存',
-        dataIndex: 'memeory',
-        key: 'memeory',
+        dataIndex: 'instanceWssRate',
+        key: 'instanceWssRate',
         width: 200,
-        render: (value) => <>{} </>,
+        //render: (value) => <>{} </>,
+        sorter: {
+          compare: (a: any, b: any) => a.instanceWssRate - b.instanceWssRate,
+        },
       },
       {
         title: '请求总数（5min)',
-        dataIndex: 'gmtCreate',
-        key: 'gmtCreate',
+        dataIndex: 'fullGcTotal',
+        key: 'fullGcTotal',
         width: 200,
-        render: (value) => <>{} </>,
+        //render: (value) => <>{} </>,
+        sorter: {
+          compare: (a: any, b: any) => a.fullGcTotal - b.fullGcTotal,
+        },
       },
       {
         title: '平均RT（5min)',
         dataIndex: 'gmtCreate',
         key: 'gmtCreate',
         width: 200,
-        render: (value) => <>{} </>,
+        //render: (value) => <>{} </>,
+        sorter: {
+          compare: (a: any, b: any) => a.Wss - b.Wss,
+        },
       },
       {
         title: '成功率（5min)',
         dataIndex: 'gmtCreate',
         key: 'gmtCreate',
         width: 200,
-        render: (value) => <>{} </>,
+        //render: (value) => <>{} </>,
+        sorter: {
+          compare: (a: any, b: any) => a.Wss - b.Wss,
+        },
       },
       {
         title: '失败数（5min)',
         dataIndex: 'gmtCreate',
         key: 'gmtCreate',
         width: 200,
-        render: (value) => <>{} </>,
+        //render: (value) => <>{} </>,
+        sorter: {
+          compare: (a: any, b: any) => a.Wss - b.Wss,
+        },
       },
       {
         title: '状态',
         dataIndex: 'gmtCreate',
         key: 'gmtCreate',
         width: 200,
-        render: (value) => <>{} </>,
+        //render: (value) => <>{} </>,
       },
       {
         title: '操作',

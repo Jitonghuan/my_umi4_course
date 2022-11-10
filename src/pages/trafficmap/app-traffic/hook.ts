@@ -19,4 +19,17 @@ export const queryEnvList = async () =>
         }
         return [];
       })
+
+      export const queryTrafficList = async (params:{envCode:string,start:string,end:string}) => 
+     
+    await getRequest(APIS.getTrafficList, { data:params })
+      .then((result) => {
+        if (result?.success) {
+          const dataSource = result.data || [];
+         
+          return dataSource;
+        
+        }
+        return [];
+      })
     

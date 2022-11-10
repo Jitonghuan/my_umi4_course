@@ -1,10 +1,11 @@
 import React, { useMemo, useState,useEffect } from 'react';
 import PageContainer from '@/components/page-container';
-import { Table, Space, Form,Select,Input } from 'antd';
+import { Table, Space, Form,Select,Input ,Button} from 'antd';
 import { createTableColumns } from './schema';
 import { FilterCard,ContentCard } from '@/components/vc-page-content';
-import {queryEnvList} from './hook';
-import {history } from 'umi'
+import {queryEnvList,queryTrafficList} from './hook';
+import {history } from 'umi';
+import {RedoOutlined} from '@ant-design/icons'
 import './index.less'
 
 export default function AppTrafficList() {
@@ -12,9 +13,27 @@ export default function AppTrafficList() {
   const [envOptions,setEnvOptions] = useState([]);
   const [curEnv,setCurEnv]=useState<any>({});
   const [curEnvCode,setCurEnvCode]=useState<string>("");
-  const [mode, setMode] = useState<EditorMode>('HIDE');
-  const [curRecord, setcurRecord] = useState<any>({});
   const [envOptionsLoading, setEnvOptionsLoading] = useState<boolean>(false);
+  const [dataSource,setDataSource]= useState([]);
+  const [loading,setLoading]=useState<boolean>(false)
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [pageTotal, setPageTotal] = useState<number>(0);
+  const getDataSource=(params:{envCode:string})=>{
+    setLoading(true)
+    const now = new Date().getTime();
+    queryTrafficList({
+      envCode:params?.envCode,
+      start: Number((now - 5 * 60 * 1000) / 1000)+"",
+      end: Number(now / 1000)+"",
+    }).then((resp)=>{
+      setDataSource(resp)
+      setPageTotal(resp?.length)
+
+    }).finally(()=>{
+      setLoading(false)
+    })
+  }
   useEffect(()=>{
     getEnvOptions()
   },[])
@@ -24,6 +43,7 @@ export default function AppTrafficList() {
         setEnvOptions(res)
         setCurEnv(res[0])
         setCurEnvCode(res[0]?.value)
+        getDataSource({envCode:res[0]?.value})
     }).finally(()=>{
         setEnvOptionsLoading(false)
     })
@@ -33,39 +53,67 @@ export default function AppTrafficList() {
       onView: (record, index) => {
        history.push({
         pathname:'./traffic-detail'
+       },{
+         envCode:curEnvCode,
+         appId:record?.appId,
+         appCode:record?.appCode,
        })
       },
       onAlertConfig: (record, index) => {
-        setcurRecord(record);
-        setMode('EDIT');
+       
       },
     }) as any;
-  }, []);
+  }, [curEnvCode]);
 
 
   return (
     <PageContainer className="app-traffic-page">
         <FilterCard className="app-traffic-page-header">
             <div className="app-traffic-filter">
-                <span>环境：<Select style={{width:220}} loading={envOptionsLoading} options={envOptions} allowClear value={curEnvCode} showSearch onChange={(envCode,option:any)=>{
+              <span>环境：<Select style={{width:220}} loading={envOptionsLoading} options={envOptions} allowClear value={curEnvCode} showSearch onChange={(envCode,option:any)=>{
                     setCurEnvCode(envCode)
                     setCurEnv(option)
-                }}/></span>
-                <span className="app-traffic-filter-center">{curEnv?.label}</span>
-                <span>查询：<Input style={{width:280}} placeholder="请输入内容按回车键查询"/></span>
+                    getDataSource({envCode})
+                }}/>
+              </span>
+               <span className="app-traffic-filter-envName">{curEnv?.label}</span>
+             
+                <span>查询：<Input style={{width:280}} placeholder="请输入应用名称或应用Code按回车键查询" onPressEnter={()=>{}}/></span>
             </div>
-
         </FilterCard>
         <ContentCard>
-            <Table  columns={columns}    scroll={{ x: '100%' }}  dataSource={[
-                {
-                    "id": 1,
-                    "appName": "测试应用",
-                    "appCode": "dubbo-consumer",
-                    "disk":"10.10.129.18",
-                    cpu:"80%"
-                }
-            ]}/>
+        <div className="table-caption" style={{marginBottom:8}}>
+          <h3>应用流量列表</h3>
+          <Button
+            type="primary"
+            icon={<RedoOutlined />}
+            onClick={() => {
+              getDataSource({envCode:curEnvCode})
+            }}
+          >
+            刷新
+          </Button>
+        </div>
+            <Table  
+            columns={columns}  
+            loading={loading} 
+            scroll={{ x: '100%' }} 
+            dataSource={dataSource}
+            pagination={{
+              pageSize: pageSize,
+              current: pageIndex,
+              showTotal: (total) => `共 ${pageTotal} 条`,
+              showSizeChanger: true,
+              onShowSizeChange: (_, size) => {
+                setPageSize(size);
+                setPageIndex(1);
+              },
+              onChange: (page, size: any) => {
+                setPageSize(size);
+                setPageIndex(page);
+              },
+            }}
+            />
 
 
         </ContentCard>

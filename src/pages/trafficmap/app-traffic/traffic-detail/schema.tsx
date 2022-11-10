@@ -1,5 +1,9 @@
 // 开始时间枚举
 export const START_TIME_ENUMS = [
+  {
+    label: 'Last 5 minutes',
+    value: 5 * 60 * 1000,
+  },
     {
       label: 'Last 30 minutes',
       value: 30 * 60 * 1000,
