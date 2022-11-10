@@ -76,24 +76,7 @@ export function useNodeListData(props: any) {
 
 // 获取资源详情列表
 export function useResourceListData(props: any) {
-  const mockdata = [
-    {
-      nodeName: '11',
-      memoryInfo: { total: '100' },
-      labels: { key1: 'key1', key2: 'key2' },
-      tags: ['111', '222', '2333'],
-      taints: [
-        {
-          key: 'key',
-          value: 'value',
-          effect: 'NoSchedule',
-        },
-      ],
-      unschedulable: true,
-    },
-  ];
-
-  const [data, setData] = useState<any>(mockdata);
+  const [data, setData] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState(false);
   const loadData = useCallback(async (extra?: any) => {
@@ -126,6 +109,7 @@ export function useResourceType(props: any) {
   const loadData = useCallback(
     async (extra?: any) => {
       try {
+        setData([])
         const result = await getResourceType({ ...props });
         if (result?.success) {
           const res = result?.data?.map((item: string) => ({ label: item, value: item }));
@@ -153,6 +137,7 @@ export function useNameSpace(props: any) {
   const loadData = useCallback(
     async (extra?: any) => {
       try {
+        setData([])
         const result = await getResourceList({ ...props });
         if (result?.success) {
 
