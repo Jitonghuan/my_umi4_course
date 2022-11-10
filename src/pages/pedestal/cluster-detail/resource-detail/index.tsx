@@ -142,7 +142,6 @@ export default function ResourceDetail(props: any) {
       setContinueList(['']);
     }
     queryList();
-    // queryAll();
   }, [pageIndex, limit]);
 
   useEffect(() => {
@@ -167,7 +166,7 @@ export default function ResourceDetail(props: any) {
         resourceType: currentType,
         node: storeParams?.node || '',
       });
-      const newValue = { namespace: currentNamespace, resourceType: currentType, node: storeParams?.node || '' }
+      const newValue = { namespace: storeParams.namespace ? currentNamespace : undefined, resourceType: currentType, node: storeParams?.node || '' }
       sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: newValue } || {}));
       setStoreParams(newValue);
       setSelectType(currentType);
@@ -340,6 +339,7 @@ export default function ResourceDetail(props: any) {
         <Form
           layout="inline"
           onFinish={(value) => {
+            console.log(value, 'vlaue')
             sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: value } || {}));
             setStoreParams(value);
             initialSearch();
