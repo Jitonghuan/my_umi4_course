@@ -12,7 +12,8 @@ export const queryEnvList = async () =>
           const dataSource = result.data.dataSource || [];
           let option= dataSource?.map((ele:any)=>({
               label:ele?.envName,
-              value:ele?.envCode
+              value:ele?.envCode,
+              ...ele
           }))
           return option;
         
@@ -20,11 +21,13 @@ export const queryEnvList = async () =>
         return [];
       })
 
-      export const queryTrafficList = async (params:{envCode:string,start:string,end:string}) => 
+      export const queryTrafficList = async (params:{envCode:string,start:string,end:string,needMetric?:boolean}) => 
      
-    await getRequest(APIS.getTrafficList, { data:params })
+       await getRequest(APIS.getTrafficList, { data:params })
       .then((result) => {
         if (result?.success) {
+        
+          
           const dataSource = result.data || [];
          
           return dataSource;

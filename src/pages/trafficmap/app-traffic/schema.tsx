@@ -5,15 +5,6 @@ import type { ColumnsType } from 'antd/lib/table';
 import JavaLogo from '@/assets/imgs/java-logo.png';
 import PythonLogo from '@/assets/imgs/Python-logo.svg';
 import GolangLogo from '@/assets/imgs/go-logo.svg';
-type languageTypeItem = {
-  icon:React.ReactNode;
-  text: string;
-};
-const LANGUAGE_TYPE: Record<string, [React.ReactNode]> = {
-  java: [ <img src={JavaLogo} alt="" />],
-  python: [<img src={PythonLogo} alt="" />],
-  golang:[ <img src={GolangLogo} alt="" />],
-};
 
 
 
@@ -91,32 +82,32 @@ export const createTableColumns = (params: {
       },
       {
         title: '平均RT（5min)',
-        dataIndex: 'gmtCreate',
-        key: 'gmtCreate',
+        dataIndex: 'svcAvg',
+        key: 'svcAvg',
         width: 200,
         //render: (value) => <>{} </>,
         sorter: {
-          compare: (a: any, b: any) => a.Wss - b.Wss,
+          compare: (a: any, b: any) => a.svcAvg - b.svcAvg,
         },
       },
       {
         title: '成功率（5min)',
-        dataIndex: 'gmtCreate',
-        key: 'gmtCreate',
+        dataIndex: 'svcSR',
+        key: 'svcSR',
         width: 200,
         //render: (value) => <>{} </>,
         sorter: {
-          compare: (a: any, b: any) => a.Wss - b.Wss,
+          compare: (a: any, b: any) => a.svcSR - b.svcSR,
         },
       },
       {
         title: '失败数（5min)',
-        dataIndex: 'gmtCreate',
-        key: 'gmtCreate',
+        dataIndex: 'svcFailed',
+        key: 'svcFailed',
         width: 200,
         //render: (value) => <>{} </>,
         sorter: {
-          compare: (a: any, b: any) => a.Wss - b.Wss,
+          compare: (a: any, b: any) => a.svcFailed - b.svcFailed,
         },
       },
       {

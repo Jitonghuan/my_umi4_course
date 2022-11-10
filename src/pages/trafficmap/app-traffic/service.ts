@@ -23,6 +23,10 @@ export const getTrafficList = `${appConfig.apiPrefix}/trafficMap/appTraffic/traf
 
 /** GET 调用统计概览 */
 export const getCountOverview = `${appConfig.apiPrefix}/trafficMap/callInfo/countOverview`;
+///trafficMap/tracing/search
+export const getSearchTracing = `${appConfig.apiPrefix}/trafficMap/tracing/search`;
+/** GET 调用统计概览 */
+export const getCountDetail = `${appConfig.apiPrefix}/trafficMap/callInfo/countDetail`;
 //GET 节点趋势图-CPU
 export const queryPodCpu = `${appConfig.apiPrefix}/monitorManage/app/cpuUseInfo`;
 //GET 节点趋势图-内存

@@ -4,12 +4,14 @@ import { createContext } from 'react';
 export interface ContextTypes {
   /** 共享数据 */
   appCode?: string;
-  appID?:string
+  appId?:string
   envCode?:string;
   startTime?:number;
   endTime?:number;
   hostIP?:string;
   hostName?:string
+  currentTableData?:any;
+  deployName?:string;
   /** 请求应用数据 */
   //queryAppData?: () => void;
 }

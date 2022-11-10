@@ -2,67 +2,33 @@ import { Card, Select, Form, Tooltip, Tabs, Button, Row, Col,Badge } from 'antd'
 
 // 表格schema
 export const tableSchema = [
-    // {
-    //   dataIndex: 'hostIP',
-    //   title: 'IP',
-    //   align: 'left',
-    //   width: 180,
-    // },
     {
-      title: '主机名',
-      dataIndex: 'hostName',
+      dataIndex: 'resourceName',
+      title: '资源名称',
       align: 'left',
-      width: 333,
-      fixed:"left"
+      width: 116,
     },
-    {
-      dataIndex: 'memLimit',
-      title: '总内存(MB)',
-      width: 100,
-    },
-    {
-      dataIndex: 'cpuLimit',
-      title: 'CPU核数',
-      width: 90,
-    },
+  
     {
       dataIndex: 'cpu',
-      title: 'CPU使用率',
-      width: 100,
+      title: 'CPU',
+      width: 50,
+    },
+   
+    {
+      dataIndex: 'wss',
+      title: '内存(WSS)',
+      width: 60,
     },
     {
-      dataIndex: 'RSS',
+      dataIndex: 'rss',
       title: '内存使用率(RSS)',
-      width: 160,
-    },
-    {
-      dataIndex: 'WSS',
-      title: '内存使用率(WSS)',
-      width: 160,
+      width: 60,
     },
     {
       dataIndex: 'disk',
-      title: '磁盘使用量(MB)',
-      width: 140,
+      title: '磁盘',
+      width: 50,
     },
-    {
-      dataIndex: 'restartNum',
-      title: '重启次数',
-      width: 90,
-    },
-    {
-      dataIndex: 'uptime',
-      title: '运行时长',
-      width: 120,
-    },
-    {
-      dataIndex: 'health',
-      title: '健康状态',
-      
-     // valueType: 'status',
-      width: 90,
-      render:(value:string)=>{
-     return(value==="0"? <Badge status="error" />:<Badge status="success" />) 
-      }
-    },
+   
   ];

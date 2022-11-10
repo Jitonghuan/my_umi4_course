@@ -29,7 +29,17 @@ export default function AppTrafficList() {
     }).then((resp)=>{
       setDataSource(resp)
       setPageTotal(resp?.length)
-
+      queryTrafficList({
+        envCode:params?.envCode,
+        start: Number((now - 5 * 60 * 1000) / 1000)+"",
+        end: Number(now / 1000)+"",
+        needMetric:true
+      }).then((result)=>{
+        setDataSource(result)
+        setPageTotal(result?.length)
+      }).finally(()=>{
+        setLoading(false)
+      })
     }).finally(()=>{
       setLoading(false)
     })
@@ -57,10 +67,20 @@ export default function AppTrafficList() {
          envCode:curEnvCode,
          appId:record?.appId,
          appCode:record?.appCode,
+         deployName:record?.deployName
+         
        })
       },
       onAlertConfig: (record, index) => {
-       
+       history.push({
+         pathname:"/matrix/monitor/alarm-rules"
+       },{
+        envCode:curEnvCode,
+        appCode:record?.appCode,
+        envTypeCode:curEnv?.envTypeCode
+
+        
+      })
       },
     }) as any;
   }, [curEnvCode]);

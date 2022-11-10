@@ -50,22 +50,38 @@ interface queryInstanceParams{
     appID:string
 }
 
-export const queryInstanceList = (params: queryInstanceParams) =>
-getRequest(APIS.queryInstanceListApi, { data: {...params, },hideToast: true, }).then((res: any) => {
-  if (res?.success) {
-    const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
-    return data
-    
-  }
- 
-  return [];
+interface queryNodeParams{
+  start:number;
+  end:number;
+  envCode:string;
+  appCode:string
+}
+export const queryNodeList = (params: queryNodeParams) =>
+getRequest(APIS.queryPodInfoApi, { data: {...params,pageSize:1000} }).then((res: any) => {
+if (res?.success) {
+  const dataSource  = res?.data;
+  return dataSource
+  
+}
+return [];
 });
+
+// export const queryInstanceList = (params: queryInstanceParams) =>
+// getRequest(APIS.queryInstanceListApi, { data: {...params, },hideToast: true, }).then((res: any) => {
+//   if (res?.success) {
+//     const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
+//     return data
+    
+//   }
+ 
+//   return [];
+// });
 interface queryCountOverviewParams{
   start:string;
   end:string;
   envCode:string;
-  appID:string;
-  instanceIDs:string[];
+  appId:string;
+ 
 }
 //getCountOverview
 export const getCountOverview = (params: queryCountOverviewParams) =>
