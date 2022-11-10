@@ -219,16 +219,8 @@ export default function RrightTrace(props: any) {
                 size="small"
                 color="blue"
                 onClick={() => {
-                  history.push({
-                    pathname: '/matrix/logger/search',
-                    search: `envCode=${envCode}&startTime=${moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss')}&traceId=${selectTraceId}`
-                    // query: {
-                    //   envCode,
-                    //   startTime: moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss'),
-                    //   endTime: moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss'),
-                    //   traceId: selectTraceId,
-                    // },
-                  });
+                  const url = `/matrix/logger/search?envCode=${envCode}&startTime=${moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss')}&traceId=${selectTraceId}`
+                  window.open(url, '_blank')
                 }}
               >
                 查看日志
