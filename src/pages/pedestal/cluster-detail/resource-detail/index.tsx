@@ -166,7 +166,8 @@ export default function ResourceDetail(props: any) {
         resourceType: currentType,
         node: storeParams?.node || '',
       });
-      const newValue = { namespace: storeParams?.namespace ? currentNamespace : undefined, resourceType: currentType, node: storeParams?.node || '' }
+      const newNamespace = (currentType === 'namespaces' || currentType === 'persistentvolumes') ? undefined : currentNamespace;
+      const newValue = { namespace: newNamespace, resourceType: currentType, node: storeParams?.node || '' }
       sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: newValue } || {}));
       setStoreParams(newValue);
       setSelectType(currentType);
