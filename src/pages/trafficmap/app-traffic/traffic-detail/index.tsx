@@ -244,9 +244,10 @@ export default function TrafficDetail() {
             {nodeDataSource?.length < 1 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"暂无数据"} />}
             {nodeDataSource?.length > 0 && nodeDataSource?.map((element: any,index:number) => {
               const nowData = countOverView?.instanceCallInfos?.filter((item: any) => item?.instanceIp === element?.hostIP)
-              const instanceRt =Number( nowData?.instanceRt||0).toFixed(2);
-              const requestCounts = nowData?.requestCounts;
-              const requestFailures = nowData?.requestFailures
+              console.log("nowData",nowData)
+              const instanceRt =Number( nowData[0]?.instanceRt||0).toFixed(2);
+              const requestCounts = nowData[0]?.requestCounts;
+              const requestFailures = nowData[0]?.requestFailures
               return (
                 <ul>
                   <li  className={`left-content-detail-info ${index===isClick?"is-click":"not-click"}`}>

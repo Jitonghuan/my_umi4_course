@@ -110,7 +110,7 @@ export default function InstanceMonitor(){
             resourceName:"使用百分比",
             cpu:`${result?.svcCpuRate}%`,
             wss:`${result?.svcWssRate}% `,
-            rss:`${Number(result?.svcRssUsage).toFixed(2) }%`,
+            rss:`${Number(result?.svcRssRate).toFixed(2) }%`,
             disk:`--`
           }
           )
