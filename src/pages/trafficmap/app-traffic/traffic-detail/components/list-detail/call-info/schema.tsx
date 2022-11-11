@@ -79,7 +79,9 @@ export const createQueryTableColumns = (params: {
         dataIndex: 'endpointNames',
         key: 'endpointNames',
         width: 686,
-        render: (value) => <>{value[0]} </>,
+        ellipsis:true,
+        render: (value) => <Tooltip title={value}>{value[0]} </Tooltip>,
+        
       },
       {
         title: '创建时间',

@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import PageContainer from '@/components/page-container';
-import { Table, Space, Form, Select, Input, Button, Spin, Empty, Tag, Badge } from 'antd';
+import { Table, Space, Form, Select, Tooltip, Button, Spin, Empty, Tag, Badge } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { START_TIME_ENUMS } from './schema';
 import { history, useLocation } from 'umi';
@@ -112,12 +112,16 @@ export default function TrafficDetail() {
         setHostName(res[0]?.hostName);
         setIsClick(curApp)
       }
+      let podIps=res?.map((ele:any)=>(ele?.hostIP))
+      console.log("podIps",podIps)
       queryCountOverview({
         start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
         end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
         appId: curAppId,
         envCode: curEnv,
-        deployName: curDeployName
+        deployName: curDeployName,
+        podIps
+
       })
 
       setNodeDataSource(res)
@@ -132,7 +136,9 @@ export default function TrafficDetail() {
     end: string
     envCode: string,
     appId: string
-    deployName: string
+    deployName: string,
+    podIps:string[]
+    
   }) => {
     getCountOverview({
       ...params
@@ -147,13 +153,18 @@ export default function TrafficDetail() {
   const handleMouseEnter = (type: string) => {
     if (type === "count") {
       setIsCountHovering(true);
+      setIsRTHovering(false)
+      setIsFailHovering(false)
     }
     if (type === "rt") {
       setIsRTHovering(true)
-
+      setIsCountHovering(false);
+      setIsFailHovering(false)
     }
     if (type === "fail") {
       setIsFailHovering(true)
+      setIsRTHovering(false)
+      setIsCountHovering(false);
 
     }
 
@@ -162,13 +173,19 @@ export default function TrafficDetail() {
   const handleMouseLeave = (type: string) => {
     if (type === "count") {
       setIsCountHovering(false);
+      setIsRTHovering(true)
+      setIsFailHovering(true)
     }
     if (type === "rt") {
       setIsRTHovering(false)
+      setIsCountHovering(true)
+      setIsFailHovering(true)
 
     }
     if (type === "fail") {
       setIsFailHovering(false)
+      setIsRTHovering(true)
+      setIsCountHovering(true)
 
     }
   };
@@ -179,20 +196,37 @@ export default function TrafficDetail() {
         <div className="left-content-title">
 
           <span>
-            <QuestionCircleOutlined style={{ color: "#1E90FF", }} />实例
+            实例<Tooltip title={"当前服务的请求总数/平均响应时间/失败请求数"}> <QuestionCircleOutlined style={{ color: "#1E90FF", fontSize:14}} /></Tooltip>
                     </span>
           <div>
-            <div
+            {/* <div
               className="title-hover"
-            >
+            > */}
 
-              <div className="title-hover"
-                onMouseEnter={() => { handleMouseEnter("count") }}
-                onMouseLeave={() => { handleMouseLeave("count") }}><span >请求数</span></div></div>/
-              <div className="title-hover" onMouseEnter={() => { handleMouseEnter("rt") }}
-              onMouseLeave={() => { handleMouseLeave("rt") }}><span >RT</span></div>/
-              <div className="title-hover" onMouseEnter={() => { handleMouseEnter("fail") }}
-              onMouseLeave={() => { handleMouseLeave("fail") }}><span   >失败数</span></div>
+            <span className={isCountHovering?"title-click":"not-click"}
+               onClick={()=>{
+                 if(isCountHovering){
+                   handleMouseLeave("count") 
+                 }else{
+                   handleMouseEnter("count")
+                 }
+               }}>请求数</span>/
+            <span className={isRTHovering?"title-click":"not-click"}
+              onClick={()=>{
+                if(isRTHovering){
+                  handleMouseLeave("rt") 
+                }else{
+                  handleMouseEnter("rt") 
+                }
+              }} >RT</span>/
+             <span  className={isFailHovering?"title-click":"not-click"}
+              onClick={()=>{
+               if(isFailHovering){
+                 handleMouseLeave("fail") 
+               }else{
+                 handleMouseEnter("fail")
+               }
+             }} >失败数</span>
           </div>
 
         </div>

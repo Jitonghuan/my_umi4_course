@@ -81,6 +81,7 @@ interface queryCountOverviewParams{
   end:string;
   envCode:string;
   appId:string;
+  podIps:string[];
  
 }
 //getCountOverview

@@ -1,6 +1,4 @@
-import { datetimeCellRender } from '@/utils';
-import { FormProps } from '@/components/table-search/typing';
-import { Space, Popconfirm, Tooltip, Switch } from 'antd';
+import { Space, Tooltip, Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import JavaLogo from '@/assets/imgs/java-logo.png';
 import PythonLogo from '@/assets/imgs/Python-logo.svg';
@@ -20,23 +18,23 @@ export const createTableColumns = (params: {
         title: '序号',
         dataIndex: 'id',
         key: 'id',
-        width: 100,
+        width: 50,
       },
       {
         title: '应用名称',
         dataIndex: 'appName',
         key: 'appName',
-        width: 200,
+        width: 300,
         sorter: {
           compare: (a: any, b: any) => a.appName.localeCompare(b.appName),
         },
-        render: (text,record) => {return <>
+        render: (text,record,index) => {return <>
         <span >
           {
-          record?.language==="java"? <img src={JavaLogo} height={18} width={18} alt="" />
-         : record?.language==="python"?<img src={PythonLogo} height={18} width={18} alt="" />:
-         record?.language==="golang"?<img src={GolangLogo} height={18} width={18} alt="" />:null
-           }</span><span style={{marginLeft:8}}>{text}</span> </>}, 
+          record?.language==="java"?<span > <img src={JavaLogo} height={18} width={18} alt="" style={{marginBottom:8}}/></span>
+         : record?.language==="python"?<span ><img src={PythonLogo} height={18} width={18} alt="" style={{marginBottom:8}} /></span>:
+         record?.language==="golang"?<span ><img src={GolangLogo} height={18} width={18} alt="" style={{marginBottom:8}} /></span>:null
+           }</span><span style={{marginLeft:8}}><a onClick={() => params.onView(record, index)}>{text}</a></span> </>}, 
 
       },
       {
@@ -52,20 +50,20 @@ export const createTableColumns = (params: {
       },
       {
         title: 'CPU',
-        dataIndex: 'instanceCpuRate',
-        key: 'instanceCpuRate',
-        width: 200,
-        //render: (value) => <>{} </>,
+        dataIndex: 'svcCpuRate',
+        key: 'svcCpuRate',
+        width: 90,
+        render: (value) => <>{value}% </>,
         sorter: {
           compare: (a: any, b: any) => a.instanceCpuRate - b.instanceCpuRate,
         },
       },
       {
         title: '内存',
-        dataIndex: 'instanceWssRate',
-        key: 'instanceWssRate',
-        width: 200,
-        //render: (value) => <>{} </>,
+        dataIndex: 'svcWssRate',
+        key: 'svcWssRate',
+        width: 100,
+        render: (value) => <>{value}% </>,
         sorter: {
           compare: (a: any, b: any) => a.instanceWssRate - b.instanceWssRate,
         },
@@ -74,7 +72,7 @@ export const createTableColumns = (params: {
         title: '请求总数（5min)',
         dataIndex: 'fullGcTotal',
         key: 'fullGcTotal',
-        width: 200,
+        width: 110,
         //render: (value) => <>{} </>,
         sorter: {
           compare: (a: any, b: any) => a.fullGcTotal - b.fullGcTotal,
@@ -84,7 +82,7 @@ export const createTableColumns = (params: {
         title: '平均RT（5min)',
         dataIndex: 'svcAvg',
         key: 'svcAvg',
-        width: 200,
+        width: 110,
         //render: (value) => <>{} </>,
         sorter: {
           compare: (a: any, b: any) => a.svcAvg - b.svcAvg,
@@ -94,8 +92,8 @@ export const createTableColumns = (params: {
         title: '成功率（5min)',
         dataIndex: 'svcSR',
         key: 'svcSR',
-        width: 200,
-        //render: (value) => <>{} </>,
+        width: 110,
+        render: (value) => <>{value}% </>,
         sorter: {
           compare: (a: any, b: any) => a.svcSR - b.svcSR,
         },
@@ -104,7 +102,7 @@ export const createTableColumns = (params: {
         title: '失败数（5min)',
         dataIndex: 'svcFailed',
         key: 'svcFailed',
-        width: 200,
+        width: 110,
         //render: (value) => <>{} </>,
         sorter: {
           compare: (a: any, b: any) => a.svcFailed - b.svcFailed,
@@ -112,17 +110,20 @@ export const createTableColumns = (params: {
       },
       {
         title: '状态',
-        dataIndex: 'gmtCreate',
-        key: 'gmtCreate',
-        width: 200,
-        //render: (value) => <>{} </>,
+        dataIndex: 'status',
+        key: 'status',
+        width: 90,
+        render: (value) => <>{
+          value==="警告"?<Tag color="yellow">警告</Tag>:value==="正常"?<Tag color="success">正常</Tag>:value==="危险"?<Tag>危险</Tag>:"--"
+
+        } </>,
       },
       {
         title: '操作',
         dataIndex: 'option',
         key: 'option',
-        fixed:"right",
-        width: 180,
+        //fixed:"right",
+        width: 120,
         render: (_: string, record, index: number) => (
           //根据不同类型跳转
           <Space>

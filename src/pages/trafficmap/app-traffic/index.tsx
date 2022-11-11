@@ -19,11 +19,13 @@ export default function AppTrafficList() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [pageTotal, setPageTotal] = useState<number>(0);
-  const getDataSource=(params:{envCode:string})=>{
+  const [keyWord,setKeyWord]=useState<string>("")
+  const getDataSource=(params:{envCode:string,keyWord?:string})=>{
     setLoading(true)
     const now = new Date().getTime();
     queryTrafficList({
       envCode:params?.envCode,
+      keyWord:params?.keyWord,
       start: Number((now - 5 * 60 * 1000) / 1000)+"",
       end: Number(now / 1000)+"",
     }).then((resp)=>{
@@ -31,6 +33,7 @@ export default function AppTrafficList() {
       setPageTotal(resp?.length)
       queryTrafficList({
         envCode:params?.envCode,
+        keyWord:params?.keyWord,
         start: Number((now - 5 * 60 * 1000) / 1000)+"",
         end: Number(now / 1000)+"",
         needMetric:true
@@ -98,7 +101,10 @@ export default function AppTrafficList() {
               </span>
                <span className="app-traffic-filter-envName">{curEnv?.label}</span>
              
-                <span>查询：<Input style={{width:280}} placeholder="请输入应用名称或应用Code按回车键查询" onPressEnter={()=>{}}/></span>
+                <span>查询：<Input style={{width:280}} placeholder="请输入应用名称或应用Code按回车键查询" onPressEnter={(e)=>{
+                    getDataSource({envCode:curEnvCode,keyWord:e.target.value})
+                    setKeyWord(e.target.value)
+                }}/></span>
             </div>
         </FilterCard>
         <ContentCard>
@@ -108,7 +114,7 @@ export default function AppTrafficList() {
             type="primary"
             icon={<RedoOutlined />}
             onClick={() => {
-              getDataSource({envCode:curEnvCode})
+              getDataSource({envCode:curEnvCode,keyWord:keyWord})
             }}
           >
             刷新

@@ -1,14 +1,13 @@
 
 import React, { useState, useCallback, useEffect, useRef,useContext } from 'react';
-import { Card, Row, Col,Table } from 'antd';
-import { RedoOutlined, SyncOutlined } from '@ant-design/icons';
+import { Card, Row, Col,Table,Tooltip } from 'antd';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import {QuestionCircleOutlined} from '@ant-design/icons'
 import {tableSchema} from './schema';
-import {queryNodeList} from '../hook';
 import DetailContext from '../../../context';
 import CpuUsage from './dashboards/cpu';
 import MemroyUsage from './dashboards/memory';
+import {queryTrafficList} from '../../../../hook';
 import FsWritesChart from './dashboards/fs';
 import NetWorkIOChart from './dashboards/network';
 import { useQueryPodCpu, usequeryPodMem, useQueryFs, useQueryNetwork ,queryItems} from './dashboards/hook';
@@ -17,7 +16,8 @@ import './index.less'
 export default function InstanceMonitor(){
  
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
-  const {appCode,envCode,startTime,endTime,currentTableData,hostIP,hostName,count} =useContext(DetailContext);
+  const [loading,setLoading]=useState<boolean>(false)
+  const {appCode,envCode,startTime,currentTableData,hostIP,hostName,count,isClick} =useContext(DetailContext);
   const [podCpuData, podCpuLoading, queryPodCpu] = useQueryPodCpu();
   const [podMemData, podMemLoading, queryPodMem] = usequeryPodMem();
   const [fsData, fsLoading, queryFs] = useQueryFs();
@@ -39,13 +39,28 @@ export default function InstanceMonitor(){
        }
    },[envCode,appCode,hostIP,hostName,startTime,count])
    useEffect(()=>{
-     if(Object.keys(currentTableData||{})?.length>0){
+    if(isClick&&isClick===appCode){
+      
+      console.log("here")
+       getDataSource({
+         keyWord:appCode,
+         envCode:envCode||""
+       })
+    }
+   
+    
+    
+   },[appCode,isClick,envCode,startTime,count])
+   useEffect(()=>{
+    if(isClick!==appCode&&Object.keys(currentTableData||{})?.length>0){
       getNodeDataSource()
      }else{
       setNodeDataSource([])
      }
     
-   },[currentTableData,count])
+    
+   },[currentTableData,appCode,isClick])
+  
 
    const getChartsDataSource=(params:queryItems)=>{
     queryPodCpu(params)
@@ -55,6 +70,62 @@ export default function InstanceMonitor(){
 
    }
 
+  
+    const getDataSource=useCallback((params:{envCode:string,keyWord?:string})=>{
+      setLoading(true)
+      const now = new Date().getTime();
+      let data:any=[]
+      queryTrafficList({
+        envCode:params?.envCode,
+        keyWord:params?.keyWord,
+        start: Number((now - startTime) / 1000)+"",
+        end: Number(now / 1000)+"",
+      }).then((resp)=>{
+        queryTrafficList({
+          envCode:params?.envCode,
+          keyWord:params?.keyWord,
+          start: Number((now - startTime) / 1000)+"",
+          end: Number(now / 1000)+"",
+          needMetric:true
+        }).then((res)=>{
+          let result=res[0]
+          data.push({
+            resourceName:"资源配额",
+            cpu:result?.svcCpuQuota,
+            wss:result?.svcWssQuota,
+            rss:result?.svcRssQuota,
+            disk:"--"
+      
+            
+          },
+          {
+            resourceName:"已使用量",
+            cpu: Number(result?.svcCpuUsage).toFixed(2),
+            wss: Number(result?.svcWssUsage).toFixed(2), 
+            rss:  Number(result?.svcRssUsage).toFixed(2), 
+            disk:`--`
+      
+          },
+          {
+            resourceName:"使用百分比",
+            cpu:`${result?.svcCpuRate}%`,
+            wss:`${result?.svcWssRate}% `,
+            rss:`${Number(result?.svcRssUsage).toFixed(2) }%`,
+            disk:`--`
+          }
+          )
+         
+          setNodeDataSource(data)
+         
+        }).finally(()=>{
+          setLoading(false)
+        })
+      }).finally(()=>{
+        setLoading(false)
+      })
+    },[startTime,])
+    
+ 
    
   
   const getNodeDataSource=useCallback(()=>{
@@ -118,7 +189,7 @@ const getMultiNumber=(first:string,second:string)=>{
           <Table rowKey="ip" bordered dataSource={nodeDataSource}  scroll={{ x: '100%' }}  columns={tableSchema as ColumnProps[]}  pagination={false}  />
 
            <h3 className="monitor-tabs-content-title">
-            监控图表&nbsp;<QuestionCircleOutlined style={{fontSize:18,color:"#1E90FF"}} />
+            监控图表&nbsp;<Tooltip title={"当前实例的资源使用情况"}><QuestionCircleOutlined style={{fontSize:18,color:"#1E90FF"}} /></Tooltip>
           </h3>
           <Row gutter={[16, 24]}>
                   <Col span={12}>
