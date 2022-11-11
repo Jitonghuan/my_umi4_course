@@ -346,10 +346,14 @@ export default function ResourceDetail(props: any) {
           }}
           form={form}
           onReset={() => {
-            form.setFieldsValue({ resourceType: 'deployments', namespace: '' });
-            sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: form.getFieldsValue() } || {}));
             setSelectType('deployments');
-            initialSearch();
+            setTimeout((
+              () => {
+                form.setFieldsValue({ resourceType: 'deployments', namespace: nameSpaceData[0] && nameSpaceData[0].value || '' });
+                sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: form.getFieldsValue() } || {}));
+                initialSearch();
+              }
+            ), 10)
           }}
         >
           <Form.Item label="资源类型" name="resourceType" rules={[{ required: true, message: '请选择查询关键词' }]}>
