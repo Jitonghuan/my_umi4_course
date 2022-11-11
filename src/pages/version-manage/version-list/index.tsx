@@ -15,12 +15,13 @@ export default function VersionList() {
     const [data, setData] = useState<any>([{ content: 'ceshi', version: '1.2.1' }]);
     const [visible, setVisible] = useState<boolean>(false);
     const [appGroup, setAppGroup] = useState<any>({});
+    const [form] = Form.useForm();
     const [selectTime, setSelectTime] = useState<string>('');
     const [appGroupOptions] = useAppGroupData({});
     useEffect(() => {
         if (appGroupOptions?.length && !appGroup.value) {
-            console.log(appGroupOptions, 'options')
-            setAppGroup(appGroupOptions[0])
+            form.setFieldsValue({ appGroup: appGroupOptions[0].value })
+            // setAppGroup(appGroupOptions[0])
         }
     }, [appGroupOptions])
 
@@ -36,12 +37,55 @@ export default function VersionList() {
         }) as any;
     }, [data, appGroup]);
 
+    const formChange = (changedValues: any, allValues: any) => {
+        console.log(allValues, 'all')
+    }
+
     return (
         <PageContainer className='version-list-page'>
             <ContentCard>
                 <CreateVersion visible={visible} onClose={() => { setVisible(false) }} />
                 <div className="search-wrapper">
-                    <Space>
+                    <Form
+                        layout="inline"
+                        form={form}
+                        onValuesChange={formChange}
+                    >
+                        <Form.Item label="应用分类：" name="appGroup">
+                            <Select
+                                style={{ width: 180 }}
+                                size="small"
+                                showSearch
+                                options={appGroupOptions}
+                                // value={appGroup}
+                                // onChange={(v) => {
+                                //     setAppGroup({ label: v.label, value: v.value });
+                                // }}
+                                labelInValue
+                            ></Select>
+                        </Form.Item>
+                        <Form.Item label="版本号" name="version">
+                            <Input placeholder='请输入版本号' />
+                        </Form.Item>
+                        <Form.Item label="发版时间" name="time">
+                            <DatePicker
+                                showTime
+                                // onChange={(v: any) => { setSelectTime(v.format('YYYY-MM-DD HH:mm:ss')) }}
+                                format="YYYY-MM-DD HH:mm:ss"
+                            />
+                        </Form.Item>
+                        {/* <Form.Item>
+          <Button type="primary" htmlType="submit">
+            搜索
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Button type="ghost" htmlType="reset">
+            重置
+          </Button>
+        </Form.Item> */}
+                    </Form>
+                    {/* <Space>
                         应用分类：
                          <Select
                             style={{ width: 180 }}
@@ -62,7 +106,7 @@ export default function VersionList() {
                             onChange={(v: any) => { setSelectTime(v.format('YYYY-MM-DD HH:mm:ss')) }}
                             format="YYYY-MM-DD HH:mm:ss"
                         />
-                    </Space>
+                    </Space> */}
                     <div>
                         <span style={{ fontWeight: '600', fontSize: '18px', marginRight: '10px' }}>
                             {appGroup?.value || '---'}

@@ -29,13 +29,15 @@ export default function VersionDetail() {
     const [versionOptions] = useVersion({});
 
     useEffect(() => {
-        if (versionOptions && !selectVersion) {
+        if (versionOptions.length && !selectVersion) {
             setSelectVersion(versionOptions[0].value)
         }
     }, [versionOptions])
 
     useEffect(() => {
-
+        if (appGroupOptions.length && !appGroup.value) {
+            setAppGroup(appGroupOptions[0])
+        }
     }, [appGroupOptions])
 
     const TabList = [
