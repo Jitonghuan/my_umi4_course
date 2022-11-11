@@ -618,11 +618,11 @@ export default [
         "name": '集群监控',
         "component": '@/pages/monitor/cluster',
       },
-      {
-        "path": `${baseRoutePath}/monitor/application`,
-        "name": '应用监控',
-        "component": '@/pages/monitor/application',
-      },
+      // {
+      //   "path": `${baseRoutePath}/monitor/application`,
+      //   "name": '应用监控',
+      //   "component": '@/pages/monitor/application',
+      // },
       {
         "path": `${baseRoutePath}/monitor/fe-monitor`,
         "name": "前端监控",

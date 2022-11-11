@@ -10,7 +10,7 @@ import { history } from 'umi'
 
 import './index.less'
 export default function InstanceMonitor() {
-  const { appCode, envCode, startTime, appId, deployName, count, isClick } = useContext(DetailContext);
+  const { appCode, envCode, startTime, appId, deployName, count, isClick,podIps } = useContext(DetailContext);
   const [statisticsData, setStatisticsData] = useState<any>([])
   const [statisticsLoading, setStatisticsLoading] = useState<boolean>(false)
   const [traceLoading, setTraceLoading] = useState<boolean>(false)
@@ -37,10 +37,11 @@ export default function InstanceMonitor() {
     const now = new Date().getTime();
     //@ts-ignore
     getCountDetail({
-      envCode,
+      envCode:envCode||"",
       deployName,
       appId,
       isTotal,
+      podIps,
       //@ts-ignore
       start: moment(new Date(Number(now - startTime))).format('YYYY-MM-DD HH:mm:ss'),
       //@ts-ignore

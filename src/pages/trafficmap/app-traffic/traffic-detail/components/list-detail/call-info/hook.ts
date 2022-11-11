@@ -9,6 +9,7 @@ interface queryCountDetailParams {
   instanceIDs?: string[];
   deployName?: string;
   isTotal?: boolean
+  podIps?:string[]
 
 }
 

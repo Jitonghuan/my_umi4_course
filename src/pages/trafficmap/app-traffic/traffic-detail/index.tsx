@@ -32,6 +32,7 @@ export default function TrafficDetail() {
   const [countOverView, setCountOverView] = useState<any>({});
   const [currentTableData, setCurrentTableData] = useState<any>([]);
   const [isClick, setIsClick] = useState<string | number>()
+  const [podIps,setPodIps]=useState<any>([])
 
   // pod ip
   const [curtIP, setCurtIp] = useState<string>('');
@@ -43,6 +44,7 @@ export default function TrafficDetail() {
     queryEnvs()
     return () => {
       setCount(0)
+      setEmpty(false)
     }
   }, [])
 
@@ -65,11 +67,11 @@ export default function TrafficDetail() {
 
     }
   }, [])
-
+const [empty,setEmpty]=useState<boolean>(false)
   // 查询应用列表
   const queryApps = (params: {
     envCode: string;
-    startTime: number
+    startTime: number;
   }) => {
     setAppLoading(true)
     const now = new Date().getTime();
@@ -79,6 +81,13 @@ export default function TrafficDetail() {
       end: Number((now) / 1000) + "",
     }).then((resp) => {
       setAppOptions(resp);
+      const appIndex = resp.findIndex((item:any) => item.value == curRecord?.appCode);
+     if(appIndex === -1){
+      setEmpty(true)
+     }
+     if(appIndex !== -1){
+      setEmpty(false)
+     }
     }).finally(() => {
       setAppLoading(false)
     })
@@ -111,8 +120,13 @@ export default function TrafficDetail() {
         setCurtIp(res[0].hostIP);
         setHostName(res[0]?.hostName);
         setIsClick(curApp)
+      }else{
+        setCurtIp("");
+        setHostName("");
+        setIsClick(curApp)
       }
       let podIps = res?.map((ele: any) => (ele?.hostIP))
+      setPodIps(podIps)
       queryCountOverview({
         start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
         end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
@@ -268,7 +282,7 @@ export default function TrafficDetail() {
         </div>
       </>
     )
-  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick])
+  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick,empty])
   const rightContent = useMemo(() => {
     return (
       <>
@@ -284,7 +298,8 @@ export default function TrafficDetail() {
     formInstance?.getFieldsValue()?.envCode,
     currentTableData,
     count,
-    isClick
+    isClick,
+    empty
   ])
 
 
@@ -299,18 +314,29 @@ export default function TrafficDetail() {
 
             <Form.Item label="选择环境" name="envCode">
               <Select showSearch options={envOptions} onChange={(envCode) => {
+                 setCurtIp("");
+                 setHostName("");
+                 setCurrentTableData({})
                 queryApps({
                   envCode,
-                  startTime: startTime
+                  startTime: startTime,
                 })
-                getNodeDataSource({
-                  envCode
-                })
+               
+                  getNodeDataSource({
+                    envCode
+                  })
+                // }
+              
+               
 
               }} loading={envLoading} style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="选择应用" name="appCode">
               <Select showSearch options={appOptions} onChange={(appCode, option: any) => {
+                 setCurtIp("");
+                 setHostName("");
+                 setCurrentTableData({})
+                 setIsClick(appCode)
                 setCurAppID(option?.appId)
                 setAppCode(appCode)
                 getNodeDataSource({
@@ -326,11 +352,15 @@ export default function TrafficDetail() {
             style={{ width: 150 }}
             value={startTime}
             onChange={(value) => {
+              setCurtIp("");
+              setHostName("");
+              setCurrentTableData({})
               setStartTime(value);
 
               queryApps({
                 envCode: formInstance.getFieldsValue()?.envCode,
-                startTime: value
+                startTime: value,
+                
               })
               getNodeDataSource({
                 start: value
@@ -367,11 +397,12 @@ export default function TrafficDetail() {
         currentTableData: currentTableData,
         deployName: deployName,
         count: count,
-        isClick: isClick
+        isClick: isClick,
+        podIps:podIps
 
       }}>
         <ContentCard className="traffic-detail-page-content">
-          <LightDragable
+          {empty?<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`该环境下不存在${curRecord?.appCode}应用`} />:   <LightDragable
             showIcon={true}
             leftContent={leftContent}
             rightContent={
@@ -380,7 +411,8 @@ export default function TrafficDetail() {
             initWidth={200}
             least={20}
             isSonPage={true}
-          />
+          />}
+       
         </ContentCard>
       </DetailContext.Provider>
     </PageContainer>

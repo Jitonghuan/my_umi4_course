@@ -13,7 +13,8 @@ export interface ContextTypes {
   currentTableData?:any;
   deployName?:string;
   count?:number;
-  isClick?:string|number
+  isClick?:string|number;
+  podIps?:any
 }
 
 export default createContext<ContextTypes>({});

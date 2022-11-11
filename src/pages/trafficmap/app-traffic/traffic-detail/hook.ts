@@ -66,7 +66,8 @@ interface queryCountOverviewParams {
 }
 //getCountOverview
 export const getCountOverview = (params: queryCountOverviewParams) =>
-  getRequest(APIS.getCountOverview, { data: { ...params } }).then((res: any) => {
+  getRequest(APIS.getCountOverview, { data: params ,hideToast: true }).then((res: any) => {
+  
     if (res?.success) {
       const dataSource = res?.data;
       return dataSource
