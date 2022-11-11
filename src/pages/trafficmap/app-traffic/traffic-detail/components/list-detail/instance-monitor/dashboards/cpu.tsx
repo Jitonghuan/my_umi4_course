@@ -1,6 +1,6 @@
 // data formatter
 // @author JITONGHUAN <muxi@come-future.com>
-// @create 2021/08/09 10:30
+// @create 2022/11/09 10:30
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { Line } from '@ant-design/charts';
@@ -26,7 +26,6 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
   const getData = (value: string) => {
     let optionData = value === '1' ? data[0] : value === '2' ? data[1] : [];
     setSumData(optionData);
-    // sumData=optionData
     setOption(value);
   };
 
@@ -56,7 +55,6 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
 
   const podsCpuOption = [
     { label: 'cpuUse', value: '1' },
-    // { label: 'cpuRequest', value: '2' },
     { label: 'cpuLimit', value: '2' },
   ];
 

@@ -1,14 +1,10 @@
-import { Space, Popconfirm, Tooltip, Tag } from 'antd';
+import { Space,Tooltip, Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { dateCellRender } from '@/utils';
 import moment from 'moment'
 
 // 列表页-表格
 export const createStatisticsTableColumns = (params: {
-  
     onView: (record: any, index: number) => void;
-   
-    
   }) => {
     return [
       {
@@ -67,11 +63,8 @@ export const createStatisticsTableColumns = (params: {
   };
 
   // 列表页-表格
-export const createQueryTableColumns = (params: {
-  
+export const createQueryTableColumns = (params: { 
     onView: (record: any, index: number) => void;
-   
-    
   }) => {
     return [
       {

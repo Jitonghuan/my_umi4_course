@@ -3,14 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
 import { Radio, Select, message, Spin, RadioChangeEvent, Drawer, Tooltip } from 'antd';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { RedoOutlined, FullscreenOutlined, SyncOutlined } from '@ant-design/icons';
-import {  START_TIME_ENUMS } from '../../../schema';
+import { RedoOutlined, FullscreenOutlined} from '@ant-design/icons';
+import { START_TIME_ENUMS } from '../../../schema';
 import './index.less'
 
 const { ColorContainer } = colorUtil.context;
-
 export type IOperateItem = '';
-
 export interface IProps {
   /** 标题 */
   title?: string;
@@ -29,7 +27,7 @@ export interface IProps {
 
   /** 瞬时值、累计值的初始值 */
   initialRadio?: string;
-  count?:number
+  count?: number
 }
 
 type IEchartResp = {
@@ -54,7 +52,7 @@ const typeEnum = [
  * @create 2021-04-14 15:40
  */
 const Coms = (props: IProps) => {
-  const { title, getOption = () => {}, hasRadio = false, initialRadio = '1', queryFn, requestParams = {},count } = props;
+  const { title, getOption = () => { }, hasRadio = false, initialRadio = '1', queryFn, requestParams = {}, count } = props;
   const [loading, setLoading] = useState<boolean>(false);
   const [curtRadio, setCurtRadio] = useState<string>(initialRadio || '1');
   const [curOptions, setCurOptions] = useState<any>({});
@@ -95,7 +93,7 @@ const Coms = (props: IProps) => {
         const resource = curtRadio === '1' ? resp.count : resp.sum;
         const options = getOption(resource.xAxis, resource.dataSource);
         prevData.current = resp;
-      
+
         setCurOptions(options);
       })
       .catch((err) => {
@@ -258,7 +256,7 @@ const Coms = (props: IProps) => {
                 ))}
               </Select>
             </Tooltip>
-          
+
           </div>
           <div className="monitor-app-card" style={{ padding: '16px 0' }}>
             <div className="app-header" style={{ marginBottom: 12 }}>

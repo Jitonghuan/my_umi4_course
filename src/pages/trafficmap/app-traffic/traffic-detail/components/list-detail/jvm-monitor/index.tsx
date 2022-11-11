@@ -2,7 +2,6 @@
 import React, {useContext } from 'react';
 import DetailContext from '../../../context';
 import AppCard from './app-card';
-
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import {
     getGCTimeChartOption,

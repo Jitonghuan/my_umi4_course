@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useEffect, useRef,useContext } from 'react';
+import React, { useState, useCallback, useEffect,useContext } from 'react';
 import { Card, Row, Col,Table,Tooltip } from 'antd';
 import HulkTable, { usePaginated, ColumnProps } from '@cffe/vc-hulk-table';
 import {QuestionCircleOutlined} from '@ant-design/icons'
@@ -14,7 +14,6 @@ import { useQueryPodCpu, usequeryPodMem, useQueryFs, useQueryNetwork ,queryItems
 import './index.less'
 
 export default function InstanceMonitor(){
- 
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
   const [loading,setLoading]=useState<boolean>(false)
   const {appCode,envCode,startTime,currentTableData,hostIP,hostName,count,isClick} =useContext(DetailContext);
@@ -22,8 +21,6 @@ export default function InstanceMonitor(){
   const [podMemData, podMemLoading, queryPodMem] = usequeryPodMem();
   const [fsData, fsLoading, queryFs] = useQueryFs();
   const [networkIOData, networkIOLoading, queryNetworkIO] = useQueryNetwork();
- 
- 
    useEffect(()=>{
        if(appCode&&envCode&&startTime&&hostIP&&hostName){
         const now = new Date().getTime();
@@ -35,21 +32,16 @@ export default function InstanceMonitor(){
             appCode: appCode,
             ip: hostIP,
           })
-        
        }
    },[envCode,appCode,hostIP,hostName,startTime,count])
    useEffect(()=>{
     if(isClick&&isClick===appCode){
-      
       console.log("here")
        getDataSource({
          keyWord:appCode,
          envCode:envCode||""
        })
-    }
-   
-    
-    
+    }    
    },[appCode,isClick,envCode,startTime,count])
    useEffect(()=>{
     if(isClick!==appCode&&Object.keys(currentTableData||{})?.length>0){
@@ -57,8 +49,6 @@ export default function InstanceMonitor(){
      }else{
       setNodeDataSource([])
      }
-    
-    
    },[currentTableData,appCode,isClick])
   
 
@@ -67,7 +57,6 @@ export default function InstanceMonitor(){
     queryPodMem(params)
     queryFs(params)
     queryNetworkIO(params)
-
    }
 
   
@@ -95,8 +84,6 @@ export default function InstanceMonitor(){
             wss:result?.svcWssQuota,
             rss:result?.svcRssQuota,
             disk:"--"
-      
-            
           },
           {
             resourceName:"已使用量",
@@ -104,7 +91,6 @@ export default function InstanceMonitor(){
             wss: Number(result?.svcWssUsage).toFixed(2), 
             rss:  Number(result?.svcRssUsage).toFixed(2), 
             disk:`--`
-      
           },
           {
             resourceName:"使用百分比",
@@ -114,29 +100,20 @@ export default function InstanceMonitor(){
             disk:`--`
           }
           )
-         
-          setNodeDataSource(data)
-         
+          setNodeDataSource(data) 
         }).finally(()=>{
           setLoading(false)
         })
       })
     },[startTime,])
-    
- 
-   
-  
   const getNodeDataSource=useCallback(()=>{
     let data=[]
-    
       data.push({
         resourceName:"资源配额",
         cpu:currentTableData?.cpuLimit,
         wss:getDiviNumber(getMultiNumber(currentTableData?.memLimit,currentTableData?.WSS)||"",currentTableData?.WSS),
         rss:getDiviNumber(getMultiNumber(currentTableData?.memLimit,currentTableData?.RSS)||"",currentTableData?.RSS),
         disk:currentTableData?.diskLimit||"--"
-
-        
       },
       {
         resourceName:"已使用量",
@@ -144,7 +121,6 @@ export default function InstanceMonitor(){
         wss:getMultiNumber(currentTableData?.memLimit,(Number(currentTableData?.WSS)*0.01).toString()),
         rss:getMultiNumber(currentTableData?.memLimit,(Number(currentTableData?.RSS)*0.01).toString()),
         disk:`${parseInt(currentTableData?.disk)}MB`
-
       },
       {
         resourceName:"使用百分比",
@@ -152,9 +128,8 @@ export default function InstanceMonitor(){
         wss:`${currentTableData?.WSS}% `,
         rss:`${currentTableData?.RSS}%`,
         disk:`${getDiviNumber(currentTableData?.disk,currentTableData?.diskLimit)}`
-      }
+       }
       )
-
       setNodeDataSource(data)
 },[currentTableData])
 const getDiviNumber=(first:string,second:string)=>{
@@ -175,17 +150,13 @@ const getMultiNumber=(first:string,second:string)=>{
   return number
 
 }
-
     return(
         <>
           <Card className="monitor-app-body">
           <h3 className="monitor-tabs-content-title">
             资源使用
-            
-        
           </h3>
           <Table rowKey="ip" bordered dataSource={nodeDataSource}  scroll={{ x: '100%' }} loading={loading}  columns={tableSchema as ColumnProps[]}  pagination={false}  />
-
            <h3 className="monitor-tabs-content-title">
             监控图表&nbsp;<Tooltip title={"当前实例的资源使用情况"}><QuestionCircleOutlined style={{fontSize:18,color:"#1E90FF"}} /></Tooltip>
           </h3>
@@ -213,8 +184,6 @@ const getMultiNumber=(first:string,second:string)=>{
                     </div>
                   </Col>
                 </Row>
-
-          
           </Card>
         </>
     )

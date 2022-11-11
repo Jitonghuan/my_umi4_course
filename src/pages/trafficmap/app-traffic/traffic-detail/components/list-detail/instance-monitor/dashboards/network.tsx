@@ -14,7 +14,6 @@ const { ColorContainer } = colorUtil.context;
 export default function NetWorkLine(props: ChartCaseListProps) {
   const { data, loading } = props;
   const [option, setOption] = useState<string>('1');
-  // const sumData = useRef<any>([]);
   const networkOption = [
     { label: 'receive', value: '1' },
     { label: 'transmit', value: '2' },

@@ -1,5 +1,3 @@
-import { Card, Select, Form, Tooltip, Tabs, Button, Row, Col,Badge } from 'antd';
-
 // 表格schema
 export const tableSchema = [
     {

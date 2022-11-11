@@ -4,16 +4,15 @@
  * @description 用于存在接口数据或者接口调用函数
  * @create 2021-04-12 19:15:42
  */
- import appConfig from '@/app.config';
- import { getRequest } from '@/utils/request';
- import moment from 'moment';
- 
- 
- // 应⽤GC次数
- export const queryGcCountApi = `${appConfig.apiPrefix}/monitorManage/app/gcCount`;
- export const queryGcCount = (params: { [key: string]: string }) =>
-   getRequest(queryGcCountApi, { ...params }).then((res: any) => {
-     if (res?.success) {
+import appConfig from '@/app.config';
+import { getRequest } from '@/utils/request';
+import moment from 'moment';
+
+// 应⽤GC次数
+export const queryGcCountApi = `${appConfig.apiPrefix}/monitorManage/app/gcCount`;
+export const queryGcCount = (params: { [key: string]: string }) =>
+  getRequest(queryGcCountApi, { ...params }).then((res: any) => {
+    if (res?.success) {
       const { fullGCCount = [], youngGCCount = [], fullGCSum = [], youngGCSum = [] } = res.data;
       let curxAxis: any[] = [];
       const fullCount: string[] = [];
@@ -97,30 +96,30 @@
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
-   
- 
-       return {
-         count: {
+
+
+      return {
+        count: {
           xAxis,
-           dataSource: [gcFullCountArry, gcYoungCountArry],
-         },
-         sum: {
+          dataSource: [gcFullCountArry, gcYoungCountArry],
+        },
+        sum: {
           xAxis,
-           dataSource: [gcFullSumArry, gcYoungSumArry],
-         },
-       };
-     }
-     return {
-       count: {},
-       sum: {},
-     };
-   });
- 
- // 应⽤GC耗时
- export const queryGcTimeApi = `${appConfig.apiPrefix}/monitorManage/app/gcTime`;
- export const queryGcTime = (params: { [key: string]: string }) =>
-   getRequest(queryGcTimeApi, { ...params }).then((res: any) => {
-     if (res?.success) {
+          dataSource: [gcFullSumArry, gcYoungSumArry],
+        },
+      };
+    }
+    return {
+      count: {},
+      sum: {},
+    };
+  });
+
+// 应⽤GC耗时
+export const queryGcTimeApi = `${appConfig.apiPrefix}/monitorManage/app/gcTime`;
+export const queryGcTime = (params: { [key: string]: string }) =>
+  getRequest(queryGcTimeApi, { ...params }).then((res: any) => {
+    if (res?.success) {
       const { fullGCTime = [], youngGCTime = [], fullGCTimeSum = [], youngGCTimeSum = [] } = res.data;
       let fullGCTimeArry: any = [];
       let youngGCTimeArry: any = [];
@@ -200,29 +199,29 @@
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
 
- 
-       return {
-         count: {
-           xAxis,
-           dataSource: [fullGCTimeArry, youngGCTimeArry],
-         },
-         sum: {
-           xAxis,
-           dataSource: [fullGCTimeSumArry, youngGCTimeSumArry],
-         },
-       };
-     }
-     return {
-       count: {},
-       sum: {},
-     };
-   });
- 
- // 应⽤JVM堆内存使⽤
- export const queryJvmHeapApi = `${appConfig.apiPrefix}/monitorManage/app/jvmHeap`;
- export const queryJvmHeap = (params: { [key: string]: string }) =>
-   getRequest(queryJvmHeapApi, { ...params }).then((res: any) => {
-     if (res?.success) {
+
+      return {
+        count: {
+          xAxis,
+          dataSource: [fullGCTimeArry, youngGCTimeArry],
+        },
+        sum: {
+          xAxis,
+          dataSource: [fullGCTimeSumArry, youngGCTimeSumArry],
+        },
+      };
+    }
+    return {
+      count: {},
+      sum: {},
+    };
+  });
+
+// 应⽤JVM堆内存使⽤
+export const queryJvmHeapApi = `${appConfig.apiPrefix}/monitorManage/app/jvmHeap`;
+export const queryJvmHeap = (params: { [key: string]: string }) =>
+  getRequest(queryJvmHeapApi, { ...params }).then((res: any) => {
+    if (res?.success) {
       const { heapEdenSpace = [], heapMemSum = [], heapOldGen = [], heapSurvivorSpace = [] } = res.data;
       let curxAxis: any[] = [];
       let heapEdenSpaceArry: any = [];
@@ -301,27 +300,27 @@
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
-     
- 
-       return {
-         count: {
-           xAxis,
-           dataSource: [heapMemSumArry, heapEdenSpaceArry, heapSurvivorSpaceArry, heapOldGenArry],
-         },
-         sum: {},
-       };
-     }
-     return {
-       count: {},
-       sum: {},
-     };
-   });
- 
- // 应⽤JVM元空间使⽤
- export const queryJvmMetaspaceApi = `${appConfig.apiPrefix}/monitorManage/app/jvmMetaSpace`;
- export const queryJvmMetaspace = (params: { [key: string]: string }) =>
-   getRequest(queryJvmMetaspaceApi, { ...params }).then((res: any) => {
-     if (res.success) {
+
+
+      return {
+        count: {
+          xAxis,
+          dataSource: [heapMemSumArry, heapEdenSpaceArry, heapSurvivorSpaceArry, heapOldGenArry],
+        },
+        sum: {},
+      };
+    }
+    return {
+      count: {},
+      sum: {},
+    };
+  });
+
+// 应⽤JVM元空间使⽤
+export const queryJvmMetaspaceApi = `${appConfig.apiPrefix}/monitorManage/app/jvmMetaSpace`;
+export const queryJvmMetaspace = (params: { [key: string]: string }) =>
+  getRequest(queryJvmMetaspaceApi, { ...params }).then((res: any) => {
+    if (res.success) {
       const { metaspace = [] } = res.data;
       let curxAxis: any[] = [];
       let metaspaceArry: any = [];
@@ -357,41 +356,40 @@
       curxAxis?.map((item) => {
         xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
       });
-       return {
-         count: {
-           xAxis,
-           dataSource: [metaspaceArry],
-         },
-         sum: {},
-       };
-     }
-     return {
-       count: {},
-       sum: {},
-     };
-   });
- 
- /**
-  * POD明细列表
-  */
- export const queryPodUrl = `${appConfig.apiPrefix}/monitorManage/app/CpuUseInfo`;
- export const queryPodUseData = (params: {
-   clusterId?: string;
-   pageIdex?: number;
-   pageSize?: number;
-   envCode?: string;
-   keyword?: string;
-   nameSpace?: string;
- }) =>
-   getRequest(queryPodUrl, { data: params }).then((res: any) => {
-     if (res?.success) {
-       let podResourceData: any = [];
-       podResourceData = res.dataSource;
- 
-       return podResourceData;
-     }
-     return [];
-   });
- 
- 
- 
+      return {
+        count: {
+          xAxis,
+          dataSource: [metaspaceArry],
+        },
+        sum: {},
+      };
+    }
+    return {
+      count: {},
+      sum: {},
+    };
+  });
+
+/**
+ * POD明细列表
+ */
+export const queryPodUrl = `${appConfig.apiPrefix}/monitorManage/app/CpuUseInfo`;
+export const queryPodUseData = (params: {
+  clusterId?: string;
+  pageIdex?: number;
+  pageSize?: number;
+  envCode?: string;
+  keyword?: string;
+  nameSpace?: string;
+}) =>
+  getRequest(queryPodUrl, { data: params }).then((res: any) => {
+    if (res?.success) {
+      let podResourceData: any = [];
+      podResourceData = res.dataSource;
+
+      return podResourceData;
+    }
+    return [];
+  });
+
+

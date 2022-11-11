@@ -1,11 +1,11 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect,  } from 'react';
 import PageContainer from '@/components/page-container';
-import { Table, Space, Form, Select, Tooltip, Button, Spin, Empty, Tag, Badge } from 'antd';
+import { Space, Form, Select, Tooltip, Button, Spin, Empty,Badge } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { START_TIME_ENUMS } from './schema';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
-import { RedoOutlined} from '@ant-design/icons';
+import { RedoOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -30,18 +30,18 @@ export default function TrafficDetail() {
   const [isFailHovering, setIsFailHovering] = useState(false);
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
   const [countOverView, setCountOverView] = useState<any>({});
-  const [currentTableData,setCurrentTableData]= useState<any>([]);
-  const [isClick,setIsClick]=useState<string|number>()
+  const [currentTableData, setCurrentTableData] = useState<any>([]);
+  const [isClick, setIsClick] = useState<string | number>()
 
   // pod ip
   const [curtIP, setCurtIp] = useState<string>('');
   const [hostName, setHostName] = useState<string>('');
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
-  const [count,setCount]=useState<number>(0)
+  const [count, setCount] = useState<number>(0)
   useEffect(() => {
     queryEnvs()
-    return()=>{
+    return () => {
       setCount(0)
     }
   }, [])
@@ -65,7 +65,7 @@ export default function TrafficDetail() {
 
     }
   }, [])
- 
+
   // 查询应用列表
   const queryApps = (params: {
     envCode: string;
@@ -112,7 +112,7 @@ export default function TrafficDetail() {
         setHostName(res[0]?.hostName);
         setIsClick(curApp)
       }
-      let podIps=res?.map((ele:any)=>(ele?.hostIP))
+      let podIps = res?.map((ele: any) => (ele?.hostIP))
       queryCountOverview({
         start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
         end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
@@ -136,8 +136,8 @@ export default function TrafficDetail() {
     envCode: string,
     appId: string
     deployName: string,
-    podIps:string[]
-    
+    podIps: string[]
+
   }) => {
     getCountOverview({
       ...params
@@ -193,69 +193,64 @@ export default function TrafficDetail() {
     return (
       <>
         <div className="left-content-title">
-
           <span>
-            实例<Tooltip title={"当前服务的请求总数/平均响应时间/失败请求数"}> <QuestionCircleOutlined style={{ color: "#1E90FF", fontSize:14}} /></Tooltip>
-                    </span>
+            实例<Tooltip title={"当前服务的请求总数/平均响应时间/失败请求数"}> <QuestionCircleOutlined style={{ color: "#1E90FF", fontSize: 14 }} /></Tooltip>
+          </span>
           <div>
-            {/* <div
-              className="title-hover"
-            > */}
 
-            <span className={isCountHovering?"title-click":"not-click"}
-               onClick={()=>{
-                 if(isCountHovering){
-                   handleMouseLeave("count") 
-                 }else{
-                   handleMouseEnter("count")
-                 }
-               }}>请求数</span>/
-            <span className={isRTHovering?"title-click":"not-click"}
-              onClick={()=>{
-                if(isRTHovering){
-                  handleMouseLeave("rt") 
-                }else{
-                  handleMouseEnter("rt") 
+            <span className={isCountHovering ? "title-click" : "not-click"}
+              onClick={() => {
+                if (isCountHovering) {
+                  handleMouseLeave("count")
+                } else {
+                  handleMouseEnter("count")
+                }
+              }}>请求数</span>/
+            <span className={isRTHovering ? "title-click" : "not-click"}
+              onClick={() => {
+                if (isRTHovering) {
+                  handleMouseLeave("rt")
+                } else {
+                  handleMouseEnter("rt")
                 }
               }} >RT</span>/
-             <span  className={isFailHovering?"title-click":"not-click"}
-              onClick={()=>{
-               if(isFailHovering){
-                 handleMouseLeave("fail") 
-               }else{
-                 handleMouseEnter("fail")
-               }
-             }} >失败数</span>
+             <span className={isFailHovering ? "title-click" : "not-click"}
+              onClick={() => {
+                if (isFailHovering) {
+                  handleMouseLeave("fail")
+                } else {
+                  handleMouseEnter("fail")
+                }
+              }} >失败数</span>
           </div>
 
         </div>
         <div className="left-content-detail">
           <Spin spinning={loading}>
-            
-            <p  className={`left-content-detail-title ${appCode===isClick?"is-click":"not-click"}`}>
-              <span className={`title-code `}  onClick={()=>{setIsClick(appCode)}} >{appCode}</span>
-              <span>
-                   <span className={isCountHovering ? "count-hovering" : "not-hover"} style={{padding:6,display:"inline-block"}}> {countOverView?.totalCounts || 0}</span>/
-                    <span className={isRTHovering ? "rt-hovering" : "not-hover"}  style={{padding:6,display:"inline-block"}}>{Number(countOverView?.avgRequestTime||0).toFixed(2) || 0}ms</span>/
-                    <span className={isFailHovering ? "fail-hovering" : "not-hover"}  style={{padding:6,display:"inline-block"}}>{countOverView?.totalFailures || 0}</span>
 
+            <p className={`left-content-detail-title ${appCode === isClick ? "is-click" : "not-click"}`}>
+              <span className={`title-code `} onClick={() => { setIsClick(appCode) }} >{appCode}</span>
+              <span>
+                <span className={isCountHovering ? "count-hovering" : "not-hover"} style={{ padding: 6, display: "inline-block" }}> {countOverView?.totalCounts || 0}</span>/
+                    <span className={isRTHovering ? "rt-hovering" : "not-hover"} style={{ padding: 6, display: "inline-block" }}>{Number(countOverView?.avgRequestTime || 0).toFixed(2) || 0}ms</span>/
+                    <span className={isFailHovering ? "fail-hovering" : "not-hover"} style={{ padding: 6, display: "inline-block" }}>{countOverView?.totalFailures || 0}</span>
               </span>
             </p>
             {nodeDataSource?.length < 1 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"暂无数据"} />}
-            {nodeDataSource?.length > 0 && nodeDataSource?.map((element: any,index:number) => {
+            {nodeDataSource?.length > 0 && nodeDataSource?.map((element: any, index: number) => {
               const nowData = countOverView?.instanceCallInfos?.filter((item: any) => item?.instanceIp === element?.hostIP)
-              console.log("nowData",nowData)
-              const instanceRt =Number( nowData[0]?.instanceRt||0).toFixed(2);
-              const requestCounts = nowData[0]?.requestCounts;
-              const requestFailures = nowData[0]?.requestFailures
+            
+              const instanceRt =nowData?.length>0? Number(nowData[0]?.instanceRt || 0).toFixed(2):"0";
+              const requestCounts =nowData?.length>0? nowData[0]?.requestCounts:"0";
+              const requestFailures =nowData?.length>0? nowData[0]?.requestFailures:"0"
               return (
                 <ul>
-                  <li  className={`left-content-detail-info ${index===isClick?"is-click":"not-click"}`}>
-                    <span><span style={{ paddingRight: 8 }}>{element?.health === 0 ? <Badge status="error" /> : <Badge status="success" />}</span><span className={`title-ip`} onClick={()=>{
-                        setIsClick(index)
-                        setCurtIp(element?.hostIP);
-                        setHostName(element?.hostName);
-                        setCurrentTableData(element)
+                  <li className={`left-content-detail-info ${index === isClick ? "is-click" : "not-click"}`}>
+                    <span><span style={{ paddingRight: 8 }}>{element?.health === 0 ? <Badge status="error" /> : <Badge status="success" />}</span><span className={`title-ip`} onClick={() => {
+                      setIsClick(index)
+                      setCurtIp(element?.hostIP);
+                      setHostName(element?.hostName);
+                      setCurrentTableData(element)
                     }}>{element?.hostIP}</span></span>
                     <span>
                       <span className={isCountHovering ? "count-hovering" : "not-hover"} > {requestCounts || 0}</span>/
@@ -273,7 +268,7 @@ export default function TrafficDetail() {
         </div>
       </>
     )
-  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering,appCode,isClick])
+  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick])
   const rightContent = useMemo(() => {
     return (
       <>
@@ -320,7 +315,7 @@ export default function TrafficDetail() {
                 setAppCode(appCode)
                 getNodeDataSource({
                   appCode,
-                  deployName:option?.deployName
+                  deployName: option?.deployName
                 })
                 setDeployName(option?.deployName)
               }} loading={appLoading} style={{ width: 200 }} />
@@ -332,13 +327,13 @@ export default function TrafficDetail() {
             value={startTime}
             onChange={(value) => {
               setStartTime(value);
-             
+
               queryApps({
                 envCode: formInstance.getFieldsValue()?.envCode,
                 startTime: value
               })
               getNodeDataSource({
-                start:value
+                start: value
               })
             }}
           >  <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
@@ -350,8 +345,8 @@ export default function TrafficDetail() {
           </Select>
             <Space style={{ marginLeft: 8, marginTop: 2 }}>
               <Button type="primary" icon={<RedoOutlined />} onClick={() => {
-               getNodeDataSource()
-              setCount(count=>count+1)
+                getNodeDataSource()
+                setCount(count => count + 1)
               }}>刷新</Button>
               <span><Button type="primary" ghost onClick={() => {
                 history.push({
@@ -364,15 +359,15 @@ export default function TrafficDetail() {
       </FilterCard>
       <DetailContext.Provider value={{
         envCode: formInstance?.getFieldsValue()?.envCode,
-        appId: curAppID||curRecord?.appId,
+        appId: curAppID || curRecord?.appId,
         appCode: formInstance?.getFieldsValue()?.appCode,
-        startTime:startTime,
+        startTime: startTime,
         hostIP: curtIP,
         hostName: hostName,
-        currentTableData:currentTableData,
-        deployName:deployName,
-        count:count,
-        isClick:isClick
+        currentTableData: currentTableData,
+        deployName: deployName,
+        count: count,
+        isClick: isClick
 
       }}>
         <ContentCard className="traffic-detail-page-content">
@@ -381,7 +376,7 @@ export default function TrafficDetail() {
             leftContent={leftContent}
             rightContent={
               rightContent
-          }
+            }
             initWidth={200}
             least={20}
             isSonPage={true}

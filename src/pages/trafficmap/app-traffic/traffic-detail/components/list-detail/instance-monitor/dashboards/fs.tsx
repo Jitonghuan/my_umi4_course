@@ -22,7 +22,6 @@ export default function DiskIOLine(props: ChartCaseListProps) {
       setSumData(data[0]);
       setOption('1');
     }
-    // if(!data[0].length||!data[1].length) return;
   }, [data]);
 
   const getData = (value: string) => {
