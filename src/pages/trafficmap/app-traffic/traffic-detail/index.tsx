@@ -402,7 +402,7 @@ const [empty,setEmpty]=useState<boolean>(false)
 
       }}>
         <ContentCard className="traffic-detail-page-content">
-          {empty?<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`该环境下不存在${curRecord?.appCode}应用`} />:   <LightDragable
+          {empty?<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`该环境下不存在${appCode||curRecord?.appCode}应用`} />:   <LightDragable
             showIcon={true}
             leftContent={leftContent}
             rightContent={
