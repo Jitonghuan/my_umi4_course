@@ -2,7 +2,7 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
 import { Select } from 'antd';
@@ -69,7 +69,10 @@ export default function DiskIOLine(props: ChartCaseListProps) {
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>
           <ColorContainer roleKeys={['color']}>
-            <Line {...config} />
+          {
+            useMemo(() => <Line {...config} />, [sumData])
+        }
+            {/* <Line {...config} /> */}
           </ColorContainer>
         </div>
       </div>

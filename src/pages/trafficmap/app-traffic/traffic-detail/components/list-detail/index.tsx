@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef,useContext } from 'react';
 import { Drawer, Form, Button, Radio, Input, Switch } from 'antd';
 import DetailContext from '../../context';
 import type { RadioChangeEvent } from 'antd';
+import { FilterCard,ContentCard } from '@/components/vc-page-content';
 import CallInfo from './call-info';
 import InstanceMonitor from './instance-monitor';
 import JvmMonitor from './jvm-monitor';
@@ -33,13 +34,21 @@ export default function CreateArticle() {
              
 
             </div>
-            <div>
-              {filterMode==="instance"&&<InstanceMonitor  
+            
+            {/* <div className="detail-wrapper"> */}
+            {/* <ContentCard> */}
+            {filterMode==="instance"&&<InstanceMonitor  
               />}
               {filterMode==="jvm"&&<JvmMonitor/>}
               {filterMode==="call"&&<CallInfo/>}
 
-            </div>
+            {/* </ContentCard> */}
+             
+
+          
+
+            {/* </div> */}
+            
         </div>
 
      

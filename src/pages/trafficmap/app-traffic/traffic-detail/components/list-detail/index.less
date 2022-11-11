@@ -1,20 +1,26 @@
-.traffic-detail-right-content-header{
+.traffic-detail-right-content-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    // .ant-radio-button .ant-radio-button-checked{
-    //     background-color: hotpink;
-    // }
+
     .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
         z-index: 1;
-        // color: var(--ant-primary-color);
+
         color: ivory;
-        /* background: #fff; */
+
         background: var(--ant-primary-color);
         border-color: var(--ant-primary-color);
     }
 
 }
-.traffic-detail-right-content-wrap{
+
+.traffic-detail-right-content-wrap {
     padding: 12px 12px 12px 0px;
+
+    .detail-wrapper {
+        display: flex;
+        flex-direction: column;
+        //padding: 0px 12px;
+        height: calc(100%-77px);
+    }
 }

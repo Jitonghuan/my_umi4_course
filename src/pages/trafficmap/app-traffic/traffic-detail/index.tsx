@@ -113,7 +113,6 @@ export default function TrafficDetail() {
         setIsClick(curApp)
       }
       let podIps=res?.map((ele:any)=>(ele?.hostIP))
-      console.log("podIps",podIps)
       queryCountOverview({
         start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
         end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),

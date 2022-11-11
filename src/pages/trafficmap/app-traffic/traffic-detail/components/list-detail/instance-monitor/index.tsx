@@ -120,8 +120,6 @@ export default function InstanceMonitor(){
         }).finally(()=>{
           setLoading(false)
         })
-      }).finally(()=>{
-        setLoading(false)
       })
     },[startTime,])
     
@@ -186,7 +184,7 @@ const getMultiNumber=(first:string,second:string)=>{
             
         
           </h3>
-          <Table rowKey="ip" bordered dataSource={nodeDataSource}  scroll={{ x: '100%' }}  columns={tableSchema as ColumnProps[]}  pagination={false}  />
+          <Table rowKey="ip" bordered dataSource={nodeDataSource}  scroll={{ x: '100%' }} loading={loading}  columns={tableSchema as ColumnProps[]}  pagination={false}  />
 
            <h3 className="monitor-tabs-content-title">
             监控图表&nbsp;<Tooltip title={"当前实例的资源使用情况"}><QuestionCircleOutlined style={{fontSize:18,color:"#1E90FF"}} /></Tooltip>

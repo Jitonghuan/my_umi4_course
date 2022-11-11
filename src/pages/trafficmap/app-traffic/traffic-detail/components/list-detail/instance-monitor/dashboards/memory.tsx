@@ -72,7 +72,10 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
       <div>
         <div>
           <ColorContainer roleKeys={['color']}>
-            <Line {...config} />
+            {/* <Line {...config} /> */}
+            {
+            useMemo(() => <Line {...config} />, [sumData])
+        }
           </ColorContainer>
         </div>
       </div>

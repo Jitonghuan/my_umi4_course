@@ -71,7 +71,10 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>
           <ColorContainer roleKeys={['color']}>
-            <Line {...config} />
+            {/* <Line {...config} /> */}
+            {
+            useMemo(() => <Line {...config} />, [sumData])
+        }
           </ColorContainer>
         </div>
       </div>
