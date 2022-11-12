@@ -29,7 +29,6 @@ export default function CreateArticle() {
           <Radio.Button value="jvm">JVM监控</Radio.Button>
           <Radio.Button value="call">调用信息</Radio.Button>
         </Radio.Group>
-        {console.log("hostIP",hostIP)}
         {isClick === appCode ? <span>{appCode}</span> : <span>{appCode} {hostIP?<span>| {hostIP}</span>:null}</span>}
       </div>
       {filterMode === "instance" && <InstanceMonitor

@@ -160,7 +160,7 @@ export default [
             "name": "应用监控",
             "key": "appList",
             "hideInMenu": true,
-            "component": "@/pages/monitor/application/app-table"
+            "component": "@/pages/trafficmap/app-traffic/traffic-detail"
           },
           {
             "path": `${baseRoutePath}/application/detail/appDeploy`,

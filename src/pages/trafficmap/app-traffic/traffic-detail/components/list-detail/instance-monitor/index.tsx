@@ -36,7 +36,6 @@ export default function InstanceMonitor(){
    },[envCode,appCode,hostIP,hostName,startTime,count])
    useEffect(()=>{
     if(isClick&&isClick===appCode){
-      console.log("here")
        getDataSource({
          keyWord:appCode,
          envCode:envCode||""

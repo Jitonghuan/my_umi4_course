@@ -3,19 +3,22 @@ import PageContainer from '@/components/page-container';
 import { Space, Form, Select, Tooltip, Button, Spin, Empty,Badge } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { START_TIME_ENUMS } from './schema';
+import { parse,stringify } from 'query-string';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
 import { RedoOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { queryAppList, queryEnvList, queryNodeList, getCountOverview } from './hook';
+import { queryAppList, queryEnvList, queryNodeList, getCountOverview,getListAppEnv,queryTrafficList } from './hook';
 import DetailContext from './context';
 import './index.less'
 export default function TrafficDetail() {
   const now = new Date().getTime();
   let location = useLocation();
+  //entry:"appDetail-monitor"
   const curRecord: any = location.state || {};
+  const query:any = parse(location.search);
   const [formInstance] = Form.useForm();
   const [appOptions, setAppOptions] = useState([]);
   const [envOptions, setEnvOptions] = useState([]);
@@ -23,8 +26,8 @@ export default function TrafficDetail() {
   const [envLoading, setEnvLoading] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [curAppID, setCurAppID] = useState<string>(curRecord?.appId)
-  const [deployName, setDeployName] = useState<string>(curRecord?.deployName)
-  const [appCode, setAppCode] = useState<string>(curRecord?.appCode)
+  const [deployName, setDeployName] = useState<string>(curRecord?.deployName||query?.deploymentName)
+  const [appCode, setAppCode] = useState<string>(curRecord?.appCode||query?.appCode)
   const [isCountHovering, setIsCountHovering] = useState(false);
   const [isRTHovering, setIsRTHovering] = useState(false);
   const [isFailHovering, setIsFailHovering] = useState(false);
@@ -33,6 +36,59 @@ export default function TrafficDetail() {
   const [currentTableData, setCurrentTableData] = useState<any>([]);
   const [isClick, setIsClick] = useState<string | number>()
   const [podIps,setPodIps]=useState<any>([])
+  useEffect(()=>{
+    if(query?.entry&&query?.entry==="appDetail-monitor"){
+      setAppCode(query?.appCode)
+      formInstance.setFieldsValue({
+        appCode:query?.appCode
+      })
+      setDeployName(query?.deploymentName)
+      getListAppEnvData()
+    }
+  },[])
+  const getListAppEnvData=()=>{
+    setEnvLoading(true)
+    getListAppEnv({appCode:query?.appCode}).then((res)=>{
+      setEnvOptions(res)
+      formInstance.setFieldsValue({
+        envCode:res?.length>0?res[0]?.value:""
+      })
+      getAppId({envCode:res?.length>0?res[0]?.value:"",startTime})
+    }).finally(()=>{
+      setEnvLoading(false)
+    })
+  }
+  const getAppId=(params:{envCode:string,startTime:number})=>{
+    queryTrafficList(
+      {
+        envCode: params?.envCode,
+        keyWord:query?.appCode,
+        start: Number((now - startTime) / 1000) + "",
+        end: Number(now / 1000) + "",
+      }
+    ).then(()=>{
+      queryTrafficList(
+        {
+          envCode: params?.envCode,
+          keyWord:query?.appCode,
+          start: Number((now - startTime) / 1000) + "",
+          end: Number(now / 1000) + "",
+          needMetric: true
+        }
+      ).then((resp)=>{
+       
+        if (resp?.length>0&&resp[0]?.appId) {
+          setCurAppID(resp[0]?.appId)
+          getNodeDataSource({
+            appId:resp?.length>0?resp[0]?.appId:""
+          })
+        }
+
+      })
+     
+
+    })
+  }
 
   // pod ip
   const [curtIP, setCurtIp] = useState<string>('');
@@ -41,7 +97,10 @@ export default function TrafficDetail() {
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const [count, setCount] = useState<number>(0)
   useEffect(() => {
-    queryEnvs()
+    if(query?.entry!=="appDetail-monitor"){
+      queryEnvs()
+    }
+   
     return () => {
       setCount(0)
       setEmpty(false)
@@ -107,7 +166,9 @@ const [empty,setEmpty]=useState<boolean>(false)
     let curStart: number = params?.start ? params?.start : startTime
     let curEnv = params?.envCode ? params?.envCode : formInstance.getFieldsValue()?.envCode
     let curApp = params?.appCode ? params?.appCode : formInstance.getFieldsValue()?.appCode
+  
     let curAppId = params?.appId ? params?.appId : curAppID
+  
     let curDeployName = params?.deployName ? params?.deployName : deployName
     queryNodeList({
       //@ts-ignore
@@ -317,22 +378,26 @@ const [empty,setEmpty]=useState<boolean>(false)
                  setCurtIp("");
                  setHostName("");
                  setCurrentTableData({})
-                queryApps({
-                  envCode,
-                  startTime: startTime,
-                })
-               
-                  getNodeDataSource({
-                    envCode
+                 if(query?.entry&&query?.entry==="appDetail-monitor"){
+
+                 }else{
+                  queryApps({
+                    envCode,
+                    startTime: startTime,
                   })
-                // }
-              
+
+                 }
                
+                getNodeDataSource({
+                  envCode
+                })
+                 
+              
 
               }} loading={envLoading} style={{ width: 200 }} />
             </Form.Item>
             <Form.Item label="选择应用" name="appCode">
-              <Select showSearch options={appOptions} onChange={(appCode, option: any) => {
+              <Select showSearch options={appOptions} disabled={query?.entry==="appDetail-monitor"} onChange={(appCode, option: any) => {
                  setCurtIp("");
                  setHostName("");
                  setCurrentTableData({})
@@ -356,12 +421,17 @@ const [empty,setEmpty]=useState<boolean>(false)
               setHostName("");
               setCurrentTableData({})
               setStartTime(value);
+              if(query?.entry&&query?.entry==="appDetail-monitor"){
 
-              queryApps({
+              }else{
+               queryApps({
                 envCode: formInstance.getFieldsValue()?.envCode,
                 startTime: value,
-                
-              })
+               })
+
+              }
+
+             
               getNodeDataSource({
                 start: value
               })
@@ -390,7 +460,7 @@ const [empty,setEmpty]=useState<boolean>(false)
       <DetailContext.Provider value={{
         envCode: formInstance?.getFieldsValue()?.envCode,
         appId: curAppID || curRecord?.appId,
-        appCode: formInstance?.getFieldsValue()?.appCode,
+        appCode: formInstance?.getFieldsValue()?.appCode||curRecord?.appCode||query?.appCode,
         startTime: startTime,
         hostIP: curtIP,
         hostName: hostName,

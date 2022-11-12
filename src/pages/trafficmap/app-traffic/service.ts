@@ -28,4 +28,6 @@ export const queryPodMem = `${appConfig.apiPrefix}/monitorManage/app/memUseInfo`
 export const queryPodDisk = `${appConfig.apiPrefix}/monitorManage/app/diskUseInfo`;
 //GET 节点趋势图-网络速率
 export const querynetWorkBps = `${appConfig.apiPrefix}/monitorManage/app/netWorkBps`;
+/** 获取应用环境 */
+export const listAppEnv = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 

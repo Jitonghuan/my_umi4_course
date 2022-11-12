@@ -75,3 +75,33 @@ export const getCountOverview = (params: queryCountOverviewParams) =>
     }
     return [];
   });
+
+  export const getListAppEnv = (params:{appCode?:string}) =>
+  getRequest(APIS.listAppEnv, { data:{...params,pageSize:-1}}).then((res: any) => {
+  
+    if (res?.success) {
+      const dataSource = res?.data;
+      let arry:any=[]
+      dataSource?.map((item:any)=>{
+        arry.push({
+          label:item?.envCode,
+          value:item?.envCode,
+        })
+      })
+      return arry
+
+    }
+    return [];
+  });
+  export const queryTrafficList = async (params: { envCode: string, start: string, end: string, needMetric?: boolean, keyWord?: string }) =>
+
+  await getRequest(APIS.getTrafficList, { data: params })
+    .then((result) => {
+      if (result?.success) {
+        const dataSource = result.data || [];
+
+        return dataSource;
+
+      }
+      return [];
+    })
