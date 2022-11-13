@@ -20,7 +20,14 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
       setOption('1');
       setSumData(data[0]);
     }
-    if (!data[0]?.length || !data[1]?.length || !data[2]?.length) return;
+    if (!data[0]?.length || !data[1]?.length || !data[2]?.length) {
+      // console.log("data",data)
+      // setSumData([]);
+    };
+    if(data.length===0){
+      setSumData([]);
+
+    }
   }, [data]);
 
   const getData = (value: string) => {
@@ -71,7 +78,7 @@ export default function CpuUsingLine(props: ChartCaseListProps) {
           <ColorContainer roleKeys={['color']}>
             {/* <Line {...config} /> */}
             {
-            useMemo(() => <Line {...config} />, [sumData])
+            useMemo(() => <Line {...config} />, [data,sumData])
         }
           </ColorContainer>
         </div>

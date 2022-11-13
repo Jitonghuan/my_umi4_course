@@ -22,6 +22,10 @@ export default function DiskIOLine(props: ChartCaseListProps) {
       setSumData(data[0]);
       setOption('1');
     }
+    if(data.length===0){
+      setSumData([]);
+
+    }
   }, [data]);
 
   const getData = (value: string) => {
@@ -69,7 +73,7 @@ export default function DiskIOLine(props: ChartCaseListProps) {
         <div style={{ height: 'calc(100% - 120px)' }}>
           <ColorContainer roleKeys={['color']}>
           {
-            useMemo(() => <Line {...config} />, [sumData])
+            useMemo(() => <Line {...config} />, [data,sumData])
         }
             {/* <Line {...config} /> */}
           </ColorContainer>

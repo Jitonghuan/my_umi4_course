@@ -16,14 +16,25 @@ import './index.less'
 export default function InstanceMonitor(){
   const [nodeDataSource, setNodeDataSource] = useState<any>([]);
   const [loading,setLoading]=useState<boolean>(false)
-  const {appCode,envCode,startTime,currentTableData,hostIP,hostName,count,isClick} =useContext(DetailContext);
-  const [podCpuData, podCpuLoading, queryPodCpu] = useQueryPodCpu();
-  const [podMemData, podMemLoading, queryPodMem] = usequeryPodMem();
-  const [fsData, fsLoading, queryFs] = useQueryFs();
-  const [networkIOData, networkIOLoading, queryNetworkIO] = useQueryNetwork();
+  const {appCode,envCode,startTime,currentTableData,hostIP,hostName,count,isClick,podIps} =useContext(DetailContext);
+  const [podCpuData, podCpuLoading, queryPodCpu,setQueryPodCpuData] = useQueryPodCpu();
+  const [podMemData, podMemLoading, queryPodMem,setQueryPodMemData] = usequeryPodMem();
+  const [fsData, fsLoading, queryFs,setQueryPodNetworkData] = useQueryFs();
+  const [networkIOData, networkIOLoading, queryNetworkIO,setQueryPodDiskData] = useQueryNetwork();
+  useEffect(()=>{
+  
+    if(podIps&&podIps?.length<1){
+    setQueryPodNetworkData([])
+    setQueryPodCpuData([])
+    setQueryPodMemData([])
+    setQueryPodDiskData([])
+    }
+  },[podIps])
    useEffect(()=>{
+    
        if(appCode&&envCode&&startTime&&hostIP&&hostName){
         const now = new Date().getTime();
+       
           getChartsDataSource({
             hostName: hostName,
             envCode: envCode,

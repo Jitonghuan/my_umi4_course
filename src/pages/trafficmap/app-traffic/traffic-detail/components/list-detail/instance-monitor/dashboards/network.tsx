@@ -24,7 +24,14 @@ export default function NetWorkLine(props: ChartCaseListProps) {
       setSumData(data[0]);
       setOption('1');
     }
-    if (!data[0]?.length || !data[1]?.length) return;
+   
+    if (!data[0]?.length || !data[1]?.length) {
+     // setSumData([])
+    };
+    if(data.length===0){
+      setSumData([]);
+
+    }
   }, [data]);
 
   const getData = (value: string) => {
@@ -62,7 +69,7 @@ export default function NetWorkLine(props: ChartCaseListProps) {
           <ColorContainer roleKeys={['color']}>
             {/* <Line {...config} /> */}
             {
-            useMemo(() => <Line {...config} />, [sumData])
+            useMemo(() => <Line {...config} />, [data,sumData])
         }
           </ColorContainer>
         </div>

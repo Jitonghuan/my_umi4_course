@@ -92,7 +92,7 @@
          setLoading(false);
        });
    };
-   return [queryPodCpuData, loading, queryPodCpu];
+   return [queryPodCpuData, loading, queryPodCpu,setQueryPodCpuData];
  }
  
  // POD趋势图-内存
@@ -194,7 +194,7 @@
          setLoading(false);
        });
    };
-   return [queryPodMemData, loading, queryPodMem];
+   return [queryPodMemData, loading, queryPodMem,setQueryPodMemData];
  }
  
  // POD趋势图-磁盘
@@ -282,7 +282,7 @@
          setLoading(false);
        });
    };
-   return [queryPodDiskData, loading, queryPodDisk];
+   return [queryPodDiskData, loading, queryPodDisk,setQueryPodDiskData];
  }
  
  // POD趋势图-网络速率
@@ -363,6 +363,6 @@
          setLoading(false);
        });
    };
-   return [queryPodNetworkData, loading, queryPodNetwork];
+   return [queryPodNetworkData, loading, queryPodNetwork,setQueryPodNetworkData];
  }
  
