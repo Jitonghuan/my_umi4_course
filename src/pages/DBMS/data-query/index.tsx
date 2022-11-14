@@ -90,6 +90,7 @@ export default function ResizeLayout() {
       message.warning("请先进行信息填写并且输入sql语句再查询！")
       return
     }
+   
     setSqlLoading(true)
     setImplementDisabled(true)
     querySqlResultInfo({ ...params, ...values, tableCode }).then((res) => {
