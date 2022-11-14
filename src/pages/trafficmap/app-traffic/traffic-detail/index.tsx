@@ -198,20 +198,20 @@ const [empty,setEmpty]=useState<boolean>(false)
 
   const handleMouseLeave = (type: string) => {
     if (type === "count") {
-      setIsCountHovering(false);
-      setIsRTHovering(true)
-      setIsFailHovering(true)
+      setIsRTHovering(false)
+      setIsCountHovering(true);
+      setIsFailHovering(false)
     }
     if (type === "rt") {
-      setIsRTHovering(false)
-      setIsCountHovering(true)
-      setIsFailHovering(true)
+      setIsRTHovering(true)
+      setIsCountHovering(false)
+      setIsFailHovering(false)
 
     }
     if (type === "fail") {
-      setIsFailHovering(false)
-      setIsRTHovering(true)
-      setIsCountHovering(true)
+      setIsFailHovering(true)
+      setIsRTHovering(false)
+      setIsCountHovering(false)
 
     }
   };
@@ -229,7 +229,8 @@ const [empty,setEmpty]=useState<boolean>(false)
               onClick={() => {
                 if (isCountHovering) {
                   handleMouseLeave("count")
-                } else {
+                }
+                 else {
                   handleMouseEnter("count")
                 }
               }}>请求数</span>/
@@ -449,7 +450,7 @@ const [empty,setEmpty]=useState<boolean>(false)
             rightContent={
               rightContent
             }
-            initWidth={200}
+            initWidth={329}
             least={20}
             isSonPage={true}
           />}
