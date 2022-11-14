@@ -114,7 +114,7 @@ export const createTableColumns = (params: {
         key: 'status',
         width: 90,
         render: (value) => <>{
-          value==="警告"?<Tag color="yellow">警告</Tag>:value==="正常"?<Tag color="success">正常</Tag>:value==="危险"?<Tag>危险</Tag>:"--"
+          value==="警告"?<Tag color="yellow">警告</Tag>:value==="正常"?<Tag color="success">正常</Tag>:value==="危险"?<Tag color="red">危险</Tag>:"--"
 
         } </>,
       },

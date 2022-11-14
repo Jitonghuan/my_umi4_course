@@ -59,7 +59,9 @@ export default function TrafficDetail() {
         envCode: curRecord?.envCode,
         startTime: startTime
       })
-      getNodeDataSource()
+      getNodeDataSource({
+        appId: curRecord?.appId
+      })
     }
   }, [])
 const [empty,setEmpty]=useState<boolean>(false)
@@ -393,10 +395,12 @@ const [empty,setEmpty]=useState<boolean>(false)
                 if(curAppID === ""){
                   const nowAppId:any = appOptions?.filter((item: any) => item?.value === curRecord?.appCode)
                   getNodeDataSource({
-                    appId:nowAppId?.length>0?nowAppId[0]?.appId:""
+                    appId:nowAppId?.length>0?nowAppId[0]?.appId:"",
+                    deployName:nowAppId?.length>0?nowAppId[0]?.deployName:""
                   })
                   setCurAppID(nowAppId?.length>0?nowAppId[0]?.appId:"")
                   setCount(count => count + 1)
+                  setDeployName(nowAppId?.length>0?nowAppId[0]?.deployName:"")
                 }else{
                   getNodeDataSource()
                   setCount(count => count + 1)

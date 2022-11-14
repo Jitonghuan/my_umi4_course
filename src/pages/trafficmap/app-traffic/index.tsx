@@ -43,8 +43,6 @@ export default function AppTrafficList() {
       }).finally(() => {
         setLoading(false)
       })
-    }).finally(() => {
-      setLoading(false)
     })
   }
   useEffect(() => {
