@@ -47,3 +47,6 @@ export const checkSqlApi = `${dmpApiPrefix}/dmp/sql/check`;
 export const workflowLogApi = `${dmpApiPrefix}/dmp/workflow/logs`;
 //dmp/workflow/audit/currentAudits
 export const currentAuditsApi = `${dmpApiPrefix}/dmp/workflow/audit/currentAudits`;
+
+//dmp/rule/ruleSet/list
+export const getRuleSetListApi = `${dmpApiPrefix}/dmp/rule/ruleSet/list`;

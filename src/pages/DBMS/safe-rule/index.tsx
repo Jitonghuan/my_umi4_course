@@ -23,8 +23,11 @@ export default function AuthorityManage() {
   
 
   return (<PageContainer className="safe-rule-wrap">
+    <div className="safe-rule-content-wrapper">
+
+    </div>
   
-    <FilterCard className="safe-rule-filter">
+    {/* <FilterCard className="safe-rule-filter"> */}
     <Tabs
         activeKey={tabKey}
 
@@ -43,8 +46,8 @@ export default function AuthorityManage() {
           <Tabs.TabPane tab="实例规则" key="instance-list" />
     </Tabs>
 
-    </FilterCard>
-    <ContentCard>
+    {/* </FilterCard> */}
+    {/* <ContentCard> */}
         {tabKey==="safe-list"&&(
             <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>
             <VCPermission code={window.location.pathname} isShowErrorPage >
@@ -67,7 +70,7 @@ export default function AuthorityManage() {
 
        
 
-    </ContentCard>
+    {/* </ContentCard> */}
   
   </PageContainer>)
 }
