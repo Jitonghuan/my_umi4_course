@@ -70,12 +70,12 @@ export const createTableColumns = (params: {
       },
       {
         title: '请求总数（5min)',
-        dataIndex: 'fullGcTotal',
-        key: 'fullGcTotal',
+        dataIndex: 'svcTotalRes',
+        key: 'svcTotalRes',
         width: 110,
         //render: (value) => <>{} </>,
         sorter: {
-          compare: (a: any, b: any) => a.fullGcTotal - b.fullGcTotal,
+          compare: (a: any, b: any) => a.svcTotalRes - b.svcTotalRes,
         },
       },
       {
