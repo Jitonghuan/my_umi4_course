@@ -67,7 +67,6 @@
     "dynamic-antd-theme": "^0.8.7",
     "echarts": "^5.1.2",
     "events": "~3.3.0",
-    "htmr": "^1.0.2",
     "immutability-helper": "^3.1.1",
     "konva": "^8.3.9",
     "language-detect": "^1.1.0",
@@ -117,7 +116,6 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "antd": "4.23.6"
-
   },
   "__npminstall_done": false
 }

@@ -3,8 +3,6 @@ import { Tabs, Form, Space, Select, message, Collapse, Spin, Input } from 'antd'
 import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined, PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import RightContent from "./components/right-content";
-import {queryTableFieldsApi} from '../common-service';
-import { getRequest} from '@/utils/request';
 import { useEnvList, querySqlResultInfo, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, queryTables } from '../common-hook'
 import './index.less';
 const { Panel } = Collapse;
@@ -13,7 +11,6 @@ export default function ResizeLayout() {
   const formRef = useRef<any>(null)
   const [form] = Form.useForm();
   const addSqlConsole = () => rightContentRef?.current?.addSqlConsole;
-  //getFirstInitSqlValue
   const getFirstInitSqlValue = (value: string) => rightContentRef?.current?.getFirstInitSqlValue(value);
   const updateData = (value: any,error?:string,time?:string) => rightContentRef?.current?.updateData(value,error,time);
   const [envOptionLoading, envOptions, queryEnvList] = useEnvList();

@@ -156,11 +156,11 @@ export default [
             "component": "@/pages/application/application-detail/components/application-envManage"
           },
           {
-            "path": `${baseRoutePath}/application/detail/monitor`,
-            "name": "应用监控",
+            "path": `${baseRoutePath}/application/detail/traffic-detail`,
+            "name": "应用流量",
             "key": "appList",
             "hideInMenu": true,
-            "component": "@/pages/monitor/application/app-table"
+            "component": "@/pages/application/application-detail/components/traffic-detail"
           },
           {
             "path": `${baseRoutePath}/application/detail/appDeploy`,
@@ -618,11 +618,11 @@ export default [
         "name": '集群监控',
         "component": '@/pages/monitor/cluster',
       },
-      {
-        "path": `${baseRoutePath}/monitor/application`,
-        "name": '应用监控',
-        "component": '@/pages/monitor/application',
-      },
+      // {
+      //   "path": `${baseRoutePath}/monitor/application`,
+      //   "name": '应用监控',
+      //   "component": '@/pages/monitor/application',
+      // },
       {
         "path": `${baseRoutePath}/monitor/fe-monitor`,
         "name": "前端监控",
@@ -676,10 +676,15 @@ export default [
     "name": "日志管理",
     "icon": "icon-diagnose",
     "routes": [
+      // {
+      //   "path": `${baseRoutePath}/logger/search`,
+      //   "name": "日志检索",
+      //   "component": "@/pages/logger/search"
+      // },
       {
         "path": `${baseRoutePath}/logger/search`,
         "name": "日志检索",
-        "component": "@/pages/logger/search"
+        "component": "@/pages/logger/search-new"
       },
       {
         "path": `${baseRoutePath}/logger/index-manage`,
@@ -710,7 +715,13 @@ export default [
         "name": "应用流量",
         "key": "trafficmap-app",
         "component": "@/pages/trafficmap/app-traffic",
-        "hideInMenu": false
+      },
+      {
+        "path": `${baseRoutePath}/trafficmap/traffic-detail`,
+        "name": "流量详情",
+        "key": "trafficmap-app",
+        "component": "@/pages/trafficmap/app-traffic/traffic-detail",
+        "hideInMenu": true,
       },
       {
         "path": `${baseRoutePath}/trafficmap/tracking`,

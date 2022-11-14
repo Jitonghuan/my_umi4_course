@@ -184,11 +184,18 @@ export default function Tracking() {
         traceID:infoRecord?.traceId,
        // appID:infoRecord?.appCode||""
       })
+      if(infoRecord?.appId){
+        form.setFieldsValue({
+         
+          appID:infoRecord?.appId||""
+        })
+      }
      
       setSelectTime({
          start:moment(infoRecord?.startTime*1000)
         , end:moment(infoRecord?.endTime*1000)
        });
+      
     }
 },[infoRecord?.traceId,infoRecord?.entry,infoRecord?.startTime,infoRecord?.endTime,expand])
 useEffect(()=>{

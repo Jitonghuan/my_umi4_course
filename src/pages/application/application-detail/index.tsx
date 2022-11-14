@@ -160,6 +160,7 @@ export default function ApplicationDetail(props: IProps) {
   return (
     <PageContainer className="application-detail-page">
       <FilterCard className="layout-compact">
+        {console.log("--location.search,",location.search)}
         <Tabs
           activeKey={tabActiveKey}
           onChange={(key) => {
