@@ -9,6 +9,7 @@ import PageContainer from '@/components/page-container';
 import RulesTable from './_components/rules-table';
 import { useAppOptions, useStatusOptions, useEnvListOptions } from './hooks';
 import useTable from '@/utils/useTable';
+import {useLocation } from 'umi';
 import { queryGroupList, queryRulesList } from '../basic/services';
 import { UpOutlined, DownOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import useRequest from "@/utils/useRequest";
@@ -35,6 +36,8 @@ const rulesOptions = [
 ];
 
 export default function AlarmRules() {
+  let location = useLocation();
+  const curRecord: any = location.state || {};
   const [searchRulesForm] = Form.useForm();
   const [statusOptions] = useStatusOptions();
   const [appOptions] = useAppOptions();
@@ -45,6 +48,19 @@ export default function AlarmRules() {
 
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
+  useEffect(()=>{
+    // if(!curRecord?.appID) return
+    if(curRecord?.appCode&&curRecord?.envCode){
+      setCurrentEnvType(curRecord?.envTypeCode)
+      setCurrentEnvCode(curRecord?.envCode)
+      searchRulesForm.setFieldsValue({
+        appCode:curRecord?.appCode
+      })
+      queryList({
+        envCode:curRecord?.envCode
+      })
+    }
+  },[])
 
   const envTypeData = [
     {
@@ -65,14 +81,14 @@ export default function AlarmRules() {
     },
   ]; //环境大类
 
-  const queryList = async (page?: any) => {
+  const queryList = async (params?:{page?: any,envCode?:string}) => {
     const param = await searchRulesForm.getFieldsValue();
     const res = await getRequest(queryRulesList, {
       data: {
         ...param,
-        pageIndex: page?.pageIndex || 1,
-        pageSize: page?.pageSize || 20,
-        envCode: currentEnvCode
+        pageIndex: params?.page?.pageIndex || 1,
+        pageSize: params?.page?.pageSize || 20,
+        envCode: currentEnvCode||params?.envCode
       }
     })
     if (res?.success) {

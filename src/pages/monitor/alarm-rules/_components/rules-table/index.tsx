@@ -229,7 +229,7 @@ export default function RulesTable(props: RulesTableProps) {
           ...dataSource.pageInfo,
           showTotal: (total) => `共 ${total} 条`,
           showSizeChanger: true,
-          onChange: (page, pageSize) => onQuery({ pageIndex: page, pageSize }),
+          onChange: (page, pageSize) => onQuery({page:{ pageIndex: page, pageSize }}),
         }}
       />
       <TemplateDrawer
