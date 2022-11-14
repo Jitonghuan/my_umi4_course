@@ -472,10 +472,10 @@ export default [
         hideInMenu:true
       },
       {
-        path: `${baseRoutePath}/DBMS/configuration`,
+        path: `${baseRoutePath}/DBMS/safe-rule`,
         name: '配置项',
-        key: 'configuration',
-        component: '@/pages/DBMS/configuration',
+        key: 'safe-rule',
+        component: '@/pages/DBMS/safe-rule',
       },
     ],
   },
