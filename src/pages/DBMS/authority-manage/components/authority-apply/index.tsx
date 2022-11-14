@@ -218,7 +218,8 @@ return(<div className="authority-apply">
           </Form.Item>
         </Form>
       </FilterCard>
-      <ContentCard>
+      {/* <ContentCard> */}
+      <div className="authority-wrapper"></div>
         <div className="table-caption">
           {/* <div className="caption-left"> */}
             <h3>权限列表</h3>
@@ -249,7 +250,7 @@ return(<div className="authority-apply">
             onChange={pageSizeClick}
           ></Table>
         </div>
-      </ContentCard>
+      {/* </ContentCard> */}
  
  </div>)
 }

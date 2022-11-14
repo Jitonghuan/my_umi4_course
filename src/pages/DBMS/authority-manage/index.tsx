@@ -49,9 +49,7 @@ export default function AuthorityManage(){
     
 
     return(<PageContainer    >
-      <ContentCard noPadding className="authority-manage-page">
-
-     
+      <ContentCard  className="authority-manage-page">
          <Tabs
         activeKey={tabKey}
         onChange={(val) => {
