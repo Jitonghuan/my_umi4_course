@@ -20,15 +20,11 @@ export default function AuthorityManage() {
   const [envOptions, setEnvOptions] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [curEnvCode, setCurEnvCode] = useState<string>('')
-  
+
 
   return (<PageContainer className="safe-rule-wrap">
     <div className="safe-rule-content-wrapper">
-
-    </div>
-  
-    {/* <FilterCard className="safe-rule-filter"> */}
-    <Tabs
+      <Tabs
         activeKey={tabKey}
 
         onChange={(val) => {
@@ -39,38 +35,37 @@ export default function AuthorityManage() {
 
           });
         }}
-        
-      
+
+
       >
-          <Tabs.TabPane tab="安全规则" key="safe-list" />
-          <Tabs.TabPane tab="实例规则" key="instance-list" />
-    </Tabs>
+        <Tabs.TabPane tab="安全规则" key="safe-list" />
+        <Tabs.TabPane tab="实例规则" key="instance-list" />
+      </Tabs>
 
-    {/* </FilterCard> */}
-    {/* <ContentCard> */}
-        {tabKey==="safe-list"&&(
-            <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>
-            <VCPermission code={window.location.pathname} isShowErrorPage >
-            <SafeList/>
-            </VCPermission>
-          </DetailContext.Provider>
-
-        )}
-        {tabKey==="instance-list"&&(
-
-          <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>
-          <VCPermission code={window.location.pathname} isShowErrorPage>
-          <InstanceList/>
+      {/* </FilterCard> */}
+      {/* <ContentCard> */}
+      {tabKey === "safe-list" && (
+        <DetailContext.Provider value={{ envCode: curEnvCode, tabKey: tabKey }}>
+          <VCPermission code={window.location.pathname} isShowErrorPage >
+            <SafeList />
           </VCPermission>
         </DetailContext.Provider>
 
-        )}
-   
-          
+      )}
+      {tabKey === "instance-list" && (
 
-       
+        <DetailContext.Provider value={{ envCode: curEnvCode, tabKey: tabKey }}>
+          <VCPermission code={window.location.pathname} isShowErrorPage>
+            <InstanceList />
+          </VCPermission>
+        </DetailContext.Provider>
 
-    {/* </ContentCard> */}
-  
+      )}
+
+
+
+    </div>
+
+
   </PageContainer>)
 }
