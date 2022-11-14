@@ -32,7 +32,7 @@ export default function VersionDetail() {
 
     useEffect(() => {
         if (versionOptions.length && !selectVersion) {
-            setSelectVersion(versionOptions[0].value)
+            setSelectVersion(versionOptions[0].value);
         }
     }, [versionOptions])
 

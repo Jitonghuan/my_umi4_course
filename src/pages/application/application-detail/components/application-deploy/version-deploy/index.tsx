@@ -2,17 +2,33 @@
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { Descriptions, Button, Modal, Table, Checkbox, Radio, Upload, Form, Select, Typography, Spin } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { contentList } from './schema';
+import { contentList, versionList } from './schema';
+import RelateDemand from './component/relate-demand';
+import SubmitPublish from './component/submit-publish';
 import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
 import './index.less';
-
+const mockData = [{ demand: 5, code: "code1" }]
 export default function VersionDeploy(props: any) {
     const { pipelineCode, data = [] } = props;
+    const [visible, setVisible] = useState<boolean>(false);
+    const [initData, setInitData] = useState<any>({});
+    const [submitVisible, setSubmitVisible] = useState<boolean>(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
     const columns: any = useMemo(() => {
         return contentList()
     }, [data])
+    const verisionColumns = useMemo(() => {
+        return versionList({
+            demandDetail: (value: string, record: any) => {
+                setInitData(record);
+                setVisible(true)
+            }
+        })
+    }, [mockData])
     return (
         <div className='version-deploy-page'>
+            <RelateDemand visible={visible} onClose={() => { setVisible(false) }} initData={initData} />
+            <SubmitPublish visible={submitVisible} onClose={() => { setSubmitVisible(false) }} />
             {/* 发布详情 */}
             <Descriptions
                 title="发布详情"
@@ -75,15 +91,22 @@ export default function VersionDeploy(props: any) {
             <div className='version-list'>
                 <div className='flex-space-between'>
                     <div className='ant-descriptions-title'>版本列表</div>
-                    <Button type='primary'>提交发布</Button>
+                    <Button type='primary' disabled={!selectedRowKeys.length} onClick={() => { setSubmitVisible(true) }}>提交发布</Button>
                 </div>
                 <Table
-                    dataSource={data}
+                    dataSource={mockData}
                     // loading={loading || updateLoading}
                     bordered
                     rowKey="id"
                     pagination={false}
-                    columns={columns}
+                    columns={verisionColumns}
+                    rowSelection={{
+                        type: 'checkbox',
+                        selectedRowKeys,
+                        onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                            setSelectedRowKeys(selectedRowKeys as any);
+                        },
+                    }}
                 />
             </div>
         </div>
