@@ -7,7 +7,7 @@ import {tableSchema} from './schema';
 import DetailContext from '../../../context';
 import CpuUsage from './dashboards/cpu';
 import MemroyUsage from './dashboards/memory';
-import {queryTrafficList} from '../../../../hook';
+import {queryTrafficList} from '../../../hook';
 import FsWritesChart from './dashboards/fs';
 import NetWorkIOChart from './dashboards/network';
 import { useQueryPodCpu, usequeryPodMem, useQueryFs, useQueryNetwork ,queryItems} from './dashboards/hook';
@@ -90,23 +90,23 @@ export default function InstanceMonitor(){
           let result=res[0]
           data.push({
             resourceName:"资源配额",
-            cpu:result?.svcCpuQuota,
-            wss:result?.svcWssQuota,
-            rss:result?.svcRssQuota,
+            cpu:result?.svcCpuQuota||"--",
+            wss:result?.svcWssQuota||"--",
+            rss:result?.svcRssQuota||"--",
             disk:"--"
           },
           {
             resourceName:"已使用量",
-            cpu: Number(result?.svcCpuUsage).toFixed(2),
-            wss: Number(result?.svcWssUsage).toFixed(2), 
-            rss:  Number(result?.svcRssUsage).toFixed(2), 
+            cpu: Number(result?.svcCpuUsage).toFixed(2)||"--",
+            wss: Number(result?.svcWssUsage).toFixed(2)||"--", 
+            rss:  Number(result?.svcRssUsage).toFixed(2)||"--", 
             disk:`--`
           },
           {
             resourceName:"使用百分比",
-            cpu:`${result?.svcCpuRate}%`,
-            wss:`${result?.svcWssRate}% `,
-            rss:`${Number(result?.svcRssRate).toFixed(2) }%`,
+            cpu:`${result?.svcCpuRate||"--"}%`,
+            wss:`${result?.svcWssRate||"--"}% `,
+            rss:`${Number(result?.svcRssRate).toFixed(2) ||"--"}%`,
             disk:`--`
           }
           )

@@ -20,7 +20,7 @@ export default function InstanceMonitor() {
   const [total, setTotal] = useState<number>(0);
   const [nowSearchEndpoint, setNowSearchEndpoint] = useState<string>("")
   useEffect(() => {
-    //if (!envCode || !startTime || !appId || !deployName) return
+    if (!envCode || !startTime || !appId || !deployName) return
     if (isClick && isClick === appCode) {
       getCountDetailTable(true)
     } else {

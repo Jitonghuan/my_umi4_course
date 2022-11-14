@@ -1,30 +1,29 @@
-import React, { useMemo, useState, useEffect,  } from 'react';
+import React, { useMemo, useState, useEffect, useContext } from 'react';
 import PageContainer from '@/components/page-container';
-import { Space, Form, Select, Tooltip, Button, Spin, Empty,Badge } from 'antd';
+import { Space, Form, Select, Tooltip, Button, Spin, Empty, Badge } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { START_TIME_ENUMS } from './schema';
-import { history, useLocation } from 'umi';
+import { parse, stringify } from 'query-string';
+import AppDetailContext from '@/pages/application/application-detail/context';
+import { history } from 'umi';
 import moment from 'moment';
 import { RedoOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { queryAppList, queryEnvList, queryNodeList, getCountOverview} from './hook';
+import { queryNodeList, getCountOverview, getListAppEnv, queryTrafficList } from './hook';
 import DetailContext from './context';
 import './index.less'
 export default function TrafficDetail() {
- 
-  let location = useLocation();
-  const curRecord: any = location.state || {};
+
   const [formInstance] = Form.useForm();
-  const [appOptions, setAppOptions] = useState([]);
+  const { appData } = useContext(AppDetailContext);
   const [envOptions, setEnvOptions] = useState([]);
-  const [appLoading, setAppLoading] = useState<boolean>(false)
   const [envLoading, setEnvLoading] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [curAppID, setCurAppID] = useState<string>(curRecord?.appId)
-  const [deployName, setDeployName] = useState<string>(curRecord?.deployName)
-  const [appCode, setAppCode] = useState<string>(curRecord?.appCode)
+  const [curAppID, setCurAppID] = useState<string>("")
+  const [deployName, setDeployName] = useState<string>(appData?.deploymentName || "")
+  const [appCode, setAppCode] = useState<string>(appData?.appCode || "")
   const [isCountHovering, setIsCountHovering] = useState(false);
   const [isRTHovering, setIsRTHovering] = useState(false);
   const [isFailHovering, setIsFailHovering] = useState(false);
@@ -32,105 +31,94 @@ export default function TrafficDetail() {
   const [countOverView, setCountOverView] = useState<any>({});
   const [currentTableData, setCurrentTableData] = useState<any>([]);
   const [isClick, setIsClick] = useState<string | number>()
-  const [podIps,setPodIps]=useState<any>([])
+  const [empty, setEmpty] = useState<boolean>(false)
+  const [podIps, setPodIps] = useState<any>([])
+  useEffect(() => {
+    if (appData?.appCode) {
+      setAppCode(appData?.appCode)
+      setDeployName(appData?.deploymentName || "")
+      getListAppEnvData()
+    }
+    return () => {
+      setCount(0)
+      setEmpty(false)
+    }
+  }, [appData?.appCode])
+  const getListAppEnvData = () => {
+    setEnvLoading(true)
+    getListAppEnv({ appCode: appData?.appCode }).then((res) => {
+      setEnvOptions(res)
+      formInstance.setFieldsValue({
+        envCode: res?.length > 0 ? res[0]?.value : ""
+      })
+      getAppId({ envCode: res?.length > 0 ? res[0]?.value : "", startTime })
+    }).finally(() => {
+      setEnvLoading(false)
+    })
+  }
+  const getAppId = (params: { envCode: string, startTime: number }) => {
+    const now = new Date().getTime();
+    queryTrafficList(
+      {
+        envCode: params?.envCode,
+        keyWord: appData?.appCode,
+        start: Number((now - startTime) / 1000) + "",
+        end: Number(now / 1000) + "",
+      }
+    ).then(() => {
+      queryTrafficList(
+        {
+          envCode: params?.envCode,
+          keyWord: appData?.appCode,
+          start: Number((now - startTime) / 1000) + "",
+          end: Number(now / 1000) + "",
+          needMetric: true
+        }
+      ).then((resp) => {
+
+        if (resp?.length > 0 && resp[0]?.appId) {
+          setCurAppID(resp[0]?.appId)
+          getNodeDataSource({
+            appId: resp?.length > 0 ? resp[0]?.appId : "",
+            appCode: appData?.appCode
+          })
+        }
+
+      })
+
+
+    })
+  }
+
   // pod ip
   const [curtIP, setCurtIp] = useState<string>('');
   const [hostName, setHostName] = useState<string>('');
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const [count, setCount] = useState<number>(0)
-  useEffect(() => {
-    queryEnvs()
-    return () => {
-      setCount(0)
-      setEmpty(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    //if(!curRecord?.appId) return
-    if (curRecord?.appCode && curRecord?.envCode) {
-      formInstance.setFieldsValue({
-        appCode: curRecord?.appCode,
-        envCode: curRecord?.envCode,
-      });
-      setCurAppID(curRecord?.appId)
-      queryApps({
-        envCode: curRecord?.envCode,
-        startTime: startTime
-      })
-
-      if (curRecord?.appId !== "") {
-        getNodeDataSource()
-      }
-
-    }
-  }, [])
-const [empty,setEmpty]=useState<boolean>(false)
-  // 查询应用列表
-  const queryApps = (params: {
-    envCode: string;
-    startTime: number;
-  }) => {
-    setAppLoading(true)
-    const now = new Date().getTime();
-    queryAppList({
-      envCode: params?.envCode,
-      start: Number((now - params?.startTime) / 1000) + "",
-      end: Number((now) / 1000) + "",
-    }).then(() => {
-      queryAppList({
-        envCode: params?.envCode,
-        start: Number((now - params?.startTime) / 1000) + "",
-        end: Number((now) / 1000) + "",
-        needMetric:true
-      }).then((resp)=>{
-        setAppOptions(resp);
-        const appIndex = resp.findIndex((item:any) => item.value == curRecord?.appCode);
-       if(appIndex === -1){
-        setEmpty(true)
-       }
-       if(appIndex !== -1){
-        setEmpty(false)
-       }
-
-      })
-     
-    }).finally(() => {
-      setAppLoading(false)
-    })
-  }
-  const queryEnvs = () => {
-    setEnvLoading(true)
-    queryEnvList().then((resp) => {
-      setEnvOptions(resp)
-    }).finally(() => {
-      setEnvLoading(false)
-    })
-  }
   //获取左侧数据
   const getNodeDataSource = (params?: { start?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string }) => {
     setLoading(true)
     const now = new Date().getTime();
     let curStart: number = params?.start ? params?.start : startTime
     let curEnv = params?.envCode ? params?.envCode : formInstance.getFieldsValue()?.envCode
-    let curApp = params?.appCode ? params?.appCode : formInstance.getFieldsValue()?.appCode
-  
+    let curApp = params?.appCode|| appData?.appCode
+
     let curAppId = params?.appId ? params?.appId : curAppID
-  
+
     let curDeployName = params?.deployName ? params?.deployName : deployName
     queryNodeList({
       //@ts-ignore
       start: Number((now - curStart) / 1000),
       end: Number(now / 1000),
-      appCode: curApp,
+      appCode: curApp||"",
       envCode: curEnv,
     }).then((res: any) => {
       if (res[0]) {
         setCurtIp(res[0].hostIP);
         setHostName(res[0]?.hostName);
         setIsClick(curApp)
-      }else{
+      } else {
         setCurtIp("");
         setHostName("");
         setIsClick(curApp)
@@ -263,10 +251,10 @@ const [empty,setEmpty]=useState<boolean>(false)
             {nodeDataSource?.length < 1 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"暂无数据"} />}
             {nodeDataSource?.length > 0 && nodeDataSource?.map((element: any, index: number) => {
               const nowData = countOverView?.instanceCallInfos?.filter((item: any) => item?.instanceIp === element?.hostIP)
-            
-              const instanceRt =nowData?.length>0? Number(nowData[0]?.instanceRt || 0).toFixed(2):"0";
-              const requestCounts =nowData?.length>0? nowData[0]?.requestCounts:"0";
-              const requestFailures =nowData?.length>0? nowData[0]?.requestFailures:"0"
+
+              const instanceRt = nowData?.length > 0 ? Number(nowData[0]?.instanceRt || 0).toFixed(2) : "0";
+              const requestCounts = nowData?.length > 0 ? nowData[0]?.requestCounts : "0";
+              const requestFailures = nowData?.length > 0 ? nowData[0]?.requestFailures : "0"
               return (
                 <ul>
                   <li className={`left-content-detail-info ${index === isClick ? "is-click" : "not-click"}`}>
@@ -292,7 +280,7 @@ const [empty,setEmpty]=useState<boolean>(false)
         </div>
       </>
     )
-  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick,empty])
+  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty])
   const rightContent = useMemo(() => {
     return (
       <>
@@ -304,12 +292,13 @@ const [empty,setEmpty]=useState<boolean>(false)
     curtIP,
     hostName,
     startTime,
-    formInstance?.getFieldsValue()?.appCode,
+    appData?.appCode,
     formInstance?.getFieldsValue()?.envCode,
     currentTableData,
     count,
     isClick,
-    empty
+    empty,
+    appData?.appCode
   ])
 
 
@@ -324,43 +313,19 @@ const [empty,setEmpty]=useState<boolean>(false)
 
             <Form.Item label="选择环境" name="envCode">
               <Select showSearch options={envOptions} onChange={(envCode) => {
-                 setCurtIp("");
-                 setHostName("");
-                 setCurrentTableData({})
-               
-                  queryApps({
-                    envCode,
-                    startTime: startTime,
-                  })
-
-                 
-               
+                setCurtIp("");
+                setHostName("");
+                setCurrentTableData({})
                 getNodeDataSource({
-                  envCode
+                  envCode,
+                  appCode:appData?.appCode
                 })
-                 
-              
+
+
 
               }} loading={envLoading} style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="选择应用" name="appCode">
-              <Select showSearch options={appOptions}onChange={(appCode, option: any) => {
-                 setCurtIp("");
-                 setHostName("");
-                 setCurrentTableData({})
-                 setIsClick(appCode)
-                setCurAppID(option?.appId)
-                setAppCode(appCode)
-                setDeployName(option?.deployName)
-                getNodeDataSource({
-                  appCode,
-                  deployName: option?.deployName,
-                  appId:option?.appId,
-                
-                })
-               
-              }} loading={appLoading} style={{ width: 200 }} />
-            </Form.Item>
+          
           </Form>
 
           <span>选择时间：<Select
@@ -371,17 +336,9 @@ const [empty,setEmpty]=useState<boolean>(false)
               setHostName("");
               setCurrentTableData({})
               setStartTime(value);
-             
-               queryApps({
-                envCode: formInstance.getFieldsValue()?.envCode,
-                startTime: value,
-               })
-
-              
-
-             
               getNodeDataSource({
-                start: value
+                start: value,
+                appCode:appData?.appCode
               })
             }}
           >  <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
@@ -393,22 +350,24 @@ const [empty,setEmpty]=useState<boolean>(false)
           </Select>
             <Space style={{ marginLeft: 8, marginTop: 2 }}>
               <Button type="primary" icon={<RedoOutlined />} onClick={() => {
-                getNodeDataSource()
+                getNodeDataSource({
+                  appCode:appData?.appCode
+                })
                 setCount(count => count + 1)
               }}>刷新</Button>
-              <span><Button type="primary" ghost onClick={() => {
+              {/* <span><Button type="primary" ghost onClick={() => {
                 history.push({
                   pathname: "/matrix/trafficmap/app-traffic"
                 })
-              }}>返回</Button></span>
+              }}>返回</Button></span> */}
             </Space>
           </span>
         </div>
       </FilterCard>
       <DetailContext.Provider value={{
         envCode: formInstance?.getFieldsValue()?.envCode,
-        appId: curAppID || curRecord?.appId,
-        appCode: formInstance?.getFieldsValue()?.appCode||curRecord?.appCode,
+        appId: curAppID,
+        appCode:  appData?.appCode,
         startTime: startTime,
         hostIP: curtIP,
         hostName: hostName,
@@ -416,11 +375,11 @@ const [empty,setEmpty]=useState<boolean>(false)
         deployName: deployName,
         count: count,
         isClick: isClick,
-        podIps:podIps
+        podIps: podIps
 
       }}>
         <ContentCard className="traffic-detail-page-content">
-          {empty?<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`该环境下不存在${appCode||curRecord?.appCode}应用`} />:   <LightDragable
+          {empty ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`该环境下不存在${appCode || appData?.appCode}应用`} /> : <LightDragable
             showIcon={true}
             leftContent={leftContent}
             rightContent={
@@ -430,7 +389,7 @@ const [empty,setEmpty]=useState<boolean>(false)
             least={20}
             isSonPage={true}
           />}
-       
+
         </ContentCard>
       </DetailContext.Provider>
     </PageContainer>

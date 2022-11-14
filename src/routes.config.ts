@@ -156,11 +156,11 @@ export default [
             "component": "@/pages/application/application-detail/components/application-envManage"
           },
           {
-            "path": `${baseRoutePath}/application/detail/monitor`,
-            "name": "应用监控",
+            "path": `${baseRoutePath}/application/detail/traffic-detail`,
+            "name": "应用流量",
             "key": "appList",
             "hideInMenu": true,
-            "component": "@/pages/trafficmap/app-traffic/traffic-detail"
+            "component": "@/pages/application/application-detail/components/traffic-detail"
           },
           {
             "path": `${baseRoutePath}/application/detail/appDeploy`,

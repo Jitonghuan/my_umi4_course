@@ -1,7 +1,7 @@
 export const tabsConfig: any = {
   overview: '概述',
   envManage: '环境管理',
-  monitor: '应用流量',
+  "traffic-detail": '应用流量',
   branch: '分支',
   appDeploy: '应用部署',
   feVersion: '版本管理',
