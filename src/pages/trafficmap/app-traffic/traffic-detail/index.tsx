@@ -1,11 +1,11 @@
 import React, { useMemo, useState, useEffect,  } from 'react';
 import PageContainer from '@/components/page-container';
-import { Space, Form, Select, Tooltip, Button, Spin, Empty,Badge } from 'antd';
+import { Space, Form, Select, Tooltip, Button, Spin, Empty,Badge,message } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { START_TIME_ENUMS } from './schema';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
-import { RedoOutlined } from '@ant-design/icons';
+import { RedoOutlined} from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -59,11 +59,7 @@ export default function TrafficDetail() {
         envCode: curRecord?.envCode,
         startTime: startTime
       })
-
-      if (curRecord?.appId !== "") {
-        getNodeDataSource()
-      }
-
+      getNodeDataSource()
     }
   }, [])
 const [empty,setEmpty]=useState<boolean>(false)
@@ -137,18 +133,23 @@ const [empty,setEmpty]=useState<boolean>(false)
       }
       let podIps = res?.map((ele: any) => (ele?.hostIP))
       setPodIps(podIps)
-      queryCountOverview({
-        start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
-        end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
-        appId: curAppId,
-        envCode: curEnv,
-        deployName: curDeployName,
-        podIps
-
-      })
-
       setNodeDataSource(res)
       setCurrentTableData(res[0])
+      if(curAppId!==""){
+        queryCountOverview({
+          start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
+          end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
+          appId: curAppId,
+          envCode: curEnv,
+          deployName: curDeployName,
+          podIps
+  
+        })
+
+      }else{
+        message.warning("调用信息为空，请刷新重试!")
+      }
+    
     }).finally(() => {
       setLoading(false)
     })
@@ -376,10 +377,6 @@ const [empty,setEmpty]=useState<boolean>(false)
                 envCode: formInstance.getFieldsValue()?.envCode,
                 startTime: value,
                })
-
-              
-
-             
               getNodeDataSource({
                 start: value
               })
@@ -393,8 +390,17 @@ const [empty,setEmpty]=useState<boolean>(false)
           </Select>
             <Space style={{ marginLeft: 8, marginTop: 2 }}>
               <Button type="primary" icon={<RedoOutlined />} onClick={() => {
-                getNodeDataSource()
-                setCount(count => count + 1)
+                if(curAppID === ""){
+                  const nowAppId:any = appOptions?.filter((item: any) => item?.value === curRecord?.appCode)
+                  getNodeDataSource({
+                    appId:nowAppId?.length>0?nowAppId[0]?.appId:""
+                  })
+                  setCurAppID(nowAppId?.length>0?nowAppId[0]?.appId:"")
+                  setCount(count => count + 1)
+                }else{
+                  getNodeDataSource()
+                  setCount(count => count + 1)
+                }
               }}>刷新</Button>
               <span><Button type="primary" ghost onClick={() => {
                 history.push({

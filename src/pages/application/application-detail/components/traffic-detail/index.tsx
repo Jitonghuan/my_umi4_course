@@ -3,9 +3,7 @@ import PageContainer from '@/components/page-container';
 import { Space, Form, Select, Tooltip, Button, Spin, Empty, Badge } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { START_TIME_ENUMS } from './schema';
-import { parse, stringify } from 'query-string';
 import AppDetailContext from '@/pages/application/application-detail/context';
-import { history } from 'umi';
 import moment from 'moment';
 import { RedoOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
@@ -82,7 +80,14 @@ export default function TrafficDetail() {
             appId: resp?.length > 0 ? resp[0]?.appId : "",
             appCode: appData?.appCode
           })
+        
+        }else{
+          setCurAppID("")
+          getNodeDataSource({   
+            appCode: appData?.appCode
+          })
         }
+       
 
       })
 
@@ -125,16 +130,20 @@ export default function TrafficDetail() {
       }
       let podIps = res?.map((ele: any) => (ele?.hostIP))
       setPodIps(podIps)
-      queryCountOverview({
-        start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
-        end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
-        appId: curAppId,
-        envCode: curEnv,
-        deployName: curDeployName,
-        podIps
+      if(curAppId){
+        queryCountOverview({
+          start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
+          end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
+          appId: curAppId,
+          envCode: curEnv,
+          deployName: curDeployName,
+          podIps
+  
+        })
+  
 
-      })
-
+      }
+    
       setNodeDataSource(res)
       setCurrentTableData(res[0])
     }).finally(() => {
@@ -280,7 +289,7 @@ export default function TrafficDetail() {
         </div>
       </>
     )
-  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty])
+  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty,appData?.appCode,appData?.deploymentName])
   const rightContent = useMemo(() => {
     return (
       <>
@@ -298,7 +307,8 @@ export default function TrafficDetail() {
     count,
     isClick,
     empty,
-    appData?.appCode
+    appData?.appCode,
+    appData?.deploymentName
   ])
 
 
@@ -355,11 +365,7 @@ export default function TrafficDetail() {
                 })
                 setCount(count => count + 1)
               }}>刷新</Button>
-              {/* <span><Button type="primary" ghost onClick={() => {
-                history.push({
-                  pathname: "/matrix/trafficmap/app-traffic"
-                })
-              }}>返回</Button></span> */}
+            
             </Space>
           </span>
         </div>
