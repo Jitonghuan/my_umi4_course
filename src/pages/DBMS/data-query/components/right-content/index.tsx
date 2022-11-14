@@ -50,6 +50,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             isSqlExecutePlanBtn={true}
                             tableFields={tableFields}
                             initValue={firstInitSqlValue || "select * from user limit 10"}
+                            // executLoading={sqlLoading}
                             subChange={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
                             implementDisabled={implementDisabled}
                         />,
@@ -86,6 +87,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                 isSqlExecutePlanBtn={true}
                                 tableFields={tableFields}
                                 initValue={firstInitSqlValue || "select * from user limit 10"}
+                                // executLoading={sqlLoading}
                                 subChange={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
                                 implementDisabled={implementDisabled}
                             />,
@@ -337,6 +339,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             tableFields={tableFields}
                             initValue={initSqlValue}
                             implementDisabled={implementDisabled}
+                            // executLoading={sqlLoading}
                             subChange={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
                         />, key: newActiveKey
                 }]);
@@ -346,7 +349,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                 message.info("您已经打开太多页面，请关闭一些吧！")
             }
         }
-    }, [initSqlValue, addCount,relayInfo?.envCode,relayInfo?.instance,relayInfo?.dbCode,])
+    }, [initSqlValue, addCount,relayInfo?.envCode,relayInfo?.instance,relayInfo?.dbCode])
 
     const removeSql = (targetKey: string) => {
         const targetIndex = sqlItems.findIndex(pane => pane.key === targetKey);
