@@ -118,6 +118,11 @@ export default [
     redirect: `${baseRoutePath}/config/nacos-config/nacos`,
   },
   {
+    path: `${baseRoutePath}/DBMS/safe-rule`,
+    redirect: `${baseRoutePath}/DBMS/safe-rule/safe-list`,
+  },
+
+  {
    
     "path": `${baseRoutePath}/application`,
     "name": "应用管理",
@@ -473,9 +478,25 @@ export default [
       },
       {
         path: `${baseRoutePath}/DBMS/safe-rule`,
-        name: '配置项',
+        name: '安全规则',
         key: 'safe-rule',
         component: '@/pages/DBMS/safe-rule',
+        routes:[
+          {
+            path:`${baseRoutePath}/DBMS/safe-rule/safe-list` ,
+            name: '安全规则',
+            key: 'safe-rule',
+            component: '@/pages/DBMS/safe-rule/components/safe-list',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/DBMS/safe-rule/instance-list`,
+            name: '实例规则',
+            key: 'safe-rule',
+            component: '@/pages/DBMS/safe-rule/components/instance-list',
+            hideInMenu: true,
+          }
+        ]
       },
     ],
   },
