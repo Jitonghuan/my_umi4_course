@@ -40,9 +40,9 @@ export default function AppTrafficList() {
       }).then((result) => {
         setDataSource(result)
         setPageTotal(result?.length)
-      }).finally(() => {
-        setLoading(false)
       })
+    }).finally(() => {
+      setLoading(false)
     })
   }
   useEffect(() => {
