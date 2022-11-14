@@ -4,36 +4,36 @@ export const listSchema = ({ toDetail }) => {
         {
             title: '序号',
             dataIndex: 'id',
-            width: 120,
+            width: 60,
         },
         {
             title: '版本号',
             dataIndex: 'version',
-            width: 100,
+            width: 80,
             render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'list') }}>{value}</a>
         },
         {
             title: '变更应用数',
             dataIndex: 'version',
-            width: 100,
+            width: 80,
             render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'app') }}>{value}</a>
         },
         {
             title: '变更配置项',
             dataIndex: 'version',
-            width: 100,
+            width: 80,
             render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'config') }}>{value}</a>
         },
         {
             title: 'SQL脚本',
             dataIndex: 'version',
-            width: 100,
+            width: 80,
             render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'sql') }}>{value}</a>
         },
         {
             title: '关联内容',
             dataIndex: 'content',
-            width: 100,
+            width: 80,
             render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'list') }}>{value}</a>
         },
         {
@@ -49,7 +49,7 @@ export const listSchema = ({ toDetail }) => {
         {
             title: '下载次数',
             dataIndex: 'id',
-            width: 120,
+            width: 80,
         },
         {
             title: '版本负责人',

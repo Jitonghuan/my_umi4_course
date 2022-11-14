@@ -21,13 +21,14 @@ export default function VersionList() {
     useEffect(() => {
         if (appGroupOptions?.length && !appGroup.value) {
             form.setFieldsValue({ appGroup: appGroupOptions[0].value })
-            // setAppGroup(appGroupOptions[0])
+            setAppGroup(appGroupOptions[0])
         }
     }, [appGroupOptions])
 
     const tableColumns = useMemo(() => {
         return listSchema({
             toDetail: (version: string, toTab: string) => {
+                console.log(appGroup, 'appGroup')
                 // 跳转到版本详情
                 history.push({
                     pathname: '/matrix/version-manage/detail',
@@ -38,7 +39,6 @@ export default function VersionList() {
     }, [data, appGroup]);
 
     const formChange = (changedValues: any, allValues: any) => {
-        console.log(allValues, 'all')
     }
 
     return (
@@ -57,7 +57,7 @@ export default function VersionList() {
                                 size="small"
                                 showSearch
                                 options={appGroupOptions}
-                                // value={appGroup}
+                                value={appGroup}
                                 // onChange={(v) => {
                                 //     setAppGroup({ label: v.label, value: v.value });
                                 // }}

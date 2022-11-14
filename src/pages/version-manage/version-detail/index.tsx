@@ -12,6 +12,7 @@ import ModifyApp from './component/modify-app';
 import ContentList from './component/content-list';
 import ModifyConfig from './component/modify-config';
 import ModifySql from './component/modify-sql';
+import detailContext from './context';
 import { useAppGroupData, useVersion } from '../hook'
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
@@ -22,6 +23,7 @@ export default function VersionDetail() {
     const [seletAppType, setSelectAppType] = useState<any>({})
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
+    console.log(query, 'qeury')
     const [appGroup, setAppGroup] = useState<any>({ value: groupCode || '', label: groupName || '' });
     const [appGroupOptions] = useAppGroupData({});
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
@@ -88,12 +90,15 @@ export default function VersionDetail() {
                             ></Select>
                         </div>
                     </Space>
-                    <div>
-                        <span>当前版本：<span>--</span></span>
-                        <span style={{ fontWeight: '600', fontSize: '16px', marginRight: '10px' }}>
-                            {seletAppType?.value || '---'}
-                        </span>
-                        <span style={{ color: '#776e6e', fontSize: '13px' }}>{seletAppType?.label || '---'}</span>
+                    <div className='right-text-container'>
+                        <div>
+                            <span className='grey-text'>当前版本：</span>
+                            <span className='black-text'>{selectVersion || '---'}</span>
+                        </div>
+                        <div>
+                            <span className='black-text' style={{ fontSize: 17 }}>{appGroup?.value || '---'}</span>
+                            <span className='grey-text'>{appGroup?.label || '---'}</span>
+                        </div>
                     </div>
                 </div>
                 <Descriptions title="概述" bordered column={4}>
@@ -117,7 +122,11 @@ export default function VersionDetail() {
                             <TabPane tab={item.label} key={item.key} />
                         ))}
                     </Tabs>
-                    <GetComponent />
+                    <detailContext.Provider
+                        value={{ selectVersion: selectVersion || '', groupCode: appGroup?.value || '', groupName: appGroup?.label || '' }}
+                    >
+                        <GetComponent />
+                    </detailContext.Provider>
                 </div>
 
             </ContentCard>

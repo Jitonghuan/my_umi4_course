@@ -16,6 +16,7 @@ import { parse, stringify } from 'query-string';
 import './index.less';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl } from '@/pages/application/service';
+import VersionDeploy from './version-deploy';
 
 const { TabPane } = Tabs;
 
@@ -230,18 +231,26 @@ export default function ApplicationDeploy(props: any) {
       >
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
-            <DeployContent
-              isActive={item.value === tabActive}
-              envTypeCode={item.value}
-              pipelineCode={currentValue}
-              visible={visible}
-              onDeployNextEnvSuccess={() => {
-                const i = envTypeData.findIndex((item) => item.value === tabActive);
-                setTabActive(envTypeData[i + 1]?.value);
-                getPipeline(envTypeData[i + 1]?.value);
-              }}
-              nextTab={nextTab}
-            />
+            {item.value !== 'version' ?
+              <DeployContent
+                isActive={item.value === tabActive}
+                envTypeCode={item.value}
+                pipelineCode={currentValue}
+                visible={visible}
+                onDeployNextEnvSuccess={() => {
+                  const i = envTypeData.findIndex((item) => item.value === tabActive);
+                  setTabActive(envTypeData[i + 1]?.value);
+                  getPipeline(envTypeData[i + 1]?.value);
+                }}
+                nextTab={nextTab}
+              /> :
+              <VersionDeploy
+                isActive={item.value === tabActive}
+                envTypeCode={item.value}
+                pipelineCode={currentValue}
+                visible={visible}
+              />
+            }
           </TabPane>
         ))}
       </Tabs>

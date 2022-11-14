@@ -1,0 +1,28 @@
+.version-deploy-page{
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px 24px;
+    overflow: auto;
+    height: 100%;
+    .ant-descriptions-title {
+        display: flex;
+        align-items: center;
+    
+        &::before {
+          display: inline-block;
+          content: '';
+          margin-right: 8px;
+          width: 4px;
+          height: 16px;
+          background: #3591ff;
+        }
+      }
+      .version-publish{
+      }
+      .version-list{
+          margin-top: 20px;
+          &>:nth-child(1){
+              margin-bottom: 10px;
+          }
+      }
+}
