@@ -143,7 +143,9 @@ export default function ResizeLayout() {
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
     setValue(value);
   };
+  
   const createSqlApply = useCallback(async (params: querySqlItems) => {
+   
     const createItems = form?.getFieldsValue()
     if (!endTime || !startTime || !createItems?.title || !createItems?.instanceId || !createItems?.dbCode || !params?.sqlContent) {
       message.warning("请先进行信息填写且输入sql语句再提交变更！")
@@ -296,10 +298,10 @@ export default function ResizeLayout() {
   const rightContent = useMemo(() => {
     return (
       <>
-        <RightContent tableFields={fields} createItems={form?.getFieldsValue()} createSql={(params: { sqlContent: string }) => createSqlApply(params)} />
+        <RightContent tableFields={fields} createItems={form?.getFieldsValue()} createSql={(params: { sqlContent: string }) => createSqlApply(params)} sqlLoading={sqlLoading} />
       </>
     )
-  }, [fields, formRef, form?.getFieldsValue()],);
+  }, [fields, formRef, form?.getFieldsValue(),sqlLoading]);
 
   return (
     <PageContainer>

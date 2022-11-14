@@ -8,7 +8,8 @@
  */
 import React, {useState, useEffect, useCallback } from 'react';
 import * as monaco from 'monaco-editor';
-import {Space} from 'antd';
+import {Space,Spin} from 'antd';
+import _ from "lodash";
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
 import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql';
@@ -38,6 +39,8 @@ export interface Iprops {
   tableFields?: any;
   implementDisabled: boolean;
   isGoback?: boolean;
+  sqlLoading?:boolean;
+  executLoading?:boolean
 
 
 }
@@ -60,7 +63,9 @@ export default function SqlEditor(props: Iprops) {
     isSubChangeBtn,
     isSqlCheckBtn,
     subChange,
-    subSqlChange
+    subSqlChange,
+    sqlLoading,
+    executLoading
   } = props;
   const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const rootCls = 'monaco-sql-editor-title';
@@ -256,27 +261,46 @@ export default function SqlEditor(props: Iprops) {
     <div className="monaco-sql-editor-content">
       <div className="monaco-sql-editor-title">
         <Space className={`${rootCls}-wrapper`}>
+          
           {isSqlExecuteBtn && !implementDisabled && <span className={`${rootCls}-btn`} id="one" onClick={() => {
+            
               getSelectionVal();
               if( getSelectionVal()){
+                //@ts-ignore
                 subChange({ sqlContent:  getSelectionVal() || "", sqlType: "query" })
-                console.log("---- getSelectionVal()", getSelectionVal())
+                // _.throttle( function(){  subChange({ sqlContent:  getSelectionVal() || "", sqlType: "query" })} ,3000,{
+                //   leading: true,
+                //   trailing: false
+                // })
+               
+              
 
               }else{
+                 //@ts-ignore
                 subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
+                // _.throttle( function(){ subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })} ,3000,{
+                //   leading: true,
+                //   trailing: false
+                // })
+                
               }
              
-           // subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
+          
           }}>执行</span>}
           {isSqlExecuteBtn && implementDisabled && <span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>}
           {isSqlBueatifyBtn && <span className={`${rootCls}-btn`} id="three" onClick={formatSql}>sql美化</span>}
           {isSqlCheckBtn && <span className={`${rootCls}-btn`} id="two" onClick={() => {
+             //@ts-ignore
             sqlCheck(instance?.getValue() || "")
           }}>sql检测</span>}
           {/* {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>}  */}
-          {isSubChangeBtn && <span className={`${rootCls}-btn`} id="fifth" onClick={() => {
-            subSqlChange({ sqlContent: instance?.getValue() || "" })
-          }}>提交变更</span>}
+          {isSubChangeBtn &&<Spin spinning={sqlLoading}>
+            <span className={`${rootCls}-btn`} id="fifth" onClick={() => {
+               //@ts-ignore
+               subSqlChange({ sqlContent: instance?.getValue() || "" })
+           
+         
+          }}>提交变更</span></Spin >}
           {isGoback && <span className={`${rootCls}-back-btn`} id="back" onClick={() => {
             history.push(
               {
