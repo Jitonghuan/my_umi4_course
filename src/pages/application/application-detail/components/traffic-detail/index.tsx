@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useContext } from 'react';
+import React, { useMemo, useState, useEffect, useContext,useCallback } from 'react';
 import PageContainer from '@/components/page-container';
 import { Space, Form, Select, Tooltip, Button, Spin, Empty, Badge } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
@@ -312,6 +312,15 @@ export default function TrafficDetail() {
   ])
 
 
+  const getTime=useCallback((params?:{start:number})=>{
+    const now = new Date().getTime();
+    let curStart: number = params?.start ? params?.start : startTime
+    let start=moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss')
+    let end=moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss')
+    
+    return [start,end]
+  },[startTime])
+
 
 
 
@@ -338,7 +347,11 @@ export default function TrafficDetail() {
           
           </Form>
 
-          <span>选择时间：<Select
+          <span>
+          <span className="show-time" >
+              <Tooltip title={`${getTime()?.[0]}-${getTime()?.[1]}`}>{getTime()?.[0]}-{getTime()?.[1]}</Tooltip>
+            </span>
+            选择时间：<Select
             style={{ width: 150 }}
             value={startTime}
             onChange={(value) => {

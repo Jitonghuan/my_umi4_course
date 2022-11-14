@@ -1,4 +1,5 @@
 .traffic-detail-page {
+  padding: 0px !important;
   &-header {
     .ant-card-body {
       padding: 10px 16px;
@@ -8,6 +9,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .show-time{
+      display: inline-flex;
+      margin-right: 10px;
+      overflow-x: auto;
+
+      >span{
+        
+        color: rgb(146, 146, 146);
+       width: 16vw;
+        height: 30px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: center;
+
+      }
+    
+
+    }
   }
   &-content {
     .ant-card-body {

@@ -2,7 +2,7 @@ import { Space, Tooltip, Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import JavaLogo from '@/assets/imgs/java-logo.png';
 import PythonLogo from '@/assets/imgs/Python-logo.svg';
-import GolangLogo from '@/assets/imgs/go-logo.svg';
+import GolangLogo from '@/assets/imgs/go_logo_blue.svg';
 
 
 
@@ -33,7 +33,7 @@ export const createTableColumns = (params: {
           {
           record?.language==="java"?<span > <img src={JavaLogo} height={18} width={18} alt="" style={{marginBottom:8}}/></span>
          : record?.language==="python"?<span ><img src={PythonLogo} height={18} width={18} alt="" style={{marginBottom:8}} /></span>:
-         record?.language==="golang"?<span ><img src={GolangLogo} height={18} width={18} alt="" style={{marginBottom:8}} /></span>:null
+         record?.language==="golang"?<span ><img src={GolangLogo} height={20} width={20} alt="" style={{}} /></span>:null
            }</span><span style={{marginLeft:8}}><a onClick={() => params.onView(record, index)}>{text}</a></span> </>}, 
 
       },
@@ -53,7 +53,7 @@ export const createTableColumns = (params: {
         dataIndex: 'svcCpuRate',
         key: 'svcCpuRate',
         width: 90,
-        render: (value) => <>{value}% </>,
+        render: (value) => <>{value||0}% </>,
         sorter: {
           compare: (a: any, b: any) => a.instanceCpuRate - b.instanceCpuRate,
         },
@@ -73,7 +73,7 @@ export const createTableColumns = (params: {
         dataIndex: 'svcTotalRes',
         key: 'svcTotalRes',
         width: 110,
-        //render: (value) => <>{} </>,
+        render: (value) => <>{value||0} 次 </>,
         sorter: {
           compare: (a: any, b: any) => a.svcTotalRes - b.svcTotalRes,
         },

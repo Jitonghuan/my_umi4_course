@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect,  } from 'react';
+import React, { useMemo, useState, useEffect,useCallback  } from 'react';
 import PageContainer from '@/components/page-container';
 import { Space, Form, Select, Tooltip, Button, Spin, Empty,Badge,message } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
@@ -315,6 +315,15 @@ const [empty,setEmpty]=useState<boolean>(false)
     empty
   ])
 
+  const getTime=useCallback((params?:{start:number})=>{
+    const now = new Date().getTime();
+    let curStart: number = params?.start ? params?.start : startTime
+    let start=moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss')
+    let end=moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss')
+    
+    return [start,end]
+  },[startTime])
+
 
 
 
@@ -344,7 +353,7 @@ const [empty,setEmpty]=useState<boolean>(false)
                  
               
 
-              }} loading={envLoading} style={{ width: 200 }} />
+              }} loading={envLoading} style={{ width: 180 }} />
             </Form.Item>
             <Form.Item label="选择应用" name="appCode">
               <Select showSearch options={appOptions}onChange={(appCode, option: any) => {
@@ -362,11 +371,15 @@ const [empty,setEmpty]=useState<boolean>(false)
                 
                 })
                
-              }} loading={appLoading} style={{ width: 200 }} />
+              }} loading={appLoading} style={{ width: 180 }} />
             </Form.Item>
           </Form>
 
-          <span>选择时间：<Select
+          <span>
+            <span className="show-time" >
+              <Tooltip title={`${getTime()?.[0]}-${getTime()?.[1]}`}>{getTime()?.[0]}-{getTime()?.[1]}</Tooltip>
+            </span>
+            选择时间：<Select
             style={{ width: 150 }}
             value={startTime}
             onChange={(value) => {
