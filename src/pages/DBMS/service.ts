@@ -7,6 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 /* 数据变更管理接口文档 https://come-future.yuque.com/sekh46/bbgc7f/eh25u4#Wm5mi */
+//二期文档 https://come-future.yuque.com/sekh46/bbgc7f/ghkm6m#Qj4D0
 import appConfig from '@/app.config';
 let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 //kapi-base-dev.cfuture.shop/matrix-dmp
@@ -47,6 +48,16 @@ export const checkSqlApi = `${dmpApiPrefix}/dmp/sql/check`;
 export const workflowLogApi = `${dmpApiPrefix}/dmp/workflow/logs`;
 //dmp/workflow/audit/currentAudits
 export const currentAuditsApi = `${dmpApiPrefix}/dmp/workflow/audit/currentAudits`;
-
-//dmp/rule/ruleSet/list
+/* -------------------------------数据管理二期-------------------------------- */
+//查询安全规则列表
 export const getRuleSetListApi = `${dmpApiPrefix}/dmp/rule/ruleSet/list`;
+//新建安全规则
+export const createRuleSetApi = `${dmpApiPrefix}/dmp/rule/ruleSet/create`;
+//更新安全规则
+export const updateRuleSetApi = `${dmpApiPrefix}/dmp/rule/ruleSet/update`;
+
+
+//查询集群规则列表
+export const getInstanceListApi = `${dmpApiPrefix}/dmp/rule/instance/list`;
+//更新安全规则
+export const updateInstanceRuleSetApi = `${dmpApiPrefix}/dmp/rule/instance/ruleSet/update`;

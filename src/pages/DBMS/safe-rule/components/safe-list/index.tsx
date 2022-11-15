@@ -6,13 +6,14 @@ import { createTableColumns,typeOptions} from './schema';
 import useTable from '@/utils/useTable';
 import { Button, Space, Form } from 'antd';
 import * as APIS from '../../../service';
+import EditRules from "./create-rule";
 import './index.less'
-//getRuleSetListApi
+
 export default function SafeList(){
     const [mode, setMode] = useState<EditorMode>('HIDE');
     const [form] = Form.useForm();
-
-  const {
+    const [curRecord,setCurRecord]=useState<any>({})
+    const {
     tableProps,
     search: { submit, reset },
   } = useTable({
@@ -37,6 +38,7 @@ export default function SafeList(){
       onEdit: (record, index) => {
       
         setMode('EDIT');
+        setCurRecord(record)
       },
     
       onDelete: async (id) => {
@@ -47,6 +49,12 @@ export default function SafeList(){
   }, []);
     return(
         <div className="safe-list-content">
+          <EditRules 
+          mode={mode}
+          onClose={()=>{setMode("HIDE") ;}}
+          curRecord={curRecord}
+          onSave={()=>{ setMode("HIDE") ;submit()}}
+          />
         <TableSearch
         form={form}
         bordered
