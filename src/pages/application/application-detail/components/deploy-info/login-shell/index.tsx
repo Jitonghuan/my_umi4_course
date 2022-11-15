@@ -7,6 +7,7 @@ import { Select, Form, Button, Tag, message } from '@cffe/h2o-design';
 import { ContentCard } from '@/components/vc-page-content';
 import * as APIS from '../deployInfo-content/service';
 import { getRequest } from '@/utils/request';
+import DetailContext from '@/pages/application/application-detail/context';
 import { history, useLocation} from 'umi';
 import { parse } from 'query-string';
 import { Terminal } from 'xterm';
@@ -17,9 +18,11 @@ import './index.less';
 
 export default function AppDeployInfo(props: any) {
   const [viewLogform] = Form.useForm();
-  let location = useLocation();
+  let location:any = useLocation();
   const query = parse(location.search);
-  const { appCode, envCode, optType, containerName, deploymentName } = query;
+  const { appData } = useContext(DetailContext);
+  const { appCode, envCode, optType, containerName, deploymentName,viewLogEnvType } = query;
+  const infoRecord:any=location.state?.infoRecord || {};
   const instName = query.instName;
   const [queryListContainer, setQueryListContainer] = useState<any>();
   const [previous, setPrevious] = useState<boolean>(false);
@@ -143,10 +146,30 @@ export default function AppDeployInfo(props: any) {
       window.removeEventListener('resize', function () {});
     };
   }, []);
+  const id = appData?.id;
   const closeSocket = () => {
     if (ws.current) {
       ws.current.close();
-      history.back();
+      //history.back();
+      if (optType && optType === 'containerInfo') {
+        history.push({
+          pathname: `/matrix/application/detail/container-info`,
+          search:`appCode=${appCode}&envCode=${envCode}&viewLogEnvType=${viewLogEnvType}`, 
+         }, {
+          infoRecord:{  appCode: appCode,
+            envCode: envCode,
+            viewLogEnvType: viewLogEnvType,
+            infoRecord: infoRecord,
+            id: appData?.id,
+          } },
+        );
+      } else {
+        history.push({
+          pathname: `/matrix/application/detail/deployInfo`,
+          search:`appCode=${appCode}&id=${id + ''}&viewLogEnv=${envCode}&viewLogEnvType=${viewLogEnvType}&type=viewLog_goBack`
+         
+        });
+      }
     }
   };
   //选择容器
