@@ -1,11 +1,11 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { Select, Descriptions, Tabs, DatePicker, Space } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import './index.less';
 import { Form, Button, Table, message } from 'antd';
 // import { listSchema } from './schema';
-import VCPermission from '@/components/vc-permission';
+import { FeContext } from '@/common/hooks';
 import { history, useLocation, Outlet } from 'umi';
 import { parse, stringify } from 'query-string';
 import ModifyApp from './component/modify-app';
@@ -20,10 +20,10 @@ const { RangePicker } = DatePicker;
 export default function VersionDetail() {
     const query: any = parse(location.search);
     const { key, version, groupName, groupCode } = query || {};
+    const { categoryData } = useContext(FeContext);
     const [seletAppType, setSelectAppType] = useState<any>({})
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
-    console.log(query, 'qeury')
     const [appGroup, setAppGroup] = useState<any>({ value: groupCode || '', label: groupName || '' });
     const [appGroupOptions] = useAppGroupData({});
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
@@ -37,10 +37,10 @@ export default function VersionDetail() {
     }, [versionOptions])
 
     useEffect(() => {
-        if (appGroupOptions.length && !appGroup.value) {
-            setAppGroup(appGroupOptions[0])
+        if (categoryData.length && !appGroup.value) {
+            setAppGroup(categoryData[0])
         }
-    }, [appGroupOptions])
+    }, [categoryData])
 
     const TabList = [
         { label: '内容列表', key: 'list', component: ContentList },

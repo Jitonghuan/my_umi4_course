@@ -3,7 +3,7 @@ import { parse } from 'qs';
 import appConfig from '@/app.config';
 
 /** 深度优先搜索处理 func */
-export const DFSFunc = (tree: any[]=[], childKey: string = 'children', func: (treeNode: any) => void) => {
+export const DFSFunc = (tree: any[] = [], childKey: string = 'children', func: (treeNode: any) => void) => {
   tree.forEach((node) => {
     if (node[childKey]) {
       DFSFunc(node[childKey], childKey, func);
@@ -88,3 +88,28 @@ export const getEnvName = (envList: any[] = [], text: string) => {
 
   return (envList as any).find((v: any) => v.envCode === text)?.envName;
 };
+
+/**
+ * 比较x.y.z版本号格式的大小
+ */
+export const versionSortFn = (a: string, b: string) => {
+  const match = /^(\d+)\.(\d+)\.(\d+)$/;
+  const ag = match.exec(a)
+  const bg = match.exec(b)
+  if (ag == null) {
+    return 1;
+  }
+  if (bg == null) {
+    return -1;
+  }
+  if (ag[1] != bg[1]) {
+    return -(parseInt(ag[1]) - parseInt(bg[1]));
+  }
+  if (ag[2] != bg[2]) {
+    return -(parseInt(ag[2]) - parseInt(bg[2]));
+  }
+  if (ag[3] != bg[3]) {
+    return -(parseInt(ag[3]) - parseInt(bg[3]));
+  }
+  return 0;
+}

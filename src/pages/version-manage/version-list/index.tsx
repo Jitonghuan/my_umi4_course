@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { Select, DatePicker, Space, Input } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
@@ -9,34 +9,61 @@ import CreateVersion from './create-version';
 import VCPermission from '@/components/vc-permission';
 import { history, useLocation, Outlet } from 'umi';
 import { parse, stringify } from 'query-string';
-import { useAppGroupData } from '../hook'
+import { FeContext } from '@/common/hooks';
+import OperateModal from './operate-modal';
+import { useAppGroupData } from '../hook';
+import { versionSortFn } from '@/utils';
 
 export default function VersionList() {
-    const [data, setData] = useState<any>([{ content: 'ceshi', version: '1.2.1' }]);
+    const [data, setData] = useState<any>([{ content: 'ceshi', version: '1.2.1', downloadCount: 2 }, { content: 'ceshi', version: '1.2.3', downloadCount: 2 }]);
     const [visible, setVisible] = useState<boolean>(false);
+    const { categoryData } = useContext(FeContext);
     const [appGroup, setAppGroup] = useState<any>({});
     const [form] = Form.useForm();
+    const [action, setAction] = useState<string>('')
     const [selectTime, setSelectTime] = useState<string>('');
-    const [appGroupOptions] = useAppGroupData({});
+    const [operateVisible, setOperateVisible] = useState<boolean>(false);
+    const [initData, setInitData] = useState<any>({});
+
+    const maxVersion = useMemo(() => {
+        const versionList = (data || []).map((item: any) => item.version);
+        const res = versionList.sort((a: any, b: any) => versionSortFn(a, b))
+        return res.length ? res[0] : '';
+    }, [data]);
+
     useEffect(() => {
-        if (appGroupOptions?.length && !appGroup.value) {
-            form.setFieldsValue({ appGroup: appGroupOptions[0].value })
-            setAppGroup(appGroupOptions[0])
+        if (categoryData?.length && !appGroup.value) {
+            form.setFieldsValue({ appGroup: categoryData[0].value })
+            setAppGroup(categoryData[0])
         }
-    }, [appGroupOptions])
+    }, [categoryData])
 
     const tableColumns = useMemo(() => {
         return listSchema({
             toDetail: (version: string, toTab: string) => {
-                console.log(appGroup, 'appGroup')
                 // 跳转到版本详情
                 history.push({
                     pathname: '/matrix/version-manage/detail',
                     search: stringify({ key: toTab, version, groupName: appGroup.label, groupCode: appGroup.value })
                 })
             },
+            downloadVersion: (record: any) => {
+                openModal('downloadPackage', record)
+            },
+            downloadCountList: (record: any) => {
+                openModal('downloadList', record)
+            },
+            mergeVersion: (record: any) => {
+                openModal('merge', record)
+            }
         }) as any;
     }, [data, appGroup]);
+
+    const openModal = (actionType: string, record: any) => {
+        setInitData(record);
+        setAction(actionType);
+        setOperateVisible(true)
+    }
 
     const formChange = (changedValues: any, allValues: any) => {
     }
@@ -44,7 +71,19 @@ export default function VersionList() {
     return (
         <PageContainer className='version-list-page'>
             <ContentCard>
-                <CreateVersion visible={visible} onClose={() => { setVisible(false) }} />
+                <OperateModal
+                    action={action}
+                    visible={operateVisible}
+                    onClose={() => { setOperateVisible(false) }}
+                    initData={initData}
+                    appGroup={appGroup}
+                />
+                <CreateVersion
+                    visible={visible}
+                    onClose={() => { setVisible(false) }}
+                    categoryData={categoryData}
+                    maxVersion={maxVersion || ''}
+                />
                 <div className="search-wrapper">
                     <Form
                         layout="inline"
@@ -53,10 +92,10 @@ export default function VersionList() {
                     >
                         <Form.Item label="应用分类：" name="appGroup">
                             <Select
-                                style={{ width: 180 }}
+                                style={{ width: 160 }}
                                 size="small"
                                 showSearch
-                                options={appGroupOptions}
+                                options={categoryData}
                                 value={appGroup}
                                 // onChange={(v) => {
                                 //     setAppGroup({ label: v.label, value: v.value });

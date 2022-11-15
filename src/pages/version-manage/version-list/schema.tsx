@@ -1,5 +1,5 @@
-import { Popconfirm } from 'antd';
-export const listSchema = ({ toDetail }) => {
+import { Popconfirm, Tooltip } from 'antd';
+export const listSchema = ({ toDetail, downloadVersion, downloadCountList, mergeVersion }) => {
     return [
         {
             title: '序号',
@@ -40,6 +40,8 @@ export const listSchema = ({ toDetail }) => {
             title: '版本简述',
             dataIndex: 'id',
             width: 150,
+            ellipsis: true,
+            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '状态',
@@ -48,25 +50,30 @@ export const listSchema = ({ toDetail }) => {
         },
         {
             title: '下载次数',
-            dataIndex: 'id',
-            width: 80,
+            dataIndex: 'downloadCount',
+            width: 60,
+            render: (value: string, record: any) => <a onClick={() => { downloadCountList(record) }}>{value}</a>
         },
         {
             title: '版本负责人',
             dataIndex: 'id',
             width: 120,
+            ellipsis: true,
+            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '发版时间',
             dataIndex: 'id',
             width: 120,
+            ellipsis: true,
+            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '操作',
             dataIndex: 'id',
             width: 240,
             fixed: 'right',
-            render: (_: any, record: any, index: number) => (
+            render: (value: any, record: any, index: number) => (
                 <div className="action-cell">
                     <a onClick={() => { toDetail(record.version) }}>
                         详情
@@ -77,10 +84,10 @@ export const listSchema = ({ toDetail }) => {
                     <a onClick={() => { }}>
                         发版
                   </a>
-                    <a onClick={() => { }}>
+                    <a onClick={() => { downloadVersion(record) }}>
                         下载版本包
                   </a>
-                    <a onClick={() => { }}>
+                    <a onClick={() => { mergeVersion(record) }}>
                         合并
                   </a>
                     {/* <a onClick={() => { }}>
@@ -99,6 +106,39 @@ export const listSchema = ({ toDetail }) => {
                     </Popconfirm> */}
                 </div>
             ),
+        },
+    ]
+}
+
+export const downloadList = () => {
+    return [
+        {
+            title: '序号',
+            dataIndex: '',
+            width: 40,
+            ellipsis: true,
+            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
+        },
+        {
+            title: '下载人',
+            dataIndex: 'id',
+            width: 80,
+            ellipsis: true,
+            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
+        },
+        {
+            title: '下载时间',
+            dataIndex: 'time',
+            width: 100,
+            ellipsis: true,
+            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
+        },
+        {
+            title: '下载目的',
+            dataIndex: 'id',
+            width: 240,
+            ellipsis: true,
+            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
     ]
 }
