@@ -109,7 +109,7 @@ export default function VersionDetail() {
                     <Descriptions.Item label="创建时间">2022-11-02</Descriptions.Item>
                     <Descriptions.Item label="计划发版本时间">2022-11-02</Descriptions.Item>
                     <Descriptions.Item label="发版时间">--</Descriptions.Item>
-                    <Descriptions.Item label="下载次数">$60.00</Descriptions.Item>
+                    <Descriptions.Item label="下载次数"><a onClick={() => { }}>0</a></Descriptions.Item>
                     <Descriptions.Item label="简述" >这是一个简述</Descriptions.Item>
                     <Descriptions.Item label="备注" >这是一个备注</Descriptions.Item>
                 </Descriptions>

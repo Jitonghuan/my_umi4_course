@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Drawer, Tag, Form, Button, DatePicker, Col, Input, Row, Radio, Select, Space } from 'antd';
 import UserSelector, { stringToList } from '@/components/user-selector';
+import moment from 'moment';
+import { disabledDate, disabledTime } from '@/utils'
 import './index.less';
 
 export default function AddDrawer(props: any) {
@@ -19,7 +21,13 @@ export default function AddDrawer(props: any) {
         }
     }, [visible, maxVersion]);
 
-    const handleSubmit = () => { };
+
+
+    const handleSubmit = async () => {
+        const value = await form.validateFields();
+        value.time = value.time.format('YYYY-MM-DD HH:mm:ss');
+    };
+
     return (
         <Drawer
             width={650}
@@ -40,7 +48,7 @@ export default function AddDrawer(props: any) {
             }
         >
             <Form form={form} labelCol={{ flex: '120px' }}>
-                <Form.Item label="应用分类" name="name" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item label="应用分类" name="name" rules={[{ required: true, message: '请选择' }]}>
                     <Select style={{ width: 240 }} options={categoryData || []} />
                 </Form.Item>
 
@@ -57,6 +65,8 @@ export default function AddDrawer(props: any) {
                     <DatePicker
                         showTime
                         format="YYYY-MM-DD HH:mm:ss"
+                        disabledDate={disabledDate}
+                        disabledTime={disabledTime}
                     />
                 </Form.Item>
                 <Form.Item label="版本负责人" name="user" rules={[{ required: true, message: '请输入' }]}>

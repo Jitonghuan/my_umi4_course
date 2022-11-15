@@ -7,6 +7,8 @@ import './index.less';
 export default function OperateModal(props: any) {
     const { visible, onClose, action, initData, appGroup } = props;
     const [data, setData] = useState<any>([]);
+    const [value, setValue] = useState<any>();
+    const [downLoadForm] = Form.useForm();
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -17,7 +19,11 @@ export default function OperateModal(props: any) {
 
     const columns = useMemo(() => downloadList(), [data])
 
-    const handleSubmit = () => { };
+    const handleSubmit = async () => {
+        if (action === 'downloadPackage') {
+            const value = await downLoadForm.validateFields();
+        }
+    };
     return (
         <Modal
             title={
@@ -29,15 +35,14 @@ export default function OperateModal(props: any) {
                     </span>
                 </div>
             }
-            // closable={false}
             visible={visible}
             onCancel={onClose}
             width={700}
             footer={
                 action !== 'downloadList' ? <div className="drawer-footer">
                     <Button type="primary" onClick={handleSubmit}>
-                        确认
-                   </Button>
+                        {action === 'downloadPackage' ? '确认下载' : '确认'}
+                    </Button>
                     <Button type="default" onClick={onClose}>
                         取消
                     </Button>
@@ -54,10 +59,9 @@ export default function OperateModal(props: any) {
 
             {action === 'downloadList' &&
                 <>
-                    <div>下载列表</div>
+                    <div style={{ marginBottom: '10px' }}>下载列表</div>
                     <Table
                         dataSource={data}
-                        // loading={loading || updateLoading}
                         bordered
                         rowKey="id"
                         pagination={false}
@@ -68,7 +72,18 @@ export default function OperateModal(props: any) {
             {
                 action === 'downloadPackage' &&
                 <>
-
+                    <Form form={downLoadForm}>
+                        <Form.Item name="packType" label="下载内容">
+                            <Radio.Group>
+                                <Radio value="a">全部</Radio>
+                                <Radio value="b">镜像包</Radio>
+                                <Radio value="c">XX包</Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                        <Form.Item label='下载理由' name='reason' rules={[{ required: true, message: '请输入下载理由' }]}>
+                            <Input.TextArea style={{ width: 350 }} />
+                        </Form.Item>
+                    </Form>
                 </>
             }
         </Modal>

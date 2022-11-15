@@ -113,3 +113,35 @@ export const versionSortFn = (a: string, b: string) => {
   }
   return 0;
 }
+
+// 时间组件 只能选择当前时间往后的时间
+export const disabledDate = (current: any) => {
+  return current && current <= moment().subtract(1, 'days').endOf('day')
+}
+
+function range(start: any, end: any) {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+}
+
+export const disabledTime: any = (date: any, partial: any) => {
+  const selectHours = moment(date).hours();
+  let hours = moment().hours();
+  let minutes = moment().minutes();
+  let seconds = moment().seconds();
+  if (date && moment(date).date() === moment().date()) {
+    return {
+      disabledHours: () => selectHours === hours ? range(0, 24).splice(0, hours) : [],
+      disabledMinutes: () => selectHours === hours ? range(0, 60).splice(0, minutes + 1) : [],
+      disabledSeconds: () => selectHours === hours ? range(0, 60).splice(0, seconds + 1) : [],
+    };
+  }
+  return {
+    disabledHours: () => [],
+    disabledMinutes: () => [],
+    disabledSeconds: () => [],
+  };
+}
