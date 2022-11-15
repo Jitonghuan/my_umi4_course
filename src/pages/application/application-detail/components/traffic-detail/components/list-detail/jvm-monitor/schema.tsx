@@ -83,12 +83,32 @@ export interface ITableSchema {
   
   // GC 次数
   export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
+   
+    let arry: any = [];
+    let nameArry: any = [];
+  dataSource?.map((item: any,index:number) => {
+    item?.map((ele:any)=>{
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      nameArry.push(ele?.name);
+      
+
+    })
+    
+
+      
+  });
+ 
+  
     return {
       tooltip: {
         trigger: 'axis',
       },
       grid: {
-        bottom: 34,
+        bottom: 45,
         top: 30,
         left: 30,
         right: 40,
@@ -96,8 +116,11 @@ export interface ITableSchema {
       },
       legend: {
         bottom: 0,
-        data: ['FullGC次数', 'YoungGC次数'],
+        data:nameArry,
+       // data: ['FullGC次数', 'YoungGC次数'],
         icon: 'rect',
+        type: 'scroll', //分页类型
+        orient: 'horizontal',
       },
       color: ['#4BA2FF', '#54DA81'],
       xAxis: {
@@ -124,30 +147,48 @@ export interface ITableSchema {
           splitNumber: 3,
         },
       ],
-      series: [
-        {
-          name: 'FullGC次数',
-          data: dataSource?.[0] || [],
-          type: 'line',
-        },
-        {
-          // yAxisIndex: 1,
-          name: 'YoungGC次数',
-          data: dataSource?.[1] || [],
-          type: 'line',
-        },
-      ],
+      series :arry
+      // series: [
+      //   {
+      //     name: 'FullGC次数',
+      //     data: dataSource?.[0] || [],
+      //     type: 'line',
+      //   },
+      //   {
+      //     // yAxisIndex: 1,
+      //     name: 'YoungGC次数',
+      //     data: dataSource?.[1] || [],
+      //     type: 'line',
+      //   },
+      // ],
     };
   };
   
   // GC 耗时
   export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
+     
+    let arry: any = [];
+    let nameArry: any = [];
+  dataSource?.map((item: any,index:number) => {
+    item?.map((ele:any)=>{
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      
+      nameArry.push(ele?.name);
+    })
+    
+
+     
+  });
     return {
       tooltip: {
         trigger: 'axis',
       },
       grid: {
-        bottom: 34,
+        bottom: 45,
         top: 30,
         left: 30,
         right: 40,
@@ -155,8 +196,10 @@ export interface ITableSchema {
       },
       legend: {
         bottom: 0,
-        data: ['FullGC耗时', 'YoungGC耗时'],
+        data:nameArry,
         icon: 'rect',
+        type: 'scroll', //分页类型
+        orient: 'horizontal',
       },
       color: ['#4BA2FF', '#54DA81'],
       xAxis: {
@@ -183,30 +226,37 @@ export interface ITableSchema {
           splitNumber: 3,
         },
       ],
-      series: [
-        {
-          name: 'FullGC耗时',
-          data: dataSource[0],
-          type: 'line',
-        },
-        {
-          // yAxisIndex: 1,
-          name: 'YoungGC耗时',
-          data: dataSource[1],
-          type: 'line',
-        },
-      ],
+      series:arry
     };
   };
   
   // 内存
-  export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
+  export const getMemoryChartOption: any = (xAxis = [], dataSource:any = []) => {
+   
+    let arry: any = [];
+    let nameArry: any = [];
+    dataSource?.map((item: any,index:number) => {
+    item?.map((ele:any)=>{
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      nameArry.push(ele?.name);
+
+    })
+    
+
+     
+  });
+  
+  
     return {
       tooltip: {
         trigger: 'axis',
       },
       grid: {
-        bottom: 34,
+        bottom: 70,
         top: 34,
         left: 30,
         right: 40,
@@ -214,8 +264,11 @@ export interface ITableSchema {
       },
       legend: {
         bottom: 0,
-        data: ['使用总和', '年轻代Eden区', '年轻代Survivor区', '老年代'],
+        data: nameArry,
+        //data: ['使用总和', '年轻代Eden区', '年轻代Survivor区', '老年代'],
         icon: 'rect',
+        type: 'scroll', //分页类型
+        orient: 'horizontal',
       },
       color: ['#4BA2FF', '#54DA81'],
       xAxis: {
@@ -243,39 +296,58 @@ export interface ITableSchema {
           splitNumber: 3,
         },
       ],
-      series: [
-        {
-          name: '使用总和',
-          data: dataSource?.[0] || [],
-          type: 'line',
-        },
-        {
-          name: '年轻代Eden区',
-          data: dataSource?.[1] || [],
-          type: 'line',
-        },
-        {
-          name: '年轻代Survivor区',
-          data: dataSource?.[2] || [],
-          type: 'line',
-        },
-        {
-          name: '老年代',
-          data: dataSource?.[3] || [],
-          type: 'line',
-        },
-      ],
+     series: arry,
+      // series: [
+      //   {
+      //     name: '使用总和',
+      //     data: arryone || [],
+      //     type: 'line',
+      //   },
+      //   {
+      //     name: '年轻代Eden区',
+      //     data: arrytwo || [],
+      //     type: 'line',
+      //   },
+      //   {
+      //     name: '年轻代Survivor区',
+      //     data: arrythree || [],
+      //     type: 'line',
+      //   },
+      //   {
+      //     name: '老年代',
+      //     data: arryfour || [],
+      //     type: 'line',
+      //   },
+      // ],
     };
   };
   
   // 元空间
   export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
+    let arry: any = [];
+    let nameArry: any = [];
+  dataSource?.map((item: any,index:number) => {
+    item?.map((ele:any)=>{
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      nameArry.push(ele?.name);
+
+    })
+    
+
+     
+  });
+  
+  
     return {
       tooltip: {
         trigger: 'axis',
       },
       grid: {
-        bottom: 34,
+        bottom: 45,
         top: 30,
         left: 30,
         right: 40,
@@ -283,7 +355,8 @@ export interface ITableSchema {
       },
       legend: {
         bottom: 0,
-        data: ['元空间'],
+        data: nameArry,
+        //data: ['元空间'],
         icon: 'rect',
       },
       color: ['#4BA2FF', '#54DA81'],
@@ -302,6 +375,12 @@ export interface ITableSchema {
         },
         data: xAxis,
       },
+      dataZoom: [
+        {
+          type: 'inside', //slider表示有滑动块的，inside表示内置的
+          show: false,
+        },
+      ],
       yAxis: [
         {
           type: 'value',
@@ -312,13 +391,14 @@ export interface ITableSchema {
           splitNumber: 3,
         },
       ],
-      series: [
-        {
-          name: '元空间',
-          data: dataSource?.[0] || [],
-          type: 'line',
-        },
-      ],
+      series:arry
+      // series: [
+      //   {
+      //     name: '元空间',
+      //     data: dataSource?.[0] || [],
+      //     type: 'line',
+      //   },
+      // ],
     };
   };
   
