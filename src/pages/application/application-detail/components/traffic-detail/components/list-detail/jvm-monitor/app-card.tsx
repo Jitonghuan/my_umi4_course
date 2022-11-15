@@ -93,7 +93,8 @@ const Coms = (props: IProps) => {
         const resource = curtRadio === '1' ? resp.count : resp.sum;
         const options = getOption(resource.xAxis, resource.dataSource);
         prevData.current = resp;
-
+      
+          
         setCurOptions(options);
       })
       .catch((err) => {
