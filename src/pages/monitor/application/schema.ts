@@ -226,6 +226,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource = []) => {
     });
     nameArry.push(item?.name);
   });
+  
   return {
     tooltip: {
       trigger: 'axis',
