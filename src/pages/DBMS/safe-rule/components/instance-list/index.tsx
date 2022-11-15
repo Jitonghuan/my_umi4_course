@@ -98,7 +98,7 @@ export default function InstanceList(){
         searchText="查询"
       />
         </div>
-        <Modal visible={mode==="EDIT"} destroyOnClose onOk={()=>{
+        <Modal title="编辑实例规则" visible={mode==="EDIT"} destroyOnClose onOk={()=>{
           updateRuleSet({ruleSetId:ruleForm.getFieldValue("ruleSetId"),instanceId:curRecord?.instanceId}).then((res)=>{
         if(res?.success){
             setMode("HIDE")
@@ -113,7 +113,7 @@ export default function InstanceList(){
         }}>
           <Form form={ruleForm} preserve={false} >
           <Form.Item name="ruleSetId" label="安全规则">
-            <Select options={options} />
+            <Select options={options} style={{width:280}} />
 
           </Form.Item>
 

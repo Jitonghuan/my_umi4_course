@@ -8,12 +8,13 @@ interface querySqlItems {
   dbCode?: string;
   tableCode?: string;
   title?: string;
-  // sqlWfType?:string;
+  sqlWfType?:string;
   envCode?: string;
   instanceId?: number;
   runStartTime?: string;
   runEndTime?: string;
   allowTiming: boolean;
+
 
 
 }

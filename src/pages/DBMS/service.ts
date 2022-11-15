@@ -61,3 +61,11 @@ export const updateRuleSetApi = `${dmpApiPrefix}/dmp/rule/ruleSet/update`;
 export const getInstanceListApi = `${dmpApiPrefix}/dmp/rule/instance/list`;
 //更新安全规则
 export const updateInstanceRuleSetApi = `${dmpApiPrefix}/dmp/rule/instance/ruleSet/update`;
+
+/* ---------------工单变更详情------------- */
+//获得结构变更工单研发流程和下一个环境
+export const getddlDesignFlowApi = `${dmpApiPrefix}/dmp/workflow/sql/ddl/designFlow`;
+//发布到下一个环境
+export const createNextDDLApi = `${dmpApiPrefix}/dmp/workflow/sql/nextDDL/create`;
+//根据parentWfId和envType查询sql工单详情
+export const getSqlDdlInfoApi = `${dmpApiPrefix}/dmp/workflow/sql/ddl/info`;

@@ -7,7 +7,7 @@ import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
 import { ScheduleOutlined, } from '@ant-design/icons';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
-import { START_TIME_ENUMS, options } from "./schema"
+import { START_TIME_ENUMS, options,sqlWfTypeOptions } from "./schema"
 import {queryTableFieldsApi} from '../../../common-service'
 import { useEnvList, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, useQueryTablesOptions } from '../../../common-hook'
 import RightContent from "./_components/right-content"
@@ -180,6 +180,9 @@ export default function ResizeLayout() {
           <Form.Item name="title" label="标题：" rules={[{ required: true, message: '请填写' }]}>
             <Input placeholder="标题" />
           </Form.Item>
+          <Form.Item name="sqlWfType" label="变更类型：" rules={[{ required: true, message: '请填写' }]}>
+            <Select placeholder="选择变更类型" options={sqlWfTypeOptions}/>
+          </Form.Item>
           {/* <Form.Item name="sqlWfType">
                 <Select  placeholder="普通变更" options={sqlWfTypeOptions}/>
               </Form.Item> */}
@@ -212,6 +215,7 @@ export default function ResizeLayout() {
               })
             }} />
           </Form.Item>
+         
           <Form.Item name="tableCode" label="表：" >
             <Select placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={() => {
               const values = form?.getFieldsValue();
@@ -269,12 +273,9 @@ export default function ResizeLayout() {
 
 
             </Space>
-            {/* <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
-               format="YYYY-MM-DD HH:mm:ss" showTime /> */}
+           
           </Form.Item>
-          {/* <Form.Item name="dbCode">
-              <Select  placeholder="关联发布计划"/>
-              </Form.Item> */}
+         
           <Form.Item name="allowTiming" label="是否允许定时执行:" rules={[{ required: true, message: '请填写' }]}>
             <Radio.Group options={options} onChange={onChange3} value={value} />
           </Form.Item>

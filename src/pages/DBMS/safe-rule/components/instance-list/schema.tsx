@@ -5,8 +5,8 @@ import type { ColumnsType } from 'antd/lib/table';
 export const typeOptions=[
     {
         label:"MySQL",
-        value:"MySQL",
-        key:"MySQL"
+        value:"mysql",
+        key:"mysql"
     }
 ]
  export const envTypeData = [

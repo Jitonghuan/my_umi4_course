@@ -72,6 +72,14 @@ export default function AuthorityApply (){
         return createTableColumns({
             dataSource:dataSource,
           onDetail: (record, index) => {
+            if(record?.sqlWfType==="ddl"){
+              history.push({
+                pathname:"/matrix/DBMS/ddl-detail"
+              },{
+                record
+              })
+
+            }else{
               history.push({
                 pathname:"/matrix/DBMS/approval-end",
                 
@@ -80,6 +88,9 @@ export default function AuthorityApply (){
                 record
               })
             
+
+            }
+             
            
           },
          
@@ -126,6 +137,7 @@ export default function AuthorityApply (){
               allowClear
               style={{ width: 150 }}
               options={userNameOptions}
+              loading={loading}
              
             />
           </Form.Item>

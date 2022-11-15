@@ -470,6 +470,13 @@ export default [
         hideInMenu: true,
       },
       {
+        path:`${baseRoutePath}/DBMS/ddl-detail`,
+        name: '工单详情-结构变更',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/ddl-detail',
+        hideInMenu: true,
+      },
+      {
         path: `${baseRoutePath}/DBMS/change-apply`,
         name: '数据变更申请',
         key: 'data-change',

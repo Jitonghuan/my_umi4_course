@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Tabs, Select } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history, useLocation } from 'umi';
-import DetailContext from './context'
 import InstanceList from '../safe-rule/components/instance-list';
 import SafeList from '../safe-rule/components/safe-list'
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
@@ -45,20 +44,20 @@ export default function AuthorityManage() {
       {/* </FilterCard> */}
       {/* <ContentCard> */}
       {tabKey === "safe-list" && (
-        <DetailContext.Provider value={{ envCode: curEnvCode, tabKey: tabKey }}>
+       // <DetailContext.Provider value={{ envCode: curEnvCode, tabKey: tabKey }}>
           <VCPermission code={window.location.pathname} isShowErrorPage >
             <SafeList />
           </VCPermission>
-        </DetailContext.Provider>
+       // </DetailContext.Provider>
 
       )}
       {tabKey === "instance-list" && (
 
-        <DetailContext.Provider value={{ envCode: curEnvCode, tabKey: tabKey }}>
+       // <DetailContext.Provider value={{ envCode: curEnvCode, tabKey: tabKey }}>
           <VCPermission code={window.location.pathname} isShowErrorPage>
             <InstanceList />
           </VCPermission>
-        </DetailContext.Provider>
+       // </DetailContext.Provider>
 
       )}
 

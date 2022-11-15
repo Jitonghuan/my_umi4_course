@@ -95,14 +95,14 @@ export const createTableColumns = (params: {
           <Space>
           
             <a onClick={() => params.onEdit(record, index)}>编辑</a>
-            <Popconfirm
+            {/* <Popconfirm
               title="确认删除?"
               onConfirm={() => {
                 params?.onDelete(record.id);
               }}
             >
               <a>删除</a>
-            </Popconfirm>
+            </Popconfirm> */}
           </Space>
         ),
       },
