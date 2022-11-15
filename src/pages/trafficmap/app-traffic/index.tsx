@@ -107,7 +107,7 @@ export default function AppTrafficList() {
       </FilterCard>
       <ContentCard>
         <div className="table-caption" style={{ marginBottom: 8 }}>
-          <h3>应用流量列表</h3>
+          <h3>应用监控列表</h3>
           <Button
             type="primary"
             icon={<RedoOutlined />}
