@@ -368,7 +368,7 @@ export default function ApprovalEnd() {
               {info?.currentStatus === "reviewPass" && <span>
                 <Spin spinning={runLoading}>
                   <Space>
-                    <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>
+                    <Tag color="geekblue" onClick={showRunSqlConfirm}>执行到下个环境</Tag>
                   </Space>
                 </Spin></span>}
             </Space>
