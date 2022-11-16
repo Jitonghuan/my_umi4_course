@@ -1,12 +1,15 @@
 import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm,Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect,useContext } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
 import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined ,LoadingOutlined} from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
+import NextEnvDraw from './next-env-draw'
 import moment from 'moment';
+import {useGetDdlDesignFlow} from '../hook'
+import DetailContext from '../context';
 import { parse } from 'query-string';
 import { CurrentStatusStatus, PrivWfType } from '../../../../authority-manage/components/authority-apply/schema'
 import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog } from './hook'
@@ -42,6 +45,7 @@ export default function ApprovalEnd() {
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
   const [runSqlform] = Form.useForm()
+  const { tabKey } = useContext(DetailContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setstatus] = useState<string>("");
   const [runMode, setRunMode] = useState<string>("now")
@@ -53,6 +57,8 @@ export default function ApprovalEnd() {
   const [executeResultData, setExecuteResultData] = useState<any>([])
   const [reviewContentData, setReviewContentData] = useState<any>([])
   const [dateString, setDateString] = useState<string>("");
+  const [nextEnvmode,setNextEnvmode]=useState<EditorMode>("HIDE")
+  const [label,setLabel]=useState<any>([])
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
@@ -84,7 +90,7 @@ export default function ApprovalEnd() {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
-    }, 10000*20);
+    }, 1000*60);
 
     return () => {
       clearInterval(intervalId);
@@ -95,7 +101,22 @@ export default function ApprovalEnd() {
     if (!initInfo?.record?.id) return
     getInfo()
     getWorkflowLog(initInfo?.record?.id)
+   
   }, [])
+  useEffect(()=>{
+    
+    getDdlDesignFlow()
+  },[tabKey])
+  const getDdlDesignFlow=()=>{
+    if(tabKey){
+      useGetDdlDesignFlow(initInfo?.record?.id,tabKey).then((res)=>{
+        let nextEnv=res?.nextEnv
+        setLabel(nextEnv)
+      })
+
+    }
+   
+  }
   const onChange = (
     value: DatePickerProps['value'] | RangePickerProps['value'],
     dateString: | string,
@@ -131,9 +152,18 @@ export default function ApprovalEnd() {
       onOk(close) {
         form.validateFields().then((info) => {
           auditTicket({ reason: info?.reason, auditType, id: initInfo?.record?.id || afferentId }).then(() => {
-            afferentId ? getInfo(afferentId) : getInfo()
+            //afferentId ? getInfo(afferentId) : getInfo()
             // history.back()
             close()
+          
+          }).then(()=>{
+            if (query?.detail === "true" && query?.id) {
+              getInfo(afferentId)
+              getWorkflowLog(afferentId)
+            }else{
+              getInfo()
+              getWorkflowLog(initInfo?.record?.id)
+            }
           })
         })
 
@@ -214,25 +244,67 @@ export default function ApprovalEnd() {
       }
     }
   };
+  //console.log("label",label)
 
   const columns = useMemo(() => {
     return createTableColumns() as any;
   }, []);
   return (
     <PageContainer className="approval-end">
+      <NextEnvDraw 
+      mode={nextEnvmode} 
+      onClose={()=>{
+        setNextEnvmode("HIDE")
+      }} 
+      initData={initInfo} 
+      onSave={()=>{
+        if (query?.detail === "true" && query?.id) {
+          getInfo(afferentId)
+          getWorkflowLog(afferentId)
+        }else{
+          getInfo()
+          getWorkflowLog(initInfo?.record?.id)
+        }
+        setNextEnvmode("HIDE")
+      }}
+      label={label}
+      sqlContent={info?.sqlContent}
+      />
       <ContentCard>
         <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} onCancel={() => { setVisible(false) }} onOk={
           () => {
             runSqlform.validateFields().then((info) => {
               if (info?.runMode === "now") {
                 runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
-                  afferentId ? getInfo(afferentId) : getInfo()
+                  //afferentId ? getInfo(afferentId) : getInfo()
                   setVisible(false)
+                 
+
+                }).then(()=>{
+                  setTimeout(() => {
+                    if (query?.detail === "true" && query?.id) {
+                      getInfo(afferentId)
+                      getWorkflowLog(afferentId)
+                    }else{
+                      getInfo()
+                      getWorkflowLog(initInfo?.record?.id)
+                    }
+                    
+                  }, 300);
                 })
               } else {
                 runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
-                  afferentId ? getInfo(afferentId) : getInfo()
+                  //afferentId ? getInfo(afferentId) : getInfo()
                   setVisible(false)
+                 
+                }).then(()=>{
+                  if (query?.detail === "true" && query?.id) {
+                    getInfo(afferentId)
+                    getWorkflowLog(afferentId)
+                  }else{
+                    getInfo()
+                    getWorkflowLog(initInfo?.record?.id)
+                  }
                 })
               }
             })
@@ -255,6 +327,7 @@ export default function ApprovalEnd() {
                     onOk={onOk}
                     showNow={false}
                     disabledDate={disabledDate}
+                    //@ts-ignore
                     disabledTime={disabledDateTime}
                     placeholder="请选择执行时间"
                   />
@@ -348,7 +421,17 @@ export default function ApprovalEnd() {
                   status === "wait"&&owner?.join(',')?.includes(userName)? <Space>
                    <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
-                        afferentId ? getInfo(afferentId) : getInfo()
+                        //afferentId ? getInfo(afferentId) : getInfo()
+                        setTimeout(() => {
+                          if (query?.detail === "true" && query?.id) {
+                            getInfo(afferentId)
+                            getWorkflowLog(afferentId)
+                          }else{
+                            getInfo()
+                            getWorkflowLog(initInfo?.record?.id)
+                          }
+                          
+                        }, 300);
                         // history.back()
                       })
                     }}>审批通过</Tag>
@@ -365,12 +448,19 @@ export default function ApprovalEnd() {
           <div className="ticket-detail-title">
             <Space>
               <span><b>{(status === "wait"&&reviewContentData?.length > 0)?"检测详情":(status !== "wait" && executeResultData?.length > 0)?"执行详情":"检测详情"}</b></span>
-              {info?.currentStatus === "reviewPass" && <span>
+            <span>
                 <Spin spinning={runLoading}>
                   <Space>
-                    <Tag color="geekblue" onClick={showRunSqlConfirm}>执行到下个环境</Tag>
+                    {info?.currentStatus === "reviewPass"&& <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                   {info?.currentStatus==="finish"&&label?.value&&(
+                       <Tag color="geekblue" onClick={()=>{
+                         setNextEnvmode("EDIT")
+
+                      }}>执行到下个环境</Tag>
+                   )}
+                  
                   </Space>
-                </Spin></span>}
+                </Spin></span>
             </Space>
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >

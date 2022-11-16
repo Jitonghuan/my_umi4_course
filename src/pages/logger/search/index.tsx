@@ -16,7 +16,6 @@ import {
   Tabs,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
-import htmr from 'htmr';
 import ReactJson from 'react-json-view';
 import { history, useLocation } from 'umi';
 import { parse } from 'query-string';

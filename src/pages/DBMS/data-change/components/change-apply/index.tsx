@@ -43,8 +43,8 @@ export default function ResizeLayout() {
   const [databasesOptionsLoading, databasesOptions, queryDatabases, setSource] = useQueryDatabasesOptions()
   const [tablesOptionsLoading, tablesOptions, queryTables, setTablesSource] = useQueryTablesOptions();
   //const [loading, tableFields, tableFieldsOptions, queryTableFields] = useQueryTableFieldsOptions();
-  const [start, setStart] = useState<string>("")
-  const [end, setEnd] = useState<string>("")
+  // const [start, setStart] = useState<string>("")
+  // const [end, setEnd] = useState<string>("")
   const [fields,setFields]=useState<any>([])
 
   const queryTableFields = async (params:{dbCode:string,tableCode:string}) => {
@@ -69,8 +69,8 @@ export default function ResizeLayout() {
   const selectTime = (time: any, timeString: any) => {
    let start=moment(timeString[0]).add(2, "minutes").format("YYYY-MM-DD HH:mm:ss")
    let end=moment(timeString[1]).add(2, "minutes").format("YYYY-MM-DD HH:mm:ss")
-    setStart(start)
-    setEnd(end)
+    // setStart(start)
+    // setEnd(end)
     if (start !== 'NaN' && end !== 'NaN') {
       setStartTime(start);
       setEndTime(end);
@@ -171,7 +171,7 @@ export default function ResizeLayout() {
     }).finally(() => {
       setSqlLoading(false)
     })
-  }, [start, end,startTime,endTime,value])
+  }, [startTime,endTime,value])
 
   const leftContent = useMemo(() => {
     return (
@@ -237,6 +237,7 @@ export default function ResizeLayout() {
                onChange={(v: any, b: any) => selectTime(v, b)}
                showNow={false}
                disabledDate={disabledDate}
+               //@ts-ignore
                disabledTime={disabledDateTime}
                format="YYYY-MM-DD HH:mm:ss" showTime />}
 
@@ -300,7 +301,7 @@ export default function ResizeLayout() {
         <RightContent tableFields={fields} createItems={form?.getFieldsValue()} createSql={(params: { sqlContent: string }) => createSqlApply(params)} />
       </>
     )
-  }, [fields, formRef, form?.getFieldsValue()],);
+  }, [fields, formRef, form?.getFieldsValue()]);
 
   return (
     <PageContainer>

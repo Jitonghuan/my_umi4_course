@@ -1,41 +1,50 @@
-import { Avatar, Divider, List, Skeleton,Collapse } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Avatar, Divider, List, Skeleton,Collapse,Button } from 'antd';
+import React, { useEffect, useState,useContext } from 'react';
+import DetailContext from '../context';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import {useGetSqlDdlInfo} from '../hook'
 
 interface DataType {
-  gender: string;
-  name: {
-    title: string;
-    first: string;
-    last: string;
-  };
-  email: string;
-  picture: {
-    large: string;
-    medium: string;
-    thumbnail: string;
-  };
-  nat: string;
+  id: number,
+  title: string,
+  remark: string,
+  userSsoName: string,
+  userName: string,
+  currentStatus:string,
+  startTime: string,
+  endTime: string,
+  envCode: string,
+  instanceId: number,
+  instanceName: string,
+  dbCode: string,
+  runStartTime: string,
+  runEndTime: string,
+  syntaxType: string,
+  sqlWfType:string,
+  execTime: string,
+  currentStatusDesc:string,
+  allowTiming: boolean,
+  parentWfId: number,
+  envType: string
 }
 const { Panel } = Collapse;
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<DataType[]>([]);
+  const { tabKey ,changeTabKey,parentWfId} = useContext(DetailContext);
 
   const loadMoreData = () => {
     if (loading) {
       return;
     }
     setLoading(true);
-    fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
-      .then(res => res.json())
-      .then(body => {
-        setData([...data, ...body.results]);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    //@ts-ignore
+    useGetSqlDdlInfo({parentWfId:parentWfId,envType:tabKey}).then((data)=>{
+      setData(data)
+
+    }).finally(()=>{
+      setLoading(false);
+    })
   };
 
   useEffect(() => {
@@ -58,32 +67,25 @@ const App: React.FC = () => {
       <InfiniteScroll
         dataLength={data.length}
         next={loadMoreData}
-        hasMore={data.length < 50}
-        loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+        hasMore={data.length < 500}
+        loader={<Skeleton paragraph={{ rows: 1 }}   />}
         endMessage={<Divider plain>--------已加载全部-------</Divider>}
         scrollableTarget="scrollableDiv"
       >
         <List
           dataSource={data}
+          // locale={{
+          //   emptyText: "暂无数据"
+          // }}
           renderItem={item => (
-              <List.Item key={item.email}>
+              <List.Item key={item.id}>
                   <Collapse  onChange={onChange} style={{width:"100%"}}>
-                      <Panel header="This is panel header 1" key="1">
+                      <Panel header={item?.title} key={item.id} extra={<Button>刷新</Button>}>
                           <p>{""}</p>
                       </Panel>
-                      <Panel header="This is panel header 2" key="2">
-                          <p>{""}</p>
-                      </Panel>
-                      <Panel header="This is panel header 3" key="3">
-                          <p>{""}</p>
-                      </Panel>
+                    
                   </Collapse>
-                  {/* <List.Item.Meta
-                avatar={<Avatar src={item.picture.large} />}
-                title={<a href="https://ant.design">{item.name.last}</a>}
-                description={item.email}
-              />
-              <div>Content</div> */}
+                 
               </List.Item>
           )}
         />

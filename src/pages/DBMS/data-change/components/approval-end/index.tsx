@@ -92,7 +92,7 @@ export default function ApprovalEnd() {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
-    }, 10000*20);
+    }, 10000*6);
 
     return () => {
       clearInterval(intervalId);
@@ -139,9 +139,18 @@ export default function ApprovalEnd() {
       onOk(close) {
         form.validateFields().then((info) => {
           auditTicket({ reason: info?.reason, auditType, id: initInfo?.record?.id || afferentId }).then(() => {
-            afferentId ? getInfo(afferentId) : getInfo()
+          
             // history.back()
             close()
+          }).then(()=>{
+           // afferentId ? getInfo(afferentId) : getInfo()
+           if (query?.detail === "true" && query?.id) {
+            getInfo(afferentId)
+            getWorkflowLog(afferentId)
+          }else{
+            getInfo()
+            getWorkflowLog(initInfo?.record?.id)
+          }
           })
         })
 
@@ -234,13 +243,31 @@ export default function ApprovalEnd() {
             runSqlform.validateFields().then((info) => {
               if (info?.runMode === "now") {
                 runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
-                  afferentId ? getInfo(afferentId) : getInfo()
+                 // afferentId ? getInfo(afferentId) : getInfo()
+              
                   setVisible(false)
+                }).then(()=>{
+                  if (query?.detail === "true" && query?.id) {
+                    getInfo(afferentId)
+                    getWorkflowLog(afferentId)
+                  }else{
+                    getInfo()
+                    getWorkflowLog(initInfo?.record?.id)
+                  }
                 })
               } else {
                 runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
-                  afferentId ? getInfo(afferentId) : getInfo()
+                  //afferentId ? getInfo(afferentId) : getInfo()
+                 
                   setVisible(false)
+                }).then(()=>{
+                  if (query?.detail === "true" && query?.id) {
+                    getInfo(afferentId)
+                    getWorkflowLog(afferentId)
+                  }else{
+                    getInfo()
+                    getWorkflowLog(initInfo?.record?.id)
+                  }
                 })
               }
             })
@@ -356,8 +383,18 @@ export default function ApprovalEnd() {
                   status === "wait"&&owner?.join(',')?.includes(userName)? <Space>
                    <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
-                        afferentId ? getInfo(afferentId) : getInfo()
+                       // afferentId ? getInfo(afferentId) : getInfo()
                         // history.back()
+                        setTimeout(() => {
+                          if (query?.detail === "true" && query?.id) {
+                            getInfo(afferentId)
+                            getWorkflowLog(afferentId)
+                          }else{
+                            getInfo()
+                            getWorkflowLog(initInfo?.record?.id)
+                          }
+                          
+                        }, 300);
                       })
                     }}>审批通过</Tag>
 

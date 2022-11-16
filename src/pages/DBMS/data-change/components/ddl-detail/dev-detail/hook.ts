@@ -11,6 +11,22 @@ getRequest(APIS.getSqlInfoApi,{data:{id}}).then((res: any) => {
   }
   return {};
 });
+interface nextEnvItems{
+  parentWfId:number;
+  envType:string;
+  sqlContent?: string;
+  dbCode?: string;
+  envCode?: string;
+  instanceId?: number;
+  runStartTime?: string;
+  runEndTime?: string;
+  allowTiming: boolean;
+}
+
+export const createNextDDL = (params: nextEnvItems) =>
+  postRequest(APIS.createNextDDLApi, {
+    data: params,
+  });
 
 //auditApi
 export function useAuditTicket(): [
