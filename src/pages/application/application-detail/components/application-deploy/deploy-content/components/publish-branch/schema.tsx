@@ -86,6 +86,9 @@ export const branchTableSchema = ({ id, appCode, appData, env }) => {
         {
             title: '创建时间',
             dataIndex: 'gmtCreate',
+            ellipsis: {
+                showTitle: false,
+            },
             width: 140,
             render: (value: string, record: any) => <Tooltip placement="topLeft" title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip>
         },

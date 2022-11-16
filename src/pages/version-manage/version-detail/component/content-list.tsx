@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Input, Button, Table, Space, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Input, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
+import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 const mockData = [
     { title: '应用管理：版本发布' },
     { title: '应用管理：版本发布' },
@@ -34,7 +34,7 @@ export default function ContentList() {
         {
             title: '类型',
             dataIndex: 'id',
-            width: 120,
+            width: 80,
         },
         {
             title: '版本需求状态',
@@ -44,9 +44,32 @@ export default function ContentList() {
         {
             title: '关联应用',
             dataIndex: 'id',
-            width: 120,
+            width: 300,
+        },
+        {
+            title: '操作',
+            fixed: 'right',
+            width: 40,
+            render: (_: any, record: any, index: number) => (
+                <div className="action-cell">
+                    <Popconfirm
+                        title="确定要删除吗？"
+                        onConfirm={() => {
+                            handleDelete();
+                        }}
+                    >
+                        <a>
+                            <CloseCircleFilled style={{ color: '#d10a0a', fontSize: 18 }} />
+                        </a>
+                    </Popconfirm>
+                </div>
+            ),
         },
     ]
+
+    const handleDelete = () => {
+
+    }
     return (
         <>
             <div className='table-top'>

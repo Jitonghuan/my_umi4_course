@@ -9,7 +9,7 @@
 import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio, Tabs } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures } from '@/pages/application/service';
@@ -160,91 +160,89 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
   return (
     <div className={rootCls}>
-      <div className='flex-space-between'>
-        <div className={`${rootCls}__title`}>{`待发布的${publishType === 'branch' ? '分支' : '版本'}`}</div>
-        <Radio.Group value={publishType} onChange={handleTypeChange}>
-          <Radio.Button value="branch">分支发布</Radio.Button>
-          <Radio.Button value="version">版本发布</Radio.Button>
-        </Radio.Group>
-      </div>
+      <div className={`${rootCls}__title`}>{`待发布内容`}</div>
+      <Tabs activeKey={publishType} onChange={(key) => { setPublishType(key) }}>
+        {/* 发布分支 */}
+        <Tabs.TabPane tab='待发布分支' key='branch' >
+          <>
+            <div className="table-caption">
+              <div className="caption-left">
+                <h4>主干分支：</h4>
+                <Select
+                  ref={selectRef}
+                  options={masterBranchOptions}
+                  value={selectMaster}
+                  style={{ width: '300px', marginRight: '20px' }}
+                  onChange={handleChange}
+                  showSearch
+                  optionFilterProp="label"
+                  // labelInValue
+                  filterOption={(input, option) => {
+                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                  }}
+                />
+                <h4>开发分支名称：</h4>
+                <Input.Search
+                  placeholder="搜索分支"
+                  value={searchText}
+                  onChange={(e) => {
+                    setSearchText(e.target.value), changeBranchName(e.target.value)
+                  }}
+                  onPressEnter={() => onSearch?.(searchText)}
+                  onSearch={() => onSearch?.(searchText)}
+                />
+              </div>
+              <div className="caption-right">
+                {appData?.deployModel === 'online' && (
+                  <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+                    {hasPublishContent ? '追加分支' : '提交分支'}
+                  </Button>
+                )}
+              </div>
+            </div>
+            <Table
+              rowKey="id"
+              bordered
+              dataSource={dataSource}
+              loading={loading}
+              pagination={false}
+              columns={branchColumns}
+              scroll={{ x: '100%' }}
+              rowSelection={{
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                  setSelectedRowKeys(selectedRowKeys as any);
+                },
+              }}
+            />
+          </>
+        </Tabs.TabPane>
 
-      {publishType === 'branch' &&
-        <>
-          <div className="table-caption">
-            <div className="caption-left">
-              <h4>主干分支：</h4>
-              <Select
-                ref={selectRef}
-                options={masterBranchOptions}
-                value={selectMaster}
-                style={{ width: '300px', marginRight: '20px' }}
-                onChange={handleChange}
-                showSearch
-                optionFilterProp="label"
-                // labelInValue
-                filterOption={(input, option) => {
-                  return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                }}
-              />
-              <h4>开发分支名称：</h4>
-              <Input.Search
-                placeholder="搜索分支"
-                value={searchText}
-                onChange={(e) => {
-                  setSearchText(e.target.value), changeBranchName(e.target.value)
-                }}
-                onPressEnter={() => onSearch?.(searchText)}
-                onSearch={() => onSearch?.(searchText)}
-              />
+        {/* 发布版本 */}
+        <Tabs.TabPane tab='待发布版本' key='version'>
+          <>
+            <div className='flex-end' style={{ marginBottom: '10px' }}>
+              <Button type='primary' disabled={!selectedRowKeys.length} onClick={() => { }}>提交发布</Button>
             </div>
-            <div className="caption-right">
-              {appData?.deployModel === 'online' && (
-                <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-                  {hasPublishContent ? '追加分支' : '提交分支'}
-                </Button>
-              )}
-            </div>
-          </div>
-          <Table
-            rowKey="id"
-            bordered
-            dataSource={dataSource}
-            loading={loading}
-            pagination={false}
-            columns={branchColumns}
-            scroll={{ x: '100%' }}
-            rowSelection={{
-              type: 'checkbox',
-              selectedRowKeys,
-              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                setSelectedRowKeys(selectedRowKeys as any);
-              },
-            }}
-          />
-        </>
-      }
-      {
-        publishType === 'version' &&
-        <>
-          <div className='flex-end'>
-            <Button type='primary' disabled={!selectedRowKeys.length} onClick={() => { }}>提交发布</Button>
-          </div>
-          <Table
-            dataSource={[]}
-            bordered
-            rowKey="id"
-            pagination={false}
-            columns={verisionColumns}
-            rowSelection={{
-              type: 'checkbox',
-              selectedRowKeys,
-              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                setSelectedRowKeys(selectedRowKeys as any);
-              },
-            }}
-          />
-        </>
-      }
+            <Table
+              dataSource={[]}
+              bordered
+              rowKey="id"
+              pagination={false}
+              columns={verisionColumns}
+              rowSelection={{
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                  setSelectedRowKeys(selectedRowKeys as any);
+                },
+              }}
+            />
+          </>
+        </Tabs.TabPane>
+      </Tabs>
+
 
       <Modal
         title="选择发布环境"
