@@ -65,7 +65,7 @@ export default function CreateEditRule(props: any) {
             }
         >
             <div className="creat-rule">
-                <Form form={form} labelCol={{ flex: '120px' }}>
+                <Form form={form} labelCol={{ flex: '120px' }} autoComplete="off" colon={false}>
                     <Form.Item label="规则名称：" name="ruleName" rules={[{ required: true, message: '这是必填项' }]}>
                         <Input style={{ width: 300 }} placeholder="请输入环境名称"></Input>
                     </Form.Item>

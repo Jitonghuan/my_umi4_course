@@ -592,10 +592,14 @@ export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
     },
     {
       title: '关联资源',
-      dataIndex: ['info', 'message'],
+      dataIndex: 'resourceRel',
       width: 240,
       ellipsis: true,
-      render: (value: any) => <Tooltip title={value}>{value}</Tooltip>
+      render: (value: any) => {
+        return (
+          (value || []).map((item: any) => <Tag color='geekblue'>{item}</Tag>)
+        )
+      }
     },
     {
       title: '弹性伸缩',
