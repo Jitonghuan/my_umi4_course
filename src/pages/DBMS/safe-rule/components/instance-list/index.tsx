@@ -99,7 +99,7 @@ export default function InstanceList(){
       />
         </div>
         <Modal title="编辑实例规则" visible={mode==="EDIT"} destroyOnClose onOk={()=>{
-          updateRuleSet({ruleSetId:ruleForm.getFieldValue("ruleSetId"),instanceId:curRecord?.instanceId}).then((res)=>{
+          updateRuleSet({ruleSetId:ruleForm.getFieldValue("ruleSetId"),instanceId:curRecord?.id}).then((res)=>{
         if(res?.success){
             setMode("HIDE")
              submit()

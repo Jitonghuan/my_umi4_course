@@ -1,8 +1,13 @@
-import { Avatar, Divider, List, Skeleton,Collapse,Button } from 'antd';
+import { Avatar, Divider, List, Space,Collapse,Button,Empty } from 'antd';
 import React, { useEffect, useState,useContext } from 'react';
 import DetailContext from '../context';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {useGetSqlDdlInfo} from '../hook'
+import PanelDetail from './panel-detail'
+import PageContainer from '@/components/page-container';
+import { history, useLocation } from 'umi';
+import { parse, stringify } from 'query-string';
+import './index.less'
 
 interface DataType {
   id: number,
@@ -32,6 +37,22 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<DataType[]>([]);
   const { tabKey ,changeTabKey,parentWfId} = useContext(DetailContext);
+  const [activePanel, setActivePanel] = useState<any>(undefined);
+   const [count,setCount]=useState<number>(0)
+  const [refreshKey,setRefreshKey]=useState<number>()
+  let location = useLocation();
+  const query = parse(location.search);
+  useEffect(()=>{
+    if(query?.curId&&query?.entry==="DDL"){
+      setRefreshKey(Number(query?.curId))
+      setActivePanel(Number(query?.curId))
+     // setCount
+
+    }
+
+    
+    
+  },[])
 
   const loadMoreData = () => {
     if (loading) {
@@ -48,42 +69,61 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    loadMoreData();
+    if(parentWfId&&tabKey){
+      loadMoreData();
+    }
+    return()=>{
+      //setRefreshKey("")
+    }
+
   }, []);
-  const onChange = (key: string | string[]) => {
-    console.log(key);
+  const onChange = (key: any ) => {
+    console.log("---key--",key)
+    if (key) {
+      
+      setActivePanel(key)
+    }
   };
 
   return (
+<PageContainer style={{margin:0}} className="content-detail">
+      {/* {data.length>0?<>
+      </>:<Empty/>} */}
     <div
       id="scrollableDiv"
       style={{
-        height: "100%",
         overflow: 'auto',
-        padding: '0 16px',
-        border: '1px solid rgba(140, 140, 140, 0.35)',
+        display: "flex",
+        flexDirection: "column", 
+        height: "100%"
       }}
     >
       <InfiniteScroll
         dataLength={data.length}
         next={loadMoreData}
         hasMore={data.length < 500}
-        loader={<Skeleton paragraph={{ rows: 1 }}   />}
+        loader={false}
         endMessage={<Divider plain>--------已加载全部-------</Divider>}
         scrollableTarget="scrollableDiv"
       >
         <List
           dataSource={data}
-          // locale={{
-          //   emptyText: "暂无数据"
-          // }}
+          loading={loading}
           renderItem={item => (
               <List.Item key={item.id}>
-                  <Collapse  onChange={onChange} style={{width:"100%"}}>
-                      <Panel header={item?.title} key={item.id} extra={<Button>刷新</Button>}>
-                          <p>{""}</p>
+                  <Collapse  accordion activeKey={activePanel}  onChange={onChange} style={{width:"100%"}}  bordered={false}>
+                      <Panel   header={<Space size="large"><span>工单号：{item?.id}</span><span>实例名：{item?.instanceName}</span></Space>} key={item.id} extra={<Button type="primary" onClick={(e)=>{
+                       
+                        e.stopPropagation();
+                         setCount(count=>count+1)
+                       
+                        setRefreshKey(item.id)
+                      }}>刷新</Button>}>
+                         <div style={{height:"100%"}}>
+                         <PanelDetail parentWfId={item.id} refreshKey={refreshKey} count={count}  tabKey={tabKey||""}/>
+                           </div>
                       </Panel>
-                    
+                     
                   </Collapse>
                  
               </List.Item>
@@ -91,6 +131,7 @@ const App: React.FC = () => {
         />
       </InfiniteScroll>
     </div>
+    </PageContainer>
   );
 };
 

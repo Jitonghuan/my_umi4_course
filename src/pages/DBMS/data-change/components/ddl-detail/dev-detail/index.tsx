@@ -13,6 +13,7 @@ import DetailContext from '../context';
 import { parse } from 'query-string';
 import { CurrentStatusStatus, PrivWfType } from '../../../../authority-manage/components/authority-apply/schema'
 import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog } from './hook'
+import RollbackSql from '../../rollback-sql'
 import './index.less';
 
 const runModeOptions = [
@@ -51,6 +52,7 @@ export default function ApprovalEnd() {
   const [runMode, setRunMode] = useState<string>("now")
   const [owner, setOwner] = useState<any>([]);
   const [auditLoading, auditTicket] = useAuditTicket();
+  const [visiable,setVisiable]= useState<boolean>(false);
   //useRunSql
   const [runLoading, runSql] = useRunSql();
   const [statusText, setStatusText] = useState<string>("");
@@ -251,12 +253,13 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
+       <RollbackSql  visiable={visiable} onClose={()=>{setVisiable(false)}} curId={initInfo?.record?.id}/>
       <NextEnvDraw 
       mode={nextEnvmode} 
       onClose={()=>{
         setNextEnvmode("HIDE")
       }} 
-      initData={initInfo} 
+     
       onSave={()=>{
         if (query?.detail === "true" && query?.id) {
           getInfo(afferentId)
@@ -453,14 +456,18 @@ export default function ApprovalEnd() {
                   <Space>
                     {info?.currentStatus === "reviewPass"&& <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
                    {info?.currentStatus==="finish"&&label?.value&&(
-                       <Tag color="geekblue" onClick={()=>{
+                       <Button type="primary" onClick={()=>{
                          setNextEnvmode("EDIT")
 
-                      }}>执行到下个环境</Tag>
+                      }}>执行到下个环境</Button>
                    )}
                   
                   </Space>
                 </Spin></span>
+                <span > <Button type="primary" onClick={()=>{
+                  setVisiable(true)
+                }}>获取回滚语句</Button></span>
+
             </Space>
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >

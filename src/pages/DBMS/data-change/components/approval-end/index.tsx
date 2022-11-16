@@ -12,6 +12,8 @@ import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
 import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined ,LoadingOutlined} from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
+import RollbackSql  from '../rollback-sql'
+
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
@@ -49,6 +51,7 @@ export default function ApprovalEnd() {
   const [info, setInfo] = useState<any>({});
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
+  const [visiable,setVisiable]= useState<boolean>(false);
   const [runSqlform] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setstatus] = useState<string>("");
@@ -237,6 +240,7 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
+      <RollbackSql  visiable={visiable} onClose={()=>{setVisiable(false)}} curId={initInfo?.record?.id}/>
       <ContentCard>
         <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} onCancel={() => { setVisible(false) }} onOk={
           () => {
@@ -413,9 +417,13 @@ export default function ApprovalEnd() {
               {info?.currentStatus === "reviewPass" && <span>
                 <Spin spinning={runLoading}>
                   <Space>
-                    <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>
+                    <Button type="primary"  onClick={showRunSqlConfirm}>开始执行</Button>
                   </Space>
                 </Spin></span>}
+
+                <Button type="primary"  onClick={()=>{
+                  setVisiable(true)
+                }}>获取回滚语句</Button>
             </Space>
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >

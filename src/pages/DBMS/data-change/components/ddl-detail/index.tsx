@@ -3,8 +3,6 @@ import { Tabs, Select, Spin,Empty } from 'antd';
 import PageContainer from '@/components/page-container';
 import { history, useLocation } from 'umi';
 import DetailContext from './context'
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import VCPermission from '@/components/vc-permission';
 import ContentDetail from './content-detail';
 import DevDetail from './dev-detail'
 import { useGetDdlDesignFlow } from './hook'
@@ -15,9 +13,16 @@ export default function DDLDetail() {
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
-  const afferentId = Number(query?.id)
+  const parentId = Number(query?.parentId)
   const [label, setLabel] = useState<any>([])
   const [loading, setLoading] = useState<boolean>(false)
+  //activeKey parentId curId entry=DDL
+  useEffect(()=>{
+   
+    if(parentId&&query?.entry==="DDL"){
+      getDdlDesignFlow(parentId)
+    }
+  },[])
  
   useEffect(() => {
     if (initInfo?.record?.id) {
@@ -25,13 +30,31 @@ export default function DDLDetail() {
     }
 
   }, [initInfo?.record?.id])
-  const getDdlDesignFlow = () => {
+  const getDdlDesignFlow = (id?:number) => {
     setLoading(true)
-    useGetDdlDesignFlow(initInfo?.record?.id).then((res) => {
+    let curId=id?id:initInfo?.record?.id
+    useGetDdlDesignFlow(curId).then((res) => {
       let envs=res?.env;
       setLabel(envs)
       if(envs?.length>0){
-        setTabKey(envs[0]?.value)
+      
+        if(query?.activeKey){
+          const index= envs?.findIndex((v:any) => v.value === query?.activeKey)
+          console.log("index",index)
+          if(index!==-1){
+            setTabKey(query?.activeKey)
+          }else{
+            return
+          }
+
+          
+        }else{
+          setTabKey(envs[0]?.value)
+
+        }
+
+       
+
       }
     }).finally(() => {
       setLoading(false)
@@ -42,10 +65,15 @@ export default function DDLDetail() {
   }
 
   return (
-    <PageContainer>
+    <PageContainer style={{  display: "flex",
+    flexDirection: "column",
+     padding: "0px 12px",
+     height: "100%"}}>
       <Spin spinning={loading}>
         <Tabs
           activeKey={tabKey}
+          type="card"
+
           onChange={(val) => {
             setTabKey(val);
           }}
@@ -54,11 +82,11 @@ export default function DDLDetail() {
             return (
               <>
                 <Tabs.TabPane tab={ele?.label} key={ele?.value} >
-                  {ele?.id===1?<DetailContext.Provider value={{ tabKey:ele?.value,changeTabKey,parentWfId:initInfo?.record?.id }}>
+                  {ele?.id===1?<DetailContext.Provider value={{ tabKey:ele?.value,changeTabKey,parentWfId:initInfo?.record?.id||query?.parentId }}>
                      <DevDetail />
 
                  </DetailContext.Provider>:
-                 <DetailContext.Provider value={{tabKey:ele?.value,changeTabKey,parentWfId:initInfo?.record?.id }}> 
+                 <DetailContext.Provider value={{tabKey:ele?.value,changeTabKey,parentWfId:initInfo?.record?.id|| query?.parentId}}> 
                     <ContentDetail />
                   </DetailContext.Provider>
                   }

@@ -40,8 +40,8 @@ export const createTableColumns = (params: {
     return [
       {
         title: '实例ID',
-        dataIndex: 'instanceId',
-        key: 'instanceId',
+        dataIndex: 'id',
+        key: 'id',
         width: '6%',
       },
       {
