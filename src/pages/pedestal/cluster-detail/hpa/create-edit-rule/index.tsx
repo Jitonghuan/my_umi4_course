@@ -29,7 +29,7 @@ export default function CreateEditRule(props: any) {
         let labels: any = {};
         const tags = value['labelRelMap'];
         tags.forEach((item: any) => {
-            labels[item.key] = item.value;
+            labels[item.key] = item.value || '';
         });
         value.labelRelMap = labels;
         value.hpaSwitch = value.hpaSwitch ? 1 : 0;
