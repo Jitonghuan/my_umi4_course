@@ -38,7 +38,7 @@ export default function Hpa(props: any) {
                 }
             },
             handleSwitch: async (checked: boolean, record: any) => {
-                const res = await hpaUpdate({ hpaSwitch: checked ? 1 : 0, id: record.id });
+                const res = await hpaUpdate({ ...record, hpaSwitch: checked ? 1 : 0 });
                 if (res?.success) {
                     message.success('操作成功');
                     initSearch();
@@ -80,7 +80,7 @@ export default function Hpa(props: any) {
     }
 
     return (
-        <div className="cluster-resource-detail">
+        <div className="hpa-page">
             <CreateEditRule
                 mode={mode}
                 onClose={() => { setMode('HIDE') }}

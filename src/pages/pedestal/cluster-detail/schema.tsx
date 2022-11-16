@@ -570,7 +570,7 @@ export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
     {
       title: '规则名称',
       dataIndex: 'ruleName',
-      width: 180,
+      width: 160,
       ellipsis: true,
       render: (value: any) => (
         <Tooltip title={value}>
@@ -600,14 +600,14 @@ export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
     {
       title: '弹性伸缩',
       dataIndex: 'hpaSwitch',
-      width: 80,
+      width: 60,
       ellipsis: true,
       render: (value: any, record: any) => <Switch checked={value} onChange={(checked) => { handleSwitch(checked, record) }} />
     },
     {
       title: '操作',
       fixed: 'right',
-      width: 120,
+      width: 100,
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">

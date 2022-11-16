@@ -51,7 +51,7 @@ export default function CreateEditRule(props: any) {
             title={mode === 'EDIT' ? '编辑规则' : mode === 'VIEW' ? '规则详情' : '创建规则'}
             maskClosable={false}
             onClose={onClose}
-            width={'50%'}
+            width='650'
             className='create-edit-pha-rule'
             footer={
                 <div className="drawer-footer">
