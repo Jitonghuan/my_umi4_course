@@ -12,13 +12,13 @@ export default function CreateEditRule(props: any) {
     useEffect(() => {
         if (mode === 'ADD') {
             form.resetFields();
-            form.setFieldsValue({ labelRel: [undefined], hpaSwitch: false })
+            form.setFieldsValue({ labelRelMap: [undefined], hpaSwitch: false })
         }
         if (mode === 'EDIT') {
-            const labels = Object.keys((initData?.labelRel || [])).map((item) => ({ key: item, value: initData?.labelRel[item] }));
+            const labels = Object.keys((initData?.labelRelMap || [])).map((item) => ({ key: item, value: initData?.labelRelMap[item] }));
             form.setFieldsValue({
                 ...initData,
-                labelRel: labels.length ? labels : [undefined],
+                labelRelMap: labels.length ? labels : [undefined],
                 checked: initData.hpaSwitch,
             })
         }
@@ -27,11 +27,12 @@ export default function CreateEditRule(props: any) {
         const value = await form.validateFields();
         const { id } = initData || {}
         let labels: any = {};
-        const tags = value['labelRel'];
+        const tags = value['labelRelMap'];
         tags.forEach((item: any) => {
             labels[item.key] = item.value;
         });
-        value.labelRel = labels;
+        value.labelRelMap = labels;
+        value.hpaSwitch = value.hpaSwitch ? 1 : 0;
         setLoading(true)
         try {
             const res = await (mode === 'ADD' ? hpaCreate({ ...value, clusterCode }) : hpaUpdate({ ...value, clusterCode, id }));
@@ -69,19 +70,19 @@ export default function CreateEditRule(props: any) {
                         <Input style={{ width: 300 }} placeholder="请输入环境名称"></Input>
                     </Form.Item>
                     <Form.Item label="弹性伸缩：" name="hpaSwitch" valuePropName='checked'>
-                        <Switch />
+                        <Switch size="default" />
                     </Form.Item>
                     <Form.Item label='扩容阈值(高于)：' name='expansionThreshold' rules={[{ required: true, message: '这是必填项' }]}>
-                        <InputNumber style={{ width: 200 }} addonAfter="%" placeholder='请输入' min={0} max={100} />
+                        <InputNumber size="middle" style={{ width: 150 }} addonAfter="%" placeholder='请输入' min={0} max={100} />
                     </Form.Item>
                     <Form.Item label='扩容阈值(低于)：' name='shrinkageThreshold' rules={[{ required: true, message: '这是必填项' }]}>
-                        <InputNumber style={{ width: 200 }} addonAfter="%" placeholder='请输入' min={0} max={100} />
+                        <InputNumber size="middle" style={{ width: 150 }} addonAfter="%" placeholder='请输入' min={0} max={100} />
                     </Form.Item>
                     <Form.Item label='静默时间：' name='silenceTime' rules={[{ required: true, message: '这是必填项' }]}>
-                        <InputNumber style={{ width: 200 }} addonAfter="min" placeholder='请输入' min={0} />
+                        <InputNumber size="middle" style={{ width: 150 }} addonAfter="min" placeholder='请输入' min={0} />
                     </Form.Item>
-                    <Form.Item label="关联标签">
-                        <Form.List name="labelRel" >
+                    <Form.Item label="关联标签" className="label-item">
+                        <Form.List name="labelRelMap" >
                             {(fields, { add, remove }) => (
                                 <>
                                     {fields.map((field, index) => (

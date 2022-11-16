@@ -580,13 +580,13 @@ export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
     },
     {
       title: '关联标签',
-      dataIndex: 'labelRel',
+      dataIndex: 'labelRelMap',
       width: 240,
       ellipsis: true,
       render: (value: any, record: any) =>
         <div style={{ whiteSpace: 'nowrap' }}>
-          {Object.keys(record.labelRel || {}).map((k) => (
-            <Tag color="green">{`${k}=${record.labelRel[k]}`}</Tag>
+          {Object.keys(record.labelRelMap || {}).map((k) => (
+            <Tag color="green">{`${k}=${record.labelRelMap[k]}`}</Tag>
           ))}
         </div>
     },

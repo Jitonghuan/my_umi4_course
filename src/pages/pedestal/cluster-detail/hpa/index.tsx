@@ -18,7 +18,7 @@ export default function Hpa(props: any) {
     const [pageSize, setPageSize] = useState<number>(20);
     const [form] = Form.useForm();
     const [pageIndex, setPageIndex] = useState<number>(1);
-    const [dataSource, setDataSource] = useState([]);
+    const [dataSource, setDataSource] = useState([{ ruleName: 'name1' }]);
     const [loading, setLoading] = useState<boolean>(false);
     const [total, setTotal] = useState<number>(0);
     const [mode, setMode] = useState<EditorMode>('HIDE');
@@ -116,7 +116,6 @@ export default function Hpa(props: any) {
             <div className="table-wrapper">
                 <Table
                     dataSource={dataSource}
-                    // dataSource={mockData}
                     loading={loading}
                     pagination={{
                         current: pageIndex,
