@@ -41,6 +41,13 @@ export default defineConfig({
       target: 'http://60.190.249.92/',
       changeOrigin: true,
     },
+    '/matrix-dmp':{
+      target: 'http://matrix-test.cfuture.shop/',
+      headers: {
+        "Connection": "keep-alive",
+      },
+      changeOrigin: true,
+    },
     '/v1': {
       target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',

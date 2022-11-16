@@ -92,7 +92,7 @@ export default function ApprovalEnd() {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
-    }, 10000*20);
+    }, 1000*60);
 
     return () => {
       clearInterval(intervalId);
