@@ -594,12 +594,22 @@ export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
       title: '关联资源',
       dataIndex: 'resourceRel',
       width: 240,
+      // ellipsis: true,
+      render: (value: any) =>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          {(value || []).map((item: any) => <Tag color='geekblue'>{item}</Tag>)}
+        </div>
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      width: 100,
       ellipsis: true,
-      render: (value: any) => {
-        return (
-          (value || []).map((item: any) => <Tag color='geekblue'>{item}</Tag>)
-        )
-      }
+      render: (value: any) => (
+        <Tooltip title={value}>
+          {value}
+        </Tooltip>
+      ),
     },
     {
       title: '弹性伸缩',
@@ -611,7 +621,7 @@ export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
     {
       title: '操作',
       fixed: 'right',
-      width: 100,
+      width: 80,
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">

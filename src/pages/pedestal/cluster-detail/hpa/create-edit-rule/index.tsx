@@ -15,6 +15,7 @@ export default function CreateEditRule(props: any) {
             form.setFieldsValue({ labelRelMap: [undefined], hpaSwitch: false })
         }
         if (mode === 'EDIT') {
+            console.log(initData, 'initData')
             const labels = Object.keys((initData?.labelRelMap || [])).map((item) => ({ key: item, value: initData?.labelRelMap[item] }));
             form.setFieldsValue({
                 ...initData,
@@ -25,6 +26,10 @@ export default function CreateEditRule(props: any) {
     }, [mode])
     const handleSubmit = async () => {
         const value = await form.validateFields();
+        if (value.expansionThreshold <= value.shrinkageThreshold) {
+            message.error('扩容阈值不能低于缩容阈值！');
+            return;
+        }
         const { id } = initData || {}
         let labels: any = {};
         const tags = value['labelRelMap'];
@@ -75,13 +80,13 @@ export default function CreateEditRule(props: any) {
                     <Form.Item label='扩容阈值(高于)：' name='expansionThreshold' rules={[{ required: true, message: '这是必填项' }]}>
                         <InputNumber size="middle" style={{ width: 150 }} addonAfter="%" placeholder='请输入' min={0} max={100} />
                     </Form.Item>
-                    <Form.Item label='扩容阈值(低于)：' name='shrinkageThreshold' rules={[{ required: true, message: '这是必填项' }]}>
+                    <Form.Item label='缩容阈值(低于)：' name='shrinkageThreshold' rules={[{ required: true, message: '这是必填项' }]}>
                         <InputNumber size="middle" style={{ width: 150 }} addonAfter="%" placeholder='请输入' min={0} max={100} />
                     </Form.Item>
                     <Form.Item label='静默时间：' name='silenceTime' rules={[{ required: true, message: '这是必填项' }]}>
                         <InputNumber size="middle" style={{ width: 150 }} addonAfter="min" placeholder='请输入' min={0} />
                     </Form.Item>
-                    <Form.Item label="关联标签" className="label-item">
+                    <Form.Item label="关联标签：" className="label-item">
                         <Form.List name="labelRelMap" >
                             {(fields, { add, remove }) => (
                                 <>
@@ -95,7 +100,7 @@ export default function CreateEditRule(props: any) {
                                                 label={index === 0 ? 'KEY' : ''}
                                                 rules={[{ required: true, message: '此项为必填项' }]}
                                             >
-                                                <Input style={{ width: '150px' }} />
+                                                <Input style={{ width: '180px' }} />
                                             </Form.Item>
                                             <span style={{ verticalAlign: 'text-bottom', lineHeight: '65px' }}>=</span>
                                             <Form.Item
@@ -105,7 +110,7 @@ export default function CreateEditRule(props: any) {
                                                 className="v-item"
                                                 name={[field.name, 'value']}
                                             >
-                                                <Input style={{ width: '150px' }} />
+                                                <Input style={{ width: '160px' }} />
                                             </Form.Item>
                                             <Form.Item>
                                                 {index !== 0 ? <MinusCircleOutlined className="tag-icon" onClick={() => remove(field.name)} /> : null}
@@ -118,6 +123,13 @@ export default function CreateEditRule(props: any) {
                                 </>
                             )}
                         </Form.List>
+                    </Form.Item>
+                    <Form.Item label="备注：" name="remark">
+                        <Input.TextArea
+                            rows={4}
+                            style={{ width: '300px' }}
+                            placeholder="多行输入"
+                        ></Input.TextArea>
                     </Form.Item>
                 </Form>
             </div>
