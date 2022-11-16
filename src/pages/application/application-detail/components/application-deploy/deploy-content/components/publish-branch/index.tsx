@@ -6,44 +6,22 @@
  * @modified 2021/08/30 moyan
  */
 
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures } from '@/pages/application/service';
-import { DeployInfoVO } from '@/pages/application/application-detail/types';
 import { datetimeCellRender } from '@/utils';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
+import { versionList } from '../../../version-deploy/schema';
+import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
-
-export interface PublishBranchProps {
-  /** 是否有发布内容 */
-  hasPublishContent: boolean;
-  deployInfo: DeployInfoVO;
-  env: string;
-  loading: boolean;
-  onSearch: (name?: string) => any;
-  masterBranchChange: any;
-  // loadData: any;
-  dataSource: {
-    id: string | number;
-    branchName: string;
-    desc: string;
-    createUser: string;
-    gmtCreate: string;
-    status: string | number;
-  }[];
-  pipelineCode: string;
-  /** 提交分支事件 */
-  onSubmitBranch: (status: 'start' | 'end') => void;
-  changeBranchName: any;
-}
 
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
   const {
@@ -74,6 +52,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const selectRef = useRef(null) as any;
   const [visible, setVisible] = useState(false);//关联需求详情弹窗
   const [currentData, setCurrentData] = useState<any>([]);
+  const [publishType, setPublishType] = useState<string>('branch')
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
     if (appType === 'frontend') {
@@ -83,19 +62,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     }
   };
 
-  type reviewStatusTypeItem = {
-    color: string;
-    text: string;
-  };
-
-  const STATUS_TYPE: Record<number, reviewStatusTypeItem> = {
-    1: { text: '未创建', color: 'default' },
-    2: { text: '审核中', color: 'blue' },
-    3: { text: '已关闭', color: 'orange' },
-    4: { text: '未通过', color: 'red' },
-    5: { text: '已删除', color: 'gray' },
-    6: { text: '已通过', color: 'green' },
-  };
+  const branchColumns: any = useMemo(() => {
+    return branchTableSchema({ appData, id, appCode, env }).filter((item) => item.title)
+  }, [dataSource])
 
   const submit = async () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
@@ -170,149 +139,112 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     });
   }, [appCategoryCode, env]);
 
+  const verisionColumns = useMemo(() => {
+    return versionList({
+      demandDetail: (value: string, record: any) => {
+        // setInitData(record);
+        // setVisible(true)
+      }
+    })
+  }, [])
+
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
     setSelectMaster(v);
     masterBranchChange(v);
   };
 
-  const branchNameRender = (branchName: string, record: any) => {
-    return (
-      <div>
-        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
-        <span style={{ marginLeft: 8, color: '#3591ff' }}>
-          <CopyToClipboard text={branchName} onCopy={() => message.success('复制成功！')}>
-            <CopyOutlined />
-          </CopyToClipboard>
-        </span>
-      </div>
-    );
-  };
+  const handleTypeChange = (e: any) => {
+    setPublishType(e.target.value)
+  }
 
   return (
     <div className={rootCls}>
-      <div className={`${rootCls}__title`}>待发布的分支</div>
-
-      <div className="table-caption">
-        <div className="caption-left">
-          <h4>主干分支：</h4>
-          <Select
-            ref={selectRef}
-            options={masterBranchOptions}
-            value={selectMaster}
-            style={{ width: '300px', marginRight: '20px' }}
-            onChange={handleChange}
-            showSearch
-            optionFilterProp="label"
-            // labelInValue
-            filterOption={(input, option) => {
-              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-            }}
-          />
-          <h4>开发分支名称：</h4>
-          <Input.Search
-            placeholder="搜索分支"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value), changeBranchName(e.target.value)
-            }}
-            onPressEnter={() => onSearch?.(searchText)}
-            onSearch={() => onSearch?.(searchText)}
-          />
-        </div>
-        <div className="caption-right">
-          {appData?.deployModel === 'online' && (
-            <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-              {hasPublishContent ? '追加分支' : '提交分支'}
-            </Button>
-          )}
-          {/* <Button
-            icon={<RedoOutlined />}
-            onClick={() => {
-              loadData();
-            }}
-            size="small"
-          >
-            刷新
-        </Button> */}
-        </div>
+      <div className='flex-space-between'>
+        <div className={`${rootCls}__title`}>{`待发布的${publishType === 'branch' ? '分支' : '版本'}`}</div>
+        <Radio.Group value={publishType} onChange={handleTypeChange}>
+          <Radio.Button value="branch">分支发布</Radio.Button>
+          <Radio.Button value="version">版本发布</Radio.Button>
+        </Radio.Group>
       </div>
-      <Table
-        rowKey="id"
-        bordered
-        dataSource={dataSource}
-        loading={loading}
-        pagination={false}
-        scroll={{ x: '100%' }}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys,
-          onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-            setSelectedRowKeys(selectedRowKeys as any);
-          },
-        }}
-      >
-        <Table.Column dataIndex="branchName" title="分支名" fixed="left" render={branchNameRender} width={320} />
-        <Table.Column
-          dataIndex="desc"
-          title="变更原因"
-          width={200}
-          ellipsis={{
-            showTitle: false,
-          }}
-          render={(value) => (
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          )}
-        />
-        <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column
-          dataIndex="status"
-          width={120}
-          align="center"
-          title="分支review状态"
-          render={(text: number) => (
-            <Tag color={STATUS_TYPE[text]?.color || 'red'}>{STATUS_TYPE[text]?.text || '---'}</Tag>
-          )}
-        />
-        {env === 'prod' && (
-          <Table.Column
-            dataIndex={['relationStatus', 'statusList']}
-            width={220}
-            align="center"
-            title="关联需求状态"
-            render={(value: any) => (
-              Array.isArray(value) && value.length ? (
-                value.map((item: any) => (
-                  <div className='demand-cell'>
-                    <Tooltip title={item.title}><a target="_blank" href={item.url}>{item.title}</a></Tooltip>
-                    <Tag color={item.status === '待发布' ? '#87d068' : '#59a6ed'}>{item.status}</Tag>
-                  </div>
-                ))
-              ) : null
-            )}
+
+      {publishType === 'branch' &&
+        <>
+          <div className="table-caption">
+            <div className="caption-left">
+              <h4>主干分支：</h4>
+              <Select
+                ref={selectRef}
+                options={masterBranchOptions}
+                value={selectMaster}
+                style={{ width: '300px', marginRight: '20px' }}
+                onChange={handleChange}
+                showSearch
+                optionFilterProp="label"
+                // labelInValue
+                filterOption={(input, option) => {
+                  return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                }}
+              />
+              <h4>开发分支名称：</h4>
+              <Input.Search
+                placeholder="搜索分支"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value), changeBranchName(e.target.value)
+                }}
+                onPressEnter={() => onSearch?.(searchText)}
+                onSearch={() => onSearch?.(searchText)}
+              />
+            </div>
+            <div className="caption-right">
+              {appData?.deployModel === 'online' && (
+                <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+                  {hasPublishContent ? '追加分支' : '提交分支'}
+                </Button>
+              )}
+            </div>
+          </div>
+          <Table
+            rowKey="id"
+            bordered
+            dataSource={dataSource}
+            loading={loading}
+            pagination={false}
+            columns={branchColumns}
+            scroll={{ x: '100%' }}
+            rowSelection={{
+              type: 'checkbox',
+              selectedRowKeys,
+              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                setSelectedRowKeys(selectedRowKeys as any);
+              },
+            }}
           />
-        )}
-        <Table.Column dataIndex="gmtCreate" title="创建时间" width={140} ellipsis render={(value) => <Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip>} />
-        <Table.Column dataIndex="createUser" title="创建人" width={80} />
-        {appData?.appType === 'frontend' ? (
-          <Table.Column
-            fixed="right"
-            title="和master对比"
-            align="center"
-            width={110}
-            render={(item) => (
-              <a
-                target="_blank"
-                href={`${appData?.gitAddress.replace('.git', '')}/-/compare/master...${item.branchName}?view=parallel`}
-              >
-                查看
-              </a>
-            )}
+        </>
+      }
+      {
+        publishType === 'version' &&
+        <>
+          <div className='flex-end'>
+            <Button type='primary' disabled={!selectedRowKeys.length} onClick={() => { }}>提交发布</Button>
+          </div>
+          <Table
+            dataSource={[]}
+            bordered
+            rowKey="id"
+            pagination={false}
+            columns={verisionColumns}
+            rowSelection={{
+              type: 'checkbox',
+              selectedRowKeys,
+              onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                setSelectedRowKeys(selectedRowKeys as any);
+              },
+            }}
           />
-        ) : null}
-      </Table>
+        </>
+      }
 
       <Modal
         title="选择发布环境"
