@@ -15,7 +15,6 @@ export default function CreateEditRule(props: any) {
             form.setFieldsValue({ labelRelMap: [undefined], hpaSwitch: false })
         }
         if (mode === 'EDIT') {
-            console.log(initData, 'initData')
             const labels = Object.keys((initData?.labelRelMap || [])).map((item) => ({ key: item, value: initData?.labelRelMap[item] }));
             form.setFieldsValue({
                 ...initData,
