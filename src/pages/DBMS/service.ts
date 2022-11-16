@@ -17,61 +17,61 @@ let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 const dmpApiPrefix="/matrix-dmp"
 /* 权限 */
 /* GET  1、 查询权限列表 */
-export const queryPrivListApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/user/priv/list`;
+export const queryPrivListApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/user/priv/list`;
 /* DELETE 2、 删除权限 */
-export const delPrivApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/user/priv`;
+export const delPrivApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/user/priv`;
 /* 工单 */
 /* GET 3、查询权限申请工单列表 */
-export const queryWorkflowPrivListApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/priv/list`;
+export const queryWorkflowPrivListApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/priv/list`;
 
 /* GET 4、查询sql变更工单列表 */
-export const querySqlListApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/list`;
+export const querySqlListApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/list`;
 
 /* POST 5、创建权限申请工单 */
-export const createPrivApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/priv/create`;
+export const createPrivApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/priv/create`;
 
 /* GET 6、查询权限申请工单详情 */
-export const getPrivInfoApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/priv/info`;
+export const getPrivInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/priv/info`;
 
 /* POST 7、审批工单 */
-export const auditApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/audit`;
+export const auditApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/audit`;
 
 /* GET 8、查询权限申请工单详情 */
-export const getSqlInfoApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/info`;
+export const getSqlInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/info`;
 
 /* POST 9、创建sql变更工单 */
-export const createSqlApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/create`;
+export const createSqlApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/create`;
 
 /* POST 10、sql检测 */
-export const runSqlApi  = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/run`;
+export const runSqlApi  = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/run`;
 
 /* POST 11、sql执行 */
-export const checkSqlApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/sql/check`;
+export const checkSqlApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/sql/check`;
 //dmp/workflow/log
-export const workflowLogApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/logs`;
+export const workflowLogApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/logs`;
 //dmp/workflow/audit/currentAudits
-export const currentAuditsApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/audit/currentAudits`;
+export const currentAuditsApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/audit/currentAudits`;
 /* -------------------------------数据管理二期-------------------------------- */
 //查询安全规则列表
-export const getRuleSetListApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/rule/ruleSet/list`;
+export const getRuleSetListApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/ruleSet/list`;
 //新建安全规则
-export const createRuleSetApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/rule/ruleSet/create`;
+export const createRuleSetApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/ruleSet/create`;
 //更新安全规则
-export const updateRuleSetApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/rule/ruleSet/update`;
+export const updateRuleSetApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/ruleSet/update`;
 
 
 //查询集群规则列表
-export const getInstanceListApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/rule/instance/list`;
+export const getInstanceListApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/instance/list`;
 //更新安全规则
-export const updateInstanceRuleSetApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/rule/instance/ruleSet/update`;
+export const updateInstanceRuleSetApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/instance/ruleSet/update`;
 
 /* ---------------工单变更详情------------- */
 //获得结构变更工单研发流程和下一个环境
-export const getddlDesignFlowApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/ddl/designFlow`;
+export const getddlDesignFlowApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/ddl/designFlow`;
 //发布到下一个环境
-export const createNextDDLApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/nextDDL/create`;
+export const createNextDDLApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/nextDDL/create`;
 //根据parentWfId和envType查询sql工单详情
-export const getSqlDdlInfoApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/ddl/info`;
+export const getSqlDdlInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/ddl/info`;
 //获得回滚语句
-export const rollbackSQLApi = `${appConfig.apiPrefix}${dmpApiPrefix}/dmp/workflow/sql/rollbackSQL`;
+export const rollbackSQLApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/rollbackSQL`;
 
