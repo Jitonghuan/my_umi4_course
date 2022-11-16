@@ -13,7 +13,8 @@ import ContentList from './component/content-list';
 import ModifyConfig from './component/modify-config';
 import ModifySql from './component/modify-sql';
 import detailContext from './context';
-import { useAppGroupData, useVersion } from '../hook'
+import { useAppGroupData, useVersion } from '../hook';
+import OperateModal from '../version-list/operate-modal';
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
@@ -29,6 +30,7 @@ export default function VersionDetail() {
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
     const [selectVersion, setSelectVersion] = useState<string>(version || '');
     const [versionOptions] = useVersion({});
+    const [initData, setInitData] = useState<any>({});
 
     useEffect(() => {
         if (versionOptions.length && !selectVersion) {
@@ -64,6 +66,13 @@ export default function VersionDetail() {
     return (
         <PageContainer className='version-detail-page'>
             <ContentCard>
+                <OperateModal
+                    action='downloadList'
+                    visible={visible}
+                    onClose={() => { setVisible(false) }}
+                    initData={initData}
+                    appGroup={appGroup}
+                />
                 <div className="page-top-search">
                     <Space>
                         <div>
@@ -72,7 +81,7 @@ export default function VersionDetail() {
                                 style={{ width: 180 }}
                                 size="small"
                                 value={appGroup}
-                                options={appGroupOptions}
+                                options={categoryData}
                                 labelInValue
                                 showSearch
                                 onChange={(v) => {
@@ -96,7 +105,7 @@ export default function VersionDetail() {
                             <span className='black-text'>{selectVersion || '---'}</span>
                         </div>
                         <div>
-                            <span className='black-text' style={{ fontSize: 17 }}>{appGroup?.value || '---'}</span>
+                            <span className='black-text' style={{ fontSize: 18 }}>{appGroup?.value || '---'}</span>
                             <span className='grey-text'>{appGroup?.label || '---'}</span>
                         </div>
                     </div>
@@ -109,7 +118,7 @@ export default function VersionDetail() {
                     <Descriptions.Item label="创建时间">2022-11-02</Descriptions.Item>
                     <Descriptions.Item label="计划发版本时间">2022-11-02</Descriptions.Item>
                     <Descriptions.Item label="发版时间">--</Descriptions.Item>
-                    <Descriptions.Item label="下载次数"><a onClick={() => { }}>0</a></Descriptions.Item>
+                    <Descriptions.Item label="下载次数"><a onClick={() => { setVisible(true) }}>2</a></Descriptions.Item>
                     <Descriptions.Item label="简述" >这是一个简述</Descriptions.Item>
                     <Descriptions.Item label="备注" >这是一个备注</Descriptions.Item>
                 </Descriptions>
