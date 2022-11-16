@@ -189,23 +189,22 @@ export default function TrafficDetail() {
     }
 
   };
-
   const handleMouseLeave = (type: string) => {
     if (type === "count") {
-      setIsCountHovering(false);
-      setIsRTHovering(true)
-      setIsFailHovering(true)
+      setIsRTHovering(false)
+      setIsCountHovering(true);
+      setIsFailHovering(false)
     }
     if (type === "rt") {
-      setIsRTHovering(false)
-      setIsCountHovering(true)
-      setIsFailHovering(true)
+      setIsRTHovering(true)
+      setIsCountHovering(false)
+      setIsFailHovering(false)
 
     }
     if (type === "fail") {
-      setIsFailHovering(false)
-      setIsRTHovering(true)
-      setIsCountHovering(true)
+      setIsFailHovering(true)
+      setIsRTHovering(false)
+      setIsCountHovering(false)
 
     }
   };

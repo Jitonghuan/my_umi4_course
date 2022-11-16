@@ -162,7 +162,7 @@ export default [
           },
           {
             "path": `${baseRoutePath}/application/detail/traffic-detail`,
-            "name": "应用流量",
+            "name": "应用监控",
             "key": "appList",
             "hideInMenu": true,
             "component": "@/pages/application/application-detail/components/traffic-detail"
@@ -733,7 +733,7 @@ export default [
       },
       {
         "path": `${baseRoutePath}/trafficmap/app-traffic`,
-        "name": "应用流量",
+        "name": "应用监控",
         "key": "trafficmap-app",
         "component": "@/pages/trafficmap/app-traffic",
       },

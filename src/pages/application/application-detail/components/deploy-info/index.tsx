@@ -29,13 +29,7 @@ export default function AppDeployInfo(props: any) {
   const [currEnvCode, setCurrEnv] = useState<string>();
   const [deployData, deployDataLoading, reloadDeployData] = useAppDeployInfo(currEnvCode, appData?.deploymentName);
   let env = appConfig.IS_Matrix === 'public' ? '' : 'prod';
-  // try {
-  //   localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env;
-  // } catch (error) {
-  //   localStorage.setItem('__init_env_tab__', query.activeTab||env);
-  // }
   const [tabActive, setTabActive] = useState<any>(
-    // localStorage.__init_env_tab__ ? localStorage.getItem('__init_env_tab__') : env,
     query.activeTab || localStorage.getItem('__init_env_tab__') || env,
   );
   useEffect(() => {
@@ -58,7 +52,6 @@ export default function AppDeployInfo(props: any) {
 
   const changeTab = (value: any) => {
     setTabActive(value);
-    // localStorage.setItem('__init_env_tab__', value || env);
   };
 
   const envList = useMemo(() => appEnvCodeData['prod'] || [], [appEnvCodeData]);
@@ -125,7 +118,6 @@ export default function AppDeployInfo(props: any) {
   //定义定时器方法
   const intervalFunc = () => {
     reloadDeployData(false);
-    // reloadChangeOrderData(false);
   };
   // 定时请求发布内容
   const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(intervalFunc, 3000, { immediate: false });
