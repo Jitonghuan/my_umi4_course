@@ -279,9 +279,13 @@ export default function ApprovalEnd() {
           }
         }>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
-            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]}>
-              <Radio.Group options={info?.allowTiming ?runModeOptions:runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} />
-            </Form.Item >
+          {info?.allowTiming===true?
+            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
+            <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
+          </Form.Item >:
+          <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
+          <Radio.Group options={ runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)}  defaultValue={runModeOnlyOptions[0]?.value}/>
+        </Form.Item >}
             {runMode === "timing" && (
               <>
                 <Form.Item label="sql可执行时间范围:">
@@ -361,12 +365,10 @@ export default function ApprovalEnd() {
             <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
             <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
             <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
-            {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
+          
             <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
             <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</span></Descriptions.Item>
-            {/* <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item> */}
-            {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
-            {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
+           
             <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
             <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming?"是":"否"}</Descriptions.Item>
 

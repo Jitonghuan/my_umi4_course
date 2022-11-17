@@ -315,7 +315,14 @@ export default function ApprovalEnd() {
           }
         }>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
-            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]}>
+            {info?.allowTiming===true ?
+            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
+            <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
+          </Form.Item >:
+          <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
+          <Radio.Group options={ runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)}  defaultValue={runModeOnlyOptions[0]?.value}/>
+        </Form.Item >}
+            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
               <Radio.Group options={info?.allowTiming ? runModeOptions : runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} />
             </Form.Item >
             {runMode === "timing" && (
