@@ -74,7 +74,7 @@ export const createTableColumns = (params: {
         title: '名称',
         dataIndex: 'ruleSetName',
         key: 'ruleSetName',
-        width: '14%',
+        width: '30%',
       },
       {
         title: '引擎类型',
@@ -95,14 +95,14 @@ export const createTableColumns = (params: {
           <Space>
           
             <a onClick={() => params.onEdit(record, index)}>编辑</a>
-            {/* <Popconfirm
+            <Popconfirm
               title="确认删除?"
               onConfirm={() => {
                 params?.onDelete(record.id);
               }}
             >
-              <a>删除</a>
-            </Popconfirm> */}
+              <a style={{color:"red"}}>删除</a>
+            </Popconfirm>
           </Space>
         ),
       },

@@ -28,3 +28,7 @@ export const updateRuleSet = (params: updateItems) =>
   postRequest(APIS.updateRuleSetApi, {
     data: params,
   });
+
+  //deleteRuleSetApi
+  export const deleteRuleSet = (id: number) =>
+  delRequest(`${APIS.deleteRuleSetApi}?id=${id}`);

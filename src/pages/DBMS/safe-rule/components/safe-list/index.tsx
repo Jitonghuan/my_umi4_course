@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import PageContainer from '@/components/page-container';
-import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import TableSearch from '@/components/table-search';
 import { createTableColumns,typeOptions} from './schema';
 import useTable from '@/utils/useTable';
-import { Button, Space, Form } from 'antd';
+import { Button, Space, Form,message } from 'antd';
 import * as APIS from '../../../service';
 import EditRules from "./create-rule";
+import {deleteRuleSet} from './hook'
 import './index.less'
 
 export default function SafeList(){
@@ -42,6 +41,13 @@ export default function SafeList(){
       },
     
       onDelete: async (id) => {
+        deleteRuleSet(id).then((res:any)=>{
+          if(res?.sucess){
+            message.success("删除成功！")
+
+          }
+
+        })
        
       },
      

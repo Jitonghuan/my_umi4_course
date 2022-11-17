@@ -397,7 +397,7 @@ export default function PanelDetail(props: Iprops) {
                         <Steps direction="vertical" current={StatusMapping[status] || -1} size="small">
                             <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
                             <Step title="库Owner" icon={<DingdingOutlined />} description={`审批人:
-              ${owner?.join(',') || ''}`} />
+                             ${owner?.join(',') || ''}`} />
                             <Step title={info?.currentStatusDesc}
                                 icon={info?.currentStatus === "abort" ? <CloseCircleOutlined style={{ color: "red" }} /> :
                                     info?.currentStatus === "autoReviewWrong" ? <CloseCircleOutlined style={{ color: "red" }} /> :
@@ -431,11 +431,13 @@ export default function PanelDetail(props: Iprops) {
                 <div className="ticket-detail-env-title" >
             <Space  >
               <span>
-                <span>
-                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b></span>
-                <Spin spinning={runLoading} >
+                <span style={{display:"inline-flex"}}>
+                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
+                  <Spin spinning={runLoading}  >
                   {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
                 </Spin>
+                  </span>
+               
               </span>
               <span>
                 {info?.currentStatus === "finish" && label?.value && (
