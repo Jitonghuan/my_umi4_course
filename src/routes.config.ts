@@ -618,15 +618,16 @@ export default [
         "name": '集群监控',
         "component": '@/pages/monitor/cluster',
       },
-      // {
-      //   "path": `${baseRoutePath}/monitor/application`,
-      //   "name": '应用监控',
-      //   "component": '@/pages/monitor/application',
-      // },
       {
         "path": `${baseRoutePath}/monitor/fe-monitor`,
         "name": "前端监控",
         "component": "@/pages/fe-monitor/basic/index"
+      },
+      {
+        "path": `${baseRoutePath}/monitor/network-dail`,
+        "name": "网络拨测",
+        "component": "@/pages/monitor/network-dail",
+        "key": "network-dail",
       },
       {
         "path": `${baseRoutePath}/monitor/business`,
