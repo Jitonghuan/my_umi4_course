@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { createTableColumns } from './schema';
+import { createTableColumns ,createFormColumns} from './schema';
 import { Button, Space, Form } from 'antd';
+import EditDail from './edit-dail'
 import useTable from '@/utils/useTable';
 import * as APIS from './service';
 export default function NetworkDail(){
@@ -46,12 +47,23 @@ export default function NetworkDail(){
     },
   });
 
+
+  const formOptions = useMemo(() => {
+    return createFormColumns({
+      onTypeChange:()=>{
+
+      }
+     
+    });
+  }, []);
+
     return(
         <PageContainer>
-              <TableSearch
+          <EditDail mode={mode}/>
+        <TableSearch
         form={form}
         bordered
-        formOptions={[]}
+        formOptions={formOptions}
         formLayout="inline"
         columns={columns}
         {...tableProps}
@@ -64,7 +76,7 @@ export default function NetworkDail(){
         }}
         extraNode={
           <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <h3>列表</h3>
+            <h3>网络拨测列表</h3>
             <Button
               type="primary"
               onClick={() => {
