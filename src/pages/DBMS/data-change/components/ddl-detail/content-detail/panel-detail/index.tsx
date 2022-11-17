@@ -461,7 +461,7 @@ export default function PanelDetail(props: Iprops) {
             </span>
 
           </div>
-                    {status === "wait" && (<Table bordered scroll={{ x: '100%' }}  loading={loading} >
+                    {status === "wait" && (<Table bordered scroll={{ x: '100%' }}  dataSource={reviewContentData}  loading={loading} >
                         {reviewContentData?.length > 0 && (
                             Object.keys(reviewContentData[0])?.map((item: any) => {
                                 return (
@@ -483,7 +483,8 @@ export default function PanelDetail(props: Iprops) {
                         )}
                     </Table>)}
                     {status !== "wait" && (executeResultData?.length > 0 ?
-                        <Table bordered scroll={{ x: '100%' }}  loading={loading} >
+                        <Table bordered scroll={{ x: '100%' }}  loading={loading} dataSource={executeResultData}  >
+                            
                             {executeResultData?.length > 0 && (
                                 Object.keys(executeResultData[0])?.map((item: any) => {
                                     return (
