@@ -38,7 +38,7 @@ export function useAuditTicket(): [
       setLoading(true);
       await postRequest(APIS.auditApi, { data: paramsObj })
         .then((result) => {
-          if (result.success) {
+          if (result?.success) {
             message.success('审批成功！');
           } else {
             return;

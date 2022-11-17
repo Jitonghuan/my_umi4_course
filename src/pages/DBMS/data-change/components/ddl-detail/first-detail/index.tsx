@@ -112,7 +112,7 @@ export default function ApprovalEnd() {
   }, [tabKey])
   const getDdlDesignFlow = () => {
     if (tabKey) {
-      useGetDdlDesignFlow(initInfo?.record?.id||parentWfId, tabKey).then((res) => {
+      useGetDdlDesignFlow(initInfo?.record?.id||query?.parentId, tabKey).then((res) => {
         let nextEnv = res?.nextEnv
         setLabel(nextEnv)
       })

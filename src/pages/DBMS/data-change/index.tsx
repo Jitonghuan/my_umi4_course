@@ -28,7 +28,7 @@ export default function AuthorityApply (){
           data: {...obj, pageIndex:obj?.pageIndex|| 1, pageSize:obj?.pageSize|| 20, },
         })
           .then((result) => {
-            if (result.success) {
+            if (result?.success) {
               let data = result?.data?.dataSource;
               let list=result.data?.dataSource || []
               if(list?.length>0){
