@@ -46,7 +46,7 @@ export default function ApprovalEnd() {
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
   const [runSqlform] = Form.useForm()
-  const { tabKey } = useContext(DetailContext);
+  const { tabKey,parentWfId } = useContext(DetailContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setstatus] = useState<string>("");
   const [runMode, setRunMode] = useState<string>("now")
@@ -64,7 +64,7 @@ export default function ApprovalEnd() {
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
-  const afferentId = Number(query?.id)
+  const afferentId = Number(query?.id)||Number(query?.parentId)
   let userInfo: any = localStorage.getItem('USER_INFO');
   let userName = ""
   if (userInfo) {
@@ -75,7 +75,8 @@ export default function ApprovalEnd() {
 
   const { confirm } = Modal;
   useEffect(() => {
-    if (query?.detail === "true" && query?.id) {
+    if ((query?.detail === "true" && query?.id)||query?.parentId) {
+     
       getInfo(afferentId)
       getWorkflowLog(afferentId)
     }
@@ -85,10 +86,10 @@ export default function ApprovalEnd() {
   }, [afferentId])
   useEffect(() => {
     let intervalId = setInterval(() => {
-      if (query?.detail === "true" && query?.id) {
+      if ((query?.detail === "true" && query?.id)||query?.parentId) {
         getInfo(afferentId)
         getWorkflowLog(afferentId)
-      } else {
+      } else if(query?.entry!=="DDL") {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
@@ -100,9 +101,9 @@ export default function ApprovalEnd() {
   }, []);
 
   useEffect(() => {
-    if (!initInfo?.record?.id) return
-    getInfo()
-    getWorkflowLog(initInfo?.record?.id)
+    if (!initInfo?.record?.id&&!query?.parentId) return
+    getInfo(initInfo?.record?.id||query?.parentId)
+    getWorkflowLog(initInfo?.record?.id||query?.parentId)
 
   }, [])
   useEffect(() => {
@@ -111,7 +112,7 @@ export default function ApprovalEnd() {
   }, [tabKey])
   const getDdlDesignFlow = () => {
     if (tabKey) {
-      useGetDdlDesignFlow(initInfo?.record?.id, tabKey).then((res) => {
+      useGetDdlDesignFlow(initInfo?.record?.id||parentWfId, tabKey).then((res) => {
         let nextEnv = res?.nextEnv
         setLabel(nextEnv)
       })
@@ -159,10 +160,10 @@ export default function ApprovalEnd() {
             close()
 
           }).then(() => {
-            if (query?.detail === "true" && query?.id) {
+            if ((query?.detail === "true" && query?.id)||query?.parentId) {
               getInfo(afferentId)
               getWorkflowLog(afferentId)
-            } else {
+            } else if(query?.entry!=="DDL") {
               getInfo()
               getWorkflowLog(initInfo?.record?.id)
             }
@@ -177,7 +178,8 @@ export default function ApprovalEnd() {
   };
   const getInfo = (id?: number) => {
     setLoading(true)
-    useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
+    let currentId=id?id:initInfo?.record?.id 
+    useGetSqlInfo(currentId).then((res) => {
 
       if (Object.keys(res)?.length < 1) return
       setInfo(res)
@@ -253,7 +255,7 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
-      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id} />
+      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id||afferentId} />
       <NextEnvDraw
         mode={nextEnvmode}
         onClose={() => {
@@ -262,12 +264,12 @@ export default function ApprovalEnd() {
         nextEnvType={label?.value}
 
         onSave={() => {
-          if (query?.detail === "true" && query?.id) {
+          if ((query?.detail === "true" && query?.id)||query?.parentId) {
             getInfo(afferentId)
             getWorkflowLog(afferentId)
           } else {
             getInfo()
-            getWorkflowLog(initInfo?.record?.id)
+            getWorkflowLog(initInfo?.record?.id||afferentId)
           }
           setNextEnvmode("HIDE")
         }}
@@ -286,12 +288,12 @@ export default function ApprovalEnd() {
 
                 }).then(() => {
                   setTimeout(() => {
-                    if (query?.detail === "true" && query?.id) {
+                    if ((query?.detail === "true" && query?.id)||query?.parentId) {
                       getInfo(afferentId)
                       getWorkflowLog(afferentId)
                     } else {
                       getInfo()
-                      getWorkflowLog(initInfo?.record?.id)
+                      getWorkflowLog(initInfo?.record?.id||afferentId)
                     }
 
                   }, 300);
@@ -302,12 +304,12 @@ export default function ApprovalEnd() {
                   setVisible(false)
 
                 }).then(() => {
-                  if (query?.detail === "true" && query?.id) {
+                  if ((query?.detail === "true" && query?.id)||query?.parentId) {
                     getInfo(afferentId)
                     getWorkflowLog(afferentId)
                   } else {
                     getInfo()
-                    getWorkflowLog(initInfo?.record?.id)
+                    getWorkflowLog(initInfo?.record?.id||afferentId)
                   }
                 })
               }
@@ -322,9 +324,7 @@ export default function ApprovalEnd() {
           <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
           <Radio.Group options={ runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)}  defaultValue={runModeOnlyOptions[0]?.value}/>
         </Form.Item >}
-            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
-              <Radio.Group options={info?.allowTiming ? runModeOptions : runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} />
-            </Form.Item >
+          
             {runMode === "timing" && (
               <>
                 <Form.Item label="sql可执行时间范围:">
@@ -430,7 +430,7 @@ export default function ApprovalEnd() {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         //afferentId ? getInfo(afferentId) : getInfo()
                         setTimeout(() => {
-                          if (query?.detail === "true" && query?.id) {
+                          if ((query?.detail === "true" && query?.id)||query?.parentId) {
                             getInfo(afferentId)
                             getWorkflowLog(afferentId)
                           } else {

@@ -123,7 +123,7 @@ export default function CreateArticle(props: IProps) {
     return (
         <Drawer
             width={1000}
-            title={`下个环境是-${label.label}`}
+            title={`下个环境是-${label?.label}`}
             placement="right"
             visible={mode !== 'HIDE'}
             destroyOnClose
