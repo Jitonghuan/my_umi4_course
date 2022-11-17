@@ -448,12 +448,12 @@ export default function ApprovalEnd() {
         </Card>
         {/* ------------------------------- */}
         <div style={{ marginTop: 12 }} >
-          <div className="ticket-detail-title">
-            <Space>
-              <span><b>{(status === "wait"&&reviewContentData?.length > 0)?"检测详情":(status !== "wait" && executeResultData?.length > 0)?"执行详情":"检测详情"}</b></span>
-            <span>
-                <Spin spinning={runLoading}>
-                  <Space>
+          <div className="ticket-detail-title" style={{display:"flex",justifyContent:"space-between"}}>
+            <Space  style={{display:"inline-flex"}}>
+              <span>
+               <span><b>{(status === "wait"&&reviewContentData?.length > 0)?"检测详情":(status !== "wait" && executeResultData?.length > 0)?"执行详情":"检测详情"}</b></span> 
+                <Spin spinning={runLoading}  style={{display:"inline-flex"}}>
+                  <Space style={{display:"inline-flex"}}>
                     {info?.currentStatus === "reviewPass"&& <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
                    {info?.currentStatus==="finish"&&label?.value&&(
                        <Button type="primary" onClick={()=>{
@@ -463,12 +463,24 @@ export default function ApprovalEnd() {
                    )}
                   
                   </Space>
-                </Spin></span>
-                <span > <Button type="primary" onClick={()=>{
-                  setVisiable(true)
-                }}>获取回滚语句</Button></span>
+                </Spin>
+                {/* <span>
 
+               </span> */}
+
+              </span>
+        
+              
             </Space>
+            <span >   
+                  {info?.currentStatus === "finish"&& <Button type="primary"  onClick={()=>{
+                  setVisiable(true)
+                }}>获取回滚语句</Button>}
+                     {info?.currentStatus === "exception"&& <Button type="primary"  onClick={()=>{
+                  setVisiable(true)
+                }}>获取回滚语句</Button>}
+              </span>
+
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
             {reviewContentData?.length > 0 && (
