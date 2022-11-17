@@ -1,14 +1,14 @@
-import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm,Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
-import React, { useMemo, useState, useEffect,useContext } from 'react';
+import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import React, { useMemo, useState, useEffect, useContext } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
-import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined ,LoadingOutlined} from '@ant-design/icons';
+import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
 import NextEnvDraw from './next-env-draw'
 import moment from 'moment';
-import {useGetDdlDesignFlow} from '../hook'
+import { useGetDdlDesignFlow } from '../hook'
 import DetailContext from '../context';
 import { parse } from 'query-string';
 import { CurrentStatusStatus, PrivWfType } from '../../../../authority-manage/components/authority-apply/schema'
@@ -31,14 +31,14 @@ const runModeOnlyOptions = [
     label: "立即执行",
     value: "now"
   },
- 
+
 ]
 const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
   wait: 1,
   pass: 2,
   reject: 2,
-  abort:2
+  abort: 2
 };
 
 export default function ApprovalEnd() {
@@ -52,24 +52,24 @@ export default function ApprovalEnd() {
   const [runMode, setRunMode] = useState<string>("now")
   const [owner, setOwner] = useState<any>([]);
   const [auditLoading, auditTicket] = useAuditTicket();
-  const [visiable,setVisiable]= useState<boolean>(false);
+  const [visiable, setVisiable] = useState<boolean>(false);
   //useRunSql
   const [runLoading, runSql] = useRunSql();
   const [statusText, setStatusText] = useState<string>("");
   const [executeResultData, setExecuteResultData] = useState<any>([])
   const [reviewContentData, setReviewContentData] = useState<any>([])
   const [dateString, setDateString] = useState<string>("");
-  const [nextEnvmode,setNextEnvmode]=useState<EditorMode>("HIDE")
-  const [label,setLabel]=useState<any>([])
+  const [nextEnvmode, setNextEnvmode] = useState<EditorMode>("HIDE")
+  const [label, setLabel] = useState<any>([])
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
   const afferentId = Number(query?.id)
   let userInfo: any = localStorage.getItem('USER_INFO');
-  let userName=""
+  let userName = ""
   if (userInfo) {
     userInfo = JSON.parse(userInfo);
-    userName= userInfo ? userInfo.name : ''
+    userName = userInfo ? userInfo.name : ''
   }
   const [visible, setVisible] = useState<boolean>(false)
 
@@ -79,7 +79,7 @@ export default function ApprovalEnd() {
       getInfo(afferentId)
       getWorkflowLog(afferentId)
     }
-    return()=>{
+    return () => {
       // history.push(location.pathname)
     }
   }, [afferentId])
@@ -88,11 +88,11 @@ export default function ApprovalEnd() {
       if (query?.detail === "true" && query?.id) {
         getInfo(afferentId)
         getWorkflowLog(afferentId)
-      }else{
+      } else {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
-    }, 1000*60);
+    }, 1000 * 60);
 
     return () => {
       clearInterval(intervalId);
@@ -103,21 +103,21 @@ export default function ApprovalEnd() {
     if (!initInfo?.record?.id) return
     getInfo()
     getWorkflowLog(initInfo?.record?.id)
-   
+
   }, [])
-  useEffect(()=>{
-    
+  useEffect(() => {
+
     getDdlDesignFlow()
-  },[tabKey])
-  const getDdlDesignFlow=()=>{
-    if(tabKey){
-      useGetDdlDesignFlow(initInfo?.record?.id,tabKey).then((res)=>{
-        let nextEnv=res?.nextEnv
+  }, [tabKey])
+  const getDdlDesignFlow = () => {
+    if (tabKey) {
+      useGetDdlDesignFlow(initInfo?.record?.id, tabKey).then((res) => {
+        let nextEnv = res?.nextEnv
         setLabel(nextEnv)
       })
 
     }
-   
+
   }
   const onChange = (
     value: DatePickerProps['value'] | RangePickerProps['value'],
@@ -157,12 +157,12 @@ export default function ApprovalEnd() {
             //afferentId ? getInfo(afferentId) : getInfo()
             // history.back()
             close()
-          
-          }).then(()=>{
+
+          }).then(() => {
             if (query?.detail === "true" && query?.id) {
               getInfo(afferentId)
               getWorkflowLog(afferentId)
-            }else{
+            } else {
               getInfo()
               getWorkflowLog(initInfo?.record?.id)
             }
@@ -178,8 +178,8 @@ export default function ApprovalEnd() {
   const getInfo = (id?: number) => {
     setLoading(true)
     useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
-   
-      if(Object.keys(res)?.length<1) return
+
+      if (Object.keys(res)?.length < 1) return
       setInfo(res)
       let auditUsers = [];
 
@@ -253,25 +253,26 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
-       <RollbackSql  visiable={visiable} onClose={()=>{setVisiable(false)}} curId={initInfo?.record?.id}/>
-      <NextEnvDraw 
-      mode={nextEnvmode} 
-      onClose={()=>{
-        setNextEnvmode("HIDE")
-      }} 
-     
-      onSave={()=>{
-        if (query?.detail === "true" && query?.id) {
-          getInfo(afferentId)
-          getWorkflowLog(afferentId)
-        }else{
-          getInfo()
-          getWorkflowLog(initInfo?.record?.id)
-        }
-        setNextEnvmode("HIDE")
-      }}
-      label={label}
-      sqlContent={info?.sqlContent}
+      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id} />
+      <NextEnvDraw
+        mode={nextEnvmode}
+        onClose={() => {
+          setNextEnvmode("HIDE")
+        }}
+        nextEnvType={label?.value}
+
+        onSave={() => {
+          if (query?.detail === "true" && query?.id) {
+            getInfo(afferentId)
+            getWorkflowLog(afferentId)
+          } else {
+            getInfo()
+            getWorkflowLog(initInfo?.record?.id)
+          }
+          setNextEnvmode("HIDE")
+        }}
+        label={label}
+        sqlContent={info?.sqlContent}
       />
       <ContentCard>
         <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} onCancel={() => { setVisible(false) }} onOk={
@@ -281,30 +282,30 @@ export default function ApprovalEnd() {
                 runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
                   //afferentId ? getInfo(afferentId) : getInfo()
                   setVisible(false)
-                 
 
-                }).then(()=>{
+
+                }).then(() => {
                   setTimeout(() => {
                     if (query?.detail === "true" && query?.id) {
                       getInfo(afferentId)
                       getWorkflowLog(afferentId)
-                    }else{
+                    } else {
                       getInfo()
                       getWorkflowLog(initInfo?.record?.id)
                     }
-                    
+
                   }, 300);
                 })
               } else {
                 runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
                   //afferentId ? getInfo(afferentId) : getInfo()
                   setVisible(false)
-                 
-                }).then(()=>{
+
+                }).then(() => {
                   if (query?.detail === "true" && query?.id) {
                     getInfo(afferentId)
                     getWorkflowLog(afferentId)
-                  }else{
+                  } else {
                     getInfo()
                     getWorkflowLog(initInfo?.record?.id)
                   }
@@ -315,7 +316,7 @@ export default function ApprovalEnd() {
         }>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
             <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]}>
-              <Radio.Group options={info?.allowTiming ?runModeOptions:runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} />
+              <Radio.Group options={info?.allowTiming ? runModeOptions : runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} />
             </Form.Item >
             {runMode === "timing" && (
               <>
@@ -340,49 +341,49 @@ export default function ApprovalEnd() {
           </Form>
         </Modal>
         <div>
-        <h3>工单标题：{info?.title}<span style={{float:"right"}}>
-        <Button  type="primary" className="back-go" onClick={() => {
-                  history.push({
-                    pathname: "/matrix/DBMS/data-change",
+          <h3>工单标题：{info?.title}<span style={{ float: "right" }}>
+            <Button type="primary" className="back-go" onClick={() => {
+              history.push({
+                pathname: "/matrix/DBMS/data-change",
 
-                  })
-                }}>
-                  返回
+              })
+            }}>
+              返回
               </Button>
 
-        </span></h3>
-        
-      
+          </span></h3>
+
+
 
         </div>
-       
+
         {/* ------------------------------- */}
         <Spin spinning={loading}>
           <div className="ticket-detail-title">
-           <div>
-            <div className="second-info">
-            <span className="second-info-left">
-              {/* <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span> */}
-              <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
-              <span><Space><span>申请人:</span><span><Tag color="#2db7f5">{info?.userName}</Tag></span></Space></span>
-              <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor || "default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
-            </span>
-            <span className="second-info-right">
-              <Space>
-                {status === "wait" &&info?.userName===userName&& 
-                  <Tag color="orange" onClick={()=>{ showConfirm("abort")}} >撤销工单</Tag>
-            }
-               
+            <div>
+              <div className="second-info">
+                <span className="second-info-left">
+                  {/* <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span> */}
+                  <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
+                  <span><Space><span>申请人:</span><span><Tag color="#2db7f5">{info?.userName}</Tag></span></Space></span>
+                  <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor || "default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
+                </span>
+                <span className="second-info-right">
+                  <Space>
+                    {status === "wait" && info?.userName === userName &&
+                      <Tag color="orange" onClick={() => { showConfirm("abort") }} >撤销工单</Tag>
+                    }
 
-               
-              </Space>
-            </span>
-          
-            </div>
+
+
+                  </Space>
+                </span>
+
+              </div>
             </div>
 
-           </div>
-        
+          </div>
+
         </Spin>
         {/* ------------------------------- */}
         <Spin spinning={loading}>
@@ -404,7 +405,7 @@ export default function ApprovalEnd() {
             {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
             {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
             <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
-            <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming?"是":"否"}</Descriptions.Item>
+            <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming ? "是" : "否"}</Descriptions.Item>
 
           </Descriptions>
         </Spin>
@@ -415,92 +416,85 @@ export default function ApprovalEnd() {
               <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
               <Step title="库Owner" icon={<DingdingOutlined />} description={`审批人:
               ${owner?.join(',') || ''}`} />
-              <Step title={info?.currentStatusDesc} 
-              icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
-              info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
-              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />: info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />: status==="wait"?<LoadingOutlined style={{color:"#2db7f5"}} />:
-              <CheckCircleTwoTone />}
+              <Step title={info?.currentStatusDesc}
+                icon={info?.currentStatus === "abort" ? <CloseCircleOutlined style={{ color: "red" }} /> :
+                  info?.currentStatus === "autoReviewWrong" ? <CloseCircleOutlined style={{ color: "red" }} /> :
+                    info?.currentStatus === "exception" ? <CloseCircleOutlined style={{ color: "red" }} /> : info?.currentStatus === "reject" ? <CloseCircleOutlined style={{ color: "red" }} /> : status === "wait" ? <LoadingOutlined style={{ color: "#2db7f5" }} /> :
+                      <CheckCircleTwoTone />}
                 description={
-                  status === "wait"&&owner?.join(',')?.includes(userName)? <Space>
-                   <Tag color="success" onClick={() => {
+                  status === "wait" && owner?.join(',')?.includes(userName) ? <Space>
+                    <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         //afferentId ? getInfo(afferentId) : getInfo()
                         setTimeout(() => {
                           if (query?.detail === "true" && query?.id) {
                             getInfo(afferentId)
                             getWorkflowLog(afferentId)
-                          }else{
+                          } else {
                             getInfo()
                             getWorkflowLog(initInfo?.record?.id)
                           }
-                          
+
                         }, 300);
                         // history.back()
                       })
                     }}>审批通过</Tag>
 
-                  
-                   <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
-                  </Space>:null} />
+
+                    <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
+                  </Space> : null} />
             </Steps>
 
           </Spin>
         </Card>
         {/* ------------------------------- */}
         <div style={{ marginTop: 12 }} >
-          <div className="ticket-detail-title" style={{display:"flex",justifyContent:"space-between"}}>
-            <Space  style={{display:"inline-flex"}}>
+          <div className="ticket-detail-env-title" >
+            <Space  >
               <span>
-               <span><b>{(status === "wait"&&reviewContentData?.length > 0)?"检测详情":(status !== "wait" && executeResultData?.length > 0)?"执行详情":"检测详情"}</b></span> 
-                <Spin spinning={runLoading}  style={{display:"inline-flex"}}>
-                  <Space style={{display:"inline-flex"}}>
-                    {info?.currentStatus === "reviewPass"&& <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
-                   {info?.currentStatus==="finish"&&label?.value&&(
-                       <Button type="primary" onClick={()=>{
-                         setNextEnvmode("EDIT")
-
-                      }}>执行到下个环境</Button>
-                   )}
-                  
-                  </Space>
+                <span>
+                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b></span>
+                <Spin spinning={runLoading} >
+                  {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
                 </Spin>
-                {/* <span>
-
-               </span> */}
-
               </span>
-        
-              
+              <span>
+                {info?.currentStatus === "finish" && label?.value && (
+                  <Button type="primary" onClick={() => {
+                    setNextEnvmode("EDIT")
+                  }}>执行到下个环境</Button>
+                )}
+              </span>
             </Space>
-            <span >   
-                  {info?.currentStatus === "finish"&& <Button type="primary"  onClick={()=>{
-                  setVisiable(true)
-                }}>获取回滚语句</Button>}
-                     {info?.currentStatus === "exception"&& <Button type="primary"  onClick={()=>{
-                  setVisiable(true)
-                }}>获取回滚语句</Button>}
-              </span>
+            <span >
+              {info?.currentStatus === "finish" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+              {info?.currentStatus === "exception" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+            </span>
 
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
             {reviewContentData?.length > 0 && (
               Object.keys(reviewContentData[0])?.map((item: any) => {
                 return (
-                  item==="审批/执行信息"?
-                    <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
+                  item === "审批/执行信息" ?
+                    <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+                      <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+
+                        {value?.replace(/\\n/g, '<br/>')}
                       </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column width={400} title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value}>
-                       
+                    )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+                      <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+
+                        {value?.replace(/\\n/g, '<br/>')}
+                      </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                        <Tooltip placement="topLeft" title={value}>
+
                           {value}
-                      </Tooltip>)}/>
+                        </Tooltip>)} />
                 )
               })
 
@@ -511,21 +505,21 @@ export default function ApprovalEnd() {
               {executeResultData?.length > 0 && (
                 Object.keys(executeResultData[0])?.map((item: any) => {
                   return (
-                    item==="审批/执行信息"?
-                    <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
+                    item === "审批/执行信息" ?
+                      <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+
                           {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column width={400} title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
+                        </Tooltip>
+                      )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+
                           {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value}>
-                       
-                          {value}
-                      </Tooltip>)}/>
+                        </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                          <Tooltip placement="topLeft" title={value}>
+
+                            {value}
+                          </Tooltip>)} />
                   )
                 })
               )}
@@ -533,21 +527,21 @@ export default function ApprovalEnd() {
               {reviewContentData?.length > 0 && (
                 Object.keys(reviewContentData[0])?.map((item: any) => {
                   return (
-                    item==="审批/执行信息"?
-                    <Table.Column title={item} dataIndex={item} key={item} width={400}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
+                    item === "审批/执行信息" ?
+                      <Table.Column title={item} dataIndex={item} key={item} width={400} render={(value) => (
+                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+
                           {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
+                        </Tooltip>
+                      )} /> : item === "完整SQL内容" ? <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+
                           {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value}>
-                       
-                          {value}
-                      </Tooltip>)}/>
+                        </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                          <Tooltip placement="topLeft" title={value}>
+
+                            {value}
+                          </Tooltip>)} />
                   )
                 })
 

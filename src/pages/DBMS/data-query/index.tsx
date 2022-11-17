@@ -86,7 +86,7 @@ export default function ResizeLayout() {
   //查询sql结果
   const querySqlResult = (params: { sqlContent: string, sqlType: string }) => {
     const values = form?.getFieldsValue();
-    if (!values?.instanceId || !values?.dbCode || !tableCode || !params?.sqlContent) {
+    if (!values?.instanceId || !values?.dbCode || !params?.sqlContent) {
       message.warning("请先进行信息填写并且输入sql语句再查询！")
       return
     }

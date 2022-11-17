@@ -3,8 +3,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
-import { createTableColumns } from '../../dev-detail/schema';
-import NextEnvDraw from '../../dev-detail/next-env-draw'
+import { createTableColumns } from '../../first-detail/schema';
+import NextEnvDraw from '../../first-detail/next-env-draw'
 import moment from 'moment';
 import { useGetDdlDesignFlow } from '../../hook'
 import { CurrentStatusStatus, PrivWfType } from '../../../../../authority-manage/components/authority-apply/schema'
@@ -265,6 +265,7 @@ export default function PanelDetail(props: Iprops) {
                 onClose={() => {
                     setNextEnvmode("HIDE")
                 }}
+                nextEnvType={label?.value}
                 onSave={() => {
                     getInfo()
                     getWorkflowLog(parentWfId)
@@ -427,28 +428,33 @@ export default function PanelDetail(props: Iprops) {
                 </Card>
                 {/* ------------------------------- */}
                 <div style={{ marginTop: 12 }} >
-                    <div className="ticket-detail-title">
-                        <Space>
-                            <span><b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b></span>
-                            <span>
-                                <Spin spinning={runLoading}>
-                                    <Space>
-                                        {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
-                                        {info?.currentStatus === "finish" && label?.value && (
-                                            <Button type="primary" onClick={() => {
-                                                setNextEnvmode("EDIT")
+                <div className="ticket-detail-env-title" >
+            <Space  >
+              <span>
+                <span>
+                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b></span>
+                <Spin spinning={runLoading} >
+                  {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                </Spin>
+              </span>
+              <span>
+                {info?.currentStatus === "finish" && label?.value && (
+                  <Button type="primary" onClick={() => {
+                    setNextEnvmode("EDIT")
+                  }}>执行到下个环境</Button>
+                )}
+              </span>
+            </Space>
+            <span >
+              {info?.currentStatus === "finish" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+              {info?.currentStatus === "exception" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+            </span>
 
-                                            }}>执行到下个环境</Button>
-                                        )}
-
-                                    </Space>
-                                </Spin></span>
-                            <span > <Button type="primary" onClick={() => {
-                                setVisiable(true)
-                            }}>获取回滚语句</Button></span>
-
-                        </Space>
-                    </div>
+          </div>
                     {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
                         {reviewContentData?.length > 0 && (
                             Object.keys(reviewContentData[0])?.map((item: any) => {

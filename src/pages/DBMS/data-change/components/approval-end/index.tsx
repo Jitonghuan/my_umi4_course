@@ -411,30 +411,26 @@ export default function ApprovalEnd() {
         </Card>
         {/* ------------------------------- */}
         <div style={{ marginTop: 12 }} >
-          <div className="ticket-detail-title" style={{display:"flex",justifyContent:"space-between"}}>
-            <Space >
+        <div className="ticket-detail-env-title" >
+            <Space  >
               <span>
-                <b>{(status === "wait"&&reviewContentData?.length > 0)?"检测详情":(status !== "wait" && executeResultData?.length > 0)?"执行详情":"检测详情"}</b>
-                {info?.currentStatus === "reviewPass" && <span>
-                <Spin spinning={runLoading}>
-                  <Space>
-                    <Button type="primary"  onClick={showRunSqlConfirm}>开始执行</Button>
-                  </Space>
-                </Spin></span>}
-                </span>
-            
-               
-                 
-
-               
+                <span>
+                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b></span>
+                <Spin spinning={runLoading} >
+                  {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                </Spin>
+              </span>
+             
             </Space>
-            <span>
-                   {info?.currentStatus === "finish"&& <Button type="primary"  onClick={()=>{
-                  setVisiable(true)
-                }}>获取回滚语句</Button>}
-                     {info?.currentStatus === "exception"&& <Button type="primary"  onClick={()=>{
-                  setVisiable(true)
-                }}>获取回滚语句</Button>}</span> 
+            <span >
+              {info?.currentStatus === "finish" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+              {info?.currentStatus === "exception" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+            </span>
+
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
             {reviewContentData?.length > 0 && (

@@ -4,7 +4,7 @@ import PageContainer from '@/components/page-container';
 import { history, useLocation } from 'umi';
 import DetailContext from './context'
 import ContentDetail from './content-detail';
-import DevDetail from './dev-detail'
+import DevDetail from './first-detail'
 import { useGetDdlDesignFlow } from './hook'
 import { parse, stringify } from 'query-string';
 import './index.less'
@@ -40,7 +40,6 @@ export default function DDLDetail() {
       
         if(query?.activeKey){
           const index= envs?.findIndex((v:any) => v.value === query?.activeKey)
-          console.log("index",index)
           if(index!==-1){
             setTabKey(query?.activeKey)
           }else{

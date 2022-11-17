@@ -23,10 +23,11 @@ export interface IProps {
     onSave: () => any;
     label?: any
     sqlContent?: string
+    nextEnvType?:string
 }
 const { RangePicker } = DatePicker;
 export default function CreateArticle(props: IProps) {
-    const { mode, initData, onClose, onSave, label, sqlContent } = props;
+    const { mode, initData, onClose, onSave, label, sqlContent,nextEnvType } = props;
     const [editForm] = Form.useForm();
     const [instanceLoading, instanceOptions, getInstanceList] = useInstanceList();
     const [databasesOptionsLoading, databasesOptions, queryDatabases, setSource] = useQueryDatabasesOptions()
@@ -38,14 +39,14 @@ export default function CreateArticle(props: IProps) {
     const [loading,setLoading]=useState<boolean>(false)
     const [envOptionLoading, envOptions, queryEnvList] = useEnvList();
     useEffect(() => {
-        queryEnvList()
+        queryEnvList(label.value)
         return () => {
             setEndTime("")
             setType("time-interval")
         }
 
     }, [])
-    //runEndTime runStartTime startTime endTime execTime
+   
     useEffect(() => {
         if (mode === "EDIT") {
 
@@ -53,12 +54,7 @@ export default function CreateArticle(props: IProps) {
                
                 sqlContent
             })
-            // if(initData?.allowTiming){
-            //     setValue(true)
-
-            // }
-
-
+        
 
         }
 

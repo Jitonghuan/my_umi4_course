@@ -174,11 +174,11 @@ export const createTableColumns = (params: {
     //syntaxType
     {
       title: '类型',
-      dataIndex: 'syntaxType',
-      key: 'syntaxType',
+      dataIndex: 'sqlWfType',
+      key: 'sqlWfType',
       width:110,
       ellipsis: true,
-      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+      render: (text) => <Tooltip title={text==="normal"?"普通变更":"结构变更"}>{text==="normal"?<Tag color="purple">普通变更</Tag>:<Tag color="cyan">结构变更</Tag>}</Tooltip>,
     },
     {
       title: '当前状态',
