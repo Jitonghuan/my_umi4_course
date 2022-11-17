@@ -7,11 +7,16 @@ await getRequest(APIS.getRuleSetListApi)
   .then((result) => {
     if (result?.success) {
       const dataSource = result.data.ruleSets || [];
-      let option = dataSource?.map((ele: any) => ({
+      let option = dataSource?.map((ele: any) => (
+        {
         label: ele?.ruleSetName,
         value: ele?.id,
         ...ele
       }))
+      option.unshift({
+        label: "--",
+        value: 0,
+      })
       return option;
 
     }

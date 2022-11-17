@@ -78,10 +78,11 @@ const App: React.FC = () => {
 
   }, []);
   const onChange = (key: any ) => {
-    console.log("---key--",key)
     if (key) {
       
       setActivePanel(key)
+    }else {
+      setActivePanel('')
     }
   };
 

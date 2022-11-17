@@ -457,23 +457,20 @@ export default function PanelDetail(props: Iprops) {
             </span>
 
           </div>
-                    {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
+                    {status === "wait" && (<Table bordered scroll={{ x: '100%' }}  loading={loading} >
                         {reviewContentData?.length > 0 && (
                             Object.keys(reviewContentData[0])?.map((item: any) => {
                                 return (
-                                    item === "审批/执行信息" ?
+                                    item === "审核/执行信息" ?
                                         <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
                                             <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
                                                 {value?.replace(/\\n/g, '<br/>')}
                                             </Tooltip>
-                                        )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+                                        )} /> : item === "完整SQL内容" ? <Table.Column width={379} title={item} dataIndex={item} key={item} render={(value) => (
                                             <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
                                                 {value?.replace(/\\n/g, '<br/>')}
                                             </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                                                 <Tooltip placement="topLeft" title={value}>
-
                                                     {value}
                                                 </Tooltip>)} />
                                 )
@@ -482,7 +479,7 @@ export default function PanelDetail(props: Iprops) {
                         )}
                     </Table>)}
                     {status !== "wait" && (executeResultData?.length > 0 ?
-                        <Table bordered scroll={{ x: '100%' }} dataSource={executeResultData} loading={loading} >
+                        <Table bordered scroll={{ x: '100%' }}  loading={loading} >
                             {executeResultData?.length > 0 && (
                                 Object.keys(executeResultData[0])?.map((item: any) => {
                                     return (

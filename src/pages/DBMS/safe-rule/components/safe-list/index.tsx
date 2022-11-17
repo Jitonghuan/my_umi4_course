@@ -44,6 +44,7 @@ export default function SafeList(){
         deleteRuleSet(id).then((res:any)=>{
           if(res?.sucess){
             message.success("删除成功！")
+            submit()
 
           }
 

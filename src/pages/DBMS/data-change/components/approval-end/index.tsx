@@ -10,6 +10,7 @@ import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm,Button,
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
+import AceEditor from '@/components/ace-editor';
 import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined ,LoadingOutlined} from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import RollbackSql  from '../rollback-sql'
@@ -466,13 +467,16 @@ export default function ApprovalEnd() {
                     item==="审批/执行信息"?
                     <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
+                        {value}
+                        {console.log("00000")}
                         
-                          {value?.replace(/\\n/g, '<br/>')}
+                          {/* {value?.replace(/\\n/g, '<br/>')} */}
                       </Tooltip>
                     )}/>:item==="完整SQL内容"? <Table.Column width={400} title={item} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
+                         {value}
+                         {console.log("11111")}
+                          {/* {value?.replace(/\\n/g, '<br/>')} */}
                       </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
                       <Tooltip placement="topLeft" title= {value}>
                        
@@ -484,21 +488,25 @@ export default function ApprovalEnd() {
             </Table> : <Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
               {reviewContentData?.length > 0 && (
                 Object.keys(reviewContentData[0])?.map((item: any) => {
+                
                   return (
-                    item==="审批/执行信息"?
+                    item==="审核/执行信息"?
                     <Table.Column title={item} dataIndex={item} key={item} width={400}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>
+                     
+                      <div style={{display:"inline-block",whiteSpace:"nowrap",width:300,height:300}}>
+                        {value?.replace(/\\n/g, '<br/>')}
+                      </div>
+                     
                     )}/>:item==="完整SQL内容"? <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+                     
+                     <div style={{display:"inline-block",whiteSpace:"nowrap",width:300,height:300}}>
+                     {value?.replace(/\\n/g, '<br/>')}
+                     </div>
+                      )}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
+
                       <Tooltip placement="topLeft" title= {value}>
                        
-                          {value}
+                         {value}
                       </Tooltip>)}/>
                   )
                 })

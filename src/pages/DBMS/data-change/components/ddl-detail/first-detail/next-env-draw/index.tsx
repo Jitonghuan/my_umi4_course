@@ -39,7 +39,8 @@ export default function CreateArticle(props: IProps) {
     const [loading,setLoading]=useState<boolean>(false)
     const [envOptionLoading, envOptions, queryEnvList] = useEnvList();
     useEffect(() => {
-        queryEnvList(label.value)
+
+       
         return () => {
             setEndTime("")
             setType("time-interval")
@@ -54,6 +55,7 @@ export default function CreateArticle(props: IProps) {
                
                 sqlContent
             })
+            queryEnvList(label.value)
         
 
         }

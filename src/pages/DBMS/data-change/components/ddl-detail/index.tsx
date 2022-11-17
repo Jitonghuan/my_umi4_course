@@ -54,6 +54,8 @@ export default function DDLDetail() {
 
        
 
+      }else{
+        setTabKey("dev")
       }
     }).finally(() => {
       setLoading(false)
@@ -64,7 +66,7 @@ export default function DDLDetail() {
   }
 
   return (
-    <PageContainer style={{  display: "flex",
+    <PageContainer className="ddl-detail" style={{  display: "flex",
     flexDirection: "column",
      padding: "0px 12px",
      height: "100%"}}>

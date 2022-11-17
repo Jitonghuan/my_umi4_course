@@ -85,14 +85,16 @@ export default function AllMessage(props: IProps) {
    // console.log(stepTableMap(data),'----')
   };
   const submit=()=>{
-      setLoading(true)
+     
       const dataParam=editForm?.getFieldsValue()
       let designFlow=JSON.stringify({nodes:labelTableData})
       if(labelTableData?.length<1){
           message.warning("请填写研发流程！")
+          return
 
       }
-      if(mode==="ADD"&&labelTableData?.length>0){
+      setLoading(true)
+      if(mode==="ADD"){
         createRuleSet({...dataParam,designFlow}).then((res)=>{
             if(res?.success){
                 message.success("创建成功！")
@@ -105,7 +107,7 @@ export default function AllMessage(props: IProps) {
         })
 
       }
-      if(mode==="EDIT"&&labelTableData?.length>0){
+      if(mode==="EDIT"){
           updateRuleSet({...dataParam,designFlow,id:curRecord?.id}).then((res)=>{
             if(res?.success){
                 message.success("更新成功！")
@@ -140,7 +142,7 @@ export default function AllMessage(props: IProps) {
         </div>
       }
     >
-        <Form labelCol={{flex:"110px"}} form={editForm}>
+        <Form labelCol={{flex:"110px"}} form={editForm} preserve={false}>
             {mode==="EDIT"&&( <Form.Item label="ID" name="id">
                 <Input  style={{width:380}} disabled={mode==="EDIT"}/>
             </Form.Item>)}

@@ -398,12 +398,8 @@ export default function ApprovalEnd() {
             <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
             <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
             <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
-            {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
             <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
             <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</span></Descriptions.Item>
-            {/* <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item> */}
-            {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
-            {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
             <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
             <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming ? "是" : "否"}</Descriptions.Item>
 
@@ -482,7 +478,7 @@ export default function ApprovalEnd() {
             {reviewContentData?.length > 0 && (
               Object.keys(reviewContentData[0])?.map((item: any) => {
                 return (
-                  item === "审批/执行信息" ?
+                  item === "审核/执行信息" ?
                     <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
                       <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
 

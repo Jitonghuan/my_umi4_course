@@ -186,7 +186,7 @@ export default function ResizeLayout() {
             <Select placeholder="选择变更类型" options={sqlWfTypeOptions}/>
           </Form.Item>
           {/* <Form.Item name="sqlWfType">
-                <Select  placeholder="普通变更" options={sqlWfTypeOptions}/>
+                <Select  placeholder="数据变更" options={sqlWfTypeOptions}/>
               </Form.Item> */}
           <Form.Item name="envCode" label="环境：" rules={[{ required: true, message: '请填写' }]}>
             <Select placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions} onChange={(value) => {
@@ -290,7 +290,7 @@ export default function ResizeLayout() {
           <p style={{ whiteSpace: "break-spaces" }}>2.请不要编写对数据库不友好的SQL，以免影响线上业务运行。</p>
           <p>3. 表结构变更和数据订尽量分别提工单。</p>
           {/* <p>4. <b>离线变更</b>指的是发布sql到不同外网的环境。</p>
-               <p>5. <b>普通变更</b>指的是发布sql到当前环境</p> */}
+               <p>5. <b>数据变更</b>指的是发布sql到当前环境</p> */}
         </div>
       </div>
 

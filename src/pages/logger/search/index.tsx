@@ -299,7 +299,7 @@ export default function LoggerSearch(props: any) {
           //手风琴下拉框数据 hits
           let logSearchTableInfodata = resp.data.logs;
           let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
-          console.log("---logSearchTableInfodata--",logSearchTableInfodata?.length,viewLogSearchTabInfo.length)
+        
           setLogSearchTableInfo(logSearchTableInfodata);
           let newArryData: any = []
           let mapArry = viewLogSearchTabInfo?.slice(0)
