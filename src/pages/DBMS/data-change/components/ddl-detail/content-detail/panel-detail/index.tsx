@@ -39,13 +39,13 @@ const StatusMapping: Record<string, number> = {
 interface Iprops {
     parentWfId: number;
     tabKey: string;
-    refreshKey:number;
-    count:number
+    refreshKey: number;
+    count: number
 }
 
 export default function PanelDetail(props: Iprops) {
     const [info, setInfo] = useState<any>({});
-    const { parentWfId, tabKey,refreshKey,count } = props
+    const { parentWfId, tabKey, refreshKey, count } = props
     const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
     const [form] = Form.useForm()
     const [runSqlform] = Form.useForm()
@@ -98,9 +98,9 @@ export default function PanelDetail(props: Iprops) {
 
 
     useEffect(() => {
-       
+
         if (parentWfId && tabKey) {
-            
+
             getDdlDesignFlow()
 
         }
@@ -128,16 +128,16 @@ export default function PanelDetail(props: Iprops) {
 
 
     };
-    useEffect(()=>{
-       
-        if(refreshKey&&parentWfId===refreshKey&&count!==0){
-          
+    useEffect(() => {
+
+        if (refreshKey && parentWfId === refreshKey && count !== 0) {
+
             getInfo(refreshKey)
             getWorkflowLog(refreshKey)
         }
 
-        
-    },[refreshKey,count])
+
+    }, [refreshKey, count])
 
 
 
@@ -182,7 +182,7 @@ export default function PanelDetail(props: Iprops) {
     const getInfo = (id?: number) => {
         setLoading(true)
         //@ts-ignore
-        let curId=id?id:parentWfId
+        let curId = id ? id : parentWfId
         useGetSqlInfo(curId).then((res) => {
 
             if (Object.keys(res)?.length < 1) return
@@ -252,7 +252,7 @@ export default function PanelDetail(props: Iprops) {
             }
         }
     };
-   
+
 
     const columns = useMemo(() => {
         return createTableColumns() as any;
@@ -309,13 +309,13 @@ export default function PanelDetail(props: Iprops) {
                     }
                 }>
                     <Form form={runSqlform} labelCol={{ flex: '140px' }}>
-                    {info?.allowTiming===true ?
-            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
-            <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
-          </Form.Item >:
-          <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
-          <Radio.Group options={ runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)}  defaultValue={runModeOnlyOptions[0]?.value}/>
-        </Form.Item >}
+                        {info?.allowTiming === true ?
+                            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
+                                <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
+                            </Form.Item > :
+                            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
+                                <Radio.Group options={runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} defaultValue={runModeOnlyOptions[0]?.value} />
+                            </Form.Item >}
                         {runMode === "timing" && (
                             <>
                                 <Form.Item label="sql可执行时间范围:">
@@ -432,47 +432,55 @@ export default function PanelDetail(props: Iprops) {
                 </Card>
                 {/* ------------------------------- */}
                 <div style={{ marginTop: 12 }} >
-                <div className="ticket-detail-env-title" >
-            <Space  >
-              <span>
-                <span style={{display:"inline-flex"}}>
-                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
+                    <div className="ticket-detail-env-title" >
+                        <Space  >
+                            <span>
+                                <span style={{ display: "inline-flex" }}>
+                                    <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
                   <Spin spinning={runLoading}  >
-                  {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
-                </Spin>
-                  </span>
-               
-              </span>
-              <span>
-                {info?.currentStatus === "finish" && label?.value && (
-                  <Button type="primary" onClick={() => {
-                    setNextEnvmode("EDIT")
-                  }}>执行到下个环境</Button>
-                )}
-              </span>
-            </Space>
-            <span >
-              {info?.currentStatus === "finish" && <Button type="primary" onClick={() => {
-                setVisiable(true)
-              }}>获取回滚语句</Button>}
-              {info?.currentStatus === "exception" && <Button type="primary" onClick={() => {
-                setVisiable(true)
-              }}>获取回滚语句</Button>}
-            </span>
+                                        {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                                    </Spin>
+                                </span>
 
-          </div>
-                    {status === "wait" && (<Table bordered scroll={{ x: '100%' }}  dataSource={reviewContentData}  loading={loading} >
+                            </span>
+                            <span>
+                                {info?.currentStatus === "finish" && label?.value && (
+                                    <Button type="primary" onClick={() => {
+                                        setNextEnvmode("EDIT")
+                                    }}>执行到下个环境</Button>
+                                )}
+                            </span>
+                        </Space>
+                        <span >
+                            {info?.currentStatus === "finish" && <Button type="primary" onClick={() => {
+                                setVisiable(true)
+                            }}>获取回滚语句</Button>}
+                            {info?.currentStatus === "exception" && <Button type="primary" onClick={() => {
+                                setVisiable(true)
+                            }}>获取回滚语句</Button>}
+                        </span>
+
+                    </div>
+                    {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
                         {reviewContentData?.length > 0 && (
                             Object.keys(reviewContentData[0])?.map((item: any) => {
                                 return (
                                     item === "审核/执行信息" ?
                                         <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                                            <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+                                            <Tooltip placement="topLeft" title={<span className="refine-info">
                                                 {value?.replace(/\\n/g, '<br/>')}
+                                            </span>}>
+                                                <span className="refine-info">
+                                                    {value?.replace(/\\n/g, '<br/>')}
+                                                </span>
                                             </Tooltip>
                                         )} /> : item === "完整SQL内容" ? <Table.Column width={379} title={item} dataIndex={item} key={item} render={(value) => (
-                                            <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
+                                            <Tooltip placement="topLeft" title={<span className="refine-info">
                                                 {value?.replace(/\\n/g, '<br/>')}
+                                            </span>}>
+                                                <span className="refine-info">
+                                                    {value?.replace(/\\n/g, '<br/>')}
+                                                </span>
                                             </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                                                 <Tooltip placement="topLeft" title={value}>
                                                     {value}
@@ -483,21 +491,29 @@ export default function PanelDetail(props: Iprops) {
                         )}
                     </Table>)}
                     {status !== "wait" && (executeResultData?.length > 0 ?
-                        <Table bordered scroll={{ x: '100%' }}  loading={loading} dataSource={executeResultData}  >
-                            
+                        <Table bordered scroll={{ x: '100%' }} loading={loading} dataSource={executeResultData}  >
+
                             {executeResultData?.length > 0 && (
                                 Object.keys(executeResultData[0])?.map((item: any) => {
                                     return (
-                                        item === "审批/执行信息" ?
+                                        item === "审核/执行信息" ?
                                             <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                                                <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                                                <Tooltip placement="topLeft" title={<span className="refine-info">
                                                     {value?.replace(/\\n/g, '<br/>')}
+                                                </span>}>
+
+                                                    <span className="refine-info">
+                                                        {value?.replace(/\\n/g, '<br/>')}
+                                                    </span>
                                                 </Tooltip>
                                             )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
-                                                <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                                                <Tooltip placement="topLeft" title={<span className="refine-info">
                                                     {value?.replace(/\\n/g, '<br/>')}
+                                                </span>}>
+
+                                                    <span className="refine-info">
+                                                        {value?.replace(/\\n/g, '<br/>')}
+                                                    </span>
                                                 </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
 
@@ -510,16 +526,24 @@ export default function PanelDetail(props: Iprops) {
                             {reviewContentData?.length > 0 && (
                                 Object.keys(reviewContentData[0])?.map((item: any) => {
                                     return (
-                                        item === "审批/执行信息" ?
+                                        item === "审核/执行信息" ?
                                             <Table.Column title={item} dataIndex={item} key={item} width={400} render={(value) => (
-                                                <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                                                <Tooltip placement="topLeft" title={<span className="refine-info">
                                                     {value?.replace(/\\n/g, '<br/>')}
+                                                </span>}>
+
+                                                    <span className="refine-info">
+                                                        {value?.replace(/\\n/g, '<br/>')}
+                                                    </span>
                                                 </Tooltip>
                                             )} /> : item === "完整SQL内容" ? <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                                                <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                                                <Tooltip placement="topLeft" title={<span className="refine-info">
                                                     {value?.replace(/\\n/g, '<br/>')}
+                                                </span>}>
+
+                                                    <span className="refine-info">
+                                                        {value?.replace(/\\n/g, '<br/>')}
+                                                    </span>
                                                 </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
 

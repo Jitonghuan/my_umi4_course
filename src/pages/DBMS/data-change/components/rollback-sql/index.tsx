@@ -3,9 +3,10 @@
 // @create 2022/06/15 14:50
 
 import React, { useState, useEffect,} from 'react';
-import { Modal, Table, } from 'antd';
+import { Modal, Table,Typography } from 'antd';
 
 import {useGetRollbackSQL} from './hook'
+const { Paragraph } = Typography;
 
 
 
@@ -26,14 +27,17 @@ export default function CreateArticle(props: IProps) {
             dataIndex: 'originalSQL',
             key: 'originalSQL',
             width:500,
-            render:(value:string)=><>{value?.replace(/\\n/g, '<br/>')}</>
+            render:(value:string)=><span style={{display:"inline-block",whiteSpace:"pre-line"}}>
+                 <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+               
+                </span>
           },
           {
             title: 'rollbackSQL',
             dataIndex: 'rollbackSQL',
             key: 'rollbackSQL',
             width:500,
-            render:(value:string)=><>{value?.replace(/\\n/g, '<br/>')}</>
+            render:(value:string)=><span style={{display:"inline-block",whiteSpace:"pre-line"}}> <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph></span>
           },
     ]
 
@@ -55,7 +59,7 @@ export default function CreateArticle(props: IProps) {
     }
    
     return (
-        <Modal title="回滚sql语句" visible={visiable} destroyOnClose width={1000} footer={false} onCancel={onClose}>
+        <Modal title="回滚sql语句" visible={visiable} destroyOnClose width={"80%"} footer={false} onCancel={onClose}>
             <Table columns={columns} loading={loading} dataSource={dataSource} />  
         </Modal>
 

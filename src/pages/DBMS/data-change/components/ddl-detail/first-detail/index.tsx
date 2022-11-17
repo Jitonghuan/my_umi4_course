@@ -46,7 +46,7 @@ export default function ApprovalEnd() {
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
   const [runSqlform] = Form.useForm()
-  const { tabKey,parentWfId } = useContext(DetailContext);
+  const { tabKey, parentWfId } = useContext(DetailContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setstatus] = useState<string>("");
   const [runMode, setRunMode] = useState<string>("now")
@@ -64,7 +64,7 @@ export default function ApprovalEnd() {
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
-  const afferentId = Number(query?.id)||Number(query?.parentId)
+  const afferentId = Number(query?.id) || Number(query?.parentId)
   let userInfo: any = localStorage.getItem('USER_INFO');
   let userName = ""
   if (userInfo) {
@@ -75,8 +75,8 @@ export default function ApprovalEnd() {
 
   const { confirm } = Modal;
   useEffect(() => {
-    if ((query?.detail === "true" && query?.id)||query?.parentId) {
-     
+    if ((query?.detail === "true" && query?.id) || query?.parentId) {
+
       getInfo(afferentId)
       getWorkflowLog(afferentId)
     }
@@ -86,10 +86,10 @@ export default function ApprovalEnd() {
   }, [afferentId])
   useEffect(() => {
     let intervalId = setInterval(() => {
-      if ((query?.detail === "true" && query?.id)||query?.parentId) {
+      if ((query?.detail === "true" && query?.id) || query?.parentId) {
         getInfo(afferentId)
         getWorkflowLog(afferentId)
-      } else if(query?.entry!=="DDL") {
+      } else if (query?.entry !== "DDL") {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
@@ -101,9 +101,9 @@ export default function ApprovalEnd() {
   }, []);
 
   useEffect(() => {
-    if (!initInfo?.record?.id&&!query?.parentId) return
-    getInfo(initInfo?.record?.id||query?.parentId)
-    getWorkflowLog(initInfo?.record?.id||query?.parentId)
+    if (!initInfo?.record?.id && !query?.parentId) return
+    getInfo(initInfo?.record?.id || query?.parentId)
+    getWorkflowLog(initInfo?.record?.id || query?.parentId)
 
   }, [])
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function ApprovalEnd() {
   }, [tabKey])
   const getDdlDesignFlow = () => {
     if (tabKey) {
-      useGetDdlDesignFlow(initInfo?.record?.id||query?.parentId, tabKey).then((res) => {
+      useGetDdlDesignFlow(initInfo?.record?.id || query?.parentId, tabKey).then((res) => {
         let nextEnv = res?.nextEnv
         setLabel(nextEnv)
       })
@@ -160,10 +160,10 @@ export default function ApprovalEnd() {
             close()
 
           }).then(() => {
-            if ((query?.detail === "true" && query?.id)||query?.parentId) {
+            if ((query?.detail === "true" && query?.id) || query?.parentId) {
               getInfo(afferentId)
               getWorkflowLog(afferentId)
-            } else if(query?.entry!=="DDL") {
+            } else if (query?.entry !== "DDL") {
               getInfo()
               getWorkflowLog(initInfo?.record?.id)
             }
@@ -178,7 +178,7 @@ export default function ApprovalEnd() {
   };
   const getInfo = (id?: number) => {
     setLoading(true)
-    let currentId=id?id:initInfo?.record?.id 
+    let currentId = id ? id : initInfo?.record?.id
     useGetSqlInfo(currentId).then((res) => {
 
       if (Object.keys(res)?.length < 1) return
@@ -255,7 +255,7 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
-      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id||afferentId} />
+      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id || afferentId} />
       <NextEnvDraw
         mode={nextEnvmode}
         onClose={() => {
@@ -264,12 +264,12 @@ export default function ApprovalEnd() {
         nextEnvType={label?.value}
 
         onSave={() => {
-          if ((query?.detail === "true" && query?.id)||query?.parentId) {
+          if ((query?.detail === "true" && query?.id) || query?.parentId) {
             getInfo(afferentId)
             getWorkflowLog(afferentId)
           } else {
             getInfo()
-            getWorkflowLog(initInfo?.record?.id||afferentId)
+            getWorkflowLog(initInfo?.record?.id || afferentId)
           }
           setNextEnvmode("HIDE")
         }}
@@ -288,12 +288,12 @@ export default function ApprovalEnd() {
 
                 }).then(() => {
                   setTimeout(() => {
-                    if ((query?.detail === "true" && query?.id)||query?.parentId) {
+                    if ((query?.detail === "true" && query?.id) || query?.parentId) {
                       getInfo(afferentId)
                       getWorkflowLog(afferentId)
                     } else {
                       getInfo()
-                      getWorkflowLog(initInfo?.record?.id||afferentId)
+                      getWorkflowLog(initInfo?.record?.id || afferentId)
                     }
 
                   }, 300);
@@ -304,12 +304,12 @@ export default function ApprovalEnd() {
                   setVisible(false)
 
                 }).then(() => {
-                  if ((query?.detail === "true" && query?.id)||query?.parentId) {
+                  if ((query?.detail === "true" && query?.id) || query?.parentId) {
                     getInfo(afferentId)
                     getWorkflowLog(afferentId)
                   } else {
                     getInfo()
-                    getWorkflowLog(initInfo?.record?.id||afferentId)
+                    getWorkflowLog(initInfo?.record?.id || afferentId)
                   }
                 })
               }
@@ -317,14 +317,14 @@ export default function ApprovalEnd() {
           }
         }>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
-            {info?.allowTiming===true ?
-            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
-            <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
-          </Form.Item >:
-          <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
-          <Radio.Group options={ runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)}  defaultValue={runModeOnlyOptions[0]?.value}/>
-        </Form.Item >}
-          
+            {info?.allowTiming === true ?
+              <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
+                <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
+              </Form.Item > :
+              <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
+                <Radio.Group options={runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} defaultValue={runModeOnlyOptions[0]?.value} />
+              </Form.Item >}
+
             {runMode === "timing" && (
               <>
                 <Form.Item label="sql可执行时间范围:">
@@ -430,7 +430,7 @@ export default function ApprovalEnd() {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         //afferentId ? getInfo(afferentId) : getInfo()
                         setTimeout(() => {
-                          if ((query?.detail === "true" && query?.id)||query?.parentId) {
+                          if ((query?.detail === "true" && query?.id) || query?.parentId) {
                             getInfo(afferentId)
                             getWorkflowLog(afferentId)
                           } else {
@@ -455,13 +455,13 @@ export default function ApprovalEnd() {
           <div className="ticket-detail-env-title" >
             <Space  >
               <span>
-                <span style={{display:"inline-flex"}}>
+                <span style={{ display: "inline-flex" }}>
                   <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
                   <Spin spinning={runLoading} >
-                  {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
-                </Spin>
-                  </span>
-               
+                    {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                  </Spin>
+                </span>
+
               </span>
               <span>
                 {info?.currentStatus === "finish" && label?.value && (
@@ -487,14 +487,26 @@ export default function ApprovalEnd() {
                 return (
                   item === "审核/执行信息" ?
                     <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                      <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                      <Tooltip placement="topLeft" title={<span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
                         {value?.replace(/\\n/g, '<br/>')}
+                      </span>
+                      }>
+
+                        <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                          {value?.replace(/\\n/g, '<br/>')}
+                        </span>
+
                       </Tooltip>
                     )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
-                      <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                      <Tooltip placement="topLeft" title={<span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
                         {value?.replace(/\\n/g, '<br/>')}
+                      </span>
+                      }>
+
+                        <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                          {value?.replace(/\\n/g, '<br/>')}
+                        </span>
+
                       </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                         <Tooltip placement="topLeft" title={value}>
 
@@ -510,16 +522,28 @@ export default function ApprovalEnd() {
               {executeResultData?.length > 0 && (
                 Object.keys(executeResultData[0])?.map((item: any) => {
                   return (
-                    item === "审批/执行信息" ?
+                    item === "审核/执行信息" ?
                       <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                        <Tooltip placement="topLeft" title={<span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
                           {value?.replace(/\\n/g, '<br/>')}
+                        </span>
+                        }>
+
+                          <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                            {value?.replace(/\\n/g, '<br/>')}
+                          </span>
+
                         </Tooltip>
                       )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
-                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                        <Tooltip placement="topLeft" title={<span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
                           {value?.replace(/\\n/g, '<br/>')}
+                        </span>
+                        }>
+
+                          <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                            {value?.replace(/\\n/g, '<br/>')}
+                          </span>
+
                         </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                           <Tooltip placement="topLeft" title={value}>
 
@@ -532,16 +556,25 @@ export default function ApprovalEnd() {
               {reviewContentData?.length > 0 && (
                 Object.keys(reviewContentData[0])?.map((item: any) => {
                   return (
-                    item === "审批/执行信息" ?
+                    item === "审核/执行信息" ?
                       <Table.Column title={item} dataIndex={item} key={item} width={400} render={(value) => (
-                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                        <Tooltip placement="topLeft" title={<span className="refine-info">
                           {value?.replace(/\\n/g, '<br/>')}
+                        </span>}>
+
+                          <span className="refine-info">
+                            {value?.replace(/\\n/g, '<br/>')}
+                          </span>
+
                         </Tooltip>
                       )} /> : item === "完整SQL内容" ? <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                        <Tooltip placement="topLeft" title={value?.replace(/\\n/g, '<br/>')}>
-
+                        <Tooltip placement="topLeft" title={<span className="refine-info">
                           {value?.replace(/\\n/g, '<br/>')}
+                        </span>}>
+
+                          <span className="refine-info">
+                            {value?.replace(/\\n/g, '<br/>')}
+                          </span>
                         </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                           <Tooltip placement="topLeft" title={value}>
 
@@ -563,22 +596,11 @@ export default function ApprovalEnd() {
           </span>
         </div>
         {/* ------------------------------- */}
-        {/* <div style={{ marginBottom: 8 }} ><b>操作日志</b></div> */}
+
         <div>
           <Table columns={columns} bordered dataSource={logData} loading={tableLoading} />
         </div>
-        {/* </div> */}
 
-        {/* <div className="ticket-detail-footer">
-      <span className="ticket-detail-title-left">
-      <span><Space><span>回滚:</span><span><Tag color="geekblue">下载回滚SQL</Tag></span></Space></span>
-      <span><Space><span>离线发布:</span><span><Tag color="geekblue">下载离线Sql包</Tag></span></Space></span>
-     
-
-      </span>
-    
-      
-    </div> */}
       </ContentCard>
     </PageContainer>)
 }
