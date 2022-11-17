@@ -6,20 +6,23 @@ import { addAPIPrefix } from '@/utils';
 
 /* GET 1、显示当前集群已有拨测任务列表  */
 
-export const getInfoList = addAPIPrefix('/monitorManage/networkProbe/list');
+export const getNetworkProbeList = addAPIPrefix('/monitorManage/networkProbe/list');
 
 /* POST 2、 创建拨测任务 */
 
-export const createInfo = addAPIPrefix('/monitorManage/networkProbe/create');
+export const createNetworkProbe = addAPIPrefix('/monitorManage/networkProbe/create');
 
 /* POST 3、 更新拨测任务 */
 
-export const updateInfo = addAPIPrefix('/monitorManage/networkProbe/update');
+export const updateNetworkProbe = addAPIPrefix('/monitorManage/networkProbe/update');
 
 /* DELETE 4、 删除拨测任务 */
 
-export const deleteInfo = addAPIPrefix('/monitorManage/networkProbe/delete');
+export const deleteNetworkProbe = addAPIPrefix('/monitorManage/networkProbe/delete');
 
-/* POST 5、 创建拨测任务 */
+/* POST 5、 启动拨测任务 */
 
-// export const createInfo = addAPIPrefix('/monitorManage/networkProbe/create');
+export const networkProbeStatus = addAPIPrefix('/monitorManage/networkProbe/status');
+/* GET 6、获取拨测类型 */
+
+export const networkProbeProbeType = addAPIPrefix('/monitorManage/networkProbe/probeType');
