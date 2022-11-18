@@ -1,16 +1,17 @@
 
-import React, { useState, useEffect,useMemo, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
 import { Card, Table, Input } from 'antd';
 import moment from 'moment'
-import { createStatisticsTableColumns, createQueryTableColumns } from './schema'
+import { columnSchema } from './schema'
 import { getCountDetail, getTrace } from './hook'
 import DetailContext from '../../../context';
+import { Line } from '@ant-design/charts';
 import { history } from 'umi'
 
 
 import './index.less'
 export default function InstanceMonitor() {
-  const { appCode, envCode, startTime, appId, deployName, count, isClick,podIps } = useContext(DetailContext);
+  const { appCode, envCode, startTime, appId, deployName, count, isClick, podIps } = useContext(DetailContext);
   const [statisticsData, setStatisticsData] = useState<any>([])
   const [statisticsLoading, setStatisticsLoading] = useState<boolean>(false)
   const [traceLoading, setTraceLoading] = useState<boolean>(false)
@@ -19,6 +20,65 @@ export default function InstanceMonitor() {
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [nowSearchEndpoint, setNowSearchEndpoint] = useState<string>("")
+  const config = {
+    data: [
+      {
+        "Date": "2010-01",
+        "scales": 1998
+      },
+      {
+        "Date": "2010-02",
+        "scales": 1850
+      },
+      {
+        "Date": "2010-03",
+        "scales": 1720
+      },
+      {
+        "Date": "2010-04",
+        "scales": 1818
+      },
+      {
+        "Date": "2010-05",
+        "scales": 1920
+      },
+      {
+        "Date": "2010-06",
+        "scales": 1802
+      },
+      {
+        "Date": "2010-07",
+        "scales": 1945
+      },
+      {
+        "Date": "2010-08",
+        "scales": 1856
+      },
+      {
+        "Date": "2010-09",
+        "scales": 2107
+      },
+      {
+        "Date": "2010-10",
+        "scales": 2140
+      },
+      {
+        "Date": "2010-11",
+        "scales": 2311
+      },
+    ],
+    padding: 'auto',
+    xField: 'Date',
+    yField: 'scales',
+    xAxis: {
+      tickCount: 0
+    },
+    yAxis: false,
+  };
+
+  const tableColumns = useMemo(() => {
+    return columnSchema()
+  }, [appId, envCode])
   useEffect(() => {
     //if (!envCode || !startTime || !appId || !deployName) return
     if (isClick && isClick === appCode) {
@@ -26,8 +86,6 @@ export default function InstanceMonitor() {
     } else {
       getCountDetailTable(false)
     }
-
-
   }, [envCode, startTime, deployName, appId, count, isClick])
   useEffect(() => {
     getTraceTable()
@@ -37,7 +95,7 @@ export default function InstanceMonitor() {
     const now = new Date().getTime();
     //@ts-ignore
     getCountDetail({
-      envCode:envCode||"",
+      envCode: envCode || "",
       deployName,
       appId,
       isTotal,
@@ -76,36 +134,8 @@ export default function InstanceMonitor() {
       setTraceLoading(false)
     })
   }
-  const statisticsColumns = useMemo(() => {
-    return createStatisticsTableColumns({
-      onView: (record, index) => {
-        const now = new Date().getTime();
-        history.push({
-          pathname: "/matrix/trafficmap/tracking"
 
-        }, {
-          entry: "logSearch",
-          envCode: envCode,
-          appId: appId,
-          startTime: Number((now - startTime) / 1000),
-          endTime: Number(now / 1000),
-        })
-      },
 
-    }) as any;
-  }, [startTime, envCode, appId]);
-  const queryColumns = useMemo(() => {
-    const now = new Date().getTime();
-    return createQueryTableColumns({
-      onView: (record, index) => {
-        history.push({
-          pathname: '/matrix/logger/search',
-          search: `envCode=${envCode}&startTime=${moment(now - startTime).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(now).format('YYYY-MM-DD HH:mm:ss')}&traceId=${record?.traceIds[0]}`
-        })
-
-      }
-    }) as any;
-  }, [startTime, envCode]);
   const pageSizeClick = (pagination: any) => {
     setPageIndex(pagination.current);
     let obj = {
@@ -115,51 +145,56 @@ export default function InstanceMonitor() {
     getTraceTable({ ...obj, endpoint: nowSearchEndpoint })
   };
 
+  const mockData = [{}, {}, {}, {}, {}]
+  const [chartHeight, setChartHeight] = useState();
+  const chartRef = useCallback((node: any) => {
+    if (node) {
+      setChartHeight(node.clientHeight)
+      new ResizeObserver(() => {
+        setChartHeight(node.clientHeight)
+      }).observe(node)
+    }
+  },
+    [],
+  )
   return (
     <>
-      <Card className="call-info-body">
-        <h3 className="call-info-tabs-content-title">
-          调用统计
-          </h3>
-        <Table bordered columns={statisticsColumns} loading={statisticsLoading} scroll={{ x: '100%' }} dataSource={statisticsData} />
-        <div className="table-caption">
-          <div className="caption-left">
-            <h3 className="call-info-tabs-content-title">
-              调用查询
-             </h3>
-          </div>
+      <div className="call-info-body">
+        <div className='item-wrapper'>
+          {mockData.map((item, index) => {
+            return (
+              <div className='call-item'>
+                <div className='title flex-space-between'>
+                  <div>{index + 1}.我是一张表</div>
+                  <a>查看链路追踪</a>
+                </div>
+                <div className='main'>
+                  <div className='call-item-line' >
+                    <div className="chart-header"></div>
+                    <div className="chart-container-warpper" ref={chartRef}>
+                      {chartHeight && <Line className="chart-container" {...config} height={chartHeight} />}
+                    </div>
 
-          <div className="caption-right">
-            查询：<Input style={{ width: 220 }} placeholder="请输入内容查询" onPressEnter={(e) => {
-              getTraceTable({
-                endpoint: e.target.value
-              })
-              setNowSearchEndpoint(e.target.value)
-            }} />
-          </div>
+                  </div>
+                  <Table
+                    size="small"
+                    bordered
+                    loading={traceLoading}
+                    dataSource={[{ id: 0.3 }, { id: 0.3 }, { id: 0.3 }, { id: 0.3 }, { id: 0.3 }]}
+                    columns={tableColumns}
+                    scroll={{ x: '100%' }}
+                    pagination={
+                      false
+                    }
+                    onChange={pageSizeClick}
+
+                  />
+                </div>
+              </div>
+            )
+          })}
         </div>
-
-        <Table
-          bordered
-          columns={queryColumns}
-          loading={traceLoading}
-          dataSource={traceData}
-          scroll={{ x: '100%' }}
-          pagination={{
-            current: pageIndex,
-            total,
-            pageSize,
-            showSizeChanger: true,
-            onShowSizeChange: (_, size) => {
-              setPageSize(size);
-              setPageIndex(1); //
-            },
-            showTotal: () => `总共 ${total} 条数据`,
-          }}
-          onChange={pageSizeClick}
-
-        />
-      </Card>
+      </div>
     </>
   )
 }
