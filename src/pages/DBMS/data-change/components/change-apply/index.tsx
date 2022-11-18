@@ -7,7 +7,7 @@ import PageContainer from '@/components/page-container';
 import LightDragable from "@/components/light-dragable";
 import { ScheduleOutlined, } from '@ant-design/icons';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
-import { START_TIME_ENUMS, options } from "./schema"
+import { START_TIME_ENUMS, options,sqlWfTypeOptions } from "./schema"
 import {queryTableFieldsApi} from '../../../common-service'
 import { useEnvList, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, useQueryTablesOptions } from '../../../common-hook'
 import RightContent from "./_components/right-content"
@@ -43,8 +43,8 @@ export default function ResizeLayout() {
   const [databasesOptionsLoading, databasesOptions, queryDatabases, setSource] = useQueryDatabasesOptions()
   const [tablesOptionsLoading, tablesOptions, queryTables, setTablesSource] = useQueryTablesOptions();
   //const [loading, tableFields, tableFieldsOptions, queryTableFields] = useQueryTableFieldsOptions();
-  const [start, setStart] = useState<string>("")
-  const [end, setEnd] = useState<string>("")
+  // const [start, setStart] = useState<string>("")
+  // const [end, setEnd] = useState<string>("")
   const [fields,setFields]=useState<any>([])
 
   const queryTableFields = async (params:{dbCode:string,tableCode:string}) => {
@@ -69,8 +69,8 @@ export default function ResizeLayout() {
   const selectTime = (time: any, timeString: any) => {
    let start=moment(timeString[0]).add(2, "minutes").format("YYYY-MM-DD HH:mm:ss")
    let end=moment(timeString[1]).add(2, "minutes").format("YYYY-MM-DD HH:mm:ss")
-    setStart(start)
-    setEnd(end)
+    // setStart(start)
+    // setEnd(end)
     if (start !== 'NaN' && end !== 'NaN') {
       setStartTime(start);
       setEndTime(end);
@@ -173,7 +173,7 @@ export default function ResizeLayout() {
     }).finally(() => {
       setSqlLoading(false)
     })
-  }, [start, end,startTime,endTime,value])
+  }, [startTime,endTime,value])
 
   const leftContent = useMemo(() => {
     return (
@@ -182,8 +182,11 @@ export default function ResizeLayout() {
           <Form.Item name="title" label="标题：" rules={[{ required: true, message: '请填写' }]}>
             <Input placeholder="标题" />
           </Form.Item>
+          <Form.Item name="sqlWfType" label="变更类型：" rules={[{ required: true, message: '请填写' }]}>
+            <Select placeholder="选择变更类型" options={sqlWfTypeOptions}/>
+          </Form.Item>
           {/* <Form.Item name="sqlWfType">
-                <Select  placeholder="普通变更" options={sqlWfTypeOptions}/>
+                <Select  placeholder="数据变更" options={sqlWfTypeOptions}/>
               </Form.Item> */}
           <Form.Item name="envCode" label="环境：" rules={[{ required: true, message: '请填写' }]}>
             <Select placeholder="选择环境" allowClear showSearch loading={envOptionLoading} options={envOptions} onChange={(value) => {
@@ -214,6 +217,7 @@ export default function ResizeLayout() {
               })
             }} />
           </Form.Item>
+         
           <Form.Item name="tableCode" label="表：" >
             <Select placeholder="选择表" options={tablesOptions} allowClear showSearch loading={tablesOptionsLoading} onChange={() => {
               const values = form?.getFieldsValue();
@@ -235,6 +239,7 @@ export default function ResizeLayout() {
                onChange={(v: any, b: any) => selectTime(v, b)}
                showNow={false}
                disabledDate={disabledDate}
+               //@ts-ignore
                disabledTime={disabledDateTime}
                format="YYYY-MM-DD HH:mm:ss" showTime />}
 
@@ -271,12 +276,9 @@ export default function ResizeLayout() {
 
 
             </Space>
-            {/* <RangePicker    onChange={(v: any, b: any) => selectTime(v, b)}
-               format="YYYY-MM-DD HH:mm:ss" showTime /> */}
+           
           </Form.Item>
-          {/* <Form.Item name="dbCode">
-              <Select  placeholder="关联发布计划"/>
-              </Form.Item> */}
+         
           <Form.Item name="allowTiming" label="是否允许定时执行:" rules={[{ required: true, message: '请填写' }]}>
             <Radio.Group options={options} onChange={onChange3} value={value} />
           </Form.Item>
@@ -288,7 +290,7 @@ export default function ResizeLayout() {
           <p style={{ whiteSpace: "break-spaces" }}>2.请不要编写对数据库不友好的SQL，以免影响线上业务运行。</p>
           <p>3. 表结构变更和数据订尽量分别提工单。</p>
           {/* <p>4. <b>离线变更</b>指的是发布sql到不同外网的环境。</p>
-               <p>5. <b>普通变更</b>指的是发布sql到当前环境</p> */}
+               <p>5. <b>数据变更</b>指的是发布sql到当前环境</p> */}
         </div>
       </div>
 

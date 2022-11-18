@@ -5,7 +5,8 @@ import { createTableColumns,createFormItems } from './schema';
 import useTable from '@/utils/useTable';
 import {queryPrivListApi} from '../../../service'
 import {  useDeletePriv} from './hook';
-import {useSearchUser} from '../../../common-hook'
+import {useSearchUser} from '../../../common-hook';
+import './index.less'
 export default function MyAuthority (){
     const [loading, deletePriv]=useDeletePriv()
     const [form] = Form.useForm();
@@ -53,7 +54,7 @@ export default function MyAuthority (){
          
         }) as any;
       }, []);
-    return(<>
+    return(<div className="my-authority-wrap">
       <TableSearch
         form={form}
         bordered
@@ -79,5 +80,5 @@ export default function MyAuthority (){
         reset={reset}
         searchText="查询"
       />
-    </>)
+    </div>)
 }

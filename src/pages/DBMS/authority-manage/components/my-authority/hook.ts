@@ -18,7 +18,7 @@ export function useDeletePriv(): [boolean, (paramsObj: { id: number }) => Promis
     setLoading(true);
     await delRequest(`${APIS.delPrivApi}?id=${paramsObj.id}`)
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           message.success('删除成功！');
         } else {
           return;
