@@ -1,4 +1,4 @@
-import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -42,14 +42,13 @@ interface Iprops {
     refreshKey: number;
     count: number
 }
-
+const { Paragraph } = Typography;
 export default function PanelDetail(props: Iprops) {
     const [info, setInfo] = useState<any>({});
     const { parentWfId, tabKey, refreshKey, count } = props
     const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
     const [form] = Form.useForm()
     const [runSqlform] = Form.useForm()
-
     const [loading, setLoading] = useState<boolean>(false);
     const [status, setstatus] = useState<string>("");
     const [runMode, setRunMode] = useState<string>("now")
@@ -253,6 +252,43 @@ export default function PanelDetail(props: Iprops) {
         }
     };
 
+    const renderInfo = (data: any) => {
+        return (
+          Object.keys(data)?.map((item: any) => {
+            return (
+              item === "阶段状态" ?
+                <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
+                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                    {value?.replace(/\\n/g, '<br/>')}
+                  </span>
+                )} /> :
+                item === "错误级别" ?
+                  <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
+                    <span><Tag color={value === "通过" ? "green" : value === "警告" ? "orange" : value === "错误" ? "red" : "default"}>{value}</Tag></span>
+                  )} /> : item === "审核/执行信息" ?
+                    <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+    
+                      <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                        <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                      </span>
+    
+                    )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+    
+                      <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                        <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                      </span>
+    
+                    )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
+                      <Tooltip placement="topLeft" title={value}>
+    
+                        {value}
+                      </Tooltip>)} />
+            )
+          })
+    
+        )
+      }
+    
 
     const columns = useMemo(() => {
         return createTableColumns() as any;
@@ -353,7 +389,7 @@ export default function PanelDetail(props: Iprops) {
                         <div>
                             <div className="second-info">
                                 <span className="second-info-left">
-                                    {/* <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span> */}
+                                 
                                     <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
                                     <span><Space><span>申请人:</span><span><Tag color="#2db7f5">{info?.userName}</Tag></span></Space></span>
                                     <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor || "default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
@@ -363,8 +399,6 @@ export default function PanelDetail(props: Iprops) {
                                         {status === "wait" && info?.userName === userName &&
                                             <Tag color="orange" onClick={() => { showConfirm("abort") }} >撤销工单</Tag>
                                         }
-
-
 
                                     </Space>
                                 </span>
@@ -407,10 +441,10 @@ export default function PanelDetail(props: Iprops) {
                                     info?.currentStatus === "autoReviewWrong" ? <CloseCircleOutlined style={{ color: "red" }} /> :
                                         info?.currentStatus === "exception" ? <CloseCircleOutlined style={{ color: "red" }} /> : info?.currentStatus === "reject" ? <CloseCircleOutlined style={{ color: "red" }} /> : status === "wait" ? <LoadingOutlined style={{ color: "#2db7f5" }} /> :
                                             <CheckCircleTwoTone />}
-                                description={
-                                    status === "wait" && owner?.join(',')?.includes(userName) ? <Space>
-                                        <Tag color="success" onClick={() => {
-                                            auditTicket({ auditType: "pass", id: parentWfId }).then(() => {
+                                             description={
+                                             status === "wait" && owner?.join(',')?.includes(userName) ? <Space>
+                                              <Tag color="success" onClick={() => {
+                                                auditTicket({ auditType: "pass", id: parentWfId }).then(() => {
 
                                                 setTimeout(() => {
 
@@ -463,94 +497,20 @@ export default function PanelDetail(props: Iprops) {
                     </div>
                     {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
                         {reviewContentData?.length > 0 && (
-                            Object.keys(reviewContentData[0])?.map((item: any) => {
-                                return (
-                                    item === "审核/执行信息" ?
-                                        <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                                            <Tooltip placement="topLeft" title={<span className="refine-info">
-                                                {value?.replace(/\\n/g, '<br/>')}
-                                            </span>}>
-                                                <span className="refine-info">
-                                                    {value?.replace(/\\n/g, '<br/>')}
-                                                </span>
-                                            </Tooltip>
-                                        )} /> : item === "完整SQL内容" ? <Table.Column width={379} title={item} dataIndex={item} key={item} render={(value) => (
-                                            <Tooltip placement="topLeft" title={<span className="refine-info">
-                                                {value?.replace(/\\n/g, '<br/>')}
-                                            </span>}>
-                                                <span className="refine-info">
-                                                    {value?.replace(/\\n/g, '<br/>')}
-                                                </span>
-                                            </Tooltip>)} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
-                                                <Tooltip placement="topLeft" title={value}>
-                                                    {value}
-                                                </Tooltip>)} />
-                                )
-                            })
-
+                            renderInfo(reviewContentData[0])
+                          
                         )}
                     </Table>)}
                     {status !== "wait" && (executeResultData?.length > 0 ?
                         <Table bordered scroll={{ x: '100%' }} loading={loading} dataSource={executeResultData}  >
 
                             {executeResultData?.length > 0 && (
-                                Object.keys(executeResultData[0])?.map((item: any) => {
-                                    return (
-                                        item === "审核/执行信息" ?
-                                            <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                                                <Tooltip placement="topLeft" title={<span className="refine-info">
-                                                    {value?.replace(/\\n/g, '<br/>')}
-                                                </span>}>
-
-                                                    <span className="refine-info">
-                                                        {value?.replace(/\\n/g, '<br/>')}
-                                                    </span>
-                                                </Tooltip>
-                                            )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
-                                                <Tooltip placement="topLeft" title={<span className="refine-info">
-                                                    {value?.replace(/\\n/g, '<br/>')}
-                                                </span>}>
-
-                                                    <span className="refine-info">
-                                                        {value?.replace(/\\n/g, '<br/>')}
-                                                    </span>
-                                                </Tooltip>)} /> : <Table.Column width={80} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
-                                                    <Tooltip placement="topLeft" title={value}>
-
-                                                        {value}
-                                                    </Tooltip>)} />
-                                    )
-                                })
+                                renderInfo(executeResultData[0])
+                              
                             )}
                         </Table> : <Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
                             {reviewContentData?.length > 0 && (
-                                Object.keys(reviewContentData[0])?.map((item: any) => {
-                                    return (
-                                        item === "审核/执行信息" ?
-                                            <Table.Column title={item} dataIndex={item} key={item} width={400} render={(value) => (
-                                                <Tooltip placement="topLeft" title={<span className="refine-info">
-                                                    {value?.replace(/\\n/g, '<br/>')}
-                                                </span>}>
-
-                                                    <span className="refine-info">
-                                                        {value?.replace(/\\n/g, '<br/>')}
-                                                    </span>
-                                                </Tooltip>
-                                            )} /> : item === "完整SQL内容" ? <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
-                                                <Tooltip placement="topLeft" title={<span className="refine-info">
-                                                    {value?.replace(/\\n/g, '<br/>')}
-                                                </span>}>
-
-                                                    <span className="refine-info">
-                                                        {value?.replace(/\\n/g, '<br/>')}
-                                                    </span>
-                                                </Tooltip>)} /> : <Table.Column width={80} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
-                                                    <Tooltip placement="topLeft" title={value}>
-
-                                                        {value}
-                                                    </Tooltip>)} />
-                                    )
-                                })
+                                 renderInfo(reviewContentData[0])
 
                             )}
                         </Table>
