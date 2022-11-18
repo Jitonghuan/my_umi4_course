@@ -1,6 +1,6 @@
 import { history } from 'umi';
 import { useState } from 'react';
-import { Tooltip, Popconfirm, Button, Tag } from 'antd';
+import { Tooltip, Popconfirm, Switch, Tag } from 'antd';
 import { EditFilled, RightOutlined, MinusCircleFilled, LeftOutlined } from '@ant-design/icons';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import { LIST_STATUS_TYPE } from './load-detail/schema';
@@ -563,3 +563,80 @@ export const taskTableSchema = ({
       ),
     },
   ] as ColumnProps[];
+
+// pha列表
+export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch, recordDetail }) => {
+  return [
+    {
+      title: '规则名称',
+      dataIndex: 'ruleName',
+      width: 160,
+      ellipsis: true,
+      render: (value: any) => (
+        <Tooltip title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '关联标签',
+      dataIndex: 'labelRelMap',
+      width: 240,
+      ellipsis: true,
+      render: (value: any, record: any) =>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          {Object.keys(record.labelRelMap || {}).map((k) => (
+            <Tag color="green">{`${k}=${record.labelRelMap[k]}`}</Tag>
+          ))}
+        </div>
+    },
+    {
+      title: '关联资源',
+      dataIndex: 'resourceRel',
+      width: 240,
+      // ellipsis: true,
+      render: (value: any) =>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          {(value || []).map((item: any) => <Tag color='geekblue'>{item}</Tag>)}
+        </div>
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      width: 100,
+      ellipsis: true,
+      render: (value: any) => (
+        <Tooltip title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '弹性伸缩',
+      dataIndex: 'hpaSwitch',
+      width: 60,
+      ellipsis: true,
+      render: (value: any, record: any) => <Switch checked={value} onChange={(checked) => { handleSwitch(checked, record) }} />
+    },
+    {
+      title: '操作',
+      fixed: 'right',
+      width: 120,
+      dataIndex: 'operate',
+      render: (_: any, record: any, index: number) => (
+        <div className="action-cell">
+          <a onClick={() => handleEdit(record, index)}>编辑</a>
+          <a onClick={() => recordDetail(record, index)}>触发记录</a>
+          <Popconfirm
+            title="确定要删除该规则吗？"
+            onConfirm={() => {
+              handleDelete(record, index);
+            }}
+          >
+            <a>删除</a>
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ]
+}
