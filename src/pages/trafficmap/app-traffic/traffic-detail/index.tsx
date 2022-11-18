@@ -52,8 +52,6 @@ export default function TrafficDetail() {
     }
   }, [])
 
-  // useEffect(() => { console.log(rangTime, 'rangeTime') }, [rangTime])
-
   useEffect(() => {
     //if(!curRecord?.appId) return
     if (curRecord?.appCode && curRecord?.envCode) {
