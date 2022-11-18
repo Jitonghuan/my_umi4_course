@@ -507,7 +507,7 @@ export default function ApprovalEnd() {
                           {value?.replace(/\\n/g, '<br/>')}
                         </span>
 
-                      </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                      </Tooltip>)} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
                         <Tooltip placement="topLeft" title={value}>
 
                           {value}
@@ -544,7 +544,7 @@ export default function ApprovalEnd() {
                             {value?.replace(/\\n/g, '<br/>')}
                           </span>
 
-                        </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                        </Tooltip>)} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
                           <Tooltip placement="topLeft" title={value}>
 
                             {value}
@@ -575,7 +575,7 @@ export default function ApprovalEnd() {
                           <span className="refine-info">
                             {value?.replace(/\\n/g, '<br/>')}
                           </span>
-                        </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                        </Tooltip>)} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
                           <Tooltip placement="topLeft" title={value}>
 
                             {value}

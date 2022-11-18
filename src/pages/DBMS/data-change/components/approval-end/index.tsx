@@ -390,8 +390,6 @@ export default function ApprovalEnd() {
                   status === "wait" && owner?.join(',')?.includes(userName) ? <Space>
                     <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
-                        // afferentId ? getInfo(afferentId) : getInfo()
-                        // history.back()
                         setTimeout(() => {
                           if (query?.detail === "true" && query?.id) {
                             getInfo(afferentId)
@@ -461,7 +459,7 @@ export default function ApprovalEnd() {
                         <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
                           {value?.replace(/\\n/g, '<br/>')}
                         </span>
-                      </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                      </Tooltip>)} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
                         <Tooltip placement="topLeft" title={value}>
 
                           {value}
@@ -496,7 +494,7 @@ export default function ApprovalEnd() {
                             {value?.replace(/\\n/g, '<br/>')}
                           </span>
 
-                        </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                        </Tooltip>)} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
                           <Tooltip placement="topLeft" title={value}>
 
                             {value}
@@ -523,7 +521,7 @@ export default function ApprovalEnd() {
                           {value?.replace(/\\n/g, '<br/>')}
                         </span>
 
-                      )} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                      )} /> : <Table.Column title={item} dataIndex={item} width={80} ellipsis key={item} render={(value) => (
 
                         <Tooltip placement="topLeft" title={value}>
 

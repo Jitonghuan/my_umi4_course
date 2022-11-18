@@ -437,7 +437,7 @@ export default function PanelDetail(props: Iprops) {
                             <span>
                                 <span style={{ display: "inline-flex" }}>
                                     <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
-                  <Spin spinning={runLoading}  >
+                                     <Spin spinning={runLoading}  >
                                         {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
                                     </Spin>
                                 </span>
@@ -481,7 +481,7 @@ export default function PanelDetail(props: Iprops) {
                                                 <span className="refine-info">
                                                     {value?.replace(/\\n/g, '<br/>')}
                                                 </span>
-                                            </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                                            </Tooltip>)} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
                                                 <Tooltip placement="topLeft" title={value}>
                                                     {value}
                                                 </Tooltip>)} />
@@ -514,7 +514,7 @@ export default function PanelDetail(props: Iprops) {
                                                     <span className="refine-info">
                                                         {value?.replace(/\\n/g, '<br/>')}
                                                     </span>
-                                                </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                                                </Tooltip>)} /> : <Table.Column width={80} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
 
                                                         {value}
@@ -544,7 +544,7 @@ export default function PanelDetail(props: Iprops) {
                                                     <span className="refine-info">
                                                         {value?.replace(/\\n/g, '<br/>')}
                                                     </span>
-                                                </Tooltip>)} /> : <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                                                </Tooltip>)} /> : <Table.Column width={80} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
 
                                                         {value}
