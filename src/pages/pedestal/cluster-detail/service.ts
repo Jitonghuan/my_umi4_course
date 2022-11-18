@@ -65,3 +65,28 @@ export const getResourceType = (data: any) => {
   const url = addAPIPrefix('/infraManage/resource/type/list');
   return getRequest(url, { data: data });
 };
+
+// hpa新增弹性规则
+export const hpaCreate = (data: any) => {
+  const url = addAPIPrefix('/infraManage/hpa/createRule');
+  return postRequest(url, { data: data });
+};
+
+// hpa-编辑规则
+export const hpaUpdate = (data: any) => {
+  const url = addAPIPrefix('/infraManage/hpa/updateRule');
+  return putRequest(url, { data: data });
+};
+
+// hpa查询接口
+export const getHpaList = (data: any) => {
+  const url = addAPIPrefix('/infraManage/hpa/ruleList');
+  return getRequest(url, { data: data });
+};
+
+// hpa获取触发记录
+export const getHpaRecordList = (data: any) => {
+  const url = addAPIPrefix('/infraManage/hpa/hpaLogs');
+  return getRequest(url, { data: data });
+};
+

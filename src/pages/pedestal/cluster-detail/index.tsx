@@ -13,6 +13,7 @@ const { TabPane } = Tabs;
 const TabList = [
   { label: '资源详情', key: 'resource-detail' },
   { label: '节点列表', key: 'node-list' },
+  { label: '弹性伸缩', key: 'hpa' }
   // { label: '资源统计', key: 'resource-statistics' },
   // { label: '事件告警', key: 'event-warning' },
   // { label: '任务管理', key: 'task-manage' }
