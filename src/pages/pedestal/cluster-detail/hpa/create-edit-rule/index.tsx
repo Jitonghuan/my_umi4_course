@@ -82,7 +82,7 @@ export default function CreateEditRule(props: any) {
                     <Form.Item label='缩容阈值(低于)：' name='shrinkageThreshold' rules={[{ required: true, message: '这是必填项' }]}>
                         <InputNumber size="middle" style={{ width: 150 }} addonAfter="%" placeholder='请输入' min={0} max={100} />
                     </Form.Item>
-                    <Form.Item label='静默时间：' name='silenceTime' rules={[{ required: true, message: '这是必填项' }]}>
+                    <Form.Item label='缩容等待时间：' name='silenceTime' rules={[{ required: true, message: '这是必填项' }]}>
                         <InputNumber size="middle" style={{ width: 150 }} addonAfter="min" placeholder='请输入' min={0} />
                     </Form.Item>
                     <Form.Item label="关联标签：" className="label-item">
@@ -101,7 +101,7 @@ export default function CreateEditRule(props: any) {
                                             >
                                                 <Input style={{ width: '180px' }} />
                                             </Form.Item>
-                                            <span style={{ verticalAlign: 'text-bottom', lineHeight: '65px' }}>=</span>
+                                            <span style={{ verticalAlign: 'text-bottom', lineHeight: '73px' }}>=</span>
                                             <Form.Item
                                                 {...field}
                                                 // style={{ marginLeft: '40px' }}
