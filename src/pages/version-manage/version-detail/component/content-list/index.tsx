@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Input, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
+import RealteDemandBug from './relate-demand-bug';
 const mockData = [
     { title: '应用管理：版本发布' },
     { title: '应用管理：版本发布' },
@@ -18,9 +19,8 @@ const mockData = [
 ]
 export default function ContentList() {
     const [data, setData] = useState<any>(mockData);
-    const [visible, setVisible] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>('')
-    const columns = [
+    const columns: any = [
         {
             title: 'ID',
             dataIndex: 'id',
@@ -72,6 +72,7 @@ export default function ContentList() {
     }
     return (
         <>
+            <RealteDemandBug />
             <div className='table-top'>
                 <div className='flex-space-between'>
                     <Space>
