@@ -565,7 +565,7 @@ export const taskTableSchema = ({
   ] as ColumnProps[];
 
 // pha列表
-export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
+export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch, recordDetail }) => {
   return [
     {
       title: '规则名称',
@@ -621,11 +621,12 @@ export const phaTableSchema = ({ handleEdit, handleDelete, handleSwitch }) => {
     {
       title: '操作',
       fixed: 'right',
-      width: 80,
+      width: 120,
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
           <a onClick={() => handleEdit(record, index)}>编辑</a>
+          <a onClick={() => recordDetail(record, index)}>触发记录</a>
           <Popconfirm
             title="确定要删除该规则吗？"
             onConfirm={() => {

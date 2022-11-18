@@ -78,8 +78,15 @@ export const hpaUpdate = (data: any) => {
   return putRequest(url, { data: data });
 };
 
-// 资源类型查询接口
+// hpa查询接口
 export const getHpaList = (data: any) => {
   const url = addAPIPrefix('/infraManage/hpa/ruleList');
   return getRequest(url, { data: data });
 };
+
+// hpa获取触发记录
+export const getHpaRecordList = (data: any) => {
+  const url = addAPIPrefix('/infraManage/hpa/hpaLogs');
+  return getRequest(url, { data: data });
+};
+

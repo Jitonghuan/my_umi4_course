@@ -7,6 +7,7 @@ import clusterContext from '../context';
 import { getHpaList, hpaUpdate } from '../service';
 import { parse, stringify } from 'query-string';
 import CreateEditRule from './create-edit-rule';
+import RecordDetail from './record-detail';
 import { delRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 import './index.less';
@@ -23,6 +24,7 @@ export default function Hpa(props: any) {
     const [total, setTotal] = useState<number>(0);
     const [mode, setMode] = useState<EditorMode>('HIDE');
     const [initData, setInitData] = useState<any>({});
+    const [visible, setVisible] = useState<boolean>(false);
     // 表格列配置
     const tableColumns: any = useMemo(() => {
         return phaTableSchema({
@@ -43,6 +45,10 @@ export default function Hpa(props: any) {
                     message.success('操作成功');
                     initSearch();
                 }
+            },
+            recordDetail: (record: any) => {
+                setInitData(record);
+                setVisible(true)
             }
         })
     }, [dataSource]);
@@ -87,6 +93,13 @@ export default function Hpa(props: any) {
                 onSave={initSearch}
                 clusterCode={clusterCode}
                 initData={initData}
+            />
+
+            <RecordDetail
+                visible={visible}
+                onClose={() => { setVisible(false) }}
+                initData={initData}
+                clusterCode={clusterCode}
             />
 
             <div className="table-caption">
