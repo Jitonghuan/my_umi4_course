@@ -118,7 +118,12 @@ export default [
     redirect: `${baseRoutePath}/config/nacos-config/nacos`,
   },
   {
+    path: `${baseRoutePath}/DBMS/safe-rule`,
+    redirect: `${baseRoutePath}/DBMS/safe-rule/safe-list`,
+  },
 
+  {
+   
     "path": `${baseRoutePath}/application`,
     "name": "应用管理",
     "icon": "icon-poc_maindata",
@@ -457,18 +462,18 @@ export default [
         key: 'data-change',
         component: '@/pages/DBMS/data-change',
       },
-      // {
-      //   path: `${baseRoutePath}/DBMS/ticket-approval`,
-      //   name: '工单详情-审批中',
-      //   key: 'data-change',
-      //   component: '@/pages/DBMS/data-change/components/ticket-approval',
-      //   hideInMenu: true,
-      // },
       {
         path: `${baseRoutePath}/DBMS/approval-end`,
         name: '工单详情-审批结束',
         key: 'data-change',
         component: '@/pages/DBMS/data-change/components/approval-end',
+        hideInMenu: true,
+      },
+      {
+        path:`${baseRoutePath}/DBMS/ddl-detail`,
+        name: '工单详情-结构变更',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/ddl-detail',
         hideInMenu: true,
       },
       {
@@ -478,12 +483,28 @@ export default [
         component: '@/pages/DBMS/data-change/components/change-apply',
         hideInMenu: true
       },
-      // {
-      //   path: `${baseRoutePath}/DBMS/configuration`,
-      //   name: '配置项',
-      //   key: 'configuration',
-      //   component: '@/pages/DBMS/configuration',
-      // },
+      {
+        path: `${baseRoutePath}/DBMS/safe-rule`,
+        name: '安全规则',
+        key: 'safe-rule',
+        component: '@/pages/DBMS/safe-rule',
+        routes:[
+          {
+            path:`${baseRoutePath}/DBMS/safe-rule/safe-list` ,
+            name: '安全规则',
+            key: 'safe-rule',
+            component: '@/pages/DBMS/safe-rule/components/safe-list',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/DBMS/safe-rule/instance-list`,
+            name: '实例规则',
+            key: 'safe-rule',
+            component: '@/pages/DBMS/safe-rule/components/instance-list',
+            hideInMenu: true,
+          }
+        ]
+      },
     ],
   },
   {

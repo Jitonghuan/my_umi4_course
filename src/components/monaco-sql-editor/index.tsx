@@ -8,7 +8,7 @@
  */
 import React, {useState, useEffect, useCallback } from 'react';
 import * as monaco from 'monaco-editor';
-import {Space,Spin} from 'antd';
+import {Space,Spin,message} from 'antd';
 import _ from "lodash";
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
@@ -70,6 +70,7 @@ export default function SqlEditor(props: Iprops) {
   const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const rootCls = 'monaco-sql-editor-title';
   const [getVal, setGetVal] = useState<any>();
+  const [count,setCount]=useState<number>(0)
   let divNode: any;
   const codeContainerRef = useCallback((node: any) => {
     // On mount get the ref of the div and assign it the divNode
@@ -292,12 +293,21 @@ export default function SqlEditor(props: Iprops) {
           {isSqlCheckBtn && <span className={`${rootCls}-btn`} id="two" onClick={() => {
              //@ts-ignore
             sqlCheck(instance?.getValue() || "")
+            setCount(count=>count+1)
           }}>sql检测</span>}
           {/* {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>}  */}
           {isSubChangeBtn &&<Spin spinning={sqlLoading}>
             <span className={`${rootCls}-btn`} id="fifth" onClick={() => {
-               //@ts-ignore
+             
+              
+               if(count===0){
+                 message.warning("请进行sql检测后再提交")
+                 return
+
+               }
+                 //@ts-ignore
                subSqlChange({ sqlContent: instance?.getValue() || "" })
+               setCount(0)
            
          
           }}>提交变更</span></Spin >}

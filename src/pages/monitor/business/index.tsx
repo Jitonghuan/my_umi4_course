@@ -7,6 +7,7 @@ import { history,useLocation } from 'umi';
 import { parse } from 'query-string';
 import PrometheusCom from './prometheus';
 
+
 const { TabPane } = Tabs;
 
 export default function Dashboard() {

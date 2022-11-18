@@ -21,3 +21,8 @@ export const START_TIME_ENUMS = [
     { label: '否', value:false},
     
   ];
+  export const sqlWfTypeOptions = [
+    { label: '结构变更', value: "ddl" },
+    { label: '数据变更', value:"sql"},
+    
+  ];

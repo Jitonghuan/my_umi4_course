@@ -7,9 +7,9 @@ export function useEnvList() {
     const [loading, setLoading] = useState<boolean>(false);
     const [source, setSource] = useState<any>([]);
    
-    const queryEnvList = async () => {
+    const queryEnvList = async (envTypeCode?:string) => {
       setLoading(true);
-      await getRequest(APIS.queryEnvList, { data:{pageIndex:-1,pageSize:-1,envModel:"currency-deploy"} })
+      await getRequest(APIS.queryEnvList, { data:{pageIndex:-1,pageSize:-1,envModel:"currency-deploy",envTypeCode} })
         .then((result) => {
           if (result?.success) {
             const dataSource = result.data.dataSource || [];

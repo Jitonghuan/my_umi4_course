@@ -29,7 +29,7 @@ export function useCreatePriv(): [
           data: paramsObj,
         })
           .then((res) => {
-            if (res.success) {
+            if (res?.success) {
               message.success('保存成功！');
             } else {
               return;

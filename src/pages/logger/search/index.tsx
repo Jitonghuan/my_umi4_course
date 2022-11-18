@@ -16,7 +16,6 @@ import {
   Tabs,
 } from 'antd';
 import ChartCaseList from './LogHistorm';
-import htmr from 'htmr';
 import ReactJson from 'react-json-view';
 import { history, useLocation } from 'umi';
 import { parse } from 'query-string';
@@ -300,7 +299,7 @@ export default function LoggerSearch(props: any) {
           //手风琴下拉框数据 hits
           let logSearchTableInfodata = resp.data.logs;
           let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
-          console.log("---logSearchTableInfodata--",logSearchTableInfodata?.length,viewLogSearchTabInfo.length)
+        
           setLogSearchTableInfo(logSearchTableInfodata);
           let newArryData: any = []
           let mapArry = viewLogSearchTabInfo?.slice(0)
