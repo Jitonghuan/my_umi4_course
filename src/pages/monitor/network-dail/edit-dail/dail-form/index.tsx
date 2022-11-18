@@ -1,4 +1,4 @@
-import { Collapse, Drawer,Form } from 'antd';
+import { Collapse, Drawer,Form,Select,Input,Radio } from 'antd';
 import React from 'react';
 export default function DailForm(){
     const [form]=Form.useForm()
@@ -6,6 +6,8 @@ export default function DailForm(){
         <div>
             <Form  labelCol={{ flex: '80px' }} form={form}>
                 <Form.Item label="集群选择" name="clusterNameb">
+                    <Select />
+                    
 
                 </Form.Item>
                 <Form.Item label="拨测类型">
