@@ -5,13 +5,13 @@ import { eventTableSchema } from '../../schema';
 import { getResourceList } from '../../service';
 import { RedoOutlined } from '@ant-design/icons';
 import clusterContext from '../../context';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import { parse } from 'query-string';
 import './index.less';
 
 export default function PodsDetail() {
   // const { location } = props;
-  let location:any = useLocation();
+  let location: any = useLocation();
   const query = parse(location.search);
   const { name, namespace, kind, clusterCode } = query || {};
   const [podsData, setPodsData] = useState([]);
@@ -31,7 +31,7 @@ export default function PodsDetail() {
       viewLog: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/view-log',
-          search:`key=resource-detail&name=${name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}&containerName=${record?.name}`
+          search: `key=resource-detail&name=${name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}&containerName=${record?.name}`
           // query: {
           //   key: 'resource-detail',
           //   name,
@@ -45,7 +45,7 @@ export default function PodsDetail() {
       shell: (record: any, index: any) => {
         history.push({
           pathname: '/matrix/pedestal/login-shell',
-          search:`key=resource-detail&name=${name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}&containerName=${record?.name}&type=pods`
+          search: `key=resource-detail&name=${name}&namespace=${record?.namespace}&clusterCode=${clusterCode}&clusterName=${clusterName}&containerName=${record?.name}&type=pods`
           // query: {
           //   type: 'pods',
           //   key: 'resource-detail',
@@ -87,7 +87,7 @@ export default function PodsDetail() {
 
   const getEvents = () => {
     setEventLoading(false);
-    getResourceList({ clusterCode, resourceType: 'events', involvedObjectName: name, involvedObjectKind: kind || '' })
+    getResourceList({ clusterCode, resourceType: 'events', involvedObjectName: name, involvedObjectKind: kind || '', namespace })
       .then((res) => {
         if (res?.success) {
           setEventData(res?.data?.items || []);
