@@ -1,6 +1,6 @@
 import { datetimeCellRender } from '@/utils';
 import { FormProps } from '@/components/table-search/typing';
-import { Space, Popconfirm, Tooltip, Switch } from 'antd';
+import { Space, Popconfirm, Tooltip, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
     PlusOutlined,
@@ -12,7 +12,12 @@ import {
   } from '@ant-design/icons';
 
 // 列表页-查询表单
-export const createFormColumns = (params: { onTypeChange: (value: string) => void }) => {
+export const createFormColumns = (params: { 
+  dailTypesLoading:boolean;
+  dailTypes:any[];
+  clusterData:any[]
+  onTypeChange: (value: string) => void }) => {
+  
   return [
     {
       key: '1',
@@ -21,8 +26,10 @@ export const createFormColumns = (params: { onTypeChange: (value: string) => voi
       dataIndex: 'type',
       width: '200px',
       placeholder: '请选择',
-      option: [],
-      onChange: params.onTypeChange,
+      option:params?.clusterData,
+      renderLabel:true
+      
+     
     },
     {
       key: '2',
@@ -44,11 +51,12 @@ export const createFormColumns = (params: { onTypeChange: (value: string) => voi
     },
     {
       key: '4',
-      type: 'input',
+      type: 'select',
       label: '拨测类型',
       dataIndex: 'type',
       width: '200px',
       placeholder: '请输入',
+      option: params?.dailTypes,
      
     },
     {
@@ -65,6 +73,7 @@ export const createFormColumns = (params: { onTypeChange: (value: string) => voi
 
 // 列表页-表格
 export const createTableColumns = (params: {
+  delLoading:boolean;
   onEdit: (record: any, index: number) => void;
   onView: (record: any, index: number) => void;
   onDelete: (record: any) => void;
@@ -135,7 +144,7 @@ export const createTableColumns = (params: {
               params?.onDelete(record.id);
             }}
           >
-            <a><DeleteOutlined />删除</a>
+           <Spin spinning={ params?.delLoading}><a><DeleteOutlined />删除</a></Spin> 
           </Popconfirm>
         </Space>
       ),

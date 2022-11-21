@@ -12,15 +12,28 @@ const { Panel } = Collapse;
 
 
 interface Iprops {
-    mode: EditorMode
+    mode: EditorMode;
+    onSave:()=>any;
+    onClose:()=>any;
 }
 export default function EditDail(props: Iprops) {
-    const { mode, } = props;
+    const { mode,onSave,onClose } = props;
+    const handleSubmit=()=>{}
 
     return (
-        <Drawer title={mode === "ADD" ? "拨测新增" : "拨测编辑"} visible={mode !== 'HIDE'} width={"80%"}>
+        <Drawer 
+           title={mode === "ADD" ? "拨测新增" : "拨测编辑"} 
+           visible={mode !== 'HIDE'} 
+           width={"60%"}
+           onClose={onClose}
+           footer={null}
+           
+           >
             <Collapse bordered={false} defaultActiveKey={['1']}>
-                <Panel header={<h3>网络拨测编辑</h3>} key="1">
+                <Panel header={
+                <div className="target-item"><h3>网络拨测编辑</h3>
+                   <Button type="primary">保存</Button>
+                </div>} key="1">
                 <DailForm />
                    
                 </Panel>

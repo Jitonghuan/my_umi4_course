@@ -25,4 +25,6 @@ export const deleteNetworkProbe = addAPIPrefix('/monitorManage/networkProbe/dele
 export const networkProbeStatus = addAPIPrefix('/monitorManage/networkProbe/status');
 /* GET 6、获取拨测类型 */
 
-export const networkProbeProbeType = addAPIPrefix('/monitorManage/networkProbe/probeType');
+export const networkProbeType = addAPIPrefix('/monitorManage/networkProbe/probeType');
+
+export const getClusterApi= addAPIPrefix("/monitorManage/cluster")

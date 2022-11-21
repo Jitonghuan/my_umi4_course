@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState,useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { createTableColumns ,createFormColumns} from './schema';
@@ -6,12 +6,18 @@ import { Button, Space, Form } from 'antd';
 import EditDail from './edit-dail'
 import useTable from '@/utils/useTable';
 import * as APIS from './service';
+import {useGetNetworkProbeType,useGetCluster,useDelNetworkProbe} from './edit-dail/hook'
 export default function NetworkDail(){
   const [form] = Form.useForm();
   const [curRecord, setcurRecord] = useState<any>({});
   const [mode, setMode] = useState<EditorMode>('HIDE');
+  const [dailTypesLoading,dailTypes, getNetworkProbeProbeType]=useGetNetworkProbeType()
+  const [clusterLoading,clusterData, getCluster]=useGetCluster()
+  const [delLoading,deleteNetworkProbe]=useDelNetworkProbe()
   const columns = useMemo(() => {
+
     return createTableColumns({
+      delLoading,
       onEdit: (record, index) => {
         setcurRecord(record);
         setMode('EDIT');
@@ -21,11 +27,20 @@ export default function NetworkDail(){
         setMode('VIEW');
       },
       onDelete: async (id) => {
+        deleteNetworkProbe(id).then(()=>{
+          submit()
+        })
        
       },
      
     }) as any;
   }, []);
+  useEffect(()=>{
+    getNetworkProbeProbeType()
+    getCluster()
+
+  },[])
+ 
 
   const {
     tableProps,
@@ -50,6 +65,9 @@ export default function NetworkDail(){
 
   const formOptions = useMemo(() => {
     return createFormColumns({
+      dailTypesLoading,
+      dailTypes,
+      clusterData,
       onTypeChange:()=>{
 
       }
@@ -59,7 +77,7 @@ export default function NetworkDail(){
 
     return(
         <PageContainer>
-          <EditDail mode={mode}/>
+          <EditDail mode={mode} onSave={()=>{setMode("HIDE");submit()}} onClose={()=>{setMode("HIDE")}}/>
         <TableSearch
         form={form}
         bordered
