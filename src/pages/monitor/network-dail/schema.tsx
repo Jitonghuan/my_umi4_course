@@ -1,6 +1,6 @@
 import { datetimeCellRender } from '@/utils';
 import { FormProps } from '@/components/table-search/typing';
-import { Space, Popconfirm, Tooltip, Spin } from 'antd';
+import { Space, Popconfirm, Tooltip, Spin,Tag } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
     PlusOutlined,
@@ -11,65 +11,6 @@ import {
     PauseCircleOutlined,
   } from '@ant-design/icons';
 
-// 列表页-查询表单
-export const createFormColumns = (params: { 
-  dailTypesLoading:boolean;
-  dailTypes:any[];
-  clusterData:any[]
-  onTypeChange: (value: string) => void }) => {
-  
-  return [
-    {
-      key: '1',
-      type: 'select',
-      label: '集群选择',
-      dataIndex: 'type',
-      width: '200px',
-      placeholder: '请选择',
-      option:params?.clusterData,
-      renderLabel:true
-      
-     
-    },
-    {
-      key: '2',
-      type: 'input',
-      label: '拨测名称',
-      dataIndex: 'type',
-      width: '200px',
-      placeholder: '请输入',
-     
-    },
-    {
-      key: '3',
-      type: 'input',
-      label: '拨测地址',
-      dataIndex: 'type',
-      width: '200px',
-      placeholder: '请输入',
-     
-    },
-    {
-      key: '4',
-      type: 'select',
-      label: '拨测类型',
-      dataIndex: 'type',
-      width: '200px',
-      placeholder: '请输入',
-      option: params?.dailTypes,
-     
-    },
-    {
-      key: '5',
-      type: 'input',
-      label: '状态',
-      dataIndex: 'type',
-      width: '200px',
-      placeholder: '请输入',
-     
-    },
-  ] as FormProps[];
-};
 
 // 列表页-表格
 export const createTableColumns = (params: {
@@ -81,48 +22,48 @@ export const createTableColumns = (params: {
 }) => {
   return [
     {
-      title: '拨测ID',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
       width: '4%',
     },
     {
       title: '拨测名称',
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'probeName',
+      key: 'probeName',
       width: '14%',
     },
     {
       title: '拨测地址',
-      dataIndex: 'title',
-      key: 'title',
+      dataIndex: 'probeUrl',
+      key: 'probeUrl',
       width: '20%',
       ellipsis: true,
       render: (text) => <Tooltip title={text}>{text}</Tooltip>,
     },
     {
         title: '拨测类型',
-        dataIndex: 'title',
-        key: 'title',
+        dataIndex: 'probeType',
+        key: 'probeType',
         width: '10%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
       {
         title: '采集频率',
-        dataIndex: 'title',
-        key: 'title',
+        dataIndex: 'probeInterval',
+        key: 'probeInterval',
         width: '10%',
         ellipsis: true,
         render: (text) => <Tooltip title={text}>{text}</Tooltip>,
       },
       {
         title: '拨测状态',
-        dataIndex: 'title',
-        key: 'title',
+        dataIndex: 'status',
+        key: 'status',
         width: '10%',
         ellipsis: true,
-        render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+        render: (status) => <Tag color={status===0?"green":"red"}>{status===0?"开启":"停止"}</Tag>,
       },
      
      
@@ -131,10 +72,10 @@ export const createTableColumns = (params: {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '12%',
+      width: '16%',
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
-        <Space>
+        <Space size="middle">
           <a onClick={() => params.onView(record, index)}><BarChartOutlined/>看板</a>
           <a onClick={() => params.onEdit(record, index)}><FormOutlined />编辑</a>
           <a onClick={() => params.onEdit(record, index)}><PlayCircleOutlined />停止</a>

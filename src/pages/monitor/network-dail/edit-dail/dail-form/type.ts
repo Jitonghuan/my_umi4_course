@@ -1,11 +1,7 @@
 
- export const dailTypeOptions = [
-    { label: 'http(s)', value: 'http' },
-    { label: 'Ping', value: 'ping' },
-    { label: 'Dns', value: 'dns' },
-    { label: 'Tcp', value: 'tcp' },
-    { label: 'Grpc', value: 'grpc' },
-  ];
+  export const probeUrlOptions=[
+    { label: 'Get', value: 'get' },
+  ]
   export const frequencyOptions = [
     { label: '1分钟', value: '1min' },
     { label: '5分钟', value: '5min' },
@@ -14,24 +10,24 @@
     { label: '60分钟', value: '60min' },
   ];
   export const questConfigOptions=[
-    { label: 'Header', value: 'header' },
-    { label: 'Authorization', value: 'authorization' },
+    { label: 'Header', value: 'headers' },
+    { label: 'Authorization', value: 'basicAuth' },
   
   ]
   export const tcpQuestConfig=[
-    { label: 'QueryResponse', value: 'QueryResponse' },
+    { label: 'QueryResponse', value: 'queryResponse' },
   ]
   export  const dnsTypeOptions=[ 
-  { label: 'A', value: '1min' },
-  { label: 'MX', value: '5min' },
-  { label: 'NS', value: '15min' },
-  { label: 'CNAME', value: '30min' },
-  { label: 'TXT', value: '60min' },
-  { label: 'ANY', value: '60min' },
-  { label: 'AAAA', value: '60min' },
+  { label: 'A', value: 'A' },
+  { label: 'MX', value: 'MX' },
+  { label: 'NS', value: 'NS' },
+  { label: 'CNAME', value: 'CNAME' },
+  { label: 'TXT', value: 'TXT' },
+  { label: 'ANY', value: 'ANY' },
+  { label: 'AAAA', value: 'AAAA' },
 ]
 export const visitAgreementOption=[
-    { label: 'tcp', value: '1min' },
-    { label: 'udp', value: '5min' },
-    { label: 'tcp-tls', value: '15min' },
+    { label: 'tcp', value: 'tcp' },
+    { label: 'udp', value: 'udp' },
+    { label: 'tcp-tls', value: 'tcp-tls' },
 ]
