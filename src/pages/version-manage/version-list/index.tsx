@@ -1,8 +1,7 @@
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { Select, DatePicker, Space, Input } from 'antd';
+import { Select, DatePicker, Input } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import './index.less';
 import { Form, Button, Table, message } from 'antd';
 import { listSchema } from './schema';
 import CreateVersion from './create-version';
@@ -11,19 +10,28 @@ import { history, useLocation, Outlet } from 'umi';
 import { parse, stringify } from 'query-string';
 import { FeContext } from '@/common/hooks';
 import OperateModal from './operate-modal';
-import { useAppGroupData } from '../hook';
 import { versionSortFn } from '@/utils';
+import { getReleaseList } from '../service';
+import './index.less';
 
 export default function VersionList() {
     const [data, setData] = useState<any>([{ content: 'ceshi', version: '1.2.1', downloadCount: 2 }, { content: 'ceshi', version: '1.2.3', downloadCount: 2 }]);
     const [visible, setVisible] = useState<boolean>(false);
     const { categoryData } = useContext(FeContext);
-    const [appGroup, setAppGroup] = useState<any>({});
+    const [appCategory, setAppCategroy] = useState<any>({});
     const [form] = Form.useForm();
     const [action, setAction] = useState<string>('')
     const [selectTime, setSelectTime] = useState<string>('');
     const [operateVisible, setOperateVisible] = useState<boolean>(false);
     const [initData, setInitData] = useState<any>({});
+    const [total, setTotal] = useState<number>(0);
+    const [pageIndex, setPageIndex] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(20);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    // useEffect(() => {
+    //     queryList({ pageSize, pageIndex });
+    // }, [])
 
     const maxVersion = useMemo(() => {
         const versionList = (data || []).map((item: any) => item.version);
@@ -32,9 +40,9 @@ export default function VersionList() {
     }, [data]);
 
     useEffect(() => {
-        if (categoryData?.length && !appGroup.value) {
-            form.setFieldsValue({ appGroup: categoryData[0].value })
-            setAppGroup(categoryData[0])
+        if (categoryData?.length && !appCategory.value) {
+            form.setFieldsValue({ categoryCode: categoryData[0].value })
+            setAppCategroy(categoryData[0])
         }
     }, [categoryData])
 
@@ -44,7 +52,7 @@ export default function VersionList() {
                 // 跳转到版本详情
                 history.push({
                     pathname: '/matrix/version-manage/detail',
-                    search: stringify({ key: toTab, version, groupName: appGroup.label, groupCode: appGroup.value })
+                    search: stringify({ key: toTab, version, groupName: appCategory.label, groupCode: appCategory.value })
                 })
             },
             downloadVersion: (record: any) => {
@@ -57,7 +65,24 @@ export default function VersionList() {
                 openModal('merge', record)
             }
         }) as any;
-    }, [data, appGroup]);
+    }, [data, appCategory]);
+
+    // 获取列表
+    const queryList = (params: any) => {
+        setLoading(true);
+        const value = form.getFieldsValue();
+        getReleaseList({ ...value, ...params }).then((res) => {
+            if (res?.success) {
+                setData(res?.data?.dataSource || []);
+                setTotal(res?.data?.pageInfo?.total)
+            }
+        }).finally(() => { setLoading(false) })
+    }
+
+    const initSearch = () => {
+        setPageIndex(1);
+        queryList({ pageSize, pageIndex: 1 })
+    }
 
     const openModal = (actionType: string, record: any) => {
         setInitData(record);
@@ -66,6 +91,7 @@ export default function VersionList() {
     }
 
     const formChange = (changedValues: any, allValues: any) => {
+        // queryList({ pageSize, pageIndex })
     }
 
     return (
@@ -76,13 +102,14 @@ export default function VersionList() {
                     visible={operateVisible}
                     onClose={() => { setOperateVisible(false) }}
                     initData={initData}
-                    appGroup={appGroup}
+                    appCategory={appCategory}
                 />
                 <CreateVersion
                     visible={visible}
                     onClose={() => { setVisible(false) }}
                     categoryData={categoryData}
                     maxVersion={maxVersion || ''}
+                    onSave={initSearch}
                 />
                 <div className="search-wrapper">
                     <Form
@@ -90,71 +117,40 @@ export default function VersionList() {
                         form={form}
                         onValuesChange={formChange}
                     >
-                        <Form.Item label="应用分类：" name="appGroup">
+                        <Form.Item label="应用分类：" name="categoryCode">
                             <Select
                                 style={{ width: 160 }}
                                 size="small"
                                 showSearch
                                 options={categoryData}
-                                value={appGroup}
-                                // onChange={(v) => {
-                                //     setAppGroup({ label: v.label, value: v.value });
-                                // }}
+                                value={appCategory}
+                                onChange={(v) => {
+                                    setAppCategroy({ label: v.label, value: v.value });
+                                }}
                                 labelInValue
                             ></Select>
                         </Form.Item>
-                        <Form.Item label="版本号" name="version">
+                        <Form.Item label="版本号" name="releaseNumber">
                             <Input placeholder='请输入版本号' />
                         </Form.Item>
-                        <Form.Item label="发版时间" name="time">
+                        <Form.Item label="发版时间" name="finishTime">
                             <DatePicker
                                 showTime
                                 // onChange={(v: any) => { setSelectTime(v.format('YYYY-MM-DD HH:mm:ss')) }}
                                 format="YYYY-MM-DD HH:mm:ss"
                             />
                         </Form.Item>
-                        {/* <Form.Item>
-          <Button type="primary" htmlType="submit">
-            搜索
-          </Button>
-        </Form.Item>
-        <Form.Item>
-          <Button type="ghost" htmlType="reset">
-            重置
-          </Button>
-        </Form.Item> */}
                     </Form>
-                    {/* <Space>
-                        应用分类：
-                         <Select
-                            style={{ width: 180 }}
-                            size="small"
-                            showSearch
-                            options={appGroupOptions}
-                            value={appGroup}
-                            onChange={(v) => {
-                                setAppGroup({ label: v.label, value: v.value });
-                            }}
-                            labelInValue
-                        ></Select>
-                        版本号：
-                        <Input placeholder='请输入版本号' />
-                         发版时间：
-                         <DatePicker
-                            showTime
-                            onChange={(v: any) => { setSelectTime(v.format('YYYY-MM-DD HH:mm:ss')) }}
-                            format="YYYY-MM-DD HH:mm:ss"
-                        />
-                    </Space> */}
+
                     <div>
                         <span style={{ fontWeight: '600', fontSize: '18px', marginRight: '10px' }}>
-                            {appGroup?.value || '---'}
+                            {appCategory?.value || '---'}
                         </span>
-                        <span style={{ color: '#776e6e', fontSize: '13px' }}>{appGroup?.label || '---'}</span>
+                        <span style={{ color: '#776e6e', fontSize: '13px' }}>{appCategory?.label || '---'}</span>
                     </div>
                 </div>
                 <div className="flex-space-between">
-                    <h3>节点列表</h3>
+                    <h3>版本列表</h3>
                     <Button
                         style={{ marginRight: '10px' }}
                         size="small"
@@ -163,29 +159,25 @@ export default function VersionList() {
                     >
                         新增版本
                      </Button>
-                    {/* <div className="caption-right">
-                    <Button type="primary" onClick={() => { setVisble(true) }}>新增节点</Button>
-                </div> */}
                 </div>
                 <Table
                     dataSource={data}
-                    // loading={loading || updateLoading}
+                    loading={loading}
                     bordered
                     rowKey="id"
-                    // pagination={{
-                    //     pageSize: pageSize,
-                    //     total: total,
-                    //     current: pageIndex,
-                    //     showSizeChanger: true,
-                    //     onShowSizeChange: (_, next) => {
-                    //         setPageIndex(1);
-                    //         setPageSize(next);
-                    //     },
-                    //     onChange: (next) => {
-                    //         setPageIndex(next)
-                    //     }
-                    // }}
-                    pagination={false}
+                    pagination={{
+                        pageSize: pageSize,
+                        total: total,
+                        current: pageIndex,
+                        showSizeChanger: true,
+                        onShowSizeChange: (_, next) => {
+                            setPageIndex(1);
+                            setPageSize(next);
+                        },
+                        onChange: (next) => {
+                            setPageIndex(next)
+                        }
+                    }}
                     columns={tableColumns}
                     scroll={{ x: 1800 }}
                 ></Table>

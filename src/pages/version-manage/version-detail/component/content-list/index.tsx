@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Input, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
+import { arrowStyleType } from '@/pages/trafficmap/constant';
 const mockData = [
     { title: '应用管理：版本发布' },
     { title: '应用管理：版本发布' },
@@ -19,6 +20,7 @@ const mockData = [
 ]
 export default function ContentList() {
     const [data, setData] = useState<any>(mockData);
+    const [type, setType] = useState<string>('hide')
     const [searchValue, setSearchValue] = useState<string>('')
     const columns: any = [
         {
@@ -72,7 +74,7 @@ export default function ContentList() {
     }
     return (
         <>
-            <RealteDemandBug />
+            <RealteDemandBug type={type} onClose={() => { setType('hide') }} />
             <div className='table-top'>
                 <div className='flex-space-between'>
                     <Space>
@@ -119,10 +121,10 @@ export default function ContentList() {
             ></Table>
             <div className='flex-end'>
                 <Space>
-                    <Button type='primary'>
+                    <Button type='primary' onClick={() => { setType('demand') }}>
                         关联需求
                 </Button>
-                    <Button type='primary'>
+                    <Button type='primary' onClick={() => { setType('bug') }}>
                         关联bug
                 </Button>
                     <Button type='primary'>

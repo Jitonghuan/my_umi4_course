@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, Tag, Form, Button, DatePicker, Col, Input, Row, Radio, Select, Space } from 'antd';
+import { Drawer, Tag, Form, Button, DatePicker, Col, Input, Row, Radio, Select, Space, message } from 'antd';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import moment from 'moment';
-import { disabledDate, disabledTime } from '@/utils'
+import { disabledDate, disabledTime } from '@/utils';
+import { createRelease } from '../../service';
 import './index.less';
 
 export default function AddDrawer(props: any) {
-    const { visible, onClose, categoryData, maxVersion } = props;
+    const { visible, onClose, categoryData, maxVersion, onSave } = props;
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (visible) {
@@ -26,6 +28,17 @@ export default function AddDrawer(props: any) {
     const handleSubmit = async () => {
         const value = await form.validateFields();
         value.time = value.time.format('YYYY-MM-DD HH:mm:ss');
+        try {
+            setLoading(true);
+            const res = await createRelease({ ...value });
+            if (res?.success) {
+                message.success('新增版本成功');
+                onClose();
+                onSave();
+            }
+        } finally {
+            setLoading(false)
+        }
     };
 
     return (
@@ -38,7 +51,7 @@ export default function AddDrawer(props: any) {
             maskClosable={false}
             footer={
                 <div className="drawer-footer">
-                    <Button type="primary" onClick={handleSubmit}>
+                    <Button type="primary" onClick={handleSubmit} loading={loading}>
                         保存
             </Button>
                     <Button type="default" onClick={onClose}>
@@ -48,12 +61,12 @@ export default function AddDrawer(props: any) {
             }
         >
             <Form form={form} labelCol={{ flex: '120px' }}>
-                <Form.Item label="应用分类" name="name" rules={[{ required: true, message: '请选择' }]}>
+                <Form.Item label="应用分类" name="categoryCode" rules={[{ required: true, message: '请选择' }]}>
                     <Select style={{ width: 240 }} options={categoryData || []} />
                 </Form.Item>
 
                 <Row>
-                    <Form.Item label="版本号" name="version" rules={[{ pattern: /^\d+\.\d+\.\d+$/, required: true, message: '请输入 x.y.z 格式' }]}>
+                    <Form.Item label="版本号" name="releaseNumber" rules={[{ pattern: /^\d+\.\d+\.\d+$/, required: true, message: '请输入 x.y.z 格式' }]}>
                         <Input style={{ width: 180 }} />
                     </Form.Item>
                     {maxVersion &&
@@ -61,7 +74,7 @@ export default function AddDrawer(props: any) {
                             前置版本号：{maxVersion}
                         </span>}
                 </Row>
-                <Form.Item label="计划发版时间" name="time" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item label="计划发版时间" name="planTime" rules={[{ required: true, message: '请输入' }]}>
                     <DatePicker
                         showTime
                         format="YYYY-MM-DD HH:mm:ss"
@@ -69,10 +82,10 @@ export default function AddDrawer(props: any) {
                         disabledTime={disabledTime}
                     />
                 </Form.Item>
-                <Form.Item label="版本负责人" name="user" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item label="版本负责人" name="owner" rules={[{ required: true, message: '请输入' }]}>
                     <UserSelector style={{ width: 300 }} />
                 </Form.Item>
-                <Form.Item label="版本备注" name="caozuo" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item label="版本备注" name="desc" rules={[{ required: true, message: '请输入' }]}>
                     <Input.TextArea />
                 </Form.Item>
             </Form>

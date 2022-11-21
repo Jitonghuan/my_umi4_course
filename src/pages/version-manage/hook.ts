@@ -1,66 +1,132 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getAppType, getVersion } from './service';
-
-// 获取应用分类
-export function useAppGroupData(props: any) {
-    const [data, setData] = useState<any>([]);
-    const [total, setTotal] = useState<number>(0);
-    const [loading, setLoading] = useState(false);
-    const loadData = useCallback(async (extra?: any) => {
-        // try {
-        //     setLoading(true);
-        //     const result = await getAppType({ ...props, ...extra });
-        //     if (result?.success) {
-        //         const { items } = result?.data || {};
-        //         setData(items || []);
-        //         setTotal(items?.length);
-        //     } else {
-        //         setData([]);
-        //         setTotal(0);
-        //     }
-        // } catch (ex) {
-        //     setData([]);
-        //     setTotal(0);
-        // } finally {
-        //     setLoading(false);
-        setData([{ label: '应用组1', value: 'code1' }, { label: '应用组2', value: 'code2' }])
-        // }
-    }, Object.values(props));
-
-    useEffect(() => {
-        loadData({});
-    }, Object.values(props));
-    return [data, total, loading, loadData];
-}
+import { getReleaseList } from './service';
+import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
+import {
+    queryPortalList,
+    getDemandByProjectList,
+    getRegulusProjects,
+    getRegulusOnlineBugs,
+} from '@/pages/application/service';
 
 // 获取版本号
-export function useVersion(props: any) {
+export function useReleaseOption(props: any) {
     const [data, setData] = useState<any>([]);
-    const [total, setTotal] = useState<number>(0);
     const [loading, setLoading] = useState(false);
     const loadData = useCallback(async (extra?: any) => {
-        // try {
-        //     setLoading(true);
-        //     const result = await getVersion({ ...props, ...extra });
-        //     if (result?.success) {
-        //         const { items } = result?.data || {};
-        //         setData(items || []);
-        //         setTotal(items?.length);
-        //     } else {
-        //         setData([]);
-        //         setTotal(0);
-        //     }
-        // } catch (ex) {
-        //     setData([]);
-        //     setTotal(0);
-        // } finally {
-        //     setLoading(false);
-        setData([{ label: '1.2.1', value: '1.2.1' }, { label: '1.2.2', value: '1.2.2' }])
-        // }
+        try {
+            setLoading(true);
+            const res = await getReleaseList({ ...props, ...extra });
+            if (res?.success) {
+                const { items } = res?.data || {};
+                const options = items.map((e: any) => ({ value: e.releaseNumber, label: e.releaseNumber }))
+                setData(options || []);
+            } else {
+                setData([]);
+            }
+        } catch (ex) {
+            setData([]);
+        } finally {
+            setLoading(false);
+        }
     }, Object.values(props));
 
     useEffect(() => {
         loadData({});
     }, Object.values(props));
-    return [data, total, loading, loadData]
+    return [data, loading, loadData]
+}
+
+// 获取项目列表
+export function usePortalList(props: any) {
+    const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
+    const loadData = useCallback((extra?: any) => {
+        setLoading(true);
+        postRequest(queryPortalList)
+            .then((res: any) => {
+                if (res.success) {
+                    let dataSource = res.data;
+                    let dataArry: any = [];
+                    dataSource?.map((item: any) => {
+                        dataArry.push({ label: item?.projectName, value: item?.projectId });
+                    });
+                    setData(dataArry);
+                }
+            }).finally(() => { setLoading(false) })
+    }, [Object.values(props)])
+    return [data, loading, loadData]
+}
+
+// 获取regules项目列表
+export function useRegulesPortal(props: any) {
+    const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
+    const loadData = useCallback((extra: any) => {
+        setLoading(true)
+        getRequest(getRegulusProjects)
+            .then((result) => {
+                if (result.success) {
+                    let dataSource = result.data.projects;
+                    let dataArry: any = [];
+                    dataSource?.map((item: any) => {
+                        dataArry.push({ label: item?.name, value: item?.id });
+                    });
+                    setData(dataArry);
+                }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [Object.values(props)])
+    return [data, loading, loadData]
+}
+
+// 获取需求下面的需求列表
+export function useDemands(props: any) {
+    const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
+    const loadData = useCallback((extra?: any) => {
+        postRequest(getDemandByProjectList, {
+            data: { ...props, ...extra },
+        })
+            .then((result) => {
+                if (result.success) {
+                    let dataSource = result.data;
+                    let dataArry: any = [];
+                    dataSource?.map((item: any) => {
+                        dataArry.push({ label: item?.title, value: item?.id });
+                    });
+                    setData(dataArry);
+                }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [Object.values(props)])
+    return [data, loading, loadData]
+}
+
+// 获取线上bug
+export function useRegulusOnlineBugs(props: any) {
+    const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
+    const loadData = useCallback((extra?: any) => {
+        postRequest(getDemandByProjectList, {
+            data: { ...props, ...extra, pageSize: -1 },
+        })
+            .then((result) => {
+                if (result.success) {
+                    let dataSource = result.data;
+                    let dataArry: any = [];
+                    dataSource?.map((item: any) => {
+                        dataArry.push({ label: item?.title, value: item?.id });
+                    });
+                    setData(dataArry);
+                }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [Object.values(props)])
+    return [data, loading, loadData]
 }

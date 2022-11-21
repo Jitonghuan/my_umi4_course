@@ -2,11 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Drawer, Tag, Form, Button, Table, Modal, Input, Switch, Radio, Select, Space } from 'antd';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import { downloadList } from '../schema';
+import { useReleaseOption } from '../../hook';
 import './index.less';
 
 export default function OperateModal(props: any) {
-    const { visible, onClose, action, initData, appGroup } = props;
+    const { visible, onClose, action, initData, appCategory } = props;
     const [data, setData] = useState<any>([]);
+    const [releaseOptions] = useReleaseOption({ categoryCode: appCategory?.value || '' });
     const [value, setValue] = useState<any>();
     const [downLoadForm] = Form.useForm();
     const [form] = Form.useForm();
@@ -30,8 +32,8 @@ export default function OperateModal(props: any) {
                 <div style={{ position: 'relative' }}>
                     当前版本：{initData?.version || '--'}
                     <span style={{ right: '40px', position: "absolute" }}>
-                        <span className='group-code'>{appGroup?.value || '---'}</span>
-                        <span className='group-label'>{appGroup?.label || '---'}</span>
+                        <span className='group-code'>{appCategory?.value || '---'}</span>
+                        <span className='group-label'>{appCategory?.label || '---'}</span>
                     </span>
                 </div>
             }
@@ -52,7 +54,7 @@ export default function OperateModal(props: any) {
             {action === 'merge' &&
                 <Form form={form} labelCol={{ flex: '120px' }}>
                     <Form.Item label="选择合并版本：" name="name" rules={[{ required: true, message: '请输入' }]}>
-                        <Select style={{ width: 240 }} options={[]} />
+                        <Select style={{ width: 240 }} options={releaseOptions} />
                     </Form.Item>
                 </Form>
             }

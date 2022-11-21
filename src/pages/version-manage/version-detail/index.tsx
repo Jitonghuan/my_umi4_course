@@ -13,7 +13,7 @@ import ContentList from './component/content-list';
 import ModifyConfig from './component/modify-config';
 import ModifySql from './component/modify-sql';
 import detailContext from './context';
-import { useAppGroupData, useVersion } from '../hook';
+import { useReleaseOption } from '../hook';
 import OperateModal from '../version-list/operate-modal';
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
@@ -25,11 +25,10 @@ export default function VersionDetail() {
     const [seletAppType, setSelectAppType] = useState<any>({})
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
-    const [appGroup, setAppGroup] = useState<any>({ value: groupCode || '', label: groupName || '' });
-    const [appGroupOptions] = useAppGroupData({});
+    const [appCategory, setAppCategroy] = useState<any>({ value: groupCode || '', label: groupName || '' });
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
     const [selectVersion, setSelectVersion] = useState<string>(version || '');
-    const [versionOptions] = useVersion({});
+    const [versionOptions] = useReleaseOption({ pageIndex: -1 });
     const [initData, setInitData] = useState<any>({});
 
     useEffect(() => {
@@ -39,8 +38,8 @@ export default function VersionDetail() {
     }, [versionOptions])
 
     useEffect(() => {
-        if (categoryData.length && !appGroup.value) {
-            setAppGroup(categoryData[0])
+        if (categoryData.length && !appCategory.value) {
+            setAppCategroy(categoryData[0])
         }
     }, [categoryData])
 
@@ -71,7 +70,7 @@ export default function VersionDetail() {
                     visible={visible}
                     onClose={() => { setVisible(false) }}
                     initData={initData}
-                    appGroup={appGroup}
+                    appCategory={appCategory}
                 />
                 <div className="page-top-search">
                     <Space>
@@ -80,12 +79,12 @@ export default function VersionDetail() {
                          <Select
                                 style={{ width: 180 }}
                                 size="small"
-                                value={appGroup}
+                                value={appCategory}
                                 options={categoryData}
                                 labelInValue
                                 showSearch
                                 onChange={(v) => {
-                                    setAppGroup({ label: v.label, value: v.value });
+                                    setAppCategroy({ label: v.label, value: v.value });
                                 }}
                             ></Select>
                         </div>
@@ -105,8 +104,8 @@ export default function VersionDetail() {
                             <span className='black-text'>{selectVersion || '---'}</span>
                         </div>
                         <div>
-                            <span className='black-text' style={{ fontSize: 18 }}>{appGroup?.value || '---'}</span>
-                            <span className='grey-text'>{appGroup?.label || '---'}</span>
+                            <span className='black-text' style={{ fontSize: 18 }}>{appCategory?.value || '---'}</span>
+                            <span className='grey-text'>{appCategory?.label || '---'}</span>
                         </div>
                     </div>
                 </div>
@@ -132,7 +131,7 @@ export default function VersionDetail() {
                         ))}
                     </Tabs>
                     <detailContext.Provider
-                        value={{ selectVersion: selectVersion || '', groupCode: appGroup?.value || '', groupName: appGroup?.label || '' }}
+                        value={{ selectVersion: selectVersion || '', groupCode: appCategory?.value || '', groupName: appCategory?.label || '' }}
                     >
                         <GetComponent />
                     </detailContext.Provider>
