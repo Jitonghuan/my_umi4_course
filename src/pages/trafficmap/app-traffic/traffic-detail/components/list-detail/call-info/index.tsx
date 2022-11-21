@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
-import { Card, Table, Input } from 'antd';
+import { Card, Table, Pagination } from 'antd';
 import moment from 'moment'
 import { columnSchema } from './schema'
 import { getCountDetail, getTrace } from './hook'
 import DetailContext from '../../../context';
 import { Line } from '@ant-design/charts';
-import { history } from 'umi'
-
-
+import { history } from 'umi';
+import ChartModal from './chart-modal';
+import CardLayout from '@cffe/vc-b-card-layout';
 import './index.less'
 export default function InstanceMonitor() {
   const { appCode, envCode, startTime, appId, deployName, count, isClick, podIps } = useContext(DetailContext);
@@ -19,7 +19,7 @@ export default function InstanceMonitor() {
   const [pageSize, setPageSize] = useState<number>(20);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
-  const [nowSearchEndpoint, setNowSearchEndpoint] = useState<string>("")
+  const [visible, setVisible] = useState<boolean>(false);
   const config = {
     data: [
       {
@@ -80,60 +80,17 @@ export default function InstanceMonitor() {
     return columnSchema()
   }, [appId, envCode])
   useEffect(() => {
-    //if (!envCode || !startTime || !appId || !deployName) return
-    if (isClick && isClick === appCode) {
-      getCountDetailTable(true)
-    } else {
-      getCountDetailTable(false)
-    }
+    // //if (!envCode || !startTime || !appId || !deployName) return
+    // if (isClick && isClick === appCode) {
+    //   getCountDetailTable(true)
+    // } else {
+    //   getCountDetailTable(false)
+    // }
   }, [envCode, startTime, deployName, appId, count, isClick])
   useEffect(() => {
-    getTraceTable()
+    // getTraceTable()
   }, [startTime, appId, count])
-  const getCountDetailTable = (isTotal?: boolean) => {
-    setStatisticsLoading(true)
-    const now = new Date().getTime();
-    //@ts-ignore
-    getCountDetail({
-      envCode: envCode || "",
-      deployName,
-      appId,
-      isTotal,
-      podIps,
-      //@ts-ignore
-      start: moment(new Date(Number(now - startTime))).format('YYYY-MM-DD HH:mm:ss'),
-      //@ts-ignore
-      end: moment(new Date(Number(now))).format('YYYY-MM-DD HH:mm:ss'),
-    }).then((resp) => {
-      setStatisticsData(resp || [])
-    }).finally(() => {
-      setStatisticsLoading(false)
-    })
-  }
 
-  const getTraceTable = (info?: { endpoint?: string, pageIndex?: number, pageSize?: number }) => {
-    setTraceLoading(true)
-    const now = new Date().getTime();
-    //@ts-ignore
-    getTrace({
-      envCode,
-      endpoint: info?.endpoint,
-      pageIndex: info?.pageIndex,
-      pageSize: info?.pageSize,
-      appId,
-      //@ts-ignore
-      start: moment(new Date(Number(now - startTime))).format('YYYY-MM-DD HH:mm:ss'),
-      //@ts-ignore
-      end: moment(new Date(Number(now))).format('YYYY-MM-DD HH:mm:ss'),
-    }).then((resp) => {
-      setTraceData(resp?.dataSource)
-      setTotal(resp?.pageInfo?.total);
-      setPageIndex(resp?.pageInfo?.pageIndex);
-      setPageSize(resp?.pageInfo?.pageSize)
-    }).finally(() => {
-      setTraceLoading(false)
-    })
-  }
 
 
   const pageSizeClick = (pagination: any) => {
@@ -142,7 +99,7 @@ export default function InstanceMonitor() {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    getTraceTable({ ...obj, endpoint: nowSearchEndpoint })
+    // getTraceTable({ ...obj, endpoint: nowSearchEndpoint })
   };
 
   const mockData = [{}, {}, {}, {}, {}]
@@ -160,22 +117,26 @@ export default function InstanceMonitor() {
   return (
     <>
       <div className="call-info-body">
+        <ChartModal visible={visible} onClose={() => { setVisible(false) }} />
         <div className='item-wrapper'>
+          {/* <CardLayout gridWidths={{ xs: 400, sm: 400 }}> */}
           {mockData.map((item, index) => {
             return (
               <div className='call-item'>
                 <div className='title flex-space-between'>
-                  <div>{index + 1}.我是一张表</div>
+                  <div>{index + 1}.我是一张表
+                  <a onClick={() => { setVisible(true) }}>表详情</a>
+                  </div>
                   <a>查看链路追踪</a>
                 </div>
                 <div className='main'>
-                  <div className='call-item-line' >
+                  {/* <div className='call-item-line' >
                     <div className="chart-header"></div>
                     <div className="chart-container-warpper" ref={chartRef}>
                       {chartHeight && <Line className="chart-container" {...config} height={chartHeight} />}
                     </div>
 
-                  </div>
+                  </div> */}
                   <Table
                     size="small"
                     bordered
@@ -193,7 +154,25 @@ export default function InstanceMonitor() {
               </div>
             )
           })}
+
+          {/* </CardLayout> */}
         </div>
+        {total > 10 && (
+          <div className='flex-end'>
+            <Pagination
+              pageSize={pageSize}
+              total={total}
+              current={pageIndex}
+              showSizeChanger
+              showTotal={(total, range) => `总共 ${total} 条数据`}
+              onShowSizeChange={(_, next) => {
+                setPageIndex(1);
+                setPageSize(next);
+              }}
+              onChange={(next) => setPageIndex(next)}
+            />
+          </div>
+        )}
       </div>
     </>
   )
