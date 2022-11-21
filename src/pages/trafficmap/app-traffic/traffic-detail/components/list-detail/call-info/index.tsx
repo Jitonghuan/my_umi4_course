@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
-import { Card, Table, Pagination } from 'antd';
+import { Card, Table, Pagination, Tooltip } from 'antd';
 import moment from 'moment'
-import { columnSchema } from './schema'
+import { columnSchema, mock } from './schema'
 import { getCountDetail, getTrace } from './hook'
 import DetailContext from '../../../context';
 import { Line } from '@ant-design/charts';
@@ -11,87 +11,109 @@ import ChartModal from './chart-modal';
 import CardLayout from '@cffe/vc-b-card-layout';
 import './index.less'
 export default function InstanceMonitor() {
-  const { appCode, envCode, startTime, appId, deployName, count, isClick, podIps } = useContext(DetailContext);
-  const [statisticsData, setStatisticsData] = useState<any>([])
-  const [statisticsLoading, setStatisticsLoading] = useState<boolean>(false)
+  const { appCode, envCode, startTime, appId, deployName, count, isClick, podIps, endTime, selectTimeType } = useContext(DetailContext);
   const [traceLoading, setTraceLoading] = useState<boolean>(false)
-  const [traceData, setTraceData] = useState<any>([])
-  const [pageSize, setPageSize] = useState<number>(20);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(false);
-  const config = {
-    data: [
-      {
-        "Date": "2010-01",
-        "scales": 1998
-      },
-      {
-        "Date": "2010-02",
-        "scales": 1850
-      },
-      {
-        "Date": "2010-03",
-        "scales": 1720
-      },
-      {
-        "Date": "2010-04",
-        "scales": 1818
-      },
-      {
-        "Date": "2010-05",
-        "scales": 1920
-      },
-      {
-        "Date": "2010-06",
-        "scales": 1802
-      },
-      {
-        "Date": "2010-07",
-        "scales": 1945
-      },
-      {
-        "Date": "2010-08",
-        "scales": 1856
-      },
-      {
-        "Date": "2010-09",
-        "scales": 2107
-      },
-      {
-        "Date": "2010-10",
-        "scales": 2140
-      },
-      {
-        "Date": "2010-11",
-        "scales": 2311
-      },
-    ],
-    padding: 'auto',
-    xField: 'Date',
-    yField: 'scales',
-    xAxis: {
-      tickCount: 0
-    },
-    yAxis: false,
-  };
+  const [data, setData] = useState<any>(mock);//初始拿到的所有数据
+  const [loading, setLoading] = useState<boolean>(false);
+  const [chartData, setChartData] = useState<any>({});
+  const [rowCount, setRowCount] = useState(0);
+
+  const pageData = useMemo(() => data.slice((pageIndex - 1) * pageSize, pageIndex * pageSize), [data, pageSize, pageIndex]);
 
   const tableColumns = useMemo(() => {
     return columnSchema()
   }, [appId, envCode])
-  useEffect(() => {
-    // //if (!envCode || !startTime || !appId || !deployName) return
-    // if (isClick && isClick === appCode) {
-    //   getCountDetailTable(true)
-    // } else {
-    //   getCountDetailTable(false)
-    // }
-  }, [envCode, startTime, deployName, appId, count, isClick])
-  useEffect(() => {
-    // getTraceTable()
-  }, [startTime, appId, count])
 
+  useEffect(() => {
+    //if (!envCode || !startTime || !appId || !deployName) return
+    if (isClick && isClick === appCode) {
+      getCountDetailTable(true)
+    } else {
+      getCountDetailTable(false)
+    }
+  }, [envCode, startTime, deployName, appId, count, isClick, endTime, selectTimeType])
 
+  const getCountDetailTable = (isTotal?: boolean) => {
+    const now = new Date().getTime();
+    let start = 0, end = 0;
+    if (selectTimeType === 'lastTime') {
+      //@ts-ignore
+      start = Number((now - startTime) / 1000);
+      end = Number(now / 1000);
+    } else {
+      //@ts-ignore
+      start = startTime;
+      end = Number(endTime);
+    }
+    console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), '应用调用')
+    //@ts-ignore
+    setLoading(true)
+    getCountDetail({
+      envCode: envCode || "",
+      deployName,
+      appId,
+      isTotal,
+      podIps,
+      //@ts-ignore
+      start: moment(new Date(Number(now - startTime))).format('YYYY-MM-DD HH:mm:ss'),
+      //@ts-ignore
+      end: moment(new Date(Number(now))).format('YYYY-MM-DD HH:mm:ss'),
+    }).then((res) => {
+      let newArr = [];
+      newArr = data.map((item: any) => {
+        item.dataSource = [];
+
+        item.endpointCPM.readMetricsValues.forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { cpm: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { cpm: val.value })
+          }
+        });
+        item.endpointAvg.readMetricsValues.forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { avg: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { avg: val.value })
+          }
+        });
+        item.endpointSR.readMetricsValues.forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { sr: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { sr: val.value })
+          }
+        });
+        item.endpointFailed.readMetricsValues.forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { fail: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { fail: val.value })
+          }
+        });
+        return item;
+      })
+      setData(newArr)
+      setTotal(data.length)
+      console.log(newArr);
+
+      // setData(res?.data||[])
+    }).finally(() => {
+      // setLoading(false)
+    })
+  }
 
   const pageSizeClick = (pagination: any) => {
     setPageIndex(pagination.current);
@@ -102,32 +124,33 @@ export default function InstanceMonitor() {
     // getTraceTable({ ...obj, endpoint: nowSearchEndpoint })
   };
 
-  const mockData = [{}, {}, {}, {}, {}]
-  const [chartHeight, setChartHeight] = useState();
-  const chartRef = useCallback((node: any) => {
+  const nodeRef = useCallback((node: any) => {
     if (node) {
-      setChartHeight(node.clientHeight)
-      new ResizeObserver(() => {
-        setChartHeight(node.clientHeight)
-      }).observe(node)
+      const cardWidth = 310;
+      setRowCount(Math.floor(node.clientWidth / cardWidth) || 1);
+      const resizeObserver = new ResizeObserver((entries: any) => {
+        setRowCount(Math.floor(node.clientWidth / cardWidth) || 1);
+      }).observe(node);
     }
-  },
-    [],
-  )
+  }, []);
+
   return (
     <>
       <div className="call-info-body">
-        <ChartModal visible={visible} onClose={() => { setVisible(false) }} />
-        <div className='item-wrapper'>
-          {/* <CardLayout gridWidths={{ xs: 400, sm: 400 }}> */}
-          {mockData.map((item, index) => {
+        {visible && <ChartModal visible={visible} onClose={() => { setVisible(false) }} data={chartData} />}
+        <div className='item-wrapper' ref={nodeRef}>
+          {/* <CardLayout > */}
+          {pageData.map((item: any, index: number) => {
             return (
-              <div className='call-item'>
+              <div className='call-item' style={{ width: `${rowCount === 1 ? 100 : 97 / rowCount}%`, marginLeft: `${(index % rowCount) === 0 ? '0' : `calc(${3 / (rowCount - 1)}%)`}` }}>
                 <div className='title flex-space-between'>
-                  <div>{index + 1}.我是一张表
-                  <a onClick={() => { setVisible(true) }}>表详情</a>
+                  <div className='table-title'>
+                    <Tooltip title={item?.url || ''} placement="topLeft">
+                      {item.url || ''}
+                    </Tooltip>
                   </div>
-                  <a>查看链路追踪</a>
+                  <a onClick={() => { setChartData(item); setVisible(true) }}>图表详情</a>
+                  <a>链路追踪</a>
                 </div>
                 <div className='main'>
                   {/* <div className='call-item-line' >
@@ -141,7 +164,7 @@ export default function InstanceMonitor() {
                     size="small"
                     bordered
                     loading={traceLoading}
-                    dataSource={[{ id: 0.3 }, { id: 0.3 }, { id: 0.3 }, { id: 0.3 }, { id: 0.3 }]}
+                    dataSource={item?.dataSource || []}
                     columns={tableColumns}
                     scroll={{ x: '100%' }}
                     pagination={

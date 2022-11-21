@@ -3,7 +3,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    overflow-y: auto;
 
     .ant-card-body {
       padding: 0 24px 24px;
@@ -29,33 +28,9 @@
         display: flex;
         flex-wrap: wrap;
         width: 100%;
-        justify-content: flex-start;
       }
-        
-      @media screen and (max-width: 900px) {
-        .call-item { --n: 2; }
-      }
-
-      @media screen and (max-width: 1200px) and (min-width: 900px) {
-        .call-item { --n: 3; }
-      }
-
-      @media screen and (max-width: 1500px) and (min-width: 1200px) {
-        .call-item { --n: 4; }
-      }
-
-      @media screen and (max-width: 8888px) and (min-width: 1500px) {
-        .call-item { --n: 5; } /* 最多一行显示五个 */
-      }
-
       .call-item{
-        // --itemWidth: 300px; /* 和项目宽度一致 */
-        // width: calc(var(--itemWidth));
-        // --n:3;
-        margin: 10px;
-        // margin-left: calc((100% - var(--itemWidth) * var(--n)) / (var(--n)));
         height: 210px;
-        width: 30%;
         // max-width: calc(50% - 10px);
         overflow: auto;
         display: flex;
@@ -63,11 +38,11 @@
         margin-bottom: 20px;
         background-color: #fff;
         padding-top: 10px;
-        // &:nth-child(2n){
-        //   margin-left: 20px;
-        // }
-        &:nth-child(2n)  .call-item-line{
-          // border-left: 0;
+
+        .table-title{
+          max-width: 60%;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .title{
           margin-bottom: 5px;

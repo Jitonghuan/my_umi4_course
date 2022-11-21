@@ -7,6 +7,7 @@ import { history, useLocation } from 'umi';
 import moment from 'moment';
 import { RedoOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
+import ResizablePro from '@/components/resiable-pro';
 import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { queryAppList, queryEnvList, queryNodeList, getCountOverview } from './hook';
