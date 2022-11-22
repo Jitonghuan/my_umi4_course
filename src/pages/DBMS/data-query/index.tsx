@@ -3,6 +3,7 @@ import { Tabs, Form, Space, Select, message, Collapse, Spin, Input } from 'antd'
 import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined, PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import RightContent from "./components/right-content";
+import {exportResultApi} from '../service'
 import { useEnvList, querySqlResultInfo, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, queryTables } from '../common-hook'
 import './index.less';
 const { Panel } = Collapse;
@@ -86,13 +87,14 @@ export default function ResizeLayout() {
   //查询sql结果
   const querySqlResult = (params: { sqlContent: string, sqlType: string }) => {
     const values = form?.getFieldsValue();
-    if (!values?.instanceId || !values?.dbCode || !params?.sqlContent) {
+    if (!values?.instanceId || !values?.dbCode || !params?.sqlContent||!values?.envCode) {
       message.warning("请先进行信息填写并且输入sql语句再查询！")
       return
     }
    
     setSqlLoading(true)
     setImplementDisabled(true)
+   
     querySqlResultInfo({ ...params, ...values, tableCode }).then((res) => {
       if (res?.success) {
         const dataSource = res?.data?.result || "";
@@ -221,11 +223,15 @@ export default function ResizeLayout() {
     setActivePanel(tableCode)
     setTableCode(tableCode)
     queryDatabases({ instanceId: form?.getFieldsValue()?.instanceId })
+    setInstance(form?.getFieldsValue()?.instanceId)
+    setDBCode(dbCode)
+    setEnvCode(form?.getFieldsValue()?.envCode)
     addSqlConsole
     setInitSqlValue(initsql)
 
 
   }
+ 
 
   const leftContent = useMemo(() => {
     return (
@@ -365,6 +371,7 @@ export default function ResizeLayout() {
     costTime,
     implementDisabled,
     tableFields,
+    instanceOptions,
     sqlResult,
     sqlLoading,
     initSqlValue,

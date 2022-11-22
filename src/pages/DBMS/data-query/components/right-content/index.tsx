@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef, forwardRef, useImperativeHandle, } from 'react';
-import { Tabs, message, Table, Card, } from 'antd';
+import { Tabs, message, Table, Card, Button,Popover} from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { createTableColumns } from './schema';
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import { useQueryLogsList } from '../../../common-hook';
+import {exportResultApi} from '../../../service'
 import {history } from 'umi'
 import './index.less'
 const { TabPane } = Tabs;
@@ -24,17 +25,64 @@ interface Iprops {
   //  queryTableFieldsMethods:(params:any)=>any;
     copyAdd: (sqlContent: string, tableCode?: string) => any;
     relayInfo:any;
+    instanceOptions:any
+   
 }
 export default forwardRef(function RightContent(props: Iprops, ref: any) {
-    const { tableFields, querySqlResult,relayInfo, initSqlValue, firstInitSqlValue, implementDisabled, onAdd, addCount } = props
-    const { sqlResult, sqlLoading, formRef, queryTableFields, copyAdd, errorMsg, costTime } = props;
+    const { tableFields, querySqlResult,relayInfo, initSqlValue, firstInitSqlValue, implementDisabled, onAdd, addCount} = props
+    const { sqlResult, sqlLoading, formRef, queryTableFields, copyAdd, errorMsg, costTime,instanceOptions } = props;
     const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
     const [resultErrorMsg,setResultErrorMsg]=useState<string>("")
     const [resultCountTime,setResultCountTime]=useState<string>("")
     const [dataSource,setDataSource]=useState<any>([])
+    const [downLoadDisabled, setDownLoadDisabled] = useState<boolean>(false);
+    const [sql,setSql]=useState<string>("")
     //const disabled = useRef<boolean>(false)
     const newTabIndex = useRef(0);
     const nextTabIndex = useRef(1);
+  
+   
+    const exportAction=()=>{
+       // const instanceId=instanceOptions?.filter(item=>item?.label===)
+       console.log("------",relayInfo?.instance,relayInfo?.dbCode,relayInfo?.tableCode)
+        return(
+            <Popover placement="bottomRight" content={ <div>
+                <p >
+                   <a
+                 target="_blank"
+                 onClick={() => {
+              
+                  message.info('开始导出...');
+                  setDownLoadDisabled(true);
+                  setTimeout(() => {
+                    setDownLoadDisabled(false);
+                  }, 3000);
+                }}
+                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${sql}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=excel`}
+                >Excel</a></p>
+                <p><a
+                 target="_blank"
+                 onClick={() => {
+                  message.info('开始导出...');
+                  setDownLoadDisabled(true);
+                  setTimeout(() => {
+                    setDownLoadDisabled(false);
+                  }, 3000);
+                }}
+                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${sql}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=sql`}
+                >Sql</a></p>
+                </div>} title="导出格式" trigger="click">
+              <Button  
+             type="primary"
+              disabled={downLoadDisabled}
+              className="downloadButton"
+            
+              >
+                  导出查询数据
+              </Button>
+          </Popover>
+        )
+    }
     /* ----------------------------------------SQL Console--------------------------------------------- */
     const defaultPanes = useMemo(() => {
      
@@ -50,8 +98,24 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             isSqlExecutePlanBtn={true}
                             tableFields={tableFields}
                             initValue={firstInitSqlValue || "select * from user limit 10"}
-                            // executLoading={sqlLoading}
-                            subChange={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
+                           
+                            subChange={(params: { sqlContent: string, sqlType: string }) => {querySqlResult(params)
+                                setSql(params?.sqlContent)
+                                console.log("222222",localStorage.getItem("_dbms_sql_console_tab"))
+                                if(localStorage.getItem("_dbms_sql_console_tab")){
+                                    let key=localStorage.getItem("_dbms_sql_console_tab")||"1"
+                                    let resultKey=Number(key.substring(6))+1
+                                    if(key==="1"){
+                                        setResultActiveKey(`newTab0`)
+                                    }
+                                    if(key!=="1"){
+                                        setResultActiveKey(`newTab${resultKey}`)
+                                    }
+                                    
+                                }
+                              
+                             
+                            }}
                             implementDisabled={implementDisabled}
                         />,
                     key: id
@@ -63,6 +127,8 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
         if(sqlItems?.length===1){
          
             setSqlConsoleActiveKey(defaultPanes[0].key)
+            localStorage.setItem('_dbms_sql_console_tab', defaultPanes[0].key);
+            
             setSqlItems(defaultPanes)
         }
        
@@ -87,8 +153,22 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                 isSqlExecutePlanBtn={true}
                                 tableFields={tableFields}
                                 initValue={firstInitSqlValue || "select * from user limit 10"}
-                                // executLoading={sqlLoading}
-                                subChange={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
+                                subChange={(params: { sqlContent: string, sqlType: string }) => {querySqlResult(params);
+                                    setSql(params?.sqlContent)
+                                    console.log("111111",localStorage.getItem("_dbms_sql_console_tab"))
+                                    if(localStorage.getItem("_dbms_sql_console_tab")){
+                                        let key=localStorage.getItem("_dbms_sql_console_tab")||"1"
+                                        let resultKey=Number(key.substring(6))+1
+                                        if(key==="1"){
+                                            setResultActiveKey(`newTab0`)
+                                        }
+                                        if(key!=="1"){
+                                            setResultActiveKey(`newTab${resultKey}`)
+                                        }
+                                        
+                                    }
+                                 
+                                }}
                                 implementDisabled={implementDisabled}
                             />,
                         key: "1"
@@ -98,10 +178,12 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
             newSqlItems[0]=content()
             setSqlItems(newSqlItems)
         // }
-    }, [curFirstInitSqlValue])
+    }, [curFirstInitSqlValue,implementDisabled])
 
     const onSqlChange = (key: string) => {
+       
         setSqlConsoleActiveKey(key);
+        localStorage.setItem('_dbms_sql_console_tab', key);
         let resultKey=Number(key.substring(6))+1
         if(key==="1"){
             setResultActiveKey(`newTab0`)
@@ -217,7 +299,16 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                 </div> :
                     <div>
-                        <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
+                        <p style={{ paddingLeft: 10,display:"flex",justifyContent:"space-between" }}>
+                           <span>
+                           查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}
+                               
+                            </span>
+                            <span>
+                                {dataSource?.length>0&&exportAction()}
+                           
+                            </span>
+                         </p>
                         <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                             {dataSource?.length > 0 && (
                                 Object.keys(dataSource[0])?.map((item: any) => {
@@ -235,23 +326,33 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
     const [resultActiveKey, setResultActiveKey] = useState(initialItems[1].key);
     const [resultItems, setResultItems] = useState(initialItems);
     const onResultChange = (key: string) => {
+      
      
         setResultActiveKey(key);
+       
         if(key==="1"){
             queryLogsList()
+           
+         
         }
         let sqlKey=Number(key.substring(6))-1
         if(key==="newTab0"){
             setSqlConsoleActiveKey("1")
+            localStorage.setItem('_dbms_sql_console_tab', "1");
+            
+           
         }
         if(key!=="newTab0"&&key!=="1"){
             setSqlConsoleActiveKey(`newTab${sqlKey}`)
+            localStorage.setItem('_dbms_sql_console_tab', `newTab${sqlKey}`);
+           
         }
 
     };
     const getFirstInitSqlValue=(value:string)=>{
         setCurFirstInitSqlValue(value)
         setSqlConsoleActiveKey(defaultPanes[0].key||"1")
+        localStorage.setItem('_dbms_sql_console_tab',defaultPanes[0].key||"1");
         if(resultItems.length===1||resultItems[1].key!=="newTab0"){
             const newPanes = [...resultItems];
             const content=()=>{
@@ -260,7 +361,13 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                         label: '查询结果', children:
                            
                                 <div>
-                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
+                                    <p style={{ paddingLeft: 10,display:"flex",justifyContent:"space-between" }}>
+                                    <span>  查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</span>
+                                    <span>
+                                    {dataSource?.length>0&&exportAction()}
+                               
+                                    </span>
+                                    </p>
                                     <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                         {dataSource?.length > 0 && (
                                             Object.keys(dataSource[0])?.map((item: any) => {
@@ -303,7 +410,13 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                     </div> :
                         <div>
-                            <p style={{ paddingLeft: 10 }}>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
+                            <p style={{ paddingLeft: 10,display:"flex",justifyContent:"space-between" }}>
+                               <span>查询时间：{`${costTime} sec`} {!costTime&& <span style={{marginLeft:10,color: "rgb(39,93,124)",}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</span> 
+                                <span>
+                                    {dataSource?.length>0&&exportAction()}
+                               
+                                </span>
+                            </p>
                             <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                 {dataSource?.length > 0 && (
                                     Object.keys(dataSource[0])?.map((item: any) => {
@@ -322,7 +435,11 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
     };
 
+   
+
     const addSql = useMemo(() => {
+      
+       
         if (initSqlValue && initSqlValue !== "") {
             setDataSource([])
             setResultCountTime("")
@@ -339,17 +456,33 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             tableFields={tableFields}
                             initValue={initSqlValue}
                             implementDisabled={implementDisabled}
-                            // executLoading={sqlLoading}
-                            subChange={(params: { sqlContent: string, sqlType: string }) => querySqlResult(params)}
+                            subChange={(params: { sqlContent: string, sqlType: string }) => {querySqlResult(params);
+                                setSql(params?.sqlContent)
+                                console.log("333333",localStorage.getItem("_dbms_sql_console_tab"))
+                                if(localStorage.getItem("_dbms_sql_console_tab")){
+                                    let key=localStorage.getItem("_dbms_sql_console_tab")||"1"
+                                    let resultKey=Number(key.substring(6))+1
+                                    if(key==="1"){
+                                        setResultActiveKey(`newTab0`)
+                                    }
+                                    if(key!=="1"){
+                                        setResultActiveKey(`newTab${resultKey}`)
+                                    }
+                                    
+                                }
+                               
+                              
+                            }}
                         />, key: newActiveKey
                 }]);
                 setSqlConsoleActiveKey(newActiveKey);
+                localStorage.setItem("_dbms_sql_console_tab",newActiveKey)
                 addResult()
             } else if (tabArry.length > 10) {
                 message.info("您已经打开太多页面，请关闭一些吧！")
             }
         }
-    }, [initSqlValue, addCount,relayInfo?.envCode,relayInfo?.instance,relayInfo?.dbCode])
+    }, [initSqlValue, addCount,relayInfo?.envCode,relayInfo?.instance,relayInfo?.dbCode,])
 
     const removeSql = (targetKey: string) => {
         const targetIndex = sqlItems.findIndex(pane => pane.key === targetKey);
@@ -358,6 +491,8 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
             const { key } = newPanes[targetIndex === newPanes.length ? targetIndex - 1 : targetIndex];
           
             setSqlConsoleActiveKey(key);
+            localStorage.setItem("_dbms_sql_console_tab",key)
+            
         }
       
        
@@ -456,7 +591,13 @@ const updateData=(value:any,error?:string,time?:string)=>{
         
                             </div>) :
                                 <div>
-                                    <p style={{ paddingLeft: 10 }}>查询时间：{`${resultCountTime} sec`} {!resultCountTime&&  <span style={{marginLeft:10,color: "rgb(39,93,124)",background:"#E1FFFF",padding:5,borderRadius:4}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</p>
+                                    <p style={{ paddingLeft: 10,display:"flex",justifyContent:"space-between" }}>
+                                       <span>查询时间：{`${resultCountTime} sec`} {!resultCountTime&&  <span style={{marginLeft:10,color: "rgb(39,93,124)",background:"#E1FFFF",padding:5,borderRadius:4}}>请输入条件并点击<i><b>执行按钮</b></i>进行结果查询</span>}</span> 
+                                        <span>
+                                    {dataSource?.length>0&&exportAction()}
+                               
+                                </span>
+                                        </p>
                                     <Table dataSource={dataSource} loading={logsloading} bordered scroll={{ x: '100%' }} >
                                         {dataSource?.length > 0 && (
                                             Object.keys(dataSource[0])?.map((item: any) => {

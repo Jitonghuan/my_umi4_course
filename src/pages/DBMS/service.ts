@@ -75,3 +75,7 @@ export const getSqlDdlInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workf
 //获得回滚语句
 export const rollbackSQLApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/rollbackSQL`;
 
+//下载数据
+export const exportResultApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/sql/query/export`;
+
+
