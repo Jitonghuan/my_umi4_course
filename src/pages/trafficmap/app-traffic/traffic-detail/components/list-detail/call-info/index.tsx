@@ -1,28 +1,69 @@
 
 import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
-import { Card, Table, Pagination, Tooltip } from 'antd';
+import { Card, Table, Pagination, Tooltip, Empty, Spin } from 'antd';
 import moment from 'moment'
 import { columnSchema, mock } from './schema'
-import { getCountDetail, getTrace } from './hook'
+import { getCountDetail } from './hook'
 import DetailContext from '../../../context';
-import { Line } from '@ant-design/charts';
+import debounce from 'lodash/debounce';
 import { history } from 'umi';
 import ChartModal from './chart-modal';
 import CardLayout from '@cffe/vc-b-card-layout';
+import {
+  LineChartOutlined,
+  BranchesOutlined
+} from '@ant-design/icons';
 import './index.less'
-export default function InstanceMonitor() {
+
+export default function InstanceMonitor(props: any) {
+  const { searchValue, setCallInfoData } = props;
   const { appCode, envCode, startTime, appId, deployName, count, isClick, podIps, endTime, selectTimeType } = useContext(DetailContext);
   const [traceLoading, setTraceLoading] = useState<boolean>(false)
   const [pageSize, setPageSize] = useState<number>(10);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(false);
-  const [data, setData] = useState<any>(mock);//初始拿到的所有数据
+  const [data, setData] = useState<any>([]);//初始拿到的所有数据
   const [loading, setLoading] = useState<boolean>(false);
   const [chartData, setChartData] = useState<any>({});
   const [rowCount, setRowCount] = useState(0);
+  const [isEmpty, setIsEmpty] = useState<boolean>(false);
+  const [showPage, setShowPage] = useState<boolean>(true);
+  const [pageData, setPageData] = useState<any>([]);
+  const filter = debounce((value) => filterData(value), 500);
+  const [originData, setOriginData] = useState<any>([]);
 
-  const pageData = useMemo(() => data.slice((pageIndex - 1) * pageSize, pageIndex * pageSize), [data, pageSize, pageIndex]);
+  useEffect(() => {
+    const res = data.slice((pageIndex - 1) * pageSize, pageIndex * pageSize);
+    setPageData(res)
+    setOriginData(res);
+  }, [data, pageSize, pageIndex])
+
+  useEffect(() => {
+    setCallInfoData(data)
+  }, [data])
+
+  useEffect(() => {
+    filter(searchValue)
+  }, [searchValue])
+
+  const filterData = (value: string) => {
+    if (!value) {
+      if (originData.length) {
+        setShowPage(true);
+        setPageData(originData)
+      }
+      return;
+    }
+    setShowPage(false)
+    const afterFilter: any = [];
+    data.forEach((item: any) => {
+      if (item.url?.indexOf(value) !== -1) {
+        afterFilter.push(item);
+      }
+    });
+    setPageData(afterFilter)
+  }
 
   const tableColumns = useMemo(() => {
     return columnSchema()
@@ -31,7 +72,7 @@ export default function InstanceMonitor() {
   useEffect(() => {
     //if (!envCode || !startTime || !appId || !deployName) return
     if (isClick && isClick === appCode) {
-      getCountDetailTable(true)
+      getCountDetailTable(true);
     } else {
       getCountDetailTable(false)
     }
@@ -59,15 +100,21 @@ export default function InstanceMonitor() {
       isTotal,
       podIps,
       //@ts-ignore
-      start: moment(new Date(Number(now - startTime))).format('YYYY-MM-DD HH:mm:ss'),
+      start: moment(new Date(Number(start) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
       //@ts-ignore
-      end: moment(new Date(Number(now))).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment(new Date(Number(end) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
     }).then((res) => {
       let newArr = [];
-      newArr = data.map((item: any) => {
+      setTotal(res?.length || 0)
+      if (!res?.length) {
+        setIsEmpty(true);
+        setData([])
+        return;
+      }
+      setIsEmpty(false);
+      newArr = res?.map((item: any) => {
         item.dataSource = [];
-
-        item.endpointCPM.readMetricsValues.forEach((val: any) => {
+        (item?.endpointCPM?.readMetricsValues || []).forEach((val: any) => {
           let curT = item.dataSource.find((i: any) => i.time === val.time);
           if (!curT) {
             curT = { cpm: val.value, time: val.time }
@@ -76,7 +123,7 @@ export default function InstanceMonitor() {
             Object.assign(curT, { cpm: val.value })
           }
         });
-        item.endpointAvg.readMetricsValues.forEach((val: any) => {
+        (item?.endpointAvg?.readMetricsValues || []).forEach((val: any) => {
           let curT = item.dataSource.find((i: any) => i.time === val.time);
           if (!curT) {
             curT = { avg: val.value, time: val.time }
@@ -85,7 +132,7 @@ export default function InstanceMonitor() {
             Object.assign(curT, { avg: val.value })
           }
         });
-        item.endpointSR.readMetricsValues.forEach((val: any) => {
+        (item?.endpointSR?.readMetricsValues || []).forEach((val: any) => {
           let curT = item.dataSource.find((i: any) => i.time === val.time);
           if (!curT) {
             curT = { sr: val.value, time: val.time }
@@ -94,7 +141,7 @@ export default function InstanceMonitor() {
             Object.assign(curT, { sr: val.value })
           }
         });
-        item.endpointFailed.readMetricsValues.forEach((val: any) => {
+        (item?.endpointFailed?.readMetricsValues || []).forEach((val: any) => {
           let curT = item.dataSource.find((i: any) => i.time === val.time);
           if (!curT) {
             curT = { fail: val.value, time: val.time }
@@ -105,13 +152,9 @@ export default function InstanceMonitor() {
         });
         return item;
       })
-      setData(newArr)
-      setTotal(data.length)
-      console.log(newArr);
-
-      // setData(res?.data||[])
+      setData(newArr);
     }).finally(() => {
-      // setLoading(false)
+      setLoading(false)
     })
   }
 
@@ -121,7 +164,6 @@ export default function InstanceMonitor() {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    // getTraceTable({ ...obj, endpoint: nowSearchEndpoint })
   };
 
   const nodeRef = useCallback((node: any) => {
@@ -134,68 +176,93 @@ export default function InstanceMonitor() {
     }
   }, []);
 
+  const toTrafficMap = useCallback(() => {
+    const now = new Date().getTime();
+    let start = 0, end = 0;
+    if (selectTimeType === 'lastTime') {
+      //@ts-ignore
+      start = Number((now - startTime) / 1000);
+      end = Number(now / 1000);
+    } else {
+      //@ts-ignore
+      start = startTime;
+      end = Number(endTime);
+    }
+    history.push({
+      pathname: "/matrix/trafficmap/tracking"
+    }, {
+      entry: "logSearch",
+      envCode: envCode,
+      appId: appId,
+      startTime: start,
+      endTime: end,
+    })
+    // const url = `/matrix/trafficmap/tracking?envCode=${envCode}&startTime=${start}&endTime=${end}&appId=${appId}&entry=logSearch`
+    // window.open(url, '_blank')
+  }, [appId, envCode, selectTimeType, startTime, endTime])
+
   return (
     <>
       <div className="call-info-body">
         {visible && <ChartModal visible={visible} onClose={() => { setVisible(false) }} data={chartData} />}
-        <div className='item-wrapper' ref={nodeRef}>
-          {/* <CardLayout > */}
-          {pageData.map((item: any, index: number) => {
-            return (
-              <div className='call-item' style={{ width: `${rowCount === 1 ? 100 : 97 / rowCount}%`, marginLeft: `${(index % rowCount) === 0 ? '0' : `calc(${3 / (rowCount - 1)}%)`}` }}>
-                <div className='title flex-space-between'>
-                  <div className='table-title'>
-                    <Tooltip title={item?.url || ''} placement="topLeft">
-                      {item.url || ''}
-                    </Tooltip>
-                  </div>
-                  <a onClick={() => { setChartData(item); setVisible(true) }}>图表详情</a>
-                  <a>链路追踪</a>
-                </div>
-                <div className='main'>
-                  {/* <div className='call-item-line' >
-                    <div className="chart-header"></div>
-                    <div className="chart-container-warpper" ref={chartRef}>
-                      {chartHeight && <Line className="chart-container" {...config} height={chartHeight} />}
+        {isEmpty ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='暂无数据' /> :
+          <>
+            <Spin spinning={loading}>
+              <div className='item-wrapper' ref={nodeRef}>
+                {/* <CardLayout > */}
+                {(pageData || []).map((item: any, index: number) => {
+                  return (
+                    <div className='call-item' style={{ width: `${rowCount === 1 ? 100 : 97 / rowCount}%`, marginLeft: `${(index % rowCount) === 0 ? '0' : `calc(${3 / (rowCount - 1)}%)`}` }}>
+                      <div className='title flex-space-between'>
+                        <div className='table-title'>
+                          <Tooltip title={item?.url || ''} placement="topLeft">
+                            {item.url || ''}
+                          </Tooltip>
+                        </div>
+                        <div>
+                          <a onClick={() => { setChartData(item); setVisible(true) }}><LineChartOutlined style={{ fontSize: 16 }} /></a>
+                          <a onClick={toTrafficMap}><BranchesOutlined style={{ fontSize: 16, marginLeft: 10 }} /></a>
+                        </div>
+                      </div>
+                      <div className='main'>
+                        <Table
+                          size="small"
+                          bordered
+                          loading={traceLoading}
+                          dataSource={item?.dataSource || []}
+                          columns={tableColumns}
+                          scroll={{ x: '100%' }}
+                          pagination={
+                            false
+                          }
+                          onChange={pageSizeClick}
+                        />
+                      </div>
                     </div>
+                  )
+                })}
 
-                  </div> */}
-                  <Table
-                    size="small"
-                    bordered
-                    loading={traceLoading}
-                    dataSource={item?.dataSource || []}
-                    columns={tableColumns}
-                    scroll={{ x: '100%' }}
-                    pagination={
-                      false
-                    }
-                    onChange={pageSizeClick}
-
+                {/* </CardLayout> */}
+              </div>
+              {total > 10 && showPage && (
+                <div className='flex-end'>
+                  <Pagination
+                    pageSize={pageSize}
+                    total={total}
+                    current={pageIndex}
+                    showSizeChanger
+                    showTotal={(total, range) => `总共 ${total} 条数据`}
+                    onShowSizeChange={(_, next) => {
+                      setPageIndex(1);
+                      setPageSize(next);
+                    }}
+                    onChange={(next) => setPageIndex(next)}
                   />
                 </div>
-              </div>
-            )
-          })}
-
-          {/* </CardLayout> */}
-        </div>
-        {total > 10 && (
-          <div className='flex-end'>
-            <Pagination
-              pageSize={pageSize}
-              total={total}
-              current={pageIndex}
-              showSizeChanger
-              showTotal={(total, range) => `总共 ${total} 条数据`}
-              onShowSizeChange={(_, next) => {
-                setPageIndex(1);
-                setPageSize(next);
-              }}
-              onChange={(next) => setPageIndex(next)}
-            />
-          </div>
-        )}
+              )}
+            </Spin>
+          </>
+        }
       </div>
     </>
   )

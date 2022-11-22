@@ -8,7 +8,9 @@ export const columnSchema = () => {
       title: '时间',
       dataIndex: 'time',
       key: 'id',
-      // width: 30,
+      // ellipsis: true,
+      render: (text: string) => <Tooltip title={text}>{text}</Tooltip>,
+      // width: 100,
     },
     {
       title: '请求数',

@@ -83,24 +83,24 @@ export const tableSchema = [
 
 // GC 次数
 export const getGCNumChartOption: any = (xAxis = [], dataSource = []) => {
- 
+
   let arry: any = [];
   let nameArry: any = [];
-dataSource?.map((item: any,index:number) => {
-  item?.map((ele:any)=>{
-    arry.push({
-      name: ele?.name,
-      data: ele.data,
-      type: 'line',
-    });
-    nameArry.push(ele?.name);
-    
+  dataSource?.map((item: any, index: number) => {
+    item?.map((ele: any) => {
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      nameArry.push(ele?.name);
 
-  })
-  
 
-    
-});
+    })
+
+
+
+  });
 
 
   return {
@@ -116,8 +116,8 @@ dataSource?.map((item: any,index:number) => {
     },
     legend: {
       bottom: 0,
-      data:nameArry,
-     // data: ['FullGC次数', 'YoungGC次数'],
+      data: nameArry,
+      // data: ['FullGC次数', 'YoungGC次数'],
       icon: 'rect',
       type: 'scroll', //分页类型
       orient: 'horizontal',
@@ -140,6 +140,7 @@ dataSource?.map((item: any,index:number) => {
     },
     yAxis: [
       {
+        name: '单位：次',
         type: 'value',
         axisLabel: {
           color: '#999',
@@ -147,7 +148,7 @@ dataSource?.map((item: any,index:number) => {
         splitNumber: 3,
       },
     ],
-    series :arry
+    series: arry
     // series: [
     //   {
     //     name: 'FullGC次数',
@@ -166,23 +167,23 @@ dataSource?.map((item: any,index:number) => {
 
 // GC 耗时
 export const getGCTimeChartOption: any = (xAxis = [], dataSource = []) => {
-   
+
   let arry: any = [];
   let nameArry: any = [];
-dataSource?.map((item: any,index:number) => {
-  item?.map((ele:any)=>{
-    arry.push({
-      name: ele?.name,
-      data: ele.data,
-      type: 'line',
-    });
-    
-    nameArry.push(ele?.name);
-  })
-  
+  dataSource?.map((item: any, index: number) => {
+    item?.map((ele: any) => {
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
 
-   
-});
+      nameArry.push(ele?.name);
+    })
+
+
+
+  });
   return {
     tooltip: {
       trigger: 'axis',
@@ -196,7 +197,7 @@ dataSource?.map((item: any,index:number) => {
     },
     legend: {
       bottom: 0,
-      data:nameArry,
+      data: nameArry,
       icon: 'rect',
       type: 'scroll', //分页类型
       orient: 'horizontal',
@@ -219,6 +220,7 @@ dataSource?.map((item: any,index:number) => {
     },
     yAxis: [
       {
+        name: '单位：毫秒',
         type: 'value',
         axisLabel: {
           color: '#999',
@@ -226,29 +228,29 @@ dataSource?.map((item: any,index:number) => {
         splitNumber: 3,
       },
     ],
-    series:arry
+    series: arry
   };
 };
 
 // 内存
-export const getMemoryChartOption: any = (xAxis = [], dataSource:any = []) => {
- 
+export const getMemoryChartOption: any = (xAxis = [], dataSource: any = []) => {
+
   let arry: any = [];
   let nameArry: any = [];
-  dataSource?.map((item: any,index:number) => {
-  item?.map((ele:any)=>{
-    arry.push({
-      name: ele?.name,
-      data: ele.data,
-      type: 'line',
-    });
-    nameArry.push(ele?.name);
+  dataSource?.map((item: any, index: number) => {
+    item?.map((ele: any) => {
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      nameArry.push(ele?.name);
 
-  })
-  
+    })
 
-   
-});
+
+
+  });
 
 
   return {
@@ -296,7 +298,7 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource:any = []) => {
         splitNumber: 3,
       },
     ],
-   series: arry,
+    series: arry,
     // series: [
     //   {
     //     name: '使用总和',
@@ -326,20 +328,20 @@ export const getMemoryChartOption: any = (xAxis = [], dataSource:any = []) => {
 export const getGCDataChartOption: any = (xAxis = [], dataSource = []) => {
   let arry: any = [];
   let nameArry: any = [];
-dataSource?.map((item: any,index:number) => {
-  item?.map((ele:any)=>{
-    arry.push({
-      name: ele?.name,
-      data: ele.data,
-      type: 'line',
-    });
-    nameArry.push(ele?.name);
+  dataSource?.map((item: any, index: number) => {
+    item?.map((ele: any) => {
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      nameArry.push(ele?.name);
 
-  })
-  
+    })
 
-   
-});
+
+
+  });
 
 
   return {
@@ -391,7 +393,7 @@ dataSource?.map((item: any,index:number) => {
         splitNumber: 3,
       },
     ],
-    series:arry
+    series: arry
     // series: [
     //   {
     //     name: '元空间',
