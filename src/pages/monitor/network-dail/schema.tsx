@@ -18,6 +18,7 @@ export const createTableColumns = (params: {
   onEdit: (record: any, index: number) => void;
   onView: (record: any, index: number) => void;
   onDelete: (record: any) => void;
+  onSwitch: (record: any, index: number) => void;
  
 }) => {
   return [
@@ -78,14 +79,25 @@ export const createTableColumns = (params: {
         <Space size="middle">
           <a onClick={() => params.onView(record, index)}><BarChartOutlined/>看板</a>
           <a onClick={() => params.onEdit(record, index)}><FormOutlined />编辑</a>
-          <a onClick={() => params.onEdit(record, index)}><PlayCircleOutlined />停止</a>
+          <Popconfirm
+            title="确定进行此操作吗?"
+            onConfirm={() => {
+              params.onSwitch(record, index)
+            }}
+          ><a >
+         { record?.status===0?<PauseCircleOutlined style={{color:"red"}} />:< PlayCircleOutlined style={{color:"#3CB371"}}/>} {record?.status===0?<span style={{color:"red"}}>停止</span>:<span style={{color:"#3CB371"}}>开启</span>}
+          
+            
+           
+            </a>
+            </Popconfirm>
           <Popconfirm
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record.id);
             }}
           >
-           <Spin spinning={ params?.delLoading}><a><DeleteOutlined />删除</a></Spin> 
+           <Spin spinning={ params?.delLoading}><a  style={{color:"red"}}><DeleteOutlined />删除</a></Spin> 
           </Popconfirm>
         </Space>
       ),

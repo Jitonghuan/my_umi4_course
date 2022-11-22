@@ -3,11 +3,11 @@
     { label: 'Get', value: 'get' },
   ]
   export const frequencyOptions = [
-    { label: '1分钟', value: '1min' },
-    { label: '5分钟', value: '5min' },
-    { label: '15分钟', value: '15min' },
-    { label: '30分钟', value: '30min' },
-    { label: '60分钟', value: '60min' },
+    { label: '1分钟', value: '1m' },
+    { label: '5分钟', value: '5m' },
+    { label: '15分钟', value: '15m' },
+    { label: '30分钟', value: '30m' },
+    { label: '60分钟', value: '60m' },
   ];
   export const questConfigOptions=[
     { label: 'Header', value: 'headers' },

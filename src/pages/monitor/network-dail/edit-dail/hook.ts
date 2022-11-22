@@ -23,9 +23,9 @@ export const getNetworkProbeList = (paramsObj?:tableItems) => {
   }).then((res: any) => {
     if (res?.success) {
       const dataSource = res.data?.dataSource || [];
-      const total = res.data?.total || 0;
+      const pageInfo = res.data?.pageInfo || {};
 
-      return {dataSource, total};
+      return {dataSource, pageInfo};
     }
     return {};
   });
@@ -107,7 +107,7 @@ export function useDelNetworkProbe(): [boolean,(id:number) => Promise<void>] {
   const deleteNetworkProbe = async (id:number) => {
     setLoading(true);
     try {
-      await delRequest(APIS.deleteNetworkProbe,{data:{id}})
+      await delRequest(`${APIS.deleteNetworkProbe}?id=${id}`)
         .then((res) => {
           if (res?.success) {
               message.success("删除成功！")
@@ -129,13 +129,13 @@ export interface CreateNeworkProbeItems{
   probeType:string;
   probeInterval:string;
   probeTimeout:string;
-  probesConfig:string
-  headers:any[];
-  basicAuth:any[];
+  probeConfig:string
+  // headers:any[];
+  // basicAuth:any[];
   dnsType:string;
   dnsProtocol:string;
   dnsServer:string;
-  queryResponse:any[];
+  //queryResponse:any[];
 
 
 
@@ -168,3 +168,31 @@ export const createNetworkProbe = (params: CreateNeworkProbeItems) =>
   postRequest(APIS.createNetworkProbe, {
     data: params,
   });
+
+export interface UpdateNeworkProbeItems{
+  id:number;
+  clusterName:string;
+  probeName:string;
+  probeUrl:string;
+  probeType:string;
+  probeInterval:string;
+  probeTimeout:string;
+  probeConfig:string
+  // headers:any[];
+  // basicAuth:any[];
+  dnsType:string;
+  dnsProtocol:string;
+  dnsServer:string;
+  graphUrl:string;
+  status:number
+  //queryResponse:any[];
+
+
+
+
+}
+
+export const updateNetworkProbe = (params: UpdateNeworkProbeItems) =>
+postRequest(APIS.updateNetworkProbe, {
+  data: params,
+});

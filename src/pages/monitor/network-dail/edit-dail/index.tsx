@@ -1,135 +1,169 @@
-import { Collapse, Drawer,Button,message, } from 'antd';
-import React,{useState,useRef,useEffect} from 'react';
+import { Collapse, Drawer, Button, message, } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
 import DailForm from './dail-form';
-import AlarmConfig from './alarm-config'
 import './index.less'
-import {
-    MinusCircleOutlined,
-    PlusOutlined
-  } from '@ant-design/icons';
-import {createNetworkProbe,CreateNeworkProbeItems} from './hook'
+import { createNetworkProbe, CreateNeworkProbeItems, updateNetworkProbe, UpdateNeworkProbeItems } from './hook'
 const { Panel } = Collapse;
 
 
 interface Iprops {
-    mode: EditorMode;
-    onSave:()=>any;
-    onClose:()=>any;
+  mode: EditorMode;
+  onSave: (clusterName:string) => any;
+  onClose: () => any;
+  curRecord: any;
 }
 export default function EditDail(props: Iprops) {
-    const { mode,onSave,onClose } = props;
-    const formDetailRef = useRef<any>(null);
-    const createFormRef = () => formDetailRef?.current?.createFormRef;
-    const [loading,setLoading]=useState<boolean>(false)
-    useEffect(()=>{
-       // const labelList: any[] = Object.keys(initData.labels || {}).map((key) => ({
-      //   key,
-      //   value: initData.labels?.[key],
-      // }));
-    },[])
+  const { mode, curRecord, onSave, onClose } = props;
+  const formDetailRef = useRef<any>(null);
+  const createFormRef = () => formDetailRef?.current?.createFormRef;
+  const getData = () => formDetailRef?.current?.getData();
+  const [loading, setLoading] = useState<boolean>(false)
+  const handleSubmit = () => {
+    const payload = createFormRef()?.current?.getFieldsValue();
+    let dataParams: any = {}
+    if (payload?.probeType === "Http") {
+      //如果类型是http配置格式：
+      let configObj = {}
+
+      if (getData()?.headersData?.length > 0) {
+
+        const headersList = (getData()?.headersData || []).reduce((prev: any, curr: any) => {
+          prev[curr.httpKey] = curr.httpValue;
+          return prev;
+        }, {} as Record<string, any>);
+        configObj = {
+          headers: headersList,
+
+
+        }
+      }
+      if (getData()?.username && getData()?.password) {
+      
+        let username = getData()?.username
+        Object.assign(configObj, { basicAuth: {
+          username,
+          password:getData()?.password
+        } })
+
+      }
+
+
+
+      dataParams = {
+        ...payload,
+        // clusterName:payload?.clusterName,
+        // probeInterval:payload?.probeInterval,
+        // probeName:payload?.probeName,
+        // probeType:payload?.probeType,
+        // probeUrl: payload?.probeUrl, 
+        probeTimeout: `${payload?.probeTimeout}s`,
+        probeConfig: JSON.stringify(configObj)
+      }
+    }
+
     
-    const handleSubmit=()=>{  
-      const payload=createFormRef()?.current?.getFieldsValue();
-      console.log("payload",payload)
-      let labels:any=[]
-      // if(payload?.probeType==="Http"){
-      //    labels = (payload?.headers || []).reduce((prev:any, curr:any) => {
-      //     prev[curr.httpKey] = curr.httpValue;
-      //     return prev;
-      //   }, {} as Record<string, any>);
+    if (payload?.probeType === "Tcp") {
+      const queryResponseList = (payload?.queryResponse || []).reduce((prev: any, curr: any) => {
+        prev[curr.expect] = curr.send;
+        return prev;
+      }, {} as Record<string, any>);
 
-      // }
+      dataParams = {
+        ...payload,
+        probeTimeout: `${payload?.probeTimeout}s`,
+        probeConfig: JSON.stringify({ queryResponse: queryResponseList })
+      }
+    }
+  
     
-        console.log("-----",labels)
-
-        let dataParams:any={}
-        if(payload?.probeType==="Http"){
-           //如果类型是http配置格式：
-      dataParams={
-        ...payload,
-        probeTimeout:`${payload?.probeTimeout}s`,
-        probesConfig:payload?.probesConfig==="headers"?JSON.stringify({headers:payload?.headers}):JSON.stringify({
-          basicAuth:[
-            { username:payload?.username},
-            {password:payload?.password}
-          ]
-        })
-      }
-     }
-     if(payload?.probeType==="Tcp"){
-      dataParams={
-        ...payload,
-        probeTimeout:`${payload?.probeTimeout}s`,
-        probesConfig:JSON.stringify({queryResponse:payload?.queryResponse})
-      }
-     }
-     if(payload?.probeType!=="Tcp"&&payload?.probeType!=="Http"){
-      dataParams={
-        ...payload,
-        probeTimeout:`${payload?.probeTimeout}s`,
-        
-      }
+    let dnsConfig={}
+    if (payload?.probeType === "Dns") {
+      dnsConfig={
+       dnsType:payload?.dnsType,
+        dnsProtocol:payload?.dnsProtocol,
+        dnsServer: payload?.dnsServer, 
+       
 
      }
-     
-      setLoading(true)
-      createNetworkProbe(dataParams).then((resp)=>{
-        if(resp?.success){
-          onSave()
+     dataParams = {
+      ...payload,
+      probeTimeout: `${payload?.probeTimeout}s`,
+      probeConfig: JSON.stringify(dnsConfig)
+
+    }
+
+    }
+    if (payload?.probeType !== "Tcp" && payload?.probeType !== "Http"&&payload?.probeType !== "Dns") {
+      dataParams = {
+        ...payload,
+        probeTimeout: `${payload?.probeTimeout}s`,
+
+      }
+
+    }
+
+    setLoading(true)
+    if (mode === "ADD") {
+      createNetworkProbe(dataParams).then((resp) => {
+        if (resp?.success) {
+          const payload = createFormRef()?.current?.getFieldsValue();
+          onSave(payload?.clusterName)
           message.success("创建成功！")
 
         }
 
-      }).finally(()=>{
+      }).finally(() => {
         setLoading(false)
       })
 
+
+    }
+    if (mode === "EDIT") {
+      updateNetworkProbe({ ...dataParams, id: curRecord?.id, status: curRecord?.status, graphUrl: curRecord?.graphUrl, }).then((resp) => {
+        if (resp?.success) {
+          const payload = createFormRef()?.current?.getFieldsValue();
+          onSave(payload?.clusterName)
+          message.success("创建成功！")
+
+        }
+
+      }).finally(() => {
+        setLoading(false)
+      })
+
+
     }
 
-    return (
-        <Drawer 
-           title={mode === "ADD" ? "拨测新增" : "拨测编辑"} 
-           visible={mode !== 'HIDE'} 
-           width={"60%"}
-           onClose={onClose}
-           footer={null}
-           
-           >
-            <Collapse bordered={false} defaultActiveKey={['1']} collapsible={"icon"}>
-                <Panel header={
-                <div className="target-item"><h3>网络拨测编辑</h3>
-                   <Button type="primary" loading={loading} onClick={handleSubmit}>保存</Button>
-                </div>} key="1">
-                <DailForm ref={formDetailRef} mode={mode}  />
-                   
-                </Panel>
-                <Panel header={<div className="target-item">
-                    <h3>报警监控
+  }
 
-                   </h3>
-                    <Button
-                      type="primary"
-                      ghost
-                      disabled={false}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // setRulesType('add');
-                        // setRulesVisible(true);
-                      }}
-                      icon={<PlusOutlined />}
-                    >
-                      新增报警
-                    </Button>
-                    </div>} key="2">
-                    <AlarmConfig />
-                   
-                </Panel>
+  return (
+  <>
+   
+    <Drawer
+      title={mode === "ADD" ? "拨测新增" : "拨测编辑"}
+      visible={mode !== 'HIDE'}
+      width={"60%"}
+      onClose={onClose}
+      footer={ <div className="drawer-footer">
+      <Button type="primary" loading={loading} onClick={handleSubmit} >
+        保存
+      </Button>
+      <Button type="default" onClick={onClose}>
+        取消
+      </Button>
+    </div>}
+      destroyOnClose
+
+    >
+    
+    <DailForm ref={formDetailRef} mode={mode} curRecord={curRecord} />
+       
 
 
-            </Collapse>
+      
 
-        </Drawer>
-
-    );
+    </Drawer>
+</>
+  );
 }
 

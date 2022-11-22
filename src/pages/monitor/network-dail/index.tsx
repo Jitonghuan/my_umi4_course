@@ -1,16 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import PageContainer from '@/components/page-container';
-import TableSearch from '@/components/table-search';
 import { createTableColumns} from './schema';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import { Button, Space, Form, Table, Select, Input } from 'antd';
+import { Button, Space, Form, Table, Select, Input,message } from 'antd';
 import EditDail from './edit-dail';
 import {history} from 'umi'
-import './index.less'
-import useTable from '@/utils/useTable';
-import * as APIS from './service';
 import { getNetworkProbeList, tableItems } from './edit-dail/hook'
-import { useGetNetworkProbeType, useGetCluster, useDelNetworkProbe } from './edit-dail/hook'
+import { useGetNetworkProbeType, useGetCluster, useDelNetworkProbe,updateNetworkProbe } from './edit-dail/hook'
+import './index.less'
 export default function NetworkDail() {
     const [listForm] = Form.useForm();
     const [curRecord, setcurRecord] = useState<any>({});
@@ -18,8 +15,9 @@ export default function NetworkDail() {
     const [dailTypesLoading, dailTypes, getNetworkProbeProbeType] = useGetNetworkProbeType()
     const [clusterLoading, clusterData, getCluster] = useGetCluster()
     const [delLoading, deleteNetworkProbe] = useDelNetworkProbe()
-    const [total, setTotal] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(20);
+    const [pageIndex, setPageIndex] = useState<number>(1);
+    const [total, setTotal] = useState<number>(0);
     const [tableLoading, setTableLoading] = useState<any>(false);
     const [dataSource, setDataSource] = useState<any>([]);
     useEffect(() => {
@@ -28,6 +26,29 @@ export default function NetworkDail() {
 
 
     }, [])
+    useEffect(()=>{
+        if(clusterData?.length>0){
+            listForm.setFieldsValue({
+                clusterName:clusterData[0]?.value
+            })
+            getList({
+                clusterName:clusterData[0]?.value 
+            })
+          
+
+        }
+    },[clusterData])
+    const saveDail=(clusterName:string)=>{
+        listForm.setFieldsValue({
+            clusterName
+        })
+        let params = listForm.getFieldsValue()
+       
+        getList({
+            ...params,
+            clusterName
+        })
+    }
     const columns = useMemo(() => {
 
         return createTableColumns({
@@ -44,23 +65,37 @@ export default function NetworkDail() {
             },
             onDelete: async (id) => {
                 deleteNetworkProbe(id).then(() => {
-                    // submit()
+                    let params = listForm.getFieldsValue()
+                    getList({ ...params, }); 
+                   
                 })
 
             },
+            onSwitch:(record, index)=>{
+                updateNetworkProbe({...record,status:record?.status===0?1:0}).then((res)=>{
+                    if(res?.success){
+                       message.success("操作成功！") 
+                       let params = listForm.getFieldsValue()
+                    getList({ ...params, }); 
+                   
+
+                    }
+                })
+            }
 
         }) as any;
     }, []);
 
     //触发分页
     const pageSizeClick = (pagination: any) => {
+        setPageIndex(pagination.current);
         let obj = {
             pageIndex: pagination.current,
             pageSize: pagination.pageSize,
         };
         setPageSize(pagination.pageSize);
-
-        loadListData(obj);
+        let params = listForm.getFieldsValue()
+        loadListData({...obj,...params});
     };
 
     const loadListData = (params: any) => {
@@ -71,66 +106,84 @@ export default function NetworkDail() {
     const getList = (paramsObj?: tableItems) => {
         setTableLoading(true);
         getNetworkProbeList(paramsObj)
-            .then((res) => {
-                setDataSource(res?.dataSource);
-                setTotal(res?.total);
+            .then((result) => {
+                setDataSource(result?.dataSource);
+                setTotal(result?.pageInfo?.total);
+                setPageIndex(result?.pageInfo?.pageIndex);
+                setPageSize(result?.pageInfo?.pageSize)
+          
             })
             .finally(() => {
                 setTableLoading(false);
             });
     };
     return (<PageContainer className="network-dail">
-         <EditDail mode={mode} onSave={()=>{setMode("HIDE");}} onClose={()=>{setMode("HIDE")}}/>
+         <EditDail mode={mode} curRecord={curRecord} onSave={(clusterName:string)=>{setMode("HIDE");
+        //    let value = listForm.getFieldsValue();
+        //    getList({ ...value, }); 
+        saveDail(clusterName)
+        }} onClose={()=>{setMode("HIDE")}}/>
         <FilterCard>
             <Form
                 layout="inline"
                 form={listForm}
                 onFinish={(values: any) => {
+                    setPageIndex(pageIndex);
+
                     getList({
                         ...values,
 
                     });
                 }}
-                onReset={() => {
-                    listForm.resetFields();
-                    //getReleaseList({ clusterName: curClusterName });
-                }}
+             
             >
                 <Form.Item label="选择集群" name="clusterName">
 
                     <Select
                         options={clusterData}
                         style={{ width: 190 }}
-
+                        loading={clusterLoading}
                         showSearch
+                        onChange={(clusterName)=>{
+                            let value = listForm.getFieldsValue();
+                            getList({clusterName, ...value, }); 
+
+                        }}
                     />
                 </Form.Item>
                 <Form.Item label="拨测名称" name="probeName">
-                    <Input placeholder="请输入名称" style={{ width: 230 }} />
+                    <Input placeholder="请输入名称" style={{ width: 220 }} />
                 </Form.Item>
                 <Form.Item label="拨测地址" name="probeUrl">
-                    <Input placeholder="请输入地址" style={{ width: 230 }} />
+                    <Input placeholder="请输入地址" style={{ width: 220 }} />
                 </Form.Item>
                 <Form.Item label="拨测类型" name="probeType">
 
                     <Select
                         options={dailTypes}
                         style={{ width: 190 }}
-
+                        loading={dailTypesLoading}
                         showSearch
                         allowClear
                     />
                 </Form.Item>
                 <Form.Item label="状态" name="status">
-                    <Input placeholder="请输入名称" style={{ width: 240 }} />
+                    <Input placeholder="请输入名称" style={{ width: 200 }} />
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
                         查询
-            </Button>
+                    </Button>
                 </Form.Item>
                 <Form.Item>
-                    <Button type="ghost" htmlType="reset">
+                    <Button type="ghost" onClick={()=>{
+                          const values = listForm.getFieldsValue() || {};
+                          const valueList = Object.keys(values).map((v) => v);
+                          listForm.resetFields([...valueList.filter((v) => v !== 'clusterName')]);
+                          let clusterName = listForm.getFieldValue("clusterName");    
+                          getList({clusterName}); 
+
+                    }}>
                         重置
             </Button>
                 </Form.Item>
@@ -150,7 +203,7 @@ export default function NetworkDail() {
                             }}
                         >
                             + 新增拨测
-              </Button>
+                      </Button>
                     </Space>
                 </div>
             </div>
@@ -159,10 +212,14 @@ export default function NetworkDail() {
                 <Table
                     columns={columns}
                     dataSource={dataSource}
-                    loading={tableLoading}
+                    loading={tableLoading||delLoading}
                     bordered
                     pagination={{
-                        // current: taskTablePageInfo.pageIndex,
+                        onShowSizeChange: (_, size) => {
+                            setPageSize(size);
+                            setPageIndex(1); //
+                          },
+                        current: pageIndex,
                         total: total,
                         pageSize: pageSize,
                         showSizeChanger: true,
@@ -172,7 +229,5 @@ export default function NetworkDail() {
                 ></Table>
             </div>
         </ContentCard>
-
-
     </PageContainer>)
 }
