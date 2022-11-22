@@ -176,7 +176,7 @@ export default function InstanceMonitor(props: any) {
     }
   }, []);
 
-  const toTrafficMap = useCallback(() => {
+  const toTrafficMap = useCallback((url: string) => {
     const now = new Date().getTime();
     let start = 0, end = 0;
     if (selectTimeType === 'lastTime') {
@@ -196,6 +196,7 @@ export default function InstanceMonitor(props: any) {
       appId: appId,
       startTime: start,
       endTime: end,
+      endpoint: url
     })
     // const url = `/matrix/trafficmap/tracking?envCode=${envCode}&startTime=${start}&endTime=${end}&appId=${appId}&entry=logSearch`
     // window.open(url, '_blank')
@@ -221,7 +222,7 @@ export default function InstanceMonitor(props: any) {
                         </div>
                         <div>
                           <a onClick={() => { setChartData(item); setVisible(true) }}><LineChartOutlined style={{ fontSize: 16 }} /></a>
-                          <a onClick={toTrafficMap}><BranchesOutlined style={{ fontSize: 16, marginLeft: 10 }} /></a>
+                          <a onClick={() => { toTrafficMap(item?.url || '') }}><BranchesOutlined style={{ fontSize: 16, marginLeft: 10 }} /></a>
                         </div>
                       </div>
                       <div className='main'>

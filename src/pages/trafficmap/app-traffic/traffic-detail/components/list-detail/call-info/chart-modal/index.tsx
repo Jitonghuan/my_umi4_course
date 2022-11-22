@@ -103,10 +103,10 @@ export default function ChartModal(props: IProps) {
     }
     const chartMap = useMemo(() => {
         return [
-            { title: '请求数', config: cpmConfig(chartData?.endpointCPM?.readMetricsValues || []) },
-            { title: '平均RT', config: avgConfig(chartData?.endpointAvg?.readMetricsValues || []) },
-            { title: '成功率', config: srConfig(chartData?.endpointSR?.readMetricsValues || []) },
-            { title: '失败数', config: failConfig(chartData?.endpointFailed?.readMetricsValues || []) },
+            { title: '请求数/次', config: cpmConfig(chartData?.endpointCPM?.readMetricsValues || []) },
+            { title: '平均RT/毫秒', config: avgConfig(chartData?.endpointAvg?.readMetricsValues || []) },
+            { title: '成功率/百分比', config: srConfig(chartData?.endpointSR?.readMetricsValues || []) },
+            { title: '失败数/次', config: failConfig(chartData?.endpointFailed?.readMetricsValues || []) },
         ]
     }, [chartData])
     return (
@@ -153,7 +153,7 @@ export default function ChartModal(props: IProps) {
                 <div className='chart-container'>
                     {chartMap.map((item) => {
                         return <div className='chart-main'>
-                            <p>{item.title}</p>
+                            <p className='chart-title'>{item.title}</p>
                             <Line {...item.config} />
                         </div>
                     })}
