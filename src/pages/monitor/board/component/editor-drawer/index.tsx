@@ -46,6 +46,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
   const createType = Form.useWatch('createType', formRef);
   useEffect(() => {
     if (visible) {
+      void getGraphTemplateList();
       if (mode === 'edit') {
         setDetail(boardInfo);
         setDataSourceType(boardInfo?.dsType);
@@ -55,7 +56,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
         setDetail(null);
       }
     }
-  }, [mode, boardInfo]);
+  }, [mode, boardInfo, visible]);
 
   useEffect(() => {
     const clusterCode = formRef.getFieldValue('clusterCode') || cluster;
@@ -127,7 +128,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
     }
 
     if (dsType) {
-      getGraphTemplateList(dsType);
+      // getGraphTemplateList(dsType);
     }
     if (!clusterCode || !dsType) {
       return;
@@ -152,7 +153,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
     }
   };
 
-  const getGraphTemplateList = async (value: any) => {
+  const getGraphTemplateList = async (value?: any) => {
     const res1 = await graphTemplateList(value);
     if (Array.isArray(res1?.data?.dataSource) && res1.data.dataSource.length > 0) {
       const data = res1.data.dataSource.map((item: any) => {
@@ -191,6 +192,40 @@ const EditorDrawer = (props: IEditorDrawer) => {
       visible={visible}
     >
       <Form form={formRef} labelCol={{ span: 5 }} wrapperCol={{ span: 16 }}>
+        <Form.Item label="大盘创建方式" name="createType" initialValue={'graphTemplate'}>
+          <Select options={createTypeOptions} />
+        </Form.Item>
+        {createType === 'graphTemplate' && (
+          <Form.Item label="模版" name="graphTemplateId">
+            <Select
+              options={templateOptions}
+              filterOption={(input, option) => {
+                // @ts-ignore
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+              onChange={(id) => {
+                let item = templateOptions.find((item) => item.value === id);
+                if (item) {
+                  formRef.setFieldsValue({
+                    ...item,
+                  });
+                }
+              }}
+              showSearch
+            />
+          </Form.Item>
+        )}
+        {createType === 'grafanaId' && (
+          <Form.Item label="GrafanaID" name="grafanaId">
+            <Input />
+          </Form.Item>
+        )}
+        {createType === 'graphJson' && (
+          <Form.Item label="JSON" name="graphJson">
+            <AceEditor height={window.innerHeight - 170} mode="json" />
+          </Form.Item>
+        )}
+        <Divider />
         <Form.Item label="名称" name="graphName" rules={[{ required: true, message: '请输入名称!' }]}>
           <Input />
         </Form.Item>
@@ -238,32 +273,6 @@ const EditorDrawer = (props: IEditorDrawer) => {
         <Form.Item label="数据源" name="dsUuid" rules={[{ required: true, message: '请选择数据源!' }]}>
           <Select options={dataSourceOptions} />
         </Form.Item>
-        <Form.Item label="大盘创建方式" name="createType" initialValue={'graphTemplate'}>
-          <Select options={createTypeOptions} />
-        </Form.Item>
-        <Divider />
-        {createType === 'graphTemplate' && (
-          <Form.Item label="模版" name="graphTemplateId">
-            <Select
-              options={templateOptions}
-              filterOption={(input, option) => {
-                // @ts-ignore
-                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-              }}
-              showSearch
-            />
-          </Form.Item>
-        )}
-        {createType === 'grafanaId' && (
-          <Form.Item label="GrafanaID" name="grafanaId">
-            <Input />
-          </Form.Item>
-        )}
-        {createType === 'graphJson' && (
-          <Form.Item label="JSON" name="graphJson">
-            <AceEditor height={window.innerHeight - 170} mode="json" />
-          </Form.Item>
-        )}
       </Form>
     </Drawer>
   );
