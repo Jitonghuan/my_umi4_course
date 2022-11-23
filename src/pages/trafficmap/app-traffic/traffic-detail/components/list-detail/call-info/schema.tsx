@@ -45,7 +45,8 @@ export const cpmConfig = (data = []) => {
     xField: 'time',
     yField: 'value',
     xAxis: {
-      // tickCount: 0
+      range: [0, 1],
+      // tickCount: 5,
     },
     // yAxis: false,
   };
@@ -58,7 +59,8 @@ export const avgConfig = (data = []) => {
     xField: 'time',
     yField: 'value',
     xAxis: {
-      // tickCount: 0
+      range: [0, 1],
+      // tickCount: 5,
     },
     // yAxis: false,
   };
@@ -71,7 +73,8 @@ export const srConfig = (data = []) => {
     xField: 'time',
     yField: 'value',
     xAxis: {
-      // tickCount: 0
+      range: [0, 1],
+      // tickCount: 5,
     },
     // yAxis: false,
   };
@@ -84,7 +87,8 @@ export const failConfig = (data = []) => {
     xField: 'time',
     yField: 'value',
     xAxis: {
-      // tickCount: 0
+      range: [0, 1],
+      // tickCount: 5,
     },
     // yAxis: false,
   };

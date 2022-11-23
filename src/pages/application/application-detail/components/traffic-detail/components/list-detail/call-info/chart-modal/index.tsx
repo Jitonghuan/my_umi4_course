@@ -53,7 +53,7 @@ export default function ChartModal(props: IProps) {
             setModalStart(start)
             setModalEnd(end)
         }
-        getDetail(start, end)
+        getDetail(start, end, v)
     }
 
     // 选择的时间发生改变
@@ -74,10 +74,11 @@ export default function ChartModal(props: IProps) {
         getDetail(start, end)
     }
 
-    const getDetail = (startTime: any, endTime: any) => {
+    const getDetail = (startTime: any, endTime: any, timeType?: string) => {
         const now = new Date().getTime();
         let start = 0, end = 0;
-        if (modalTimeType === 'lastTime') {
+        const type = timeType || modalTimeType;
+        if (type === 'lastTime') {
             //@ts-ignore
             start = Number((now - startTime) / 1000);
             end = Number(now / 1000);
