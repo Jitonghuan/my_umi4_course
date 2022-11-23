@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
 import { Collapse, Drawer, Form, Select, Input, Radio, InputNumber,Segmented } from 'antd';
 import type { RadioChangeEvent } from 'antd';
-import { frequencyOptions, questConfigOptions, tcpQuestConfig, dnsTypeOptions, visitAgreementOption, probeUrlOptions } from './type'
+import { frequencyOptions, questConfigOptions, tcpQuestConfig, dnsTypeOptions, visitAgreementOption, probeUrlOptions } from '../type'
 
 import EditorTable from '@cffe/pc-editor-table';
 import { useGetNetworkProbeType, useGetCluster, } from '../../edit-dail/hook'
@@ -19,7 +19,7 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
     const [dailTypesLoading, dailTypeOptions, getNetworkProbeProbeType] = useGetNetworkProbeType()
     const [clusterLoading, clusterData, getCluster] = useGetCluster()
     const [questConfigType, setQuestConfigType] = useState<string>(questConfigOptions[0]?.value)
-    const [dailType, setDailType] = useState<string>("Http");
+    const [dailType, setDailType] = useState<string>("http");
     const [headersData,setHeadersData]=useState<any>([])
     const [username,setUsername]=useState<string>("");
     const [password,setPassword]=useState<string>("");
@@ -43,23 +43,24 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
     useEffect(() => {
         if (mode === "EDIT" && Object.keys(curRecord)?.length > 0) {
             const probeConfig=JSON.parse(curRecord?.probeConfig||"{}")
+            console.log("probeConfig",probeConfig)
             const keyData=Object.keys(probeConfig)?.length>0?Object.keys(probeConfig):[]
             let headersList:any=[]
-            let basicAuth:any=[]
+            let basicAuth:any={}
             let queryResponseList:any=[]
             setDailType(curRecord?.probeType)
             let dnsConfig={}
-            if(curRecord?.probeType==="Dns"){
+            if(curRecord?.probeType==="dns"){
 
                 dnsConfig= probeConfig
             }
-            if(curRecord?.probeType==="Http"){
+            if(curRecord?.probeType==="http"){
                 setQuestConfigType("headers")
             }
-            if(curRecord?.probeType==="Tcp"){
+            if(curRecord?.probeType==="tcp"){
                 setQuestConfigType("queryResponse")
             }
-            if(curRecord?.probeType==="Http"&&keyData?.includes("headers")){
+            if(curRecord?.probeType==="http"&&keyData?.includes("headers")){
             headersList = Object.keys(probeConfig?.headers  || {}).map((key) => ({
                     httpKey: key,
                     httpValue: probeConfig?.headers?.[key],
@@ -68,15 +69,18 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
                 //     httpKey:item?.httpKey,
                 //     httpValue: item?.httpValue,
                 // }));
+                console.log("headersList",headersList)
 
             }
-            if(curRecord?.probeType==="Http"&&keyData?.includes("basicAuth")){
-                basicAuth = Object.keys(probeConfig?.basicAuth  || {}).map((key) => ({
-                    username: key,
-                    password: probeConfig?.basicAuth?.[key],
-                  }));
+            if(curRecord?.probeType==="http"&&keyData?.includes("basicAuth")){
+                // basicAuth = Object.keys(probeConfig?.basicAuth  || {}).map((key) => ({
+                //     username: key,
+                //     password: probeConfig?.basicAuth?.[key],
+                //   }));
+                  console.log("probeConfig-basicAuth",probeConfig?.basicAuth)
+                  basicAuth=probeConfig?.basicAuth
             }
-            if(curRecord?.probeType==="Tcp"&&keyData?.includes("queryResponse")){
+            if(curRecord?.probeType==="tcp"&&keyData?.includes("queryResponse")){
                 queryResponseList = Object.keys(probeConfig?.queryResponse  || {}).map((key) => ({
                     expect: key,
                     send: probeConfig?.queryResponse?.[key],
@@ -90,8 +94,8 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
                 // probeConfig:key,
                 headers:headersList,
                 probeTimeout: curRecord?.probeTimeout.substr(0, curRecord?.probeTimeout.length - 1),
-                username:basicAuth?.length>0?basicAuth[0]:"",
-                password:basicAuth?.length>1?basicAuth[1]:"",
+                username:basicAuth?.username,
+                password:basicAuth?.password,
                 queryResponse:queryResponseList,
                 ...dnsConfig
                 
@@ -110,7 +114,7 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
 
     const onChangeType = ({ target: { value } }: RadioChangeEvent) => {
         setDailType(value)
-        if (value === "Http") {
+        if (value === "http") {
             form.setFieldsValue({
                 probeConfig: questConfigOptions[0]?.value
             })
@@ -132,9 +136,9 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
         getData:()=>{
             
             return{
-                headersData:form.getFieldValue("headers"),
-                username:form.getFieldValue("username"),
-                password:form.getFieldValue("password")
+                headersData:form.getFieldValue("headers")||headersData,
+                username:form.getFieldValue("username")||username,
+                password:form.getFieldValue("password")||password
 
             }
         }
@@ -165,7 +169,7 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
                 <Form.Item label="拨测超时(s)" name="probeTimeout" rules={[{ required: true, message: '请填写' }]}>
                     <InputNumber style={{ width: 320 }} min={1} />
                 </Form.Item>
-                {dailType === "Http" && (
+                {dailType === "http" && (
                     <>
                         <Form.Item label="请求配置" name="probeConfig" initialValue={questConfigOptions[0]?.value} rules={[{ required: true, message: '请填写' }]}>
                             <Segmented options={questConfigOptions} defaultValue={questConfigOptions[0]?.value} value={questConfigType} onChange={(value:any) => { setQuestConfigType(value)
@@ -243,22 +247,22 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
                         }
                     </>
                 )}
-                {dailType === "Dns" && (
+                {dailType === "dns" && (
                     <Form.Item label="类型" name="dnsType" rules={[{ required: true, message: '请填写' }]}>
                         <Radio.Group options={dnsTypeOptions} />
                     </Form.Item>
                 )}
-                {dailType === "Dns" && (
+                {dailType === "dns" && (
                     <Form.Item label="DNS 访问协议" name="dnsProtocol" rules={[{ required: true, message: '请填写' }]}>
                         <Radio.Group options={visitAgreementOption} />
                     </Form.Item>
                 )}
-                {dailType === "Dns" && (
+                {dailType === "dns" && (
                     <Form.Item label="DNS 服务器" name="dnsServer" rules={[{ required: true, message: '请填写' }]}>
                         <Input style={{ width: 320 }} />
                     </Form.Item>
                 )}
-                {dailType === "Tcp" && (
+                {dailType === "tcp" && (
                     <>
                         <Form.Item rules={[{ required: true, message: '请填写' }]} name="probeConfig" label="请求配置" initialValue={tcpQuestConfig[0]?.value}> <Radio.Group options={tcpQuestConfig} optionType="button" defaultValue={tcpQuestConfig[0]?.value} /></Form.Item>
                         <Form.Item name="queryResponse" style={{ marginLeft: 110 }} rules={[

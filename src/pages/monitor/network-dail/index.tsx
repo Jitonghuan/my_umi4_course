@@ -6,7 +6,7 @@ import { Button, Space, Form, Table, Select, Input,message } from 'antd';
 import EditDail from './edit-dail';
 import {history} from 'umi'
 import { getNetworkProbeList, tableItems } from './edit-dail/hook'
-import { useGetNetworkProbeType, useGetCluster, useDelNetworkProbe,updateNetworkProbe } from './edit-dail/hook'
+import { useGetNetworkProbeType, useGetCluster, useDelNetworkProbe,networkProbeStatus } from './edit-dail/hook'
 import './index.less'
 export default function NetworkDail() {
     const [listForm] = Form.useForm();
@@ -72,7 +72,7 @@ export default function NetworkDail() {
 
             },
             onSwitch:(record, index)=>{
-                updateNetworkProbe({...record,status:record?.status===0?1:0}).then((res)=>{
+                networkProbeStatus({id:record?.id,status:record?.status===0?1:0}).then((res)=>{
                     if(res?.success){
                        message.success("操作成功！") 
                        let params = listForm.getFieldsValue()
