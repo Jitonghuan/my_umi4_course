@@ -111,11 +111,11 @@ export function useRegulusOnlineBugs(props: any) {
     const [data, setData] = useState<any>([]);
     const [loading, setLoading] = useState(false);
     const loadData = useCallback((extra?: any) => {
-        postRequest(getDemandByProjectList, {
+        postRequest(getRegulusOnlineBugs, {
             data: { ...props, ...extra, pageSize: -1 },
         })
             .then((result) => {
-                if (result.success) {
+                if (result?.success) {
                     let dataSource = result.data;
                     let dataArry: any = [];
                     dataSource?.map((item: any) => {

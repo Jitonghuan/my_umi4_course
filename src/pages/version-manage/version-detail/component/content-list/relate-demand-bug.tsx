@@ -22,22 +22,6 @@ export default function BranchEditor(props: IProps) {
     const [demands, demandsLoading, loadDemands] = useDemands({});
     const [regulusBugs, bugsLoading, loadBugs] = useRegulusOnlineBugs({});
     const [form] = Form.useForm();
-
-    const projectList = useMemo(() => type === 'demand' ? portalList : regulusPortal, [type, portalList, regulusPortal])
-
-    const handleSubmit = async () => {
-        const values = await form.validateFields();
-        let demandArry: any = [];
-        values.demandId?.map((item: any) => {
-            demandArry.push(item.value + '');
-        });
-        setLoading(true);
-    }
-
-    const onSearch = debounce((val: any) => {
-        // queryDemand(projectId, val);
-    }, 300);
-
     useEffect(() => {
         if (type === 'hide') return;
         if (type === 'demand') {
@@ -51,6 +35,23 @@ export default function BranchEditor(props: IProps) {
         });
         // queryPortal();
     }, [type]);
+
+    const projectList = useMemo(() => type === 'demand' ? portalList : regulusPortal, [type, portalList, regulusPortal])
+
+    const handleSubmit = async () => {
+        const values = await form.validateFields();
+        console.log(values, 'values')
+        let demandArry: any = [];
+        values.demandId?.map((item: any) => {
+            demandArry.push(item.value + '');
+        });
+        setLoading(true);
+    }
+
+    const onSearch = debounce((val: any) => {
+        // queryDemand(projectId, val);
+    }, 300);
+
 
     return (
         <Modal
@@ -73,7 +74,7 @@ export default function BranchEditor(props: IProps) {
                         options={projectList || []}
                         onChange={(value) => {
                             console.log(value, 'value')
-                            // type === 'demand' ? loadDemands({ projectId: value }) : loadBugs({})
+                            type === 'demand' ? loadDemands({ projectId: value }) : loadBugs({ projectId: value })
                         }}
                         showSearch
                         allowClear
