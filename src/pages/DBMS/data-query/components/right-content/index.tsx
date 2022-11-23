@@ -37,14 +37,12 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
     const [dataSource,setDataSource]=useState<any>([])
     const [downLoadDisabled, setDownLoadDisabled] = useState<boolean>(false);
     const [sql,setSql]=useState<string>("")
-    //const disabled = useRef<boolean>(false)
     const newTabIndex = useRef(0);
     const nextTabIndex = useRef(1);
   
    
     const exportAction=()=>{
-       // const instanceId=instanceOptions?.filter(item=>item?.label===)
-       console.log("------",relayInfo?.instance,relayInfo?.dbCode,relayInfo?.tableCode)
+    
         return(
             <Popover placement="bottomRight" content={ <div>
                 <p >
@@ -101,7 +99,6 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                            
                             subChange={(params: { sqlContent: string, sqlType: string }) => {querySqlResult(params)
                                 setSql(params?.sqlContent)
-                                console.log("222222",localStorage.getItem("_dbms_sql_console_tab"))
                                 if(localStorage.getItem("_dbms_sql_console_tab")){
                                     let key=localStorage.getItem("_dbms_sql_console_tab")||"1"
                                     let resultKey=Number(key.substring(6))+1
@@ -155,7 +152,6 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                 initValue={firstInitSqlValue || "select * from user limit 10"}
                                 subChange={(params: { sqlContent: string, sqlType: string }) => {querySqlResult(params);
                                     setSql(params?.sqlContent)
-                                    console.log("111111",localStorage.getItem("_dbms_sql_console_tab"))
                                     if(localStorage.getItem("_dbms_sql_console_tab")){
                                         let key=localStorage.getItem("_dbms_sql_console_tab")||"1"
                                         let resultKey=Number(key.substring(6))+1
@@ -458,7 +454,6 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             implementDisabled={implementDisabled}
                             subChange={(params: { sqlContent: string, sqlType: string }) => {querySqlResult(params);
                                 setSql(params?.sqlContent)
-                                console.log("333333",localStorage.getItem("_dbms_sql_console_tab"))
                                 if(localStorage.getItem("_dbms_sql_console_tab")){
                                     let key=localStorage.getItem("_dbms_sql_console_tab")||"1"
                                     let resultKey=Number(key.substring(6))+1
@@ -565,10 +560,7 @@ const updateData=(value:any,error?:string,time?:string)=>{
              newPanes?.map((element:any,index:number)=>{
                 if(element?.key===resultActiveKey){
                     currentItem= [element?.key,index]
-                  
-
                 }
-
             })
             const content=()=>{
                 return(
