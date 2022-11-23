@@ -6,6 +6,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from '../../first-detail/schema';
 import NextEnvDraw from '../../first-detail/next-env-draw'
 import moment from 'moment';
+import AceEditor from '@/components/ace-editor';
 import { useGetDdlDesignFlow } from '../../hook'
 import { CurrentStatusStatus, PrivWfType } from '../../../../../authority-manage/components/authority-apply/schema'
 import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog } from './hook'
@@ -49,7 +50,9 @@ export default function PanelDetail(props: Iprops) {
     const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
     const [form] = Form.useForm()
     const [runSqlform] = Form.useForm()
+    const [sqlForm] =Form.useForm()
     const [loading, setLoading] = useState<boolean>(false);
+    const [showSql,setShowSql]=useState<boolean>(false)
     const [status, setstatus] = useState<string>("");
     const [runMode, setRunMode] = useState<string>("now")
     const [owner, setOwner] = useState<any>([]);
@@ -266,16 +269,28 @@ export default function PanelDetail(props: Iprops) {
                   <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
                     <span><Tag color={value === "通过" ? "green" : value === "警告" ? "orange" : value === "错误" ? "red" : "default"}>{value}</Tag></span>
                   )} /> : item === "审核/执行信息" ?
-                    <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+                    <Table.Column title={item} width={400} ellipsis dataIndex={item} key={item} render={(value) => (
     
                       <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                        <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                           <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                        {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                       </span>
     
-                    )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+                    )} /> : item === "完整SQL内容" ? <Table.Column width={400} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
     
                       <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                        <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                           <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                        {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                       </span>
     
                     )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
@@ -295,6 +310,16 @@ export default function PanelDetail(props: Iprops) {
     }, []);
     return (
         <div className="panel-detail">
+             <Modal title="sql详情" visible={showSql} footer={false} width={"70%"} onCancel={()=>{setShowSql(false)}} destroyOnClose>
+        <Form form={sqlForm} preserve={false}>
+          <Form.Item name="showSql">
+          <AceEditor mode="sql" height={900} readOnly={true} />
+          </Form.Item>
+
+        </Form>
+       
+
+      </Modal>
             <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={parentWfId} />
             <NextEnvDraw
                 mode={nextEnvmode}

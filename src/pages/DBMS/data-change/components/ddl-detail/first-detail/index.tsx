@@ -1,13 +1,14 @@
-import { Card, Descriptions, Space, Tag, Table, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table, Input, Modal,message, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
-import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined,CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
 import NextEnvDraw from './next-env-draw'
 import moment from 'moment';
+import AceEditor from '@/components/ace-editor';
 import { useGetDdlDesignFlow } from '../hook'
 import DetailContext from '../context';
 import { parse } from 'query-string';
@@ -45,6 +46,7 @@ export default function ApprovalEnd() {
   const [info, setInfo] = useState<any>({});
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
+  const [sqlForm] =Form.useForm()
   const [runSqlform] = Form.useForm()
   const { tabKey, parentWfId } = useContext(DetailContext);
   const [loading, setLoading] = useState<boolean>(false);
@@ -61,6 +63,7 @@ export default function ApprovalEnd() {
   const [dateString, setDateString] = useState<string>("");
   const [nextEnvmode, setNextEnvmode] = useState<EditorMode>("HIDE")
   const [label, setLabel] = useState<any>([])
+  const [showSql,setShowSql]=useState<boolean>(false)
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
@@ -263,16 +266,28 @@ export default function ApprovalEnd() {
               <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
                 <span><Tag color={value === "通过" ? "green" : value === "警告" ? "orange" : value === "错误" ? "red" : "default"}>{value}</Tag></span>
               )} /> : item === "审核/执行信息" ?
-                <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+                <Table.Column title={item} width={400} ellipsis dataIndex={item} key={item} render={(value) => (
 
                   <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                    <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                    <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                   </span>
 
-                )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+                )} /> : item === "完整SQL内容" ? <Table.Column width={400} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
 
                   <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                    <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                      <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                   </span>
 
                 )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
@@ -291,6 +306,16 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
+      <Modal title="sql详情" visible={showSql} footer={false} width={"70%"} onCancel={()=>{setShowSql(false)}} destroyOnClose>
+        <Form form={sqlForm} preserve={false}>
+          <Form.Item name="showSql">
+          <AceEditor mode="sql" height={900} readOnly={true} />
+          </Form.Item>
+
+        </Form>
+       
+
+      </Modal>
       <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id || afferentId} />
       <NextEnvDraw
         mode={nextEnvmode}
