@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, useContext, useCallback } from 're
 import { Card, Table, Pagination, Tooltip, Empty, Spin } from 'antd';
 import moment from 'moment'
 import { columnSchema } from '@/pages/trafficmap/app-traffic/traffic-detail/components/list-detail/call-info/schema';
+import { useCountDetailTable } from '@/pages/trafficmap/app-traffic/traffic-detail/components/list-detail/call-info/hook';
 import { getCountDetail, getTrace } from './hook'
 import DetailContext from '../../../context';
 import debounce from 'lodash/debounce';
@@ -21,17 +22,14 @@ export default function CallInfo(props: any) {
   const [traceLoading, setTraceLoading] = useState<boolean>(false)
   const [pageSize, setPageSize] = useState<number>(20);
   const [pageIndex, setPageIndex] = useState<number>(1);
-  const [total, setTotal] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(false);
-  const [data, setData] = useState<any>([]);//初始拿到的所有数据
-  const [loading, setLoading] = useState<boolean>(false);
   const [chartData, setChartData] = useState<any>({});
   const [rowCount, setRowCount] = useState(0);
-  const [isEmpty, setIsEmpty] = useState<boolean>(false);
   const [showPage, setShowPage] = useState<boolean>(true);
   const [pageData, setPageData] = useState<any>([]);
   const filter = debounce((value) => filterData(value), 500);
   const [originData, setOriginData] = useState<any>([]);
+  const [data, total, loading, loadData, isEmpty] = useCountDetailTable({});
 
   useEffect(() => {
     const res = data.slice((pageIndex - 1) * pageSize, pageIndex * pageSize);
@@ -71,14 +69,6 @@ export default function CallInfo(props: any) {
 
   useEffect(() => {
     // if (!envCode || !startTime || !appId || !deployName) return
-    if (isClick && isClick === appCode) {
-      getCountDetailTable(true)
-    } else {
-      getCountDetailTable(false)
-    }
-  }, [envCode, startTime, deployName, appId, count, isClick, endTime, selectTimeType])
-
-  const getCountDetailTable = (isTotal?: boolean) => {
     const now = new Date().getTime();
     let start = 0, end = 0;
     if (selectTimeType === 'lastTime') {
@@ -90,73 +80,22 @@ export default function CallInfo(props: any) {
       start = startTime;
       end = Number(endTime);
     }
-    console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), '应用调用')
-    //@ts-ignore
-    setLoading(true)
-    getCountDetail({
+    const params = {
       envCode: envCode || "",
       deployName,
       appId,
-      isTotal,
       podIps,
       //@ts-ignore
       start: moment(new Date(Number(start) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
       //@ts-ignore
       end: moment(new Date(Number(end) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
-    }).then((res) => {
-      let newArr = [];
-      setTotal(res?.length || 0)
-      if (!res?.length) {
-        setIsEmpty(true);
-        setData([])
-        return;
-      }
-      setIsEmpty(false);
-      newArr = res?.map((item: any) => {
-        item.dataSource = [];
-        (item?.endpointCPM?.readMetricsValues || []).forEach((val: any) => {
-          let curT = item.dataSource.find((i: any) => i.time === val.time);
-          if (!curT) {
-            curT = { cpm: val.value, time: val.time }
-            item.dataSource.push(curT);
-          } else {
-            Object.assign(curT, { cpm: val.value })
-          }
-        });
-        (item?.endpointAvg?.readMetricsValues || []).forEach((val: any) => {
-          let curT = item.dataSource.find((i: any) => i.time === val.time);
-          if (!curT) {
-            curT = { avg: val.value, time: val.time }
-            item.dataSource.push(curT);
-          } else {
-            Object.assign(curT, { avg: val.value })
-          }
-        });
-        (item?.endpointSR?.readMetricsValues || []).forEach((val: any) => {
-          let curT = item.dataSource.find((i: any) => i.time === val.time);
-          if (!curT) {
-            curT = { sr: val.value, time: val.time }
-            item.dataSource.push(curT);
-          } else {
-            Object.assign(curT, { sr: val.value })
-          }
-        });
-        (item?.endpointFailed?.readMetricsValues || []).forEach((val: any) => {
-          let curT = item.dataSource.find((i: any) => i.time === val.time);
-          if (!curT) {
-            curT = { fail: val.value, time: val.time }
-            item.dataSource.push(curT);
-          } else {
-            Object.assign(curT, { fail: val.value })
-          }
-        });
-        return item;
-      })
-      setData(newArr);
-    }).finally(() => {
-      setLoading(false)
-    })
-  }
+    }
+    if (isClick && isClick === appCode) {
+      loadData({ ...params, isTotal: true })
+    } else {
+      loadData({ ...params, isTotal: false })
+    }
+  }, [envCode, startTime, deployName, appId, count, isClick, endTime, selectTimeType])
 
   const pageSizeClick = (pagination: any) => {
     setPageIndex(pagination.current);
