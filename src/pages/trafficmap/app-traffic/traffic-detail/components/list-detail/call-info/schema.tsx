@@ -1,4 +1,5 @@
 import { Space, Tooltip, Tag } from 'antd';
+import { getColor } from '../../../../schema';
 import moment from 'moment'
 
 export const columnSchema = () => {
@@ -21,12 +22,14 @@ export const columnSchema = () => {
       title: '平均RT',
       dataIndex: 'avg',
       key: 'avg',
+      render: (value: any) => <span style={{ color: getColor(value, 'rt') }}>{value}</span>,
       // width: 50,
     },
     {
       title: '成功率',
       dataIndex: 'sr',
       key: 'sr',
+      render: (value: any) => <span style={{ color: getColor(value, 'sr') }}>{value}% </span>,
       // width: 50,
     },
     {

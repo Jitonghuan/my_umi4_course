@@ -4,7 +4,7 @@ import JavaLogo from '@/assets/imgs/java-logo.png';
 import PythonLogo from '@/assets/imgs/Python-logo.svg';
 import GolangLogo from '@/assets/imgs/go_logo_blue.svg';
 
-const getColor = (value: any, type: string) => {
+export const getColor = (value: any, type: string) => {
   // cpu
   if (type === 'cpu') {
     if (value > 90) { return 'red' }
