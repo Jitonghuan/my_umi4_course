@@ -198,6 +198,4 @@ postRequest(APIS.updateNetworkProbe, {
 });
 
 export const networkProbeStatus = (params: {id:number,status:number}) =>
-  postRequest(APIS.networkProbeStatus, {
-    data: params,
-  });
+  postRequest(`${APIS.networkProbeStatus}?id=${params?.id}&status=${params?.status}`);

@@ -43,7 +43,7 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
     useEffect(() => {
         if (mode === "EDIT" && Object.keys(curRecord)?.length > 0) {
             const probeConfig=JSON.parse(curRecord?.probeConfig||"{}")
-            console.log("probeConfig",probeConfig)
+          
             const keyData=Object.keys(probeConfig)?.length>0?Object.keys(probeConfig):[]
             let headersList:any=[]
             let basicAuth:any={}
@@ -69,7 +69,7 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
                 //     httpKey:item?.httpKey,
                 //     httpValue: item?.httpValue,
                 // }));
-                console.log("headersList",headersList)
+             
 
             }
             if(curRecord?.probeType==="http"&&keyData?.includes("basicAuth")){
@@ -77,7 +77,7 @@ export default forwardRef(function DailForm(props: Iprops, ref: any) {
                 //     username: key,
                 //     password: probeConfig?.basicAuth?.[key],
                 //   }));
-                  console.log("probeConfig-basicAuth",probeConfig?.basicAuth)
+              
                   basicAuth=probeConfig?.basicAuth
             }
             if(curRecord?.probeType==="tcp"&&keyData?.includes("queryResponse")){

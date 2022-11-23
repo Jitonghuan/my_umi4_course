@@ -48,7 +48,7 @@ export default function EditDail(props: Iprops) {
   useEffect(() => {
     if (mode === "EDIT" && Object.keys(curRecord)?.length > 0) {
       const probeConfig = JSON.parse(curRecord?.probeConfig || "{}")
-      console.log("probeConfig", probeConfig)
+    
       const keyData = Object.keys(probeConfig)?.length > 0 ? Object.keys(probeConfig) : []
       let headersList: any = []
       let basicAuth: any = {}
@@ -77,11 +77,11 @@ export default function EditDail(props: Iprops) {
           httpValue: probeConfig?.headers?.[key],
         }));
         setHeadersData(headersList)
-        console.log("headersList", headersList)
+     
 
       }
       if (curRecord?.probeType === "http" && keyData?.includes("basicAuth")) {
-        console.log("probeConfig-basicAuth", probeConfig?.basicAuth)
+      
         basicAuth = probeConfig?.basicAuth
         setUsername(basicAuth?.username)
         setPassword( basicAuth?.password)
@@ -306,7 +306,7 @@ export default function EditDail(props: Iprops) {
           </Form.Item>
           {dailType === "http" && (
             <>
-            {console.log("questConfigType",questConfigType)}
+          
               <Form.Item label="请求配置" name="probeConfig" initialValue={questConfigOptions[0]?.value} rules={[{ required: true, message: '请填写' }]}>
                 <Segmented options={questConfigOptions} defaultValue={questConfigOptions[0]?.value} value={questConfigType} onChange={(value: any) => {
                   setQuestConfigType(value)
