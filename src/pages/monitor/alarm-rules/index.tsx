@@ -45,9 +45,9 @@ export default function AlarmRules() {
   const [expand, setExpand] = useState(false);
   const [groupData, setGroupData] = useState<any[]>([]);
   const [tableProps, setTableProps] = useState<any>({});
-
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
+  const [pageInfo,setPageInfo]=useState<any>({})
   useEffect(()=>{
     // if(!curRecord?.appID) return
     if(curRecord?.appCode&&curRecord?.envCode){
@@ -93,6 +93,7 @@ export default function AlarmRules() {
     })
     if (res?.success) {
       setTableProps(res.data);
+      setPageInfo(res?.data?.pageInfo)
     }
   }
 
@@ -209,7 +210,7 @@ export default function AlarmRules() {
         </Form>
       </FilterCard>
       <ContentCard>
-        <RulesTable dataSource={tableProps} onQuery={queryList} />
+        <RulesTable dataSource={tableProps} onQuery={queryList} pageInfo={pageInfo}/>
       </ContentCard>
     </PageContainer>
   );
