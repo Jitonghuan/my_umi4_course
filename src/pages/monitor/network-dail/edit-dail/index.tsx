@@ -36,10 +36,14 @@ export default function EditDail(props: Iprops) {
   useEffect(() => {
     if (mode === "HIDE") return
     if (dailTypeOptions?.length > 0 && mode === "ADD") {
+     
       form.setFieldsValue({
-        probeType: dailTypeOptions[0]?.value
+        probeType: dailTypeOptions[0]?.value,
+        probeConfig:"headers"
+        
       })
       setDailType(dailTypeOptions[0]?.value)
+      setQuestConfigType("headers")
     }
 
 
@@ -110,6 +114,7 @@ export default function EditDail(props: Iprops) {
 
     }
     return () => {
+     // form.resetFields()
 
 
     }
@@ -135,8 +140,8 @@ export default function EditDail(props: Iprops) {
     }
 
   };
-  const handleSubmit = () => {
-    const payload = form.getFieldsValue();
+  const handleSubmit = async() => {
+    const payload = await form.validateFields();
     let dataParams: any = {}
     if (payload?.probeType === "http") {
       //如果类型是http配置格式：
