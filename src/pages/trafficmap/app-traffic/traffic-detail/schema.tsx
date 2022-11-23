@@ -5,6 +5,10 @@ export const START_TIME_ENUMS = [
     value: 5 * 60 * 1000,
   },
   {
+    label: 'Last 15 minutes',
+    value: 15 * 60 * 1000,
+  },
+  {
     label: 'Last 30 minutes',
     value: 30 * 60 * 1000,
   },

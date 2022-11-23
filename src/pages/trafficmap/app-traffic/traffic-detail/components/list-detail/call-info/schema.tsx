@@ -19,7 +19,7 @@ export const columnSchema = () => {
       // width: 40,
     },
     {
-      title: '平均RT',
+      title: '平均RT/ms',
       dataIndex: 'avg',
       key: 'avg',
       render: (value: any) => <span style={{ color: getColor(value, 'rt') }}>{value}</span>,
@@ -29,7 +29,7 @@ export const columnSchema = () => {
       title: '成功率',
       dataIndex: 'sr',
       key: 'sr',
-      render: (value: any) => <span style={{ color: getColor(value, 'sr') }}>{value}% </span>,
+      render: (value: any) => <span style={{ color: getColor(value, 'sr') }}>{value}</span>,
       // width: 50,
     },
     {
