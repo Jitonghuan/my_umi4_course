@@ -111,6 +111,7 @@ export default function ResizeLayout() {
         setErrorMsg(res?.errorMsg)
         setCostTime("")
         updateData([],res?.errorMsg,"")
+        setImplementDisabled(false)
       
       }
     }).finally(() => {
