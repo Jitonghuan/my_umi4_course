@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons';
 import './index.less'
 
-export default function InstanceMonitor(props: any) {
+export default function CallInfo(props: any) {
   const { searchValue, setCallInfoData } = props;
   const { appCode, envCode, startTime, appId, deployName, count, isClick, podIps, endTime, selectTimeType } = useContext(DetailContext);
   const [traceLoading, setTraceLoading] = useState<boolean>(false)

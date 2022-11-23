@@ -1,165 +1,270 @@
 
-import React, { useState, useEffect,useMemo, useContext } from 'react';
-import { Card, Table, Input } from 'antd';
+import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
+import { Card, Table, Pagination, Tooltip, Empty, Spin } from 'antd';
 import moment from 'moment'
-import { createStatisticsTableColumns, createQueryTableColumns } from './schema'
+import { columnSchema } from '@/pages/trafficmap/app-traffic/traffic-detail/components/list-detail/call-info/schema';
 import { getCountDetail, getTrace } from './hook'
 import DetailContext from '../../../context';
-import { history } from 'umi'
-
-
+import debounce from 'lodash/debounce';
+import { history } from 'umi';
+import ChartModal from './chart-modal';
+import CardLayout from '@cffe/vc-b-card-layout';
+import {
+  LineChartOutlined,
+  BranchesOutlined
+} from '@ant-design/icons';
 import './index.less'
-export default function InstanceMonitor() {
-  const { appCode, envCode, startTime, appId, deployName, count, isClick,podIps } = useContext(DetailContext);
-  const [statisticsData, setStatisticsData] = useState<any>([])
-  const [statisticsLoading, setStatisticsLoading] = useState<boolean>(false)
+
+export default function CallInfo(props: any) {
+  const { searchValue, setCallInfoData } = props;
+  const { appCode, envCode, startTime, appId, deployName, count, isClick, podIps, endTime, selectTimeType } = useContext(DetailContext);
   const [traceLoading, setTraceLoading] = useState<boolean>(false)
-  const [traceData, setTraceData] = useState<any>([])
   const [pageSize, setPageSize] = useState<number>(20);
   const [pageIndex, setPageIndex] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
-  const [nowSearchEndpoint, setNowSearchEndpoint] = useState<string>("")
+  const [visible, setVisible] = useState<boolean>(false);
+  const [data, setData] = useState<any>([]);//初始拿到的所有数据
+  const [loading, setLoading] = useState<boolean>(false);
+  const [chartData, setChartData] = useState<any>({});
+  const [rowCount, setRowCount] = useState(0);
+  const [isEmpty, setIsEmpty] = useState<boolean>(false);
+  const [showPage, setShowPage] = useState<boolean>(true);
+  const [pageData, setPageData] = useState<any>([]);
+  const filter = debounce((value) => filterData(value), 500);
+  const [originData, setOriginData] = useState<any>([]);
+
   useEffect(() => {
-    if (!envCode || !startTime || !appId || !deployName) return
+    const res = data.slice((pageIndex - 1) * pageSize, pageIndex * pageSize);
+    setPageData(res)
+    setOriginData(res);
+  }, [data, pageSize, pageIndex])
+
+  useEffect(() => {
+    setCallInfoData(data)
+  }, [data])
+
+  useEffect(() => {
+    filter(searchValue)
+  }, [searchValue])
+
+  const filterData = (value: string) => {
+    if (!value) {
+      if (originData.length) {
+        setShowPage(true);
+        setPageData(originData)
+      }
+      return;
+    }
+    setShowPage(false)
+    const afterFilter: any = [];
+    data.forEach((item: any) => {
+      if (item.url?.indexOf(value) !== -1) {
+        afterFilter.push(item);
+      }
+    });
+    setPageData(afterFilter)
+  }
+
+  const tableColumns = useMemo(() => {
+    return columnSchema()
+  }, [appId, envCode])
+
+  useEffect(() => {
+    // if (!envCode || !startTime || !appId || !deployName) return
     if (isClick && isClick === appCode) {
       getCountDetailTable(true)
     } else {
       getCountDetailTable(false)
     }
+  }, [envCode, startTime, deployName, appId, count, isClick, endTime, selectTimeType])
 
-
-  }, [envCode, startTime, deployName, appId, count, isClick])
-  useEffect(() => {
-    getTraceTable()
-  }, [startTime, appId, count])
   const getCountDetailTable = (isTotal?: boolean) => {
-    setStatisticsLoading(true)
     const now = new Date().getTime();
+    let start = 0, end = 0;
+    if (selectTimeType === 'lastTime') {
+      //@ts-ignore
+      start = Number((now - startTime) / 1000);
+      end = Number(now / 1000);
+    } else {
+      //@ts-ignore
+      start = startTime;
+      end = Number(endTime);
+    }
+    console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), '应用调用')
     //@ts-ignore
+    setLoading(true)
     getCountDetail({
-      envCode:envCode||"",
+      envCode: envCode || "",
       deployName,
       appId,
       isTotal,
       podIps,
       //@ts-ignore
-      start: moment(new Date(Number(now - startTime))).format('YYYY-MM-DD HH:mm:ss'),
+      start: moment(new Date(Number(start) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
       //@ts-ignore
-      end: moment(new Date(Number(now))).format('YYYY-MM-DD HH:mm:ss'),
-    }).then((resp) => {
-      setStatisticsData(resp || [])
-    }).finally(() => {
-      setStatisticsLoading(false)
-    })
-  }
-
-  const getTraceTable = (info?: { endpoint?: string, pageIndex?: number, pageSize?: number }) => {
-    setTraceLoading(true)
-    const now = new Date().getTime();
-    //@ts-ignore
-    getTrace({
-      envCode,
-      endpoint: info?.endpoint,
-      pageIndex: info?.pageIndex,
-      pageSize: info?.pageSize,
-      appId,
-      //@ts-ignore
-      start: moment(new Date(Number(now - startTime))).format('YYYY-MM-DD HH:mm:ss'),
-      //@ts-ignore
-      end: moment(new Date(Number(now))).format('YYYY-MM-DD HH:mm:ss'),
-    }).then((resp) => {
-      setTraceData(resp?.dataSource)
-      setTotal(resp?.pageInfo?.total);
-      setPageIndex(resp?.pageInfo?.pageIndex);
-      setPageSize(resp?.pageInfo?.pageSize)
-    }).finally(() => {
-      setTraceLoading(false)
-    })
-  }
-  const statisticsColumns = useMemo(() => {
-    return createStatisticsTableColumns({
-      onView: (record, index) => {
-        const now = new Date().getTime();
-        history.push({
-          pathname: "/matrix/trafficmap/tracking"
-
-        }, {
-          entry: "logSearch",
-          envCode: envCode,
-          appId: appId,
-          startTime: Number((now - startTime) / 1000),
-          endTime: Number(now / 1000),
-        })
-      },
-
-    }) as any;
-  }, [startTime, envCode, appId]);
-  const queryColumns = useMemo(() => {
-    const now = new Date().getTime();
-    return createQueryTableColumns({
-      onView: (record, index) => {
-        history.push({
-          pathname: '/matrix/logger/search',
-          search: `envCode=${envCode}&startTime=${moment(now - startTime).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(now).format('YYYY-MM-DD HH:mm:ss')}&traceId=${record?.traceIds[0]}`
-        })
-
+      end: moment(new Date(Number(end) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
+    }).then((res) => {
+      let newArr = [];
+      setTotal(res?.length || 0)
+      if (!res?.length) {
+        setIsEmpty(true);
+        setData([])
+        return;
       }
-    }) as any;
-  }, [startTime, envCode]);
+      setIsEmpty(false);
+      newArr = res?.map((item: any) => {
+        item.dataSource = [];
+        (item?.endpointCPM?.readMetricsValues || []).forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { cpm: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { cpm: val.value })
+          }
+        });
+        (item?.endpointAvg?.readMetricsValues || []).forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { avg: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { avg: val.value })
+          }
+        });
+        (item?.endpointSR?.readMetricsValues || []).forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { sr: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { sr: val.value })
+          }
+        });
+        (item?.endpointFailed?.readMetricsValues || []).forEach((val: any) => {
+          let curT = item.dataSource.find((i: any) => i.time === val.time);
+          if (!curT) {
+            curT = { fail: val.value, time: val.time }
+            item.dataSource.push(curT);
+          } else {
+            Object.assign(curT, { fail: val.value })
+          }
+        });
+        return item;
+      })
+      setData(newArr);
+    }).finally(() => {
+      setLoading(false)
+    })
+  }
+
   const pageSizeClick = (pagination: any) => {
     setPageIndex(pagination.current);
     let obj = {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
     };
-    getTraceTable({ ...obj, endpoint: nowSearchEndpoint })
   };
+
+  const nodeRef = useCallback((node: any) => {
+    if (node) {
+      const cardWidth = 310;
+      setRowCount(Math.floor(node.clientWidth / cardWidth) || 1);
+      const resizeObserver = new ResizeObserver((entries: any) => {
+        setRowCount(Math.floor(node.clientWidth / cardWidth) || 1);
+      }).observe(node);
+    }
+  }, []);
+
+  const toTrafficMap = useCallback((url: string) => {
+    const now = new Date().getTime();
+    let start = 0, end = 0;
+    if (selectTimeType === 'lastTime') {
+      //@ts-ignore
+      start = Number((now - startTime) / 1000);
+      end = Number(now / 1000);
+    } else {
+      //@ts-ignore
+      start = startTime;
+      end = Number(endTime);
+    }
+    history.push({
+      pathname: "/matrix/trafficmap/tracking"
+    }, {
+      entry: "logSearch",
+      envCode: envCode,
+      appId: appId,
+      startTime: start,
+      endTime: end,
+      endpoint: url
+    })
+    // const url = `/matrix/trafficmap/tracking?envCode=${envCode}&startTime=${start}&endTime=${end}&appId=${appId}&entry=logSearch`
+    // window.open(url, '_blank')
+  }, [appId, envCode, selectTimeType, startTime, endTime])
 
   return (
     <>
-      <Card className="call-info-body">
-        <h3 className="call-info-tabs-content-title">
-          调用统计
-          </h3>
-        <Table bordered columns={statisticsColumns} loading={statisticsLoading} scroll={{ x: '100%' }} dataSource={statisticsData} />
-        <div className="table-caption">
-          <div className="caption-left">
-            <h3 className="call-info-tabs-content-title">
-              调用查询
-             </h3>
-          </div>
+      <div className="call-info-body">
+        {visible && <ChartModal visible={visible} onClose={() => { setVisible(false) }} data={chartData} />}
+        {isEmpty ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='暂无数据' /> :
+          <>
+            <Spin spinning={loading}>
+              <div className='item-wrapper' ref={nodeRef}>
+                {/* <CardLayout > */}
+                {(pageData || []).map((item: any, index: number) => {
+                  return (
+                    <div className='call-item' style={{ width: `${rowCount === 1 ? 100 : 97 / rowCount}%`, marginLeft: `${(index % rowCount) === 0 ? '0' : `calc(${3 / (rowCount - 1)}%)`}` }}>
+                      <div className='title flex-space-between'>
+                        <div className='table-title'>
+                          <Tooltip title={item?.url || ''} placement="topLeft">
+                            {item.url || ''}
+                          </Tooltip>
+                        </div>
+                        <div>
+                          <a onClick={() => { setChartData(item); setVisible(true) }}><LineChartOutlined style={{ fontSize: 16 }} /></a>
+                          <a onClick={() => { toTrafficMap(item?.url || '') }}><BranchesOutlined style={{ fontSize: 16, marginLeft: 10 }} /></a>
+                        </div>
+                      </div>
+                      <div className='main'>
+                        <Table
+                          size="small"
+                          bordered
+                          loading={traceLoading}
+                          dataSource={item?.dataSource || []}
+                          columns={tableColumns}
+                          scroll={{ x: '100%' }}
+                          pagination={
+                            false
+                          }
+                          onChange={pageSizeClick}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
 
-          <div className="caption-right">
-            查询：<Input style={{ width: 220 }} placeholder="请输入内容查询" onPressEnter={(e) => {
-              getTraceTable({
-                endpoint: e.target.value
-              })
-              setNowSearchEndpoint(e.target.value)
-            }} />
-          </div>
-        </div>
-
-        <Table
-          bordered
-          columns={queryColumns}
-          loading={traceLoading}
-          dataSource={traceData}
-          scroll={{ x: '100%' }}
-          pagination={{
-            current: pageIndex,
-            total,
-            pageSize,
-            showSizeChanger: true,
-            onShowSizeChange: (_, size) => {
-              setPageSize(size);
-              setPageIndex(1); //
-            },
-            showTotal: () => `总共 ${total} 条数据`,
-          }}
-          onChange={pageSizeClick}
-
-        />
-      </Card>
+                {/* </CardLayout> */}
+              </div>
+              {total > 10 && showPage && (
+                <div className='flex-end'>
+                  <Pagination
+                    pageSize={pageSize}
+                    total={total}
+                    current={pageIndex}
+                    showSizeChanger
+                    showTotal={(total, range) => `总共 ${total} 条数据`}
+                    onShowSizeChange={(_, next) => {
+                      setPageIndex(1);
+                      setPageSize(next);
+                    }}
+                    onChange={(next) => setPageIndex(next)}
+                  />
+                </div>
+              )}
+            </Spin>
+          </>
+        }
+      </div>
     </>
   )
 }

@@ -53,7 +53,7 @@ export default function InstanceMonitor() {
         ip: hostIP,
       })
     }
-  }, [envCode, appCode, hostIP, hostName, startTime, count, endTime])
+  }, [envCode, appCode, hostIP, hostName, startTime, count, endTime, selectTimeType])
   useEffect(() => {
     if (isClick && isClick === appCode) {
       getDataSource({
@@ -132,7 +132,7 @@ export default function InstanceMonitor() {
         setLoading(false)
       })
     })
-  }, [startTime,])
+  }, [startTime, endTime, selectTimeType])
   const getNodeDataSource = useCallback(() => {
     let data = []
     data.push({

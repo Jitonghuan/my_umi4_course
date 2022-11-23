@@ -1,5 +1,4 @@
 import { Space, Tooltip, Tag } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
 import moment from 'moment'
 
 export const columnSchema = () => {

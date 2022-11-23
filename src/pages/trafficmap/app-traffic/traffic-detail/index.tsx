@@ -343,6 +343,9 @@ export default function TrafficDetail() {
   }, [startTime])
 
   const timeTypeChange = (v: string) => {
+    setCurtIp("");
+    setHostName("");
+    setCurrentTableData({});
     setSelectTimeType(v);
     let start, end;
     if (v === 'lastTime') {
