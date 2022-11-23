@@ -3,7 +3,7 @@ import { parse } from 'qs';
 import appConfig from '@/app.config';
 
 /** 深度优先搜索处理 func */
-export const DFSFunc = (tree: any[]=[], childKey: string = 'children', func: (treeNode: any) => void) => {
+export const DFSFunc = (tree: any[] = [], childKey: string = 'children', func: (treeNode: any) => void) => {
   tree.forEach((node) => {
     if (node[childKey]) {
       DFSFunc(node[childKey], childKey, func);
@@ -88,3 +88,11 @@ export const getEnvName = (envList: any[] = [], text: string) => {
 
   return (envList as any).find((v: any) => v.envCode === text)?.envName;
 };
+
+// 处理时间 让时间倒叙排列
+export const sortTime = (arr: any) => {
+  arr.sort((a: any, b: any) => {
+    return moment(a.time).unix() - moment(b.time).unix();
+  });
+  return arr
+}

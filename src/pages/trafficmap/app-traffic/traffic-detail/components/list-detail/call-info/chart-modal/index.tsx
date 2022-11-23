@@ -6,6 +6,7 @@ import { START_TIME_ENUMS, selectOption } from '../../../../schema';
 import DetailContext from '../../../../context';
 import { getEndpointDetail } from '../../../../../service';
 import moment from 'moment';
+import { sortTime } from '@/utils';
 import './index.less';
 const { RangePicker } = DatePicker;
 
@@ -102,14 +103,17 @@ export default function ChartModal(props: IProps) {
             }
         })
     }
+
     const chartMap = useMemo(() => {
         return [
-            { title: '请求数/次', config: cpmConfig(chartData?.endpointCPM?.readMetricsValues || []) },
-            { title: '平均RT/ms', config: avgConfig(chartData?.endpointAvg?.readMetricsValues || []) },
-            { title: '成功率/百分比', config: srConfig(chartData?.endpointSR?.readMetricsValues || []) },
-            { title: '失败数/次', config: failConfig(chartData?.endpointFailed?.readMetricsValues || []) },
+            { title: '请求数/次', config: cpmConfig(sortTime(chartData?.endpointCPM?.readMetricsValues || [])) },
+            { title: '平均RT/ms', config: avgConfig(sortTime(chartData?.endpointAvg?.readMetricsValues || [])) },
+            { title: '成功率/百分比', config: srConfig(sortTime(chartData?.endpointSR?.readMetricsValues || [])) },
+            { title: '失败数/次', config: failConfig(sortTime(chartData?.endpointFailed?.readMetricsValues || [])) },
         ]
     }, [chartData])
+
+
     return (
         <>
             <Modal width={1000}
