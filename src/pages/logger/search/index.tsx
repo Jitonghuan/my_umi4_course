@@ -70,7 +70,7 @@ export default function LoggerSearch(props: any) {
   if (receiveInfo.startTime || receiveInfo.endTime) {
     rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
   }
-  
+
 
   const [stowCondition, setStowCondition] = useState<boolean>(false);
   const [logHistormData, setLogHistormData] = useState<any>([]); //柱状图图表数据
@@ -111,7 +111,7 @@ export default function LoggerSearch(props: any) {
         appCodeArry.push('envCode:' + receiveInfo.envCode);
       }
       setLogStore(receiveInfo.indexMode || 'app_log');
-      if (messageInfo['message']) {
+      if (messageInfo['message'] && receiveInfo.indexMode !== 'frontend_log') {
         let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
         setQuerySql(messageDecodedData);
         sqlForm.setFieldsValue({
@@ -182,7 +182,7 @@ export default function LoggerSearch(props: any) {
 
   //选择时间间隔
   const selectTime = (time: any, timeString: string) => {
-    
+
     let start = moment(timeString[0]).unix().toString();
     let end = moment(timeString[1]).unix().toString();
     if (start !== 'NaN' && end !== 'NaN') {
@@ -299,7 +299,7 @@ export default function LoggerSearch(props: any) {
           //手风琴下拉框数据 hits
           let logSearchTableInfodata = resp.data.logs;
           let viewLogSearchTabInfo = logSearchTableInfodata.splice(0, 20);
-        
+
           setLogSearchTableInfo(logSearchTableInfodata);
           let newArryData: any = []
           let mapArry = viewLogSearchTabInfo?.slice(0)
@@ -353,7 +353,7 @@ export default function LoggerSearch(props: any) {
     setPodName('');
     const now = new Date().getTime();
     //submitEditScreen()
-   
+
     loadMoreData(logStore, startTimestamp, endTimestamp, '', '');
 
   };
@@ -650,7 +650,7 @@ export default function LoggerSearch(props: any) {
                                         >
                                           {item?.[key]?.includes('span') ? <a dangerouslySetInnerHTML={{ __html: item?.[key] }}
                                             onClick={() => {
-                                              var doc: any = new DOMParser().parseFromString(item?.[key], "text/html");              
+                                              var doc: any = new DOMParser().parseFromString(item?.[key], "text/html");
                                               history.push({
                                                 pathname: "/matrix/trafficmap/tracking"
 

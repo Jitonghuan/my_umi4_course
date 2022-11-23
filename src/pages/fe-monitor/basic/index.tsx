@@ -66,7 +66,7 @@ const BasicFeMonitor = () => {
   return (
     <div className="basic-fe-monitor-wrapper">
       <div className="app-group-tab-wrapper">
-        {appConfig.IS_Matrix === 'public' || envType === 'fygs' ? (
+        {appConfig.IS_Matrix === 'public' || envType === 'fygs'  ? (
           <div className="env-select-wrapper">
             <span>域名：</span>
             <Select value={feEnv} clearIcon={false} style={{ width: '120px' }} onChange={setFeEnv}>
