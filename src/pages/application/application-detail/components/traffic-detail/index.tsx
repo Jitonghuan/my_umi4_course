@@ -471,7 +471,7 @@ export default function TrafficDetail() {
         endTime: endTime,
         selectTimeType: selectTimeType
       }}>
-        <ContentCard className="traffic-detail-page-content">
+        <ContentCard className="app-detail-traffic-detail-page-content">
           {empty ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`该环境下不存在${appCode || appData?.appCode}应用`} /> : <LightDragable
             showIcon={true}
             leftContent={leftContent}
