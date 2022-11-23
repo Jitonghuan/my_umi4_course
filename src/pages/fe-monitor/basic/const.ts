@@ -140,12 +140,12 @@ export const envList: any = {
   ],
   default: [
     {
-      name: '所有',
-      key: '*',
-    },
-    {
       name: 'HBOS开发',
       key: 'hbos-dev.cfuture.shop',
+    },
+    {
+      name: '所有',
+      key: '*',
     },
     {
       name: 'HBOS测试',
