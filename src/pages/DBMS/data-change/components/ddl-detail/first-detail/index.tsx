@@ -1,4 +1,4 @@
-import { Card, Descriptions, Space, Tag, Table, Input, Modal,message, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table, Input, Modal,Drawer, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
@@ -257,8 +257,8 @@ export default function ApprovalEnd() {
       Object.keys(data)?.map((item: any) => {
         return (
           item === "阶段状态" ?
-            <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
-              <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+            <Table.Column title={item} width={80}  dataIndex={item} key={item} render={(value) => (
+              <span >
                 {value?.replace(/\\n/g, '<br/>')}
               </span>
             )} /> :
@@ -266,29 +266,29 @@ export default function ApprovalEnd() {
               <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
                 <span><Tag color={value === "通过" ? "green" : value === "警告" ? "orange" : value === "错误" ? "red" : "default"}>{value}</Tag></span>
               )} /> : item === "审核/执行信息" ?
-                <Table.Column title={item} width={400} ellipsis dataIndex={item} key={item} render={(value) => (
+                <Table.Column title={item} width={400} ellipsis  dataIndex={item} key={item} render={(value) => (
 
-                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                   <span >
                     <a onClick={()=>{
                       setShowSql(true)
                       sqlForm.setFieldsValue({
                         showSql:value?.replace(/\\n/g, '<br/>')
                       })
                     }}>{value?.replace(/\\n/g, '<br/>')}</a>
-                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
+                   
                   </span>
 
                 )} /> : item === "完整SQL内容" ? <Table.Column width={400} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
 
-                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                  // <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
                       <a onClick={()=>{
                       setShowSql(true)
                       sqlForm.setFieldsValue({
                         showSql:value?.replace(/\\n/g, '<br/>')
                       })
                     }}>{value?.replace(/\\n/g, '<br/>')}</a>
-                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
-                  </span>
+                   
+                  // </span>
 
                 )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
                   <Tooltip placement="topLeft" title={value}>
@@ -306,7 +306,7 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
-      <Modal title="sql详情" visible={showSql} footer={false} width={"70%"} onCancel={()=>{setShowSql(false)}} destroyOnClose>
+      <Drawer title="sql详情" visible={showSql} footer={false} width={"70%"} onClose={()=>{setShowSql(false)}} destroyOnClose>
         <Form form={sqlForm} preserve={false}>
           <Form.Item name="showSql">
           <AceEditor mode="sql" height={900} readOnly={true} />
@@ -315,7 +315,7 @@ export default function ApprovalEnd() {
         </Form>
        
 
-      </Modal>
+      </Drawer>
       <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id || afferentId} />
       <NextEnvDraw
         mode={nextEnvmode}
