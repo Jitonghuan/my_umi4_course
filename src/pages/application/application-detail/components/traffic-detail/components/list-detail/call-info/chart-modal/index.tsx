@@ -112,7 +112,7 @@ export default function ChartModal(props: IProps) {
     }, [chartData])
     return (
         <>
-            <Modal width={900}
+            <Modal width={1000}
                 title={<div>{data?.url || '图表详情'}</div>}
                 className='app-traffic-chart-modal'
                 visible={visible} onCancel={onClose}
