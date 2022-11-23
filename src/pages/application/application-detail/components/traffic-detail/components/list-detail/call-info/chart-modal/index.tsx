@@ -113,9 +113,7 @@ export default function ChartModal(props: IProps) {
     return (
         <>
             <Modal width={900}
-                title={<div style={{ wordBreak: "break-all" }}>
-                    <span>图表详情</span>
-                </div>}
+                title={<div>{data?.url || '图表详情'}</div>}
                 className='app-traffic-chart-modal'
                 visible={visible} onCancel={onClose}
                 footer={false}

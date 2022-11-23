@@ -156,7 +156,7 @@ export default function TrafficDetail() {
       if (curAppId) {
         queryCountOverview({
           start: moment(new Date(Number(startTimestamp) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
-          end: moment(new Date(Number((endTimestamp)))).format('YYYY-MM-DD HH:mm:ss'),
+          end: moment(new Date(Number((endTimestamp) * 1000))).format('YYYY-MM-DD HH:mm:ss'),
           appId: curAppId,
           envCode: curEnv,
           deployName: curDeployName,

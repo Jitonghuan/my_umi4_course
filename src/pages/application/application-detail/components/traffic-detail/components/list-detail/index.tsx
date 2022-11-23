@@ -43,10 +43,12 @@ export default function CreateArticle() {
             />}
         </div>
       </div>
-      {filterMode === "instance" && <InstanceMonitor
-      />}
-      {filterMode === "jvm" && <JvmMonitor />}
-      {filterMode === "call" && <CallInfo searchValue={searchValue} setCallInfoData={setData} />}
+      <div className='main-wrapper'>
+        {filterMode === "instance" && <InstanceMonitor
+        />}
+        {filterMode === "jvm" && <JvmMonitor />}
+        {filterMode === "call" && <CallInfo searchValue={searchValue} setCallInfoData={setData} />}
+      </div>
     </div>
   );
 }

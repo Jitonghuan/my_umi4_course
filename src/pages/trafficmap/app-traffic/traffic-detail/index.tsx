@@ -83,8 +83,8 @@ export default function TrafficDetail() {
     const type = params?.selectTimeType || selectTimeType;
     const startTimestamp = type === 'lastTime' ? Number((now - params?.startTime) / 1000) + "" : (params?.startTime || startTime) + '';
     const endTimestamp = type === 'lastTime' ? Number((now) / 1000) + "" : (params.endTime || endTime) + '';
-    console.log(new Date(Number(startTimestamp) * 1000).toLocaleString(), 'start')
-    console.log(new Date(Number(endTimestamp) * 1000).toLocaleString(), 'end')
+    // console.log(new Date(Number(startTimestamp) * 1000).toLocaleString(), 'start')
+    // console.log(new Date(Number(endTimestamp) * 1000).toLocaleString(), 'end')
     queryAppList({
       envCode: params?.envCode,
       start: startTimestamp,

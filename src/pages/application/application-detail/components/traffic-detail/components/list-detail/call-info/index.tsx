@@ -184,7 +184,7 @@ export default function CallInfo(props: any) {
 
                 {/* </CardLayout> */}
               </div>
-              {total > 10 && showPage && (
+              {total > 0 && showPage && (
                 <div className='flex-end'>
                   <Pagination
                     pageSize={pageSize}
