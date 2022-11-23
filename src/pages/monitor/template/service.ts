@@ -29,7 +29,7 @@ const getRequestQuery = (params: any = {}) => {
 export const queryGraphTemplateUrl = `${appConfig.apiPrefix}/monitorManage/graphTemplate/list`
 export const graphTemplateList = (dsType?: string, keyword?: string) => {
   const url = `${appConfig.apiPrefix}/monitorManage/graphTemplate/list`;
-  return getRequest(url, { data: { dsType, keyword } });
+  return getRequest(url, { data: { dsType, keyword, pageSize: -1 } });
 }
 
 /**
@@ -69,4 +69,13 @@ export const deleteGraphTemplateUrl = `${appConfig.apiPrefix}/monitorManage/grap
 export const delGraphTemplate = (id: string) => {
   const url = `${appConfig.apiPrefix}/monitorManage/graphTemplate/delete:${id}`;
   return delRequest(url, { data: { id } });
+}
+
+/**
+ * POST 一键应用报警模版
+ * @returns
+ */
+export const applyTemplate = (data: any) => {
+  const url = `${appConfig.apiPrefix}/monitorManage/alertCenter/monitorRuleTemplate/apply`;
+  return postRequest(url, { data });
 }

@@ -123,7 +123,7 @@ export default [
   },
 
   {
-   
+
     "path": `${baseRoutePath}/application`,
     "name": "应用管理",
     "icon": "icon-poc_maindata",
@@ -624,8 +624,13 @@ export default [
     "icon": "icon-poc_index",
     "routes": [
       {
+        "path": `${baseRoutePath}/monitor/dashboard`,
+        "name": 'Dashboard',
+        "component": '@/pages/monitor/dashboard',
+      },
+      {
         "path": `${baseRoutePath}/monitor/panel`,
-        "name": '监控大盘',
+        "name": '基础监控',
         "component": '@/pages/monitor/board',
       },
       {
@@ -634,21 +639,17 @@ export default [
         "hideInMenu": true,
         "component": '@/pages/monitor/board/board-detail',
       },
-      {
-        "path": `${baseRoutePath}/monitor/board`,
-        "name": '集群监控',
-        "component": '@/pages/monitor/cluster',
-      },
+      // {
+      //   "path": `${baseRoutePath}/monitor/board`,
+      //   "name": '集群监控',
+      //   "component": '@/pages/monitor/cluster',
+      //   "hideInMenu": true,
+      // },
       // {
       //   "path": `${baseRoutePath}/monitor/application`,
       //   "name": '应用监控',
       //   "component": '@/pages/monitor/application',
       // },
-      {
-        "path": `${baseRoutePath}/monitor/fe-monitor`,
-        "name": "前端监控",
-        "component": "@/pages/fe-monitor/basic/index"
-      },
       {
         "path": `${baseRoutePath}/monitor/business`,
         "name": "业务监控",
@@ -656,10 +657,21 @@ export default [
         "component": "@/pages/monitor/business/index"
       },
       {
+        "path": `${baseRoutePath}/monitor/fe-monitor`,
+        "name": "前端监控",
+        "component": "@/pages/fe-monitor/basic/index"
+      },
+      {
         "path": `${baseRoutePath}/monitor/prometheus-edit`,
         "name": "编辑Prometheus",
         "hideInMenu": true,
         "component": "@/pages/monitor/business/prometheus/prometheus-form"
+      },
+      {
+        "path": `${baseRoutePath}/monitor/log-prometheus-edit`,
+        "name": "编辑日志监控",
+        "hideInMenu": true,
+        "component": "@/pages/monitor/business/log-prometheus/edit-page"
       },
       {
         "path": `${baseRoutePath}/monitor/log-monitor`,
@@ -677,19 +689,19 @@ export default [
       },
       {
         "path": `${baseRoutePath}/monitor/alarm-rules`,
-        "name": "报警管理",
-        "component": "@/pages/monitor/alarm-rules"
+        "name": "报警中心",
+        "component": "@/pages/monitor/alarm-center"
       },
-      {
-        "path": `${baseRoutePath}/monitor/template`,
-        "name": "模板管理",
-        "component": "@/pages/monitor/template"
-      },
-      {
-        "path": `${baseRoutePath}/monitor/history`,
-        "name": "报警历史",
-        "component": "@/pages/monitor/history"
-      }
+      // {
+      //   "path": `${baseRoutePath}/monitor/template`,
+      //   "name": "模板管理",
+      //   "component": "@/pages/monitor/template"
+      // },
+      // {
+      //   "path": `${baseRoutePath}/monitor/history`,
+      //   "name": "报警历史",
+      //   "component": "@/pages/monitor/history"
+      // }
     ]
   },
   {

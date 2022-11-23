@@ -17,6 +17,10 @@ interface IEditorDrawer {
 
 const createTypeOptions = [
   {
+    label: "",
+    value: "空仪表盘"
+  },
+  {
     label: "graphJson",
     value: "graphJson"
   },
@@ -243,7 +247,14 @@ const EditorDrawer = (props: IEditorDrawer) => {
         {
           createType === "graphTemplate" &&
           <Form.Item label='模版' name='graphTemplateId'>
-            <Select options={templateOptions} />
+            <Select
+              options={templateOptions}
+              filterOption={(input, option) => {
+                // @ts-ignore
+                return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }}
+              showSearch
+            />
           </Form.Item>
         }
         {

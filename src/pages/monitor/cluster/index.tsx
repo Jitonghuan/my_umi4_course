@@ -5,7 +5,7 @@ import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import { getRequest } from '@/utils/request';
-import HulkTable, { usePaginated } from '@cffe/vc-hulk-table';
+import HulkTable from '@cffe/vc-hulk-table';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 import {
   useQueryNodeCpu,
@@ -57,7 +57,7 @@ const Coms = (props: any) => {
   const [searchField] = Form.useForm();
   const [searchPodField] = Form.useForm();
   const [clusterList, setClusterList] = useState<any>([]);
-  const [currentCluster, setCurrentCluster] = useState<any>();
+  const [currentCluster, setCurrentCluster] = useState<any>(props.clusterCode);
   const [queryNodeCpuData, nodeCpuloading, queryNodeCpu] = useQueryNodeCpu();
   const [queryNodeMemData, nodeMemloading, queryNodeMem] = usequeryNodeMem();
   const [queryNodeDiskData, nodeDiskloading, queryNodeDisk] = useQueryNodeDisk();
@@ -84,7 +84,9 @@ const Coms = (props: any) => {
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
   // // 查询机构列表
   const selectCluster = (param: any) => {
-    localStorage.setItem('monitor_cluster_select', JSON.stringify(param))
+    if (!param) {
+      return;
+    }
     setCurrentCluster(param);
     queryResData(param);
     queryPodData(param);
@@ -93,6 +95,10 @@ const Coms = (props: any) => {
     queryUseMarket(param);
     queryNameSpace(param)
   };
+
+  useEffect(() => {
+    selectCluster(props.clusterCode)
+  }, [props.clusterCode])
 
   // 查询资源使用情况
   const queryResData = (value: any) => {
@@ -166,9 +172,9 @@ const Coms = (props: any) => {
 
   // 查询已安装大盘
   const queryUseMarket = (value: any) => {
-    queryUseMarketData({ clusterId: value }).then((res) => {
-      setUseMarket(res);
-    });
+    // queryUseMarketData({ clusterId: value }).then((res) => {
+    //   setUseMarket(res);
+    // });
   };
   //查询nameSpace
   const queryNameSpace = (value: any) => {
@@ -176,38 +182,6 @@ const Coms = (props: any) => {
       setNameSpaceOption(res);
     });
   };
-
-  useEffect(() => {
-    let curCluster:any;
-    if (localStorage.getItem('monitor_cluster_select')) {
-      curCluster = JSON.parse(localStorage.getItem('monitor_cluster_select') || '')
-      setCurrentCluster(curCluster)
-      queryClustersData().then((resp) => {
-        setClusterList(resp);
-        queryResData(curCluster);
-        queryPodData(curCluster);
-        queryNodeList({ clusterId: curCluster});
-        queryNameSpace(curCluster);
-        queryUseMarket(curCluster);
-      })
-    } else {
-      queryClustersData().then((resp) => {
-        setClusterList(resp);
-        setCurrentCluster(resp[0]?.value);
-        if (resp[0]?.value) {
-          queryResData(resp[0]?.value);
-          queryPodData(resp[0]?.value);
-          queryNodeList({ clusterId: resp[0]?.value });
-          queryNameSpace(resp[0]?.value);
-          queryUseMarket(resp[0]?.value);
-        } else {
-          setUseMarket([]);
-          setPodDataSource([]);
-          queryNodeList({ clusterId: '' });
-        }
-      });
-    }
-  }, []);
 
   const [currentIp, setCurrentIp] = useState<string>('');
 
@@ -408,33 +382,11 @@ const Coms = (props: any) => {
           }}
           currentIpData={currentIp}
           currentClusterData={currentCluster}
-          // getCluster:any,startTime:any,endTime:any,ip:any,isOpen:boolean
           querChartData={(getCluster: any, startTime: any, endTime: any, ip: any, isOpen: boolean) =>
             querChartData(getCluster, startTime, endTime, ip, isOpen)
           }
           queryCount={queryCount}
         />
-
-        <div style={{ marginLeft: 28, fontSize: 16, marginTop: 14 }}>
-          <span>选择集群: </span>
-          <Select
-            showSearch
-            filterOption={(input, option) => {
-              // @ts-ignore
-              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-            }}
-            style={{ width: 240, marginLeft: 5 }}
-            options={clusterList}
-            onChange={selectCluster}
-            value={currentCluster}
-          />
-          <span style={{ marginRight: '14px', float: 'right' }}>
-            <Button type="primary" onClick={handleRefresh}>
-              刷新
-            </Button>
-          </span>
-        </div>
-        <Divider />
         <div className="monitor-tabs-content">
           <Spin spinning={resLoading}>
             <h3 className="monitor-tabs-content-title">
@@ -557,7 +509,7 @@ const Coms = (props: any) => {
                 current: pageIndex,
                 showSizeChanger: true,
                 onShowSizeChange: (_, next) => {
-                 
+
                   setPageIndex(1);
                   setPageSize(next);
                   // queryPodData(currentCluster, 1, next, searchKeyWords?.keyword);
