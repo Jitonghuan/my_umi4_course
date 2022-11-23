@@ -136,6 +136,7 @@ const TemplateCom: React.FC = () => {
       title: '告警表达式',
       dataIndex: 'expression',
       key: 'expression',
+      ellipsis: true,
       // width: '5%',
       render: (text) => (
         <Tooltip title={text}>
@@ -157,6 +158,7 @@ const TemplateCom: React.FC = () => {
       title: '告警消息',
       dataIndex: 'message',
       key: 'message',
+      ellipsis: true,
       render: (text) => (
         <Tooltip title={text}>
           <span
@@ -192,7 +194,6 @@ const TemplateCom: React.FC = () => {
       key: 'option',
       width: 140,
       fixed: 'right',
-      // width: '6%',
       render: (_: string, record: Item) => (
         <Space>
           <a
@@ -324,7 +325,7 @@ const TemplateCom: React.FC = () => {
             <div>
               <Button
                 type="primary"
-                style={{marginRight: '10px'}}
+                style={{ marginRight: '10px' }}
                 onClick={() => {
                   setVisible(true);
                 }}
@@ -358,10 +359,7 @@ const TemplateCom: React.FC = () => {
         onSubmit={onSubmit}
         type={type}
       />
-      <ApplyTemplate
-        visible={visible}
-        onClose={() => setVisible(false)}
-        />
+      <ApplyTemplate visible={visible} onClose={() => setVisible(false)} />
     </PageContainer>
   );
 };

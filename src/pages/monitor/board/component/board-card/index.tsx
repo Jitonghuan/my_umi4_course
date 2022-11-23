@@ -5,7 +5,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Button, Spin, Pagination, Empty, Tabs } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import TemplateDrawer from "@/pages/monitor/alarm-rules/_components/template-drawer";
+import TemplateDrawer from '@/pages/monitor/alarm-rules/_components/template-drawer';
 import BoardList from '../card-list';
 import FilterHeader from '../filter-header';
 import './index.less';
@@ -15,8 +15,8 @@ import { delGraphTable, getCluster, getCategory } from '../../service';
 import type { TMode } from '../../interfaces';
 import { Form, Select } from '@cffe/h2o-design';
 import { history } from 'umi';
-import useRequest from "@/utils/useRequest";
-import {createRules} from "@/pages/monitor/basic/services";
+import useRequest from '@/utils/useRequest';
+import { createRules } from '@/pages/monitor/basic/services';
 const rootCls = 'monitor-board';
 
 export default function Board(props: any) {
@@ -34,14 +34,17 @@ export default function Board(props: any) {
   const [clusterCode, setClusterCode] = useState<number | null>(null);
   const [clusterList, setClusterList] = useState<any>([]);
 
-  const hookParams = useMemo(() => ({ ...searchParams, clusterCode, graphType }), [clusterCode, searchParams, graphType]);
+  const hookParams = useMemo(
+    () => ({ ...searchParams, clusterCode, graphType }),
+    [clusterCode, searchParams, graphType],
+  );
   const [graphTableList, total, isLoading, loadGraphTable] = useGrafhTable(hookParams, pageIndex, pageSize);
 
   const handleFilterSearch = useCallback((next: any) => {
     setPageIndex(1);
     setSearchParams({
       graphType,
-      ...next || {}
+      ...(next || {}),
     });
   }, []);
 
@@ -58,7 +61,7 @@ export default function Board(props: any) {
     let data = res?.data || [];
     data.unshift('全部');
     setCategoryList(data);
-  }
+  };
 
   const handleDelete = async (graphUuId: string) => {
     clusterCode &&
@@ -83,9 +86,9 @@ export default function Board(props: any) {
   const toAlarmDetail = () => {
     history.push({
       pathname: 'alarm-rules',
-      search:'tab=1'
+      search: 'tab=1',
     });
-  }
+  };
 
   useEffect(() => {
     getCluster().then((res) => {
@@ -145,8 +148,8 @@ export default function Board(props: any) {
     <>
       <FilterCard>
         <div style={{ display: 'flex', justifyContent: 'space-between', height: 30 }}>
-          <div style={{ display: 'flex', }}>
-            <Form style={{ marginRight: '10px', }}>
+          <div style={{ display: 'flex' }}>
+            <Form style={{ marginRight: '10px' }}>
               <Form.Item label="集群选择">
                 <Select
                   clearIcon={false}
@@ -160,20 +163,20 @@ export default function Board(props: any) {
             <FilterHeader onSearch={handleFilterSearch} searchParams={searchParams} />
           </div>
           <div>
-          <Button type="primary" onClick={() => setDrawerVisible(true)}>
-            + 新增报警
-          </Button>
-          <Button type="primary" onClick={toAlarmDetail} style={{margin:'0 10px'}}>
-            报警规则
-          </Button>
-          <Button type="primary" onClick={handleAdd}>
-            + 新增大盘
-          </Button>
+            <Button type="primary" onClick={() => setDrawerVisible(true)}>
+              + 新增报警
+            </Button>
+            <Button type="primary" onClick={toAlarmDetail} style={{ margin: '0 10px' }}>
+              报警规则
+            </Button>
+            <Button type="primary" onClick={handleAdd}>
+              + 新增大盘
+            </Button>
           </div>
         </div>
       </FilterCard>
-      <ContentCard className='monitor-content-card'>
-        <div className='monitor-content'>
+      <ContentCard className="monitor-content-card">
+        <div className="monitor-content">
           <Tabs
             defaultActiveKey="0"
             tabPosition="left"
@@ -183,13 +186,13 @@ export default function Board(props: any) {
               setGraphType(type);
               handleFilterSearch({
                 ...searchParams,
-                graphType: type
-              })
+                graphType: type,
+              });
             }}
           >
-            {
-              categoryList.map((item, i) => <Tabs.TabPane tab={item} key={i} />)
-            }
+            {categoryList.map((item, i) => (
+              <Tabs.TabPane tab={item} key={i} />
+            ))}
           </Tabs>
           <Spin spinning={isLoading}>
             <div className={`${rootCls}__card-wrapper`}>
@@ -226,6 +229,7 @@ export default function Board(props: any) {
           cluster={clusterCode}
           visible={editDrawer}
           clusterList={clusterList}
+          categoryList={categoryList}
           mode={mode}
           onClose={onDrawerClose}
           loadGraphTable={loadGraphTable}

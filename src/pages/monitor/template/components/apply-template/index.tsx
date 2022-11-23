@@ -1,10 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import { Button, Drawer, Form, message, Select, Checkbox, Divider, Input } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Form, message, Select, Checkbox, Drawer, Tree } from 'antd';
 import { applyTemplate, graphTemplateList } from '../../service';
 import UserSelector from '@/components/user-selector';
 import { useEnvListOptions } from '@/pages/monitor/alarm-rules/hooks';
-const CheckboxGroup = Checkbox.Group;
-
 
 interface IProps {
   visible: boolean;
@@ -32,12 +30,15 @@ const envTypeData = [
 ]; //环境大类
 
 const ApplyTemplate = (props: IProps) => {
-  const {visible, onClose} = props;
+  const { visible, onClose } = props;
   const [clusterEnvOptions, queryEnvCodeList] = useEnvListOptions();
-  const [templatesList, setTemplatesList] = useState([]);
+  const [templatesList, setTemplatesList] = useState<any[]>([]);
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
+  const [checkedList, setCheckedList] = useState<any[]>([]);
   const [form] = Form.useForm();
+  const [indeterminate, setIndeterminate] = useState(false);
+  const [checkAll, setCheckAll] = useState(false);
 
   //获取模板列表
   const getTemplate = async () => {
@@ -50,11 +51,11 @@ const ApplyTemplate = (props: IProps) => {
           title: v.name,
           key: v.id,
           value: v.id,
-          isLeaf: true
+          isLeaf: true,
         };
       }),
     );
-  }
+  };
 
   async function onConfirm() {
     const param = await form.validateFields();
@@ -62,19 +63,50 @@ const ApplyTemplate = (props: IProps) => {
       envCode: currentEnvCode,
       devNotifiers: (param.devNotifiers || []).join(','),
       opsNotifiers: (param.opsNotifiers || []).join(','),
-      monitorRuleTemplate: templatesList.filter((item: any) => param.monitorRuleTemplate.find((id: any) => id === item.id))
-    })
+      monitorRuleTemplate: templatesList.filter((item: any) => checkedList.find((id: any) => id === item.id)),
+    });
     if (res.success) {
       message.success('应用成功');
       onClose();
     }
   }
 
+  const onChange = (list: any) => {
+    setCheckedList(list);
+    setIndeterminate(!!list.length && list.length < templatesList.length);
+    setCheckAll(list.length === templatesList.length);
+  };
+
+  const onSelect = (list: any) => {
+    let ids = JSON.parse(JSON.stringify(checkedList));
+    for (let i = 0; i < list.length; i++) {
+      let index = ids.findIndex((id: any) => id === list[i]);
+      if (index !== -1) {
+        ids.splice(index, 1);
+      } else {
+        ids.push(list[i]);
+      }
+    }
+    onChange(ids);
+  };
+
+  const onCheckAllChange = (e: any) => {
+    let ids = [];
+    if (e.target.checked) {
+      for (let i = 0; i < templatesList.length; i++) {
+        ids.push(templatesList[i].id);
+      }
+    }
+    setCheckedList(ids);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+  };
+
   useEffect(() => {
     if (visible) {
       void getTemplate();
     }
-  }, [visible])
+  }, [visible]);
 
   return (
     <Drawer
@@ -94,10 +126,10 @@ const ApplyTemplate = (props: IProps) => {
         </div>
       }
     >
-      <Form form={form} labelCol={{flex: '150px'}}>
+      <Form form={form} labelCol={{ flex: '80px' }}>
         <Form.Item label="环境" name="envCode">
           <Select
-            style={{width: '100px'}}
+            style={{ width: '100px' }}
             options={envTypeData}
             value={currentEnvType}
             placeholder="分类"
@@ -109,7 +141,7 @@ const ApplyTemplate = (props: IProps) => {
             allowClear
           />
           <Select
-            style={{width: '160px', marginLeft: '5px'}}
+            style={{ width: '264px', marginLeft: '5px' }}
             options={clusterEnvOptions}
             placeholder="环境名称"
             onChange={(value) => {
@@ -125,21 +157,26 @@ const ApplyTemplate = (props: IProps) => {
         <Form.Item label="运维通知人" name="opsNotifiers">
           <UserSelector />
         </Form.Item>
-        <Form.Item label="报警模版" name="monitorRuleTemplate">
-          <Select
-            allowClear
-            showSearch
-            filterOption={(input, option) => {
-              // @ts-ignore
-              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-            }}
-            mode="multiple"
-            options={templatesList}
-          />
+        <Form.Item label="报警模版">
+          <div>
+            <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+              全选
+            </Checkbox>
+            <Tree
+              checkable
+              switcherIcon={null}
+              rootClassName="template-page"
+              checkedKeys={checkedList}
+              onCheck={(ids) => onChange(ids)}
+              height={595}
+              onSelect={(ids) => onSelect(ids)}
+              treeData={templatesList}
+            />
+          </div>
         </Form.Item>
       </Form>
     </Drawer>
-  )
-}
+  );
+};
 
 export default ApplyTemplate;

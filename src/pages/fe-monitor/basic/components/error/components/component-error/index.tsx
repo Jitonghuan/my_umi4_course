@@ -145,7 +145,12 @@ const ComponentError = ({ dataSource, total, loading, getParam, type }: IProps) 
           </Button>
         </div>
       </Drawer>
-      <SourceMapModal visible={sourceMapVisible} onClose={() => setSourceMapVisible(false)} param={sourceInfo} />
+      <SourceMapModal
+        getParam={getParam}
+        visible={sourceMapVisible}
+        onClose={() => setSourceMapVisible(false)}
+        param={sourceInfo}
+      />
     </div>
   );
 };
