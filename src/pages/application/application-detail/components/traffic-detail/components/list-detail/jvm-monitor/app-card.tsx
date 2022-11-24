@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { findDOMNode } from 'react-dom';
 import { Radio, Select, message, Spin, RadioChangeEvent, Drawer, Tooltip } from 'antd';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
-import { RedoOutlined, FullscreenOutlined} from '@ant-design/icons';
+import { RedoOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { START_TIME_ENUMS } from '../../../schema';
 import './index.less'
 
@@ -79,13 +79,26 @@ const Coms = (props: IProps) => {
     }
     setLoading(true);
     const now = new Date().getTime();
+    const startTime = requestParams?.startTime;
+    const endTime = requestParams?.endTime;
+    let start = 0, end = 0;
+    if (requestParams?.selectTimeType === 'lastTime') {
+      start = Number((now - startTime) / 1000);
+      end = Number(now / 1000);
+    } else {
+      start = startTime;
+      end = Number(endTime);
+    }
+    console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), '应用监控--jvm监控')
     queryFn({
       data: {
         appCode: requestParams.appCode,
         envCode: requestParams.envCode,
         ip: requestParams.ip,
-        start: Number((now - requestParams.startTime) / 1000),
-        end: Number(now / 1000),
+        start: start,
+        end: end,
+        // start: Number((now - requestParams.startTime) / 1000),
+        // end: Number(now / 1000),
         hostName: requestParams.hostName,
       },
     })
@@ -93,8 +106,8 @@ const Coms = (props: IProps) => {
         const resource = curtRadio === '1' ? resp.count : resp.sum;
         const options = getOption(resource.xAxis, resource.dataSource);
         prevData.current = resp;
-      
-          
+
+
         setCurOptions(options);
       })
       .catch((err) => {
@@ -109,13 +122,25 @@ const Coms = (props: IProps) => {
   const queryFullDatas = () => {
     setFullLoading(true);
     const now = new Date().getTime();
+    const startTime = requestParams?.startTime;
+    const endTime = requestParams?.endTime;
+    let start = 0, end = 0;
+    if (requestParams?.selectTimeType === 'lastTime') {
+      start = Number((now - startTime) / 1000);
+      end = Number(now / 1000);
+    } else {
+      start = startTime;
+      end = Number(endTime);
+    }
     queryFn({
       data: {
         appCode: requestParams.appCode,
         envCode: requestParams.envCode,
         ip: requestParams.ip,
-        start: Number((now - startTime) / 1000).toFixed(0),
-        end: Number(now / 1000).toFixed(0),
+        start: start.toFixed(0),
+        end: end.toFixed(0),
+        // start: Number((now - startTime) / 1000).toFixed(0),
+        // end: Number(now / 1000).toFixed(0),
         hostName: requestParams.hostName,
       },
     })
