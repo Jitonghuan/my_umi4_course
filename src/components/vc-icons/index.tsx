@@ -17,7 +17,7 @@ import {
   Activity,
   UserRecent,
   TableSettings,
-  Detail,Time
+  Detail,Time,Deploy
 } from '@cffe/internal-icon';
 
 /** Icon映射 */
@@ -40,5 +40,6 @@ export const IconMap = {
   'icon-userRecent': <UserRecent />,
   'icon-TableSettings': <TableSettings />,
   'icon-Detail':<Detail />,
-  'icon-Time':<Time />
+  'icon-Time':<Time />,
+  'icon-Deploy':<Deploy />
 };

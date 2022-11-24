@@ -930,6 +930,58 @@ export default [
     ],
   },
   {
+    "path": `${baseRoutePath}/cluster-recovery`,
+    "name": "集群容灾",
+    "icon": "icon-Deploy",
+    "routes": [
+      {
+        "path": `${baseRoutePath}/cluster-recovery/dashboards`,
+        "name": "集群大盘",
+        "key": "dashboards",
+        "component": "@/pages/cluster-recovery/dashboards",
+       
+      },
+      {
+        "path": `${baseRoutePath}/cluster-recovery/scheduling-mode`,
+        "name": "流量调度",
+        "key": "scheduling-mode",
+        "component": "@/pages/cluster-recovery/scheduling-mode",
+       
+      },
+      {
+        "path": `${baseRoutePath}/cluster-recovery/cluster-sync`,
+        "name": "集群同步",
+        "key": "cluster-sync",
+        "component": "@/pages/cluster-recovery/cluster-sync",
+        
+      },
+      {
+        "path": `${baseRoutePath}/cluster-recovery/cluster-sync-detail`,
+        "name": "集群同步详情",
+        "key": "sync-detail",
+        "component": "@/pages/cluster-recovery/sync-detail",
+        "hideInMenu": true
+      
+      },
+      {
+        "path": `${baseRoutePath}/cluster-recovery/policy-config`,
+        "name": "策略配置",
+        "key": "policy-config",
+        "component": "@/pages/cluster-recovery/policy-config",
+        "hideInMenu": true
+      },
+      {
+        "path": `${baseRoutePath}/cluster-recovery/operation-log`,
+        "name": "操作记录",
+        "key": "operation-log",
+        "component": "@/pages/cluster-recovery/operation-log",
+       
+      },
+     
+    ]
+  },
+
+  {
     "path": `${baseRoutePath}/station`,
     "name": "建站管理",
     "icon": "icon-activity",
