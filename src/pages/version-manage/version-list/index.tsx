@@ -15,7 +15,7 @@ import { getReleaseList } from '../service';
 import './index.less';
 
 export default function VersionList() {
-    const [data, setData] = useState<any>([{ content: 'ceshi', version: '1.2.1', downloadCount: 2 }, { content: 'ceshi', version: '1.2.3', downloadCount: 2 }]);
+    const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
     const { categoryData } = useContext(FeContext);
     const [appCategory, setAppCategroy] = useState<any>({});
@@ -91,7 +91,7 @@ export default function VersionList() {
     }
 
     const formChange = (changedValues: any, allValues: any) => {
-        // queryList({ pageSize, pageIndex })
+        queryList({ pageSize, pageIndex })
     }
 
     return (

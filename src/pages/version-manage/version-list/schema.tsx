@@ -8,7 +8,7 @@ export const listSchema = ({ toDetail, downloadVersion, downloadCountList, merge
         },
         {
             title: '版本号',
-            dataIndex: 'version',
+            dataIndex: 'releaseNumber',
             width: 80,
             render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'list') }}>{value}</a>
         },
@@ -38,14 +38,14 @@ export const listSchema = ({ toDetail, downloadVersion, downloadCountList, merge
         },
         {
             title: '版本简述',
-            dataIndex: 'id',
+            dataIndex: 'sketch',
             width: 150,
             ellipsis: true,
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '状态',
-            dataIndex: 'id',
+            dataIndex: 'status',
             width: 120,
         },
         {
@@ -56,14 +56,14 @@ export const listSchema = ({ toDetail, downloadVersion, downloadCountList, merge
         },
         {
             title: '版本负责人',
-            dataIndex: 'id',
+            dataIndex: 'owner',
             width: 120,
             ellipsis: true,
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '发版时间',
-            dataIndex: 'id',
+            dataIndex: 'planTime',
             width: 120,
             ellipsis: true,
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,

@@ -7,15 +7,17 @@ import { Modal, Input, Form, message, Select, Radio } from 'antd';
 import { getRequest, postRequest } from '@/utils/request';
 import { usePortalList, useRegulesPortal, useDemands, useRegulusOnlineBugs } from '../../../hook';
 import { debounce } from 'lodash';
+import { demandRel } from '../../../service';
 
 export interface IProps {
     type?: string;
+    releaseId: any;
     onClose: () => void;
     onSave: () => void;
 }
 
-export default function BranchEditor(props: IProps) {
-    const { type, onClose, onSave } = props;
+export default function RealteDemandBug(props: IProps) {
+    const { type, onClose, onSave, releaseId } = props;
     const [loading, setLoading] = useState(false);
     const [portalList, listLoading, loadPortalList] = usePortalList({});
     const [regulusPortal, regulusLoading, loadRegulusPortal] = useRegulesPortal({});
@@ -36,22 +38,20 @@ export default function BranchEditor(props: IProps) {
         // queryPortal();
     }, [type]);
 
-    const projectList = useMemo(() => type === 'demand' ? portalList : regulusPortal, [type, portalList, regulusPortal])
+    const projectList = useMemo(() => type === 'demand' ? portalList : regulusPortal, [type, portalList, regulusPortal]);
+    const demandList = useMemo(() => type === 'demand' ? demands : regulusBugs, [type, demands, regulusBugs])
 
     const handleSubmit = async () => {
         const values = await form.validateFields();
-        console.log(values, 'values')
-        let demandArry: any = [];
-        values.demandId?.map((item: any) => {
-            demandArry.push(item.value + '');
-        });
         setLoading(true);
+        const res = await demandRel({ ...values, releaseId: releaseId || "", relatedPlat: type === 'demand' ? 'demandPlat' : 'regulus' })
+        if (res?.success) {
+            message.success('操作成功！');
+            onClose();
+            onSave();
+        }
+        setLoading(false);
     }
-
-    const onSearch = debounce((val: any) => {
-        // queryDemand(projectId, val);
-    }, 300);
-
 
     return (
         <Modal
@@ -73,7 +73,6 @@ export default function BranchEditor(props: IProps) {
                     <Select
                         options={projectList || []}
                         onChange={(value) => {
-                            console.log(value, 'value')
                             type === 'demand' ? loadDemands({ projectId: value }) : loadBugs({ projectId: value })
                         }}
                         showSearch
@@ -89,11 +88,11 @@ export default function BranchEditor(props: IProps) {
                 >
                     <Select
                         mode="multiple"
-                        options={demands}
+                        options={demandList || []}
                         onChange={() => { }}
                         showSearch
                         allowClear
-                        labelInValue
+                        // labelInValue
                         // onSearch={onSearch}
                         optionFilterProp="label"
                         loading={regulusLoading || demandsLoading}

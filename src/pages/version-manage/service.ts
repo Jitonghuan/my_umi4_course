@@ -28,6 +28,12 @@ export const updateRelease = (data: any) => {
 // 获取版本列表
 export const getReleaseList = (data: any) => {
     const url = addAPIPrefix('/releaseManage/release/list');
+    return getRequest(url, { data: data });
+};
+
+// 版本关联需求/bug
+export const demandRel = (data: any) => {
+    const url = addAPIPrefix('/releaseManage/releaseDemandRel/create');
     return postRequest(url, { data: data });
 };
 

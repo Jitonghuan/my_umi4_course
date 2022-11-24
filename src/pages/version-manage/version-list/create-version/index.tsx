@@ -4,16 +4,28 @@ import UserSelector, { stringToList } from '@/components/user-selector';
 import moment from 'moment';
 import { disabledDate, disabledTime } from '@/utils';
 import { createRelease } from '../../service';
+import { useSearchUser } from '@/pages/DBMS/common-hook';
 import './index.less';
 
 export default function AddDrawer(props: any) {
     const { visible, onClose, categoryData, maxVersion, onSave } = props;
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
+    const [userLoading, userNameOptions, searchUser] = useSearchUser();
+    useEffect(() => {
+        searchUser()
+    }, [])
 
     useEffect(() => {
         if (visible) {
             form.resetFields();
+            let user: any = localStorage.getItem('USER_INFO');
+            if (user) {
+                user = JSON.parse(user);
+                form.setFieldsValue({
+                    owner: user.name,
+                });
+            }
             let initVersion = '';
             if (maxVersion) {
                 const res = (maxVersion).split('.');
@@ -27,7 +39,7 @@ export default function AddDrawer(props: any) {
 
     const handleSubmit = async () => {
         const value = await form.validateFields();
-        value.time = value.time.format('YYYY-MM-DD HH:mm:ss');
+        value.planTime = value.planTime.format('YYYY-MM-DD HH:mm:ss');
         try {
             setLoading(true);
             const res = await createRelease({ ...value });
@@ -83,7 +95,16 @@ export default function AddDrawer(props: any) {
                     />
                 </Form.Item>
                 <Form.Item label="版本负责人" name="owner" rules={[{ required: true, message: '请输入' }]}>
-                    <UserSelector style={{ width: 300 }} />
+                    <Select
+                        placeholder="请输入"
+                        showSearch
+                        allowClear
+                        style={{ width: 240 }}
+                        options={userNameOptions}
+                    />
+                </Form.Item>
+                <Form.Item label="版本简述" name="sketch" rules={[{ required: true, message: '请输入' }]}>
+                    <Input placeholder="请输入" style={{ width: 240 }} />
                 </Form.Item>
                 <Form.Item label="版本备注" name="desc" rules={[{ required: true, message: '请输入' }]}>
                     <Input.TextArea />

@@ -8,7 +8,7 @@ import {
     getRegulusOnlineBugs,
 } from '@/pages/application/service';
 
-// 获取版本号
+// 获取版本号下拉框数据
 export function useReleaseOption(props: any) {
     const [data, setData] = useState<any>([]);
     const [loading, setLoading] = useState(false);
@@ -20,15 +20,13 @@ export function useReleaseOption(props: any) {
                 const { items } = res?.data || {};
                 const options = items.map((e: any) => ({ value: e.releaseNumber, label: e.releaseNumber }))
                 setData(options || []);
-            } else {
-                setData([]);
             }
         } catch (ex) {
             setData([]);
         } finally {
             setLoading(false);
         }
-    }, Object.values(props));
+    }, [props]);
 
     useEffect(() => {
         loadData({});
@@ -111,15 +109,14 @@ export function useRegulusOnlineBugs(props: any) {
     const [data, setData] = useState<any>([]);
     const [loading, setLoading] = useState(false);
     const loadData = useCallback((extra?: any) => {
-        postRequest(getRegulusOnlineBugs, {
+        getRequest(getRegulusOnlineBugs, {
             data: { ...props, ...extra, pageSize: -1 },
         })
-            .then((result) => {
-                if (result?.success) {
-                    let dataSource = result.data;
+            .then((res) => {
+                if (res?.success) {
                     let dataArry: any = [];
-                    dataSource?.map((item: any) => {
-                        dataArry.push({ label: item?.title, value: item?.id });
+                    (res?.data?.dataSource || [])?.map((item: any) => {
+                        dataArry.push({ label: item?.name, value: item?.id });
                     });
                     setData(dataArry);
                 }
