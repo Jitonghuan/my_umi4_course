@@ -32,14 +32,6 @@ export const START_TIME_ENUMS = [
     label: 'Last 3 days',
     value: 24 * 60 * 60 * 1000 * 3,
   },
-  {
-    label: 'Last 7 days',
-    value: 24 * 60 * 60 * 1000 * 7,
-  },
-  {
-    label: 'Last 30 days',
-    value: 24 * 60 * 60 * 1000 * 30,
-  },
 ];
 
 export const selectOption = [

@@ -1,7 +1,12 @@
 import { Space, Tooltip, Tag } from 'antd';
 import { getColor } from '../../../../schema';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import moment from 'moment'
-
+const tooltipText = <ul>
+  <li>时间窗口范围小于等于一个小时，显示为每分钟平均请求数。</li>
+  <li>时间窗范围超过一个小时，显示为每个小时平均每分钟的请求数。</li>
+  <li>时间窗范围超过一天，显示为每天的平均每分钟请求数。</li>
+</ul>
 export const columnSchema = () => {
   return [
     {
@@ -13,27 +18,31 @@ export const columnSchema = () => {
       // width: 100,
     },
     {
-      title: '请求数',
+      title: <div>请求数(次/min)
+        <Tooltip title={tooltipText} placement="top">
+          <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+        </Tooltip>
+      </div>,
       dataIndex: 'cpm',
       key: 'cpm',
       // width: 40,
     },
     {
-      title: '平均RT/ms',
+      title: '平均RT(ms)',
       dataIndex: 'avg',
       key: 'avg',
       render: (value: any) => <span style={{ color: getColor(value, 'rt') }}>{value}</span>,
       // width: 50,
     },
     {
-      title: '成功率',
+      title: '成功率(%)',
       dataIndex: 'sr',
       key: 'sr',
       render: (value: any) => <span style={{ color: getColor(value, 'sr') }}>{value}</span>,
       // width: 50,
     },
     {
-      title: '失败数',
+      title: '失败数(次)',
       dataIndex: 'fail',
       key: 'fail',
       // width: 50,

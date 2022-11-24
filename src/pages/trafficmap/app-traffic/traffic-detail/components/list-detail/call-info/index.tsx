@@ -110,7 +110,7 @@ export default function CallInfo(props: any) {
 
   const nodeRef = useCallback((node: any) => {
     if (node) {
-      const cardWidth = 310;
+      const cardWidth = 600;
       setRowCount(Math.floor(node.clientWidth / cardWidth) || 1);
       const resizeObserver = new ResizeObserver((entries: any) => {
         setRowCount(Math.floor(node.clientWidth / cardWidth) || 1);
@@ -155,7 +155,7 @@ export default function CallInfo(props: any) {
                 {/* <CardLayout > */}
                 {(pageData || []).map((item: any, index: number) => {
                   return (
-                    <div className='call-item' style={{ width: `${rowCount === 1 ? 100 : 97 / rowCount}%`, marginLeft: `${(index % rowCount) === 0 ? '0' : `calc(${3 / (rowCount - 1)}%)`}` }}>
+                    <div className='call-item' style={{ width: `${rowCount === 1 ? 100 : 99 / rowCount}%`, marginLeft: `${(index % rowCount) === 0 ? '0' : `calc(${1 / (rowCount - 1)}%)`}` }}>
                       <div className='title flex-space-between'>
                         <div className='table-title'>
                           <Tooltip title={item?.url || ''} placement="topLeft">
