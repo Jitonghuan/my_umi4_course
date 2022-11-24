@@ -1,6 +1,7 @@
 import { Space, Tooltip, Tag } from 'antd';
 import { getColor } from '../../../../schema';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { sortTime } from '@/utils';
 import moment from 'moment'
 const tooltipText = <ul>
   <li>时间窗口范围小于等于一个小时，显示为每分钟平均请求数。</li>
@@ -100,6 +101,30 @@ export const failConfig = (data = []) => {
     yField: 'value',
     xAxis: {
       range: [0, 1],
+      // tickCount: 5,
+    },
+    // yAxis: false,
+  };
+}
+
+export const multiChartConfig = ({ cpm, fail }) => {
+  let data: any = [];
+  const newSr = sortTime(cpm).map((item: any) => ({ name: '请求数', time: item.time, value: item.value }));
+  const newFail = sortTime(fail).map((item: any) => ({ name: '失败数', time: item.time, value: item.value }));
+  data = [...newSr, ...newFail]
+  return {
+    data,
+    padding: 'auto',
+    xField: 'time',
+    yField: 'value',
+    seriesField: 'name',
+    // xAxis: false,
+    legend: {
+      position: 'top',
+      itemHeight: 1,
+    },
+    xAxis: {
+      // range: [0, 0.8],
       // tickCount: 5,
     },
     // yAxis: false,

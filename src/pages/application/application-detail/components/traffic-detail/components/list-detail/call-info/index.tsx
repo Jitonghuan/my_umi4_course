@@ -2,13 +2,14 @@
 import React, { useState, useEffect, useMemo, useContext, useCallback } from 'react';
 import { Card, Table, Pagination, Tooltip, Empty, Spin } from 'antd';
 import moment from 'moment'
-import { columnSchema } from '@/pages/trafficmap/app-traffic/traffic-detail/components/list-detail/call-info/schema';
+import { columnSchema, multiChartConfig } from '@/pages/trafficmap/app-traffic/traffic-detail/components/list-detail/call-info/schema';
 import { useCountDetailTable } from '@/pages/trafficmap/app-traffic/traffic-detail/components/list-detail/call-info/hook';
 import { getCountDetail, getTrace } from './hook'
 import DetailContext from '../../../context';
 import debounce from 'lodash/debounce';
 import { history } from 'umi';
 import ChartModal from './chart-modal';
+import { Line } from '@ant-design/charts';
 import CardLayout from '@cffe/vc-b-card-layout';
 import {
   LineChartOutlined,
@@ -30,6 +31,7 @@ export default function CallInfo(props: any) {
   const filter = debounce((value) => filterData(value), 500);
   const [originData, setOriginData] = useState<any>([]);
   const [data, total, loading, loadData, isEmpty] = useCountDetailTable({});
+  const [chartHeight, setChartHeight] = useState<any>();
 
   useEffect(() => {
     const res = data.slice((pageIndex - 1) * pageSize, pageIndex * pageSize);
@@ -141,6 +143,15 @@ export default function CallInfo(props: any) {
     // window.open(url, '_blank')
   }, [appId, envCode, selectTimeType, startTime, endTime])
 
+  const chartRef = useCallback((node: any) => {
+    if (node) {
+      console.log(node.clientHeight, 11)
+      new ResizeObserver((entries: any) => {
+        setChartHeight(node.clientHeight)
+      }).observe(node);
+    }
+  }, [])
+
   return (
     <>
       <div className="call-info-body">
@@ -165,6 +176,13 @@ export default function CallInfo(props: any) {
                         </div>
                       </div>
                       <div className='main'>
+                        <div className='call-item-line' >
+                          <div className="chart-header"></div>
+                          <div className="chart-container-warpper" ref={chartRef}>
+                            {chartHeight && <Line className="chart-container" {...multiChartConfig({ cpm: item?.endpointCPM?.readMetricsValues, fail: item?.endpointFailed?.readMetricsValues })} height={chartHeight} />}
+                          </div>
+
+                        </div>
                         <Table
                           size="small"
                           bordered

@@ -91,7 +91,7 @@ export const getEnvName = (envList: any[] = [], text: string) => {
 
 // 处理时间 让时间倒叙排列
 export const sortTime = (arr: any) => {
-  arr.sort((a: any, b: any) => {
+  (arr || []).sort((a: any, b: any) => {
     return moment(a.time).unix() - moment(b.time).unix();
   });
   return arr
