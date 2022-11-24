@@ -3,7 +3,7 @@ import { Tabs, Form, Space, Select, message, Collapse, Spin, Input } from 'antd'
 import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined, PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import RightContent from "./components/right-content";
-import {exportResultApi} from '../service'
+import SqlDraw from './components/sql-draw'
 import { useEnvList, querySqlResultInfo, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, queryTables } from '../common-hook'
 import './index.less';
 const { Panel } = Collapse;
@@ -17,7 +17,7 @@ export default function ResizeLayout() {
   const [envOptionLoading, envOptions, queryEnvList] = useEnvList();
   const [instanceLoading, instanceOptions, getInstanceList] = useInstanceList();
   const [databasesOptionsLoading, databasesOptions, queryDatabases, setSource] = useQueryDatabasesOptions()
-  const [fieldsLoading, tableFields, tableFieldsOptions, queryTableFields, setOptions,setFeildsSource] = useQueryTableFieldsOptions();
+  const [fieldsLoading, tableFields, tableFieldsOptions, queryTableFields, setOptions,setFeildsSource,createSQL,setCreateSQL] = useQueryTableFieldsOptions();
   const [initSqlValue, setInitSqlValue] = useState<string>("")
   const [implementDisabled, setImplementDisabled] = useState<boolean>(true);
   const [firstInitSqlValue, setFirstInitSqlValue] = useState<string>("")
@@ -35,6 +35,7 @@ export default function ResizeLayout() {
   const [instance,setInstance]=useState<number>()
   const [dbCode,setDBCode]=useState<string>("")
   const [close,setClose] = useState<boolean>();
+  const [sqlDrawMode,setSqlDrawMode]=useState<EditorMode>("HIDE")
 
   useEffect(()=>{
     if(tableFieldsOptions&&tablesSource){
@@ -45,7 +46,6 @@ export default function ResizeLayout() {
       tableFieldsOptions?.map((item: any) => {
         dataObject[item]=item
       });
-
      setFeildsSource(dataObject)
 
     }
@@ -163,6 +163,7 @@ export default function ResizeLayout() {
             const values = form?.getFieldsValue();
             setOptions([])
             queryTableFields({ ...values, tableCode: value })
+            setSqlDrawMode("VIEW")
             //queryTableFieldsMethods({ ...values, tableCode: value})
             setFirstInitSqlValue(`select * from ${value} limit 10`)
             getFirstInitSqlValue(`select * from ${value} limit 10`)
@@ -237,6 +238,7 @@ export default function ResizeLayout() {
   const leftContent = useMemo(() => {
     return (
       <>
+      
         <div className="left-content-title">选择查询对象</div>
         <div className="left-content-form">
           <Form layout="vertical" form={form} ref={formRef}>
@@ -336,7 +338,7 @@ export default function ResizeLayout() {
     firstInitSqlValue,
     errorMsg,
     costTime,
-    sqlLoading])
+    sqlLoading,createSQL,sqlDrawMode])
 
   const rightContent = useMemo(() => {
     return (
@@ -384,6 +386,8 @@ export default function ResizeLayout() {
     dbCode]);
 
   return (
+    <>
+    <SqlDraw onClose={()=>{setSqlDrawMode("HIDE")}} initData={createSQL} mode={sqlDrawMode} loading={fieldsLoading}/>
     <LightDragable
       showIcon={true}
       leftContent={leftContent}
@@ -395,5 +399,6 @@ export default function ResizeLayout() {
         setClose(close)
       }}
     />
+    </>
   );
 }

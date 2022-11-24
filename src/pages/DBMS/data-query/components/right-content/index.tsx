@@ -25,12 +25,12 @@ interface Iprops {
   //  queryTableFieldsMethods:(params:any)=>any;
     copyAdd: (sqlContent: string, tableCode?: string) => any;
     relayInfo:any;
-    instanceOptions:any
+   // instanceOptions:any
    
 }
 export default forwardRef(function RightContent(props: Iprops, ref: any) {
     const { tableFields, querySqlResult,relayInfo, initSqlValue, firstInitSqlValue, implementDisabled, onAdd, addCount} = props
-    const { sqlResult, sqlLoading, formRef, queryTableFields, copyAdd, errorMsg, costTime,instanceOptions } = props;
+    const { sqlResult, sqlLoading, formRef, queryTableFields, copyAdd, errorMsg, costTime } = props;
     const [logsloading, pageInfo, logsSource, setLogsSource, setPageInfo, queryLogsList] = useQueryLogsList();
     const [resultErrorMsg,setResultErrorMsg]=useState<string>("")
     const [resultCountTime,setResultCountTime]=useState<string>("")

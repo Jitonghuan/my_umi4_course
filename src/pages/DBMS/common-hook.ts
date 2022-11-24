@@ -174,6 +174,7 @@ export function useQueryTableFieldsOptions() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>({});
   const [options, setOptions] = useState<any>([]);
+  const [createSQL,setCreateSQL]=useState<any>("")
 
   const queryTableFields = async (params:{dbCode:string,tableCode:string}) => {
     setLoading(true);
@@ -182,6 +183,7 @@ export function useQueryTableFieldsOptions() {
         if (result?.success) {
           let dataSource = result.data?.fields||[];
           let dataObject: any = {};
+          setCreateSQL(result.data?.createSQL||"")
           setOptions(dataSource)
           dataSource?.map((item: any) => {
             dataObject[item]=item
@@ -194,7 +196,7 @@ export function useQueryTableFieldsOptions() {
       });
   };
 
-  return [loading, source,options, queryTableFields,setOptions,setSource];
+  return [loading, source,options, queryTableFields,setOptions,setSource,createSQL,setCreateSQL];
 }
 //querySqlApi
 interface querySqlItems{
