@@ -37,15 +37,15 @@ export function useInstanceList() {
 
   const getInstanceList = async (envCode:string) => {
     setLoading(true);
-    await getRequest(APIS.getInstanceList, { data: {pageIndex:-1,pageSize:-1,envCode} })
+    await getRequest(APIS.getInstanceList, { data: {envCode} })
       .then((result) => {
         if (result?.success) {
           let dataSource = result.data?.dataSource;
           let dataArry: any = [];
           dataSource?.map((item: any) => {
             dataArry.push({
-             label:item?.instance?.name,
-             value:item?.instance?.id
+             label:item?.InstanceName,
+             value:item?.InstanceId
             });
           });
          
