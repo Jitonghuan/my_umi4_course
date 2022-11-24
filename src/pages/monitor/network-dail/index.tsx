@@ -57,12 +57,12 @@ export default function NetworkDail() {
                 setcurRecord(record);
                 setMode('EDIT');
             },
-            onView: (record, index) => {
-                history.push({
-                    pathname: '/matrix/monitor/detail',
-                    search: `?url=${encodeURIComponent(record.graphUrl)}&clusterName=${record?.clusterName}&fromPage=network-dail`,
-                  });
-            },
+            // onView: (record, index) => {
+            //     history.push({
+            //         pathname: '/matrix/monitor/detail',
+            //         search: `?url=${encodeURIComponent(record.graphUrl)}&clusterName=${record?.clusterName}&fromPage=network-dail`,
+            //       });
+            // },
             onDelete: async (id) => {
                 deleteNetworkProbe(id).then(() => {
                     let params = listForm.getFieldsValue()
