@@ -1,8 +1,8 @@
-import React, { useMemo, useState, useEffect, useContext,useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useContext, useCallback } from 'react';
 import PageContainer from '@/components/page-container';
-import { Space, Form, Select, Tooltip, Button, Spin, Empty, Badge } from 'antd';
+import { Space, Form, Select, Tooltip, Button, Spin, Empty, Badge, DatePicker } from 'antd';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
-import { START_TIME_ENUMS } from './schema';
+import { START_TIME_ENUMS, selectOption } from './schema';
 import AppDetailContext from '@/pages/application/application-detail/context';
 import moment from 'moment';
 import { RedoOutlined } from '@ant-design/icons';
@@ -11,6 +11,8 @@ import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { queryNodeList, getCountOverview, getListAppEnv, queryTrafficList } from './hook';
 import DetailContext from './context';
+const { RangePicker } = DatePicker;
+
 import './index.less'
 export default function TrafficDetail() {
 
@@ -30,7 +32,11 @@ export default function TrafficDetail() {
   const [currentTableData, setCurrentTableData] = useState<any>([]);
   const [isClick, setIsClick] = useState<string | number>()
   const [empty, setEmpty] = useState<boolean>(false)
-  const [podIps, setPodIps] = useState<any>([])
+  const [podIps, setPodIps] = useState<any>([]);
+  const [selectTimeType, setSelectTimeType] = useState<string>('lastTime');
+  const [rangTime, setRangeTime] = useState<any>([]);
+  const [endTime, setEndTime] = useState<number>();
+
   useEffect(() => {
     if (appData?.appCode) {
       setAppCode(appData?.appCode)
@@ -56,20 +62,30 @@ export default function TrafficDetail() {
   }
   const getAppId = (params: { envCode: string, startTime: number }) => {
     const now = new Date().getTime();
+    let start = 0, end = 0;
+    if (selectTimeType === 'lastTime') {
+      //@ts-ignore
+      start = Number((now - startTime) / 1000);
+      end = Number(now / 1000);
+    } else {
+      //@ts-ignore
+      start = startTime;
+      end = Number(endTime);
+    }
     queryTrafficList(
       {
         envCode: params?.envCode,
         keyWord: appData?.appCode,
-        start: Number((now - startTime) / 1000) + "",
-        end: Number(now / 1000) + "",
+        start: start + '',
+        end: end + '',
       }
     ).then(() => {
       queryTrafficList(
         {
           envCode: params?.envCode,
           keyWord: appData?.appCode,
-          start: Number((now - startTime) / 1000) + "",
-          end: Number(now / 1000) + "",
+          start: start + '',
+          end: end + '',
           needMetric: true
         }
       ).then((resp) => {
@@ -80,14 +96,14 @@ export default function TrafficDetail() {
             appId: resp?.length > 0 ? resp[0]?.appId : "",
             appCode: appData?.appCode
           })
-        
-        }else{
+
+        } else {
           setCurAppID("")
-          getNodeDataSource({   
+          getNodeDataSource({
             appCode: appData?.appCode
           })
         }
-       
+
 
       })
 
@@ -102,21 +118,28 @@ export default function TrafficDetail() {
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const [count, setCount] = useState<number>(0)
   //获取左侧数据
-  const getNodeDataSource = (params?: { start?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string }) => {
+  const getNodeDataSource = (params?: { start?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string, end?: number, selectTimeType?: string }) => {
     setLoading(true)
+    params = params || {}
+    params.start = params?.start || startTime;
+    params.end = params?.end || endTime;
+    const { start, end } = params;
     const now = new Date().getTime();
-    let curStart: number = params?.start ? params?.start : startTime
+    const type = params?.selectTimeType || selectTimeType;
+    const startTimestamp: any = type === 'lastTime' ? Number((now - start) / 1000) + "" : start;
+    const endTimestamp: any = type === 'lastTime' ? Number((now) / 1000) + "" : end;
+    // let curStart: number = params?.start ? params?.start : startTime
     let curEnv = params?.envCode ? params?.envCode : formInstance.getFieldsValue()?.envCode
-    let curApp = params?.appCode|| appData?.appCode
+    let curApp = params?.appCode || appData?.appCode
 
     let curAppId = params?.appId ? params?.appId : curAppID
 
     let curDeployName = params?.deployName ? params?.deployName : deployName
     queryNodeList({
       //@ts-ignore
-      start: Number((now - curStart) / 1000),
-      end: Number(now / 1000),
-      appCode: curApp||"",
+      start: startTimestamp,
+      end: endTimestamp,
+      appCode: curApp || "",
       envCode: curEnv,
     }).then((res: any) => {
       if (res[0]) {
@@ -130,20 +153,20 @@ export default function TrafficDetail() {
       }
       let podIps = res?.map((ele: any) => (ele?.hostIP))
       setPodIps(podIps)
-      if(curAppId){
+      if (curAppId) {
         queryCountOverview({
-          start: moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss'),
-          end: moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss'),
+          start: moment(new Date(Number(startTimestamp) * 1000)).format('YYYY-MM-DD HH:mm:ss'),
+          end: moment(new Date(Number((endTimestamp) * 1000))).format('YYYY-MM-DD HH:mm:ss'),
           appId: curAppId,
           envCode: curEnv,
           deployName: curDeployName,
           podIps
-  
+
         })
-  
+
 
       }
-    
+
       setNodeDataSource(res)
       setCurrentTableData(res[0])
     }).finally(() => {
@@ -288,7 +311,7 @@ export default function TrafficDetail() {
         </div>
       </>
     )
-  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty,appData?.appCode,appData?.deploymentName])
+  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty, appData?.appCode, appData?.deploymentName])
   const rightContent = useMemo(() => {
     return (
       <>
@@ -311,16 +334,58 @@ export default function TrafficDetail() {
   ])
 
 
-  const getTime=useCallback((params?:{start:number})=>{
+  const getTime = useCallback((params?: { start: number }) => {
     const now = new Date().getTime();
     let curStart: number = params?.start ? params?.start : startTime
-    let start=moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss')
-    let end=moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss')
-    
-    return [start,end]
-  },[startTime])
+    let start = moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss')
+    let end = moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss')
 
+    return [start, end]
+  }, [startTime])
 
+  const timeTypeChange = (v: string) => {
+    setCurtIp("");
+    setHostName("");
+    setCurrentTableData({})
+    setSelectTimeType(v);
+    let start, end;
+    if (v === 'lastTime') {
+      start = 5 * 60 * 1000;
+      end = 0;
+      setStartTime(start);
+      setEndTime(end);
+    } else {
+      let startRange = moment().subtract(5, 'minutes');
+      let endRange = moment();
+      setRangeTime([moment(startRange, 'YYYY-MM-dd HH:mm:ss'), moment(endRange, 'YYYY-MM-dd HH:mm:ss')]);
+      start = startRange.unix();
+      end = endRange.unix();
+      setStartTime(start)
+      setEndTime(end)
+    }
+    getNodeDataSource({ start: start, selectTimeType: v, end: end })
+  }
+
+  // 选择的时间发生改变
+  const timeChange = (startValue: any, endValue: any) => {
+    setCurtIp("");
+    setHostName("");
+    setCurrentTableData({})
+    let start = 0;
+    let end = 0;
+    if (selectTimeType === 'lastTime') {
+      start = startValue;
+      end = 0;
+      setStartTime(startValue);
+      setEndTime(0);
+    } else {
+      start = (new Date(startValue).getTime()) / 1000;
+      end = (new Date(endValue).getTime()) / 1000;
+      setStartTime(start);
+      setEndTime(end);
+    }
+    getNodeDataSource({ start, end })
+  }
 
 
   return (
@@ -336,48 +401,57 @@ export default function TrafficDetail() {
                 setCurrentTableData({})
                 getNodeDataSource({
                   envCode,
-                  appCode:appData?.appCode
+                  appCode: appData?.appCode
                 })
 
 
 
               }} loading={envLoading} style={{ width: 200 }} />
             </Form.Item>
-          
+
           </Form>
 
           <span>
-          <span className="show-time" >
+            {/* <span className="show-time" >
               <Tooltip title={`${getTime()?.[0]}-${getTime()?.[1]}`}>{getTime()?.[0]}-{getTime()?.[1]}</Tooltip>
-            </span>
-            选择时间：<Select
-            style={{ width: 150 }}
-            value={startTime}
-            onChange={(value) => {
-              setCurtIp("");
-              setHostName("");
-              setCurrentTableData({})
-              setStartTime(value);
-              getNodeDataSource({
-                start: value,
-                appCode:appData?.appCode
-              })
-            }}
-          >  <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
-            {START_TIME_ENUMS.map((time) => (
-              <Select.Option key={time.value} value={time.value}>
-                {time.label}
-              </Select.Option>
-            ))}
-          </Select>
+            </span> */}
+            选择时间：
+            <Select options={selectOption} onChange={timeTypeChange} value={selectTimeType} size='small' />
+            {selectTimeType === 'lastTime' ?
+              <Select
+                style={{ width: 150 }}
+                value={startTime}
+                onChange={(value) => {
+                  timeChange(value, '')
+                }}
+              >
+                <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+                {START_TIME_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select> :
+              <RangePicker
+                allowClear
+                value={rangTime}
+                style={{ width: 340 }}
+                onChange={(v: any, b: any) => { setRangeTime(v); timeChange(b[0], b[1]) }}
+                showTime={{
+                  hideDisabledOptions: true,
+                  defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                }}
+                format="YYYY-MM-DD HH:mm:ss"
+              />
+            }
             <Space style={{ marginLeft: 8, marginTop: 2 }}>
               <Button type="primary" icon={<RedoOutlined />} onClick={() => {
                 getNodeDataSource({
-                  appCode:appData?.appCode
+                  appCode: appData?.appCode
                 })
                 setCount(count => count + 1)
               }}>刷新</Button>
-            
+
             </Space>
           </span>
         </div>
@@ -385,7 +459,7 @@ export default function TrafficDetail() {
       <DetailContext.Provider value={{
         envCode: formInstance?.getFieldsValue()?.envCode,
         appId: curAppID,
-        appCode:  appData?.appCode,
+        appCode: appData?.appCode,
         startTime: startTime,
         hostIP: curtIP,
         hostName: hostName,
@@ -393,10 +467,11 @@ export default function TrafficDetail() {
         deployName: deployName,
         count: count,
         isClick: isClick,
-        podIps: podIps
-
+        podIps: podIps,
+        endTime: endTime,
+        selectTimeType: selectTimeType
       }}>
-        <ContentCard className="traffic-detail-page-content">
+        <ContentCard className="app-detail-traffic-detail-page-content">
           {empty ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`该环境下不存在${appCode || appData?.appCode}应用`} /> : <LightDragable
             showIcon={true}
             leftContent={leftContent}

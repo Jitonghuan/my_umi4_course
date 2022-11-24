@@ -1,119 +1,1229 @@
-import { Space,Tooltip, Tag } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
+import { Space, Tooltip, Tag } from 'antd';
+import { getColor } from '../../../../schema';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { sortTime } from '@/utils';
 import moment from 'moment'
+const tooltipText = <ul>
+  <li>时间窗口范围小于等于一个小时，显示为每分钟平均请求数。</li>
+  <li>时间窗范围超过一个小时，显示为每个小时平均每分钟的请求数。</li>
+  <li>时间窗范围超过一天，显示为每天的平均每分钟请求数。</li>
+</ul>
+export const columnSchema = () => {
+  return [
+    {
+      title: '时间',
+      dataIndex: 'time',
+      key: 'id',
+      // ellipsis: true,
+      render: (text: string) => <Tooltip title={text}>{text}</Tooltip>,
+      // width: 100,
+    },
+    {
+      title: <div>请求数(次/min)
+        <Tooltip title={tooltipText} placement="top">
+          <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+        </Tooltip>
+      </div>,
+      dataIndex: 'cpm',
+      key: 'cpm',
+      // width: 40,
+    },
+    {
+      title: '平均RT(ms)',
+      dataIndex: 'avg',
+      key: 'avg',
+      render: (value: any) => <span style={{ color: getColor(value, 'rt') }}>{value}</span>,
+      // width: 50,
+    },
+    {
+      title: '成功率(%)',
+      dataIndex: 'sr',
+      key: 'sr',
+      render: (value: any) => <span style={{ color: getColor(value, 'sr') }}>{value}</span>,
+      // width: 50,
+    },
+    {
+      title: '失败数(次)',
+      dataIndex: 'fail',
+      key: 'fail',
+      // width: 50,
+    },
+  ]
+}
 
-// 列表页-表格
-export const createStatisticsTableColumns = (params: {
-    onView: (record: any, index: number) => void;
-  }) => {
-    return [
-      {
-        title: '接口url',
-        dataIndex: 'url',
-        key: 'url',
-        width: 696,
-        ellipsis:true,
-        render: (value) => <Tooltip title={value}>{value} </Tooltip>,
-      },
-      {
-        title: '请求数',
-        dataIndex: 'requestCounts',
-        key: 'requestCounts',
-        width: 50,
-        
-      },
-      {
-        title: '平均RT',
-        dataIndex: 'endpointAvg',
-        key: 'endpointAvg',
-        width: 60,
-        ellipsis: true,
-        render: (text) => <Tooltip title={text}>{Number(text).toFixed(2)}ms</Tooltip>,
-      },
-      {
-        title: '成功率',
-        dataIndex: 'endpointSR',
-        key: 'endpointSR',
-        width: 50,
-        render: (value) => <>{value}% </>,
-      },
-      {
-        title: '失败数',
-        dataIndex: 'endpointFailed',
-        key: 'endpointFailed',
-        width: 50,
-        render: (value) => <>{value}次 </>,
-      },
-     
-      {
-        title: '操作',
-        dataIndex: 'option',
-        key: 'option',
-        fixed:"right",
-        width: 100,
-        render: (_: string, record, index: number) => (
-          //根据不同类型跳转
-          <Space>
-            <a onClick={() => params.onView(record, index)}>链路追踪</a>
-           
-          </Space>
-        ),
-      },
-    ] as ColumnsType<any>;
+export const cpmConfig = (data = []) => {
+  return {
+    data,
+    padding: 'auto',
+    xField: 'time',
+    yField: 'value',
+    xAxis: {
+      range: [0, 1],
+      // tickCount: 5,
+    },
+    // yAxis: false,
   };
+}
 
-  // 列表页-表格
-export const createQueryTableColumns = (params: { 
-    onView: (record: any, index: number) => void;
-  }) => {
-    return [
-      {
-        title: '接口url',
-        dataIndex: 'endpointNames',
-        key: 'endpointNames',
-        width: 686,
-        ellipsis:true,
-        render: (value) => <Tooltip title={value}>{value[0]} </Tooltip>,
-        
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'start',
-        key: 'start',
-        width: 200,
-        render:(item)=><span>{moment(Number(item)).format('YYYY-MM-DD HH:mm:ss')}</span>
-
-      },
-      {
-        title: '耗时',
-        dataIndex: 'duration',
-        key: 'duration',
-        width: 110,
-        ellipsis: true,
-        render: (text) => <Tooltip title={text}><Tag color="blue">{text}ms</Tag></Tooltip>,
-      },
-      {
-        title: 'traceID',
-        dataIndex: 'traceIds',
-        key: 'traceIds',
-        width: 458,
-        render: (value) => <>{value[0]} </>,
-      },
-     
-     
-      {
-        title: '操作',
-        dataIndex: 'option',
-        key: 'option',
-        fixed:"right",
-        width: 100,
-        render: (_: string, record, index: number) => (
-          //根据不同类型跳转
-          <Space>
-            <a onClick={() => params.onView(record, index)}>查看日志</a>
-           
-          </Space>
-        ),
-      },
-    ] as ColumnsType<any>;
+export const avgConfig = (data = []) => {
+  return {
+    data,
+    padding: 'auto',
+    xField: 'time',
+    yField: 'value',
+    xAxis: {
+      range: [0, 1],
+      // tickCount: 5,
+    },
+    // yAxis: false,
   };
+}
+
+export const srConfig = (data = []) => {
+  return {
+    data,
+    padding: 'auto',
+    xField: 'time',
+    yField: 'value',
+    xAxis: {
+      range: [0, 1],
+      // tickCount: 5,
+    },
+    // yAxis: false,
+  };
+}
+
+export const failConfig = (data = []) => {
+  return {
+    data,
+    padding: 'auto',
+    xField: 'time',
+    yField: 'value',
+    xAxis: {
+      range: [0, 1],
+      // tickCount: 5,
+    },
+    // yAxis: false,
+  };
+}
+
+export const multiChartConfig = ({ cpm, fail }) => {
+  let data: any = [];
+  const newSr = sortTime(cpm).map((item: any) => ({ name: '请求数', time: item.time, value: item.value }));
+  const newFail = sortTime(fail).map((item: any) => ({ name: '失败数', time: item.time, value: item.value }));
+  data = [...newSr, ...newFail]
+  return {
+    data,
+    padding: 'auto',
+    xField: 'time',
+    yField: 'value',
+    seriesField: 'name',
+    // xAxis: false,
+    legend: {
+      position: 'top',
+      itemHeight: 1,
+    },
+    xAxis: {
+      // range: [0, 0.8],
+      // tickCount: 5,
+    },
+    // yAxis: false,
+  };
+}
+
+export const mock = [
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.doctororder.service.IDoctorOrderApiService.validateDoctorOrder(DoctorOrderValidateRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:31",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 46
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.allergy.service.IAllergyRecordApiService.queryAllergenRecordList(AllergyRecordQueryRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 2
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 20
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 19
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 12
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 15
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 12
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+  {
+    "url": "hbos-dtc/com.c2f.hbos.dtc.client.skintest.service.ISkinTestApiService.querySkinTestByPatientId(SkinTestQueryByPatientIdRequest)",
+    "endpointCPM": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 1
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 2
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 1
+        }
+      ]
+    },
+    "endpointAvg": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 31
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 57
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 30
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 26
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 27
+        }
+      ]
+    },
+    "endpointSR": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    },
+    "endpointFailed": {
+      "readMetricsValues": [
+        {
+          "time": "2022-11-21 15:26",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:27",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:28",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:29",
+          "value": 0
+        },
+        {
+          "time": "2022-11-21 15:30",
+          "value": 0
+        }
+      ]
+    }
+  },
+
+]
