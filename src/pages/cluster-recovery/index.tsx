@@ -30,7 +30,6 @@ export default function Dashboard(props: any) {
         </Tabs>
       </FilterCard>
       <VCPermission code={window.location.pathname} isShowErrorPage>
-        {/* {props.children} */}
         <Outlet/>
       </VCPermission>
     </PageContainer>
