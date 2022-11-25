@@ -638,6 +638,7 @@ export default [
         "hideInMenu": true,
         
       },
+     
       {
         "path": `${baseRoutePath}/monitor/business`,
         "name": "业务监控",
@@ -675,6 +676,7 @@ export default [
         "name": "模板管理",
         "component": "@/pages/monitor/template"
       },
+      
       {
         "path": `${baseRoutePath}/monitor/history`,
         "name": "报警历史",

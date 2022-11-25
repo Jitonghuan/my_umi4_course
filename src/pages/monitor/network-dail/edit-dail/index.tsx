@@ -294,14 +294,16 @@ export default function EditDail() {
 
         history.push({
           pathname:'/matrix/monitor/network-dail',
-          search:`?curCluster=${form.getFieldValue("clusterName")}`
         })
+        sessionStorage.setItem('network-dail-cluster', JSON.stringify(form.getFieldValue("clusterName")||'""'))
         
 
       }}>返回</Button></Space></span></p>} key="1">
         <Form labelCol={{ flex: '110px' }} form={form} preserve={false}>
           <Form.Item label="集群选择" name="clusterName" rules={[{ required: true, message: '请填写' }]}>
-            <Select style={{ width: 320 }} options={clusterData} loading={clusterLoading} />
+            <Select style={{ width: 320 }} options={clusterData} loading={clusterLoading} onChange={(value)=>{
+               sessionStorage.setItem('network-dail-cluster', JSON.stringify(value||'""'))
+            }}/>
           </Form.Item>
           <Form.Item label="拨测类型" name="probeType" rules={[{ required: true, message: '请填写' }]}  >
             <Radio.Group options={dailTypeOptions} onChange={onChangeType} value={dailType} optionType="button" />

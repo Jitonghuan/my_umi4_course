@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Form, Select, Input, Button, Divider,
-  message, Space, Collapse, Table, Tag, Tooltip, Popconfirm
-} from 'antd';
+import { Button,message, Space,Table, Tag, Tooltip, Popconfirm} from 'antd';
 import {ALERT_LEVEL,STATUS_TYPE} from './type';
-import { createPrometheus, deleteRules, rulesList, ruleSwitch, updatePrometheus } from '../../../service';
+import { deleteRules, rulesList, ruleSwitch, } from '../../../service';
 import {postRequest, getRequest, delRequest} from '@/utils/request';
 import RulesEdit from '../../../business/rules-edit';
 interface Iprops{
@@ -12,7 +9,6 @@ interface Iprops{
 }
 export default function AlarmConfig (props:Iprops){
   const {curRecord} =props
-
   const [rulesData, setRulesData] = useState<any[]>([]);
   const [rulesVisible, setRulesVisible] = useState<boolean>(false);
   const [rulesType, setRulesType] = useState('add');
@@ -96,7 +92,7 @@ export default function AlarmConfig (props:Iprops){
                     >
                       新增报警
                     </Button></div>
-         <Table
+                <Table
                   columns={[
                     {
                       title: '报警名称',
