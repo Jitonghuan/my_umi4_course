@@ -123,7 +123,6 @@ export default function CallInfo(props: any) {
 
   const chartRef = useCallback((node: any) => {
     if (node) {
-      console.log(node.clientHeight, 11)
       new ResizeObserver((entries: any) => {
         setChartHeight(node.clientHeight)
       }).observe(node);
@@ -182,9 +181,9 @@ export default function CallInfo(props: any) {
                       </div>
                       <div className='main'>
                         <div className='call-item-line' >
-                          <div className="chart-header"></div>
+                          {/* <div className="chart-header"></div> */}
                           <div className="chart-container-warpper" ref={chartRef}>
-                            <Line className="chart-container" {...multiChartConfig({ cpm: item?.endpointCPM?.readMetricsValues || [], fail: item?.endpointFailed?.readMetricsValues || [] })} height={100} />
+                            <Line className="chart-container" {...multiChartConfig({ cpm: item?.endpointCPM?.readMetricsValues || [], fail: item?.endpointFailed?.readMetricsValues || [] })} height={145} />
                           </div>
 
                         </div>
