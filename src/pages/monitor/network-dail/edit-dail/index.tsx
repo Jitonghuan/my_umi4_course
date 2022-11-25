@@ -1,21 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Form, Select, Input, Radio, InputNumber, Segmented, Drawer, Button, message, } from 'antd';
+import { Form, Select, Input, Radio, InputNumber, Segmented, Drawer, Button, message,Collapse,Space } from 'antd';
 import type { RadioChangeEvent } from 'antd';
+import PageContainer from '@/components/page-container';
 import { frequencyOptions, questConfigOptions, tcpQuestConfig, dnsTypeOptions, visitAgreementOption, probeUrlOptions } from './type'
 import EditorTable from '@cffe/pc-editor-table';
+import { history, useLocation} from 'umi';
+import { parse,stringify } from 'query-string';
 import './index.less'
 import { createNetworkProbe, CreateNeworkProbeItems, updateNetworkProbe, UpdateNeworkProbeItems, useGetNetworkProbeType, useGetCluster, } from './hook'
+import AlarmConfig from './alarm-config'
+const { Panel } = Collapse;
 
-
-
-interface Iprops {
-  mode: EditorMode;
-  onSave: (clusterName: string) => any;
-  onClose: () => any;
-  curRecord: any;
-}
-export default function EditDail(props: Iprops) {
-  const { mode, curRecord, onSave, onClose } = props;
+export default function EditDail() {
+ // const { mode, curRecord, onSave, onClose } = props;
+  // let location = useLocation();
+  // const query = parse(location.search);
+  // const curRecord: any = location.state.record || {};
+  let location = useLocation();
+  const query = parse(location.search);
+  const mode=query?.mode;
+  //@ts-ignore
+  const curRecord: any = location.state?.record || {};
   const [form] = Form.useForm()
   const [dailTypesLoading, dailTypeOptions, getNetworkProbeProbeType] = useGetNetworkProbeType()
   const [clusterLoading, clusterData, getCluster] = useGetCluster()
@@ -24,8 +29,6 @@ export default function EditDail(props: Iprops) {
   const [headersData, setHeadersData] = useState<any>([])
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  // const formDetailRef = useRef<any>(null);
-  // const getData = () => formDetailRef?.current?.getData();
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -239,7 +242,7 @@ export default function EditDail(props: Iprops) {
       createNetworkProbe(dataParams).then((resp) => {
         if (resp?.success) {
           const payload = form.getFieldsValue();
-          onSave(payload?.clusterName)
+        //  onSave(payload?.clusterName)
           message.success("创建成功！")
 
         }
@@ -254,7 +257,7 @@ export default function EditDail(props: Iprops) {
       updateNetworkProbe({ ...dataParams, id: curRecord?.id, status: curRecord?.status, graphUrl: curRecord?.graphUrl, }).then((resp) => {
         if (resp?.success) {
           const payload = form.getFieldsValue();
-          onSave(payload?.clusterName)
+         // onSave(payload?.clusterName)
           message.success("编辑成功！")
 
         }
@@ -267,27 +270,35 @@ export default function EditDail(props: Iprops) {
     }
 
   }
+  const onChange = (key: string | string[]) => {
+    console.log(key);
+  };
+
 
   return (
     <>
+   
 
-      <Drawer
+      {/* <Drawer
         title={mode === "ADD" ? "拨测新增" : "拨测编辑"}
         visible={mode !== 'HIDE'}
-        width={"50%"}
+        width={"70%"}
         onClose={onClose}
-        footer={<div className="drawer-footer">
-          <Button type="primary" loading={loading} onClick={handleSubmit} >
-            保存
-      </Button>
-          <Button type="default" onClick={onClose}>
-            取消
-      </Button>
-        </div>}
+        footer={false}
         destroyOnClose
 
-      >
+      > */}
+      <PageContainer>
+           <Collapse defaultActiveKey={['1']}  bordered={false} onChange={onChange}>
+      <Panel header={<p style={{display:"flex",justifyContent:"space-between"}}><span>拨测编辑</span><span><Space ><Button  type="primary" loading={loading} onClick={handleSubmit}>保存</Button> <Button onClick={()=>{
 
+        history.push({
+          pathname:'/matrix/monitor/network-dail',
+          search:`?curCluster=${form.getFieldValue("clusterName")}`
+        })
+        
+
+      }}>返回</Button></Space></span></p>} key="1">
         <Form labelCol={{ flex: '110px' }} form={form} preserve={false}>
           <Form.Item label="集群选择" name="clusterName" rules={[{ required: true, message: '请填写' }]}>
             <Select style={{ width: 320 }} options={clusterData} loading={clusterLoading} />
@@ -448,12 +459,21 @@ export default function EditDail(props: Iprops) {
 
 
         </Form>
+       
+      </Panel>
+      <Panel header={<p style={{display:"flex",justifyContent:"space-between"}}><span>报警配置</span></p>} key="2">
+      <AlarmConfig curRecord={curRecord} />
+      </Panel>
+     
+    </Collapse>
+
+      
 
 
 
+    </PageContainer>
 
-
-      </Drawer>
+      {/* </Drawer> */}
     </>
   );
 }

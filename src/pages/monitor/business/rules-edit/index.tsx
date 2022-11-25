@@ -215,6 +215,8 @@ const RulesEdit = (props: IPros) => {
         <Form.Item label="告警分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
           <Select placeholder="请选择" options={groupData} />
         </Form.Item>
+        {bizMonitorType==="netProbe"&&(<Form.Item></Form.Item>)}
+        {bizMonitorType==="netProbe"&&(<Form.Item></Form.Item>)}
         <Form.Item
           label="告警表达式(PromQl)"
           name="expression"

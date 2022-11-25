@@ -3,15 +3,15 @@ import PageContainer from '@/components/page-container';
 import { createTableColumns} from './schema';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { Button, Space, Form, Table, Select, Input,message } from 'antd';
-import EditDail from './edit-dail';
-import {history} from 'umi'
+import {history,useLocation} from 'umi'
+import { parse,stringify } from 'query-string';
 import { getNetworkProbeList, tableItems } from './edit-dail/hook'
 import { useGetNetworkProbeType, useGetCluster, useDelNetworkProbe,networkProbeStatus } from './edit-dail/hook'
 import './index.less'
 export default function NetworkDail() {
     const [listForm] = Form.useForm();
-    const [curRecord, setcurRecord] = useState<any>({});
-    const [mode, setMode] = useState<EditorMode>('HIDE');
+    let location = useLocation();
+    const query = parse(location.search);
     const [dailTypesLoading, dailTypes, getNetworkProbeProbeType] = useGetNetworkProbeType()
     const [clusterLoading, clusterData, getCluster] = useGetCluster()
     const [delLoading, deleteNetworkProbe] = useDelNetworkProbe()
@@ -26,8 +26,9 @@ export default function NetworkDail() {
 
 
     }, [])
+   
     useEffect(()=>{
-        if(clusterData?.length>0){
+        if(clusterData?.length>0&&!query?.curCluster){
             listForm.setFieldsValue({
                 clusterName:clusterData[0]?.value
             })
@@ -38,15 +39,22 @@ export default function NetworkDail() {
 
         }
     },[clusterData])
-    const saveDail=(clusterName:string)=>{
-        listForm.setFieldsValue({
-            clusterName
-        })
+    useEffect(()=>{
+        saveDail()
+    },[])
+    const saveDail=()=>{
+        if(query?.curCluster){
+            listForm.setFieldsValue({
+                clusterName:query?.curCluster
+            })
+
+        }
+      
         let params = listForm.getFieldsValue()
        
         getList({
             ...params,
-            clusterName
+            clusterName:query?.curCluster
         })
     }
     const columns = useMemo(() => {
@@ -54,15 +62,22 @@ export default function NetworkDail() {
         return createTableColumns({
             delLoading,
             onEdit: (record, index) => {
-                setcurRecord(record);
-                setMode('EDIT');
+                // setcurRecord(record);
+                // setMode('EDIT');
+                history.push({
+                    pathname:'/matrix/monitor/dail-edit',
+                    search:`?mode=${"EDIT"}`
+
+                },{
+                    record 
+                })
             },
-            // onView: (record, index) => {
-            //     history.push({
-            //         pathname: '/matrix/monitor/detail',
-            //         search: `?url=${encodeURIComponent(record.graphUrl)}&clusterName=${record?.clusterName}&fromPage=network-dail`,
-            //       });
-            // },
+            onView: (record, index) => {
+                history.push({
+                    pathname: '/matrix/monitor/detail',
+                    search: `?url=${encodeURIComponent(record.graphUrl)}&clusterName=${record?.clusterName}&fromPage=network-dail`,
+                  });
+            },
             onDelete: async (id) => {
                 deleteNetworkProbe(id).then(() => {
                     let params = listForm.getFieldsValue()
@@ -118,11 +133,11 @@ export default function NetworkDail() {
             });
     };
     return (<PageContainer className="network-dail">
-         <EditDail mode={mode} curRecord={curRecord} onSave={(clusterName:string)=>{setMode("HIDE");
+         {/* <EditDail mode={mode} curRecord={curRecord} onSave={(clusterName:string)=>{setMode("HIDE");
         //    let value = listForm.getFieldsValue();
         //    getList({ ...value, }); 
         saveDail(clusterName)
-        }} onClose={()=>{setMode("HIDE")}}/>
+        }} onClose={()=>{setMode("HIDE")}}/> */}
         <FilterCard>
             <Form
                 layout="inline"
@@ -199,7 +214,12 @@ export default function NetworkDail() {
                         <Button
                             type="primary"
                             onClick={() => {
-                                setMode('ADD');
+                               // setMode('ADD');
+                               history.push({
+                                pathname:'/matrix/monitor/dail-edit',
+                                search:`?curCluster=${listForm.getFieldValue("clusterName")}&mode=${'ADD'}`
+            
+                            })
                             }}
                         >
                             + 新增拨测

@@ -42,7 +42,9 @@ const BoardDetail = () => {
         <Button type='link' onClick={() => {
           if (fromPage === 'business') {
             history.push('/matrix/monitor/business')
-          } else {
+          } else  if(fromPage==="network-dail"){
+            history.push('/matrix/monitor/network-dail')
+          }else{
             history.push('/matrix/monitor/panel')
           }
         }}>

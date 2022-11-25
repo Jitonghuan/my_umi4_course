@@ -628,6 +628,15 @@ export default [
         "name": "网络拨测",
         "component": "@/pages/monitor/network-dail",
         "key": "network-dail",
+       
+      },
+      {
+        "path": `${baseRoutePath}/monitor/dail-edit`,
+        "name": "拨测编辑",
+        "component": "@/pages/monitor/network-dail/edit-dail",
+        "key": "network-dail",
+        "hideInMenu": true,
+        
       },
       {
         "path": `${baseRoutePath}/monitor/business`,
@@ -639,6 +648,7 @@ export default [
         "path": `${baseRoutePath}/monitor/prometheus-edit`,
         "name": "编辑Prometheus",
         "hideInMenu": true,
+        "key": "business-monitor",
         "component": "@/pages/monitor/business/prometheus/prometheus-form"
       },
       {

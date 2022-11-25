@@ -16,7 +16,7 @@ import {
 export const createTableColumns = (params: {
   delLoading:boolean;
   onEdit: (record: any, index: number) => void;
-  // onView: (record: any, index: number) => void;
+  onView: (record: any, index: number) => void;
   onDelete: (record: any) => void;
   onSwitch: (record: any, index: number) => void;
  
@@ -77,7 +77,7 @@ export const createTableColumns = (params: {
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space size="middle">
-          {/* <a onClick={() => params.onView(record, index)}><BarChartOutlined/>看板</a> */}
+          <a onClick={() => params.onView(record, index)}><BarChartOutlined/>看板</a>
           <a onClick={() => params.onEdit(record, index)}><FormOutlined />编辑</a>
           <Popconfirm
             title="确定进行此操作吗?"
