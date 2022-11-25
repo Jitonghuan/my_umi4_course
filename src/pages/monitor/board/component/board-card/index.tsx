@@ -57,7 +57,9 @@ export default function Board(props: any) {
   };
 
   const onCategory = async () => {
-    const res = await getCategory();
+    const res = await getCategory({
+      monitorType: 'basic',
+    });
     let data = res?.data || [];
     data.unshift('全部');
     setCategoryList(data);
@@ -86,7 +88,7 @@ export default function Board(props: any) {
   const toAlarmDetail = () => {
     history.push({
       pathname: 'alarm-rules',
-      search: 'tab=1',
+      search: 'tab=rules',
     });
   };
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {Button, Tooltip, Table, Tag} from 'antd';
+import { Button, Tooltip, Table, Tag } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import AddSilence from './component/add-silence';
 import ListSilence from './component/list-silence';
 import './index.less';
-import {getCluster, getCurrentAlerts} from './service';
+import { getCluster, getCurrentAlerts } from './service';
 import { Form, Select } from '@cffe/h2o-design';
-import {datetimeCellRender} from "@/utils";
+import { datetimeCellRender } from '@/utils';
 
 type statusTypeItem = {
   color: string;
@@ -18,6 +18,7 @@ const STATUS_TYPE: Record<string, statusTypeItem> = {
   firing: { text: '告警中', color: 'blue' },
   resolved: { text: '已修复', color: 'green' },
   terminate: { text: '中断处理', color: 'default' },
+  silenced: { text: '静默中', color: 'default' },
 };
 
 export default function CurrentAlarm(props: any) {
@@ -48,15 +49,15 @@ export default function CurrentAlarm(props: any) {
   }, []);
 
   useEffect(() => {
-    void handleSearch()
+    void handleSearch();
   }, [clusterCode]);
 
   async function handleSearch() {
     if (!clusterCode) {
-      return
+      return;
     }
-    const res = await getCurrentAlerts( {
-      clusterId: clusterCode
+    const res = await getCurrentAlerts({
+      clusterId: clusterCode,
     });
     setDataList(res?.data || []);
   }
@@ -69,9 +70,9 @@ export default function CurrentAlarm(props: any) {
     <>
       <FilterCard>
         <div style={{ display: 'flex', justifyContent: 'space-between', height: 30 }}>
-          <div style={{ display: 'flex', }}>
-            <Form style={{ marginRight: '10px', }}>
-              <Form style={{ marginRight: '10px', }}>
+          <div style={{ display: 'flex' }}>
+            <Form style={{ marginRight: '10px' }}>
+              <Form style={{ marginRight: '10px' }}>
                 <Form.Item label="集群选择">
                   <Select
                     clearIcon={false}
@@ -85,7 +86,7 @@ export default function CurrentAlarm(props: any) {
             </Form>
           </div>
           <div>
-            <Button type="primary" onClick={() => setVisible(true)} style={{margin:'0 10px'}}>
+            <Button type="primary" onClick={() => setVisible(true)} style={{ margin: '0 10px' }}>
               静默列表
             </Button>
           </div>
@@ -131,17 +132,19 @@ export default function CurrentAlarm(props: any) {
               align: 'center',
               render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
-                  <a
+                  <Button
+                    type="link"
+                    disabled={record.state === 'silenced'}
                     onClick={() => {
                       setAddParam({
                         clusterId: clusterCode + '',
-                        labels: record.labels
+                        labels: record.labels,
                       });
                       setAddVisible(true);
                     }}
                   >
                     静默
-                  </a>
+                  </Button>
                 </div>
               ),
             },
@@ -155,18 +158,16 @@ export default function CurrentAlarm(props: any) {
             setAddVisible(false);
             void handleSearch();
           }}
+        />
+        {visible && (
+          <ListSilence
+            visible={visible}
+            onClose={() => setVisible(false)}
+            param={{
+              clusterId: clusterCode,
+            }}
           />
-        {
-          visible && (
-            <ListSilence
-              visible={visible}
-              onClose={() => setVisible(false)}
-              param={{
-                clusterId: clusterCode
-              }}
-            />
-          )
-        }
+        )}
       </ContentCard>
     </>
   );

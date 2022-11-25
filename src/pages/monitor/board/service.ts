@@ -141,9 +141,9 @@ export const graphTableInfo = (clusterCode: string, dsType: string) => {
  * GET 获取监控大盘类别名称清单
  * @returns
  */
-export const getCategory = () => {
+export const getCategory = (data?: any) => {
   const url = `${appConfig.apiPrefix}/monitorManage/graphTable/category/name/list`;
-  return getRequest(url);
+  return getRequest(url, { data });
 };
 
 /**

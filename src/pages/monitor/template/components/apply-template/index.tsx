@@ -3,6 +3,7 @@ import { Button, Form, message, Select, Checkbox, Drawer, Tree } from 'antd';
 import { applyTemplate, graphTemplateList } from '../../service';
 import UserSelector from '@/components/user-selector';
 import { useEnvListOptions } from '@/pages/monitor/alarm-rules/hooks';
+import './index.less';
 
 interface IProps {
   visible: boolean;
@@ -115,6 +116,7 @@ const ApplyTemplate = (props: IProps) => {
       width={500}
       maskClosable={false}
       onClose={onClose}
+      className="apply-template-modal"
       footer={
         <div className="drawer-footer">
           <Button type="primary" onClick={onConfirm}>

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Tabs, Card, Form, Input, Spin, Select, Divider, Button,Tooltip } from 'antd';
+import { Tabs, Card, Form, Input, Spin, Select, Divider, Button, Tooltip } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import DashboardsModal from './dashboard';
 import PageContainer from '@/components/page-container';
@@ -93,12 +93,12 @@ const Coms = (props: any) => {
     // reset();
     queryNodeList({ clusterId: param });
     queryUseMarket(param);
-    queryNameSpace(param)
+    queryNameSpace(param);
   };
 
   useEffect(() => {
-    selectCluster(props.clusterCode)
-  }, [props.clusterCode])
+    selectCluster(props.clusterCode);
+  }, [props.clusterCode]);
 
   // 查询资源使用情况
   const queryResData = (value: any) => {
@@ -318,8 +318,8 @@ const Coms = (props: any) => {
                     el.title === '节点数'
                       ? '#monitor-tabs-content-sec-node'
                       : el.title === 'POD数'
-                        ? '#monitor-tabs-content-sec-pod'
-                        : '#mode-table-card'
+                      ? '#monitor-tabs-content-sec-pod'
+                      : '#mode-table-card'
                   }
                 >
                   {el.value || '-'}
@@ -345,7 +345,7 @@ const Coms = (props: any) => {
   };
 
   return (
-    <PageContainer className="monitor-board">
+    <PageContainer className="monitor-board" style={{ padding: 0 }}>
       <AlarmModal
         mode={alarmInfoMode}
         curClusterId={currentCluster}
@@ -509,7 +509,6 @@ const Coms = (props: any) => {
                 current: pageIndex,
                 showSizeChanger: true,
                 onShowSizeChange: (_, next) => {
-
                   setPageIndex(1);
                   setPageSize(next);
                   // queryPodData(currentCluster, 1, next, searchKeyWords?.keyword);
@@ -534,7 +533,10 @@ const Coms = (props: any) => {
                 Cpu: (value, record) => {
                   return (
                     <Tooltip title={`${value}%`}>
-                      <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap", }}>
+                      <span
+                        className="monitor-tabs-content-tag"
+                        style={{ backgroundColor: getColorByValue(value), whiteSpace: 'nowrap' }}
+                      >
                         {value}%
                       </span>
                     </Tooltip>
@@ -543,7 +545,10 @@ const Coms = (props: any) => {
                 Wss: (value, record) => {
                   return (
                     <Tooltip title={`${value}%`}>
-                      <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
+                      <span
+                        className="monitor-tabs-content-tag"
+                        style={{ backgroundColor: getColorByValue(value), whiteSpace: 'nowrap' }}
+                      >
                         {value}%
                       </span>
                     </Tooltip>
@@ -552,7 +557,10 @@ const Coms = (props: any) => {
                 Rss: (value, record) => {
                   return (
                     <Tooltip title={`${value}%`}>
-                      <span className="monitor-tabs-content-tag" style={{ backgroundColor: getColorByValue(value),whiteSpace:"nowrap" }}>
+                      <span
+                        className="monitor-tabs-content-tag"
+                        style={{ backgroundColor: getColorByValue(value), whiteSpace: 'nowrap' }}
+                      >
                         {value}%
                       </span>
                     </Tooltip>

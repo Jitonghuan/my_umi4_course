@@ -691,11 +691,11 @@ export default [
         name: '报警中心',
         component: '@/pages/monitor/alarm-center',
       },
-      // {
-      //   "path": `${baseRoutePath}/monitor/template`,
-      //   "name": "模板管理",
-      //   "component": "@/pages/monitor/template"
-      // },
+      {
+        path: `${baseRoutePath}/monitor/template`,
+        name: '监控配置',
+        component: '@/pages/monitor/template-center',
+      },
       // {
       //   "path": `${baseRoutePath}/monitor/history`,
       //   "name": "报警历史",

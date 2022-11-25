@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Select, Tabs, Spin } from '@cffe/h2o-design';
 import PageContainer from '@/components/page-container';
 import ClusterBoard from '../cluster';
-import { getCluster } from "@/pages/monitor/board/service";
+import { getCluster } from '@/pages/monitor/board/service';
 import { graphDashboard } from './service';
 import Detail from './component/detail';
 import './index.less';
@@ -10,7 +10,6 @@ import './index.less';
 const rootCls = 'monitor-board';
 
 export default function Board() {
-
   const [activeKey, setActiveKey] = useState('-1');
   const [clusterList, setClusterList] = useState<any>([]);
   const [clusterCode, setClusterCode] = useState<string | null>(null);
@@ -30,8 +29,8 @@ export default function Board() {
 
   useEffect(() => {
     getCluster().then((res) => {
-      if (res.success) {
-        const data = res.data.map((item: any) => {
+      if (res?.success) {
+        const data = res?.data.map((item: any) => {
           return {
             label: item.clusterName,
             value: item.id,
@@ -51,7 +50,6 @@ export default function Board() {
       }
     });
   }, []);
-
 
   return (
     <PageContainer className={rootCls}>
@@ -73,20 +71,16 @@ export default function Board() {
                   onChange={onClusterChange}
                 />
               </div>
-            )
+            ),
           }}
         >
-          <Tabs.TabPane tab="集群监控" key={-1} />
-          {
-            dashboardList.map((item, i) => (
-              <Tabs.TabPane tab={item.name} key={i} />
-            ))
-          }
+          <Tabs.TabPane tab="集群大盘" key={-1} />
+          {dashboardList.map((item, i) => (
+            <Tabs.TabPane tab={item.name} key={i} />
+          ))}
         </Tabs>
 
-        {
-          activeKey === '-1' ? <ClusterBoard clusterCode={clusterCode}/> : null
-        }
+        {activeKey === '-1' ? <ClusterBoard clusterCode={clusterCode} /> : null}
 
         {dashboardList.length && activeKey !== '-1' ? (
           <Spin style={{ display: 'block' }} spinning={loading}>

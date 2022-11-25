@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {Modal, message, Table, Tooltip} from "antd";
-import { delSilence, getSilence} from "../../service";
-import {datetimeCellRender} from "@/utils";
+import React, { useEffect, useState } from 'react';
+import { Modal, message, Table, Tooltip } from 'antd';
+import { delSilence, getSilence } from '../../service';
+import { datetimeCellRender } from '@/utils';
 
 interface IProps {
   visible: boolean;
@@ -16,7 +16,7 @@ const ListSilence = (props: IProps) => {
   async function onDel(record: any) {
     const res = await delSilence({
       ...param,
-      silenceId: record.id
+      silenceId: record.id,
     });
     if (res?.success) {
       message.success('解除成功');
@@ -24,10 +24,10 @@ const ListSilence = (props: IProps) => {
     }
   }
 
-  async function onSearch () {
+  async function onSearch() {
     const res = await getSilence({
-      ...param || {}
-    })
+      ...(param || {}),
+    });
     setDataList(res?.data || []);
   }
 
@@ -35,7 +35,7 @@ const ListSilence = (props: IProps) => {
     if (visible) {
       void onSearch();
     }
-  }, [visible])
+  }, [visible]);
 
   return (
     <Modal
@@ -82,7 +82,20 @@ const ListSilence = (props: IProps) => {
             title: '静默告警标签匹配',
             dataIndex: 'matchers',
             width: 300,
-            render: (text) => <div>{(text || []).map((item: any) => <div>{`${item.name}: ${item.value}`}</div>)}</div>,
+            ellipsis: true,
+            render: (text) => (
+              <Tooltip
+                title={
+                  <div>
+                    {(text || []).map((item: any) => (
+                      <div>{`${item.name}: ${item.value};`}</div>
+                    ))}
+                  </div>
+                }
+              >
+                {(text || []).map((item: any) => `${item.name}: ${item.value}`)}
+              </Tooltip>
+            ),
           },
           {
             width: 120,
@@ -92,18 +105,14 @@ const ListSilence = (props: IProps) => {
             align: 'center',
             render: (_: any, record: any, index: number) => (
               <div className="action-cell">
-                <a
-                  onClick={() => onDel(record)}
-                >
-                  解除静默
-                </a>
+                <a onClick={() => onDel(record)}>解除静默</a>
               </div>
             ),
           },
         ]}
       />
     </Modal>
-  )
-}
+  );
+};
 
 export default ListSilence;

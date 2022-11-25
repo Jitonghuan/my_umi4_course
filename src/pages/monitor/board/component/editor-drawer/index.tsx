@@ -241,17 +241,6 @@ const EditorDrawer = (props: IEditorDrawer) => {
             )}
           </Select>
         </Form.Item>
-        <Form.Item label="集群选择" name="clusterCode" rules={[{ required: true, message: '请选择集群!' }]}>
-          <Select
-            showSearch
-            allowClear
-            style={{ width: '250px' }}
-            options={clusterList}
-            onChange={(value) => {
-              onDataSourceTypeChange({ clusterCode: value });
-            }}
-          />
-        </Form.Item>
         <Form.Item label="数据源类型" name="dsType" rules={[{ required: true, message: '请选择数据源类型!' }]}>
           <Select
             options={[
@@ -267,6 +256,17 @@ const EditorDrawer = (props: IEditorDrawer) => {
             onChange={(value) => {
               formRef.setFieldValue('graphTemplateId', undefined);
               onDataSourceTypeChange({ dsType: value });
+            }}
+          />
+        </Form.Item>
+        <Form.Item label="集群选择" name="clusterCode" rules={[{ required: true, message: '请选择集群!' }]}>
+          <Select
+            showSearch
+            allowClear
+            style={{ width: '250px' }}
+            options={clusterList}
+            onChange={(value) => {
+              onDataSourceTypeChange({ clusterCode: value });
             }}
           />
         </Form.Item>

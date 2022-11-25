@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Space, Popconfirm, Form, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
@@ -9,7 +9,8 @@ import './index.less';
 import {
   createGraphTemplate,
   createGraphTemplateUrl,
-  deleteGraphTemplateUrl, getCategory,
+  deleteGraphTemplateUrl,
+  getCategory,
   queryGraphTemplateUrl,
   updateGraphTemplate,
   updateGraphTemplateUrl,
@@ -32,11 +33,11 @@ const TemplateCom: React.FC = () => {
   const onCategory = async () => {
     const res = await getCategory();
     setCategoryList(res?.data || []);
-  }
+  };
 
   useEffect(() => {
     onCategory();
-  }, [])
+  }, []);
 
   const {
     tableProps = {},
@@ -317,18 +318,20 @@ const TemplateCom: React.FC = () => {
               ]}
             />
           </Form.Item>
+          <Form.Item label="类别" name="graphType" required rules={[{ required: true, message: '请选择' }]}>
+            <Select>
+              {categoryList.map((item) => (
+                <Select.Option key={item} value={item}>
+                  {item}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
           <Form.Item label="描述" name="graphTemplateDescribe">
             <Input />
           </Form.Item>
           <Form.Item label="JSON" name="graphTemplateJson" initialValue="">
             <AceEditor mode="json" height={300} />
-          </Form.Item>
-          <Form.Item label="类别" name="graphType" required rules={[{ required: true, message: '请选择' }]}>
-            <Select>
-              {
-                categoryList.map(item => <Select.Option key={item} value={item}>{item}</Select.Option>)
-              }
-            </Select>
           </Form.Item>
         </Form>
       </Drawer>
