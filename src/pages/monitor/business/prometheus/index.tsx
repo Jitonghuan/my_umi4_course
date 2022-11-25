@@ -43,7 +43,7 @@ export default function DpMonitor() {
   };
 
   return (
-    <PageContainer className="dp-monitor-wrapper">
+    <PageContainer className="dp-monitor-wrapper" style={{ padding: 0 }}>
       <FilterCard>
         <Form
           layout="inline"
