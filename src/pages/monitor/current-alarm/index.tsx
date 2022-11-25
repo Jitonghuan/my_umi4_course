@@ -39,10 +39,15 @@ export default function CurrentAlarm(props: any) {
           };
         });
         setClusterList(data);
-        if (data?.[0]?.value) {
-          onClusterChange(data?.[0]?.value);
+        const localstorageData = JSON.parse(localStorage.getItem('__monitor_board_cluster_selected') || '{}');
+        if (localstorageData?.clusterCode) {
+          onClusterChange(localstorageData.clusterCode);
         } else {
-          setClusterCode(null);
+          if (data?.[0]?.value) {
+            onClusterChange(data?.[0]?.value);
+          } else {
+            setClusterCode(null);
+          }
         }
       }
     });
@@ -64,6 +69,8 @@ export default function CurrentAlarm(props: any) {
 
   const onClusterChange = (value: number) => {
     setClusterCode(value);
+    const localstorageData = { clusterCode: value };
+    localStorage.setItem('__monitor_board_cluster_selected', JSON.stringify(localstorageData));
   };
 
   return (
