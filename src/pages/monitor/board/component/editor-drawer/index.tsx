@@ -208,6 +208,7 @@ const EditorDrawer = (props: IEditorDrawer) => {
                 if (item) {
                   formRef.setFieldsValue({
                     ...item,
+                    graphName: item.name,
                   });
                 }
               }}
