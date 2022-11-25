@@ -48,11 +48,12 @@ export default function VersionList() {
 
     const tableColumns = useMemo(() => {
         return listSchema({
-            toDetail: (version: string, toTab: string) => {
+            toDetail: (record: any, toTab: string) => {
+                console.log(record, record.id, 'record')
                 // 跳转到版本详情
                 history.push({
                     pathname: '/matrix/version-manage/detail',
-                    search: stringify({ key: toTab, version, groupName: appCategory.label, groupCode: appCategory.value })
+                    search: stringify({ key: toTab, version: record?.releaseNumber, releaseId: record.id, categoryName: appCategory.label, categoryCode: appCategory.value })
                 })
             },
             downloadVersion: (record: any) => {
@@ -71,10 +72,10 @@ export default function VersionList() {
     const queryList = (params: any) => {
         setLoading(true);
         const value = form.getFieldsValue();
-        getReleaseList({ ...value, ...params }).then((res) => {
+        getReleaseList({ ...value, categoryCode: value?.categoryCode?.value, ...params }).then((res) => {
             if (res?.success) {
-                setData(res?.data?.dataSource || []);
-                setTotal(res?.data?.pageInfo?.total)
+                setData(res?.data || []);
+                setTotal(res?.data.length)
             }
         }).finally(() => { setLoading(false) })
     }
@@ -133,13 +134,13 @@ export default function VersionList() {
                         <Form.Item label="版本号" name="releaseNumber">
                             <Input placeholder='请输入版本号' />
                         </Form.Item>
-                        <Form.Item label="发版时间" name="finishTime">
+                        {/* <Form.Item label="发版时间" name="finishTime">
                             <DatePicker
                                 showTime
                                 // onChange={(v: any) => { setSelectTime(v.format('YYYY-MM-DD HH:mm:ss')) }}
                                 format="YYYY-MM-DD HH:mm:ss"
                             />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Form>
 
                     <div>

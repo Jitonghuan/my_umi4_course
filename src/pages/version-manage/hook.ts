@@ -17,8 +17,8 @@ export function useReleaseOption(props: any) {
             setLoading(true);
             const res = await getReleaseList({ ...props, ...extra });
             if (res?.success) {
-                const { items } = res?.data || {};
-                const options = items.map((e: any) => ({ value: e.releaseNumber, label: e.releaseNumber }))
+                const data = res?.data || [];
+                const options = data.map((e: any) => ({ value: e.id, label: e.releaseNumber }))
                 setData(options || []);
             }
         } catch (ex) {
@@ -28,9 +28,9 @@ export function useReleaseOption(props: any) {
         }
     }, [props]);
 
-    useEffect(() => {
-        loadData({});
-    }, []);
+    // useEffect(() => {
+    //     loadData({});
+    // }, []);
     return [data, loading, loadData]
 }
 

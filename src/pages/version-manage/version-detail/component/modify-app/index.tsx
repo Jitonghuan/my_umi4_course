@@ -1,49 +1,58 @@
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { Form, Modal, Table, Space, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import AceEditor from '@/components/ace-editor';
+import detailContext from '../../context';
+import { releaseAppRel } from '../../../service';
 import './index.less'
 
 export default function ModifyApp() {
-    const [data, setData] = useState<any>([{ content: '10', code: 'hbos-dtc' }]);
+    const { categoryCode, releaseId } = useContext(detailContext);
+    const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>('');
     const [mode, setMode] = useState<string>('hide');
     const [curRecord, setCurRecord] = useState<any>({});
+    const [loading, setLoading] = useState<boolean>(false);
     const [form] = Form.useForm();
+
+    const frontTotal = useMemo(() => (data || []).filter((item: any) => item.appType !== 'backend').length, [data])
+    const backendTotal = useMemo(() => (data || []).filter((item: any) => item.appType === 'backend').length, [data])
+
     const columns = [
         {
             title: '应用CODE',
-            dataIndex: 'code',
+            dataIndex: 'appCode',
             width: 120,
         },
         {
             title: '应用类型',
-            dataIndex: 'id',
+            dataIndex: 'appType',
             width: 80,
+            render: (value: string) => <span>{value === 'backend' ? '后端' : '前端'}</span>
         },
         {
             title: '变更内容',
-            dataIndex: 'content',
+            dataIndex: 'relationDemands',
             width: 100,
-            render: (value: string, record: any) => <a onClick={() => { clickRow('content', record) }}>{value}</a>
+            render: (value: any, record: any) => <a onClick={() => { clickRow('content', record) }}>{(value || []).length}</a>
         },
         {
             title: '变更配置',
-            dataIndex: 'content',
+            dataIndex: 'config',
             width: 100,
             render: (value: string, record: any) => <a onClick={() => { clickRow('config', record) }}>{value}</a>
         },
         {
             title: '变更SQL',
-            dataIndex: 'content',
+            dataIndex: 'sql',
             width: 100,
             render: (value: string, record: any) => <a onClick={() => { clickRow('sql', record) }}>{value}</a>
         },
         {
             title: '应用版本状态',
-            dataIndex: 'id',
+            dataIndex: 'appStatus',
             width: 120,
         },
         {
@@ -87,6 +96,21 @@ export default function ModifyApp() {
 
     ]
 
+    useEffect(() => {
+        if (releaseId) {
+            queryData();
+        }
+    }, [releaseId])
+
+    const queryData = () => {
+        setLoading(true)
+        releaseAppRel({ releaseId }).then((res) => {
+            if (res?.success) {
+                setData(res?.data || [])
+            }
+        }).finally(() => { setLoading(false) })
+    }
+
     const clickRow = (type: string, record: any) => {
         setCurRecord(record);
         setMode(type);
@@ -96,9 +120,9 @@ export default function ModifyApp() {
             <div className='table-top'>
                 <div className='flex-space-between'>
                     <Space>
-                        <span>应用总数：7</span>
-                        <span>前端应用：7</span>
-                        <span>后端应用：3</span>
+                        <span>应用总数：{data?.length}</span>
+                        <span>前端应用：{frontTotal}</span>
+                        <span>后端应用：{backendTotal}</span>
                     </Space>
                     <div>
                         <Tooltip title='ceshi ceshi ' placement="top">
@@ -118,7 +142,7 @@ export default function ModifyApp() {
             </div>
             <Table
                 dataSource={data}
-                // loading={loading || updateLoading}
+                loading={loading}
                 bordered
                 rowKey="id"
                 pagination={false}

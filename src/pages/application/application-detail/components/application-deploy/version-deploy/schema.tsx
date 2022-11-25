@@ -28,8 +28,9 @@ export const versionList = ({ demandDetail }) => {
     return [
         {
             title: '版本号',
-            dataIndex: 'id',
+            dataIndex: 'releaseNumber',
             width: 160,
+            render: (value: string) => <a>{value}</a>
         },
         {
             title: '关联需求',
@@ -39,22 +40,22 @@ export const versionList = ({ demandDetail }) => {
         },
         {
             title: '版本负责人',
-            dataIndex: 'feature',
+            dataIndex: 'owner',
             width: 120,
         },
         {
             title: '创建时间',
-            dataIndex: 'createTime',
+            dataIndex: 'gmtCreate',
             width: 150,
         },
         {
             title: '计划发布时间',
-            dataIndex: 'publishTime',
+            dataIndex: 'planTime',
             width: 180,
         },
         {
             title: '版本简述',
-            dataIndex: 'mark',
+            dataIndex: 'sketch',
             width: 240,
         },
     ]

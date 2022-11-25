@@ -83,7 +83,7 @@ export default function RealteDemandBug(props: IProps) {
                 </Form.Item>
                 <Form.Item
                     label="需求列表"
-                    name="demandId"
+                    name="demandIds"
                     rules={[{ required: true, message: '请选择需求' }]}
                 >
                     <Select

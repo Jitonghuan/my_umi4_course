@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
-import { Input, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
+import { Tag, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
+import detailContext from '../../context';
+import { releaseDemandRel, deleteDemand } from '../../../service';
 import { arrowStyleType } from '@/pages/trafficmap/constant';
 const mockData = [
     { title: '应用管理：版本发布' },
@@ -19,14 +21,23 @@ const mockData = [
     { title: '应用管理：版本发布' }
 ]
 export default function ContentList() {
-    const [data, setData] = useState<any>(mockData);
-    const [type, setType] = useState<string>('hide')
-    const [searchValue, setSearchValue] = useState<string>('')
+    const [dataSource, setDataSource] = useState<any>([]);
+    const [type, setType] = useState<string>('hide');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [searchValue, setSearchValue] = useState<string>('');
+    const { categoryCode, releaseId } = useContext(detailContext);
+    const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [dataSource])
+    const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [dataSource])
+
     const columns: any = [
         {
             title: 'ID',
-            dataIndex: 'id',
-            width: 120,
+            dataIndex: 'entryCode',
+            width: 160,
+            render: (value: string, record: any) =>
+                <a onClick={() => {
+                    if (record?.url) { window.open(record.url, '_blank') }
+                }}>{value}</a>
         },
         {
             title: '标题',
@@ -35,18 +46,20 @@ export default function ContentList() {
         },
         {
             title: '类型',
-            dataIndex: 'id',
+            dataIndex: 'relatedPlat',
             width: 80,
+            render: (value: string) => <span>{value === 'demandPlat' ? '需求' : 'bug'}</span>
         },
         {
             title: '版本需求状态',
-            dataIndex: 'id',
+            dataIndex: 'demandStatus',
             width: 120,
         },
         {
             title: '关联应用',
-            dataIndex: 'id',
+            dataIndex: 'relationApps',
             width: 300,
+            render: (value: any, record: any) => <div>{value.map((item: any) => <Tag>{item.appCode}{item.appStatus}</Tag>)}</div>
         },
         {
             title: '操作',
@@ -55,9 +68,9 @@ export default function ContentList() {
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
                     <Popconfirm
-                        title="确定要删除吗？"
+                        title="确定要移除吗？"
                         onConfirm={() => {
-                            handleDelete();
+                            handleDelete(record.id);
                         }}
                     >
                         <a>
@@ -69,18 +82,36 @@ export default function ContentList() {
         },
     ]
 
-    const handleDelete = () => {
+    useEffect(() => {
+        if (releaseId) {
+            queryData();
+        }
+    }, [releaseId])
 
+    const queryData = () => {
+        setLoading(true)
+        releaseDemandRel({ releaseId }).then((res) => {
+            if (res?.success) {
+                setDataSource(res?.data || [])
+            }
+        }).finally(() => { setLoading(false) })
+    }
+
+    const handleDelete = async (id: any) => {
+        const res = await deleteDemand({ ids: [id] })
+        if (res?.success) {
+            queryData();
+        }
     }
     return (
         <>
-            <RealteDemandBug type={type} onClose={() => { setType('hide') }} />
+            <RealteDemandBug type={type} onClose={() => { setType('hide') }} releaseId={releaseId} onSave={queryData} />
             <div className='table-top'>
                 <div className='flex-space-between'>
                     <Space>
-                        <span>内容总数：7</span>
-                        <span>需求：7</span>
-                        <span>bug：3</span>
+                        <span>内容总数：{dataSource?.length}</span>
+                        <span>需求：{demandTotal}</span>
+                        <span>bug：{bugTotal}</span>
                     </Space>
                     <div>
                         <Tooltip title='ceshi ceshi ' placement="top">
@@ -99,10 +130,10 @@ export default function ContentList() {
                 </div>
             </div>
             <Table
-                dataSource={data}
-                // loading={loading || updateLoading}
+                dataSource={dataSource}
                 bordered
                 rowKey="id"
+                loading={loading}
                 // pagination={{
                 //     pageSize: pageSize,
                 //     total: total,

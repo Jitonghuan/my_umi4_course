@@ -1,16 +1,16 @@
 import { createContext } from 'react';
 
 export interface ContextTypes {
-    selectVersion: string;
-    groupName: string;
-    groupCode: string;
+    releaseId: any;
+    categoryName: string;
+    categoryCode: string;
     loading: boolean;
 }
 
 export default createContext<ContextTypes>(
     {
-        selectVersion: '',
-        groupName: '',
-        groupCode: '',
+        releaseId: '',
+        categoryName: '',
+        categoryCode: '',
         loading: false
     });

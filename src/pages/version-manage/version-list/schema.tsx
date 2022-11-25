@@ -1,40 +1,47 @@
 import { Popconfirm, Tooltip } from 'antd';
+import { statusMap } from '../type';
 export const listSchema = ({ toDetail, downloadVersion, downloadCountList, mergeVersion }) => {
     return [
         {
             title: '序号',
             dataIndex: 'id',
-            width: 60,
+            width: 30,
         },
         {
             title: '版本号',
             dataIndex: 'releaseNumber',
-            width: 80,
-            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'list') }}>{value}</a>
+            width: 40,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record, 'list') }}>{value}</a>
         },
         {
             title: '变更应用数',
-            dataIndex: 'version',
-            width: 80,
-            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'app') }}>{value}</a>
+            dataIndex: 'alterationAppCount',
+            width: 55,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record, 'app') }}>{value}</a>
         },
         {
             title: '变更配置项',
-            dataIndex: 'version',
-            width: 80,
-            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'config') }}>{value}</a>
+            dataIndex: 'alterationConfigCount',
+            width: 55,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record, 'config') }}>{value}</a>
         },
         {
             title: 'SQL脚本',
-            dataIndex: 'version',
-            width: 80,
-            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'sql') }}>{value}</a>
+            dataIndex: 'alterationSqlCount',
+            width: 50,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record, 'sql') }}>{value}</a>
         },
         {
             title: '关联内容',
-            dataIndex: 'content',
-            width: 80,
-            render: (value: string, record: any) => <a onClick={() => { toDetail(record.version, 'list') }}>{value}</a>
+            dataIndex: 'relationDemandCount',
+            width: 50,
+            render: (value: string, record: any) => <a onClick={() => { toDetail(record, 'list') }}>{value}</a>
+        },
+        {
+            title: '状态',
+            dataIndex: 'status',
+            width: 100,
+            render: (value: string) => <span>{statusMap[value].label}</span>,
         },
         {
             title: '版本简述',
@@ -44,14 +51,9 @@ export const listSchema = ({ toDetail, downloadVersion, downloadCountList, merge
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
-            title: '状态',
-            dataIndex: 'status',
-            width: 120,
-        },
-        {
             title: '下载次数',
             dataIndex: 'downloadCount',
-            width: 60,
+            width: 45,
             render: (value: string, record: any) => <a onClick={() => { downloadCountList(record) }}>{value}</a>
         },
         {
@@ -71,7 +73,7 @@ export const listSchema = ({ toDetail, downloadVersion, downloadCountList, merge
         {
             title: '操作',
             dataIndex: 'id',
-            width: 240,
+            width: 200,
             fixed: 'right',
             render: (value: any, record: any, index: number) => (
                 <div className="action-cell">

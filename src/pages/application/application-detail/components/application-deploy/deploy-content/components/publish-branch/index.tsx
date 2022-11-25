@@ -20,6 +20,7 @@ import { useMasterBranchList } from '@/pages/application/application-detail/comp
 import './index.less';
 import { versionList } from '../../../version-deploy/schema';
 import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
+import { appActiveReleases, releaseDeploy } from '../../../service';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
@@ -52,7 +53,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const selectRef = useRef(null) as any;
   const [visible, setVisible] = useState(false);//关联需求详情弹窗
   const [currentData, setCurrentData] = useState<any>([]);
-  const [publishType, setPublishType] = useState<string>('branch')
+  const [publishType, setPublishType] = useState<string>('branch');
+  const [versionData, setVersionData] = useState<any>([]);
+  const [releaseRowKeys, setReleaseRowKeys] = useState<(string | number)[]>([]);
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
     if (appType === 'frontend') {
@@ -61,6 +64,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       return isClient ? 'beClientBuild' : 'beServerBuild';
     }
   };
+
+  useEffect(() => {
+    getVersionList();
+  }, [])
 
   const branchColumns: any = useMemo(() => {
     return branchTableSchema({ appData, id, appCode, env }).filter((item) => item.title)
@@ -158,6 +165,30 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     setPublishType(e.target.value)
   }
 
+  const getVersionList = () => {
+    appActiveReleases({ appCode: appData?.appCode }).then((res) => {
+      if (res?.success) {
+        setVersionData(res?.data || [])
+      }
+    })
+  }
+
+  const publishRelease = () => {
+    releaseDeploy({
+      releaseId: releaseRowKeys[0],
+      pipelineCode,
+      envCodes: deployEnv,
+      buildType: getBuildType(),
+      appCode: appCode!,
+      envTypeCode: env,
+      deployModel: appData?.deployModel,
+    }).then((res) => {
+      if (res?.success) {
+
+      }
+    })
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>{`待发布内容`}</div>
@@ -223,19 +254,19 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         <Tabs.TabPane tab='待发布版本' key='version'>
           <>
             <div className='flex-end' style={{ marginBottom: '10px' }}>
-              <Button type='primary' disabled={!selectedRowKeys.length} onClick={() => { }}>提交发布</Button>
+              <Button type='primary' disabled={!releaseRowKeys.length} onClick={() => { publishRelease() }}>提交发布</Button>
             </div>
             <Table
-              dataSource={[]}
+              dataSource={versionData}
               bordered
               rowKey="id"
               pagination={false}
               columns={verisionColumns}
               rowSelection={{
                 type: 'checkbox',
-                selectedRowKeys,
-                onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                  setSelectedRowKeys(selectedRowKeys as any);
+                releaseRowKeys,
+                onChange: (releaseRowKeys: React.Key[], selectedRows: any[]) => {
+                  setReleaseRowKeys(releaseRowKeys as any);
                 },
               }}
             />

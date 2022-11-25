@@ -42,3 +42,14 @@ export const deleteDemand = (data: any) => {
     const url = addAPIPrefix('/releaseManage/releaseDemandRel/delete');
     return postRequest(url, { data: data });
 };
+
+// 版本需求列表
+export const releaseDemandRel = (data: any) => {
+    const url = addAPIPrefix('/releaseManage/releaseDemandRel/list');
+    return getRequest(url, { data: data });
+};
+// 版本应用列表
+export const releaseAppRel = (data: any) => {
+    const url = addAPIPrefix('/releaseManage/releaseAppRel/list');
+    return getRequest(url, { data: data });
+};

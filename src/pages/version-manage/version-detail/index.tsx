@@ -16,25 +16,27 @@ import detailContext from './context';
 import { useReleaseOption } from '../hook';
 import { getReleaseList } from '../service';
 import OperateModal from '../version-list/operate-modal';
+import { statusMap } from '../type';
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
 export default function VersionDetail() {
     const query: any = parse(location.search);
-    const { key, version, groupName, groupCode } = query || {};
+    const { key, version, releaseId, categoryName, categoryCode } = query || {};
     const { categoryData } = useContext(FeContext);
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
-    const [appCategory, setAppCategroy] = useState<any>({ value: groupCode || '', label: groupName || '' });
+    console.log(categoryCode, categoryName, '11')
+    const [appCategory, setAppCategroy] = useState<any>({ value: categoryCode || '', label: categoryName || '' });
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
-    const [selectVersion, setSelectVersion] = useState<string>(version || '');
-    const [versionOptions, versionOptionsLoading, loadVersionOption] = useReleaseOption(0);
+    const [selectVersion, setSelectVersion] = useState<any>({ label: version || '', value: releaseId || '' });
+    const [versionOptions, versionOptionsLoading, loadVersionOption] = useReleaseOption({});
     const [initData, setInitData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        if (versionOptions.length && !selectVersion) {
-            setSelectVersion(versionOptions[0].value);
+        if (versionOptions.length && !selectVersion?.value) {
+            setSelectVersion(versionOptions[0]);
         }
     }, [versionOptions])
 
@@ -46,8 +48,8 @@ export default function VersionDetail() {
     }, [categoryData])
 
     useEffect(() => {
-        if (selectVersion && appCategory?.value) {
-            queryData({ releaseNumber: selectVersion, categoryCode: appCategory.value })
+        if (selectVersion?.value && appCategory?.value) {
+            queryData({ releaseNumber: selectVersion.label, categoryCode: appCategory.value })
         }
     }, [appCategory, selectVersion])
 
@@ -72,7 +74,7 @@ export default function VersionDetail() {
         setLoading(true);
         getReleaseList({ ...params }).then((res) => {
             if (res?.success) {
-                setData(res?.data?.dataSource[0] || {});
+                setData(res?.data[0] || {});
             }
         }).finally(() => { setLoading(false) })
     }
@@ -98,6 +100,7 @@ export default function VersionDetail() {
                                 labelInValue
                                 showSearch
                                 onChange={(v) => {
+                                    setSelectVersion({ value: '', label: '' })
                                     setAppCategroy({ label: v.label, value: v.value });
                                     loadVersionOption({ categoryCode: v.value })
                                 }}
@@ -110,13 +113,17 @@ export default function VersionDetail() {
                                 size="small"
                                 options={versionOptions}
                                 value={selectVersion}
+                                labelInValue
+                                onChange={(v) => {
+                                    setSelectVersion({ label: v.label, value: v.value });
+                                }}
                             ></Select>
                         </div>
                     </Space>
                     <div className='right-text-container'>
                         <div>
                             <span className='grey-text'>当前版本：</span>
-                            <span className='black-text'>{selectVersion || '---'}</span>
+                            <span className='black-text'>{selectVersion.label || '---'}</span>
                         </div>
                         <div>
                             <span className='black-text' style={{ fontSize: 18 }}>{appCategory?.value || '---'}</span>
@@ -126,15 +133,15 @@ export default function VersionDetail() {
                 </div>
                 <Descriptions title="概述" bordered column={4}>
                     <Descriptions.Item label="版本号">{data?.releaseNumber || '--'}</Descriptions.Item>
-                    <Descriptions.Item label="应用分类">{data?.categoryCode}</Descriptions.Item>
-                    <Descriptions.Item label="版本负责人">{data?.owner}</Descriptions.Item>
-                    <Descriptions.Item label="版本状态">关联需求</Descriptions.Item>
-                    <Descriptions.Item label="创建时间">{data?.createTime}</Descriptions.Item>
-                    <Descriptions.Item label="计划发版本时间">{data?.planTime}</Descriptions.Item>
-                    <Descriptions.Item label="发版时间">--</Descriptions.Item>
-                    <Descriptions.Item label="下载次数"><a onClick={() => { setVisible(true) }}>2</a></Descriptions.Item>
-                    <Descriptions.Item label="简述" >{data?.sketch}</Descriptions.Item>
-                    <Descriptions.Item label="备注" >{data?.desc}</Descriptions.Item>
+                    <Descriptions.Item label="应用分类">{data?.categoryCode || '--'}</Descriptions.Item>
+                    <Descriptions.Item label="版本负责人">{data?.owner || '--'}</Descriptions.Item>
+                    <Descriptions.Item label="版本状态">{data.status ? statusMap[data?.status].label : '--'}</Descriptions.Item>
+                    <Descriptions.Item label="创建时间">{data?.gmtCreate || '--'}</Descriptions.Item>
+                    <Descriptions.Item label="计划发版本时间">{data?.planTime || '--'}</Descriptions.Item>
+                    <Descriptions.Item label="发版时间">{data?.finshTime || '--'}</Descriptions.Item>
+                    <Descriptions.Item label="下载次数"><a onClick={() => { setVisible(true) }}>{data?.downloadCount || 0}</a></Descriptions.Item>
+                    <Descriptions.Item label="简述" >{data?.sketch || ''}</Descriptions.Item>
+                    <Descriptions.Item label="备注" >{data?.desc || ''}</Descriptions.Item>
                 </Descriptions>
                 <div className='tab-container'>
                     <Tabs
@@ -146,7 +153,7 @@ export default function VersionDetail() {
                         ))}
                     </Tabs>
                     <detailContext.Provider
-                        value={{ selectVersion: selectVersion || '', groupCode: appCategory?.value || '', groupName: appCategory?.label || '', loading: loading }}
+                        value={{ releaseId: selectVersion?.value || '', categoryCode: appCategory?.value || '', categoryName: appCategory?.label || '', loading: loading }}
                     >
                         <GetComponent />
                     </detailContext.Provider>
