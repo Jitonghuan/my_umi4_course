@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, message, Table, Tooltip } from 'antd';
+import { Modal, message, Table, Tooltip, Popover } from 'antd';
 import { delSilence, getSilence } from '../../service';
 import { datetimeCellRender } from '@/utils';
 
@@ -8,6 +8,12 @@ interface IProps {
   onClose: () => void;
   param?: any;
 }
+
+const getParents = (node: HTMLElement, selector: string): HTMLElement => {
+  if (node === document.body) return node;
+  if (node.matches(selector)) return node;
+  return getParents(node.parentNode as HTMLElement, selector);
+};
 
 const ListSilence = (props: IProps) => {
   const { visible, onClose, param } = props;
@@ -41,11 +47,12 @@ const ListSilence = (props: IProps) => {
     <Modal
       visible={visible}
       title="静默列表"
-      width={1100}
+      width="1200"
       maskClosable={false}
       onCancel={onClose}
       onOk={onClose}
       footer={null}
+      className="list-silence-wrapper"
     >
       <Table
         bordered
@@ -83,8 +90,14 @@ const ListSilence = (props: IProps) => {
             dataIndex: 'matchers',
             width: 300,
             ellipsis: true,
-            render: (text) => (
+            render: (text, record, index) => (
               <Tooltip
+                placement="top"
+                // @ts-ignore
+                getPopupContainer={
+                  () => document.querySelector('.list-silence-wrapper')
+                  // getParents(document.querySelector(`.matchers-${index}`)!, '.list-silence-wrapper')
+                }
                 title={
                   <div>
                     {(text || []).map((item: any) => (
@@ -93,7 +106,9 @@ const ListSilence = (props: IProps) => {
                   </div>
                 }
               >
-                {(text || []).map((item: any) => `${item.name}: ${item.value}`)}
+                <div className={`matchers-${index}`}>
+                  {(text || []).map((item: any) => `${item.name}: ${item.value}`)}
+                </div>
               </Tooltip>
             ),
           },
