@@ -47,7 +47,11 @@ export default function AlarmRules() {
   const [tableProps, setTableProps] = useState<any>({});
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
-  const [pageInfo,setPageInfo]=useState<any>({})
+  const [pageInfo,setPageInfo]=useState<any>({
+    pageIndex:1,
+    total:0,
+    pageSize:20,
+  })
   useEffect(()=>{
     // if(!curRecord?.appID) return
     if(curRecord?.appCode&&curRecord?.envCode){
@@ -94,6 +98,16 @@ export default function AlarmRules() {
     if (res?.success) {
       setTableProps(res.data);
       setPageInfo(res?.data?.pageInfo)
+    }else{
+      setTableProps({
+        dataSource:[]
+      });
+      setPageInfo({
+        pageIndex:1,
+         total:0,
+         pageSize:20,
+
+      })
     }
   }
 
@@ -210,7 +224,7 @@ export default function AlarmRules() {
         </Form>
       </FilterCard>
       <ContentCard>
-        <RulesTable dataSource={tableProps} onQuery={queryList} pageInfo={pageInfo}/>
+        <RulesTable dataSource={tableProps} onQuery={queryList} pageInfo={pageInfo} setPageInfo={setPageInfo}/>
       </ContentCard>
     </PageContainer>
   );

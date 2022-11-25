@@ -14,6 +14,7 @@ interface RulesTableProps {
   onQuery: (param?: any) => void;
   serviceId?: string;
   pageInfo?:any;
+  setPageInfo?:any;
 }
 const ALERT_LEVEL: Record<number, { text: string; value: number; color: string }> = {
   2: { text: '警告', value: 2, color: 'yellow' },
@@ -26,6 +27,7 @@ type StatusTypeItem = {
   tagText: string;
   buttonText: string;
   status: number;
+  
 };
 
 const STATUS_TYPE: Record<number, StatusTypeItem> = {
@@ -34,14 +36,14 @@ const STATUS_TYPE: Record<number, StatusTypeItem> = {
 };
 
 export default function RulesTable(props: RulesTableProps) {
-  const { dataSource, onQuery, serviceId } = props;
+  const { dataSource, onQuery, serviceId ,pageInfo,setPageInfo} = props;
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
   const [type, setType] = useState<'add' | 'edit'>('add');
   const [editRecord, setEditRecord] = useState<Item>({});
-  const [pageSize, setPageSize] = useState<number>(20);
-  const [pageIndex, setPageIndex] = useState<number>(1);
-  const [total, setTotal] = useState<number>(0);
+  // const [pageSize, setPageSize] = useState<number>(20);
+  // const [pageIndex, setPageIndex] = useState<number>(1);
+  // const [total, setTotal] = useState<number>(0);
 
   //新增
   const { run: createRulesFun } = useRequest({
@@ -208,20 +210,18 @@ export default function RulesTable(props: RulesTableProps) {
   };
   //触发分页
   const pageSizeClick = (pagination: any) => {
-    setPageIndex(pagination.current);
+    setPageInfo({
+      pageIndex:pagination.current,
+      pageSize: pagination.pageSize,
+    })
     let obj = {
         pageIndex: pagination.current,
         pageSize: pagination.pageSize,
     };
-    setPageSize(pagination.pageSize);
-    let params = listForm.getFieldsValue()
-    loadListData({...obj,...params});
+    onQuery({page:{...obj, }});
+   
 };
 
-const loadListData = (params: any) => {
-    let value = listForm.getFieldsValue();
-    getList({ ...params, ...value, });
-};
 
   return (
     <>
@@ -253,14 +253,17 @@ const loadListData = (params: any) => {
         // }}
         pagination={{
           onShowSizeChange: (_, size) => {
-              setPageSize(size);
-              setPageIndex(1); //
+            setPageInfo({
+              pageIndex:1,
+              pageSize:size
+            })
+            
             },
-          current: pageIndex,
-          total: total,
-          pageSize: pageSize,
+          current: pageInfo?.pageIndex,
+          total:pageInfo?.total,
+          pageSize:pageInfo?.pageSize,
           showSizeChanger: true,
-          showTotal: () => `总共 ${total} 条数据`,
+          showTotal: () => `总共 ${pageInfo?.total} 条数据`,
       }}
       onChange={pageSizeClick}
       />
