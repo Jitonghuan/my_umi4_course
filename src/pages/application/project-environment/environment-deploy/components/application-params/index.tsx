@@ -61,15 +61,17 @@ export default function ApplicationParams(props: any) {
       setTmplTypeOptions(listTmplType)
       let tmplType = '';
       if(listTmplType?.length>0){
-        listTmplType.forEach((element: any) => {
-          if (element?.value === 'deployment') {
-            tmplType = element.value;
-          } else if (element?.value === 'service') {
-            tmplType = element.value;   
-          }else{
-            tmplType = listTmplType[0]?.value
-          }
-        });
+        const i = listTmplType.findIndex((item:any) => item.value === 'deployment');
+        const n=listTmplType.findIndex((item:any) => item.value === 'service');
+        if(i!==-1){
+          tmplType = 'deployment';
+        }
+        if(i===-1&&n!==-1){
+          tmplType = 'service';
+        }
+        if(i===-1&&n===-1){
+          tmplType = listTmplType[0]?.value
+        }
         appTmplForm.setFieldsValue({
           tmplType: tmplType,
         });
