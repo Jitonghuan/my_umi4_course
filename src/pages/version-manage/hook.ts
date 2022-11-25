@@ -30,7 +30,7 @@ export function useReleaseOption(props: any) {
 
     useEffect(() => {
         loadData({});
-    }, Object.values(props));
+    }, []);
     return [data, loading, loadData]
 }
 

@@ -28,7 +28,7 @@ export default function VersionDetail() {
     const [appCategory, setAppCategroy] = useState<any>({ value: groupCode || '', label: groupName || '' });
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
     const [selectVersion, setSelectVersion] = useState<string>(version || '');
-    const [versionOptions, versionOptionsLoading, loadVersionOption] = useReleaseOption({});
+    const [versionOptions, versionOptionsLoading, loadVersionOption] = useReleaseOption(0);
     const [initData, setInitData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
 
