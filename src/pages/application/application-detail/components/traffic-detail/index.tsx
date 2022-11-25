@@ -11,6 +11,7 @@ import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { queryNodeList, getCountOverview, getListAppEnv, queryTrafficList } from './hook';
 import DetailContext from './context';
+import { throttle } from 'lodash';
 const { RangePicker } = DatePicker;
 
 import './index.less'
@@ -66,7 +67,7 @@ export default function TrafficDetail() {
     if (selectTimeType === 'lastTime') {
       //@ts-ignore
       start = Number((now - startTime) / 1000);
-      end = Number(now / 1000);
+      end = Number((now - (60 * 1000)) / 1000);
     } else {
       //@ts-ignore
       start = startTime;
@@ -115,7 +116,7 @@ export default function TrafficDetail() {
   const [curtIP, setCurtIp] = useState<string>('');
   const [hostName, setHostName] = useState<string>('');
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(6 * 60 * 1000);
   const [count, setCount] = useState<number>(0)
   //获取左侧数据
   const getNodeDataSource = (params?: { start?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string, end?: number, selectTimeType?: string }) => {
@@ -127,7 +128,7 @@ export default function TrafficDetail() {
     const now = new Date().getTime();
     const type = params?.selectTimeType || selectTimeType;
     const startTimestamp: any = type === 'lastTime' ? Number((now - start) / 1000) + "" : start;
-    const endTimestamp: any = type === 'lastTime' ? Number((now) / 1000) + "" : end;
+    const endTimestamp: any = type === 'lastTime' ? Number((now - (60 * 1000)) / 1000) + "" : end;
     // let curStart: number = params?.start ? params?.start : startTime
     let curEnv = params?.envCode ? params?.envCode : formInstance.getFieldsValue()?.envCode
     let curApp = params?.appCode || appData?.appCode
@@ -350,13 +351,13 @@ export default function TrafficDetail() {
     setSelectTimeType(v);
     let start, end;
     if (v === 'lastTime') {
-      start = 5 * 60 * 1000;
+      start = 6 * 60 * 1000;
       end = 0;
       setStartTime(start);
       setEndTime(end);
     } else {
-      let startRange = moment().subtract(5, 'minutes');
-      let endRange = moment();
+      let startRange = moment().subtract(6, 'minutes');
+      let endRange = moment().subtract(1, 'minutes');
       setRangeTime([moment(startRange, 'YYYY-MM-dd HH:mm:ss'), moment(endRange, 'YYYY-MM-dd HH:mm:ss')]);
       start = startRange.unix();
       end = endRange.unix();
@@ -387,6 +388,46 @@ export default function TrafficDetail() {
     getNodeDataSource({ start, end })
   }
 
+  // 时间组件 只能选择当前时间往前的时间 且当前一分钟不可选
+  const disabledDate = (current: any) => {
+    return current && current > moment().subtract(0, 'days').endOf('day')
+  }
+
+  function range(start: any, end: any) {
+    const result = [];
+    for (let i = start; i < end; i++) {
+      result.push(i);
+    }
+    return result;
+  }
+
+  const disabledTime: any = (date: any, partial: any) => {
+    const selectHours = moment(date).hours();
+    const selectMinites = moment(date).minutes();
+    let hours = moment().hours();
+    let minutes = moment().minutes();
+    let seconds = moment().seconds();
+    if (date && moment(date).date() === moment().date()) {
+      return {
+        disabledHours: () => selectHours === hours ? range(0, 24).splice(hours + 1) : [],
+        disabledMinutes: () => selectHours === hours ? range(0, 60).splice(minutes) : [],
+        disabledSeconds: () => selectHours === hours && selectMinites === minutes ? range(0, 60).splice(seconds + 1) : [],
+      };
+    }
+    return {
+      disabledHours: () => [],
+      disabledMinutes: () => [],
+      disabledSeconds: () => [],
+    };
+  }
+
+  const refresh = useCallback((throttle((paramsAppData, paramsCount) => {
+    getNodeDataSource({
+      appCode: paramsAppData?.appCode
+    })
+    setCount(paramsCount + 1)
+  }, 5000)), [])
+
 
   return (
     <PageContainer className="traffic-detail-page">
@@ -415,6 +456,9 @@ export default function TrafficDetail() {
             {/* <span className="show-time" >
               <Tooltip title={`${getTime()?.[0]}-${getTime()?.[1]}`}>{getTime()?.[0]}-{getTime()?.[1]}</Tooltip>
             </span> */}
+            <Tooltip title="基于数据统计的准确性，这里的统计时间会取当前时间的前一分钟为基值。" placement="top">
+              <QuestionCircleOutlined style={{ marginRight: 4 }} />
+            </Tooltip>
             选择时间：
             <Select options={selectOption} onChange={timeTypeChange} value={selectTimeType} size='small' />
             {selectTimeType === 'lastTime' ?
@@ -435,10 +479,12 @@ export default function TrafficDetail() {
               <RangePicker
                 allowClear
                 value={rangTime}
+                disabledDate={disabledDate}
+                disabledTime={disabledTime}
                 style={{ width: 340 }}
                 onChange={(v: any, b: any) => { setRangeTime(v); timeChange(b[0], b[1]) }}
                 showTime={{
-                  hideDisabledOptions: true,
+                  // hideDisabledOptions: true,
                   defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
                 }}
                 format="YYYY-MM-DD HH:mm:ss"
@@ -446,10 +492,7 @@ export default function TrafficDetail() {
             }
             <Space style={{ marginLeft: 8, marginTop: 2 }}>
               <Button type="primary" icon={<RedoOutlined />} onClick={() => {
-                getNodeDataSource({
-                  appCode: appData?.appCode
-                })
-                setCount(count => count + 1)
+                refresh(appData, count)
               }}>刷新</Button>
 
             </Space>
