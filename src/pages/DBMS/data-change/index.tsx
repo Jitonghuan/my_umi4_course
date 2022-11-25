@@ -41,7 +41,9 @@ export default function AuthorityApply (){
                       })])])
                     }
                   })
-                })}  
+                })}else{
+                  setDataSource([])
+                }
               let pageInfo=result?.data?.pageInfo
               setTotal(pageInfo?.total);
               setPageSize(pageInfo?.pageSize);
