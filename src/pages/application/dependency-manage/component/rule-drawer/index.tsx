@@ -248,7 +248,7 @@ export default function RuleDrawer(props: any) {
               mode="multiple"
             ></Select>
           </Form.Item>
-          <Form.Item label="强制引入依赖包" valuePropName="checked" name="isDependency" initialValue={false} rules={[{ required: true, message: '这是必填项' }]}>
+          <Form.Item label="必须引入依赖包" valuePropName="checked" name="isDependency" initialValue={false} rules={[{ required: true, message: '这是必填项' }]}>
           <Checkbox onChange={(e: CheckboxChangeEvent)=>{
             setCheck(e.target.checked)
             }} defaultChecked={false}></Checkbox>

@@ -31,7 +31,7 @@ export default function ApplicationParams(props: any) {
   const [ensureDisable, setEnsureDisable] = useState<boolean>(false);
   const [limit, setLimit] = useState<number>(0);
   const [tmplId,setTmplId]=useState<number>();
-  const [isDeployment, setIsDeployment] = useState<string>();
+  const [isDeployment, setIsDeployment] = useState<string>("");
   const appEnvOptions=[{
     label:projectEnvCode,
     value:projectEnvCode
@@ -99,7 +99,7 @@ export default function ApplicationParams(props: any) {
           const appTmpl = result.data[0];
           // setInitTmplInfo(appTmpl)
           setTmplId(appTmpl?.id)
-          setIsDeployment(appTmpl?.templateType);
+         // setIsDeployment(appTmpl?.templateType);
           let tmplConfigArr = [];
           let jvm = '';
           for (const key in appTmpl.tmplConfigurableItem) {
@@ -119,9 +119,17 @@ export default function ApplicationParams(props: any) {
             tmplConfigurableItem: tmplConfigArr,
             jvm: jvm,
           });
-          setIsDeployment(appTmpl.templateType);
+          setIsDeployment(appTmpl?.templateType);
           setLimit(tmplConfigArr.length);
         } else {
+          appTmplForm.setFieldsValue({
+            tmplConfigurableItem: [],
+            jvm: '',
+            value: '',
+          });
+          setEnsureDisable(true);
+          setLimit(0);
+          setIsDeployment("");
           message.info(`${projectEnvCode}环境的${templateType}类型模版为空`);
         }
       })
