@@ -6,7 +6,7 @@
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/approval-end/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Card, Descriptions, Space, Tag, Table, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table,Drawer, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
@@ -52,9 +52,11 @@ export default function ApprovalEnd() {
   const [info, setInfo] = useState<any>({});
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
+  const [sqlForm] =Form.useForm()
   const [visiable, setVisiable] = useState<boolean>(false);
   const [runSqlform] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false);
+  const [showSql,setShowSql]=useState<boolean>(false)
   const [status, setstatus] = useState<string>("");
   const [runMode, setRunMode] = useState<string>("now")
   const [owner, setOwner] = useState<any>([]);
@@ -250,16 +252,28 @@ export default function ApprovalEnd() {
               <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
                 <span><Tag color={value === "通过" ? "green" : value === "警告" ? "orange" : value === "错误" ? "red" : "default"}>{value}</Tag></span>
               )} /> : item === "审核/执行信息" ?
-                <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+                <Table.Column title={item} width={400} ellipsis dataIndex={item} key={item} render={(value) => (
 
-                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                    <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                  <span >
+                     <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                   </span>
 
-                )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+                )} /> : item === "完整SQL内容" ? <Table.Column width={400} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
 
-                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                    <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                  <span >
+                     <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                   </span>
 
                 )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
@@ -279,6 +293,16 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
+        <Drawer title="sql详情" visible={showSql} footer={false} width={"70%"} onClose={()=>{setShowSql(false)}} destroyOnClose>
+        <Form form={sqlForm} preserve={false}>
+          <Form.Item name="showSql">
+          <AceEditor mode="sql" height={900} readOnly={true} />
+          </Form.Item>
+
+        </Form>
+       
+
+      </Drawer>
       <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id} />
       <ContentCard>
         <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} onCancel={() => { setVisible(false) }} onOk={

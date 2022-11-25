@@ -81,8 +81,6 @@ export default function AllMessage(props: IProps) {
 
       }
     setLabelTableData(data);
-   
-   // console.log(stepTableMap(data),'----')
   };
   const submit=()=>{
      
