@@ -27,7 +27,6 @@ const activeKeyMap: Record<string, any> = {
 };
 
 export default function ApplicationDetail(props: IProps) {
-  // const { location, children } = props;
   let location: any = useLocation();
   const query: any = parse(location.search);
   const { id: appId, appCode, projectEnvCode, projectEnvName, benchmarkEnvCode } = query || {};
@@ -167,7 +166,6 @@ export default function ApplicationDetail(props: IProps) {
               ｜当前应用：
               <h4>{appData?.appCode}</h4>
               <Tag color="volcano">
-                {/* <CloseCircleTwoTone style={{fontSize:14}} /> */}
                 <a
                   onClick={() => {
                     history.push({
@@ -183,7 +181,6 @@ export default function ApplicationDetail(props: IProps) {
                   返回项目环境
                 </a>
               </Tag>
-              {/* <span>{appData?.appName}</span> */}
             </div>
           }
         >
