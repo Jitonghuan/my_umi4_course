@@ -131,6 +131,10 @@ export default function ApplicationParams(props: any) {
   const resetData=()=>{
 
      getAppTmpl(initTmplType)
+     //initTmplType
+     appTmplForm.setFieldsValue({
+      tmplType:initTmplType
+     })
   }
   const onChangeTmplType=(value:string)=>{
     getAppTmpl(value)
