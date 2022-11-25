@@ -144,7 +144,7 @@ const HistoryCom: React.FC = () => {
   }, []);
 
   return (
-    <PageContainer>
+    <PageContainer style={{ padding: 0 }}>
       <TableSearch
         form={form}
         formOptions={[
