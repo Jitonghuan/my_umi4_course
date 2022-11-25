@@ -107,7 +107,7 @@ export const failConfig = (data = []) => {
   };
 }
 
-export const multiChartConfig = ({ cpm, fail }) => {
+export const multiChartConfig = ({ cpm = [], fail = [] }) => {
   let data: any = [];
   const newSr = sortTime(cpm).map((item: any) => ({ name: '请求数', time: item.time, value: item.value }));
   const newFail = sortTime(fail).map((item: any) => ({ name: '失败数', time: item.time, value: item.value }));
