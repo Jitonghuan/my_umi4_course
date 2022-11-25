@@ -65,4 +65,5 @@ export interface TableSearchProps extends TableProps<any> {
   /** 是否是分离式布局，默认是 */
   splitLayout?: boolean;
   reset?: () => void;
+  formExtraNode?: React.ReactNode;
 }

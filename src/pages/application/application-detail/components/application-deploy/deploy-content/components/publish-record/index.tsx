@@ -6,16 +6,21 @@
  */
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Modal, Button, List, Tag } from 'antd';
+import { Modal, Button, List, Tag, Tabs } from 'antd';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
 import { recordFieldMapOut, recordDisplayMap } from './schema';
 import moment from 'moment';
+import axios from 'axios';
+import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
+import AceEditor from '@/components/ace-editor';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
 import { usePaginated } from '@cffe/vc-hulk-table';
 import { queryEnvsReq } from '@/pages/application/service';
 import './index.less';
+
+import appConfig from '@/app.config';
 
 const rootCls = 'publish-record-compo';
 
@@ -23,8 +28,14 @@ export default function PublishRecord(props: IProps) {
   const { env, appCode } = props;
 
   const { appData } = useContext(DetailContext);
-  const { appCategoryCode } = appData || {};
+  const { appCategoryCode, deploymentName, appType } = appData || {};
+
   const [intervalId, setIntervalId] = useState<any>(null);
+  const [depVisible, setDepVisible] = useState<boolean>(false);
+  const [npmJson, setNpmJson] = useState('');
+  const [originNpmJson, setOriginNpmJson] = useState('');
+  const [curVersion, setCurVersion] = useState('');
+  const [lastVersion, setLastVersion] = useState('');
 
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
@@ -131,6 +142,38 @@ export default function PublishRecord(props: IProps) {
     setcurRecord(record);
   };
 
+  async function showDepDetail(item: any, i: number) {
+    let data = tableProps.dataSource?.filter((v) => v?.envTypeCode === env) || [];
+    let envCode = item.envs.split(',')[0];
+    let res = null;
+    let originRes = null;
+    setNpmJson('');
+    setOriginNpmJson('');
+    setLastVersion('');
+    setCurVersion(item.version);
+    try {
+      res = await axios.get(
+        `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${item.version}/npm.json`,
+      );
+      setNpmJson(res?.data ? JSON.stringify(res.data, null, '\t') : '');
+    } catch (e) {}
+
+    try {
+      let lastItem = data.find(
+        (val, j) =>
+          val.deployStatus === 'finish' && j > i && val.envs.split(',').find((env: string) => env === envCode),
+      );
+      setLastVersion(lastItem?.version || '');
+      if (lastItem) {
+        originRes = await axios.get(
+          `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${lastItem.version}/npm.json`,
+        );
+        setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, '\t') : '');
+      }
+    } catch (e) {}
+    setDepVisible(true);
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布记录</div>
@@ -143,7 +186,7 @@ export default function PublishRecord(props: IProps) {
             itemLayout="vertical"
             loadMore={renderLoadMore()}
             dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
-            renderItem={(item) => (
+            renderItem={(item, i) => (
               <List.Item>
                 <div>
                   <label>{recordFieldMapOut['modifyUser']}</label>:{item['modifyUser']}
@@ -186,12 +229,46 @@ export default function PublishRecord(props: IProps) {
                   </div>
                 )}
                 <a onClick={() => handleShowDetail(item)}>详情</a>
+                {item.deployStatus === 'finish' &&
+                  appConfig.IS_Matrix === 'public' &&
+                  appType === 'frontend' &&
+                  appCategoryCode === 'hbos' && (
+                    <a style={{ marginLeft: '10px' }} onClick={() => showDepDetail(item, i)}>
+                      依赖
+                    </a>
+                  )}
               </List.Item>
             )}
           />
         </div>
       ) : null}
-
+      {depVisible && (
+        <Modal title="依赖详情" width="98%" visible={depVisible} footer={false} onCancel={() => setDepVisible(false)}>
+          <Tabs>
+            <Tabs.TabPane tab="版本对比" key="0">
+              <ReactDiffViewer
+                oldValue={originNpmJson}
+                newValue={npmJson}
+                splitView={true}
+                compareMethod={DiffMethod.WORDS}
+                styles={{
+                  variables: {
+                    light: {
+                      codeFoldGutterBackground: '#6F767E',
+                      codeFoldBackground: '#E2E4E5',
+                    },
+                  },
+                }}
+                leftTitle={`上一次版本：${lastVersion}`}
+                rightTitle={`当前版本：${curVersion}`}
+              />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="依赖详情" key="1">
+              <AceEditor value={npmJson} mode="json" readOnly />
+            </Tabs.TabPane>
+          </Tabs>
+        </Modal>
+      )}
       <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
         <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
       </Modal>

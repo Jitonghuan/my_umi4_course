@@ -175,6 +175,8 @@ export default function NpmList() {
             {
               title: '负责人',
               dataIndex: 'npmOwner',
+              ellipsis: true,
+              render: (text) => <Tooltip title={text}>{text}</Tooltip>,
               width: 420,
             },
             {

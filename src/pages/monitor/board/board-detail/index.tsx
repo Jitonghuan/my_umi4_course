@@ -23,7 +23,7 @@ const BoardDetail = () => {
   useEffect(() => {
     let graphUrl = '';
     if (url) {
-      graphUrl = `${url}?kiosk=full`
+      graphUrl = `${url}`
     }
     setInfo({
       graphName, graphUrl, clusterName

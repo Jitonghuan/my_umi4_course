@@ -225,6 +225,10 @@ const BasicPerformance = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
                   </span>
                 ),
               },
+              {
+                title: pageGroupTab === 'highFrequency' ? 'UV' : '',
+                dataIndex: 'uv',
+              },
             ]}
             pagination={{
               total,

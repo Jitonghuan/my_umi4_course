@@ -31,7 +31,7 @@ type StatusTypeItem = {
 };
 
 const STATUS_TYPE: Record<number, StatusTypeItem> = {
-  0: { tagText: '已启用', buttonText: '禁用', color: 'green', status: 1 },
+  0: { tagText: '已启用', buttonText: '停用', color: 'green', status: 1 },
   1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
 };
 
@@ -155,7 +155,7 @@ export default function RulesTable(props: RulesTableProps) {
       dataIndex: 'option',
       key: 'news',
       width: 150,
-      fixed:"right",
+      fixed: 'right',
       render: (_: string, record: Item) => (
         <Space>
           <a

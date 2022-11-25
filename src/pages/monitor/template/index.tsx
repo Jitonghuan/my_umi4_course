@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Space, Tag, Popconfirm, Form, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
@@ -6,6 +6,7 @@ import PageContainer from '@/components/page-container';
 import useTable from '@/utils/useTable';
 import useRequest from '@/utils/useRequest';
 import TemplateDrawer from '../component/template-drawer';
+import ApplyTemplate from './components/apply-template';
 import { Item } from '../typing';
 import { OptionProps } from '@/components/table-search/typing';
 import {
@@ -17,8 +18,6 @@ import {
   queryGroupList,
 } from '../service';
 import './index.less';
-import { Tabs } from '@cffe/h2o-design';
-import Panel from './components/panel';
 
 type statusTypeItem = {
   color: string;
@@ -38,7 +37,7 @@ const TemplateCom: React.FC = () => {
   const [editRecord, setEditRecord] = useState<Item>({});
   const [type, setType] = useState<'add' | 'edit'>('add');
   const [groupData, setGroupData] = useState<OptionProps[]>([]);
-  const [activeKey, setActiveKey] = useState('alarm-rules');
+  const [visible, setVisible] = useState(false);
 
   const [form] = Form.useForm();
   useEffect(() => {
@@ -105,9 +104,6 @@ const TemplateCom: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       width: 70,
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
     },
     {
       title: '规则名称',
@@ -135,12 +131,12 @@ const TemplateCom: React.FC = () => {
       title: '分类',
       dataIndex: 'group',
       key: 'group',
-      // width: '3%',
     },
     {
       title: '告警表达式',
       dataIndex: 'expression',
       key: 'expression',
+      ellipsis: true,
       // width: '5%',
       render: (text) => (
         <Tooltip title={text}>
@@ -162,7 +158,7 @@ const TemplateCom: React.FC = () => {
       title: '告警消息',
       dataIndex: 'message',
       key: 'message',
-      // width: '5%',
+      ellipsis: true,
       render: (text) => (
         <Tooltip title={text}>
           <span
@@ -197,7 +193,7 @@ const TemplateCom: React.FC = () => {
       dataIndex: 'option',
       key: 'option',
       width: 140,
-      // width: '6%',
+      fixed: 'right',
       render: (_: string, record: Item) => (
         <Space>
           <a
@@ -272,70 +268,70 @@ const TemplateCom: React.FC = () => {
   return (
     <PageContainer className="template-page">
       <div className="app-group-content-wrapper">
-        <Tabs
-          activeKey={activeKey}
-          onChange={(val) => {
-            setActiveKey(val);
+        <TableSearch
+          form={form}
+          formOptions={[
+            {
+              key: '1',
+              type: 'input',
+              label: '名称',
+              dataIndex: 'name',
+              width: '144px',
+              placeholder: '请输入',
+            },
+            {
+              key: '2',
+              type: 'select',
+              label: '分类',
+              dataIndex: 'group',
+              width: '144px',
+              placeholder: '请选择报警分类',
+              option: groupData,
+            },
+            {
+              key: '3',
+              type: 'select',
+              label: '状态',
+              dataIndex: 'status',
+              width: '144px',
+              placeholder: '请选择',
+              option: [
+                {
+                  key: '0',
+                  value: '已启用',
+                  label: '已启用',
+                },
+                {
+                  key: '1',
+                  value: '未启用',
+                  label: '未启用',
+                },
+              ],
+            },
+          ]}
+          formLayout="inline"
+          columns={columns}
+          {...tableProps}
+          pagination={{
+            ...tableProps?.pagination,
+            showTotal: (total) => `共 ${total} 条`,
+            showSizeChanger: true,
+            // size: 'small',
+            defaultPageSize: 20,
           }}
-        >
-          <Tabs.TabPane tab="报警规则模版" key="alarm-rules" />
-          <Tabs.TabPane tab="监控大盘模版" key="panel" />
-        </Tabs>
-        {activeKey === 'alarm-rules' && (
-          <TableSearch
-            form={form}
-            formOptions={[
-              {
-                key: '1',
-                type: 'input',
-                label: '名称',
-                dataIndex: 'name',
-                width: '144px',
-                placeholder: '请输入',
-              },
-              {
-                key: '2',
-                type: 'select',
-                label: '分类',
-                dataIndex: 'group',
-                width: '144px',
-                placeholder: '请选择报警分类',
-                option: groupData,
-              },
-              {
-                key: '3',
-                type: 'select',
-                label: '状态',
-                dataIndex: 'status',
-                width: '144px',
-                placeholder: '请选择',
-                option: [
-                  {
-                    key: '0',
-                    value: '已启用',
-                    label: '已启用',
-                  },
-                  {
-                    key: '1',
-                    value: '未启用',
-                    label: '未启用',
-                  },
-                ],
-              },
-            ]}
-            formLayout="inline"
-            columns={columns}
-            {...tableProps}
-            pagination={{
-              ...tableProps?.pagination,
-              showTotal: (total) => `共 ${total} 条`,
-              showSizeChanger: true,
-              // size: 'small',
-              defaultPageSize: 20,
-            }}
-            showTableTitle
-            tableTitle="报警规则模板列表"
-            extraNode={
+          showTableTitle={false}
+          tableTitle=""
+          formExtraNode={
+            <div>
+              <Button
+                type="primary"
+                style={{ marginRight: '10px' }}
+                onClick={() => {
+                  setVisible(true);
+                }}
+              >
+                一键应用模版
+              </Button>
               <Button
                 type="primary"
                 onClick={() => {
@@ -346,14 +342,13 @@ const TemplateCom: React.FC = () => {
               >
                 + 新增报警规则模版
               </Button>
-            }
-            className="table-form"
-            onSearch={queryList}
-            reset={reset}
-            scroll={{ x: '100%' }}
-          />
-        )}
-        {activeKey === 'panel' && <Panel />}
+            </div>
+          }
+          className="table-form"
+          onSearch={queryList}
+          reset={reset}
+          scroll={{ x: '100%' }}
+        />
       </div>
       <TemplateDrawer
         visible={drawerVisible}
@@ -364,6 +359,7 @@ const TemplateCom: React.FC = () => {
         onSubmit={onSubmit}
         type={type}
       />
+      <ApplyTemplate visible={visible} onClose={() => setVisible(false)} />
     </PageContainer>
   );
 };

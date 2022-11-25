@@ -6,12 +6,15 @@
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/approval-end/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Card, Descriptions, Space, Tag, Table, Input, Modal, Popconfirm,Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
-import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined,CloseCircleOutlined ,LoadingOutlined} from '@ant-design/icons';
+import AceEditor from '@/components/ace-editor';
+import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
+import RollbackSql from '../rollback-sql'
+
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
@@ -35,20 +38,21 @@ const runModeOnlyOptions = [
     label: "立即执行",
     value: "now"
   },
- 
+
 ]
 const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
   wait: 1,
   pass: 2,
   reject: 2,
-  abort:2
+  abort: 2
 };
-
+const { Paragraph } = Typography;
 export default function ApprovalEnd() {
   const [info, setInfo] = useState<any>({});
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
+  const [visiable, setVisiable] = useState<boolean>(false);
   const [runSqlform] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setstatus] = useState<string>("");
@@ -66,10 +70,10 @@ export default function ApprovalEnd() {
   const initInfo: any = location.state || {};
   const afferentId = Number(query?.id)
   let userInfo: any = localStorage.getItem('USER_INFO');
-  let userName=""
+  let userName = ""
   if (userInfo) {
     userInfo = JSON.parse(userInfo);
-    userName= userInfo ? userInfo.name : ''
+    userName = userInfo ? userInfo.name : ''
   }
   const [visible, setVisible] = useState<boolean>(false)
 
@@ -79,7 +83,7 @@ export default function ApprovalEnd() {
       getInfo(afferentId)
       getWorkflowLog(afferentId)
     }
-    return()=>{
+    return () => {
       // history.push(location.pathname)
     }
   }, [afferentId])
@@ -88,11 +92,11 @@ export default function ApprovalEnd() {
       if (query?.detail === "true" && query?.id) {
         getInfo(afferentId)
         getWorkflowLog(afferentId)
-      }else{
+      } else {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
-    }, 1000*60);
+    }, 10000 * 6);
 
     return () => {
       clearInterval(intervalId);
@@ -139,9 +143,18 @@ export default function ApprovalEnd() {
       onOk(close) {
         form.validateFields().then((info) => {
           auditTicket({ reason: info?.reason, auditType, id: initInfo?.record?.id || afferentId }).then(() => {
-            afferentId ? getInfo(afferentId) : getInfo()
+
             // history.back()
             close()
+          }).then(() => {
+            // afferentId ? getInfo(afferentId) : getInfo()
+            if (query?.detail === "true" && query?.id) {
+              getInfo(afferentId)
+              getWorkflowLog(afferentId)
+            } else {
+              getInfo()
+              getWorkflowLog(initInfo?.record?.id)
+            }
           })
         })
 
@@ -154,8 +167,8 @@ export default function ApprovalEnd() {
   const getInfo = (id?: number) => {
     setLoading(true)
     useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
-   
-      if(Object.keys(res)?.length<1) return
+
+      if (Object.keys(res)?.length < 1) return
       setInfo(res)
       let auditUsers = [];
 
@@ -223,33 +236,94 @@ export default function ApprovalEnd() {
     }
   };
 
+  const renderInfo = (data: any) => {
+    return (
+      Object.keys(data)?.map((item: any) => {
+        return (
+          item === "阶段状态" ?
+            <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
+              <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                {value?.replace(/\\n/g, '<br/>')}
+              </span>
+            )} /> :
+            item === "错误级别" ?
+              <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
+                <span><Tag color={value === "通过" ? "green" : value === "警告" ? "orange" : value === "错误" ? "red" : "default"}>{value}</Tag></span>
+              )} /> : item === "审核/执行信息" ?
+                <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+
+                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                    <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                  </span>
+
+                )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+
+                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                    <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                  </span>
+
+                )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
+                  <Tooltip placement="topLeft" title={value}>
+
+                    {value}
+                  </Tooltip>)} />
+        )
+      })
+
+    )
+  }
+
+
   const columns = useMemo(() => {
     return createTableColumns() as any;
   }, []);
   return (
     <PageContainer className="approval-end">
+      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id} />
       <ContentCard>
         <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} onCancel={() => { setVisible(false) }} onOk={
           () => {
             runSqlform.validateFields().then((info) => {
               if (info?.runMode === "now") {
                 runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
-                  afferentId ? getInfo(afferentId) : getInfo()
+                  // afferentId ? getInfo(afferentId) : getInfo()
+
                   setVisible(false)
+                }).then(() => {
+                  if (query?.detail === "true" && query?.id) {
+                    getInfo(afferentId)
+                    getWorkflowLog(afferentId)
+                  } else {
+                    getInfo()
+                    getWorkflowLog(initInfo?.record?.id)
+                  }
                 })
               } else {
                 runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
-                  afferentId ? getInfo(afferentId) : getInfo()
+                  //afferentId ? getInfo(afferentId) : getInfo()
+
                   setVisible(false)
+                }).then(() => {
+                  if (query?.detail === "true" && query?.id) {
+                    getInfo(afferentId)
+                    getWorkflowLog(afferentId)
+                  } else {
+                    getInfo()
+                    getWorkflowLog(initInfo?.record?.id)
+                  }
                 })
               }
             })
           }
         }>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
-            <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]}>
-              <Radio.Group options={info?.allowTiming ?runModeOptions:runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} />
-            </Form.Item >
+            {info?.allowTiming === true ?
+              <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
+                <Radio.Group options={runModeOptions} onChange={(e) => setRunMode(e.target.value)} />
+              </Form.Item > :
+              <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} initialValue={runModeOnlyOptions[0]?.value} >
+                <Radio.Group options={runModeOnlyOptions} onChange={(e) => setRunMode(e.target.value)} defaultValue={runModeOnlyOptions[0]?.value} />
+              </Form.Item >}
             {runMode === "timing" && (
               <>
                 <Form.Item label="sql可执行时间范围:">
@@ -263,6 +337,7 @@ export default function ApprovalEnd() {
                     onOk={onOk}
                     showNow={false}
                     disabledDate={disabledDate}
+                    //@ts-ignore
                     disabledTime={disabledDateTime}
                     placeholder="请选择执行时间"
                   />
@@ -272,49 +347,49 @@ export default function ApprovalEnd() {
           </Form>
         </Modal>
         <div>
-        <h3>工单标题：{info?.title}<span style={{float:"right"}}>
-        <Button  type="primary" className="back-go" onClick={() => {
-                  history.push({
-                    pathname: "/matrix/DBMS/data-change",
+          <h3>工单标题：{info?.title}<span style={{ float: "right" }}>
+            <Button type="primary" className="back-go" onClick={() => {
+              history.push({
+                pathname: "/matrix/DBMS/data-change",
 
-                  })
-                }}>
-                  返回
+              })
+            }}>
+              返回
               </Button>
 
-        </span></h3>
-        
-      
+          </span></h3>
+
+
 
         </div>
-       
+
         {/* ------------------------------- */}
         <Spin spinning={loading}>
           <div className="ticket-detail-title">
-           <div>
-            <div className="second-info">
-            <span className="second-info-left">
-              {/* <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span> */}
-              <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
-              <span><Space><span>申请人:</span><span><Tag color="#2db7f5">{info?.userName}</Tag></span></Space></span>
-              <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor || "default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
-            </span>
-            <span className="second-info-right">
-              <Space>
-                {status === "wait" &&info?.userName===userName&& 
-                  <Tag color="orange" onClick={()=>{ showConfirm("abort")}} >撤销工单</Tag>
-            }
-               
+            <div>
+              <div className="second-info">
+                <span className="second-info-left">
+                  {/* <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span> */}
+                  <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
+                  <span><Space><span>申请人:</span><span><Tag color="#2db7f5">{info?.userName}</Tag></span></Space></span>
+                  <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor || "default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
+                </span>
+                <span className="second-info-right">
+                  <Space>
+                    {status === "wait" && info?.userName === userName &&
+                      <Tag color="orange" onClick={() => { showConfirm("abort") }} >撤销工单</Tag>
+                    }
 
-               
-              </Space>
-            </span>
-          
-            </div>
+
+
+                  </Space>
+                </span>
+
+              </div>
             </div>
 
-           </div>
-        
+          </div>
+
         </Spin>
         {/* ------------------------------- */}
         <Spin spinning={loading}>
@@ -329,14 +404,10 @@ export default function ApprovalEnd() {
             <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
             <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
             <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
-            {/* <Descriptions.Item label="执行方式" span={2}>定时执行</Descriptions.Item> */}
             <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
             <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</span></Descriptions.Item>
-            {/* <Descriptions.Item label="sql检测结果"><span style={{maxWidth:'57vw', display:'inline-block',overflow:"scroll",whiteSpace:"nowrap"}}>{info?.reviewContent}</span></Descriptions.Item> */}
-            {/* <Descriptions.Item label="sql审核">通过</Descriptions.Item> */}
-            {/* <Descriptions.Item label="风险项">修改列类型 int改为varchar</Descriptions.Item> */}
             <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
-            <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming?"是":"否"}</Descriptions.Item>
+            <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming ? "是" : "否"}</Descriptions.Item>
 
           </Descriptions>
         </Spin>
@@ -347,109 +418,72 @@ export default function ApprovalEnd() {
               <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
               <Step title="库Owner" icon={<DingdingOutlined />} description={`审批人:
               ${owner?.join(',') || ''}`} />
-              <Step title={info?.currentStatusDesc} 
-              icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
-              info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
-              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />: info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />: status==="wait"?<LoadingOutlined style={{color:"#2db7f5"}} />:
-              <CheckCircleTwoTone />}
+              <Step title={info?.currentStatusDesc}
+                icon={info?.currentStatus === "abort" ? <CloseCircleOutlined style={{ color: "red" }} /> :
+                  info?.currentStatus === "autoReviewWrong" ? <CloseCircleOutlined style={{ color: "red" }} /> :
+                    info?.currentStatus === "exception" ? <CloseCircleOutlined style={{ color: "red" }} /> : info?.currentStatus === "reject" ? <CloseCircleOutlined style={{ color: "red" }} /> : status === "wait" ? <LoadingOutlined style={{ color: "#2db7f5" }} /> :
+                      <CheckCircleTwoTone />}
                 description={
-                  status === "wait"&&owner?.join(',')?.includes(userName)? <Space>
-                   <Tag color="success" onClick={() => {
+                  status === "wait" && owner?.join(',')?.includes(userName) ? <Space>
+                    <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
-                        afferentId ? getInfo(afferentId) : getInfo()
-                        // history.back()
+                        setTimeout(() => {
+                          if (query?.detail === "true" && query?.id) {
+                            getInfo(afferentId)
+                            getWorkflowLog(afferentId)
+                          } else {
+                            getInfo()
+                            getWorkflowLog(initInfo?.record?.id)
+                          }
+
+                        }, 300);
                       })
                     }}>审批通过</Tag>
-
-                  
-                   <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
-                  </Space>:null} />
+                    <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
+                  </Space> : null} />
             </Steps>
 
           </Spin>
         </Card>
         {/* ------------------------------- */}
         <div style={{ marginTop: 12 }} >
-          <div className="ticket-detail-title">
-            <Space>
-              <span><b>{(status === "wait"&&reviewContentData?.length > 0)?"检测详情":(status !== "wait" && executeResultData?.length > 0)?"执行详情":"检测详情"}</b></span>
-              {info?.currentStatus === "reviewPass" && <span>
-                <Spin spinning={runLoading}>
-                  <Space>
-                    <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>
-                  </Space>
-                </Spin></span>}
+          <div className="ticket-detail-env-title" >
+            <Space  >
+              <span>
+                <span style={{ display: "inline-flex" }}>
+                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
+                  <Spin spinning={runLoading} >
+                    {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                  </Spin>
+                </span>
+
+              </span>
+
             </Space>
+            <span >
+              {info?.currentStatus === "finish" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+              {info?.currentStatus === "exception" && <Button type="primary" onClick={() => {
+                setVisiable(true)
+              }}>获取回滚语句</Button>}
+            </span>
+
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
             {reviewContentData?.length > 0 && (
-              Object.keys(reviewContentData[0])?.map((item: any) => {
-                return (
-                  item==="审批/执行信息"?
-                    <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column width={400} title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value}>
-                       
-                          {value}
-                      </Tooltip>)}/>
-                )
-              })
-
+              renderInfo(reviewContentData[0])
             )}
           </Table>)}
           {status !== "wait" && (executeResultData?.length > 0 ?
             <Table bordered scroll={{ x: '100%' }} dataSource={executeResultData} loading={loading} >
               {executeResultData?.length > 0 && (
-                Object.keys(executeResultData[0])?.map((item: any) => {
-                  return (
-                    item==="审批/执行信息"?
-                    <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column width={400} title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value}>
-                       
-                          {value}
-                      </Tooltip>)}/>
-                  )
-                })
+                renderInfo(executeResultData[0])
+
               )}
             </Table> : <Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
               {reviewContentData?.length > 0 && (
-                Object.keys(reviewContentData[0])?.map((item: any) => {
-                  return (
-                    item==="审批/执行信息"?
-                    <Table.Column title={item} dataIndex={item} key={item} width={400}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>
-                    )}/>:item==="完整SQL内容"? <Table.Column title={item} width={400} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value?.replace(/\\n/g, '<br/>')}>
-                        
-                          {value?.replace(/\\n/g, '<br/>')}
-                      </Tooltip>)}/>: <Table.Column title={item} dataIndex={item} key={item}  render={(value) => (
-                      <Tooltip placement="topLeft" title= {value}>
-                       
-                          {value}
-                      </Tooltip>)}/>
-                  )
-                })
-
+                renderInfo(reviewContentData[0])
               )}
             </Table>
           )}
@@ -463,22 +497,11 @@ export default function ApprovalEnd() {
           </span>
         </div>
         {/* ------------------------------- */}
-        {/* <div style={{ marginBottom: 8 }} ><b>操作日志</b></div> */}
+
         <div>
           <Table columns={columns} bordered dataSource={logData} loading={tableLoading} />
         </div>
-        {/* </div> */}
 
-        {/* <div className="ticket-detail-footer">
-      <span className="ticket-detail-title-left">
-      <span><Space><span>回滚:</span><span><Tag color="geekblue">下载回滚SQL</Tag></span></Space></span>
-      <span><Space><span>离线发布:</span><span><Tag color="geekblue">下载离线Sql包</Tag></span></Space></span>
-     
-
-      </span>
-    
-      
-    </div> */}
       </ContentCard>
     </PageContainer>)
 }

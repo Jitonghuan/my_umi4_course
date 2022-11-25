@@ -10,9 +10,7 @@
 /* 数据变更管理接口文档 https://come-future.yuque.com/sekh46/bbgc7f/eh25u4#Wm5mi */
 //二期文档 https://come-future.yuque.com/sekh46/bbgc7f/ghkm6m#Qj4D0
 import appConfig from '@/app.config';
-// `${appConfig.apiPrefix}`;
 let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
-//kapi-base-dev.cfuture.shop/matrix-dmp
 //const dmpApiPrefix=`http://kapi-base-${env}.cfuture.shop/matrix-dmp/v1`;
 const dmpApiPrefix="/matrix-dmp"
 /* 权限 */
@@ -58,6 +56,8 @@ export const getRuleSetListApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule
 export const createRuleSetApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/ruleSet/create`;
 //更新安全规则
 export const updateRuleSetApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/ruleSet/update`;
+//删除安全规则
+export const deleteRuleSetApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/rule/ruleSet/delete`;
 
 
 //查询集群规则列表
