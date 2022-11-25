@@ -135,6 +135,15 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
           <Descriptions.Item label="科室" span={2}>
             {detail.deptName}
           </Descriptions.Item>
+          <Descriptions.Item label="终端信息" span={2}>
+            {detail.terminalInfo
+              ? Object.keys(JSON.parse(detail.terminalInfo)).map((key: any) => (
+                  <div>
+                    {key}: {JSON.parse(detail.terminalInfo)[key]}
+                  </div>
+                ))
+              : ''}
+          </Descriptions.Item>
         </Descriptions>
         <div className="sub-title">堆栈信息</div>
         <div style={{ wordBreak: 'break-all' }}>{detail.d4}</div>
