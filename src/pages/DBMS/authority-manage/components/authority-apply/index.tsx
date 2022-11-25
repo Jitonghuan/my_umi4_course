@@ -73,7 +73,9 @@ const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:strin
                   })])])
                 }
               })
-            })}  
+            })}else{
+              setDataSource([])
+            }
           let pageInfo=result?.data?.pageInfo
           setTotal(pageInfo?.total);
           setPageSize(pageInfo?.pageSize);
