@@ -107,6 +107,15 @@ const ResourceErrorTable = ({ dataSource, total, loading, getParam, type }: IPro
           <Descriptions.Item label="科室" span={2}>
             {detail.deptName}
           </Descriptions.Item>
+          <Descriptions.Item label="终端信息" span={2}>
+            {detail.terminalInfo
+              ? Object.keys(JSON.parse(detail.terminalInfo)).map((key: any) => (
+                  <div>
+                    {key}: {JSON.parse(detail.terminalInfo)[key]}
+                  </div>
+                ))
+              : ''}
+          </Descriptions.Item>
         </Descriptions>
       </Drawer>
     </div>
