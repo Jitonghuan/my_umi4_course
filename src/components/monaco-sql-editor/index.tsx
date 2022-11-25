@@ -40,7 +40,8 @@ export interface Iprops {
   implementDisabled: boolean;
   isGoback?: boolean;
   sqlLoading?:boolean;
-  executLoading?:boolean
+  executLoading?:boolean;
+  actionDisabled?:boolean
 
 
 }
@@ -65,7 +66,8 @@ export default function SqlEditor(props: Iprops) {
     subChange,
     subSqlChange,
     sqlLoading,
-    executLoading
+    executLoading,
+    actionDisabled=false
   } = props;
   const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const rootCls = 'monaco-sql-editor-title';
@@ -79,7 +81,6 @@ export default function SqlEditor(props: Iprops) {
   let completeProvider: any
   useEffect(() => {
     if (divNode) {
-      console.log("-----第三个页面filedsvalue------",tableFields,"000000", registerCompletion())
       registerCompletion();
       const monacoEditor = monaco.editor.create(divNode, {
         autoIndent: "keep",
@@ -123,8 +124,6 @@ export default function SqlEditor(props: Iprops) {
   }, [initValue, instance])
   useEffect(() => {
     if (instance && tableFields) {
-      console.log("第三个页面监听位置")
-    
       registerCompletion()
     }
   }, [initValue, tableFields])
@@ -263,7 +262,7 @@ export default function SqlEditor(props: Iprops) {
       <div className="monaco-sql-editor-title">
         <Space className={`${rootCls}-wrapper`}>
           
-          {isSqlExecuteBtn && !implementDisabled && <span className={`${rootCls}-btn`} id="one" onClick={() => {
+          {isSqlExecuteBtn &&!actionDisabled&& !implementDisabled && <span className={`${rootCls}-btn`} id="one" onClick={() => {
             
               getSelectionVal();
               if( getSelectionVal()){
@@ -288,7 +287,8 @@ export default function SqlEditor(props: Iprops) {
              
           
           }}>执行</span>}
-          {isSqlExecuteBtn && implementDisabled && <span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>}
+          {isSqlExecuteBtn &&actionDisabled?<span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>:isSqlExecuteBtn &&!actionDisabled&& implementDisabled ?<span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>:null}
+          {/* {isSqlExecuteBtn &&!actionDisabled&& implementDisabled && <span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>} */}
           {isSqlBueatifyBtn && <span className={`${rootCls}-btn`} id="three" onClick={formatSql}>sql美化</span>}
           {isSqlCheckBtn && <span className={`${rootCls}-btn`} id="two" onClick={() => {
              //@ts-ignore
