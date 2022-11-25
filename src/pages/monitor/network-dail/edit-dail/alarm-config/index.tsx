@@ -6,9 +6,10 @@ import {postRequest, getRequest, delRequest} from '@/utils/request';
 import RulesEdit from '../../../business/rules-edit';
 interface Iprops{
     curRecord:any;
+    curId:number
 }
 export default function AlarmConfig (props:Iprops){
-  const {curRecord} =props
+  const {curRecord,curId} =props
   const [rulesData, setRulesData] = useState<any[]>([]);
   const [rulesVisible, setRulesVisible] = useState<boolean>(false);
   const [rulesType, setRulesType] = useState('add');
@@ -66,7 +67,7 @@ export default function AlarmConfig (props:Iprops){
          <RulesEdit
           visible={rulesVisible}
           record={rulesRecord}
-          bizMonitorId={curRecord?.id}
+          bizMonitorId={curId}
           bizMonitorType={"netProbe"}
           envCode={rulesRecord?.envCode||""}
           onCancel={() => setRulesVisible(false)}
@@ -82,7 +83,7 @@ export default function AlarmConfig (props:Iprops){
         <div style={{display:"flex",justifyContent:"flex-end"}}> <Button
                       type="primary"
                       ghost
-                      disabled={!curRecord?.id}
+                      disabled={!curId}
                       onClick={(e) => {
                         e.stopPropagation();
                         setRulesType('add');

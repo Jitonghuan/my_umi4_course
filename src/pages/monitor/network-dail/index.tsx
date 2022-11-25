@@ -37,8 +37,8 @@ export default function NetworkDail() {
                         setClusterData(data)
                         if (data?.length > 0) {
                             try {
-                                const filterCluster = JSON.parse(sessionStorage.getItem('network-dail-cluster') || '""');
-                                console.log("filterCluster",filterCluster)
+                                const filterCluster = JSON.parse(sessionStorage.getItem('network-dail-cluster'))||"";
+                                console.log("filterCluster",filterCluster,filterCluster && filterCluster !== "")
                                 if (filterCluster && filterCluster !== "") {
                                   // debugger
                                     listForm.setFieldsValue({
@@ -48,14 +48,14 @@ export default function NetworkDail() {
                                         clusterName: filterCluster
                                     })
                                 } else {
-                                    //debugger
+                                  
                                     listForm.setFieldsValue({
                                         clusterName: data[0]?.value
                                     })
                                     getList({
                                         clusterName: data[0]?.value
                                     })
-                                    sessionStorage.setItem('network-dail-cluster', JSON.stringify(clusterData[0]?.value || '""'))
+                                    sessionStorage.setItem('network-dail-cluster', JSON.stringify(data[0]?.value || ''))
 
                                 }
                             } catch (error) {
@@ -245,7 +245,7 @@ export default function NetworkDail() {
                                 // setMode('ADD');
                                 history.push({
                                     pathname: '/matrix/monitor/dail-edit',
-                                    search: `?curCluster=${listForm.getFieldValue("clusterName")}&mode=${'ADD'}`
+                                    search: `?mode=${'ADD'}`
 
                                 })
                             }}
