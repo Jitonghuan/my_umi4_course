@@ -53,7 +53,7 @@ export const columnSchema = () => {
 
 export const cpmConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
@@ -67,7 +67,7 @@ export const cpmConfig = (data = []) => {
 
 export const avgConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
@@ -81,7 +81,7 @@ export const avgConfig = (data = []) => {
 
 export const srConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
@@ -95,7 +95,7 @@ export const srConfig = (data = []) => {
 
 export const failConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
@@ -107,10 +107,24 @@ export const failConfig = (data = []) => {
   };
 }
 
+// 对时间进行处理 取最后的时间
+export const splitTime = (arr: any) => {
+  const newArray = JSON.parse(JSON.stringify(arr || '[]'))
+  newArray.forEach((item: any) => {
+    let timeList = item.time.split(' ');
+    if (timeList.length > 1) {
+      item.time = timeList[timeList.length - 1]
+    } else {
+      item.time = timeList[0]
+    }
+  })
+  return newArray;
+}
+
 export const multiChartConfig = ({ cpm = [], fail = [] }) => {
   let data: any = [];
-  const newSr = sortTime(cpm).map((item: any) => ({ name: '请求数', time: item.time, value: item.value }));
-  const newFail = sortTime(fail).map((item: any) => ({ name: '失败数', time: item.time, value: item.value }));
+  const newSr = splitTime(sortTime(cpm)).map((item: any) => ({ name: '请求数', time: item.time, value: item.value }));
+  const newFail = splitTime(sortTime(fail)).map((item: any) => ({ name: '失败数', time: item.time, value: item.value }));
   data = [...newSr, ...newFail]
   return {
     data,
