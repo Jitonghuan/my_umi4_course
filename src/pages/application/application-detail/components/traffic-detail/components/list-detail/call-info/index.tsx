@@ -76,7 +76,7 @@ export default function CallInfo(props: any) {
     if (selectTimeType === 'lastTime') {
       //@ts-ignore
       start = Number((now - startTime) / 1000);
-      end = Number(now / 1000);
+      end = Number((now - (60 * 1000)) / 1000);
     } else {
       //@ts-ignore
       start = startTime;
@@ -123,7 +123,7 @@ export default function CallInfo(props: any) {
     if (selectTimeType === 'lastTime') {
       //@ts-ignore
       start = Number((now - startTime) / 1000);
-      end = Number(now / 1000);
+      end = Number((now - (60 * 1000)) / 1000);
     } else {
       //@ts-ignore
       start = startTime;

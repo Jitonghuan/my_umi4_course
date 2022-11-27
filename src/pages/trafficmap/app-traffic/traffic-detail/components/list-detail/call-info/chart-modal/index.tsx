@@ -41,13 +41,13 @@ export default function ChartModal(props: IProps) {
         setModalTimeType(v);
         let start, end;
         if (v === 'lastTime') {
-            start = 5 * 60 * 1000;
+            start = 6 * 60 * 1000;
             end = 0;
             setModalStart(start);
             setModalEnd(end);
         } else {
-            let startRange = moment().subtract(5, 'minutes');
-            let endRange = moment();
+            let startRange = moment().subtract(6, 'minutes');
+            let endRange = moment().subtract(1, 'minutes');
             setRangeTime([moment(startRange, 'YYYY-MM-dd HH:mm:ss'), moment(endRange, 'YYYY-MM-dd HH:mm:ss')]);
             start = startRange.unix();
             end = endRange.unix();
@@ -82,7 +82,7 @@ export default function ChartModal(props: IProps) {
         if (type === 'lastTime') {
             //@ts-ignore
             start = Number((now - startTime) / 1000);
-            end = Number(now / 1000);
+            end = Number((now - (60 * 1000)) / 1000);
         } else {
             //@ts-ignore
             start = startTime;
