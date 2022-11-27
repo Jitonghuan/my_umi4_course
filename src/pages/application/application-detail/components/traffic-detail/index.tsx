@@ -426,7 +426,7 @@ export default function TrafficDetail() {
       appCode: paramsAppData?.appCode
     })
     setCount(paramsCount + 1)
-  }, 5000)), [])
+  }, 3000, { trailing: false })), [])
 
 
   return (

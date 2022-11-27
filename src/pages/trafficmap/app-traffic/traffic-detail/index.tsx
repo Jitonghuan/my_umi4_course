@@ -445,7 +445,7 @@ export default function TrafficDetail() {
       getNodeDataSource()
       setCount(paramsCount + 1)
     }
-  }, 5000)), [])
+  }, 3000, { trailing: false })), [])
 
   return (
     <PageContainer className="traffic-detail-page">

@@ -53,7 +53,7 @@ export const columnSchema = () => {
 
 export const cpmConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
@@ -67,7 +67,7 @@ export const cpmConfig = (data = []) => {
 
 export const avgConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
@@ -81,7 +81,7 @@ export const avgConfig = (data = []) => {
 
 export const srConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
@@ -95,7 +95,7 @@ export const srConfig = (data = []) => {
 
 export const failConfig = (data = []) => {
   return {
-    data,
+    data: splitTime(data),
     padding: 'auto',
     xField: 'time',
     yField: 'value',
