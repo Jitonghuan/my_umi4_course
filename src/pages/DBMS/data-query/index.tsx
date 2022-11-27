@@ -73,12 +73,12 @@ export default function ResizeLayout() {
   const onAdd = () => {
     const values = form?.getFieldsValue();
     let initsql = "select * from user limit 10"
-    if (tableCode) {
-      initsql = `select * from ${tableCode} limit 10`
-      setImplementDisabled(false)
-    } else if (!tableCode) {
-      setImplementDisabled(true)
-    }
+    // if (tableCode) {
+    //   initsql = `select * from ${tableCode} limit 10`
+    //   setImplementDisabled(false)
+    // } else if (!tableCode) {
+    //   setImplementDisabled(true)
+    // }
     addSqlConsole
     setInitSqlValue(initsql)
     setAddCount(count => count + 1)
