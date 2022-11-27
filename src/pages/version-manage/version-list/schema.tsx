@@ -1,6 +1,6 @@
 import { Popconfirm, Tooltip } from 'antd';
 import { statusMap } from '../type';
-export const listSchema = ({ toDetail, downloadVersion, downloadCountList, mergeVersion }) => {
+export const listSchema = ({ toDetail, downloadVersion, downloadCountList, mergeVersion, handleEdit }) => {
     return [
         {
             title: '序号',
@@ -77,35 +77,53 @@ export const listSchema = ({ toDetail, downloadVersion, downloadCountList, merge
             fixed: 'right',
             render: (value: any, record: any, index: number) => (
                 <div className="action-cell">
-                    <a onClick={() => { toDetail(record.version) }}>
-                        详情
-                  </a>
-                    <a onClick={() => { }}>
-                        锁定需求
-                  </a>
-                    <a onClick={() => { }}>
-                        发版
-                  </a>
-                    <a onClick={() => { downloadVersion(record) }}>
-                        下载版本包
-                  </a>
-                    <a onClick={() => { mergeVersion(record) }}>
-                        合并
-                  </a>
-                    {/* <a onClick={() => { }}>
-                        启用版本
-                  </a> */}
-                    {/* <Button size="small" type="primary" onClick={() => download(record, index)}>下载文件</Button> */}
-                    {/* <Popconfirm
-                        title="确定要删除该信息吗？"
-                        onConfirm={() => {
-                            handleDelete(record, index);
-                        }}
-                    >
-                        <a>
-                            删除
-                    </a>
-                    </Popconfirm> */}
+                    <a onClick={() => { toDetail(record, 'list') }}>详情</a>
+                    {record.status === 'developing' &&
+                        <Popconfirm
+                            title="确定要启用该版本吗？"
+                            onConfirm={() => {
+                                handleEdit(record, index);
+                            }}>
+                            <a> 锁定需求</a>
+                        </Popconfirm>
+                    }
+                    {record?.status === 'waitPack' &&
+                        <Popconfirm
+                            title="确定要启用该版本吗？"
+                            onConfirm={() => {
+                                handleEdit(record, index);
+                            }}>
+                            <a> 发版</a>
+                        </Popconfirm>
+                    }
+                    {record?.status === 'disable' &&
+                        <Popconfirm
+                            title="确定要启用该版本吗？"
+                            onConfirm={() => {
+                                handleEdit(record, index);
+                            }}>
+                            <a > 启用版本</a>
+                        </Popconfirm>
+                    }
+                    {record?.status === 'packFinish' &&
+                        <a onClick={() => { downloadVersion(record) }}>
+                            下载版本包
+                        </a>
+                    }
+                    {record?.status === 'packFinish' &&
+                        <a onClick={() => { mergeVersion(record) }}>
+                            合并
+                        </a>
+                    }
+                    {record?.status === 'packFinish' &&
+                        <Popconfirm
+                            title="确定要禁用该版本吗？"
+                            onConfirm={() => {
+                                handleEdit(record, index);
+                            }}>
+                            <a>禁用</a>
+                        </Popconfirm>
+                    }
                 </div>
             ),
         },

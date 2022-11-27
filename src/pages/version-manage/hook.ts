@@ -28,9 +28,11 @@ export function useReleaseOption(props: any) {
         }
     }, [props]);
 
-    // useEffect(() => {
-    //     loadData({});
-    // }, []);
+    useEffect(() => {
+        if (props.categoryCode) {
+            loadData({});
+        }
+    }, []);
     return [data, loading, loadData]
 }
 

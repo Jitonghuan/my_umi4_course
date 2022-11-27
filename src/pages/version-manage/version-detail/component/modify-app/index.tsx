@@ -7,18 +7,16 @@ import detailContext from '../../context';
 import { releaseAppRel } from '../../../service';
 import './index.less'
 
-export default function ModifyApp() {
+export default function ModifyApp(props: any) {
+    const { tableData, tableLoading, onSave, filter } = props;
     const { categoryCode, releaseId } = useContext(detailContext);
-    const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
-    const [searchValue, setSearchValue] = useState<string>('');
     const [mode, setMode] = useState<string>('hide');
     const [curRecord, setCurRecord] = useState<any>({});
-    const [loading, setLoading] = useState<boolean>(false);
     const [form] = Form.useForm();
 
-    const frontTotal = useMemo(() => (data || []).filter((item: any) => item.appType !== 'backend').length, [data])
-    const backendTotal = useMemo(() => (data || []).filter((item: any) => item.appType === 'backend').length, [data])
+    const frontTotal = useMemo(() => (tableData || []).filter((item: any) => item.appType !== 'backend').length, [tableData])
+    const backendTotal = useMemo(() => (tableData || []).filter((item: any) => item.appType === 'backend').length, [tableData])
 
     const columns = [
         {
@@ -96,21 +94,6 @@ export default function ModifyApp() {
 
     ]
 
-    useEffect(() => {
-        if (releaseId) {
-            queryData();
-        }
-    }, [releaseId])
-
-    const queryData = () => {
-        setLoading(true)
-        releaseAppRel({ releaseId }).then((res) => {
-            if (res?.success) {
-                setData(res?.data || [])
-            }
-        }).finally(() => { setLoading(false) })
-    }
-
     const clickRow = (type: string, record: any) => {
         setCurRecord(record);
         setMode(type);
@@ -120,7 +103,7 @@ export default function ModifyApp() {
             <div className='table-top'>
                 <div className='flex-space-between'>
                     <Space>
-                        <span>应用总数：{data?.length}</span>
+                        <span>应用总数：{tableData?.length}</span>
                         <span>前端应用：{frontTotal}</span>
                         <span>后端应用：{backendTotal}</span>
                     </Space>
@@ -134,15 +117,15 @@ export default function ModifyApp() {
                             placeholder='输入内容进行查询过滤'
                             className="ant-input ant-input-sm"
                             onChange={(e) => {
-                                //   filter(e.target.value)
+                                filter(e.target.value)
                             }}
                         ></input>
                     </div>
                 </div>
             </div>
             <Table
-                dataSource={data}
-                loading={loading}
+                dataSource={tableData}
+                loading={tableLoading}
                 bordered
                 rowKey="id"
                 pagination={false}

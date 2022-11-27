@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext, useMemo } from 'react';
+import React, { useEffect, useState, useContext, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { Tag, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
 import detailContext from '../../context';
 import { releaseDemandRel, deleteDemand } from '../../../service';
-import { arrowStyleType } from '@/pages/trafficmap/constant';
 const mockData = [
     { title: '应用管理：版本发布' },
     { title: '应用管理：版本发布' },
@@ -20,14 +19,12 @@ const mockData = [
     { title: '应用管理：版本发布' },
     { title: '应用管理：版本发布' }
 ]
-export default function ContentList() {
-    const [dataSource, setDataSource] = useState<any>([]);
+export default forwardRef(function ContentList(props: any) {
+    const { tableData, tableLoading, onSave, filter } = props;
     const [type, setType] = useState<string>('hide');
-    const [loading, setLoading] = useState<boolean>(false);
-    const [searchValue, setSearchValue] = useState<string>('');
     const { categoryCode, releaseId } = useContext(detailContext);
-    const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [dataSource])
-    const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [dataSource])
+    const demandTotal = useMemo(() => (tableData || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [tableData])
+    const bugTotal = useMemo(() => (tableData || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [tableData])
 
     const columns: any = [
         {
@@ -59,7 +56,7 @@ export default function ContentList() {
             title: '关联应用',
             dataIndex: 'relationApps',
             width: 300,
-            render: (value: any, record: any) => <div>{value.map((item: any) => <Tag>{item.appCode}{item.appStatus}</Tag>)}</div>
+            render: (value: any, record: any) => <div>{value.map((item: any) => <Tag> <span style={{ color: 'blue' }}>{item.appCode} </span> <span style={{ color: item.appStatus === '未出包' ? 'gray' : 'green' }}>{item.appStatus}</span> </Tag>)}</div>
         },
         {
             title: '操作',
@@ -82,34 +79,19 @@ export default function ContentList() {
         },
     ]
 
-    useEffect(() => {
-        if (releaseId) {
-            queryData();
-        }
-    }, [releaseId])
-
-    const queryData = () => {
-        setLoading(true)
-        releaseDemandRel({ releaseId }).then((res) => {
-            if (res?.success) {
-                setDataSource(res?.data || [])
-            }
-        }).finally(() => { setLoading(false) })
-    }
-
     const handleDelete = async (id: any) => {
         const res = await deleteDemand({ ids: [id] })
         if (res?.success) {
-            queryData();
+            onSave();
         }
     }
     return (
         <>
-            <RealteDemandBug type={type} onClose={() => { setType('hide') }} releaseId={releaseId} onSave={queryData} />
+            <RealteDemandBug type={type} onClose={() => { setType('hide') }} releaseId={releaseId} onSave={onSave} />
             <div className='table-top'>
                 <div className='flex-space-between'>
                     <Space>
-                        <span>内容总数：{dataSource?.length}</span>
+                        <span>内容总数：{tableData?.length}</span>
                         <span>需求：{demandTotal}</span>
                         <span>bug：{bugTotal}</span>
                     </Space>
@@ -123,17 +105,17 @@ export default function ContentList() {
                             placeholder='输入内容进行查询过滤'
                             className="ant-input ant-input-sm"
                             onChange={(e) => {
-                                //   filter(e.target.value)
+                                filter(e.target.value)
                             }}
                         ></input>
                     </div>
                 </div>
             </div>
             <Table
-                dataSource={dataSource}
+                dataSource={tableData}
                 bordered
                 rowKey="id"
-                loading={loading}
+                loading={tableLoading}
                 // pagination={{
                 //     pageSize: pageSize,
                 //     total: total,
@@ -165,4 +147,4 @@ export default function ContentList() {
             </div>
         </>
     )
-}
+})

@@ -15,11 +15,16 @@ import { getReleaseList } from '../service';
 import './index.less';
 
 export default function VersionList() {
+    let sessionData = JSON.parse(sessionStorage.getItem('version_list_form') || '{}');
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
     const { categoryData } = useContext(FeContext);
-    const [appCategory, setAppCategroy] = useState<any>({});
+    const [appCategory, setAppCategroy] = useState<any>(sessionData['categoryCode'] || categoryData[0] || {});
     const [form] = Form.useForm();
+    form.setFieldsValue({
+        categoryCode: appCategory,
+        releaseNumber: sessionData?.releaseNumber || ''
+    });
     const [action, setAction] = useState<string>('')
     const [selectTime, setSelectTime] = useState<string>('');
     const [operateVisible, setOperateVisible] = useState<boolean>(false);
@@ -29,27 +34,20 @@ export default function VersionList() {
     const [pageSize, setPageSize] = useState<number>(20);
     const [loading, setLoading] = useState<boolean>(false);
 
-    // useEffect(() => {
-    //     queryList({ pageSize, pageIndex });
-    // }, [])
+    useEffect(() => {
+        queryList({ pageSize, pageIndex });
+    }, [])
 
     const maxVersion = useMemo(() => {
-        const versionList = (data || []).map((item: any) => item.version);
+        const versionList = (data || []).map((item: any) => item.releaseNumber);
         const res = versionList.sort((a: any, b: any) => versionSortFn(a, b))
         return res.length ? res[0] : '';
     }, [data]);
 
-    useEffect(() => {
-        if (categoryData?.length && !appCategory.value) {
-            form.setFieldsValue({ categoryCode: categoryData[0].value })
-            setAppCategroy(categoryData[0])
-        }
-    }, [categoryData])
 
     const tableColumns = useMemo(() => {
         return listSchema({
             toDetail: (record: any, toTab: string) => {
-                console.log(record, record.id, 'record')
                 // 跳转到版本详情
                 history.push({
                     pathname: '/matrix/version-manage/detail',
@@ -64,6 +62,9 @@ export default function VersionList() {
             },
             mergeVersion: (record: any) => {
                 openModal('merge', record)
+            },
+            handleEdit: (record: any) => {
+
             }
         }) as any;
     }, [data, appCategory]);
@@ -92,6 +93,7 @@ export default function VersionList() {
     }
 
     const formChange = (changedValues: any, allValues: any) => {
+        sessionStorage.setItem('version_list_form', JSON.stringify(allValues));
         queryList({ pageSize, pageIndex })
     }
 
