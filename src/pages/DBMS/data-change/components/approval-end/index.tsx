@@ -227,7 +227,7 @@ export default function ApprovalEnd() {
         return {
           disabledHours: () => range(0, startHours).concat(range( endHours+1,24)),
           disabledMinutes: () => current.hours() === startHours?range( 0, startMinutes):current.hours() === endHours?range( endMinutes+1,60):[],
-          disabledSeconds: () => current.hours() === startHours?range( 0, startSeconds):current.hours() === endHours?range( endSeconds+1,60):[],
+          disabledSeconds: () => current.minutes() === startMinutes?range( 0, startSeconds):current.minutes() === endMinutes?range( endSeconds+1,60):[],
         }
       }
   
@@ -378,6 +378,7 @@ export default function ApprovalEnd() {
                     //@ts-ignore
                     disabledTime={disabledDateTime}
                     placeholder="请选择执行时间"
+                    
                   />
                 </Form.Item>
               </>)

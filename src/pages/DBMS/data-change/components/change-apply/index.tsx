@@ -112,33 +112,24 @@ export default function ResizeLayout() {
     return current && current < moment().subtract(1, 'days').endOf('day')
   };
 
-  const disabledDateTime = (current: any) => {
-    const now = new Date().getTime();
-    const startHours = Number(moment(now).hours());
-    const endHours = Number(moment(now).hours());
-    const startMinutes = Number(moment(now).minutes());
-    const endMinutes = Number(moment(now).minutes());
-    const startSeconds = Number(moment(now).seconds());
-    const endSeconds = Number(moment(now).seconds());
-    if (current) {
-      const startDate = moment(now).endOf("days").date();
-      const endDate = moment(now).endOf("days").date();
-      if (current.date() === startDate) {
+  const disabledDateTime = (current:any) => {
+  const now = new Date().getTime();
+  const curHours= Number(moment(now).hours());
+  const curMinutes = Number(moment(now).minutes());
+  const curSeconds = Number(moment(now).seconds());
+  if(current){
+    const curDate = moment(now).endOf("days").date();
+         if (current.date() === curDate) {
         return {
-          disabledHours: () => range(0, startHours),
-          disabledMinutes: () => range(0, startMinutes),
-          disabledSeconds: () => range(0, startSeconds),
+          disabledHours: () => range(0, curHours),
+          disabledMinutes: () =>  current.hours() === curHours?range(0, curMinutes+1):[],
+          disabledSeconds: () => current.minutes() === curMinutes?range(0, curSeconds):[],
+        //  disabledSeconds:()=>[]
         }
       }
 
-      if (current.date() === endDate) {
-        return {
-          disabledHours: () => range(0, endHours),
-          disabledMinutes: () => range(0, endMinutes),
-          disabledSeconds: () => range(0, endSeconds),
-        }
-      }
-    }
+  }
+  
   };
   const onChange3 = ({ target: { value } }: RadioChangeEvent) => {
     setValue(value);
