@@ -49,6 +49,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                    <a
                  target="_blank"
                  onClick={() => {
+                     console.log("---encodeURIComponent(sql)-----",encodeURIComponent(sql),)
               
                   message.info('开始导出...');
                   setDownLoadDisabled(true);
@@ -56,7 +57,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                     setDownLoadDisabled(false);
                   }, 3000);
                 }}
-                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${sql}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=excel&envCode=${relayInfo?.envCode}`}
+                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${encodeURIComponent(sql)}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=excel&envCode=${relayInfo?.envCode}`}
                 >Excel</a></p>
                 <p><a
                  target="_blank"
@@ -67,7 +68,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                     setDownLoadDisabled(false);
                   }, 3000);
                 }}
-                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${sql}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=sql&envCode=${relayInfo?.envCode}`}
+                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${encodeURIComponent(sql)}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=sql&envCode=${relayInfo?.envCode}`}
                 >Sql</a></p>
                 </div>} title="导出格式" trigger="click">
               <Button  
