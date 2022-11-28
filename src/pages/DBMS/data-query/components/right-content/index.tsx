@@ -57,7 +57,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                     setDownLoadDisabled(false);
                   }, 3000);
                 }}
-                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${decodeURIComponent(sql)}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=excel&envCode=${relayInfo?.envCode}`}
+                 href={`${exportResultApi}?instanceId=${relayInfo?.instance}&sqlContent=${encodeURIComponent(sql)}&dbCode=${relayInfo?.dbCode}&tableCode=${relayInfo?.tableCode}&exportType=excel&envCode=${relayInfo?.envCode}`}
                 >Excel</a></p>
                 <p><a
                  target="_blank"
