@@ -237,13 +237,14 @@ export default function PanelDetail(props: Iprops) {
         if (current) {
             const startDate = moment(info?.runStartTime).endOf("days").date();
             const endDate = moment(info?.runEndTime).endOf("days").date();
-            if( endDate=== startDate){
-                return {
-                  disabledHours: () => range(0, startHours).concat(range( endHours+1,24)),
-                  disabledMinutes: () => range( 0, startMinutes).concat(range( endMinutes+1,60)),
-                  disabledSeconds: () => range(endSeconds+1,60),
-                }
-              }
+             
+      if( endDate=== startDate){
+        return {
+          disabledHours: () => range(0, startHours).concat(range( endHours+1,24)),
+          disabledMinutes: () => current.hours() === startHours?range( 0, startMinutes):current.hours() === endHours?range( endMinutes+1,60):[],
+          disabledSeconds: () => current.hours() === startHours?range( 0, startSeconds):current.hours() === endHours?range( endSeconds+1,60):[],
+        }
+      }
             if (current.date() === startDate) {
                 return {
                     disabledHours: () => range(0, startHours),
