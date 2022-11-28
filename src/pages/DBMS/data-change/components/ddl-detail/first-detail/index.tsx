@@ -234,6 +234,13 @@ export default function ApprovalEnd() {
     if (current) {
       const startDate = moment(info?.runStartTime).endOf("days").date();
       const endDate = moment(info?.runEndTime).endOf("days").date();
+      if( endDate=== startDate){
+        return {
+          disabledHours: () => range(0, startHours).concat(range( endHours+1,24)),
+          disabledMinutes: () => range( 0, startMinutes).concat(range( endMinutes+1,60)),
+          disabledSeconds: () => range(endSeconds+1,60),
+        }
+      }
       if (current.date() === startDate) {
         return {
           disabledHours: () => range(0, startHours),
@@ -244,9 +251,9 @@ export default function ApprovalEnd() {
 
       if (current.date() === endDate) {
         return {
-          disabledHours: () => range(0, endHours),
-          disabledMinutes: () => range(0, endMinutes),
-          disabledSeconds: () => range(0, endSeconds),
+          disabledHours: () => range( endHours+1,24),
+          disabledMinutes: () => range( endMinutes+1,60),
+          disabledSeconds: () => range(endSeconds+1,60),
         }
       }
     }

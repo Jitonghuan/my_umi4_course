@@ -1,6 +1,6 @@
-// article editor
+// 应用流量详情
 // @author JITONGHUAN <muxi@come-future.com>
-// @create 2022/06/15 14:50
+// @create 2022/11/16 14:50
 
 import React, { useState, useContext, useRef } from 'react';
 import { Radio, Input } from 'antd';
