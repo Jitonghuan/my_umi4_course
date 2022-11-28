@@ -5,6 +5,7 @@
 
 import { addAPIPrefix } from '@/utils';
 
+
 /** GET 流量地图 */
 export const trafficMap = addAPIPrefix('/opsManage/multiple/map');
 

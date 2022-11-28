@@ -121,6 +121,10 @@ export default [
     path: `${baseRoutePath}/DBMS/safe-rule`,
     redirect: `${baseRoutePath}/DBMS/safe-rule/safe-list`,
   },
+  {
+    path: `${baseRoutePath}/cluster-recovery`,
+    redirect: `${baseRoutePath}/cluster-recovery/dashboards`,
+  },
 
   {
    
