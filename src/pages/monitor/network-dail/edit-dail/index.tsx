@@ -285,7 +285,11 @@ export default function EditDail() {
             history.push({
               pathname: '/matrix/monitor/network-dail',
             })
-            sessionStorage.setItem('network-dail-cluster', JSON.stringify(form.getFieldValue("clusterName")||""))
+            if(form.getFieldValue("clusterName")){
+              sessionStorage.setItem('network-dail-cluster', JSON.stringify(form.getFieldValue("clusterName")||""))
+
+            }
+           
 
 
           }}>返回</Button></Space></span></p>} key="1">
@@ -315,7 +319,7 @@ export default function EditDail() {
               {dailType === "http" && (
                 <>
 
-                  <Form.Item label="请求配置" name="probeConfig" initialValue={questConfigOptions[0]?.value} rules={[{ required: true, message: '请填写' }]}>
+                  <Form.Item label="请求配置" name="probeConfig" initialValue={questConfigOptions[0]?.value} >
                     <Segmented options={questConfigOptions} defaultValue={questConfigOptions[0]?.value} value={questConfigType} onChange={(value: any) => {
                       setQuestConfigType(value)
                       if (form.getFieldValue("headers")?.length > 0) {
@@ -347,24 +351,25 @@ export default function EditDail() {
                   {questConfigType === "headers" && <Form.Item
                     name="headers"
                     style={{ marginLeft: 110 }}
-                    rules={[
-                      {
-                        validator: async (_, value: any) => {
-                          if (!value?.length) {
-                            throw new Error('关联信息至少填写一组');
-                          }
-                          if (value.find((n: any) => !(n.httpKey && n.httpValue))) {
-                            throw new Error('Key 和 Value不能为空!');
-                          }
-                          // 去重校验
-                          const httpKey = value.map((n: any) => n.httpKey);
-                          if (httpKey.length > [...new Set(httpKey)].length) {
-                            throw new Error('请勿重复Key!');
-                          }
-                        },
-                        validateTrigger: [],
-                      },
-                    ]}>
+                    // rules={[
+                    //   {
+                    //     validator: async (_, value: any) => {
+                    //       if (!value?.length) {
+                    //         throw new Error('关联信息至少填写一组');
+                    //       }
+                    //       if (value.find((n: any) => !(n.httpKey && n.httpValue))) {
+                    //         throw new Error('Key 和 Value不能为空!');
+                    //       }
+                    //       // 去重校验
+                    //       const httpKey = value.map((n: any) => n.httpKey);
+                    //       if (httpKey.length > [...new Set(httpKey)].length) {
+                    //         throw new Error('请勿重复Key!');
+                    //       }
+                    //     },
+                    //     validateTrigger: [],
+                    //   },
+                    // ]}
+                    >
                     <EditorTable
                       columns={[
                         {
@@ -409,25 +414,27 @@ export default function EditDail() {
               )}
               {dailType === "tcp" && (
                 <>
-                  <Form.Item rules={[{ required: true, message: '请填写' }]} name="probeConfig" label="请求配置" initialValue={tcpQuestConfig[0]?.value}> <Radio.Group options={tcpQuestConfig} optionType="button" defaultValue={tcpQuestConfig[0]?.value} /></Form.Item>
-                  <Form.Item name="queryResponse" style={{ marginLeft: 110 }} rules={[
-                    {
-                      validator: async (_, value: any) => {
-                        if (!value?.length) {
-                          throw new Error('关联信息至少填写一组');
-                        }
-                        if (value.find((n: any) => !(n.expect && n.send))) {
-                          throw new Error('Key 和 Value不能为空!');
-                        }
-                        // 去重校验
-                        const expect = value.map((n: any) => n.expect);
-                        if (expect.length > [...new Set(expect)].length) {
-                          throw new Error('请勿重复Key!');
-                        }
-                      },
-                      validateTrigger: [],
-                    },
-                  ]}>
+                  <Form.Item  name="probeConfig" label="请求配置" initialValue={tcpQuestConfig[0]?.value}> <Radio.Group options={tcpQuestConfig} optionType="button" defaultValue={tcpQuestConfig[0]?.value} /></Form.Item>
+                  <Form.Item name="queryResponse" style={{ marginLeft: 110 }}
+                  //  rules={[
+                  //   {
+                  //     validator: async (_, value: any) => {
+                  //       if (!value?.length) {
+                  //         throw new Error('关联信息至少填写一组');
+                  //       }
+                  //       if (value.find((n: any) => !(n.expect && n.send))) {
+                  //         throw new Error('Key 和 Value不能为空!');
+                  //       }
+                  //       // 去重校验
+                  //       const expect = value.map((n: any) => n.expect);
+                  //       if (expect.length > [...new Set(expect)].length) {
+                  //         throw new Error('请勿重复Key!');
+                  //       }
+                  //     },
+                  //     validateTrigger: [],
+                  //   },
+                  // ]}
+                  >
                     <EditorTable
                       columns={[
                         {
