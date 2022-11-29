@@ -21,12 +21,10 @@ export default function Dashboard(props: any) {
   return (
     <PageContainer>
       <FilterCard className="layout-compact">
-        <Tabs activeKey={activeKey} onChange={(next) => history.push(`/matrix/cluster-recovery/${next}`)}>
-          <Tabs.TabPane tab="集群大盘" key="dashboards" />
-          <Tabs.TabPane tab="流量调度" key="scheduling-mode" />
-          <Tabs.TabPane tab="集群同步" key="cluster-sync" />
-          <Tabs.TabPane tab="策略配置" key="policy-config" />
-          <Tabs.TabPane tab="操作记录" key="operation-log" />
+        <Tabs activeKey={activeKey} onChange={(next) => history.push(`/matrix/cluster-recovery/scheduling/${next}`)}>
+          <Tabs.TabPane tab="机构维度" key="organ" />
+          <Tabs.TabPane tab="操作员维度" key="operator" />
+          <Tabs.TabPane tab="用户维度" key="user" />
         </Tabs>
       </FilterCard>
       <VCPermission code={window.location.pathname} isShowErrorPage>

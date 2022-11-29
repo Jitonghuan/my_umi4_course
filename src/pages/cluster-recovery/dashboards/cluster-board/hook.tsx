@@ -4,6 +4,8 @@ import appConfig from '@/app.config';
 import { getRequest } from '@/utils/request';
 import moment from 'moment';
 import { addAPIPrefix } from '@/utils';
+
+
 export const getCommonEnvCode = addAPIPrefix('/opsManage/multiple/common/getEnvCode');
 export const queryCommonEnvCode = () =>getRequest(getCommonEnvCode);
 

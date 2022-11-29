@@ -56,11 +56,6 @@ export default [
     path: `${baseRoutePath}/test/autotest`,
     redirect: `${baseRoutePath}/test/autotest/dashboard`,
   },
-  // {
-  //   path: `${baseRoutePath}/monitor`,
-  //   redirect: `${baseRoutePath}/monitor/business`,
-
-  // },
   {
     path: `${baseRoutePath}/monitor/basic`,
     redirect: `${baseRoutePath}/monitor/basic/prometheus`,
@@ -124,6 +119,10 @@ export default [
   {
     path: `${baseRoutePath}/cluster-recovery`,
     redirect: `${baseRoutePath}/cluster-recovery/dashboards`,
+  },
+  {
+    path: `${baseRoutePath}/cluster-recovery/scheduling`,
+    redirect: `${baseRoutePath}/cluster-recovery/scheduling/organ`,
   },
 
   {
@@ -946,10 +945,35 @@ export default [
        
       },
       {
-        "path": `${baseRoutePath}/cluster-recovery/scheduling-mode`,
+        "path": `${baseRoutePath}/cluster-recovery/scheduling`,
         "name": "流量调度",
         "key": "scheduling-mode",
-        "component": "@/pages/cluster-recovery/scheduling-mode",
+        "component": "@/pages/cluster-recovery/scheduling",
+        routes:[
+          {
+            "path": `${baseRoutePath}/cluster-recovery/scheduling/organ`,
+            "name": "机构维度",
+            "key": "scheduling-mode",
+            "component": "@/pages/cluster-recovery/scheduling/organ",
+            "hideInMenu": true
+          },
+
+          {
+            "path": `${baseRoutePath}/cluster-recovery/scheduling/operator`,
+            "name": "操作员维度",
+            "key": "scheduling-mode",
+            "component": "@/pages/cluster-recovery/scheduling/operator",
+            "hideInMenu": true
+          },
+          {
+            "path": `${baseRoutePath}/cluster-recovery/scheduling/user`,
+            "name": "用户维度",
+            "key": "scheduling-mode",
+            "component": "@/pages/cluster-recovery/scheduling/user",
+            "hideInMenu": true
+          },
+
+        ]
        
       },
       {
@@ -1015,7 +1039,6 @@ export default [
         "name": "组件中心",
         "key": "component-center",
         "component": "@/pages/station/component-center",
-        "routes": []
       },
       {
         "path": `${baseRoutePath}/station/component-detail`,

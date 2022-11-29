@@ -48,9 +48,9 @@ export default function Dashboards(props:Iprops) {
   }, []);
 
   useEffect(() => {
-    if (appConfig.IS_Matrix !== 'public') {
+    // if (appConfig.IS_Matrix !== 'public') {
       getEnvCode()
-    }
+    // }
   }, []);
   useEffect(()=>{
     if(count!==0&&envCode){

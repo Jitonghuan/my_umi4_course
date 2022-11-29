@@ -31,7 +31,10 @@ export default function Dashboards(){
             <ContentCard>
               <div className="cluster-recovery-dashboard-header">
               <Radio.Group size="middle" options={options} onChange={onChange} value={value} optionType="button" />
-              {value==="cluster-board"&&<Button type="primary" onClick={refresh}>刷新数据</Button>}
+              {/* {value==="cluster-board"&& */}
+              <Button type="primary" onClick={refresh}>刷新数据</Button>
+              {/* } */}
+
 
               </div>
             
