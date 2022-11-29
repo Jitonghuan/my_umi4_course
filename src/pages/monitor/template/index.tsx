@@ -266,7 +266,7 @@ const TemplateCom: React.FC = () => {
   };
 
   return (
-    <PageContainer className="template-page">
+    <PageContainer className="template-page" style={{ padding: 0 }}>
       <div className="app-group-content-wrapper">
         <TableSearch
           form={form}
