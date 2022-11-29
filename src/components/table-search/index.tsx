@@ -41,11 +41,15 @@ const TableSearch: React.FC<TableSearchProps> = ({
         <FormList form={form} {...rest} />
       </FilterCard>
       <ContentCard>
-        <div className="extra-node-box">
-          {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
-          <>{extraNode}</>
-        </div>
-       
+        {
+          showTableTitle || extraNode ? (
+            <div className="extra-node-box">
+              {showTableTitle ? <b style={{ fontSize: '16px' }}>{tableTitle}</b> : null}
+              <>{extraNode}</>
+            </div>
+          ) : null
+        }
+
         <Table className={className} columns={columns} loading={!rest?.dataSource}  {...rest} rowKey={rest.rowKey || 'id'} />
       </ContentCard>
     </>

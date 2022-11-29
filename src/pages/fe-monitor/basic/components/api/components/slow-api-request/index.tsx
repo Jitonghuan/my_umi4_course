@@ -1,18 +1,49 @@
-import React, { useState } from 'react';
-import { Button, Descriptions, Drawer, Input, Table } from '@cffe/h2o-design';
+import React, {useEffect, useState} from 'react';
+import {Button, Descriptions, Drawer, Form, Input, Table} from '@cffe/h2o-design';
 import moment from 'moment';
+import { getSlowApiList } from "@/pages/fe-monitor/basic/server";
 
 interface IProps {
-  dataSource: any[];
-  loading: boolean;
-  pageTotal: number | undefined;
+  timeList: any;
+  appGroup: string;
+  feEnv: string;
+  getParam: () => any;
 }
 
 const SlowApiRequest = (props: IProps) => {
-  const { dataSource, loading, pageTotal } = props;
+  const { getParam } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
+  const [searchValue, setSearchValue] = useState<any>({});
+
+  const [timeOutTotal, setTimeOutTotal] = useState<number>(0);
+  const [timeOutData, setTimeOutData] = useState<any[]>([]);
+  const [timeOutLoading, setTimeOutLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    void onSearchTimeOut(searchValue);
+  }, [props.timeList, props.appGroup, props.feEnv]);
+
+
+  async function onSearchTimeOut(searchValue?: any) {
+    if (timeOutLoading) {
+      return;
+    }
+    setTimeOutLoading(true);
+    const res = await getSlowApiList({
+      ...getParam(),
+      ...searchValue || {}
+    });
+    setTimeOutData(res?.data || []);
+    setTimeOutTotal(res?.data?.length || 0);
+    setTimeOutLoading(false);
+  }
+
+  const handleSearch = async (value: any) => {
+    setSearchValue(value);
+    void onSearchTimeOut(value);
+  };
 
   const getDetail = (record: any) => {
     setDetail(record);
@@ -20,12 +51,24 @@ const SlowApiRequest = (props: IProps) => {
 
   return (
     <>
+      <div className="success-rate-search-bar">
+        <Form layout="inline" className="monitor-filter-form" onFinish={handleSearch}>
+          <Form.Item label="关键字" name="api">
+            <Input allowClear />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              查询
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
       <Table
-        dataSource={dataSource}
+        dataSource={timeOutData}
         bordered
         scroll={{ x: '100%' }}
         rowKey="ts"
-        loading={loading}
+        loading={timeOutLoading}
         rowClassName={(record) => (record.d3 === selectedRowKeys[0] ? 'row-active' : '')}
         onRow={(record) => {
           return {
@@ -75,7 +118,7 @@ const SlowApiRequest = (props: IProps) => {
           },
         ]}
         pagination={{
-          total: pageTotal,
+          total: timeOutTotal,
         }}
       />
       <Drawer
