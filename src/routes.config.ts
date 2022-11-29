@@ -124,6 +124,10 @@ export default [
     path: `${baseRoutePath}/cluster-recovery/scheduling`,
     redirect: `${baseRoutePath}/cluster-recovery/scheduling/organ`,
   },
+  {
+    path: `${baseRoutePath}/cluster-recovery/cluster-sync`,
+    redirect: `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
+  },
 
   {
    
@@ -981,6 +985,45 @@ export default [
         "name": "集群同步",
         "key": "cluster-sync",
         "component": "@/pages/cluster-recovery/cluster-sync",
+        routes:[
+          {
+            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
+            "name": "全量同步",
+            "key": "cluster-sync",
+            "component": "@/pages/cluster-recovery/cluster-sync/full",
+            "hideInMenu": true
+          },
+
+          {
+            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/backend`,
+            "name": "后端单应用同步",
+            "key": "cluster-sync",
+            "component": "@/pages/cluster-recovery/cluster-sync/backend",
+            "hideInMenu": true
+          },
+          {
+            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/front`,
+            "name": "前端单应用同步",
+            "key": "cluster-sync",
+            "component": "@/pages/cluster-recovery/cluster-sync/front",
+            "hideInMenu": true
+          },
+          {
+            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/nacos`,
+            "name": "Nacos配置同步",
+            "key": "cluster-sync",
+            "component": "@/pages/cluster-recovery/cluster-sync/nacos",
+            "hideInMenu": true
+          },
+          {
+            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/policy`,
+            "name": "同步策略",
+            "key": "cluster-sync",
+            "component": "@/pages/cluster-recovery/cluster-sync/policy",
+            "hideInMenu": true
+          },
+
+        ]
         
       },
       {
@@ -992,11 +1035,10 @@ export default [
       
       },
       {
-        "path": `${baseRoutePath}/cluster-recovery/policy-config`,
-        "name": "策略配置",
-        "key": "policy-config",
-        "component": "@/pages/cluster-recovery/policy-config",
-        "hideInMenu": true
+        "path": `${baseRoutePath}/cluster-recovery/district-manage`,
+        "name": "机构管理",
+        "key": "district-manage",
+        "component": "@/pages/cluster-recovery/district-manage",
       },
       {
         "path": `${baseRoutePath}/cluster-recovery/operation-log`,
