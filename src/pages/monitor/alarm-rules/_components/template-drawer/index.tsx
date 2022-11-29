@@ -281,6 +281,8 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       }
       if (type === 'edit') {
         obj.id = record?.id;
+        obj.bizMonitorId = record?.bizMonitorId;
+        obj.bizMonitorType = record?.bizMonitorType;
       }
       delete obj.timeType;
       onSubmit && onSubmit(obj);

@@ -53,7 +53,7 @@ export default defineConfig({
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       // target: 'http://10.10.129.38:8081',//青枫本地
-      // target: 'http://10.10.129.128:8080/', // 羁绊本地
+      // target: 'http://10.10.129.182:8080/', // 羁绊本地
       // target: 'http://10.10.130.108:8000', // 可乐本地
       // target: 'http://turing.cfuture.shop:8010', // 逍遥本地
       // target: 'https://release.zy91.com:4443/futuredog',

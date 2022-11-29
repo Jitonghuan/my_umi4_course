@@ -58,6 +58,9 @@ export const updateRuleTemplates = `${appConfig.apiPrefix}/monitorManage/ruleTem
 // 删除
 export const deleteRuleTemplates = `${appConfig.apiPrefix}/monitorManage/ruleTemplates/delete`;
 
+// 查询业务报警规则
+export const rulesList = `${appConfig.apiPrefix}/monitorManage/rules/list`;
+
 /**
  * 报警历史
  */

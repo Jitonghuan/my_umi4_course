@@ -93,3 +93,12 @@ export const createPrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMon
 
 // 编辑Prometheus
 export const updatePrometheus = `${appConfig.apiPrefix}/monitorManage/serviceMonitor/update`;
+
+// 日志级接入列表
+export const logList = `${appConfig.apiPrefix}/monitorManage/biz/log/list`;
+
+// 日志级监控接入-新增监控
+export const logAdd = `${appConfig.apiPrefix}/monitorManage/biz/log/add`;
+
+// 日志级监控接入-删除监控
+export const logDelete = `${appConfig.apiPrefix}/monitorManage/biz/log/delete`;

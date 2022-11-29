@@ -6,6 +6,7 @@ import DpMonitor from './dp-monitor';
 import { history,useLocation } from 'umi';
 import { parse } from 'query-string';
 import PrometheusCom from './prometheus';
+import LogPrometheus from './log-prometheus/index';
 
 
 const { TabPane } = Tabs;
@@ -24,17 +25,17 @@ export default function Dashboard() {
           history.replace({
             pathname: '/matrix/monitor/business',
             search:`tab=${val}`
-            // query: {
-            //   tab: val,
-            // },
           });
         }}
       >
-        <TabPane tab="数据库接入" key="db">
+        <TabPane tab="数据级接入" key="db">
           <DpMonitor  />
         </TabPane>
-        <TabPane tab="应用接入" key="interface">
+        <TabPane tab="API级接入" key="interface">
           <PrometheusCom/>
+        </TabPane>
+        <TabPane tab="日志级接入" key="log">
+          <LogPrometheus/>
         </TabPane>
       </Tabs>
     </PageContainer>

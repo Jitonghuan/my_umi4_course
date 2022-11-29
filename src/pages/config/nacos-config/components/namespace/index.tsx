@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo,useCallback } from 'react';
 import { Button, Space, Table } from 'antd';
 import { RedoOutlined } from '@ant-design/icons'
-import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
-import PageContainer from '@/components/page-container';
 import { getNacosNamespaces, useDeleteNamespace } from './hook';
 import DetailContext from '../../context';
 import CreateNamespace from './create-namespace';

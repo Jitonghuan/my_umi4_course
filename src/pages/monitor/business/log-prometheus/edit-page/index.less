@@ -1,0 +1,117 @@
+.monitor-log {
+  overflow: hidden;
+
+  .ant-card-body{
+    height: 100%;
+  }
+
+  .monitor-log-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .monitor-log-content {
+      flex: 1;
+      overflow: auto;
+    }
+  }
+
+  .log-config {
+    display: flex;
+    margin: 10px 0 20px;
+
+    .log-config-left {
+      flex: 1;
+      .ant-row {
+        width: 470px;
+        margin-bottom: 10px;
+      }
+
+      .ant-form-item-control-input-content {
+        display: flex;
+      }
+    }
+
+    .log-config-right {
+      width: 55%;
+      .log-board,
+      .target-board {
+        width: 100%;
+        height: 96%;
+        background-color: rgb(8, 29, 16);
+        overflow: auto;
+      }
+    }
+  }
+
+  .monitor-log-btn-wrapper {
+    display: flex;
+  }
+
+  .ant-collapse>.ant-collapse-item>.ant-collapse-header {
+    display: flex;
+    align-items: center;
+    .ant-collapse-header-text {
+      flex: 1;
+    }
+  }
+
+  .target-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  .target-config {
+    display: flex;
+    height: 100%;
+    .target-config-left {
+      flex: 1;
+      height: 100%;
+      overflow: auto;
+    }
+  }
+
+  .space-list-item {
+    display: flex;
+    .ant-space-item {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .ant-form-item {
+      width: 480px;
+    }
+  }
+
+  .ant-row {
+    width: 100%;
+  }
+
+  .filters-list-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 0 10px 10px 0;
+    .ant-form-item {
+      width: auto;
+      margin-bottom: 0;
+      margin-right: 20px;
+    }
+  }
+
+  .target-item-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.log-monitor-board-con {
+  width: 100%;
+  height: 93%;
+  min-height: 550px;
+  background-color: rgb(8, 29, 16);
+  overflow: auto;
+}
