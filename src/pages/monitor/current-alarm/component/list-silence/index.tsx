@@ -47,7 +47,7 @@ const ListSilence = (props: IProps) => {
     <Modal
       visible={visible}
       title="静默列表"
-      width="1200"
+      width={1000}
       maskClosable={false}
       onCancel={onClose}
       onOk={onClose}
