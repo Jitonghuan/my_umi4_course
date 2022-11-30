@@ -210,16 +210,27 @@ export default function ApprovalEnd() {
     return current < moment(info?.runStartTime).startOf("days") || current > moment(info?.runEndTime).endOf("days")
   };
 
-  const disabledDateTime = (current: any) => {
+  const disabledDateTime = (current: any,) => {
     const startHours = Number(moment(info?.runStartTime).hours());
     const endHours = Number(moment(info?.runEndTime).hours());
     const startMinutes = Number(moment(info?.runStartTime).minutes());
     const endMinutes = Number(moment(info?.runEndTime).minutes());
     const startSeconds = Number(moment(info?.runStartTime).seconds());
     const endSeconds = Number(moment(info?.runEndTime).seconds());
+   
     if (current) {
+     
       const startDate = moment(info?.runStartTime).endOf("days").date();
       const endDate = moment(info?.runEndTime).endOf("days").date();
+     
+      if( endDate=== startDate){
+        return {
+          disabledHours: () => range(0, startHours).concat(range( endHours+1,24)),
+          disabledMinutes: () => current.hours() === startHours?range( 0, startMinutes):current.hours() === endHours?range( endMinutes+1,60):[],
+          disabledSeconds: () => current.minutes() === startMinutes?range( 0, startSeconds):current.minutes() === endMinutes?range( endSeconds+1,60):[],
+        }
+      }
+  
       if (current.date() === startDate) {
         return {
           disabledHours: () => range(0, startHours),
@@ -227,14 +238,17 @@ export default function ApprovalEnd() {
           disabledSeconds: () => range(0, startSeconds),
         }
       }
-
       if (current.date() === endDate) {
         return {
-          disabledHours: () => range(0, endHours),
-          disabledMinutes: () => range(0, endMinutes),
-          disabledSeconds: () => range(0, endSeconds),
+          disabledHours: () => range( endHours+1,24),
+          disabledMinutes: () => range( endMinutes+1,60),
+          disabledSeconds: () => range(endSeconds+1,60),
         }
       }
+
+     
+
+     
     }
   };
 
@@ -364,6 +378,7 @@ export default function ApprovalEnd() {
                     //@ts-ignore
                     disabledTime={disabledDateTime}
                     placeholder="请选择执行时间"
+                    
                   />
                 </Form.Item>
               </>)
