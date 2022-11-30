@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, message, Select, Checkbox, Drawer, Tree } from 'antd';
-import { applyTemplate, graphTemplateList } from '../../service';
+import { applyTemplate, graphTemplateList, queryRuleTemplatesList } from '../../service';
 import UserSelector from '@/components/user-selector';
 import { useEnvListOptions } from '@/pages/monitor/alarm-rules/hooks';
 import './index.less';
@@ -43,7 +43,7 @@ const ApplyTemplate = (props: IProps) => {
 
   //获取模板列表
   const getTemplate = async () => {
-    const res = await graphTemplateList();
+    const res = await queryRuleTemplatesList();
     setTemplatesList(
       res?.data?.dataSource.map((v: any) => {
         return {
