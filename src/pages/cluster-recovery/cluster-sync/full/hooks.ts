@@ -21,13 +21,13 @@ function getCacheData(key: string, limit = 6e5): { timestamp: number; data: any 
   return cacheData;
 }
 
-export function useTableData(): [any[], string, boolean, boolean, (fromCache?: boolean) => Promise<void>] {
+export function useTableData(): [any[], string, boolean, boolean, (fromCache?: boolean,envCode?:string) => Promise<void>] {
   const [data, setData] = useState<any[]>([]);
   const [fromCache, setFromCache] = useState<string>('');
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const loadData = useCallback(async (fromCache = false) => {
+  const loadData = useCallback(async (fromCache = false,envCode?:string) => {
     if (fromCache) {
       const cache = getCacheData('DIFF_CLUSTER_APP', 20 * 60 * 1000);
       if (cache) {
@@ -43,7 +43,7 @@ export function useTableData(): [any[], string, boolean, boolean, (fromCache?: b
     setLoading(true);
     try {
       //集群应用比对
-            getRequest(APIS.diffClusterApp, { data: { envCode: commonEnvCode } }).then((res) => {
+            getRequest(APIS.diffClusterApp, { data: { envCode: envCode } }).then((res) => {
               if (res?.success) {
                 const resultData = res?.data || [];
                 const next = resultData?.map((item: any, index: number) => {

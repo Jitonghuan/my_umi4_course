@@ -9,7 +9,7 @@ import { useTableData } from './hooks';
 import { history } from 'umi';
 import { queryCommonEnvCode } from '../../dashboards/cluster-board/hook';
 
-export default function ClusterPage(props: any) {
+export default function ClusterPage() {
   const [tableData, fromCache, loading, completed, reloadData] = useTableData();
   const [jvmConfigInfo, setJvmConfigInfo] = useState<any>('');
   const [jvmVisiable, setJvmVisiable] = useState<boolean>(false);
@@ -18,6 +18,12 @@ export default function ClusterPage(props: any) {
     queryCommonEnvCode().then((res:any)=>{
       if(res?.success){
         setEnvCode(res?.data)
+        let curEnvCode=res?.data
+        if(curEnvCode){
+            reloadData(true,curEnvCode)
+
+        }
+        
       }else{
         setEnvCode("")
       }
@@ -48,7 +54,7 @@ export default function ClusterPage(props: any) {
       <div className="table-caption">
         <h3>集群列表</h3>
         <div className="caption-right">
-          <Button type="primary" ghost disabled={loading} onClick={() => reloadData(false)}>
+          <Button type="primary" ghost disabled={loading} onClick={() => reloadData(false,envCode)}>
             开始比对
           </Button>
           <Button
@@ -74,7 +80,7 @@ export default function ClusterPage(props: any) {
           showIcon
           message={
             <span>
-              当前数据更新时间 {fromCache}，<a onClick={() => reloadData(false)}>重新比对</a>
+              当前数据更新时间 {fromCache}，<a onClick={() => reloadData(false,envCode)}>重新比对</a>
             </span>
           }
         />
@@ -97,7 +103,7 @@ export default function ClusterPage(props: any) {
               ) : completed ? (
                 '当前双集群版本一致，无需同步'
               ) : (
-                <a onClick={() => reloadData(false)}>当前无缓存数据，点击开始进行比对</a>
+                <a onClick={() => reloadData(false,envCode)}>当前无缓存数据，点击开始进行比对</a>
               )}
             </div>
           ),

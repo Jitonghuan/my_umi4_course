@@ -1030,7 +1030,7 @@ export default [
         "path": `${baseRoutePath}/cluster-recovery/cluster-sync-detail`,
         "name": "集群同步详情",
         "key": "sync-detail",
-        "component": "@/pages/cluster-recovery/sync-detail",
+        "component": "@/pages/cluster-recovery/cluster-sync/sync-detail",
         "hideInMenu": true
       
       },

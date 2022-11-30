@@ -85,3 +85,26 @@ export const updateHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/comm
 
 /** POST 编辑机构信息 */
 export const deleteHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/common/deleteHospitalDistrictInfo');
+
+/* ---------------------------new feat ------------------------- */
+//文档地址：https://come-future.yuque.com/sekh46/bbgc7f/vlkirb#oRCTM
+
+/** GET Nacos配置比对 */
+export const diffConfigApi= addAPIPrefix('/opsManage/k8s/multiple/diffConfig');
+
+/** POST Nacos配置同步 */
+export const syncConfigApi= addAPIPrefix('/opsManage/k8s/multiple/syncConfig');
+
+/* 集群同步配置白屏化需求  */
+
+/** POST 新增双集群配置 */
+export const addSyncStrategyApi= addAPIPrefix('/opsManage/k8s/multiple/syncStrategy/add');
+
+/** PUT Nacos配置同步 */
+export const updateSyncStrategyApi= addAPIPrefix('/opsManage/k8s/multiple/syncStrategy/update');
+
+/** DELETE  删除双集群配置 */
+export const deleteSyncStrategyApi= addAPIPrefix('/opsManage/k8s/multiple/syncStrategy/delete');
+
+/** GET 双集群配置列表 */
+export const getSyncStrategyListApi= addAPIPrefix('/opsManage/k8s/multiple/syncStrategy/list');
