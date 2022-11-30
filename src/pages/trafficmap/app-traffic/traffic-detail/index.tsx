@@ -7,7 +7,6 @@ import { history, useLocation } from 'umi';
 import moment from 'moment';
 import { RedoOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
-import ResizablePro from '@/components/resiable-pro';
 import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { queryAppList, queryEnvList, queryNodeList, getCountOverview } from './hook';
@@ -84,8 +83,6 @@ export default function TrafficDetail() {
     const type = params?.selectTimeType || selectTimeType;
     const startTimestamp = type === 'lastTime' ? Number((now - params?.startTime) / 1000) + "" : (params?.startTime || startTime) + '';
     const endTimestamp = type === 'lastTime' ? Number((now - (60 * 1000)) / 1000) + "" : (params.endTime || endTime) + '';
-    // console.log(new Date(Number(startTimestamp) * 1000).toLocaleString(), 'start')
-    // console.log(new Date(Number(endTimestamp) * 1000).toLocaleString(), 'end')
     queryAppList({
       envCode: params?.envCode,
       start: startTimestamp,
@@ -398,9 +395,10 @@ export default function TrafficDetail() {
     getNodeDataSource({ start, end })
   }
 
-  // 时间组件 只能选择当前时间往前的时间 且当前一分钟不可选
+
+  // 时间组件 只能选择当前时间往前的时间 且当前这一分钟不可选
   const disabledDate = (current: any) => {
-    return current && current > moment().subtract(0, 'days').endOf('day')
+    return  current < moment().subtract(7, 'days').endOf('day') || current > moment().subtract(0, 'days').endOf('day')
   }
 
   function range(start: any, end: any) {
@@ -411,24 +409,34 @@ export default function TrafficDetail() {
     return result;
   }
 
-  const disabledTime: any = (date: any, partial: any) => {
-    const selectHours = moment(date).hours();
-    const selectMinites = moment(date).minutes();
-    let hours = moment().hours();
-    let minutes = moment().minutes();
-    let seconds = moment().seconds();
-    if (date && moment(date).date() === moment().date()) {
-      return {
-        disabledHours: () => selectHours === hours ? range(0, 24).splice(hours + 1) : [],
-        disabledMinutes: () => selectHours === hours ? range(0, 60).splice(minutes) : [],
-        disabledSeconds: () => selectHours === hours && selectMinites === minutes ? range(0, 60).splice(seconds + 1) : [],
-      };
+  const disabledTime: any = (current: any, partial: any) => {
+    const runStartTime= moment().subtract( 7,'days',).format('YYYY-MM-DD HH:mm:ss');
+    const runEndTime=moment().format('YYYY-MM-DD HH:mm:ss')
+    const startHours = Number(moment(runStartTime).hours());
+    const endHours = Number(moment(runEndTime).hours());
+    const startMinutes = Number(moment(runStartTime).minutes());
+    const endMinutes = Number(moment(runEndTime).minutes());
+    const startSeconds = Number(moment(runStartTime).seconds());
+    const endSeconds = Number(moment(runEndTime).seconds());
+    if (current) {
+      const startDate = moment(runStartTime).endOf("days").date();
+      const endDate = moment(runEndTime).endOf("days").date();
+      if (current.date() === startDate) {
+        return {
+          disabledHours: () => range(0, startHours),
+          disabledMinutes: () => range(0, startMinutes),
+          disabledSeconds: () => range(0, startSeconds),
+        }
+      }
+
+      if (current.date() === endDate) {
+        return {
+          disabledHours: () => range( endHours+1,24),
+          disabledMinutes: () => range(endMinutes,60),
+          disabledSeconds: () => range(endSeconds+1,60),
+        }
+      }
     }
-    return {
-      disabledHours: () => [],
-      disabledMinutes: () => [],
-      disabledSeconds: () => [],
-    };
   }
 
   const refresh = useCallback((throttle((id, cur, Options, paramsCount) => {
@@ -491,9 +499,6 @@ export default function TrafficDetail() {
           </Form>
 
           <span style={{ textAlign: "right" }}>
-            {/* <span className="show-time" >
-              <Tooltip title={`${getTime()?.[0]}-${getTime()?.[1]}`}>{getTime()?.[0]}-{getTime()?.[1]}</Tooltip>
-            </span> */}
             <Tooltip title="基于数据统计的准确性，这里的统计时间会取当前时间的前一分钟为基值。" placement="top">
               <QuestionCircleOutlined style={{ marginRight: 4 }} />
             </Tooltip>

@@ -390,8 +390,9 @@ export default function TrafficDetail() {
 
   // 时间组件 只能选择当前时间往前的时间 且当前一分钟不可选
   const disabledDate = (current: any) => {
-    return current && current > moment().subtract(0, 'days').endOf('day')
+    return  current < moment().subtract(7, 'days').endOf('day') || current > moment().subtract(0, 'days').endOf('day')
   }
+
 
   function range(start: any, end: any) {
     const result = [];
@@ -401,26 +402,36 @@ export default function TrafficDetail() {
     return result;
   }
 
-  const disabledTime: any = (date: any, partial: any) => {
-    const selectHours = moment(date).hours();
-    const selectMinites = moment(date).minutes();
-    let hours = moment().hours();
-    let minutes = moment().minutes();
-    let seconds = moment().seconds();
-    if (date && moment(date).date() === moment().date()) {
-      return {
-        disabledHours: () => selectHours === hours ? range(0, 24).splice(hours + 1) : [],
-        disabledMinutes: () => selectHours === hours ? range(0, 60).splice(minutes) : [],
-        disabledSeconds: () => selectHours === hours && selectMinites === minutes ? range(0, 60).splice(seconds + 1) : [],
-      };
-    }
-    return {
-      disabledHours: () => [],
-      disabledMinutes: () => [],
-      disabledSeconds: () => [],
-    };
-  }
+  
+  const disabledTime: any = (current: any, partial: any) => {
+    const runStartTime= moment().subtract( 7,'days',).format('YYYY-MM-DD HH:mm:ss');
+    const runEndTime=moment().format('YYYY-MM-DD HH:mm:ss')
+    const startHours = Number(moment(runStartTime).hours());
+    const endHours = Number(moment(runEndTime).hours());
+    const startMinutes = Number(moment(runStartTime).minutes());
+    const endMinutes = Number(moment(runEndTime).minutes());
+    const startSeconds = Number(moment(runStartTime).seconds());
+    const endSeconds = Number(moment(runEndTime).seconds());
+    if (current) {
+      const startDate = moment(runStartTime).endOf("days").date();
+      const endDate = moment(runEndTime).endOf("days").date();
+      if (current.date() === startDate) {
+        return {
+          disabledHours: () => range(0, startHours),
+          disabledMinutes: () => range(0, startMinutes),
+          disabledSeconds: () => range(0, startSeconds),
+        }
+      }
 
+      if (current.date() === endDate) {
+        return {
+          disabledHours: () => range( endHours+1,24),
+          disabledMinutes: () => range(endMinutes,60),
+          disabledSeconds: () => range(endSeconds+1,60),
+        }
+      }
+    }
+  }
   const refresh = useCallback((throttle((paramsAppData, paramsCount) => {
     getNodeDataSource({
       appCode: paramsAppData?.appCode
