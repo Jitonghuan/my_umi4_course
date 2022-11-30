@@ -9,7 +9,7 @@ export function useAppOptions() {
 
   useEffect(() => {
     getRequest(APIS.getAppList, { data: { appType: 'frontend', pageIndex: -1, pageSize: -1 } }).then((result) => {
-      const next = (result.data.dataSource || []).map((item: any) => {
+      const next = (result?.data?.dataSource || []).map((item: any) => {
         return { label: item.appCode, value: item.appCode, info: item };
       });
       setData(next);

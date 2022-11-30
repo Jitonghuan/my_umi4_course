@@ -108,3 +108,9 @@ export const deleteSyncStrategyApi= addAPIPrefix('/opsManage/k8s/multiple/syncSt
 
 /** GET 双集群配置列表 */
 export const getSyncStrategyListApi= addAPIPrefix('/opsManage/k8s/multiple/syncStrategy/list');
+
+/* GET 获取命名空间 */
+export const getNacosNamespaceApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNamespace');
+
+/* GET 获取DataId */
+export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNsDataId');
