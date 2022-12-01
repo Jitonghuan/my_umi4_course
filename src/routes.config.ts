@@ -121,6 +121,10 @@ export default [
     path: `${baseRoutePath}/DBMS/safe-rule`,
     redirect: `${baseRoutePath}/DBMS/safe-rule/safe-list`,
   },
+  {
+    path: `${baseRoutePath}/steps`,
+    redirect: `${baseRoutePath}/steps/detail`,
+  },
 
   {
     path: `${baseRoutePath}/application`,
@@ -1331,6 +1335,19 @@ export default [
         name: '实战分析',
         key: 'display',
         component: '@/pages/display',
+      },
+    ],
+  },
+  {
+    path: `${baseRoutePath}/steps`,
+    name: '步骤条',
+    icon: 'icon-MoreCircle',
+    routes: [
+      {
+        path: `${baseRoutePath}/steps/detail`,
+        name: '详情',
+        key: 'detail',
+        component: '@/pages/steps/detail',
       },
     ],
   },
