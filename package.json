@@ -51,6 +51,7 @@
     "@cffe/vc-loading": "1.0.4",
     "@cffe/vc-request": "2.0.16",
     "@hbos/component-position-switcher": "^1.0.7",
+    "@jiaminghi/data-view-react": "^1.2.5",
     "@types/codemirror": "^5.60.5",
     "@types/diff-match-patch": "^1.0.32",
     "@types/react-resizable": "^1.7.4",

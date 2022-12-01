@@ -3,9 +3,11 @@ import React,{useState,useEffect} from 'react';
 import PageContainer from '@/components/page-container';
 import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined,LoadingOutlined} from '@ant-design/icons'
 import { ContentCard } from '@/components/vc-page-content';
+import {BorderBox6,BorderBox9,BorderBox13,Decoration6,Decoration8} from '@jiaminghi/data-view-react'
+import './index.less'
 const { Step } = Steps;
 const StatusMapping: Record<string, number> = {
-    //start:1,
+    start:0,
     startwaiting:1,
     mdmwaiting:1.5,
     mdm:2,
@@ -18,84 +20,114 @@ const StatusMapping: Record<string, number> = {
 
   };
 export default function StepsDetail(){
-    const description = 'This is a description.';
     const [status,setStatus]=useState<string>("")
-    // function rnd(max:number,min=26){//min放后面，为有初始值，包含0
-
-    //     return Math.round(Math.random()*(max-min))+min
-    //   }
-    //   console.log(rnd(31));
-    //(Math.random() * 1000000).toFixed(0) 
-   
-
     const handleStart=()=>{
         setStatus("startwaiting")
-        console.log("------new Date().getTime()",new Date().getTime())
     }
     useEffect(()=>{
         if(status){
             let intervalId = setInterval(() => {
                 if(status==="startwaiting"){
                      setStatus("mdmwaiting")
-                     console.log("------new Date().getTime()",new Date().getTime())
-
                 }
                 if(status==="mdmwaiting"){
                     setStatus("targetwaiting")
-                    console.log("------new Date().getTime()",new Date().getTime())
                 }
                 if(status==="targetwaiting"){
                     setStatus("labelwaiting")
-                    console.log("------new Date().getTime()",new Date().getTime())
-
                 }
                 if(status==="labelwaiting"){
-                    setStatus("sucessLoading")
-                    console.log("------new Date().getTime()",new Date().getTime())
+                    setStatus("sucessLoading")  
                 }
                 if(status==="sucessLoading"){
                     setStatus("sucess")
-                    console.log("------new Date().getTime()",new Date().getTime())
-
                 }
-               
-              }, 1000*29);
-              console.log("------定时器")
-          
-              
-          
+              }, 1000*28);
               return () => {
-                console.log("------注销")
                 intervalId && clearInterval(intervalId);
               };
 
         }
     },[status])
-
-    
-
-    
-    
-
     return(
-        <PageContainer >
+        <PageContainer className="steps-page">
             <ContentCard>
-                <div style={{display:"flex",alignItems:"center",height:"80vh",padding:20}}>
-                <Steps current={StatusMapping[status] || -1}>
-                    <Step title="开始" 
-                    description={<span><Button type="primary" onClick={handleStart}>开始</Button></span>} 
-                    icon={status==="startwaiting"?<LoadingOutlined/>:null}
-                    />
-                    <Step title="获取MDM点位信息" description={""}  icon={status==="mdmwaiting"?<LoadingOutlined/>:null}  />
-                    <Step title="指标计算" description={""}  icon={status==="targetwaiting"?<LoadingOutlined/>:null}/>
-                    <Step title="标签计算" description={""}  icon={status==="labelwaiting"?<LoadingOutlined/>:null}/>
-                    <Step title="完成" description={status==="sucess"?<a    target="_blank" href="http://h2o.cfuture.shop/icons?categoryId=1">跳转</a>:""}  icon={status==="sucessLoading"?<LoadingOutlined/>:null} />
-               </Steps>
+                {/* <BorderBox13 style={{heigh:"100%",width:"100%"}}> */}
+                
+                <div className="steps-wrapper" >
+                <div className="decorate-top" ><Decoration8 style={{width: '300px', height: '30px'}}/></div>
+                <span className={`${StatusMapping[status]>0?"start-light":"start-gray"} start-begin`}  onClick={handleStart}>
+                        <span className="word-banner">
+
+                            开始
+                      </span>
+                      {StatusMapping[status]>0&&StatusMapping[status]<=1? <span className="light-line right-top">
+                          <div className="line-block gradient" style={{display:"inline-block"}}></div>
+                      </span>:StatusMapping[status]>1?<span className="finish-line" >
+                   </span>:<span className="un-begin"></span>}
+                    
+                   
+                      <div style={{display:"inline-block"}} className="triangle-right"></div>
+
+                      </span>
+
+                      
+                   
+                        <span  className={`${StatusMapping[status]>=1.5?"start-light":"start-gray"} mdm-step`}  >
+                        <span className="long-word-banner"><span>获取MDM<br/>点位信息</span></span>
+                        {StatusMapping[status]>=1.5&&StatusMapping[status]<=2? <span className="light-line right-top">
+                          <div className="line-block gradient" style={{display:"inline-block"}}></div>
+                      </span>:StatusMapping[status]>2?<span className="finish-line" >
+                   </span>:<span className="un-begin"></span>}
+                    
+                      <div style={{display:"inline-block"}} className="triangle-right"></div>
+
+                        </span>
+                    
+                        <span  className={`${StatusMapping[status]>=2.5?"start-light":"start-gray"} target-step`}  >
+                        <span className="longger-word-banner">指标计算</span>
+                        {StatusMapping[status]>=2.5&&StatusMapping[status]<=3? <span className="light-line right-top">
+                          <div className="line-block gradient" style={{display:"inline-block"}}></div>
+                      </span>:StatusMapping[status]>3?<span className="finish-line" >
+                   </span>:<span className="un-begin"></span>}
+                      <div  style={{display:"inline-block"}} className="triangle-right"></div>
+
+                        </span>
+                   
+                        <span  className={`${StatusMapping[status]>=3.5?"start-light":"start-gray"} label-step`}   > 
+                        <span className="longger-word-banner">标签计算</span>
+                      {/* {console.log("StatusMapping[status]",StatusMapping[status])} */}
+                      {StatusMapping[status]>=3.5&&StatusMapping[status]<=4? <span className="light-line right-top">
+                          <div className="line-block gradient" style={{display:"inline-block"}}></div>
+                      </span>:StatusMapping[status]>4?<span className="finish-line" >
+                           </span>:<span className="un-begin"></span>}
+                      <div style={{display:"inline-block"}} className="triangle-right"></div>
+
+                        </span>
+                   
+                        <span className={`${StatusMapping[status]>=4.5?"start-light":"start-gray"} sucess-step`}   >
+                        <span className="word-banner">完成</span>
+                        {StatusMapping[status]>4.5 &&  <span className="open-another"><Button type="primary">跳转</Button></span>}
+                       
+                        
+                        </span>
 
                 </div>
-          
+                <div style={{display:"flex",justifyContent:"flex-end",paddingTop:80}}>
+                    <Decoration8 reverse={true} style={{width: '300px', height: '30px'}}/>
+                    <span className="color-detail">颜色</span>
+                    </div>
+
+                {/* </BorderBox13> */}
+                
+               
+            
+                   
+                      
+
+               
+
             </ContentCard>
         </PageContainer>
-        
     )
 }
