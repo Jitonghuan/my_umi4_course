@@ -456,7 +456,13 @@ export default function PanelDetail(props: Iprops) {
                         <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
                         <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
                         <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
-                        <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</span></Descriptions.Item>
+                        <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>
+                        <a onClick={()=>{setShowSql(true);
+              sqlForm.setFieldsValue({
+                showSql:info?.sqlContent?.replace(/\\n/g, '<br/>')
+              })
+            }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</a>
+                            </span></Descriptions.Item>
                         <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
                         <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming ? "是" : "否"}</Descriptions.Item>
 
@@ -505,7 +511,7 @@ export default function PanelDetail(props: Iprops) {
                                 <span style={{ display: "inline-flex" }}>
                                     <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
                                      <Spin spinning={runLoading}  >
-                                        {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                                        {info?.currentStatus === "reviewPass" && <Button type="primary" onClick={showRunSqlConfirm}>开始执行</Button>}
                                     </Spin>
                                 </span>
 
