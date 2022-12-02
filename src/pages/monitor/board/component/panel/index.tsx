@@ -3,6 +3,7 @@ import { Button, Space, Popconfirm, Form, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import TableSearch from '@/components/table-search';
 import useTable from '@/utils/useTable';
+import { ContentCard } from '@/components/vc-page-content';
 import useRequest from '@/utils/useRequest';
 import { Item } from '../../../typing';
 import './index.less';
@@ -228,7 +229,8 @@ const TemplateCom: React.FC = () => {
   };
 
   return (
-    <div>
+     <div className="pannel-wrapper">
+   
       <TableSearch
         form={form}
         formOptions={[
@@ -335,7 +337,8 @@ const TemplateCom: React.FC = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </div>
+  
+     </div>
   );
 };
 
