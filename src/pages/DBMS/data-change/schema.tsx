@@ -190,26 +190,40 @@ export const createTableColumns = (params: {
     },
     {
       title: '当前处理人',
-      dataIndex: 'audit',
-      key: 'audit',
+      dataIndex: 'currentAudits',
+      key: 'currentAudits',
       // width: '10%',
       width: 280,
       ellipsis: {
         showTitle: false,
       },
-      render: (users,record,index) => {
-       
-        return (
+      render:(users,record,index)=>{
+        if(users&&users?.length>0){
+              return (
           <>
           {users?.map((item:any)=>{
             return( <Tag color="#108ee9">{item} </Tag>)
           })}
         
-          </>
+          </>)
           
-          
-        )
+        }
+
+
       }
+      // render: (users,record,index) => {
+       
+      //   return (
+      //     <>
+      //     {users?.map((item:any)=>{
+      //       return( <Tag color="#108ee9">{item} </Tag>)
+      //     })}
+        
+      //     </>
+          
+          
+      //   )
+      // }
     },
     {
         title: '申请人',
