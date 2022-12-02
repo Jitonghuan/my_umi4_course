@@ -12,7 +12,6 @@ import {
   useAppOptions,
   useEnvOptions,
   useUserOptions,
-  useNotifyTypeOptions,
   useRuleGroupOptions,
   useRuleIndexOptions,
   useLevelOptions,
@@ -29,6 +28,8 @@ export interface AlarmEditorProps {
   initData?: Record<string, any>;
   onClose: () => any;
   onSave: () => any;
+  bizMonitorId?: string;
+  bizMonitorType?: string;
 }
 
 export default function AlarmEditor(props: AlarmEditorProps) {
@@ -40,7 +41,6 @@ export default function AlarmEditor(props: AlarmEditorProps) {
   const [userOptions] = useUserOptions();
   const [ruleGroupOptions] = useRuleGroupOptions();
   const [ruleIndexOptions] = useRuleIndexOptions(envCode);
-  // const [notifyTypeOptions] = useNotifyTypeOptions();
   const [levelOptions] = useLevelOptions();
   const [operationOptions] = useOperatorOptions();
   const [name, setName] = useState(props.initData?.name || '');
@@ -100,6 +100,8 @@ export default function AlarmEditor(props: AlarmEditorProps) {
       silenceStart: values.silenceStart?.format('HH:mm'),
       silenceEnd: values.silenceEnd?.format('HH:mm'),
       name,
+      bizMonitorId: props.bizMonitorId,
+      bizMonitorType:  props.bizMonitorType
     };
 
     if (props.mode === 'ADD') {
@@ -189,11 +191,6 @@ export default function AlarmEditor(props: AlarmEditorProps) {
           <FormItem noStyle name="expression" rules={[{ required: true, message: '请输入告警表达式' }]}>
             <Input.TextArea
               disabled={true}
-              // onMouseDown={() => {
-              //   void getParams();
-              //   setVisible(true);
-              // }}
-
               placeholder={`例: d1: "abc" AND d2: "xyz"`}
               style={{ marginBottom: 8, width: 470 }}
             />

@@ -9,7 +9,7 @@ export const searchUserUrl = `${appConfig.apiPrefix}/appManage/user/list`;
 /** 查看环境 */
 export const queryEnvList = `${appConfig.apiPrefix}/appManage/env/list`;
 /** GET 实例列表 */
-export const getInstanceList = `${appConfig.apiPrefix}/databaseManage/instance/list`;
+export const getInstanceList = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/instance/list`;
 
 
 

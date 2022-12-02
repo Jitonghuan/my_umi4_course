@@ -84,8 +84,8 @@ export const renderForm = (formOptions: FormProps[] = [], onSearch?: () => void)
                     {item.value}
                   </Option>
                 ))}
-                
-              
+
+
               </Select>
             </Item>
             {extraForm}
@@ -322,25 +322,31 @@ const FormList: React.FC<TableSearchProps> = ({
   onSearch,
   reset,
   style,
+  formExtraNode
 }) => {
   return (
-    <Form form={form} layout={formLayout} style={style}>
-      {renderForm(formOptions, onSearch)}
-      <Item>
-        <Space size={12}>
-          {showSearch && (
-            <Button type="primary" onClick={onSearch}>
-              {searchText}
-            </Button>
-          )}
-          {showReset && (
-            <Button onClick={reset}>
-              重置
-            </Button>
-          )}
-        </Space>
-      </Item>
-    </Form>
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Form form={form} layout={formLayout} style={style}>
+        {renderForm(formOptions, onSearch)}
+        <Item>
+          <Space size={12}>
+            {showSearch && (
+              <Button type="primary" onClick={onSearch}>
+                {searchText}
+              </Button>
+            )}
+            {showReset && (
+              <Button onClick={reset}>
+                重置
+              </Button>
+            )}
+          </Space>
+        </Item>
+      </Form>
+      {
+        formExtraNode
+      }
+    </div>
   );
 };
 

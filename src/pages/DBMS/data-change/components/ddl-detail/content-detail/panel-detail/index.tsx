@@ -1,4 +1,4 @@
-import { Card, Descriptions, Space, Tag, Table, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip,Drawer } from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -6,6 +6,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from '../../first-detail/schema';
 import NextEnvDraw from '../../first-detail/next-env-draw'
 import moment from 'moment';
+import AceEditor from '@/components/ace-editor';
 import { useGetDdlDesignFlow } from '../../hook'
 import { CurrentStatusStatus, PrivWfType } from '../../../../../authority-manage/components/authority-apply/schema'
 import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog } from './hook'
@@ -49,7 +50,9 @@ export default function PanelDetail(props: Iprops) {
     const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
     const [form] = Form.useForm()
     const [runSqlform] = Form.useForm()
+    const [sqlForm] =Form.useForm()
     const [loading, setLoading] = useState<boolean>(false);
+    const [showSql,setShowSql]=useState<boolean>(false)
     const [status, setstatus] = useState<string>("");
     const [runMode, setRunMode] = useState<string>("now")
     const [owner, setOwner] = useState<any>([]);
@@ -234,6 +237,14 @@ export default function PanelDetail(props: Iprops) {
         if (current) {
             const startDate = moment(info?.runStartTime).endOf("days").date();
             const endDate = moment(info?.runEndTime).endOf("days").date();
+             
+      if( endDate=== startDate){
+        return {
+            disabledHours: () => range(0, startHours).concat(range( endHours+1,24)),
+            disabledMinutes: () => current.hours() === startHours?range( 0, startMinutes):current.hours() === endHours?range( endMinutes+1,60):[],
+            disabledSeconds: () => current.minutes() === startMinutes?range( 0, startSeconds):current.minutes() === endMinutes?range( endSeconds+1,60):[],
+          }
+      }
             if (current.date() === startDate) {
                 return {
                     disabledHours: () => range(0, startHours),
@@ -244,9 +255,9 @@ export default function PanelDetail(props: Iprops) {
 
             if (current.date() === endDate) {
                 return {
-                    disabledHours: () => range(0, endHours),
-                    disabledMinutes: () => range(0, endMinutes),
-                    disabledSeconds: () => range(0, endSeconds),
+                    disabledHours: () => range( endHours+1,24),
+                    disabledMinutes: () => range( endMinutes+1,60),
+                    disabledSeconds: () => range(endSeconds+1,60),
                 }
             }
         }
@@ -257,25 +268,37 @@ export default function PanelDetail(props: Iprops) {
           Object.keys(data)?.map((item: any) => {
             return (
               item === "阶段状态" ?
-                <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
-                  <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
+                <Table.Column title={item} width={80} dataIndex={item}  key={item} render={(value) => (
+                  <span >
                     {value?.replace(/\\n/g, '<br/>')}
                   </span>
                 )} /> :
                 item === "错误级别" ?
-                  <Table.Column title={item} width={80} dataIndex={item} key={item} render={(value) => (
+                  <Table.Column title={item} width={80} dataIndex={item}  key={item} render={(value) => (
                     <span><Tag color={value === "通过" ? "green" : value === "警告" ? "orange" : value === "错误" ? "red" : "default"}>{value}</Tag></span>
                   )} /> : item === "审核/执行信息" ?
-                    <Table.Column title={item} width={400} dataIndex={item} key={item} render={(value) => (
+                    <Table.Column title={item} width={400} ellipsis dataIndex={item} key={item} render={(value) => (
     
-                      <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                        <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                      <span >
+                           <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                        {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                       </span>
     
-                    )} /> : item === "完整SQL内容" ? <Table.Column width={400} title={item} dataIndex={item} key={item} render={(value) => (
+                    )} /> : item === "完整SQL内容" ? <Table.Column width={400} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
     
                       <span style={{ display: "inline-block", whiteSpace: "pre-line" }}>
-                        <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph>
+                           <a onClick={()=>{
+                      setShowSql(true)
+                      sqlForm.setFieldsValue({
+                        showSql:value?.replace(/\\n/g, '<br/>')
+                      })
+                    }}>{value?.replace(/\\n/g, '<br/>')}</a>
+                        {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
                       </span>
     
                     )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
@@ -295,6 +318,16 @@ export default function PanelDetail(props: Iprops) {
     }, []);
     return (
         <div className="panel-detail">
+             <Drawer title="sql详情" visible={showSql} footer={false} width={"70%"} onClose={()=>{setShowSql(false)}} destroyOnClose>
+        <Form form={sqlForm} preserve={false}>
+          <Form.Item name="showSql">
+          <AceEditor mode="sql" height={900} readOnly={true} />
+          </Form.Item>
+
+        </Form>
+       
+
+      </Drawer>
             <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={parentWfId} />
             <NextEnvDraw
                 mode={nextEnvmode}
@@ -423,7 +456,13 @@ export default function PanelDetail(props: Iprops) {
                         <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
                         <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
                         <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
-                        <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</span></Descriptions.Item>
+                        <Descriptions.Item label="变更sql" span={3} ><span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}>
+                        <a onClick={()=>{setShowSql(true);
+              sqlForm.setFieldsValue({
+                showSql:info?.sqlContent?.replace(/\\n/g, '<br/>')
+              })
+            }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</a>
+                            </span></Descriptions.Item>
                         <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
                         <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming ? "是" : "否"}</Descriptions.Item>
 
@@ -472,7 +511,7 @@ export default function PanelDetail(props: Iprops) {
                                 <span style={{ display: "inline-flex" }}>
                                     <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
                                      <Spin spinning={runLoading}  >
-                                        {info?.currentStatus === "reviewPass" && <Tag color="geekblue" onClick={showRunSqlConfirm}>开始执行</Tag>}
+                                        {info?.currentStatus === "reviewPass" && <Button type="primary" onClick={showRunSqlConfirm}>开始执行</Button>}
                                     </Spin>
                                 </span>
 

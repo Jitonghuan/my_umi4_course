@@ -31,3 +31,8 @@ export const querynetWorkBps = `${appConfig.apiPrefix}/monitorManage/app/netWork
 /** 获取应用环境 */
 export const listAppEnv = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 
+export const getEndpointDetail = (data: any) => {
+    const url = `${appConfig.apiPrefix}/trafficMap/callInfo/endpointDetail`;
+    return getRequest(url, { data: data });
+};
+

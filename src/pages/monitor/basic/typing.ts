@@ -37,6 +37,8 @@ export interface Item {
   silenceTime?: Moment[];
   silenceStart?: string;
   silenceEnd?: string;
+  bizMonitorId?: string;
+  bizMonitorType?: string;
 }
 
 export interface InitValue {
