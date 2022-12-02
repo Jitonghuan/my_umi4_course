@@ -77,16 +77,32 @@ export default function ResizeLayout() {
     }
   }
 
-  const selectTimeInterval = (timeValue: number) => {
+  const selectTimeInterval = (timeValue: number|string) => {
 
     const now = new Date().getTime();
+    if(typeof timeValue==="string" &&timeValue==="today"){
+      let start = moment(Number(now )).format("YYYY-MM-DD HH:mm:ss");
+      let end =moment().endOf('day').format('YYYY-MM-DD HH:mm:ss');
+      setStartTime(start) 
+      setEndTime(end)
+
+
+
+    }else if(typeof timeValue==="number"){
+      let end =moment(Number((now + timeValue))).format("YYYY-MM-DD HH:mm:ss") ;
+      let start = moment(Number(now )).format("YYYY-MM-DD HH:mm:ss");
+      setStartTime(start) 
+      setEndTime(end)
+
+    }
   
-    let end =moment(Number((now + timeValue))).format("YYYY-MM-DD HH:mm:ss") ;
-    let start = moment(Number(now )).format("YYYY-MM-DD HH:mm:ss");
    
-    setStartTime(start) 
-    setEndTime(end)
+   
+   
   }
+
+
+
   useEffect(() => {
     queryEnvList()
     // getInstanceList()
@@ -224,8 +240,8 @@ export default function ResizeLayout() {
               </Form.Item> */}
           <Form.Item label="执行时间：" className="nesting-form-item">
             <Space style={{ height: 20 }}>
-              {type === "time-interval" ? (<Form.Item name="versionRangeOne" rules={[{ required: true, message: '请选择' }]} >
-                <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval} onClear={onClear} style={{ width: 220 }} />
+              {type === "time-interval" ? (<Form.Item name="versionRangeOne" rules={[{ required: true, message: '请选择' }]}  >
+                <Select options={START_TIME_ENUMS} allowClear showSearch onChange={selectTimeInterval} onClear={onClear}  style={{ width: 220 }} />
               </Form.Item>) :<RangePicker   
                onChange={(v: any, b: any) => selectTime(v, b)}
                showNow={false}
