@@ -84,7 +84,7 @@ const Coms = (props: IProps) => {
     let start = 0, end = 0;
     if (requestParams?.selectTimeType === 'lastTime') {
       start = Number((now - startTime) / 1000);
-      end = Number((now - (60 * 1000)) / 1000);
+      end = Number((now ) / 1000);
     } else {
       start = startTime;
       end = Number(endTime);
@@ -126,7 +126,7 @@ const Coms = (props: IProps) => {
     let start = 0, end = 0;
     if (requestParams?.selectTimeType === 'lastTime') {
       start = Number((now - startTime) / 1000);
-      end = Number((now - (60 * 1000)) / 1000);
+      end = Number((now ) / 1000);
     } else {
       start = startTime;
       end = Number(endTime);

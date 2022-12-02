@@ -6,6 +6,7 @@ import DataSource from '@/pages/monitor/board/component/datasource';
 import AlarmTemplate from '../template/index';
 import { history, useLocation } from 'umi';
 import { parse } from 'query-string';
+import { ContentCard } from '@/components/vc-page-content';
 
 const rootCls = 'template-center-wrapper';
 
@@ -16,6 +17,7 @@ export default function Board() {
 
   return (
     <PageContainer className={rootCls}>
+      <ContentCard>
       <div>
         <Tabs
           activeKey={activeKey}
@@ -35,6 +37,10 @@ export default function Board() {
         {activeKey === 'datasource' && <DataSource />}
         {activeKey === 'template' && <AlarmTemplate />}
       </div>
+
+      </ContentCard>
+
+    
     </PageContainer>
   );
 }

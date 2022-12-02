@@ -2,39 +2,39 @@
 export const START_TIME_ENUMS = [
   {
     label: 'Last 5 minutes',
-    value: 6 * 60 * 1000,
+    value: 5 * 60 * 1000,
   },
   {
     label: 'Last 15 minutes',
-    value: 16 * 60 * 1000,
+    value: 15 * 60 * 1000,
   },
   {
     label: 'Last 30 minutes',
-    value: 31 * 60 * 1000,
+    value: 30 * 60 * 1000,
   },
   {
     label: 'Last 1 hours',
-    value: 61 * 60 * 1000,
+    value: 60 * 60 * 1000,
   },
   {
     label: 'Last 6 hours',
-    value: 61 * 60 * 1000 * 6,
+    value: 60 * 60 * 1000 * 6,
   },
   {
     label: 'Last 12 hours',
-    value: 61 * 60 * 1000 * 12,
+    value: 60 * 60 * 1000 * 12,
   },
   {
     label: 'Last 24 hours',
-    value: 61 * 60 * 1000 * 24,
+    value: 60 * 60 * 1000 * 24,
   },
   {
     label: 'Last 3 days',
-    value: 61 * 60 * 1000 * 24 * 3,
+    value: 60 * 60 * 1000 * 24 * 3,
   },
   {
     label: 'Last 7 days',
-    value: 61 * 60 * 1000 * 24 * 7,
+    value: 60 * 60 * 1000 * 24 * 7,
   },
 ];
 
