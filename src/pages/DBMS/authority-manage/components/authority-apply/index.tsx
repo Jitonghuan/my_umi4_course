@@ -60,25 +60,30 @@ const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:strin
       data: {...obj, pageIndex:obj?.pageIndex|| 1, pageSize:obj?.pageSize|| 20, },
     })
       .then((result) => {
+      
         if (result?.success) {
           let data = result?.data?.dataSource;
-          let list=result.data?.dataSource || []
-          if(list?.length>0){
-            list?.map((item:any)=>{
-              getRequest(currentAuditsApi,{data:{id:item?.id}}).then((res)=>{
-                if(res?.success){
-                  let data=res?.data?.audits;
-                  setDataSource([...new Set([...list,Object.assign(item, {
-                    audit: data,
-                  })])])
-                }
-              })
-            })}else{
-              setDataSource([])
-            }
+         // let list=result.data?.dataSource || []
+          // if(list?.length>0){
+          //   list?.map((item:any)=>{
+          //     getRequest(currentAuditsApi,{data:{id:item?.id}}).then((res)=>{
+          //       if(res?.success){
+          //         let data=res?.data?.audits;
+          //         setDataSource([...new Set([...list,Object.assign(item, {
+          //           audit: data,
+          //         })])])
+          //       }
+          //     })
+          //   })
+          // }else{
+          //     setDataSource([])
+          //   }
+          setDataSource(data)
           let pageInfo=result?.data?.pageInfo
           setTotal(pageInfo?.total);
           setPageSize(pageInfo?.pageSize);
+        }else{
+          setDataSource([])
         }
       })
       .finally(() => {
@@ -239,7 +244,7 @@ return(<div className="authority-apply">
           <Table
             columns={columns}
             dataSource={dataSource}
-            loading={!dataSource?tableLoading:false}
+            loading={dataSource?.length<1?tableLoading:false}
             bordered
             scroll={{ x: '100%' }}
             pagination={{
