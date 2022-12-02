@@ -82,7 +82,7 @@ export default function TrafficDetail() {
     const now = new Date().getTime();
     const type = params?.selectTimeType || selectTimeType;
     const startTimestamp = type === 'lastTime' ? Number((now - params?.startTime) / 1000) + "" : (params?.startTime || startTime) + '';
-    const endTimestamp = type === 'lastTime' ? Number((now - (60 * 1000)) / 1000) + "" : (params.endTime || endTime) + '';
+    const endTimestamp = type === 'lastTime' ? Number((now ) / 1000) + "" : (params.endTime || endTime) + '';
     queryAppList({
       envCode: params?.envCode,
       start: startTimestamp,
@@ -127,7 +127,7 @@ export default function TrafficDetail() {
     const now = new Date().getTime();
     const type = params?.selectTimeType || selectTimeType;
     const startTimestamp: any = type === 'lastTime' ? Number((now - start) / 1000) + "" : start;
-    const endTimestamp: any = type === 'lastTime' ? Number((now - (60 * 1000)) / 1000) + "" : end;
+    const endTimestamp: any = type === 'lastTime' ? Number((now ) / 1000) + "" : end;
     let curEnv = params?.envCode ? params?.envCode : formInstance.getFieldsValue()?.envCode
     let curApp = params?.appCode ? params?.appCode : formInstance.getFieldsValue()?.appCode
     let curAppId = params?.appId ? params?.appId : curAppID
