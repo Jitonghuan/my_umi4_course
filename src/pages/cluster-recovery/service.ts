@@ -97,10 +97,16 @@ export const syncConfigApi= addAPIPrefix('/opsManage/k8s/multiple/syncConfig');
 
 /* 集群同步配置白屏化需求  */
 
-/** POST 新增双集群配置 */
+/** GET Nacos命名空间列表 */
+export const nacosNamespaceListApi= addAPIPrefix('/opsManage/multiple/common/nacosNamespace/list');
+
+/** GET  应用部署名列表 */
+export const deploymentNameListApi= addAPIPrefix('/opsManage/k8s/multiple/deploymentName/list');
+
+/** POST   新增双集群配置 */
 export const addSyncStrategyApi= addAPIPrefix('/opsManage/k8s/multiple/syncStrategy/add');
 
-/** PUT Nacos配置同步 */
+/** PUT 修改双集群配置 */
 export const updateSyncStrategyApi= addAPIPrefix('/opsManage/k8s/multiple/syncStrategy/update');
 
 /** DELETE  删除双集群配置 */
