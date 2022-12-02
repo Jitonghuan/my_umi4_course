@@ -40,7 +40,7 @@ export default function TrafficDetail() {
   const [curtIP, setCurtIp] = useState<string>('');
   const [hostName, setHostName] = useState<string>('');
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(6 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const [endTime, setEndTime] = useState<number>();
   const [count, setCount] = useState<number>(0);
   const [selectTimeType, setSelectTimeType] = useState<string>('lastTime');
