@@ -37,7 +37,7 @@ export default function InstanceMonitor() {
       let start = 0, end = 0;
       if (selectTimeType === 'lastTime') {
         start = Number((now - startTime) / 1000);
-        end = Number((now - (60 * 1000)) / 1000);
+        end = Number((now ) / 1000);
       } else {
         start = startTime;
         end = Number(endTime);
@@ -84,7 +84,7 @@ export default function InstanceMonitor() {
     let start = 0, end = 0;
     if (selectTimeType === 'lastTime') {
       start = Number((now - startTime) / 1000);
-      end = Number((now - (60 * 1000)) / 1000);
+      end = Number((now ) / 1000);
     } else {
       start = startTime;
       end = Number(endTime);

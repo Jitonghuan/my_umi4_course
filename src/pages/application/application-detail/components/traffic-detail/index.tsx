@@ -67,7 +67,7 @@ export default function TrafficDetail() {
     if (selectTimeType === 'lastTime') {
       //@ts-ignore
       start = Number((now - startTime) / 1000);
-      end = Number((now - (60 * 1000)) / 1000);
+      end = Number((now ) / 1000);
     } else {
       //@ts-ignore
       start = startTime;
@@ -116,7 +116,7 @@ export default function TrafficDetail() {
   const [curtIP, setCurtIp] = useState<string>('');
   const [hostName, setHostName] = useState<string>('');
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(6 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const [count, setCount] = useState<number>(0)
   //获取左侧数据
   const getNodeDataSource = (params?: { start?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string, end?: number, selectTimeType?: string }) => {
@@ -128,7 +128,7 @@ export default function TrafficDetail() {
     const now = new Date().getTime();
     const type = params?.selectTimeType || selectTimeType;
     const startTimestamp: any = type === 'lastTime' ? Number((now - start) / 1000) + "" : start;
-    const endTimestamp: any = type === 'lastTime' ? Number((now - (60 * 1000)) / 1000) + "" : end;
+    const endTimestamp: any = type === 'lastTime' ? Number((now) / 1000) + "" : end;
     // let curStart: number = params?.start ? params?.start : startTime
     let curEnv = params?.envCode ? params?.envCode : formInstance.getFieldsValue()?.envCode
     let curApp = params?.appCode || appData?.appCode
