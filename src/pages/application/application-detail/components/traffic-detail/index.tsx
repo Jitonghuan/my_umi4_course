@@ -116,7 +116,7 @@ export default function TrafficDetail() {
   const [curtIP, setCurtIp] = useState<string>('');
   const [hostName, setHostName] = useState<string>('');
   // 请求开始时间，由当前时间往前
-  const [startTime, setStartTime] = useState<number>(6 * 60 * 1000);
+  const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const [count, setCount] = useState<number>(0)
   //获取左侧数据
   const getNodeDataSource = (params?: { start?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string, end?: number, selectTimeType?: string }) => {
