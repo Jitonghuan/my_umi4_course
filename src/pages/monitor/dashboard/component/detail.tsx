@@ -44,8 +44,8 @@ const BoardDetail = (props: IProps) => {
           title: res?.data||"",
           content: (
             <div>
-              <p>some messages...some messages...</p>
-              <p>some messages...some messages...</p>
+              {/* <p>some messages...some messages...</p>
+              <p>some messages...some messages...</p> */}
             </div>
           ),
           onOk() {},
