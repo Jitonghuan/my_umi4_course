@@ -35,12 +35,10 @@ export default function PublishDetail(props: IProps) {
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [envProjectVisible, setEnvProjectVisible] = useState(false);
- // const [confirmLoading, setConfirmLoading] = useState(false);
   const [projectEnvCodeOptions, setProjectEnvCodeOptions] = useState<any>([]);
   const [offlineEnvData, setOffLineEnvData] = useState<any>([]); //支持离线部署的环境
   const [deployEnv, setDeployEnv] = useState<string[]>();
   const [restartEnv, setRestartEnv] = useState<string[]>([]); //重启时获取到的环境值
- // const [deployMasterEnv, setDeployMasterEnv] = useState<string[]>();
   const [envDataList, setEnvDataList] = useState<IOption[]>([]);
   const [nextEnvDataList, setNextEnvDataList] = useState<IOption[]>([]);
   const [deployVisible, setDeployVisible] = useState(false);
@@ -201,31 +199,6 @@ export default function PublishDetail(props: IProps) {
     setDeployEnv([]);
     onOperate('uploadImageEnd');
   };
-  // const queryProjectEnv = async (benchmarkEnvCode: any) => {
-  //   setListLoading(true);
-  //   await getRequest(queryProjectEnvList, { data: { benchmarkEnvCode, pageSize: 9999, pageIndex: 1 } })
-  //     .then((res) => {
-  //       if (res?.success) {
-  //         let data = res.data.dataSource;
-  //         let option = (data || []).map((item: any) => ({
-  //           label: item.envName,
-  //           value: item.envCode,
-  //         }));
-  //         setProjectEnvCodeOptions(option);
-  //       }
-  //     })
-  //     .finally(() => {
-  //       setListLoading(false);
-  //     });
-  // };
-  // const selectEnvProject = (value: string, option: any) => {
-  //   queryProjectEnv(value);
-  // };
-
-  // const selectProjectEnv = (value: string, option: any) => {
-  //   setProjectEnvName(option.label);
-  // };
-  
 
   //重启确认
   const { confirm } = Modal;
