@@ -85,6 +85,7 @@ export default function EntryProject(props:Iprops){
         footer={null}
         onCancel={onClose}
         maskClosable={false}
+        destroyOnClose
       >
         <Spin spinning={envLoading}>
         <div>

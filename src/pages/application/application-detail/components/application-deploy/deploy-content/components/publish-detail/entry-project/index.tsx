@@ -58,9 +58,10 @@ export default function EntryProject(props:Iprops){
         onCancel={onClose}
         onOk={ensureProjectEnv}
         maskClosable={false}
+        destroyOnClose
       >
         <div>
-          <Form form={envProjectForm}>
+          <Form form={envProjectForm} preserve={false}>
             <Form.Item label="项目环境:" name="envCode" rules={[{ required: true, message: '请选择项目环境' }]}>
               <Select
                 style={{ width: 180 }}
