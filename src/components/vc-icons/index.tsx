@@ -18,6 +18,7 @@ import {
   UserRecent,
   TableSettings,
   Detail,Time,MoreCircle,
+  Deploy
 } from '@cffe/internal-icon';
 
 /** Icon映射 */
@@ -42,4 +43,5 @@ export const IconMap = {
   'icon-Detail':<Detail />,
   'icon-Time':<Time />,
   'icon-MoreCircle':<MoreCircle />,
+  'icon-Deploy':<Deploy />
 };
