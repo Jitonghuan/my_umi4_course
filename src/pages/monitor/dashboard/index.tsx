@@ -75,18 +75,21 @@ export default function Board() {
           }}
         >
           <Tabs.TabPane tab="集群大盘" key={-1} />
+          <Tabs.TabPane tab={"详情"} key={3} />
           {dashboardList.map((item, i) => (
             <Tabs.TabPane tab={item.name} key={i} />
+            
           ))}
         </Tabs>
 
-        {activeKey === '-1' ? <ClusterBoard clusterCode={clusterCode} /> : null}
+        {/* {activeKey === '-1' ? <ClusterBoard clusterCode={clusterCode} /> : null}
 
         {dashboardList.length && activeKey !== '-1' ? (
           <Spin style={{ display: 'block' }} spinning={loading}>
             <Detail url={dashboardList[Number(activeKey)].url} />
           </Spin>
-        ) : null}
+        ) : null} */}
+         <Detail url={'http://grafana-yhyy.seenew.info:4445/d/SdllMIF4k/ji-qun-liu-liang-tuo-bu?viewPanel=2\u0026orgId=1\u0026refresh=5s\u0026kiosk'} />
       </div>
     </PageContainer>
   );
