@@ -11,7 +11,8 @@ import { parse, stringify } from 'query-string';
 import { FeContext } from '@/common/hooks';
 import OperateModal from './operate-modal';
 import { versionSortFn } from '@/utils';
-import { getReleaseList } from '../service';
+import { getReleaseList,updateRelease } from '../service';
+import {UpdateItems} from '../type'
 import './index.less';
 
 export default function VersionList() {
@@ -44,6 +45,18 @@ export default function VersionList() {
         return res.length ? res[0] : '';
     }, [data]);
 
+    const updateReleaseAction=(params:UpdateItems)=>{
+        updateRelease({...params}).then((res)=>{
+            if(res?.success){
+                message.success("操作成功！")
+                queryList({ pageSize, pageIndex });
+
+            }
+
+        })
+
+    }
+
 
     const tableColumns = useMemo(() => {
         return listSchema({
@@ -63,8 +76,8 @@ export default function VersionList() {
             mergeVersion: (record: any) => {
                 openModal('merge', record)
             },
-            handleEdit: (record: any) => {
-
+            handleEdit: (record: any,index:number) => {
+                updateReleaseAction({...record,locked:record?.locked===0?1:0})
             }
         }) as any;
     }, [data, appCategory]);
@@ -77,6 +90,9 @@ export default function VersionList() {
             if (res?.success) {
                 setData(res?.data || []);
                 setTotal(res?.data.length)
+            }else{
+                setData( []);
+                setTotal(0)
             }
         }).finally(() => { setLoading(false) })
     }

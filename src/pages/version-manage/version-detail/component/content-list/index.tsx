@@ -3,22 +3,8 @@ import { Tag, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
 import detailContext from '../../context';
+import {demandStatusTypes} from './type'
 import { releaseDemandRel, deleteDemand } from '../../../service';
-const mockData = [
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' },
-    { title: '应用管理：版本发布' }
-]
 export default forwardRef(function ContentList(props: any) {
     const { tableData, tableLoading, onSave, filter } = props;
     const [type, setType] = useState<string>('hide');
@@ -45,23 +31,27 @@ export default forwardRef(function ContentList(props: any) {
             title: '类型',
             dataIndex: 'relatedPlat',
             width: 80,
-            render: (value: string) => <span>{value === 'demandPlat' ? '需求' : 'bug'}</span>
+            render: (value: string) => <span><Tag color={value === 'demandPlat' ? 'green' : 'blue'}>{value === 'demandPlat' ? '需求' : 'bug'}</Tag></span>
         },
         {
             title: '版本需求状态',
             dataIndex: 'demandStatus',
             width: 120,
+            render:(value: string)=><span style={{color:demandStatusTypes[value]?.color ||"gray"}}>
+                
+                {value}</span>
         },
         {
             title: '关联应用',
             dataIndex: 'relationApps',
             width: 300,
-            render: (value: any, record: any) => <div>{value.map((item: any) => <Tag> <span style={{ color: 'blue' }}>{item.appCode} </span> <span style={{ color: item.appStatus === '未出包' ? 'gray' : 'green' }}>{item.appStatus}</span> </Tag>)}</div>
+            render: (value: any, record: any) => <div>{value?.map((item: any) => <Tag> <span style={{ color: '#4169E1' }}>{item?.appCode} </span> <span style={{ color: item.appStatus === '未出包' ? 'gray' : 'green' }}>{item?.appStatus}</span> </Tag>)}</div>
         },
         {
             title: '操作',
             fixed: 'right',
             width: 40,
+            align: 'center',
             render: (_: any, record: any, index: number) => (
                 <div className="action-cell">
                     <Popconfirm
@@ -99,7 +89,7 @@ export default forwardRef(function ContentList(props: any) {
                         <Tooltip title='ceshi ceshi ' placement="top">
                             <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
                         </Tooltip>
-                        搜索：
+                        查询：
                         <input
                             style={{ width: 200 }}
                             placeholder='输入内容进行查询过滤'

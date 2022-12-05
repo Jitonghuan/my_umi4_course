@@ -7,23 +7,20 @@
  */
 
 import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio, Tabs } from 'antd';
+import { Table, Input, Button, Modal, Checkbox,  Select, Radio, Tabs } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { createDeploy, updateFeatures } from '@/pages/application/service';
-import { datetimeCellRender } from '@/utils';
+import { createDeploy, updateFeatures,updateReleaseDeploy } from '@/pages/application/service';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 import { versionList } from '../../../version-deploy/schema';
 import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
-import { appActiveReleases, releaseDeploy } from '../../../service';
+import {  releaseDeploy } from '../../../service';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
-
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
   const {
     hasPublishContent,
@@ -36,6 +33,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     pipelineCode,
     changeBranchName,
     loading,
+    versionData
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -51,11 +49,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
-  const [visible, setVisible] = useState(false);//关联需求详情弹窗
-  const [currentData, setCurrentData] = useState<any>([]);
   const [publishType, setPublishType] = useState<string>('branch');
-  const [versionData, setVersionData] = useState<any>([]);
-  const [releaseRowKeys, setReleaseRowKeys] = useState<(string | number)[]>([]);
+  const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
+ 
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
     if (appType === 'frontend') {
@@ -65,9 +61,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     }
   };
 
-  useEffect(() => {
-    getVersionList();
-  }, [])
+  
 
   const branchColumns: any = useMemo(() => {
     return branchTableSchema({ appData, id, appCode, env }).filter((item) => item.title)
@@ -77,10 +71,30 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
+      if(publishType==="version"){
+        return await updateReleaseDeploy({
+          deployId: metadata?.id,
+          releaseId: releaseRowKeys,
+        });
+
+      }
       return await updateFeatures({
         id: metadata?.id,
         features: filter,
       });
+
+    }
+
+    if(publishType==="version"){
+      return await   releaseDeploy({
+        releaseId: releaseRowKeys,
+        pipelineCode,
+        envCodes: deployEnv,
+        buildType: getBuildType(),
+        appCode: appCode!,
+        envTypeCode: env,
+        deployModel: appData?.deployModel,
+      })
     }
 
     return await createDeploy({
@@ -92,6 +106,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envCodes: deployEnv,
       masterBranch: selectMaster, //主干分支
       buildType: getBuildType(),
+      //@ts-ignore
       deployModel: appData?.deployModel,
     });
   };
@@ -141,16 +156,15 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           envSelect.push({ label: item.envName, value: item.envCode });
         });
         setEnvDataList(envSelect);
+      }else{
+        setEnvDataList([]);
       }
-      // setEnvDataList(data.list);
     });
   }, [appCategoryCode, env]);
-
+  
   const verisionColumns = useMemo(() => {
     return versionList({
       demandDetail: (value: string, record: any) => {
-        // setInitData(record);
-        // setVisible(true)
       }
     })
   }, [])
@@ -161,38 +175,44 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     masterBranchChange(v);
   };
 
-  const handleTypeChange = (e: any) => {
-    setPublishType(e.target.value)
-  }
-
-  const getVersionList = () => {
-    appActiveReleases({ appCode: appData?.appCode }).then((res) => {
-      if (res?.success) {
-        setVersionData(res?.data || [])
-      }
-    })
-  }
-
-  const publishRelease = () => {
-    releaseDeploy({
-      releaseId: releaseRowKeys[0],
-      pipelineCode,
-      envCodes: deployEnv,
-      buildType: getBuildType(),
-      appCode: appCode!,
-      envTypeCode: env,
-      deployModel: appData?.deployModel,
-    }).then((res) => {
-      if (res?.success) {
+const [defaultKey,setDefaultKey]=useState<number[]>([])
+  useEffect(()=>{
+    if(versionData?.length>0&&publishType==="version"){
+      let key=versionData?.filter((item:any) => item.canPublish===true)
+      console.log("key",key)
+      if(key?.length>0){
+        setReleaseRowKeys(key[0]?.id);
+        setDefaultKey([key[0]?.id])
+        console.log("[key[0]?.id]",[key[0]?.id])
 
       }
-    })
-  }
+
+
+
+    }
+
+  },[versionData,publishType])
+
+
+
+  const rowSelection = {
+    onChange: (selectedRowKeys:any[], selectedRows: any[]) => {
+      console.log("selectedRowKeys",selectedRowKeys)
+        setReleaseRowKeys(selectedRowKeys[0] as number);
+    },
+    getCheckboxProps: (record: any) => ({
+      disabled: !record?.canPublish, 
+      //name: record.name,
+    }),
+  };
+
 
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>{`待发布内容`}</div>
-      <Tabs activeKey={publishType} onChange={(key) => { setPublishType(key) }}>
+      <Tabs activeKey={publishType} onChange={(key) => {
+         setPublishType(key) 
+         }}>
         {/* 发布分支 */}
         <Tabs.TabPane tab='待发布分支' key='branch' >
           <>
@@ -209,6 +229,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
                   optionFilterProp="label"
                   // labelInValue
                   filterOption={(input, option) => {
+                    //@ts-ignore
                     return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
                   }}
                 />
@@ -249,29 +270,44 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
             />
           </>
         </Tabs.TabPane>
+          {/* 发布版本 */}
+        {versionData?.length>0&&(
 
-        {/* 发布版本 */}
         <Tabs.TabPane tab='待发布版本' key='version'>
-          <>
-            <div className='flex-end' style={{ marginBottom: '10px' }}>
-              <Button type='primary' disabled={!releaseRowKeys.length} onClick={() => { publishRelease() }}>提交发布</Button>
-            </div>
-            <Table
-              dataSource={versionData}
-              bordered
-              rowKey="id"
-              pagination={false}
-              columns={verisionColumns}
-              rowSelection={{
-                type: 'checkbox',
-                releaseRowKeys,
-                onChange: (releaseRowKeys: React.Key[], selectedRows: any[]) => {
-                  setReleaseRowKeys(releaseRowKeys as any);
-                },
-              }}
-            />
-          </>
-        </Tabs.TabPane>
+        <>
+        <div className="table-caption">
+              <div className="caption-left">
+                <h3>待发布版本列表</h3>
+              </div>
+              <div>
+              <Button type='primary' disabled={!releaseRowKeys} onClick={()=>{
+                  submitClick()
+              }}>
+                   {hasPublishContent ? '更新发布' : '提交发布'}
+                
+                </Button>
+              </div>
+          </div>
+      
+          <Table
+            dataSource={versionData}
+            bordered
+            rowKey="id"
+            defaultSelectedRowKeys={defaultKey}
+            pagination={false}
+            columns={verisionColumns}
+            //@ts-ignore
+            rowSelection={{
+              type:"radio" ,
+              ...rowSelection,
+            }}
+          />
+        </>
+      </Tabs.TabPane>
+
+        )}
+
+      
       </Tabs>
 
 
@@ -281,17 +317,18 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         confirmLoading={confirmLoading}
         onOk={() => {
           setConfirmLoading(true);
-          return submit()
-            .then(() => {
+          return submit().then(() => {
               setDeployVisible(false);
               onSubmitBranch?.('end');
-            })
-            .finally(() => setConfirmLoading(false));
+            }).finally(() => {setConfirmLoading(false)
+            
+            });
         }}
         onCancel={() => {
           setDeployVisible(false);
           setConfirmLoading(false);
           onSubmitBranch?.('end');
+         
         }}
         maskClosable={false}
       >

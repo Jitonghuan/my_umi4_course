@@ -26,6 +26,7 @@ export interface PublishBranchProps {
     /** 提交分支事件 */
     onSubmitBranch: (status: 'start' | 'end') => void;
     changeBranchName: any;
+    versionData:any;
 }
 
 export const branchTableSchema = ({ id, appCode, appData, env }) => {
