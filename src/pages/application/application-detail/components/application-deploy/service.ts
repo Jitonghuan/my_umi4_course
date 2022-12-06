@@ -12,3 +12,10 @@ export const releaseDeploy = (data: any) => {
     const url = addAPIPrefix('/releaseManage/releaseDeploy/create');
     return postRequest(url, { data: data });
 };
+///appPublish/list
+export const appPublishListUrl = addAPIPrefix('/releaseManage/appPublish/list');
+export const getAppPublishList = (appCode: string) => {
+    const url = addAPIPrefix('/releaseManage/appPublish/list');
+    return getRequest(url, { data: {appCode} });
+};
+

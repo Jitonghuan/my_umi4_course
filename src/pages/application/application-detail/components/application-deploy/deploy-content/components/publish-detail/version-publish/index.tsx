@@ -1,21 +1,45 @@
-import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message, Checkbox, Radio, Upload, Form, Select,Input, Typography,Spin } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import React, { useState,useEffect } from 'react';
+import {  Modal, message,  Form, Select,Input,} from 'antd';
+import { getRequest } from '@/utils/request';
+import { getPipelineUrl } from '@/pages/application/service';
 import { appReleasePublish } from '@/pages/application/service';
+
 interface Iprops{
     visible:boolean;
     onClose:()=>void;
-    pipelineOptions:any;
     curPipelineCode:string
     onSave:()=>void
+    appCode?:string;
 
 
 }
 
 export default function VersionPublish(props:Iprops){
-    const {visible,onClose,pipelineOptions,curPipelineCode,onSave}=props
+    const {visible,onClose,curPipelineCode,onSave,appCode}=props
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [form]=Form.useForm()
+    const [pipelineOptions, setPipelineOptions] = useState<any>([]);
+    useEffect(()=>{
+        if(visible&&appCode){
+            getPipelineOptions()
+
+        }
+
+    },[visible])
+
+    const getPipelineOptions=()=>{
+        getRequest(getPipelineUrl, {
+            data: { appCode, envTypeCode: "version", pageIndex: -1, size: -1 },
+          }).then((res) => {
+            if (res?.success) {
+              let data = res?.data?.dataSource;
+              const pipelineOptionData = data.map((item: any) => ({ value: item.pipelineCode, label: item.pipelineName }));
+              setPipelineOptions(pipelineOptionData);
+            } else {
+              setPipelineOptions([]);
+            }
+          });
+    }
     const handleSubmit=async()=>{
         setConfirmLoading(true);
         const params= await form.validateFields()
@@ -43,8 +67,10 @@ export default function VersionPublish(props:Iprops){
         onCancel={onClose}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}
-        maskClosable={false}>
-            <Form form={form} labelCol={{flex:"110px"}} >
+        maskClosable={false}
+        destroyOnClose
+        >
+            <Form form={form} labelCol={{flex:"110px"}} preserve={false}>
                 <Form.Item name="pipelineCode" label="选择流水线" rules={[{ required: true, message: '请输入' }]}>
                 <Select
               options={pipelineOptions}

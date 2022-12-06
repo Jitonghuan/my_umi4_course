@@ -287,7 +287,7 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-         {versionData?.length>0 && appData?.deployModel === 'online' && (
+         {versionData?.length>0 && appData?.deployModel === 'online'&&envTypeCode !== 'prod' && (
           <Button type="primary" onClick={()=>{
             setVersionPublishVisiable(true)
             onOperate('versionPublishStart');
@@ -510,13 +510,13 @@ export default function PublishDetail(props: IProps) {
       projectEnvCodeOptions={projectEnvCodeOptions}
       envLoading={envLoading}
       />
-     
+     {/* --------- 部署到版本发布弹窗----- */}
       <VersionPublish 
       visible={versionPublishVisiable} 
       onClose={()=>{setVersionPublishVisiable(false)
         onOperate('versionPublishEnd');
       }} 
-      pipelineOptions={pipelineOptions} 
+      appCode={appData?.appCode}
       curPipelineCode={pipelineCode}
       onSave={()=>{
         setVersionPublishVisiable(false)

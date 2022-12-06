@@ -218,7 +218,7 @@ export default function VersionDetail() {
                     <detailContext.Provider
                         value={{ releaseId: selectVersion?.value || '', categoryCode: appCategory?.value || '', categoryName: appCategory?.label || '' }}
                     >
-                        <GetComponent tableData={tableData} tableLoading={tableLoading} filter={filter} onSave={queryTableData} />
+                        <GetComponent tableData={tableData} tableLoading={tableLoading} filter={filter} onSave={queryTableData} detailInfo={data}/>
                     </detailContext.Provider>
                 </div>
 

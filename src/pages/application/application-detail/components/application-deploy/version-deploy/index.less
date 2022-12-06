@@ -1,10 +1,17 @@
 .version-deploy-page{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 0 16px 24px;
-    overflow: auto;
     height: 100%;
-    .ant-descriptions-title {
+    overflow: auto;
+    &-body{
+      flex: 1;
+      height: 100%;
+      overflow: auto;
+      padding-right: 12px;
+      border-right: solid 1px #d2d8e6;
+      margin-right: 12px;
+      .ant-descriptions-title {
         display: flex;
         align-items: center;
     
@@ -17,12 +24,13 @@
           background: #3591ff;
         }
       }
-      .version-publish{
-      }
-      .version-list{
-          margin-top: 20px;
-          &>:nth-child(1){
-              margin-bottom: 10px;
-          }
-      }
+     
+    }
+    &-sider{
+      width: 205px;
+      height: 100%;
+      overflow: auto;
+
+    }
+  
 }

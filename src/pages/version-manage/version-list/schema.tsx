@@ -46,7 +46,7 @@ export const listSchema = (params:{
             title: '状态',
             dataIndex: 'status',
             width: 100,
-            render: (value: string) => <span><Tag color={statusMap[value]?.color||"default"}>{statusMap[value]?.label||"--"}</Tag></span>,
+            render: (value: string) => <span style={{color:statusMap[value]?.color||"gray"}}>{statusMap[value]?.label||"--"}</span>,
         },
         {
             title: '版本简述',

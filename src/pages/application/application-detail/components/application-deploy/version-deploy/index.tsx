@@ -6,29 +6,44 @@ import { contentList, versionList } from './schema';
 import RelateDemand from './component/relate-demand';
 import SubmitPublish from './component/submit-publish';
 import DeploySteps from '@/pages/application/application-detail/components/application-deploy/deploy-content/components/publish-content/steps';
+import {getAppPublishList} from '../service'
+import VersionDetail from './component/version-detail'
 import './index.less';
-const mockData = [{ demand: 5, code: "code1" }]
-export default function VersionDeploy(props: any) {
-    const { pipelineCode, data = [] } = props;
-    const [visible, setVisible] = useState<boolean>(false);
+interface Iprops{
+    pipelineCode:string;
+    envTypeCode:string;
+    isActive:boolean;
+    visible:boolean;
+    appData:any;
+
+
+}
+const rootCls = 'version-deploy-page';
+export default function VersionDeploy(props: Iprops) {
+    const { pipelineCode, envTypeCode,isActive, visible,appData} = props;
+    const [relateDemandVisible, setRelateDemandVisible] = useState<boolean>(false);
     const [initData, setInitData] = useState<any>({});
     const [submitVisible, setSubmitVisible] = useState<boolean>(false);
-    const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
+    const getTableData=()=>{
+        //getAppPublishList()
+    }
     const columns: any = useMemo(() => {
         return contentList()
-    }, [data])
+    }, [])
     const verisionColumns = useMemo(() => {
         return versionList({
             demandDetail: (value: string, record: any) => {
                 setInitData(record);
-                setVisible(true)
+                setRelateDemandVisible(true)
             }
         })
-    }, [mockData])
+    }, [])
     return (
         <div className='version-deploy-page'>
-            <RelateDemand visible={visible} onClose={() => { setVisible(false) }} initData={initData} />
+             <RelateDemand visible={relateDemandVisible} onClose={() => { setRelateDemandVisible(false) }} initData={initData} />
             <SubmitPublish visible={submitVisible} onClose={() => { setSubmitVisible(false) }} />
+        <div className={`${rootCls}-body`}>
+                 
             {/* 发布详情 */}
             <Descriptions
                 title="发布详情"
@@ -46,7 +61,7 @@ export default function VersionDeploy(props: any) {
                 <Descriptions.Item label="版本TAG">{'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布时间">{'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布人">{'--'}</Descriptions.Item>
-                <Descriptions.Item label="版本说吗">{'--'}</Descriptions.Item>
+                <Descriptions.Item label="版本说明">{'--'}</Descriptions.Item>
             </Descriptions>
             {/* 发布内容 */}
             <div className='version-publish publish-content-compo'>
@@ -80,35 +95,37 @@ export default function VersionDeploy(props: any) {
                 </div>
             </div>
             <Table
-                dataSource={data}
+                dataSource={[]}
                 // loading={loading || updateLoading}
                 bordered
                 rowKey="id"
                 pagination={false}
                 columns={columns}
             />
+
+                  </div>
+      
+
+         <div className={`${rootCls}-sider`}>
+         <VersionDetail envTypeCode={envTypeCode}  />
+      </div>
+      
             {/* 版本列表 */}
-            <div className='version-list'>
+            {/* <div className='version-list'>
                 <div className='flex-space-between'>
                     <div className='ant-descriptions-title'>版本列表</div>
-                    <Button type='primary' disabled={!selectedRowKeys.length} onClick={() => { setSubmitVisible(true) }}>提交发布</Button>
+                    
                 </div>
                 <Table
-                    dataSource={mockData}
+                    dataSource={[]}
                     // loading={loading || updateLoading}
                     bordered
                     rowKey="id"
                     pagination={false}
                     columns={verisionColumns}
-                    rowSelection={{
-                        type: 'checkbox',
-                        selectedRowKeys,
-                        onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                            setSelectedRowKeys(selectedRowKeys as any);
-                        },
-                    }}
+                   
                 />
-            </div>
+            </div> */}
         </div>
     )
 }
