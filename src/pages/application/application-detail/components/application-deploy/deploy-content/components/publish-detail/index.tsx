@@ -523,6 +523,7 @@ export default function PublishDetail(props: IProps) {
         onOperate('versionPublishEnd');
 
       }}
+      versionData={versionData}
        />
      
     </div>

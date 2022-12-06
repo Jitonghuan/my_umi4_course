@@ -419,7 +419,7 @@ export default [
   {
     "path": `${baseRoutePath}/version-manage`,
     "name": "版本管理",
-    "icon": "icon-exit",
+    "icon": "icon-Textarea",
     "routes": [
       {
         'path': `${baseRoutePath}/version-manage/list`,
