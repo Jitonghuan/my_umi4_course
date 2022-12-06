@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Modal, Button, List, Tag, Tabs } from 'antd';
+import { Modal, Button, List, Tag, Tabs, Spin } from 'antd';
 import VCDescription from '@/components/vc-description';
 import DetailContext from '@/pages/application/application-detail/context';
 import { recordFieldMapOut, recordDisplayMap } from './schema';
@@ -36,6 +36,7 @@ export default function PublishRecord(props: IProps) {
   const [curVersion, setCurVersion] = useState('');
   const [curEnvCode, setCurEnvCode] = useState(''); // 只给依赖详情使用
   const [lastVersion, setLastVersion] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
@@ -152,6 +153,8 @@ export default function PublishRecord(props: IProps) {
     setLastVersion('');
     setCurVersion(item.version);
     setCurEnvCode(envCode);
+    setDepVisible(true);
+    setLoading(true);
     try {
       res = await axios.get(
         `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${item.version}/npm-tile.json`,
@@ -172,7 +175,7 @@ export default function PublishRecord(props: IProps) {
         setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, '\t') : '');
       }
     } catch (e) {}
-    setDepVisible(true);
+    setLoading(false);
   }
 
   return (
@@ -254,22 +257,26 @@ export default function PublishRecord(props: IProps) {
         >
           <Tabs>
             <Tabs.TabPane tab="版本对比" key="0">
-              <ReactDiffViewer
-                oldValue={originNpmJson}
-                newValue={npmJson}
-                splitView={true}
-                compareMethod={DiffMethod.WORDS}
-                styles={{
-                  variables: {
-                    light: {
-                      codeFoldGutterBackground: '#6F767E',
-                      codeFoldBackground: '#E2E4E5',
-                    },
-                  },
-                }}
-                leftTitle={`上一次版本：${lastVersion}`}
-                rightTitle={`当前版本：${curVersion}`}
-              />
+              <Spin spinning={loading}>
+                {!loading && (
+                  <ReactDiffViewer
+                    oldValue={originNpmJson}
+                    newValue={npmJson}
+                    splitView={true}
+                    compareMethod={DiffMethod.WORDS}
+                    styles={{
+                      variables: {
+                        light: {
+                          codeFoldGutterBackground: '#6F767E',
+                          codeFoldBackground: '#E2E4E5',
+                        },
+                      },
+                    }}
+                    leftTitle={`上一次版本：${lastVersion}`}
+                    rightTitle={`当前版本：${curVersion}`}
+                  />
+                )}
+              </Spin>
             </Tabs.TabPane>
             <Tabs.TabPane tab="依赖详情" key="1">
               <a
