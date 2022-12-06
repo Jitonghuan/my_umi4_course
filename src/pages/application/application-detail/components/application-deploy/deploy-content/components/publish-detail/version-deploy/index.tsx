@@ -36,6 +36,7 @@ export default function VersionPublish(props:Iprops){
                 }))
 
             }
+            console.log("data",data,versionData)
             setReleaseOption(data)
 
 
@@ -62,7 +63,7 @@ export default function VersionPublish(props:Iprops){
         appReleasePublish({
             ...params,
             reusePipelineCode:curPipelineCode,
-            releaseId:""
+            releaseId:params?.releaseId
 
         }).then((res)=>{
             if(res?.success){
@@ -92,11 +93,12 @@ export default function VersionPublish(props:Iprops){
                 <Form.Item name="releaseId" label="发布版本" rules={[{ required: true, message: '请输入' }]} initialValue={releaseOption[0]?.value} >
                     <Select options={releaseOption} style={{width: '240px'}}  defaultValue={releaseOption[0]?.value}/>
                 </Form.Item>
-                <Form.Item name="pipelineCode" label="选择流水线" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item name="pipelineCode" label="选择流水线" rules={[{ required: true, message: '请输入' }]} initialValue={pipelineOptions[0]?.value}>
                 <Select
               options={pipelineOptions}
               style={{ width: '240px' }}
               showSearch
+              defaultValue={pipelineOptions[0]?.value}
               optionFilterProp="label"
               filterOption={(input, option) => {
                   //@ts-ignore
