@@ -11,12 +11,13 @@ interface Iprops{
     onSave:()=>void
     appCode?:string;
     versionData:any;
+    handleTabChange:(tab:string)=>void;
 
 
 }
 
 export default function VersionPublish(props:Iprops){
-    const {visible,onClose,curPipelineCode,onSave,appCode,versionData}=props
+    const {visible,onClose,curPipelineCode,onSave,appCode,versionData,handleTabChange}=props
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [form]=Form.useForm()
     const [pipelineOptions, setPipelineOptions] = useState<any>([]);
@@ -36,13 +37,24 @@ export default function VersionPublish(props:Iprops){
                 }))
 
             }
-            console.log("data",data,versionData)
+           
             setReleaseOption(data)
+         
 
 
         }
 
     },[visible])
+    useEffect(()=>{
+        if(visible&&pipelineOptions?.length>0){
+            form.setFieldsValue({
+                pipelineCode:pipelineOptions[0]?.value
+            })
+
+        }
+       
+
+    },[pipelineOptions,visible])
 
     const getPipelineOptions=()=>{
         getRequest(getPipelineUrl, {
@@ -69,6 +81,7 @@ export default function VersionPublish(props:Iprops){
             if(res?.success){
                 message.success("提交成功！")
                 onSave()
+                handleTabChange('version')
 
             }
 

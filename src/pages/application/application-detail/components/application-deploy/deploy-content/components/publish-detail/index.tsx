@@ -26,7 +26,7 @@ const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
   
-  let { deployInfo, envTypeCode, onOperate, appStatusInfo, nextTab, pipelineCode,versionData } = props;
+  let { deployInfo, envTypeCode, onOperate, appStatusInfo, nextTab, pipelineCode,checkVersion,handleTabChange,versionData } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
@@ -287,7 +287,7 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-         {versionData?.length>0 && appData?.deployModel === 'online'&&envTypeCode !== 'prod' && (
+         {checkVersion===true&& appData?.deployModel === 'online'&&envTypeCode !== 'prod' && (
           <Button type="primary" onClick={()=>{
             setVersionPublishVisiable(true)
             onOperate('versionPublishStart');
@@ -516,6 +516,7 @@ export default function PublishDetail(props: IProps) {
       onClose={()=>{setVersionPublishVisiable(false)
         onOperate('versionPublishEnd');
       }} 
+      handleTabChange={(tab:string)=>{handleTabChange(tab)}}
       appCode={appData?.appCode}
       curPipelineCode={pipelineCode}
       onSave={()=>{

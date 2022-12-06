@@ -33,7 +33,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     pipelineCode,
     changeBranchName,
     loading,
-    versionData
+    versionData,
+    checkVersion
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -271,7 +272,7 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
           </>
         </Tabs.TabPane>
           {/* 发布版本 */}
-        {versionData?.length>0&&env!=="prod"&&(
+        {checkVersion===true&&env!=="prod"&&(
 
         <Tabs.TabPane tab='待发布版本' key='version'>
         <>

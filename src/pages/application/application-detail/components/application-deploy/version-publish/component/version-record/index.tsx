@@ -1,17 +1,16 @@
 /**
  * PublishRecord
- * @description 发布记录
+ * @description 版本发布记录
  * @author moting.nq
- * @create 2021-04-25 16:05
+ * @create 2022-04-25 16:05
  */
 
  import React, { useState, useEffect, useContext, useMemo } from 'react';
- import { Modal, Button, List, Tag } from 'antd';
+ import { Modal, Button, List, Descriptions } from 'antd';
  import VCDescription from '@/components/vc-description';
  import DetailContext from '@/pages/application/application-detail/context';
  import moment from 'moment';
- import { getAppPublishList } from '../../../service';
- import { usePaginated } from '@cffe/vc-hulk-table';
+ import { getAppPublishList } from '../../../service';;
  import './index.less';
  const rootCls = 'publish-record-compo';
  interface Iprops{
@@ -26,6 +25,7 @@
    const [loading,setLoading]=useState<boolean>(false)
    const [curRecord, setcurRecord] = useState<any>({});
    const [visible, setVisible] = useState<boolean>(false);
+   
    const queryDataSource=(params:{appCode:string})=>{
     setLoading(true)
     getAppPublishList(params?.appCode).then((res)=>{
@@ -38,16 +38,7 @@
     })
 }
  
-//    const {
-//      run: queryDataSource,
-//      tableProps,
-//      loadMore,
-//    } = usePaginated({
-//      requestUrl:appPublishListUrl,
-//      requestMethod: 'GET',
-//      showRequestError: true,
-//      loadMore: true,
-//    });
+
    useEffect(() => {
        if (!appData?.appCode) return
      queryDataSource({
@@ -71,28 +62,7 @@
      };
    }, []);
  
-   
  
-//    const renderLoadMore = () => {
-//     const { pageSize = 0, total = 0, current = 0 } = tableProps?.pagination || {};
-//      return (
-//        total > 0 &&
-//        total > pageSize && (
-//          <div className={`${rootCls}-btns`}>
-//            <Button
-//              ghost
-//              type="primary"
-//              onClick={() => {
-//             //   loadMore && loadMore();
-//                intervalId && clearInterval(intervalId);
-//              }}
-//            >
-//              加载更多
-//            </Button>
-//          </div>
-//        )
-//      );
-//    };
  
    // 显示详情
    const handleShowDetail = (record: any) => {
@@ -108,52 +78,25 @@
            <List
              className="demo-loadmore-list"
              id="load-more-list"
-             loading={loading}
+             loading={dataSource?.length>0?false:loading}
              itemLayout="vertical"
             // loadMore={renderLoadMore()}
              dataSource={dataSource?.filter((v:any) => v?.envTypeCode === envTypeCode) as any[]}
              renderItem={(item) => (
                <List.Item>
                  <div>
-                   {/* <label>{recordFieldMapOut['modifyUser']}</label>:{item['modifyUser']} */}
+                   <label>版本号</label>:{item?.releaseNumber||"--"}
                  </div>
                  <div>
-                   {/* <label>{recordFieldMapOut['deployedTime']}</label>: */}
-                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
+                   <label>版本TAG</label>:{item?.tag||'--'}
                  </div>
-                 {item.version && (
-                   <div>
-                     <label>版本号</label>:{item['version']}
-                   </div>
-                 )}
-                 {item.deployStatus === 'multiEnvDeploying' && item.deploySubStates ? (
-                   <div>
-                     {/* <label>{recordFieldMapOut['deployStatus']}</label>: */}
-                     {JSON.parse(item.deploySubStates)?.map((subItem: any) => (
-                       <div>
-                         <label>{subItem.envCode}</label>:
-                         {
-                           <span style={{ marginLeft: 6 }}>
-                             {/* <Tag color={recordDisplayMap[subItem['subState']]?.color || 'red'}>
-                               {recordDisplayMap[subItem['subState']]?.text || '---'}
-                             </Tag> */}
-                           </span>
-                         }
-                       </div>
-                     ))}
-                   </div>
-                 ) : (
-                   <div>
-                     {/* <label>{recordFieldMapOut['deployStatus']}</label>:
-                     {
-                       <span style={{ marginLeft: 6 }}>
-                         <Tag color={recordDisplayMap[item['deployStatus']]?.color || 'red'}>
-                           {recordDisplayMap[item['deployStatus']]?.text || '---'}
-                         </Tag>
-                       </span>
-                     } */}
-                   </div>
-                 )}
+                 <div>
+                   <label>发布人</label>:{item?.createUser||'--'}
+                 </div>
+                 <div>
+                   <label>发布时间</label>: {item?.gmtCreate ? moment(item?.gmtCreate).format('YYYY-MM-DD HH:mm') : ''}
+                 </div>
+                
                  <a onClick={() => handleShowDetail(item)}>详情</a>
                </List.Item>
              )}
@@ -161,8 +104,25 @@
          </div>
        ) : null}
  
-       <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
-         <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
+       <Modal title="发布详情" destroyOnClose width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
+       <div>
+       <Descriptions
+      // {...rest}
+      labelStyle={{ width: 100, justifyContent: 'flex-end' }}
+      column={1}
+    >
+      <Descriptions.Item label="版本号">{curRecord?.releaseNumber}</Descriptions.Item>
+      <Descriptions.Item label="版本TAG">{curRecord?.tag}</Descriptions.Item>
+      <Descriptions.Item label="发布人">{curRecord?.createUser}</Descriptions.Item>
+      <Descriptions.Item label="发布时间">
+      
+        {curRecord?.gmtCreate ? moment(curRecord?.gmtCreate).format('YYYY-MM-DD HH:mm') : ''}
+        </Descriptions.Item>
+      <Descriptions.Item label="变更配置">{curRecord?.config}</Descriptions.Item>
+      <Descriptions.Item label="变更SQL">{curRecord?.sql}</Descriptions.Item>
+      </Descriptions>
+
+       </div>
        </Modal>
      </div>
    );
