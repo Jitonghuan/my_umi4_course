@@ -16,7 +16,7 @@ import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
-import { versionList } from '../../../version-deploy/schema';
+import { versionList } from '../../../version-publish/schema';
 import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
 import {  releaseDeploy } from '../../../service';
 const rootCls = 'publish-branch-compo';

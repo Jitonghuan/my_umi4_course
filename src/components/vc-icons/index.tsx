@@ -43,6 +43,6 @@ export const IconMap = {
   'icon-Detail':<Detail />,
   'icon-Time':<Time />,
   'icon-MoreCircle':<MoreCircle />,
-  'icon-Deploy':<Deploy />
+  'icon-Deploy':<Deploy />,
   'icon-Textarea':<Textarea />
 };
