@@ -27,6 +27,16 @@ interface DataSourceItem {
   i: number;
 }
 
+const ignoreError = [
+  '服务器繁忙，请稍后再试',
+  'Cannot resolve a Slate point from DOM point',
+  'Cannot resolve a Slate node from DOM node',
+  'Cannot resolve a Slate range from a DOM event',
+  'Cannot resolve a Slate range from a DOM range',
+  'Cannot resolve a DOM point from Slate point',
+  'Cannot resolve a DOM node from Slate node',
+];
+
 const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
   const [chart, setChart] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
@@ -104,23 +114,28 @@ const BasicError = ({ appGroup, envCode, feEnv, timeList }: IProps) => {
     const res = await getErrorList(getParam());
     const data = res?.data || [];
     const list: any = [];
+    let num = 0;
     for (const item of data) {
-      for (let i = 0; i < item[1].length; i++) {
-        const suItem = item[1][i];
-        list.push({
-          id: (Math.random() * 1000000).toFixed(0),
-          url: item[0],
-          colSpan: i === 0 ? 1 : 0,
-          i,
-          len: item[1].length,
-          rowSpan: i === 0 ? item[1].length : 1,
-          d1: suItem[0],
-          count: suItem[1],
-        });
+      if (item[0]) {
+        num += 1;
+        const subData = item[1].filter((arr: any) => !ignoreError.find((val) => arr[0].includes(val)));
+        for (let i = 0; i < subData.length; i++) {
+          const suItem = subData[i];
+          list.push({
+            id: (Math.random() * 1000000).toFixed(0),
+            url: item[0],
+            colSpan: i === 0 ? 1 : 0,
+            i,
+            len: subData.length,
+            rowSpan: i === 0 ? subData.length : 1,
+            d1: suItem[0],
+            count: suItem[1],
+          });
+        }
       }
     }
     setDataSource(list);
-    setTotal(data.length);
+    setTotal(num);
     setLoading(false);
   }
 

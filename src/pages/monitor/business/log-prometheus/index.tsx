@@ -163,6 +163,18 @@ export default function DpMonitor() {
             <Button
               type="primary"
               onClick={() => {
+                history.push({
+                  pathname: 'alarm-rules',
+                  search: 'tab=rules',
+                });
+              }}
+              style={{ margin: '0 10px' }}
+            >
+              报警规则
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
                 history.push(
                   { pathname: '/matrix/monitor/log-prometheus-edit' },
                   { type: 'add', bizMonitorType: 'log' },

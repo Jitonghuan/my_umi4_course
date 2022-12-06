@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {getRequest} from '@/utils/request';
+import { getRequest } from '@/utils/request';
 import { message } from 'antd';
 import * as APIS from '../service';
 
@@ -77,8 +77,8 @@ export function useGetListMonitor() {
 
 export function useDelMonitor() {
   const delMonitor = async (id: string, callBack: () => void) => {
-    await getRequest(`${APIS.deletePrometheus}/${id}`, {
-      data: { id }
+    await getRequest(`${APIS.deletePrometheus}`, {
+      data: { id },
     }).then((result) => {
       if (result?.success) {
         message.success('删除成功！');
