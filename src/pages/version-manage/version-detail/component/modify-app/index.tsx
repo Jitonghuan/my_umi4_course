@@ -10,14 +10,15 @@ import { releaseAppRel } from '../../../service';
 import './index.less'
 interface Iprops{
     activeTab:string;
-    detailInfo:any
-    infoLoading:boolean
+    detailInfo:any;
+    infoLoading:boolean;
+    count:number
   
 
 }
 
 export default function ModifyApp(props: Iprops) {
-    const { activeTab,detailInfo,infoLoading } = props;
+    const { activeTab,detailInfo,infoLoading,count } = props;
     const { categoryCode, releaseId } = useContext(detailContext);
     const [visible, setVisible] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('hide');
@@ -49,7 +50,6 @@ export default function ModifyApp(props: Iprops) {
             if(res?.success){
                 let data:any=[];
                 (res?.data)?.map((ele:any)=>{
-                    console.log("Object.keys(ele?.config)",ele)
                     data.push({
                         ...ele,
                         configInfo:Object.keys(ele?.config)?.length,
@@ -80,10 +80,18 @@ export default function ModifyApp(props: Iprops) {
      const backendTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType === 'backend').length, [JSON.stringify(dataSource)])
     
     useEffect(()=>{
-        getDataSource()
+        if(releaseId){
+            getDataSource()
+
+        }else{
+            setDataSource([])
+            setOriginData([])
+
+        }
+       
        
 
-    },[releaseId,activeTab])
+    },[releaseId,activeTab,categoryCode,count])
 
     const columns = [
         {

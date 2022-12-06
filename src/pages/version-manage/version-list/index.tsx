@@ -34,6 +34,7 @@ export default function VersionList() {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
     const [loading, setLoading] = useState<boolean>(false);
+    const [optLoading,setOptLoading] = useState<boolean>(false);
 
     useEffect(() => {
         queryList({ pageSize, pageIndex });
@@ -46,6 +47,7 @@ export default function VersionList() {
     }, [data]);
 
     const updateReleaseAction=(params:UpdateItems)=>{
+        setOptLoading(true)
         updateRelease({...params}).then((res)=>{
             if(res?.success){
                 message.success("操作成功！")
@@ -53,18 +55,20 @@ export default function VersionList() {
 
             }
 
+        }).finally(()=>{
+            setOptLoading(false)
         })
 
     }
     const releasePublishAction=(id:number)=>{
+        setOptLoading(true)
         releasePublish(id).then((res)=>{
             if(res?.success){
-                message.success("发版成功！")
+                message.success("操作成功！")
                 queryList({ pageSize, pageIndex });
-
             }
-
-
+        }).finally(()=>{
+            setOptLoading(false)
 
         })
     }
@@ -81,6 +85,7 @@ export default function VersionList() {
             },
             downloadVersion: (record: any) => {
                 openModal('downloadPackage', record)
+                setInitData(record)
             },
             downloadCountList: (record: any) => {
                 openModal('downloadList', record)
@@ -205,7 +210,7 @@ export default function VersionList() {
                 </div>
                 <Table
                     dataSource={data}
-                    loading={data?.length>0? false:loading}
+                    loading={optLoading?optLoading:data?.length>0? false:loading}
                     bordered
                     rowKey="id"
                     pagination={{
