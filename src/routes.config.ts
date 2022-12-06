@@ -984,120 +984,7 @@ export default [
       },
     ],
   },
-  {
-    "path": `${baseRoutePath}/cluster-recovery`,
-    "name": "集群容灾",
-    "icon": "icon-Deploy",
-    "routes": [
-      {
-        "path": `${baseRoutePath}/cluster-recovery/dashboards`,
-        "name": "集群大盘",
-        "key": "dashboards",
-        "component": "@/pages/cluster-recovery/dashboards",
-       
-      },
-      {
-        "path": `${baseRoutePath}/cluster-recovery/scheduling`,
-        "name": "流量调度",
-        "key": "scheduling-mode",
-        "component": "@/pages/cluster-recovery/scheduling",
-        routes:[
-          {
-            "path": `${baseRoutePath}/cluster-recovery/scheduling/organ`,
-            "name": "机构维度",
-            "key": "scheduling-mode",
-            "component": "@/pages/cluster-recovery/scheduling/organ",
-            "hideInMenu": true
-          },
-
-          {
-            "path": `${baseRoutePath}/cluster-recovery/scheduling/operator`,
-            "name": "操作员维度",
-            "key": "scheduling-mode",
-            "component": "@/pages/cluster-recovery/scheduling/operator",
-            "hideInMenu": true
-          },
-          {
-            "path": `${baseRoutePath}/cluster-recovery/scheduling/user`,
-            "name": "用户维度",
-            "key": "scheduling-mode",
-            "component": "@/pages/cluster-recovery/scheduling/user",
-            "hideInMenu": true
-          },
-
-        ]
-       
-      },
-      {
-        "path": `${baseRoutePath}/cluster-recovery/cluster-sync`,
-        "name": "集群同步",
-        "key": "cluster-sync",
-        "component": "@/pages/cluster-recovery/cluster-sync",
-        routes:[
-          {
-            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
-            "name": "全量同步",
-            "key": "cluster-sync",
-            "component": "@/pages/cluster-recovery/cluster-sync/full",
-            "hideInMenu": true
-          },
-
-          {
-            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/backend`,
-            "name": "后端单应用同步",
-            "key": "cluster-sync",
-            "component": "@/pages/cluster-recovery/cluster-sync/backend",
-            "hideInMenu": true
-          },
-          {
-            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/front`,
-            "name": "前端单应用同步",
-            "key": "cluster-sync",
-            "component": "@/pages/cluster-recovery/cluster-sync/front",
-            "hideInMenu": true
-          },
-          {
-            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/nacos`,
-            "name": "Nacos配置同步",
-            "key": "cluster-sync",
-            "component": "@/pages/cluster-recovery/cluster-sync/nacos",
-            "hideInMenu": true
-          },
-          {
-            "path": `${baseRoutePath}/cluster-recovery/cluster-sync/policy`,
-            "name": "同步策略",
-            "key": "cluster-sync",
-            "component": "@/pages/cluster-recovery/cluster-sync/policy",
-            "hideInMenu": true
-          },
-
-        ]
-        
-      },
-      {
-        "path": `${baseRoutePath}/cluster-recovery/cluster-sync-detail`,
-        "name": "集群同步详情",
-        "key": "sync-detail",
-        "component": "@/pages/cluster-recovery/cluster-sync/sync-detail",
-        "hideInMenu": true
-      
-      },
-      {
-        "path": `${baseRoutePath}/cluster-recovery/district-manage`,
-        "name": "机构管理",
-        "key": "district-manage",
-        "component": "@/pages/cluster-recovery/district-manage",
-      },
-      {
-        "path": `${baseRoutePath}/cluster-recovery/operation-log`,
-        "name": "操作记录",
-        "key": "operation-log",
-        "component": "@/pages/cluster-recovery/operation-log",
-       
-      },
-     
-    ]
-  },
+ 
 
   {
     "path": `${baseRoutePath}/station`,
@@ -1478,19 +1365,7 @@ export default [
       },
     ],
   },
-  {
-    path: `${baseRoutePath}/steps`,
-    name: '步骤条',
-    icon: 'icon-MoreCircle',
-    routes: [
-      {
-        path: `${baseRoutePath}/steps/detail`,
-        name: '详情',
-        key: 'detail',
-        component: '@/pages/steps/detail',
-      },
-    ],
-  },
+  
   {
     path: `${baseRoutePath}/database`,
     name: '数据库管理',
