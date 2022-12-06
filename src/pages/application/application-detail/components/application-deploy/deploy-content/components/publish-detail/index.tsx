@@ -288,7 +288,11 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )} */}
          {versionData?.length>0 && appData?.deployModel === 'online' && (
-          <Button type="primary" onClick={()=>{setVersionPublishVisiable(true)}}>
+          <Button type="primary" onClick={()=>{
+            setVersionPublishVisiable(true)
+            onOperate('versionPublishStart');
+           
+            }}>
             部署到版本发布
           </Button>
         )}
@@ -509,12 +513,14 @@ export default function PublishDetail(props: IProps) {
      
       <VersionPublish 
       visible={versionPublishVisiable} 
-      onClose={()=>{setVersionPublishVisiable(false)}} 
+      onClose={()=>{setVersionPublishVisiable(false)
+        onOperate('versionPublishEnd');
+      }} 
       pipelineOptions={pipelineOptions} 
       curPipelineCode={pipelineCode}
       onSave={()=>{
         setVersionPublishVisiable(false)
-        onOperate('deployNextEnvSuccess');
+        onOperate('versionPublishEnd');
 
       }}
        />

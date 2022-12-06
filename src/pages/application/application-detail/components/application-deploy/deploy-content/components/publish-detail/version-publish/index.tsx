@@ -37,14 +37,14 @@ export default function VersionPublish(props:Iprops){
     }
     return(
         <Modal key="publish-version"
-        title="选择环境"
+        title="部署到版本发布"
         visible={visible}
         width={800}
         onCancel={onClose}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}
         maskClosable={false}>
-            <Form form={form} labelCol={{flex:"80px"}} >
+            <Form form={form} labelCol={{flex:"110px"}} >
                 <Form.Item name="pipelineCode" label="选择流水线" rules={[{ required: true, message: '请输入' }]}>
                 <Select
               options={pipelineOptions}

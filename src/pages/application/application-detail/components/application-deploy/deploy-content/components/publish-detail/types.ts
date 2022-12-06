@@ -22,6 +22,8 @@ export interface IProps {
       | 'uploadImageStart'
       | 'uploadImageEnd'
       | 'mergeStart'
-      | 'mergeEnd',
+      | 'mergeEnd'
+      | 'versionPublishStart'
+      | 'versionPublishEnd'
   ) => void;
 }
