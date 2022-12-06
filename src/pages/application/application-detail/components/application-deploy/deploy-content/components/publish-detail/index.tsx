@@ -10,7 +10,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 import DetailContext from '@/pages/application/application-detail/context';
 import { listAppEnv, checkNextEnv } from '@/pages/application/service';
-import VersionPublish from './version-publish';
+import VersionDeploy from './version-deploy';
 import NextDeploy from './next-deploy';
 import MasterDeploy from './master-deploy';
 import OfflineDeploy from './offline-deploy';
@@ -511,7 +511,7 @@ export default function PublishDetail(props: IProps) {
       envLoading={envLoading}
       />
      {/* --------- 部署到版本发布弹窗----- */}
-      <VersionPublish 
+      <VersionDeploy 
       visible={versionPublishVisiable} 
       onClose={()=>{setVersionPublishVisiable(false)
         onOperate('versionPublishEnd');

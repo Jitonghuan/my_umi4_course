@@ -5,21 +5,18 @@
  * @create 2021-04-15 10:04
  */
 
-import React, { useState, useContext, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
-import {
-  queryDeployList,
-  queryFeatureDeployed,
-  queryApplicationStatus,
-  queryActiveDeployInfo,
-} from '@/pages/application/service';
+import {queryFeatureDeployed,queryApplicationStatus,queryActiveDeployInfo} from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
 import PublishDetail from './components/publish-detail';
 import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
+import VersionPublishDetail from '../version-publish';
+import VersionPublishRecord from '../version-publish/component/version-record'
 import { Spin } from 'antd';
 import { listAppEnv } from '@/pages/application/service';
 import './index.less';
@@ -47,19 +44,13 @@ export default function DeployContent(props: DeployContentProps) {
   const cachebranchName = useRef<string>();
   const masterBranchName = useRef<string>('master');
   const [updating, setUpdating] = useState(false);
-  // const [deployInfo, setDeployInfo] = useState<DeployInfoVO>({} as DeployInfoVO);
   const [deployInfo, setDeployInfo] = useState<any>({});
-  // const [branchInfo, setBranchInfo] = useState<{
-  //   deployed: any[];
-  //   unDeployed: any[];
-  // }>({ deployed: [], unDeployed: [] });
   const [deployed, setDeployed] = useState<any>([]);
   const [unDeployed, setUnDeployed] = useState<any>([]);
   // 应用状态，仅线上有
   const [appStatusInfo, setAppStatusInfo] = useState<IStatusInfoProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [envList, setEnvList] = useState([])
-  const publishContentRef = useRef<any>();
   const [deployedLoad, setDeployedLoad] = useState(false);
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
 
@@ -228,7 +219,15 @@ export default function DeployContent(props: DeployContentProps) {
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
         <Spin spinning={loading}>
-          <PublishDetail
+          {envTypeCode==="version"?<VersionPublishDetail
+          //@ts-ignore
+           isActive={isActive}
+           envTypeCode={envTypeCode}
+           pipelineCode={pipelineCode}
+           visible={visible}
+
+           />:
+            <PublishDetail
             envTypeCode={envTypeCode}
             deployInfo={deployInfo}
             appStatusInfo={appStatusInfo}
@@ -244,6 +243,8 @@ export default function DeployContent(props: DeployContentProps) {
               onOperate(type);
             }}
           />
+          }
+        
           <PublishContent
             appCode={appCode!}
             envTypeCode={envTypeCode}
@@ -262,34 +263,37 @@ export default function DeployContent(props: DeployContentProps) {
           //   requestDeployBranch();
           // }}
           />
-          <PublishBranch
-            deployInfo={deployInfo}
-            hasPublishContent={!!(deployed && deployed.length)}
-            dataSource={unDeployed}
-            env={envTypeCode}
-            versionData={versionData}
-            onSearch={searchUndeployedBranch}
-            pipelineCode={pipelineCode}
-            onSubmitBranch={(status) => {
-              timerHandle(status === 'start' ? 'stop' : 'do', true);
-              // requestUnDeployBranch();
-              // requestDeployBranch();
-            }}
-            masterBranchChange={(masterBranch: string) => {
-              masterBranchName.current = masterBranch;
-              timerHandle('do', true);
-              // requestUnDeployBranch();
-            }}
-            // loadData={requestUnDeployBranch}
-            loading={unDeployedLoad}
-            changeBranchName={(branchName: string) => {
-              // cachebranchName.current = branchName;
-            }}
-          />
+           {envTypeCode!=="version"&&(
+              <PublishBranch
+              deployInfo={deployInfo}
+              hasPublishContent={!!(deployed && deployed.length)}
+              dataSource={unDeployed}
+              env={envTypeCode}
+              versionData={versionData}
+              onSearch={searchUndeployedBranch}
+              pipelineCode={pipelineCode}
+              onSubmitBranch={(status) => {
+                timerHandle(status === 'start' ? 'stop' : 'do', true);
+              }}
+              masterBranchChange={(masterBranch: string) => {
+                masterBranchName.current = masterBranch;
+                timerHandle('do', true);
+              }}
+              loading={unDeployedLoad}
+              changeBranchName={(branchName: string) => {
+                // cachebranchName.current = branchName;
+              }}
+            />
+           )}
+         
         </Spin>
       </div>
       <div className={`${rootCls}-sider`}>
-        <PublishRecord env={envTypeCode} appCode={appCode} />
+      {envTypeCode==="version"?<>
+      <VersionPublishRecord />
+
+      </>:
+        <PublishRecord env={envTypeCode} appCode={appCode} />}
       </div>
     </div>
   );

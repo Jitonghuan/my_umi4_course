@@ -105,11 +105,11 @@ export default function VersionPublish(props:Iprops){
             ></Select>
                 </Form.Item>
                 
-                <Form.Item name="config" label="配置" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item name="config" label="配置" >
                     <Input.TextArea  style={{width:600}}/>
 
                 </Form.Item>
-                <Form.Item name="sql" label="Sql" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item name="sql" label="Sql" >
                 <Input.TextArea  style={{width:600}}/>
                 </Form.Item>
             </Form>

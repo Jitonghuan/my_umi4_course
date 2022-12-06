@@ -17,7 +17,7 @@ import { appActiveReleases } from './service';
 import './index.less';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl } from '@/pages/application/service';
-import VersionDeploy from './version-deploy';
+import VersionDeploy from './version-publish';
 
 const { TabPane } = Tabs;
 
@@ -248,7 +248,7 @@ export default function ApplicationDeploy(props: any) {
       >
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
-            {item.value !== 'version' ?
+            {/* {item.value !== 'version' ? */}
               <DeployContent
                 isActive={item.value === tabActive}
                 envTypeCode={item.value}
@@ -261,15 +261,15 @@ export default function ApplicationDeploy(props: any) {
                   getPipeline(envTypeData[i + 1]?.value);
                 }}
                 nextTab={nextTab}
-              /> :
+              /> 
+              {/* :
               <VersionDeploy
                 isActive={item.value === tabActive}
                 envTypeCode={item.value}
                 pipelineCode={currentValue}
                 visible={visible}
-                appData={appData}
               />
-            }
+            } */}
           </TabPane>
         ))}
       </Tabs>
