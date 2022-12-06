@@ -1,16 +1,69 @@
 import React, { useEffect, useState, useContext, useMemo, forwardRef, useImperativeHandle } from 'react';
-import { Tag, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
+import { Tag, Button, Table, Space, Tooltip, Popconfirm, message, Spin } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
 import detailContext from '../../context';
+import { debounce } from 'lodash';
+import { releaseAppRel, releaseDemandRel, deleteDemand, updateRelease } from '../../../service';
 import { demandStatusTypes } from './type'
-import { releaseDemandRel, deleteDemand } from '../../../service';
-export default forwardRef(function ContentList(props: any) {
-    const { tableData, tableLoading, onSave, filter, detailInfo } = props;
+import { UpdateItems } from '../../../type'
+
+interface Iprops {
+    activeTab: string;
+   // filter: any;
+    detailInfo: any
+    onReload: any;
+    infoLoading: boolean
+
+
+}
+export default forwardRef(function ContentList(props: Iprops) {
+    const { activeTab, detailInfo, onReload, infoLoading } = props;
     const [type, setType] = useState<string>('hide');
     const { categoryCode, releaseId } = useContext(detailContext);
-    const demandTotal = useMemo(() => (tableData || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [tableData])
-    const bugTotal = useMemo(() => (tableData || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [tableData])
+    const [dataSource, setDataSource] = useState<any>([])
+    const [loading, setLoading] = useState<boolean>(false)
+    const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [JSON.stringify(dataSource)])
+    const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [JSON.stringify(dataSource)])
+    const [originData, setOriginData] = useState<any>([]);
+    const filter = debounce((value) => filterData(value), 500)
+
+    const filterData = (value: string) => {
+        if (!value) {
+            setDataSource(originData);
+            return;
+        }
+        const data = JSON.parse(JSON.stringify(dataSource));
+        const afterFilter: any = [];
+        data.forEach((item: any) => {
+            if (item.title?.indexOf(value) !== -1) {
+                afterFilter.push(item);
+            }
+        });
+
+        setDataSource(afterFilter);
+    }
+    const getDataSource = () => {
+        setLoading(true)
+        releaseDemandRel({ releaseId }).then((res) => {
+            if (res?.success) {
+                setDataSource(res?.data)
+                setOriginData(res?.data)
+            }else{
+                setDataSource([])
+                setOriginData([])
+
+            }
+        }).finally(() => {
+            setLoading(false)
+        })
+    }
+    useEffect(() => {
+        getDataSource()
+
+
+    }, [releaseId, activeTab])
+
 
     const columns: any = [
         {
@@ -72,21 +125,45 @@ export default forwardRef(function ContentList(props: any) {
     const handleDelete = async (id: any) => {
         const res = await deleteDemand({ ids: [id] })
         if (res?.success) {
-            onSave();
+            //onSave();
         }
     }
+    const [lockLoading, setLockLoading] = useState<boolean>(false)
+    const updateReleaseAction = (params: UpdateItems) => {
+        setLockLoading(true)
+        updateRelease({ ...params }).then((res) => {
+            if (res?.success) {
+                message.success("操作成功！")
+                getDataSource()
+                onReload()
+
+
+
+            }
+
+        }).finally(() => {
+            setLockLoading(
+                false
+            )
+
+        })
+
+    }
+
     return (
         <>
-            <RealteDemandBug type={type} onClose={() => { setType('hide') }} releaseId={releaseId} onSave={onSave} />
+            <RealteDemandBug type={type} onClose={() => { setType('hide') }} releaseId={releaseId} onSave={() => {
+
+            }} />
             <div className='table-top'>
                 <div className='flex-space-between'>
                     <Space>
-                        <span>内容总数：{tableData?.length}</span>
+                        <span>内容总数：{dataSource?.length}</span>
                         <span>需求：{demandTotal}</span>
                         <span>bug：{bugTotal}</span>
                     </Space>
                     <div>
-                        <Tooltip title='ceshi ceshi ' placement="top">
+                        <Tooltip title='请根据ID或标题进行搜索 ' placement="top">
                             <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
                         </Tooltip>
                         查询：
@@ -102,46 +179,41 @@ export default forwardRef(function ContentList(props: any) {
                 </div>
             </div>
             <Table
-                dataSource={tableData}
+                dataSource={dataSource}
                 bordered
                 rowKey="id"
-                loading={tableLoading}
-                // pagination={{
-                //     pageSize: pageSize,
-                //     total: total,
-                //     current: pageIndex,
-                //     showSizeChanger: true,
-                //     onShowSizeChange: (_, next) => {
-                //         setPageIndex(1);
-                //         setPageSize(next);
-                //     },
-                //     onChange: (next) => {
-                //         setPageIndex(next)
-                //     }
-                // }}
+                loading={loading}
                 pagination={false}
                 columns={columns}
             ></Table>
             <div className='flex-end'>
-                <Space>
+                <Spin spinning={infoLoading}>
+                    <Space>
 
 
-                    <Button type='primary' disabled={detailInfo?.locked === 1} onClick={() => { setType('demand') }}>
-                        关联需求
+                        <Button type='primary' disabled={detailInfo?.locked === 1} onClick={() => { setType('demand') }}>
+                            关联需求
+                        </Button>
+                        <Button type='primary' disabled={detailInfo?.locked === 1} onClick={() => { setType('bug') }}>
+                            关联bug
                          </Button>
-                    <Button type='primary' disabled={detailInfo?.locked === 1} onClick={() => { setType('bug') }}>
-                        关联bug
-                         </Button>
 
 
 
-                    {detailInfo?.locked === 1 ? <Button type='primary'>
-                        解除锁定
-                </Button> : <Button type='primary'>
-                        锁定需求
-                </Button>}
+                        {detailInfo?.locked === 1 ? <Button type='primary' loading={lockLoading} onClick={() => {
+                            updateReleaseAction({ ...detailInfo, locked: 0 })
+                        }}>
+                            解除锁定
+                       </Button> : <Button type='primary' loading={lockLoading} onClick={() => {
+                            updateReleaseAction({ ...detailInfo, locked: 1 })
+                        }}>
+                            锁定需求
+                     </Button>}
 
-                </Space>
+                    </Space>
+
+                </Spin>
+
             </div>
         </>
     )

@@ -4,24 +4,20 @@ import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import './index.less';
 import { Form, Button, Table, message } from 'antd';
-// import { listSchema } from './schema';
 import { FeContext } from '@/common/hooks';
 import { history, useLocation, Outlet } from 'umi';
 import { parse, stringify } from 'query-string';
 import ModifyApp from './component/modify-app';
 import ContentList from './component/content-list';
-import ModifyConfig from './component/modify-config';
-import ModifySql from './component/modify-sql';
 import detailContext from './context';
 import { useReleaseOption } from '../hook';
-import { getReleaseList, releaseDemandRel, releaseAppRel } from '../service';
+import { getReleaseList} from '../service';
 import OperateModal from '../version-list/operate-modal';
 import { RedoOutlined } from '@ant-design/icons';
 import { statusMap } from '../type';
 import moment from 'moment';
-import { debounce } from 'lodash';
+
 const { TabPane } = Tabs;
-const { RangePicker } = DatePicker;
 const getLocalCategory = () => (sessionStorage.getItem('version-detail-category') ? JSON.parse(sessionStorage.getItem('version-detail-category') as any) : {})
 const getLocalVersion = () => (sessionStorage.getItem('version-detail-version') ? JSON.parse(sessionStorage.getItem('version-detail-version') as any) : {})
 export default function VersionDetail() {
@@ -36,10 +32,6 @@ export default function VersionDetail() {
     const [versionOptions, versionOptionsLoading, loadVersionOption] = useReleaseOption({ categoryCode: appCategory.value });
     const [initData, setInitData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
-    const [tableData, setTableData] = useState<any>([]);
-    const [tableLoading, setTableLoading] = useState<boolean>(false);
-    const [originData, setOriginData] = useState<any>([]);
-    const tableRef = useRef<any>(null)
 
     const versionChange = (v: any) => {
         if (!v) {
@@ -75,15 +67,15 @@ export default function VersionDetail() {
     useEffect(() => {
         if (selectVersion?.value && appCategory?.value) {
             queryData(selectVersion.label, appCategory.value)
-            queryTableData()
+            // queryTableData()
         }
     }, [appCategory, selectVersion])
 
     const TabList = [
         { label: '内容列表', key: 'list', component: ContentList },
         { label: '变更应用', key: 'app', component: ModifyApp },
-        { label: '变更配置', key: 'config', component: ModifyConfig },
-        { label: '变更SQL', key: 'sql', component: ModifySql },
+        // { label: '变更配置', key: 'config', component: ModifyConfig },
+        // { label: '变更SQL', key: 'sql', component: ModifySql },
     ]
 
     const GetComponent = useMemo(() => TabList.find((e: any) => e.key === activeTab)?.component, [activeTab]) as any
@@ -104,34 +96,7 @@ export default function VersionDetail() {
             }
         }).finally(() => { setLoading(false) })
     }
-    // 获取表格数据
-    const queryTableData = async () => {
-        setTableLoading(true)
-        const res = await (activeTab === 'list' ? releaseDemandRel({ releaseId: selectVersion.value }) : releaseAppRel({ releaseId: selectVersion.value }));
-        if (res?.success) {
-            setTableData(res?.data || [])
-            setOriginData(res?.data || [])
-        }
-        setTableLoading(false)
-    }
-
-    const filter = debounce((value) => filterData(value), 500)
-
-    const filterData = (value: string) => {
-        if (!value) {
-            setTableData(originData);
-            return;
-        }
-        const data = JSON.parse(JSON.stringify(tableData));
-        const afterFilter: any = [];
-        data.forEach((item: any) => {
-            if (item.title?.indexOf(value) !== -1) {
-                afterFilter.push(item);
-            }
-        });
-
-        setTableData(afterFilter);
-    }
+    
 
     return (
         <PageContainer className='version-detail-page'>
@@ -183,10 +148,11 @@ export default function VersionDetail() {
                 <Spin spinning={loading}>
                     <Descriptions title="概述" bordered column={4} extra={
                         <Button
+                          type="primary"
                             icon={<RedoOutlined />}
                             onClick={() => {
                                 queryData();
-                                queryTableData()
+                              //  queryTableData()
                                 // tableRef.current.getTableData();
                             }}
                             size="small"
@@ -197,7 +163,7 @@ export default function VersionDetail() {
                         <Descriptions.Item label="版本号">{data?.releaseNumber || '--'}</Descriptions.Item>
                         <Descriptions.Item label="应用分类">{data?.categoryCode || '--'}</Descriptions.Item>
                         <Descriptions.Item label="版本负责人">{data?.owner || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="版本状态">{data.status ? statusMap[data?.status].label : '--'}</Descriptions.Item>
+                        <Descriptions.Item label="版本状态"><span style={{color:statusMap[data?.status]?.color||"gray"}}>{data.status ? statusMap[data?.status].label : '--'}</span></Descriptions.Item>
                         <Descriptions.Item label="创建时间">{moment(data?.gmtCreate).format("YYYY-MM-DD HH:mm:ss") || '--'}</Descriptions.Item>
                         <Descriptions.Item label="计划发版本时间">{data?.planTime || '--'}</Descriptions.Item>
                         <Descriptions.Item label="发版时间">{data?.finshTime || '--'}</Descriptions.Item>
@@ -218,7 +184,12 @@ export default function VersionDetail() {
                     <detailContext.Provider
                         value={{ releaseId: selectVersion?.value || '', categoryCode: appCategory?.value || '', categoryName: appCategory?.label || '' }}
                     >
-                        <GetComponent tableData={tableData} tableLoading={tableLoading} filter={filter} onSave={queryTableData} detailInfo={data}/>
+                        <GetComponent 
+                        activeTab={activeTab} 
+                       // filter={filter} 
+                        detailInfo={data} 
+                        infoLoading={loading}
+                        onReload={  queryData}/>
                     </detailContext.Provider>
                 </div>
 

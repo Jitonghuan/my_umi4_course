@@ -11,7 +11,7 @@ import { parse, stringify } from 'query-string';
 import { FeContext } from '@/common/hooks';
 import OperateModal from './operate-modal';
 import { versionSortFn } from '@/utils';
-import { getReleaseList,updateRelease } from '../service';
+import { getReleaseList,updateRelease,releasePublish } from '../service';
 import {UpdateItems} from '../type'
 import './index.less';
 
@@ -56,6 +56,18 @@ export default function VersionList() {
         })
 
     }
+    const releasePublishAction=(id:number)=>{
+        releasePublish(id).then((res)=>{
+            if(res?.success){
+                message.success("发版成功！")
+                queryList({ pageSize, pageIndex });
+
+            }
+
+
+
+        })
+    }
 
 
     const tableColumns = useMemo(() => {
@@ -78,9 +90,21 @@ export default function VersionList() {
             },
             handleEdit: (record: any,index:number) => {
                 updateReleaseAction({...record,locked:record?.locked===0?1:0})
+            },
+            onPublish:(record: any,index:number)=>{
+                releasePublishAction(record?.id)
             }
         }) as any;
     }, [data, appCategory]);
+    useEffect(() => {
+        let intervalId = setInterval(() => {
+            queryList({ pageSize, pageIndex });
+        }, 1000*10);
+      
+        return () => {
+          clearInterval(intervalId);
+        };
+      }, []);
 
     // 获取列表
     const queryList = (params: any) => {
@@ -181,7 +205,7 @@ export default function VersionList() {
                 </div>
                 <Table
                     dataSource={data}
-                    loading={loading}
+                    loading={data?.length>0? false:loading}
                     bordered
                     rowKey="id"
                     pagination={{
