@@ -53,3 +53,9 @@ export const releaseAppRel = (data: any) => {
     const url = addAPIPrefix('/releaseManage/releaseAppRel/list');
     return getRequest(url, { data: data });
 };
+
+// 版本应用列表
+export const releasePublish = (id: number) => {
+    const url = addAPIPrefix('/releaseManage/release/pack');
+    return postRequest(url, { data: {id} });
+};

@@ -5,6 +5,7 @@ export const listSchema = (params:{
     downloadVersion:(record: any,) => void;
     downloadCountList:(record: any) => void;
     mergeVersion:(record: any,) => void;
+    onPublish:(record: any,index:number) => void;
     handleEdit:(record: any,index:number) => void; }) => {
     return [
         {
@@ -92,11 +93,11 @@ export const listSchema = (params:{
                             <a> 锁定需求</a>
                         </Popconfirm>
                     }
-                    {record?.status === 'waitPack' &&
+                    {(record?.status === 'waitPack'||record?.status === 'packError' ) &&
                         <Popconfirm
                             title="确定要发布该版本吗？"
                             onConfirm={() => {
-                                params?.handleEdit(record, index);
+                                params?.onPublish(record, index);
                             }}>
                             <a> 发版</a>
                         </Popconfirm>
