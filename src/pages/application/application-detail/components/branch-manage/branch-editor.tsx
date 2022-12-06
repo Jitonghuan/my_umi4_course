@@ -253,7 +253,9 @@ export default function BranchEditor(props: IProps) {
         <Form.Item
           label="需求列表"
           name="demandId"
+          tooltip="关联regulus bug需要将bug设置为线上bug"
           rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择需求' }]}
+
         >
           <Select
             mode="multiple"
