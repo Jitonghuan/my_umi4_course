@@ -13,7 +13,6 @@ import { recordFieldMapOut, recordDisplayMap } from './schema';
 import moment from 'moment';
 import axios from 'axios';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
-import AceEditor from '@/components/ace-editor';
 import { IProps, IRecord } from './types';
 import { queryRecordApi } from './service';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -35,6 +34,7 @@ export default function PublishRecord(props: IProps) {
   const [npmJson, setNpmJson] = useState('');
   const [originNpmJson, setOriginNpmJson] = useState('');
   const [curVersion, setCurVersion] = useState('');
+  const [curEnvCode, setCurEnvCode] = useState(''); // 只给依赖详情使用
   const [lastVersion, setLastVersion] = useState('');
 
   const [curRecord, setcurRecord] = useState<IRecord>({});
@@ -151,9 +151,10 @@ export default function PublishRecord(props: IProps) {
     setOriginNpmJson('');
     setLastVersion('');
     setCurVersion(item.version);
+    setCurEnvCode(envCode);
     try {
       res = await axios.get(
-        `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${item.version}/npm.json`,
+        `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${item.version}/npm-tile.json`,
       );
       setNpmJson(res?.data ? JSON.stringify(res.data, null, '\t') : '');
     } catch (e) {}
@@ -166,7 +167,7 @@ export default function PublishRecord(props: IProps) {
       setLastVersion(lastItem?.version || '');
       if (lastItem) {
         originRes = await axios.get(
-          `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${lastItem.version}/npm.json`,
+          `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${lastItem.version}/npm-tile.json`,
         );
         setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, '\t') : '');
       }
@@ -243,7 +244,14 @@ export default function PublishRecord(props: IProps) {
         </div>
       ) : null}
       {depVisible && (
-        <Modal title="依赖详情" width="98%" visible={depVisible} footer={false} onCancel={() => setDepVisible(false)}>
+        <Modal
+          title="依赖详情"
+          width={1000}
+          visible={depVisible}
+          footer={false}
+          onCancel={() => setDepVisible(false)}
+          className="dependency-modal-wrapper"
+        >
           <Tabs>
             <Tabs.TabPane tab="版本对比" key="0">
               <ReactDiffViewer
@@ -264,7 +272,12 @@ export default function PublishRecord(props: IProps) {
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="依赖详情" key="1">
-              <AceEditor value={npmJson} mode="json" readOnly />
+              <a
+                target="_blank"
+                href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${curEnvCode}/${deploymentName}/${curVersion}/npm.json`}
+              >
+                查看
+              </a>
             </Tabs.TabPane>
           </Tabs>
         </Modal>
