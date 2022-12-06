@@ -7,6 +7,7 @@ export interface IProps {
   appStatusInfo: IStatusInfoProps[];
   nextTab: string;
   pipelineCode: string;
+  versionData:any;
   onOperate: (
     type:
       | 'deployNextEnvStart'
@@ -21,6 +22,8 @@ export interface IProps {
       | 'uploadImageStart'
       | 'uploadImageEnd'
       | 'mergeStart'
-      | 'mergeEnd',
+      | 'mergeEnd'
+      | 'versionPublishStart'
+      | 'versionPublishEnd'
   ) => void;
 }

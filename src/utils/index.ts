@@ -96,3 +96,59 @@ export const sortTime = (arr: any) => {
   });
   return arr
 }
+/**
+ * 比较x.y.z版本号格式的大小
+ */
+export const versionSortFn = (a: string, b: string) => {
+  const match = /^(\d+)\.(\d+)\.(\d+)$/;
+  const ag = match.exec(a)
+  const bg = match.exec(b)
+  if (ag == null) {
+    return 1;
+  }
+  if (bg == null) {
+    return -1;
+  }
+  if (ag[1] != bg[1]) {
+    return -(parseInt(ag[1]) - parseInt(bg[1]));
+  }
+  if (ag[2] != bg[2]) {
+    return -(parseInt(ag[2]) - parseInt(bg[2]));
+  }
+  if (ag[3] != bg[3]) {
+    return -(parseInt(ag[3]) - parseInt(bg[3]));
+  }
+  return 0;
+}
+
+// 时间组件 只能选择当前时间往后的时间
+export const disabledDate = (current: any) => {
+  return current && current <= moment().subtract(1, 'days').endOf('day')
+}
+
+function range(start: any, end: any) {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+}
+
+export const disabledTime: any = (date: any, partial: any) => {
+  const selectHours = moment(date).hours();
+  let hours = moment().hours();
+  let minutes = moment().minutes();
+  let seconds = moment().seconds();
+  if (date && moment(date).date() === moment().date()) {
+    return {
+      disabledHours: () => selectHours === hours ? range(0, 24).splice(0, hours) : [],
+      disabledMinutes: () => selectHours === hours ? range(0, 60).splice(0, minutes + 1) : [],
+      disabledSeconds: () => selectHours === hours ? range(0, 60).splice(0, seconds + 1) : [],
+    };
+  }
+  return {
+    disabledHours: () => [],
+    disabledMinutes: () => [],
+    disabledSeconds: () => [],
+  };
+}

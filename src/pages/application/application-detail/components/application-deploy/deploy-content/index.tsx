@@ -37,10 +37,11 @@ export interface DeployContentProps {
   onDeployNextEnvSuccess: () => void;
   // 下一个tab
   nextTab: string;
+  versionData:any;
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab,versionData } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
   const cachebranchName = useRef<string>();
@@ -233,6 +234,7 @@ export default function DeployContent(props: DeployContentProps) {
             appStatusInfo={appStatusInfo}
             pipelineCode={pipelineCode}
             nextTab={nextTab}
+            versionData={versionData}
             onOperate={(type) => {
               if (type === 'deployNextEnvSuccess') {
                 onDeployNextEnvSuccess();
@@ -265,6 +267,7 @@ export default function DeployContent(props: DeployContentProps) {
             hasPublishContent={!!(deployed && deployed.length)}
             dataSource={unDeployed}
             env={envTypeCode}
+            versionData={versionData}
             onSearch={searchUndeployedBranch}
             pipelineCode={pipelineCode}
             onSubmitBranch={(status) => {

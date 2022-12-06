@@ -434,6 +434,25 @@ export default [
     ],
   },
   {
+    "path": `${baseRoutePath}/version-manage`,
+    "name": "版本管理",
+    "icon": "icon-exit",
+    "routes": [
+      {
+        'path': `${baseRoutePath}/version-manage/list`,
+        'key': "version-list",
+        "name": "版本列表",
+        "component": "@/pages/version-manage/version-list",
+      },
+      {
+        "path": `${baseRoutePath}/version-manage/detail`,
+        "name": "版本详情",
+        "key": "version-detail",
+        "component": "@/pages/version-manage/version-detail",
+      },
+    ]
+  },
+  {
     path: `${baseRoutePath}/DBMS`,
     name: '数据管理',
     icon: 'icon-Detail',
