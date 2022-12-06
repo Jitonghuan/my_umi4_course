@@ -14,11 +14,12 @@ interface Iprops {
     detailInfo: any
     onReload: any;
     infoLoading: boolean
+    count:number
 
 
 }
 export default forwardRef(function ContentList(props: Iprops) {
-    const { activeTab, detailInfo, onReload, infoLoading } = props;
+    const { activeTab, detailInfo, onReload, infoLoading,count } = props;
     const [type, setType] = useState<string>('hide');
     const { categoryCode, releaseId } = useContext(detailContext);
     const [dataSource, setDataSource] = useState<any>([])
@@ -59,10 +60,17 @@ export default forwardRef(function ContentList(props: Iprops) {
         })
     }
     useEffect(() => {
-        getDataSource()
+        if(releaseId){
+            getDataSource()
 
+        }else{
+            setDataSource([])
+            setOriginData([])
 
-    }, [releaseId, activeTab])
+        }
+       
+
+    }, [releaseId, activeTab,categoryCode,count])
 
 
     const columns: any = [

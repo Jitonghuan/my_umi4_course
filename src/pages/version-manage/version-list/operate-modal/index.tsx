@@ -3,6 +3,7 @@ import { Drawer, Tag, Form, Button, Table, Modal, Input, Switch, Radio, Select, 
 import UserSelector, { stringToList } from '@/components/user-selector';
 import { downloadList } from '../schema';
 import { useReleaseOption } from '../../hook';
+import {downLoadUrl} from '../../service'
 import './index.less';
 
 export default function OperateModal(props: any) {
@@ -12,6 +13,7 @@ export default function OperateModal(props: any) {
     const [value, setValue] = useState<any>();
     const [downLoadForm] = Form.useForm();
     const [form] = Form.useForm();
+    
 
     useEffect(() => {
         if (visible) {
@@ -24,13 +26,15 @@ export default function OperateModal(props: any) {
     const handleSubmit = async () => {
         if (action === 'downloadPackage') {
             const value = await downLoadForm.validateFields();
+            window.open(`${downLoadUrl}?id=${initData?.id}&reason=${value?.reason}`,'_blank')
+            onClose()
         }
     };
     return (
         <Modal
             title={
                 <div style={{ position: 'relative' }}>
-                    当前版本：{initData?.version || '--'}
+                    当前版本：{initData?.releaseNumber || '--'}
                     <span style={{ right: '40px', position: "absolute" }}>
                         <span className='group-code'>{appCategory?.value || '---'}</span>
                         <span className='group-label'>{appCategory?.label || '---'}</span>
@@ -75,13 +79,13 @@ export default function OperateModal(props: any) {
                 action === 'downloadPackage' &&
                 <>
                     <Form form={downLoadForm}>
-                        <Form.Item name="packType" label="下载内容">
+                        {/* <Form.Item name="packType" label="下载内容">
                             <Radio.Group>
                                 <Radio value="a">全部</Radio>
                                 <Radio value="b">镜像包</Radio>
                                 <Radio value="c">XX包</Radio>
                             </Radio.Group>
-                        </Form.Item>
+                        </Form.Item> */}
                         <Form.Item label='下载理由' name='reason' rules={[{ required: true, message: '请输入下载理由' }]}>
                             <Input.TextArea style={{ width: 350 }} />
                         </Form.Item>

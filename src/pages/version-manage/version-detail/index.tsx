@@ -32,6 +32,7 @@ export default function VersionDetail() {
     const [versionOptions, versionOptionsLoading, loadVersionOption] = useReleaseOption({ categoryCode: appCategory.value });
     const [initData, setInitData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
+    const [count,setCount]=useState<number>(0)
 
     const versionChange = (v: any) => {
         if (!v) {
@@ -67,9 +68,14 @@ export default function VersionDetail() {
     useEffect(() => {
         if (selectVersion?.value && appCategory?.value) {
             queryData(selectVersion.label, appCategory.value)
-            // queryTableData()
         }
+        
     }, [appCategory, selectVersion])
+    useEffect(()=>{
+        return()=>{
+            setCount(0)
+        }
+    },[])
 
     const TabList = [
         { label: '内容列表', key: 'list', component: ContentList },
@@ -129,6 +135,7 @@ export default function VersionDetail() {
                                 size="small"
                                 options={versionOptions}
                                 value={selectVersion}
+                                loading={versionOptionsLoading}
                                 labelInValue
                                 onChange={(v) => versionChange(v)}
                             ></Select>
@@ -152,8 +159,7 @@ export default function VersionDetail() {
                             icon={<RedoOutlined />}
                             onClick={() => {
                                 queryData();
-                              //  queryTableData()
-                                // tableRef.current.getTableData();
+                                setCount(count=>count+1)
                             }}
                             size="small"
                         >
@@ -186,9 +192,9 @@ export default function VersionDetail() {
                     >
                         <GetComponent 
                         activeTab={activeTab} 
-                       // filter={filter} 
                         detailInfo={data} 
                         infoLoading={loading}
+                        count={count}
                         onReload={  queryData}/>
                     </detailContext.Provider>
                 </div>

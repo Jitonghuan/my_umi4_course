@@ -59,3 +59,6 @@ export const releasePublish = (id: number) => {
     const url = addAPIPrefix('/releaseManage/release/pack');
     return postRequest(url, { data: {id} });
 };
+
+///release/download
+export const downLoadUrl=addAPIPrefix('/releaseManage/release/download');
