@@ -10,18 +10,34 @@ interface Iprops{
     curPipelineCode:string
     onSave:()=>void
     appCode?:string;
+    versionData:any;
 
 
 }
 
 export default function VersionPublish(props:Iprops){
-    const {visible,onClose,curPipelineCode,onSave,appCode}=props
+    const {visible,onClose,curPipelineCode,onSave,appCode,versionData}=props
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [form]=Form.useForm()
     const [pipelineOptions, setPipelineOptions] = useState<any>([]);
+    const [releaseOption,setReleaseOption]=useState<any>([])
     useEffect(()=>{
         if(visible&&appCode){
             getPipelineOptions()
+
+        }
+        if(visible){
+            let option=versionData?.filter((item:any) => item.canPublish===true)
+            let data=[]
+            if(option?.length>0){
+                data=  option?.map((ele:any)=>({
+                    label:ele?.releaseNumber,
+                    value:ele?.id
+                }))
+
+            }
+            setReleaseOption(data)
+
 
         }
 
@@ -45,7 +61,9 @@ export default function VersionPublish(props:Iprops){
         const params= await form.validateFields()
         appReleasePublish({
             ...params,
-            reusePipelineCode:curPipelineCode
+            reusePipelineCode:curPipelineCode,
+            releaseId:""
+
         }).then((res)=>{
             if(res?.success){
                 message.success("提交成功！")
@@ -71,10 +89,13 @@ export default function VersionPublish(props:Iprops){
         destroyOnClose
         >
             <Form form={form} labelCol={{flex:"110px"}} preserve={false}>
+                <Form.Item name="releaseId" label="发布版本" rules={[{ required: true, message: '请输入' }]} initialValue={releaseOption[0]?.value} >
+                    <Select options={releaseOption} style={{width: '240px'}}  defaultValue={releaseOption[0]?.value}/>
+                </Form.Item>
                 <Form.Item name="pipelineCode" label="选择流水线" rules={[{ required: true, message: '请输入' }]}>
                 <Select
               options={pipelineOptions}
-              style={{ width: '240px', marginRight: '20px' }}
+              style={{ width: '240px' }}
               showSearch
               optionFilterProp="label"
               filterOption={(input, option) => {

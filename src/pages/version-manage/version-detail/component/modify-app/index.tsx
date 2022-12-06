@@ -52,6 +52,7 @@ export default function ModifyApp(props: any) {
             title: '应用版本状态',
             dataIndex: 'appStatus',
             width: 120,
+            render:(value: string, record: any)=><span style={{color:value==="内容开发"?"#209EA5":value==="出包完成"?"#58A55C":"gray"}}>{value}</span>
         },
         {
             title: '版本Tag',

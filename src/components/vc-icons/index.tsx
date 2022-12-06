@@ -18,7 +18,7 @@ import {
   UserRecent,
   TableSettings,
   Detail,Time,MoreCircle,
-  Deploy
+  Deploy,Textarea
 } from '@cffe/internal-icon';
 
 /** Icon映射 */
@@ -44,4 +44,5 @@ export const IconMap = {
   'icon-Time':<Time />,
   'icon-MoreCircle':<MoreCircle />,
   'icon-Deploy':<Deploy />
+  'icon-Textarea':<Textarea />
 };
