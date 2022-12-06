@@ -13,6 +13,7 @@ export interface PublishBranchProps {
     loading: boolean;
     onSearch: (name?: string) => any;
     masterBranchChange: any;
+    checkVersion:boolean;
     // loadData: any;
     dataSource: {
         id: string | number;

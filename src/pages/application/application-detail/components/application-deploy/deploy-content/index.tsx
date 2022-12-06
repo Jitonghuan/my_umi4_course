@@ -18,6 +18,7 @@ import PublishRecord from './components/publish-record';
 import VersionPublishDetail from '../version-publish';
 import VersionPublishRecord from '../version-publish/component/version-record'
 import { Spin } from 'antd';
+import { appActiveReleases } from '../service';
 import { listAppEnv } from '@/pages/application/service';
 import './index.less';
 const rootCls = 'deploy-content-compo';
@@ -34,11 +35,13 @@ export interface DeployContentProps {
   onDeployNextEnvSuccess: () => void;
   // 下一个tab
   nextTab: string;
-  versionData:any;
+ // versionData:any;
+  checkVersion:boolean;
+  handleTabChange:(tab:string)=>void;
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab,versionData } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab,checkVersion,handleTabChange } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
   const cachebranchName = useRef<string>();
@@ -53,6 +56,28 @@ export default function DeployContent(props: DeployContentProps) {
   const [envList, setEnvList] = useState([])
   const [deployedLoad, setDeployedLoad] = useState(false);
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
+  const [versionData, setVersionData] = useState<any>([]);//请求版本列表数据
+  useEffect(()=>{
+    if(appData?.appCode){
+      getVersionList()
+
+    }
+
+  },[appData?.appCode])
+
+  const getVersionList = () => {
+    appActiveReleases({ appCode: appData?.appCode }).then((res) => {
+      if (res?.success &&res?.data?.length>0) {
+        setVersionData(res?.data)
+       
+      }else{
+        setVersionData([])
+       
+      }
+
+    })
+  }
+
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
@@ -233,6 +258,7 @@ export default function DeployContent(props: DeployContentProps) {
             appStatusInfo={appStatusInfo}
             pipelineCode={pipelineCode}
             nextTab={nextTab}
+            checkVersion={checkVersion}
             versionData={versionData}
             onOperate={(type) => {
               if (type === 'deployNextEnvSuccess') {
@@ -242,6 +268,7 @@ export default function DeployContent(props: DeployContentProps) {
               requestData();
               onOperate(type);
             }}
+            handleTabChange={(tab:string)=>{handleTabChange(tab)}}
           />
           }
         
@@ -270,6 +297,7 @@ export default function DeployContent(props: DeployContentProps) {
               dataSource={unDeployed}
               env={envTypeCode}
               versionData={versionData}
+              checkVersion={checkVersion}
               onSearch={searchUndeployedBranch}
               pipelineCode={pipelineCode}
               onSubmitBranch={(status) => {

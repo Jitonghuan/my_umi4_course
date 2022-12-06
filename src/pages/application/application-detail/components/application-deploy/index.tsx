@@ -13,14 +13,11 @@ import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
 import { history, useLocation } from 'umi';
 import { parse, stringify } from 'query-string';
-import { appActiveReleases } from './service';
-import './index.less';
+import { checkReleaseDeploy } from './service';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl } from '@/pages/application/service';
-import VersionDeploy from './version-publish';
-
+import './index.less';
 const { TabPane } = Tabs;
-
 export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   let location = useLocation();
@@ -30,8 +27,7 @@ export default function ApplicationDeploy(props: any) {
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
-  const [versionData, setVersionData] = useState<any>([]);//请求版本列表数据
-
+  const [checkVersion, setCheckVersion] = useState<boolean>(false)
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
     : window.location.href.includes('matrix-fygs')
@@ -64,7 +60,7 @@ export default function ApplicationDeploy(props: any) {
     return <SecondPartyPkg {...props} />;
   }
   useEffect(() => {
-    getVersionList()
+    checkVersionShow()
   }, []);
 
   const nextTab = useMemo(() => {
@@ -75,13 +71,21 @@ export default function ApplicationDeploy(props: any) {
     }
     return data;
   }, [tabActive, envTypeData]);
-  const getVersionList = () => {
-    appActiveReleases({ appCode: appData?.appCode }).then((res) => {
-      if (res?.success &&res?.data?.length>0) {
-        setVersionData(res?.data)
-        queryData(true)
-      }else{
-        setVersionData([])
+  //checkReleaseDeploy
+
+  const checkVersionShow = () => {
+    checkReleaseDeploy(appData?.appCode || "").then((res) => {
+      if (res?.success) {
+        setCheckVersion(res?.data)
+        if (res?.data === true) {
+          queryData(true)
+
+        } else {
+          queryData(false)
+        }
+
+      } else {
+        setCheckVersion(false)
         queryData(
           false
         )
@@ -92,13 +96,15 @@ export default function ApplicationDeploy(props: any) {
 
 
 
+
+
   const warning = () => {
     Modal.warning({
       title: '该应用未绑定环境！',
       content: '请先为该应用绑定环境哦...',
     });
   };
-  const queryData = (hasVersion:boolean) => {
+  const queryData = (hasVersion: boolean) => {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
@@ -124,8 +130,8 @@ export default function ApplicationDeploy(props: any) {
             next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
           }
         });
-        if(hasVersion===true){
-          next.push({ label: '版本发布',  typeName: '版本发布',typeCode: 'version', value: 'version',sortType: 5 })
+        if (hasVersion === true) {
+          next.push({ label: '版本发布', typeName: '版本发布', typeCode: 'version', value: 'version', sortType: 5 })
         }
         next.sort((a: any, b: any) => {
           return a.sortType - b.sortType;
@@ -235,41 +241,33 @@ export default function ApplicationDeploy(props: any) {
                 onChange={handleChange}
                 options={pipelineOption}
               />
-              {tabActive!=="version"&& <SettingOutlined
+              {tabActive !== "version" && <SettingOutlined
                 style={{ marginLeft: '10px' }}
                 onClick={() => {
                   setVisible(true);
                 }}
               />}
-             
+
             </span>
           </div>
         }
       >
         {envTypeData?.map((item) => (
           <TabPane tab={item.label} key={item.value}>
-            {/* {item.value !== 'version' ? */}
-              <DeployContent
-                isActive={item.value === tabActive}
-                envTypeCode={item.value}
-                pipelineCode={currentValue}
-                visible={visible}
-                versionData={versionData}
-                onDeployNextEnvSuccess={() => {
-                  const i = envTypeData.findIndex((item) => item.value === tabActive);
-                  setTabActive(envTypeData[i + 1]?.value);
-                  getPipeline(envTypeData[i + 1]?.value);
-                }}
-                nextTab={nextTab}
-              /> 
-              {/* :
-              <VersionDeploy
-                isActive={item.value === tabActive}
-                envTypeCode={item.value}
-                pipelineCode={currentValue}
-                visible={visible}
-              />
-            } */}
+            <DeployContent
+              isActive={item.value === tabActive}
+              envTypeCode={item.value}
+              pipelineCode={currentValue}
+              visible={visible}
+              checkVersion={checkVersion}
+              onDeployNextEnvSuccess={() => {
+                const i = envTypeData.findIndex((item) => item.value === tabActive);
+                setTabActive(envTypeData[i + 1]?.value);
+                getPipeline(envTypeData[i + 1]?.value);
+              }}
+              nextTab={nextTab}
+              handleTabChange={(tab: string) => { handleTabChange(tab) }}
+            />
           </TabPane>
         ))}
       </Tabs>
