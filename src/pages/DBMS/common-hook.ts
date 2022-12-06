@@ -7,9 +7,9 @@ export function useEnvList() {
     const [loading, setLoading] = useState<boolean>(false);
     const [source, setSource] = useState<any>([]);
    
-    const queryEnvList = async () => {
+    const queryEnvList = async (envTypeCode?:string) => {
       setLoading(true);
-      await getRequest(APIS.queryEnvList, { data:{pageIndex:-1,pageSize:-1,envModel:"currency-deploy"} })
+      await getRequest(APIS.queryEnvList, { data:{pageIndex:-1,pageSize:-1,envModel:"currency-deploy",envTypeCode} })
         .then((result) => {
           if (result?.success) {
             const dataSource = result.data.dataSource || [];
@@ -37,15 +37,15 @@ export function useInstanceList() {
 
   const getInstanceList = async (envCode:string) => {
     setLoading(true);
-    await getRequest(APIS.getInstanceList, { data: {pageIndex:-1,pageSize:-1,envCode} })
+    await getRequest(APIS.getInstanceList, { data: {envCode} })
       .then((result) => {
         if (result?.success) {
           let dataSource = result.data?.dataSource;
           let dataArry: any = [];
           dataSource?.map((item: any) => {
             dataArry.push({
-             label:item?.instance?.name,
-             value:item?.instance?.id
+             label:item?.InstanceName,
+             value:item?.InstanceId
             });
           });
          
@@ -174,6 +174,7 @@ export function useQueryTableFieldsOptions() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>({});
   const [options, setOptions] = useState<any>([]);
+  const [createSQL,setCreateSQL]=useState<any>("")
 
   const queryTableFields = async (params:{dbCode:string,tableCode:string}) => {
     setLoading(true);
@@ -182,6 +183,7 @@ export function useQueryTableFieldsOptions() {
         if (result?.success) {
           let dataSource = result.data?.fields||[];
           let dataObject: any = {};
+          setCreateSQL(result.data?.createSQL||"")
           setOptions(dataSource)
           dataSource?.map((item: any) => {
             dataObject[item]=item
@@ -194,7 +196,7 @@ export function useQueryTableFieldsOptions() {
       });
   };
 
-  return [loading, source,options, queryTableFields,setOptions,setSource];
+  return [loading, source,options, queryTableFields,setOptions,setSource,createSQL,setCreateSQL];
 }
 //querySqlApi
 interface querySqlItems{

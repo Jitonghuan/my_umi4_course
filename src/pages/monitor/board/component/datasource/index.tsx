@@ -179,7 +179,7 @@ const DataSource = (props: any) => {
               okText='删除'
               cancelText='取消'
             >
-              <Button type='link'>删除</Button>
+              <Button type='link' style={{ color: 'rgb(255, 48, 3)' }}>删除</Button>
             </Popconfirm>
           </>
         )

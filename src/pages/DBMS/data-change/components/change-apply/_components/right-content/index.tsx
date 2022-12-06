@@ -7,9 +7,10 @@ interface Iprops{
   tableFields:any;
   createItems:any;
   createSql:(params:{sqlContent:string})=>any
+  sqlLoading:boolean
 }
 export default function RightContent(props:Iprops){
-  const {tableFields,createSql,createItems} =props;
+  const {tableFields,createSql,createItems,sqlLoading} =props;
   const [loading,setLoading]=useState<boolean>(false);
   const [executeResultData,setExecuteResultData]=useState<any>([])
   const getInfo=(sqlContent:string)=>{
@@ -46,6 +47,7 @@ export default function RightContent(props:Iprops){
         subSqlChange={(params:{sqlContent:string})=>createSql(params)}
         sqlCheck={(sqlContent:string)=>getInfo(sqlContent)}
         isGoback={true}
+        sqlLoading={sqlLoading}
         />
       </div>
       <div className="container-bottom">

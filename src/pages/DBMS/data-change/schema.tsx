@@ -174,11 +174,11 @@ export const createTableColumns = (params: {
     //syntaxType
     {
       title: '类型',
-      dataIndex: 'syntaxType',
-      key: 'syntaxType',
+      dataIndex: 'sqlWfType',
+      key: 'sqlWfType',
       width:110,
       ellipsis: true,
-      render: (text) => <Tooltip title={text}>{text}</Tooltip>,
+      render: (text) => <Tooltip title={text==="sql"?"数据变更":"结构变更"}>{text==="sql"?<Tag color="purple">数据变更</Tag>:<Tag color="cyan">结构变更</Tag>}</Tooltip>,
     },
     {
       title: '当前状态',
@@ -190,26 +190,40 @@ export const createTableColumns = (params: {
     },
     {
       title: '当前处理人',
-      dataIndex: 'audit',
-      key: 'audit',
+      dataIndex: 'currentAudits',
+      key: 'currentAudits',
       // width: '10%',
       width: 280,
       ellipsis: {
         showTitle: false,
       },
-      render: (users,record,index) => {
-       
-        return (
+      render:(users,record,index)=>{
+        if(users&&users?.length>0){
+              return (
           <>
           {users?.map((item:any)=>{
             return( <Tag color="#108ee9">{item} </Tag>)
           })}
         
-          </>
+          </>)
           
-          
-        )
+        }
+
+
       }
+      // render: (users,record,index) => {
+       
+      //   return (
+      //     <>
+      //     {users?.map((item:any)=>{
+      //       return( <Tag color="#108ee9">{item} </Tag>)
+      //     })}
+        
+      //     </>
+          
+          
+      //   )
+      // }
     },
     {
         title: '申请人',

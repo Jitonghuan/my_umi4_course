@@ -74,8 +74,8 @@ function Workplace() {
                   );
                 }) : null}
               </div>
-              {total && total > 2 ? (
-                <a onClick={() => { setModalVisible(true) }}>查看更多</a>
+              {total && total > 10 ? (
+                <a onClick={() => {  }}>查看更多</a>
               ) : null}
             </div>
 

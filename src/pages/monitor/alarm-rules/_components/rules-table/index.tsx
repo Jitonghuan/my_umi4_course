@@ -13,6 +13,8 @@ interface RulesTableProps {
   dataSource?: any;
   onQuery: (param?: any) => void;
   serviceId?: string;
+  pageInfo?:any;
+  setPageInfo?:any;
 }
 const ALERT_LEVEL: Record<number, { text: string; value: number; color: string }> = {
   2: { text: '警告', value: 2, color: 'yellow' },
@@ -25,19 +27,23 @@ type StatusTypeItem = {
   tagText: string;
   buttonText: string;
   status: number;
+  
 };
 
 const STATUS_TYPE: Record<number, StatusTypeItem> = {
-  0: { tagText: '已启用', buttonText: '禁用', color: 'green', status: 1 },
+  0: { tagText: '已启用', buttonText: '停用', color: 'green', status: 1 },
   1: { tagText: '未启用', buttonText: '启用', color: 'default', status: 0 },
 };
 
 export default function RulesTable(props: RulesTableProps) {
-  const { dataSource, onQuery, serviceId } = props;
+  const { dataSource, onQuery, serviceId ,pageInfo,setPageInfo} = props;
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState('新增报警规则');
   const [type, setType] = useState<'add' | 'edit'>('add');
   const [editRecord, setEditRecord] = useState<Item>({});
+  // const [pageSize, setPageSize] = useState<number>(20);
+  // const [pageIndex, setPageIndex] = useState<number>(1);
+  // const [total, setTotal] = useState<number>(0);
 
   //新增
   const { run: createRulesFun } = useRequest({
@@ -47,7 +53,7 @@ export default function RulesTable(props: RulesTableProps) {
     isSuccessModal: true,
     onSuccess: () => {
       setDrawerVisible(false);
-      onQuery();
+      onQuery({page:{ pageIndex:1, pageSize:20 }});
     },
   });
 
@@ -59,7 +65,7 @@ export default function RulesTable(props: RulesTableProps) {
     isSuccessModal: true,
     onSuccess: () => {
       setDrawerVisible(false);
-      onQuery();
+      onQuery({page:{ pageIndex:1, pageSize:20 }});
     },
   });
 
@@ -70,7 +76,7 @@ export default function RulesTable(props: RulesTableProps) {
     successText: '操作成功',
     isSuccessModal: true,
     onSuccess: () => {
-      onQuery();
+      onQuery({page:{ pageIndex:1, pageSize:20 }});
     },
   });
 
@@ -80,7 +86,7 @@ export default function RulesTable(props: RulesTableProps) {
     successText: '删除成功',
     isSuccessModal: true,
     onSuccess: () => {
-      onQuery();
+      onQuery({page:{ pageIndex:1, pageSize:20 }});
     },
   });
 
@@ -149,7 +155,7 @@ export default function RulesTable(props: RulesTableProps) {
       dataIndex: 'option',
       key: 'news',
       width: 150,
-      fixed:"right",
+      fixed: 'right',
       render: (_: string, record: Item) => (
         <Space>
           <a
@@ -202,6 +208,20 @@ export default function RulesTable(props: RulesTableProps) {
       updateRulesFun({ ...value, serviceId });
     }
   };
+  //触发分页
+  const pageSizeClick = (pagination: any) => {
+    setPageInfo({
+      pageIndex:pagination.current,
+      pageSize: pagination.pageSize,
+    })
+    let obj = {
+        pageIndex: pagination.current,
+        pageSize: pagination.pageSize,
+    };
+    onQuery({page:{...obj, }});
+   
+};
+
 
   return (
     <>
@@ -225,12 +245,27 @@ export default function RulesTable(props: RulesTableProps) {
       <Table
         columns={columns}
         {...dataSource}
+        // pagination={{
+        //   ...dataSource.pageInfo,
+        //   showTotal: (total) => `共 ${total} 条`,
+        //   showSizeChanger: true,
+        //   onChange: (page, pageSize) => onQuery({page:{ pageIndex: page, pageSize }}),
+        // }}
         pagination={{
-          ...dataSource.pageInfo,
-          showTotal: (total) => `共 ${total} 条`,
+          onShowSizeChange: (_, size) => {
+            setPageInfo({
+              pageIndex:1,
+              pageSize:size
+            })
+            
+            },
+          current: pageInfo?.pageIndex,
+          total:pageInfo?.total,
+          pageSize:pageInfo?.pageSize,
           showSizeChanger: true,
-          onChange: (page, pageSize) => onQuery({ pageIndex: page, pageSize }),
-        }}
+          showTotal: () => `总共 ${pageInfo?.total} 条数据`,
+      }}
+      onChange={pageSizeClick}
       />
       <TemplateDrawer
         visible={drawerVisible}

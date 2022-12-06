@@ -3,7 +3,7 @@
 // @create 2022/04/21 15:30
 
 import React, { useMemo, useState, useCallback } from 'react';
-import { Button, Table } from 'antd';
+import { Button, message, Table } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import VersionEditor from './_components/version-editor';
 import PageContainer from '@/components/page-container';
@@ -11,13 +11,16 @@ import { createTableSchema, VersionRecordItem } from './schema';
 import FilterHeader from './_components/filter-header';
 import BindAppEditor from './_components/bindApp-editor';
 import { useGetVersionList } from './hooks';
+import { postRequest } from '@/utils/request';
 import './index.less';
+import { updateVersion, useUpdateVersion } from './hooks';
 
 export default function VersionList() {
   const [dataSource, pageInfo, setPageInfo, listLoading, loadVersionListData] = useGetVersionList();
   const [createVersionVisible, setCreateVersionVisible] = useState<boolean>(false);
   const [bindAppVisiable, setBindAppVisiable] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<VersionRecordItem>();
+  const [editLoading, editVersion] = useUpdateVersion();
   const [type, setType] = useState<string>('');
   const handleFilterSearch = useCallback(
     (paramsObj: { versionCode?: string; versionName?: string; appCategoryCode?: string }) => {
@@ -46,6 +49,12 @@ export default function VersionList() {
         setCurRecord(record);
         setBindAppVisiable(true);
         setType('bindApp');
+      },
+      onDisable: (record: any, index: any) => {
+        let editParams = { id: record.id, disable: record.disable ? 0 : 1, versionName: record.versionName, desc: record.desc };
+        editVersion(editParams).then(() => {
+          loadVersionListData();
+        });
       },
     }) as any;
   }, [dataSource]);

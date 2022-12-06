@@ -144,7 +144,7 @@ const HistoryCom: React.FC = () => {
   }, []);
 
   return (
-    <PageContainer>
+    <PageContainer style={{ padding: 0 }}>
       <TableSearch
         form={form}
         formOptions={[
@@ -242,8 +242,8 @@ const HistoryCom: React.FC = () => {
           // size: 'small',
           defaultPageSize: 20,
         }}
-        showTableTitle
-        tableTitle="报警历史列表"
+        showTableTitle={false}
+        tableTitle=""
         className="table-form"
         onSearch={submit}
         reset={reset}

@@ -535,14 +535,12 @@ export default function DeployContent(props: DeployContentProps) {
 
               {listEnvClusterData?.clusterType !== 'vm' ? (
                 <Table.Column
-                  width={330}
+                  width={260}
                   title="操作"
                   fixed="right"
                   render={(_, record: any) => (
                     <div className="action-cell">
                       <a
-                        // size="small"
-                        // type="primary"
                         onClick={() =>
                           history.push(
                             {
@@ -557,11 +555,12 @@ export default function DeployContent(props: DeployContentProps) {
                         查看日志
                       </a>
                       <a
-                        // size="small"
-                        // type="primary"
                         onClick={() => {
                           history.push(
-                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
+                            `/matrix/application/detail/loginShell?appCode=${appData?.appCode}&envCode=${currentEnvData}&viewLogEnvType=${envTypeCode}&instName=${record?.instName}&optType=deployInfo&deploymentName=${appData?.deploymentName}`,
+                            {
+                              infoRecord: record,
+                            }
                           );
                         }}
                       >
@@ -587,7 +586,7 @@ export default function DeployContent(props: DeployContentProps) {
                           
                         }}
                       >
-                        <a>
+                        <a style={{color:"red"}}>
                           删除
                         </a>
                       </Popconfirm>
@@ -678,9 +677,6 @@ export default function DeployContent(props: DeployContentProps) {
           setRollbackVisible(false);
           queryAppOperateLog(currentEnvData);
           timerHandler('do', true);
-
-          // handleRollbackSubmit(); //回滚走的接口
-          // reloadDeployData();
         }}
       />
     </div>

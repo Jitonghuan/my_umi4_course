@@ -83,7 +83,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
       <FormItem label="名称" name="keyword">
         <Input placeholder="请输入" style={{ width: 140 }} />
       </FormItem>
-      <FormItem label="分类" name="graphType">
+      {/* <FormItem label="分类" name="graphType">
         <Select
           options={[
             {
@@ -99,7 +99,7 @@ export default function FilterHeader(props: FilterHeaderProps) {
           style={{ width: 150 }}
           allowClear
         />
-      </FormItem>
+      </FormItem> */}
       <FormItem>
         <Button type="primary" htmlType="submit" style={{ marginRight: 16 }}>
           查询

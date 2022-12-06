@@ -1,0 +1,32 @@
+.traffic-detail-right-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+        z-index: 1;
+
+        color: ivory;
+
+        background: var(--ant-primary-color);
+        border-color: var(--ant-primary-color);
+    }
+
+}
+
+.traffic-detail-right-content-wrap {
+    display: flex;
+    padding: 12px 12px 12px 0px;
+    height: 100%;
+    flex-direction: column;
+    height: 100%;
+    .main-wrapper{
+        flex:1 1;
+        overflow: auto;
+    }
+    .detail-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: calc(100%-77px);
+    }
+}

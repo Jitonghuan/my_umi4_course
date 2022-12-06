@@ -13,9 +13,8 @@ import { useResourceType, useNameSpace } from '../hook';
 import debounce from 'lodash/debounce';
 import { parse, stringify } from 'query-string';
 import { FeContext } from '@/common/hooks';
-
-
 import './index.less';
+
 export default function ResourceDetail(props: any) {
   let location: any = useLocation();
   const query = parse(location.search);
@@ -143,7 +142,6 @@ export default function ResourceDetail(props: any) {
       setContinueList(['']);
     }
     queryList();
-    // queryAll();
   }, [pageIndex, limit]);
 
   useEffect(() => {
@@ -162,13 +160,14 @@ export default function ResourceDetail(props: any) {
       const namespaceList = nameSpaceData.map((item: any) => item.value)
       const typeValueList = typeData.map((item: any) => item.value);
       const currentType = typeValueList.includes(storeParams?.resourceType) ? storeParams?.resourceType : typeData[0].value;
-      const currentNamespace = namespaceList.includes(storeParams?.namespace) ? storeParams?.namespace : nameSpaceData[0].value;
+      const currentNamespace = storeParams?.namespace && namespaceList.includes(storeParams?.namespace) ? storeParams?.namespace : nameSpaceData[0].value;
       form.setFieldsValue({
         namespace: currentNamespace,
         resourceType: currentType,
         node: storeParams?.node || '',
       });
-      const newValue = { namespace: currentNamespace, resourceType: currentType, node: storeParams?.node || '' }
+      const newNamespace = (currentType === 'namespaces' || currentType === 'persistentvolumes') ? undefined : currentNamespace;
+      const newValue = { namespace: newNamespace, resourceType: currentType, node: storeParams?.node || '' }
       sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: newValue } || {}));
       setStoreParams(newValue);
       setSelectType(currentType);
@@ -197,8 +196,14 @@ export default function ResourceDetail(props: any) {
       }
     ).then((res: any) => {
       if (res?.success) {
-        setDataSource(res?.data?.items || []);
-        setOriginData(res?.data?.items || []);
+        let data = [];
+        if (values.resourceType === 'namespaces') {
+          data = res?.data?.items.filter((item: any) => item.name);
+        } else {
+          data = res?.data?.items
+        }
+        setDataSource(data || []);
+        setOriginData(data || []);
         if (index === 1) {
           setTotal(res?.data?.total || 0);
         }
@@ -224,7 +229,13 @@ export default function ResourceDetail(props: any) {
     getResourceList({ ...values, nodeName: values.node, limit: '', clusterCode })
       .then((res: any) => {
         if (res?.success) {
-          setAllData(res?.data?.items || []);
+          let data = [];
+          if (values.resourceType === 'namespaces') {
+            data = res?.data?.items.filter((item: any) => item.name);
+          } else {
+            data = res?.data?.items
+          }
+          setAllData(data || []);
         } else {
           setAllData([]);
         }
@@ -335,10 +346,14 @@ export default function ResourceDetail(props: any) {
           }}
           form={form}
           onReset={() => {
-            form.setFieldsValue({ resourceType: 'deployments', namespace: '' });
-            sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: form.getFieldsValue() } || {}));
             setSelectType('deployments');
-            initialSearch();
+            setTimeout((
+              () => {
+                form.setFieldsValue({ resourceType: 'deployments', namespace: nameSpaceData[0] && nameSpaceData[0].value || '' });
+                sessionStorage.setItem('cluster_resource_params', JSON.stringify({ ...JSON.parse(sessionData), [clusterCode]: form.getFieldsValue() } || {}));
+                initialSearch();
+              }
+            ), 10)
           }}
         >
           <Form.Item label="资源类型" name="resourceType" rules={[{ required: true, message: '请选择查询关键词' }]}>
@@ -356,7 +371,7 @@ export default function ResourceDetail(props: any) {
               }}
             ></Select>
           </Form.Item>
-          {selectType !== 'namespaces' && (
+          {selectType !== 'namespaces' && selectType !== 'persistentvolumes' && (
             <Form.Item label="命名空间" name="namespace">
               <Select
                 style={{ width: 200 }}

@@ -14,7 +14,7 @@ import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { envTypeData } from '../schema';
 import { useEnvListOptions, useGetListMonitor, useEnableMonitor, useDisableMonitor, useDelMonitor } from './hooks';
 import './index.less';
-import { useAppOptions } from "@/pages/monitor/business/hooks";
+import { useAppOptions } from '@/pages/monitor/business/hooks';
 const { Panel } = Collapse;
 
 export default function DpMonitor() {
@@ -30,14 +30,16 @@ export default function DpMonitor() {
   const [delMonitor] = useDelMonitor();
 
   const editMonitor = (item: any) => {
-    history.push({
-      pathname: '/matrix/monitor/dp-monitor-edit',
-    },{
+    history.push(
+      {
+        pathname: '/matrix/monitor/dp-monitor-edit',
+      },
+      {
         type: 'edit',
         recordData: item,
-        bizMonitorType: 'db'
-      
-    });
+        bizMonitorType: 'db',
+      },
+    );
   };
   const enableMonitorClick = (id: string) => {
     enableMonitor(id, () => {
@@ -79,8 +81,10 @@ export default function DpMonitor() {
                       e.stopPropagation();
                       history.push({
                         pathname: 'detail',
-                        search: `?graphName=${item.monitorName}&url=${encodeURIComponent(item.dashboardUrl)}&fromPage=business`
-                      })
+                        search: `?graphName=${item.monitorName}&url=${encodeURIComponent(
+                          item.dashboardUrl,
+                        )}&fromPage=business`,
+                      });
                       // window.open(item.dashboardUrl, '_blank');
                     }}
                   >
@@ -106,7 +110,7 @@ export default function DpMonitor() {
                         enableMonitorClick(item.id);
                       }}
                     >
-                      启动
+                      启用
                     </Button>
                   ) : (
                     <Button
@@ -118,7 +122,7 @@ export default function DpMonitor() {
                         disableMonitorClick(item.id);
                       }}
                     >
-                      停止
+                      停用
                     </Button>
                   )}
                   <Button
@@ -166,7 +170,7 @@ export default function DpMonitor() {
   }
 
   return (
-    <PageContainer className="dp-monitor-wrapper">
+    <PageContainer className="dp-monitor-wrapper" style={{ padding: 0 }}>
       <FilterCard>
         <Form
           layout="inline"
@@ -206,12 +210,7 @@ export default function DpMonitor() {
             />
           </Form.Item>
           <Form.Item label="关联应用" name="appCode">
-            <Select
-              options={appOptions}
-              style={{ width: '200px' }}
-              showSearch
-              allowClear
-            />
+            <Select options={appOptions} style={{ width: '200px' }} showSearch allowClear />
           </Form.Item>
           <Form.Item label="监控名称" name="monitorName">
             <Input placeholder="请输入" style={{ width: 180 }} />
@@ -225,7 +224,7 @@ export default function DpMonitor() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" >
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -233,7 +232,7 @@ export default function DpMonitor() {
             <Button
               type="primary"
               onClick={() => {
-                history.push({ pathname: '/matrix/monitor/dp-monitor-edit'},{type: 'add', bizMonitorType: 'db'  });
+                history.push({ pathname: '/matrix/monitor/dp-monitor-edit' }, { type: 'add', bizMonitorType: 'db' });
               }}
               icon={<PlusOutlined />}
             >
@@ -242,7 +241,7 @@ export default function DpMonitor() {
           </Form.Item>
         </Form>
       </FilterCard>
-      <ContentCard style={{width:"100%"}}>
+      <ContentCard style={{ width: '100%' }}>
         {listData.length !== 0 ? (
           <List
             itemLayout="vertical"
@@ -253,7 +252,7 @@ export default function DpMonitor() {
               },
               total: total,
               pageSize: 10,
-              position:"bottom"
+              position: 'bottom',
             }}
             dataSource={listData}
             renderItem={(item: any) => <List.Item>{item}</List.Item>}

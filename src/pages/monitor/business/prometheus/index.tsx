@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import { Table, Form, Select, Input, Button, Space, Empty } from 'antd';
 import PageContainer from '@/components/page-container';
-import {
-  PlusOutlined,
-  FormOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, FormOutlined, DeleteOutlined, BarChartOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { envTypeData } from '../schema';
 import { useEnvListOptions, useGetListMonitor, useDelMonitor } from './hooks';
 import './index.less';
-import { useAppOptions } from "@/pages/monitor/business/hooks";
+import { useAppOptions } from '@/pages/monitor/business/hooks';
 
 export default function DpMonitor() {
   const [form] = Form.useForm();
@@ -24,19 +20,20 @@ export default function DpMonitor() {
   const [delMonitor] = useDelMonitor();
 
   const editMonitor = (item: any) => {
-    history.push({
-      pathname: '/matrix/monitor/prometheus-edit',
-      search:`name=${item.name}`
-      // query: {
-      //   name: item.name
-      // },
-    },
-       {
+    history.push(
+      {
+        pathname: '/matrix/monitor/prometheus-edit',
+        search: `name=${item.name}`,
+        // query: {
+        //   name: item.name
+        // },
+      },
+      {
         type: 'edit',
         recordData: item,
-        bizMonitorType: 'interface'
-    
-    });
+        bizMonitorType: 'interface',
+      },
+    );
   };
 
   const delMonitorClick = (id: string) => {
@@ -46,7 +43,7 @@ export default function DpMonitor() {
   };
 
   return (
-    <PageContainer className="dp-monitor-wrapper">
+    <PageContainer className="dp-monitor-wrapper" style={{ padding: 0 }}>
       <FilterCard>
         <Form
           layout="inline"
@@ -86,12 +83,7 @@ export default function DpMonitor() {
             />
           </Form.Item>
           <Form.Item label="关联应用" name="appCode">
-            <Select
-              options={appOptions}
-              style={{ width: '200px' }}
-              showSearch
-              allowClear
-            />
+            <Select options={appOptions} style={{ width: '200px' }} showSearch allowClear />
           </Form.Item>
           <Form.Item label="监控名称" name="name">
             <Input placeholder="请输入" style={{ width: 180 }} />
@@ -113,7 +105,10 @@ export default function DpMonitor() {
             <Button
               type="primary"
               onClick={() => {
-                history.push({ pathname: '/matrix/monitor/prometheus-edit'},{ type: 'add', bizMonitorType: 'interface' });
+                history.push(
+                  { pathname: '/matrix/monitor/prometheus-edit' },
+                  { type: 'add', bizMonitorType: 'interface' },
+                );
               }}
               icon={<PlusOutlined />}
             >
@@ -168,6 +163,23 @@ export default function DpMonitor() {
                 width: 80,
                 render: (_: string, record: any) => (
                   <Space>
+                    <Button
+                      type="link"
+                      style={{ color: '#5468ff' }}
+                      icon={<BarChartOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        history.push({
+                          pathname: 'detail',
+                          search: `?graphName=${record.name}&url=${encodeURIComponent(
+                            record.dashboardUrl,
+                          )}&fromPage=business`,
+                        });
+                        // window.open(item.dashboardUrl, '_blank');
+                      }}
+                    >
+                      看板
+                    </Button>
                     <Button
                       type="link"
                       icon={<FormOutlined />}

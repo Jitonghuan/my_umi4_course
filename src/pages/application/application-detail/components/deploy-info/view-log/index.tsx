@@ -245,14 +245,8 @@ export default function ViewLog(props: any) {
       } else {
         history.push({
           pathname: `/matrix/application/detail/deployInfo`,
-          search:`appCode=${appCode}&id=${id + ''}&viewLogEnv=${envCode}&viewLogEnvType=${viewLogEnvType}`
-          // query: {
-          //   appCode: appCode,
-          //   id: id + '',
-          //   viewLogEnv: envCode,
-          //   type: 'viewLog_goBack',
-          //   viewLogEnvType: viewLogEnvType,
-          // },
+          search:`appCode=${appCode}&id=${id + ''}&viewLogEnv=${envCode}&viewLogEnvType=${viewLogEnvType}&type=viewLog_goBack`
+        
         });
       }
     }

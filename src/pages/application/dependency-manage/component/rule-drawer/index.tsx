@@ -4,13 +4,12 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-
-import { Drawer, Input, Button, Form, Select, message, Switch, DatePicker, Space } from 'antd';
-import { addRule, updateRule } from '../../service';
-import { fetchEnvList } from '@/pages/application/_components/application-editor/service';
+import { Drawer, Input, Button, Form, Select, message, Switch, DatePicker, Space,Checkbox } from 'antd';
+import { addRule, updateRule } from '../../service'
 import Icon, { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { operatorOption, operatorLessOption, operatorGreaterOption, levelOption } from '../../schema';
 import moment from 'moment';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 export interface IProps {
   mode?: EditorMode;
@@ -23,12 +22,12 @@ export interface IProps {
 export default function RuleDrawer(props: any) {
   const { mode, onClose, onSave, initData, envData } = props;
   const [form] = Form.useForm();
-  // const [envData, setEnvData] = useState<any>([]);
   const [isChecked, setisChecked] = useState<boolean>(false);
   const [isEnableChangeOption, setisEnableChangeOption] = useState<number>(0);
   const [viewEditable, setViewEditable] = useState<boolean>(false);
   const [showMore, setShowMore] = useState<boolean>(false);
-  const [currentDateTime, setCurrentDateTime] = useState<any>();
+  const [check,setCheck]=useState<boolean>(false)
+  
 
   const splitMap: any = {
     gt: '>',
@@ -46,6 +45,42 @@ export default function RuleDrawer(props: any) {
     '=': 'eq',
     '!=': 'ne',
   };
+  const getInitVersionRange=(initData?:any)=>{
+   // if(Object.keys(initData)?.length<1) return
+    if(Object.keys(initData)?.length>0){
+      let item1 = '';
+      let version1 = '';
+      let item2 = '';
+      let version2 = '';
+      let versionRange = initData?.versionRange?.includes(',')
+        ? initData?.versionRange?.split(',')
+        : [initData?.versionRange];
+      if (versionRange) {
+        if (initData?.versionRange?.includes(',') && versionRange.length === 2) {
+          setShowMore(true);
+        }
+        versionRange?.map((ele: any, index: any) => {
+          if (index == 1) {
+            item2 = ele?.split('@')[0];
+            version2 = ele?.split('@')[1];
+          } else {
+            item1 = ele?.split('@')[0];
+            version1 = ele?.split('@')[1];
+          }
+        });
+        form.setFieldsValue({
+           versionRangeOne: splitMap[item1] ,
+           versionRangeTwo: version1,
+           versionRangeThree: splitMap[item2] ,
+           versionRangeFour: version2
+
+          });
+       
+      }
+
+    }
+
+  }
   useEffect(() => {
     if (mode === 'HIDE') return;
     if (mode === 'VIEW') {
@@ -53,34 +88,9 @@ export default function RuleDrawer(props: any) {
     }
     if (mode === 'EDIT' || mode === 'VIEW') {
       if (initData) {
-        // let versionRange = ['gt@2.0.0','lt@9.0.0'];
-
-        let item1 = '';
-        let version1 = '';
-        let item2 = '';
-        let version2 = '';
-        let versionRange = initData?.versionRange?.includes(',')
-          ? initData?.versionRange?.split(',')
-          : [initData?.versionRange];
-        if (versionRange) {
-          if (initData?.versionRange?.includes(',') && versionRange.length === 2) {
-            setShowMore(true);
-          }
-          versionRange?.map((ele: any, index: any) => {
-            if (index == 1) {
-              item2 = ele?.split('@')[0];
-              version2 = ele?.split('@')[1];
-            } else {
-              item1 = ele?.split('@')[0];
-              version1 = ele?.split('@')[1];
-            }
-          });
-          form.setFieldsValue({ versionRangeOne: splitMap[item1] });
-          form.setFieldsValue({ versionRangeTwo: version1 });
-          form.setFieldsValue({ versionRangeThree: splitMap[item2] });
-          form.setFieldsValue({ versionRangeFour: version2 });
-        }
+        getInitVersionRange(initData)
         let curEnvCode = initData?.envCode?.split(',');
+
         form.setFieldsValue({
           ruleName: initData?.ruleName,
           groupId: initData?.groupId,
@@ -88,8 +98,9 @@ export default function RuleDrawer(props: any) {
           envCode: curEnvCode[0] === '' ? undefined : curEnvCode,
           checkLevel: initData?.checkLevel,
           blockTime: moment(initData?.blockTime, 'YYYY-MM-DD'),
+          isDependency:initData?.isDependency==="NotMust"?false:true,
         });
-        setCurrentDateTime(initData?.blockTime);
+        setCheck(initData?.isDependency==="NotMust"?false:true)
         setisChecked(initData?.isEnable === 0 ? false : true);
         setisEnableChangeOption(initData?.isEnable);
       }
@@ -103,8 +114,25 @@ export default function RuleDrawer(props: any) {
       setisEnableChangeOption(0);
       setViewEditable(false);
       setShowMore(false);
+      setCheck(false)
     };
   }, [mode]);
+  useEffect(()=>{
+    if(check===true&&mode==="ADD"){
+      form.setFieldsValue({ versionRangeOne: "ge",
+      versionRangeTwo: "0.0.0"
+     });
+    
+    
+    }
+    if(mode==="EDIT"&&check===false){
+      getInitVersionRange(initData)
+      
+    
+
+    }
+   
+  },[check,mode])
 
   //是否启用任务
   const isEnableChange = (checked: boolean) => {
@@ -121,10 +149,6 @@ export default function RuleDrawer(props: any) {
     const values = await form.validateFields();
     let curEnvCode = '';
     let curEnvCodeString = '';
-    // let curEnvCodeString= JSON.stringify(values?.envCode);
-    // let str1=curEnvCodeString.substr(1);
-    // let str2=str1.substring(0,str1.length-1);
-    // curEnvCode=str2;
     values?.envCode?.map((item: any, index: number) => {
       let envCodeString = `${item},`;
       curEnvCodeString = curEnvCodeString + envCodeString;
@@ -165,6 +189,7 @@ export default function RuleDrawer(props: any) {
       envCode: curEnvCode,
       groupId: values?.groupId,
       ruleName: values?.ruleName,
+      isDependency:check?"Must":"NotMust"
     };
 
     const res = await (mode === 'ADD' ? addRule({ ...paramsObj }) : updateRule({ ...paramsObj, id: initData?.id }));
@@ -192,7 +217,7 @@ export default function RuleDrawer(props: any) {
       }
     >
       <div className="creat-rule">
-        <Form form={form} labelCol={{ flex: '120px' }} onFinish={handleSubmit}>
+        <Form form={form}  labelCol={{ flex: '160px' }} onFinish={handleSubmit}>
           <Form.Item label="规则名称：" name="ruleName" rules={[{ required: true, message: '这是必填项' }]}>
             <Input style={{ width: 400 }} placeholder="请输入规则名称" disabled={viewEditable}></Input>
           </Form.Item>
@@ -222,6 +247,12 @@ export default function RuleDrawer(props: any) {
               disabled={viewEditable}
               mode="multiple"
             ></Select>
+          </Form.Item>
+          <Form.Item label="必须引入依赖包" valuePropName="checked" name="isDependency" initialValue={false} rules={[{ required: true, message: '这是必填项' }]}>
+          <Checkbox onChange={(e: CheckboxChangeEvent)=>{
+            setCheck(e.target.checked)
+            }} defaultChecked={false}></Checkbox>
+          
           </Form.Item>
           <Form.Item label="版本范围：">
             <Space>

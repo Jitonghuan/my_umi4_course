@@ -1,0 +1,144 @@
+.traffic-detail-page {
+  &-header {
+    .ant-card-body {
+      padding: 10px 16px;
+    }
+  }
+  .traffic-detail-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .show-time{
+      display: inline-flex;
+      margin-right: 4px;
+      overflow-x: auto;
+
+      >span{
+        
+        color: rgb(146, 146, 146);
+       // width: 252px;
+       width: 14vw;
+        height: 30px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: center;
+
+      }
+     // display: inline-block;
+    
+
+    }
+  }
+  &-content {
+    .ant-card-body {
+      padding: 0px;
+    }
+
+    .left-content-title {
+      display: flex;
+      height: 28px;
+      overflow: hidden;
+      justify-content: space-between;
+      font-size: smaller;
+      border-bottom: 1px solid rgb(223, 221, 221);
+
+      .title-click {
+        transition: 0.5s;
+        font-size: 16px !important;
+        color: rgb(84, 136, 231) !important;
+        cursor: pointer !important;
+
+      }
+      .not-click {
+        cursor: pointer !important;
+      }
+
+    }
+
+    .left-content-detail {
+      margin-top: 10px;
+
+      &-title {
+        display: flex;
+        justify-content: space-between;
+        // font-size: 16px;
+        font-size: small;
+        height: 28px;
+        align-items: center;
+        overflow: hidden;
+
+        .title-code:hover {
+          font-size: 14px;
+          color: rgb(13, 190, 160);
+          cursor: pointer;
+          transition: 0.5s;
+        }
+
+        border-bottom: 1px solid rgb(223, 221, 221);
+
+        .count-hovering,
+        .rt-hovering,
+        .fail-hovering {
+          font-size: 16px;
+          color: rgb(84, 136, 231);
+          transition: 0.5s;
+        }
+      }
+
+      &-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: small;
+        height: 28px;
+        overflow: hidden;
+        align-items: center;
+        border-bottom: 1px solid rgb(223, 221, 221);
+
+        .title-ip:hover {
+
+          font-size: 14px;
+          color: rgb(84, 136, 231);
+          cursor: pointer;
+          transition: 0.5s;
+        }
+
+        .count-hovering,
+        .rt-hovering,
+        .fail-hovering {
+          font-size: 16px;
+          color: rgb(84, 136, 231);
+          display: inline-block;
+          transition: 0.5s;
+          display: inline-block;
+          padding: 6px;
+
+        }
+
+        .not-hover {
+          display: inline-block;
+          padding: 6px;
+        }
+
+
+      }
+
+      .ant-badge-status-dot {
+        width: 12px;
+        height: 12px;
+      }
+
+      .not-hover {
+        display: inline-block;
+        padding: 6px;
+      }
+
+      .is-click {
+        background-color: #e0f0e9;
+        color: #708090;
+        border-radius: 4px;
+        padding: 4px;
+      }
+    }
+  }
+
+}

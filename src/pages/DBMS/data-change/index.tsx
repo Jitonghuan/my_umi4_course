@@ -28,23 +28,28 @@ export default function AuthorityApply (){
           data: {...obj, pageIndex:obj?.pageIndex|| 1, pageSize:obj?.pageSize|| 20, },
         })
           .then((result) => {
-            if (result.success) {
+            if (result?.success) {
               let data = result?.data?.dataSource;
               let list=result.data?.dataSource || []
-              if(list?.length>0){
-                list?.map((item:any)=>{
-                  getRequest(currentAuditsApi,{data:{id:item?.id}}).then((res)=>{
-                    if(res?.success){
-                      let data=res?.data?.audits;
-                      setDataSource([...new Set([...list,Object.assign(item, {
-                        audit: data,
-                      })])])
-                    }
-                  })
-                })}  
+              setDataSource(data)
+              // if(list?.length>0){
+              //   list?.map((item:any)=>{
+              //     getRequest(currentAuditsApi,{data:{id:item?.id}}).then((res)=>{
+              //       if(res?.success){
+              //         let data=res?.data?.audits;
+              //         setDataSource([...new Set([...list,Object.assign(item, {
+              //           audit: data,
+              //         })])])
+              //       }
+              //     })
+              //   })}else{
+              //     setDataSource([])
+              //   }
               let pageInfo=result?.data?.pageInfo
               setTotal(pageInfo?.total);
               setPageSize(pageInfo?.pageSize);
+            }else{
+              setDataSource([])
             }
           })
           .finally(() => {
@@ -72,6 +77,14 @@ export default function AuthorityApply (){
         return createTableColumns({
             dataSource:dataSource,
           onDetail: (record, index) => {
+            if(record?.sqlWfType==="ddl"){
+              history.push({
+                pathname:"/matrix/DBMS/ddl-detail"
+              },{
+                record
+              })
+
+            }else{
               history.push({
                 pathname:"/matrix/DBMS/approval-end",
                 
@@ -80,6 +93,9 @@ export default function AuthorityApply (){
                 record
               })
             
+
+            }
+             
            
           },
          
@@ -126,6 +142,7 @@ export default function AuthorityApply (){
               allowClear
               style={{ width: 150 }}
               options={userNameOptions}
+              loading={loading}
              
             />
           </Form.Item>
@@ -167,7 +184,7 @@ export default function AuthorityApply (){
           <Table
             columns={columns}
             dataSource={dataSource}
-            loading={!dataSource?tableLoading:false}
+            loading={dataSource?.length<1?tableLoading:false}
             bordered
             scroll={{ x: '100%' }}
             pagination={{

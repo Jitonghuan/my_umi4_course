@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Table, Descriptions } from 'antd';
-import {getPageErrorInfo} from '../../../../server';
+import { getPageErrorInfo } from '../../../../server';
 import { Drawer } from '@cffe/h2o-design';
 import SourceMapModal from '../source-map';
 
@@ -26,8 +26,8 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
-  const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false)
-  const [sourceInfo, setSourceInfo] = useState<any>({})
+  const [sourceMapVisible, setSourceMapVisible] = useState<boolean>(false);
+  const [sourceInfo, setSourceInfo] = useState<any>({});
   async function getDetail(record: any) {
     const res = await getPageErrorInfo(
       getParam({
@@ -112,12 +112,7 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
           ]}
         />
       </div>
-      <Drawer
-        visible={showDetail}
-        title='错误信息'
-        onClose={() => setShowDetail(false)}
-        className='fe-error-detail'
-      >
+      <Drawer visible={showDetail} title="错误信息" onClose={() => setShowDetail(false)} className="fe-error-detail">
         <Descriptions bordered column={2} labelStyle={{ width: 140 }}>
           <Descriptions.Item label="错误信息" span={2}>
             {detail.d1}
@@ -140,6 +135,15 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
           <Descriptions.Item label="科室" span={2}>
             {detail.deptName}
           </Descriptions.Item>
+          <Descriptions.Item label="终端信息" span={2}>
+            {detail.terminalInfo
+              ? Object.keys(JSON.parse(detail.terminalInfo)).map((key: any) => (
+                  <div>
+                    {key}: {JSON.parse(detail.terminalInfo)[key]}
+                  </div>
+                ))
+              : ''}
+          </Descriptions.Item>
         </Descriptions>
         <div className="sub-title">堆栈信息</div>
         <div style={{ wordBreak: 'break-all' }}>{detail.d4}</div>
@@ -153,9 +157,10 @@ const ErrorTable = ({ dataSource, total, loading, getParam }: IProps) => {
       </Drawer>
       <SourceMapModal
         visible={sourceMapVisible}
+        getParam={getParam}
         onClose={() => setSourceMapVisible(false)}
         param={sourceInfo}
-        />
+      />
     </div>
   );
 };

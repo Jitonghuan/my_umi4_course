@@ -91,7 +91,9 @@ export default function RrightTrace(props: any) {
       dataIndex: 'endpointName',
       key: 'endpointName',
       width: '35%',
-      ellipsis: true,
+      ellipsis: {
+        showTitle: false
+      },
       render: (value: string) => (
         <Tooltip placement="topLeft" title={value}>
           {value}
@@ -103,7 +105,9 @@ export default function RrightTrace(props: any) {
       dataIndex: 'startTime',
       key: 'startTime',
       width: 160,
-      ellipsis: true,
+      ellipsis: {
+        showTitle: false
+      },
       render: (value: string) => (
         <Tooltip placement="topLeft" title={moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}>
           {`${moment(Number(value)).format('YYYY-MM-DD HH:mm:ss')}`}
@@ -132,7 +136,9 @@ export default function RrightTrace(props: any) {
       title: 'API',
       dataIndex: 'component',
       key: 'component',
-      ellipsis: true,
+      ellipsis: {
+        showTitle: false
+      },
       render: (value: string) => (
         <Tooltip placement="topLeft" title={value}>
           {value}
@@ -143,7 +149,9 @@ export default function RrightTrace(props: any) {
       title: 'Service',
       dataIndex: 'serviceCode',
       key: 'serviceCode',
-      ellipsis: true,
+      ellipsis: {
+        showTitle: false
+      },
       render: (value: string) => (
         <Tooltip placement="topLeft" title={value}>
           {value}
@@ -219,16 +227,8 @@ export default function RrightTrace(props: any) {
                 size="small"
                 color="blue"
                 onClick={() => {
-                  history.push({
-                    pathname: '/matrix/logger/search',
-                    search: `envCode=${envCode}&startTime=${moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss')}&traceId=${selectTraceId}`
-                    // query: {
-                    //   envCode,
-                    //   startTime: moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss'),
-                    //   endTime: moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss'),
-                    //   traceId: selectTraceId,
-                    // },
-                  });
+                  const url = `/matrix/logger/search?envCode=${envCode}&startTime=${moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss')}&endTime=${moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss')}&traceId=${selectTraceId}`
+                  window.open(url, '_blank')
                 }}
               >
                 查看日志

@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo,useLayoutEffect } from 'react';
+import { useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import moment from 'moment';
 import ResizablePro from '@/components/resiable-pro';
 import { ContentCard, } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import LeftList from './components/left-list';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import RrightTrace from './components/right-trace';
 import { Form, Select, Button, DatePicker, Divider, Input, Empty } from 'antd';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
@@ -41,8 +41,8 @@ const START_TIME_ENUMS = [
 ];
 
 export default function Tracking() {
-  let location:any = useLocation();
-  const infoRecord:any=location.state || {};
+  let location: any = useLocation();
+  const infoRecord: any = location.state || {};
   const [listData, setListData] = useState<leftItem[]>(); //左侧list数据
   const [rightData, setRightData] = useState<any>([]); //右侧渲染图的数据
   const [form] = Form.useForm();
@@ -71,7 +71,7 @@ export default function Tracking() {
   ];
 
   const btnMessage: any = useMemo(() => btnMessageList.find((item: any) => item.expand === expand), [expand]);
-  
+
   // 降噪数据前端过滤处理
   const filterData = useMemo(() => {
     const copyData = JSON.parse(JSON.stringify(rightData));
@@ -118,12 +118,12 @@ export default function Tracking() {
     // 先处理完忽略 再处理合并
     return handleMerge(filterIgnore(copyData, ignoreList), mergeList);
   }, [rightData, noiseList]);
-  useLayoutEffect(()=>{
-    if(infoRecord?.entry==="logSearch"){
+  useLayoutEffect(() => {
+    if (infoRecord?.entry === "logSearch") {
       setIsExpand(true)
 
     }
-  },[infoRecord?.entry])
+  }, [infoRecord?.entry])
   //获取环境列表
   useEffect(() => {
     getEnvs().then((res: any) => {
@@ -140,14 +140,14 @@ export default function Tracking() {
 
   useEffect(() => {
 
-    if (infoRecord?.entry==="logSearch") {
+    if (infoRecord?.entry === "logSearch") {
       setSelectEnv(infoRecord?.envCode)
-     
-    }else if(envOptions.length !== 0&&infoRecord?.entry!=="logSearch"){
+
+    } else if (envOptions.length !== 0 && infoRecord?.entry !== "logSearch") {
       setSelectEnv(envOptions[0]?.value);
     }
   }, [envOptions]);
-  
+
 
   useEffect(() => {
     if (selectEnv) {
@@ -161,13 +161,13 @@ export default function Tracking() {
   }, [selectEnv]);
 
   useEffect(() => {
-    if (!first&&infoRecord?.entry!=="logSearch") {
-     
+    if (!first && infoRecord?.entry !== "logSearch") {
+
       queryTraceList({ pageIndex: 1, pageSize: 20, });
     }
-   
+
   }, [selectTime]);
- 
+
 
   useEffect(() => {
     if (selectEnv && appID) {
@@ -176,30 +176,38 @@ export default function Tracking() {
     }
   }, [selectEnv, appID]);
 
-  
- 
-  useEffect(()=>{
-    if(infoRecord?.entry&&infoRecord?.entry==="logSearch"){
+
+
+  useEffect(() => {
+    if (infoRecord?.entry && infoRecord?.entry === "logSearch") {
       form.setFieldsValue({
-        traceID:infoRecord?.traceId,
-       // appID:infoRecord?.appCode||""
+        traceID: infoRecord?.traceId,
+        endpoint: infoRecord?.endpoint,
+        // appID:infoRecord?.appCode||""
       })
-     
+      if (infoRecord?.appId) {
+        form.setFieldsValue({
+
+          appID: infoRecord?.appId || ""
+        })
+      }
+
       setSelectTime({
-         start:moment(infoRecord?.startTime*1000)
-        , end:moment(infoRecord?.endTime*1000)
-       });
+        start: moment(infoRecord?.startTime * 1000)
+        , end: moment(infoRecord?.endTime * 1000)
+      });
+
     }
-},[infoRecord?.traceId,infoRecord?.entry,infoRecord?.startTime,infoRecord?.endTime,expand])
-useEffect(()=>{
-  if(selectEnv&&selectTime&&infoRecord?.entry==="logSearch"&&first){
+  }, [infoRecord?.traceId, infoRecord?.entry, infoRecord?.startTime, infoRecord?.endTime, expand])
+  useEffect(() => {
+    if (selectEnv && selectTime && infoRecord?.entry === "logSearch" && first) {
 
-   
-    queryTraceList({ pageIndex: 1, pageSize: 20 });
 
-  }
-  
-},[selectEnv,selectTime,])
+      queryTraceList({ pageIndex: 1, pageSize: 20 });
+
+    }
+
+  }, [selectEnv, selectTime,])
 
   // 获取右侧图的数据
   useEffect(() => {
@@ -238,7 +246,7 @@ useEffect(()=>{
   const getIns = () => {
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
-    getInstance({ envCode: selectEnv,appID: appID, start, end })
+    getInstance({ envCode: selectEnv, appID: appID, start, end })
       .then((res: any) => {
         if (res && res.success) {
           const data = res?.data?.map((item: any) => ({ ...item, value: item.key }));
@@ -259,10 +267,10 @@ useEffect(()=>{
     // setListData([]);
     setRightLoading(true);
     const values = form.getFieldsValue();
-   
+
     const start = moment(selectTime.start).format('YYYY-MM-DD HH:mm:ss');
     const end = moment(selectTime.end).format('YYYY-MM-DD HH:mm:ss');
-    getTrace({  ...values,...params,end,start, envCode: selectEnv||infoRecord?.envCode, noiseReductionIDs: getNoiseIds() })
+    getTrace({ ...values, ...params, end, start, envCode: selectEnv || infoRecord?.envCode, noiseReductionIDs: getNoiseIds() })
       .then((res: any) => {
         if (res) {
           setListData(res?.data?.dataSource);
@@ -278,7 +286,7 @@ useEffect(()=>{
       })
       .finally(() => {
         setLoading(false);
-        
+
         // setRightLoading(false)
       });
   };
@@ -396,22 +404,22 @@ useEffect(()=>{
                 pageIndex: 1,
                 pageSize: 20,
               });
-              if(infoRecord?.entry==="logSearch"){
+              if (infoRecord?.entry === "logSearch") {
                 history.replace({
-                  pathname:"/matrix/trafficmap/tracking",
-                  
-                },{})
+                  pathname: "/matrix/trafficmap/tracking",
+
+                }, {})
 
               }
             }}
             onReset={() => {
               form.resetFields();
               setCurrentItem({});
-              if(infoRecord?.entry==="logSearch"){
+              if (infoRecord?.entry === "logSearch") {
                 history.replace({
-                  pathname:"/matrix/trafficmap/tracking",
-                  
-                },{})
+                  pathname: "/matrix/trafficmap/tracking",
+
+                }, {})
 
               }
               queryTraceList({
@@ -420,7 +428,7 @@ useEffect(()=>{
               });
             }}
           >
-            { expand && (
+            {expand && (
               <Form.Item label="应用" name="appID">
                 <Select
                   value={appID}

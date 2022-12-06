@@ -8,13 +8,13 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import RulesTable from './_components/rules-table';
 import { useAppOptions, useStatusOptions, useEnvListOptions } from './hooks';
-import useTable from '@/utils/useTable';
+import { useLocation } from 'umi';
 import { queryGroupList, queryRulesList } from '../basic/services';
-import { UpOutlined, DownOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import useRequest from "@/utils/useRequest";
-import UserSelector from "@/components/user-selector";
+import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
+import useRequest from '@/utils/useRequest';
+import UserSelector from '@/components/user-selector';
 import './index.less';
-import { getRequest } from "@/utils/request";
+import { getRequest } from '@/utils/request';
 
 const rulesOptions = [
   {
@@ -35,6 +35,8 @@ const rulesOptions = [
 ];
 
 export default function AlarmRules() {
+  let location = useLocation();
+  const curRecord: any = location.state || {};
   const [searchRulesForm] = Form.useForm();
   const [statusOptions] = useStatusOptions();
   const [appOptions] = useAppOptions();
@@ -42,9 +44,26 @@ export default function AlarmRules() {
   const [expand, setExpand] = useState(false);
   const [groupData, setGroupData] = useState<any[]>([]);
   const [tableProps, setTableProps] = useState<any>({});
-
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
+  const [pageInfo,setPageInfo]=useState<any>({
+    pageIndex:1,
+    total:0,
+    pageSize:20,
+  })
+  useEffect(()=>{
+    // if(!curRecord?.appID) return
+    if (curRecord?.appCode && curRecord?.envCode) {
+      setCurrentEnvType(curRecord?.envTypeCode);
+      setCurrentEnvCode(curRecord?.envCode);
+      searchRulesForm.setFieldsValue({
+        appCode: curRecord?.appCode,
+      });
+      queryList({
+        envCode: curRecord?.envCode,
+      });
+    }
+  }, []);
 
   const envTypeData = [
     {
@@ -65,20 +84,31 @@ export default function AlarmRules() {
     },
   ]; //环境大类
 
-  const queryList = async (page?: any) => {
+  const queryList = async (params?: { page?: any; envCode?: string }) => {
     const param = await searchRulesForm.getFieldsValue();
     const res = await getRequest(queryRulesList, {
       data: {
         ...param,
-        pageIndex: page?.pageIndex || 1,
-        pageSize: page?.pageSize || 20,
-        envCode: currentEnvCode
-      }
-    })
+        pageIndex: params?.page?.pageIndex || 1,
+        pageSize: params?.page?.pageSize || 20,
+        envCode: currentEnvCode || params?.envCode,
+      },
+    });
     if (res?.success) {
       setTableProps(res.data);
+      setPageInfo(res?.data?.pageInfo)
+    }else{
+      setTableProps({
+        dataSource:[]
+      });
+      setPageInfo({
+        pageIndex:1,
+         total:0,
+         pageSize:20,
+
+      })
     }
-  }
+  };
 
   //分类
   const { run: groupList } = useRequest({
@@ -99,10 +129,10 @@ export default function AlarmRules() {
   useEffect(() => {
     void groupList();
     void queryList();
-  }, [])
+  }, []);
 
   return (
-    <PageContainer>
+    <PageContainer style={{ padding: 0 }}>
       <FilterCard>
         <Form
           layout="inline"
@@ -149,26 +179,24 @@ export default function AlarmRules() {
           <Form.Item label="状态" name="status">
             <Select showSearch allowClear style={{ width: 120 }} options={statusOptions} />
           </Form.Item>
-          {
-            expand && (
-              <>
-                <Form.Item label="分类" name="group">
-                  <Select options={groupData} placeholder="请选择" style={{ width: '245px' }} allowClear />
+          {expand && (
+            <>
+              <Form.Item label="分类" name="group">
+                <Select options={groupData} placeholder="请选择" style={{ width: '245px' }} allowClear />
+              </Form.Item>
+              <Form.Item label="级别" name="level">
+                <Select options={rulesOptions} placeholder="请选择" style={{ width: '170px' }} allowClear />
+              </Form.Item>
+              <Form.Item label="通知对象" name="receiver">
+                <UserSelector style={{ width: '380px' }} />
+              </Form.Item>
+              <Row>
+                <Form.Item label="表达式" name="expression">
+                  <Input style={{ width: '460px' }} />
                 </Form.Item>
-                <Form.Item label="级别" name="level">
-                  <Select options={rulesOptions} placeholder="请选择" style={{ width: '170px' }} allowClear />
-                </Form.Item>
-                <Form.Item label="通知对象" name="receiver">
-                  <UserSelector style={{ width: '380px' }} />
-                </Form.Item>
-                <Row>
-                  <Form.Item label="表达式" name="expression">
-                    <Input style={{ width: '460px' }} />
-                  </Form.Item>
-                </Row>
-              </>
-            )
-          }
+              </Row>
+            </>
+          )}
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -176,7 +204,7 @@ export default function AlarmRules() {
             </Button>
           </Form.Item>
           <Form.Item>
-            <Button type="ghost" htmlType="reset" >
+            <Button type="ghost" htmlType="reset">
               重置
             </Button>
           </Form.Item>
@@ -187,13 +215,23 @@ export default function AlarmRules() {
               }}
               style={{ marginRight: '10px' }}
             >
-              {expand ? <><CaretUpOutlined />收起更多</> : <><CaretDownOutlined />更多查询</>}
+              {expand ? (
+                <>
+                  <CaretUpOutlined />
+                  收起更多
+                </>
+              ) : (
+                <>
+                  <CaretDownOutlined />
+                  更多查询
+                </>
+              )}
             </a>
           </Form.Item>
         </Form>
       </FilterCard>
       <ContentCard>
-        <RulesTable dataSource={tableProps} onQuery={queryList} />
+        <RulesTable dataSource={tableProps} onQuery={queryList} pageInfo={pageInfo} setPageInfo={setPageInfo}/>
       </ContentCard>
     </PageContainer>
   );

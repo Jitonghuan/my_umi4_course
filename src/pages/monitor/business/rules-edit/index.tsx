@@ -5,6 +5,7 @@ import EditorTable from "@cffe/pc-editor-table";
 import { rulesCreate, rulesUpdate, queryGroupList } from '@/pages/monitor/business/service';
 import { getRequest, postRequest, putRequest } from "@/utils/request";
 import { stepTableMap, formatTableDataMap } from "@/pages/monitor/basic/util";
+import { getEnvCodeList } from '../../basic/services';
 import moment from "moment";
 
 const { TextArea } = Input;
@@ -20,6 +21,28 @@ interface IPros {
   envCode: string;
 }
 
+const envTypeData = [
+  {
+    key: 'dev',
+    label: 'DEV',
+    value: 'dev',
+  },
+  {
+    key: 'test',
+    label: 'TEST',
+    value: 'test',
+  },
+  {
+    key: 'pre',
+    label: 'PRE',
+    value: 'pre',
+  },
+  {
+    key: 'prod',
+    label: 'PROD',
+    value: 'prod',
+  },
+]; //环境大类
 const rulesOptions = [
   {
     key: 2,
@@ -82,6 +105,7 @@ const RulesEdit = (props: IPros) => {
   const [loading, setLoading] = useState(false);
   const [groupData, setGroupData] = useState<any[]>([]);
   const [form] = Form.useForm();
+  const [clusterEnvOptions, setClusterEnvOptions] = useState<any[]>([]);
 
   const getGroupList = async () => {
     const res = await getRequest(queryGroupList);
@@ -115,7 +139,7 @@ const RulesEdit = (props: IPros) => {
       duration: `${params.duration}${unit}`,
       bizMonitorId,
       bizMonitorType,
-      envCode
+      envCode:bizMonitorType==="netProbe"?params?.envCode:envCode
     }
     if (params?.silence) {
       data.silenceStart = moment(params.silenceStart).format('HH:mm');
@@ -187,6 +211,23 @@ const RulesEdit = (props: IPros) => {
       void getGroupList();
     }
   }, [visible]);
+  const queryEnvCodeList = async (envTypeCode: string) => {
+    await getRequest(getEnvCodeList, {
+      data: { envTypeCode },
+    }).then((resp) => {
+      if (resp?.success) {
+        let data = resp?.data;
+        let envOptions: any = [];
+        data?.map((item: any) => {
+          envOptions.push({
+            label: item.envCode,
+            value: item.envCode,
+          });
+        });
+        setClusterEnvOptions(envOptions);
+      }
+    });
+  };
 
   return (
     <Drawer
@@ -215,6 +256,27 @@ const RulesEdit = (props: IPros) => {
         <Form.Item label="告警分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
           <Select placeholder="请选择" options={groupData} />
         </Form.Item>
+        {bizMonitorType==="netProbe"&&( <Form.Item label="环境分类" name="envTypeCode" required={true}>
+          <Select
+            showSearch
+            allowClear
+            options={envTypeData}
+            style={{ width: '400px' }}
+            onChange={(e: string) => {
+             // setEnvTypeCode(e);
+              queryEnvCodeList(e);
+            }}
+          />
+        </Form.Item>)}
+        {bizMonitorType==="netProbe"&&(  <Form.Item label="选择环境" name="envCode" rules={[{ required: true, message: '请选择集群环境！' }]}>
+          <Select
+            options={clusterEnvOptions}
+            style={{ width: '400px' }}
+            placeholder="选择监控的集群环境"
+            showSearch
+            allowClear
+          />
+        </Form.Item>)}
         <Form.Item
           label="告警表达式(PromQl)"
           name="expression"

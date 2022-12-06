@@ -8,7 +8,8 @@
  */
 import React, {useState, useEffect, useCallback } from 'react';
 import * as monaco from 'monaco-editor';
-import {Space} from 'antd';
+import {Space,Spin,message} from 'antd';
+import _ from "lodash";
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
 import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql';
@@ -38,6 +39,9 @@ export interface Iprops {
   tableFields?: any;
   implementDisabled: boolean;
   isGoback?: boolean;
+  sqlLoading?:boolean;
+  executLoading?:boolean;
+  actionDisabled?:boolean
 
 
 }
@@ -60,11 +64,15 @@ export default function SqlEditor(props: Iprops) {
     isSubChangeBtn,
     isSqlCheckBtn,
     subChange,
-    subSqlChange
+    subSqlChange,
+    sqlLoading,
+    executLoading,
+    actionDisabled=false
   } = props;
   const [instance, setInstance] = useState<editor.IStandaloneCodeEditor | undefined>(undefined);
   const rootCls = 'monaco-sql-editor-title';
   const [getVal, setGetVal] = useState<any>();
+  const [count,setCount]=useState<number>(0)
   let divNode: any;
   const codeContainerRef = useCallback((node: any) => {
     // On mount get the ref of the div and assign it the divNode
@@ -73,7 +81,6 @@ export default function SqlEditor(props: Iprops) {
   let completeProvider: any
   useEffect(() => {
     if (divNode) {
-      console.log("-----第三个页面filedsvalue------",tableFields,"000000", registerCompletion())
       registerCompletion();
       const monacoEditor = monaco.editor.create(divNode, {
         autoIndent: "keep",
@@ -117,8 +124,6 @@ export default function SqlEditor(props: Iprops) {
   }, [initValue, instance])
   useEffect(() => {
     if (instance && tableFields) {
-      console.log("第三个页面监听位置")
-    
       registerCompletion()
     }
   }, [initValue, tableFields])
@@ -256,27 +261,56 @@ export default function SqlEditor(props: Iprops) {
     <div className="monaco-sql-editor-content">
       <div className="monaco-sql-editor-title">
         <Space className={`${rootCls}-wrapper`}>
-          {isSqlExecuteBtn && !implementDisabled && <span className={`${rootCls}-btn`} id="one" onClick={() => {
+          
+          {isSqlExecuteBtn &&!actionDisabled&& !implementDisabled && <span className={`${rootCls}-btn`} id="one" onClick={() => {
+            
               getSelectionVal();
               if( getSelectionVal()){
+                //@ts-ignore
                 subChange({ sqlContent:  getSelectionVal() || "", sqlType: "query" })
-                console.log("---- getSelectionVal()", getSelectionVal())
+                // _.throttle( function(){  subChange({ sqlContent:  getSelectionVal() || "", sqlType: "query" })} ,3000,{
+                //   leading: true,
+                //   trailing: false
+                // })
+               
+              
 
               }else{
+                 //@ts-ignore
                 subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
+                // _.throttle( function(){ subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })} ,3000,{
+                //   leading: true,
+                //   trailing: false
+                // })
+                
               }
              
-           // subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
+          
           }}>执行</span>}
-          {isSqlExecuteBtn && implementDisabled && <span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>}
+          {isSqlExecuteBtn &&actionDisabled?<span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>:isSqlExecuteBtn &&!actionDisabled&& implementDisabled ?<span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>:null}
+          {/* {isSqlExecuteBtn &&!actionDisabled&& implementDisabled && <span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>} */}
           {isSqlBueatifyBtn && <span className={`${rootCls}-btn`} id="three" onClick={formatSql}>sql美化</span>}
           {isSqlCheckBtn && <span className={`${rootCls}-btn`} id="two" onClick={() => {
+             //@ts-ignore
             sqlCheck(instance?.getValue() || "")
+            setCount(count=>count+1)
           }}>sql检测</span>}
           {/* {isSqlExecutePlanBtn&&<span className={`${rootCls}-btn`} id="four" onClick={()=>{subChange({sqlContent:instance?.getValue()||"",sqlType:"explain"})}}>执行计划</span>}  */}
-          {isSubChangeBtn && <span className={`${rootCls}-btn`} id="fifth" onClick={() => {
-            subSqlChange({ sqlContent: instance?.getValue() || "" })
-          }}>提交变更</span>}
+          {isSubChangeBtn &&<Spin spinning={sqlLoading}>
+            <span className={`${rootCls}-btn`} id="fifth" onClick={() => {
+             
+              
+               if(count===0){
+                 message.warning("请进行sql检测后再提交")
+                 return
+
+               }
+                 //@ts-ignore
+               subSqlChange({ sqlContent: instance?.getValue() || "" })
+               setCount(0)
+           
+         
+          }}>提交变更</span></Spin >}
           {isGoback && <span className={`${rootCls}-back-btn`} id="back" onClick={() => {
             history.push(
               {
