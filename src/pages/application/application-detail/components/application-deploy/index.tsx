@@ -39,7 +39,7 @@ export default function ApplicationDeploy(props: any) {
       : window.location.href.includes('matrix-base-poc')
         ? 'prod'
         : '';
-  const [tabActive, setTabActive] = useState(
+  const [tabActive, setTabActive] = useState<any>(
     query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
   );
 
@@ -235,12 +235,13 @@ export default function ApplicationDeploy(props: any) {
                 onChange={handleChange}
                 options={pipelineOption}
               />
-              <SettingOutlined
+              {tabActive!=="version"&& <SettingOutlined
                 style={{ marginLeft: '10px' }}
                 onClick={() => {
                   setVisible(true);
                 }}
-              />
+              />}
+             
             </span>
           </div>
         }
@@ -266,6 +267,7 @@ export default function ApplicationDeploy(props: any) {
                 envTypeCode={item.value}
                 pipelineCode={currentValue}
                 visible={visible}
+                appData={appData}
               />
             }
           </TabPane>

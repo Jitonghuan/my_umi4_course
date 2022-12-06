@@ -3,10 +3,10 @@ import { Tag, Button, Table, Space, Tooltip, Popconfirm } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
 import detailContext from '../../context';
-import {demandStatusTypes} from './type'
+import { demandStatusTypes } from './type'
 import { releaseDemandRel, deleteDemand } from '../../../service';
 export default forwardRef(function ContentList(props: any) {
-    const { tableData, tableLoading, onSave, filter } = props;
+    const { tableData, tableLoading, onSave, filter, detailInfo } = props;
     const [type, setType] = useState<string>('hide');
     const { categoryCode, releaseId } = useContext(detailContext);
     const demandTotal = useMemo(() => (tableData || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [tableData])
@@ -37,8 +37,8 @@ export default forwardRef(function ContentList(props: any) {
             title: '版本需求状态',
             dataIndex: 'demandStatus',
             width: 120,
-            render:(value: string)=><span style={{color:demandStatusTypes[value]?.color ||"gray"}}>
-                
+            render: (value: string) => <span style={{ color: demandStatusTypes[value]?.color || "gray" }}>
+
                 {value}</span>
         },
         {
@@ -124,15 +124,23 @@ export default forwardRef(function ContentList(props: any) {
             ></Table>
             <div className='flex-end'>
                 <Space>
-                    <Button type='primary' onClick={() => { setType('demand') }}>
+
+
+                    <Button type='primary' disabled={detailInfo?.locked === 1} onClick={() => { setType('demand') }}>
                         关联需求
-                </Button>
-                    <Button type='primary' onClick={() => { setType('bug') }}>
+                         </Button>
+                    <Button type='primary' disabled={detailInfo?.locked === 1} onClick={() => { setType('bug') }}>
                         关联bug
-                </Button>
-                    <Button type='primary'>
+                         </Button>
+
+
+
+                    {detailInfo?.locked === 1 ? <Button type='primary'>
+                        解除锁定
+                </Button> : <Button type='primary'>
                         锁定需求
-                </Button>
+                </Button>}
+
                 </Space>
             </div>
         </>

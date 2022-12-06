@@ -271,7 +271,7 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
           </>
         </Tabs.TabPane>
           {/* 发布版本 */}
-        {versionData?.length>0&&(
+        {versionData?.length>0&&env!=="prod"&&(
 
         <Tabs.TabPane tab='待发布版本' key='version'>
         <>

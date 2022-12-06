@@ -1,14 +1,14 @@
 
 export const statusMap: any = {
-    developing: { label: '版本开发', color: 'blue' },
-    waitPack: { label: '等待发版', color: 'geekblue' },
+    developing: { label: '版本开发', color: "#209EA5"},
+    waitPack: { label: '等待发版', color: "#209EA5" },
     packing: { label: '正在打包', color: 'green' },
     packError: { label: '打包出错', color: 'red' },
-    packFinish: { label: '发版完成', color: 'purple' },
-    disable: { label: '版本禁用', color: 'volcano' },
+    packFinish: { label: '发版完成', color: "#58A55C" },
+    disable: { label: '版本禁用', color: 'red' },
     mergeError: { label: '合并错误', color: 'red' },
-    merged: { label: '版本合并', color: 'cyan' },
-    merging: { label: '版本合并中', color: 'lime' }
+    merged: { label: '版本合并', color: "#A19530" },
+    merging: { label: '版本合并中', color: '#A19530' }
 }
 
 export interface UpdateItems{
