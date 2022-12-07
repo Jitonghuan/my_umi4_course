@@ -78,11 +78,11 @@ export default function VersionDeploy(props: Iprops) {
                 <Descriptions.Item label="变更配置"><a onClick={()=>{
                     setInfoVisible(true)
                     setType('config')
-                }}>{Object.keys(infoDetail?.config)?.length ||'--'}</a> </Descriptions.Item>
+                }}>{1}</a> </Descriptions.Item>
                 <Descriptions.Item label="变更SQL" > <a onClick={()=>{
                     setInfoVisible(true)
                     setType('sql')
-                }}>{Object.keys(infoDetail?.sql)?.length ||'--'}</a></Descriptions.Item>
+                }}>{1}</a></Descriptions.Item>
                 <Descriptions.Item label="版本TAG"> {infoDetail?.tag||'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布人"> {infoDetail?.createUser||'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布时间"> 
@@ -95,8 +95,10 @@ export default function VersionDeploy(props: Iprops) {
 
             </Spin>
            
-       <Modal title="变更详情" visible={infoVisible} width={700} >
-           <AceEditor readOnly height={500} />
+       <Modal title="变更详情" visible={infoVisible} width={700} footer={false} onCancel={()=>{setInfoVisible(false)}} >
+           <AceEditor readOnly height={400} mode={type==="sql"?'sql':"yaml"} defaultValue={
+               type==="sql"&&infoDetail?.sql?infoDetail?.sql:type==="config"&&infoDetail?.config?infoDetail?.config:""
+           } />
 
        </Modal>
         </div>
