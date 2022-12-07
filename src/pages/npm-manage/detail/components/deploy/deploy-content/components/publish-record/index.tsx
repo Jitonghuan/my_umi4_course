@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, List, Tag, Descriptions, Table } from 'antd';
+import { Modal, Button, List, Tag, Descriptions, Table, Tabs, Spin } from 'antd';
 import { recordDisplayMap } from './schema';
 import moment from 'moment';
+import axios from 'axios';
+import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 import { IProps, IRecord } from './types';
+import appConfig from '@/app.config';
 import { queryRecordApi } from '@/pages/npm-manage/detail/server';
 import { usePaginated } from '@cffe/vc-hulk-table';
 import './index.less';
@@ -15,6 +18,12 @@ export default function PublishRecord(props: IProps) {
   const [curRecord, setcurRecord] = useState<IRecord>({});
   const [visible, setVisible] = useState<boolean>(false);
   const [intervalId, setIntervalId] = useState<any>(null);
+  const [depVisible, setDepVisible] = useState<boolean>(false);
+  const [npmJson, setNpmJson] = useState('');
+  const [originNpmJson, setOriginNpmJson] = useState('');
+  const [curVersion, setCurVersion] = useState('');
+  const [lastVersion, setLastVersion] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     run: queryDataSource,
@@ -81,6 +90,36 @@ export default function PublishRecord(props: IProps) {
     setcurRecord(record);
   };
 
+  async function showDepDetail(item: any, i: number) {
+    let data = tableProps.dataSource?.filter((v) => v?.envTypeCode === env) || [];
+    let res = null;
+    let originRes = null;
+    setNpmJson('');
+    setOriginNpmJson('');
+    setLastVersion('');
+    setCurVersion(item.version);
+    setDepVisible(true);
+    setLoading(true);
+    try {
+      res = await axios.get(
+        `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/fe-npm/${npmName}/${item.version}/npm-tile.json`,
+      );
+      setNpmJson(res?.data ? JSON.stringify(res.data, null, 4) : '');
+    } catch (e) {}
+
+    try {
+      let lastItem = data.find((val, j) => val.deployStatus === 'finish' && j > i);
+      setLastVersion(lastItem?.version || '');
+      if (lastItem) {
+        originRes = await axios.get(
+          `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/fe-npm/${npmName}/${lastItem.version}/npm-tile.json`,
+        );
+        setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, 4) : '');
+      }
+    } catch (e) {}
+    setLoading(false);
+  }
+
   const getJenkinsUrl = (record: any) => {
     let jenkinsUrl = record?.jenkinsUrl ? JSON.parse(record.jenkinsUrl) : {};
     return jenkinsUrl?.singleBuild || '';
@@ -97,7 +136,7 @@ export default function PublishRecord(props: IProps) {
             itemLayout="vertical"
             loadMore={renderLoadMore()}
             dataSource={tableProps.dataSource?.filter((v) => v?.envTypeCode === env) as IRecord[]}
-            renderItem={(item) => (
+            renderItem={(item, i) => (
               <List.Item>
                 <div>
                   <label>发布人: </label>
@@ -114,14 +153,19 @@ export default function PublishRecord(props: IProps) {
                 <div>
                   <label>发布状态: </label>
                   {
-                    <Tag color={recordDisplayMap[item?.deployStatus]?.color||"red"}>
-                      {recordDisplayMap[item?.deployStatus]?.text||"--"}
+                    <Tag color={recordDisplayMap[item?.deployStatus]?.color || 'red'}>
+                      {recordDisplayMap[item?.deployStatus]?.text || '--'}
                     </Tag>
                   }
                 </div>
                 <a style={{ marginTop: '5px' }} onClick={() => handleShowDetail(item)}>
                   详情
                 </a>
+                {appConfig.IS_Matrix === 'public' && (
+                  <a style={{ marginLeft: '10px' }} onClick={() => showDepDetail(item, i)}>
+                    依赖
+                  </a>
+                )}
               </List.Item>
             )}
           />
@@ -149,8 +193,8 @@ export default function PublishRecord(props: IProps) {
           </Descriptions.Item>
           <Descriptions.Item label="发布状态">
             {
-              <Tag color={recordDisplayMap[curRecord?.deployStatus]?.color||"red"}>
-                {recordDisplayMap[curRecord?.deployStatus]?.text||"--"}
+              <Tag color={recordDisplayMap[curRecord?.deployStatus]?.color || 'red'}>
+                {recordDisplayMap[curRecord?.deployStatus]?.text || '--'}
               </Tag>
             }
           </Descriptions.Item>
@@ -183,6 +227,42 @@ export default function PublishRecord(props: IProps) {
           />
         </div>
       </Modal>
+      {depVisible && (
+        <Modal title="依赖详情" width={1000} visible={depVisible} footer={false} onCancel={() => setDepVisible(false)}>
+          <Tabs>
+            <Tabs.TabPane tab="版本对比" key="0">
+              <Spin spinning={loading}>
+                {!loading && (
+                  <ReactDiffViewer
+                    oldValue={originNpmJson}
+                    newValue={npmJson}
+                    splitView={true}
+                    compareMethod={DiffMethod.WORDS}
+                    styles={{
+                      variables: {
+                        light: {
+                          codeFoldGutterBackground: '#6F767E',
+                          codeFoldBackground: '#E2E4E5',
+                        },
+                      },
+                    }}
+                    leftTitle={`上一次版本：${lastVersion}`}
+                    rightTitle={`当前版本：${curVersion}`}
+                  />
+                )}
+              </Spin>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="依赖详情" key="1">
+              <a
+                target="_blank"
+                href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/fe-npm/${npmName}/${curVersion}/npm.json`}
+              >
+                查看
+              </a>
+            </Tabs.TabPane>
+          </Tabs>
+        </Modal>
+      )}
     </div>
   );
 }
