@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext, useMemo, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, useContext, useMemo, forwardRef,} from 'react';
 import { Tag, Button, Table, Space, Tooltip, Popconfirm, message, Spin } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
 import detailContext from '../../context';
 import { debounce } from 'lodash';
-import { releaseAppRel, releaseDemandRel, deleteDemand, updateRelease } from '../../../service';
+import { releaseDemandRel, deleteDemand, updateRelease } from '../../../service';
 import { demandStatusTypes } from './type'
 import { UpdateItems } from '../../../type'
 
@@ -24,10 +24,10 @@ export default forwardRef(function ContentList(props: Iprops) {
     const { categoryCode, releaseId } = useContext(detailContext);
     const [dataSource, setDataSource] = useState<any>([])
     const [loading, setLoading] = useState<boolean>(false)
-    const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [JSON.stringify(dataSource)])
-    const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [JSON.stringify(dataSource)])
     const [originData, setOriginData] = useState<any>([]);
     const filter = debounce((value) => filterData(value), 500)
+    const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [JSON.stringify(dataSource)])
+    const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [JSON.stringify(dataSource)])
 
     const filterData = (value: string) => {
         if (!value) {

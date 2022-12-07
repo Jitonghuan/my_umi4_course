@@ -1,11 +1,10 @@
-import React, { useMemo, useState, useEffect, useContext,} from 'react';
-import { Select, Descriptions, Tabs, Space, Spin } from 'antd';
+import React, { useMemo, useState, useEffect, useContext, } from 'react';
+import { Select, Descriptions, Tabs, Space, Spin ,Empty} from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import './index.less';
-import { Button} from 'antd';
+import { Button } from 'antd';
 import { FeContext } from '@/common/hooks';
-import { history} from 'umi';
+import { history } from 'umi';
 import { parse, stringify } from 'query-string';
 import ModifyApp from './component/modify-app';
 import ContentList from './component/content-list';
@@ -14,11 +13,12 @@ import ModifySql from './component/modify-sql'
 import detailContext from './context';
 import { releaseAppRel } from '../service';
 import { useReleaseOption } from '../hook';
-import { getReleaseList} from '../service';
+import { getReleaseList } from '../service';
 import OperateModal from '../version-list/operate-modal';
 import { RedoOutlined } from '@ant-design/icons';
 import { statusMap } from '../type';
 import moment from 'moment';
+import './index.less';
 
 const { TabPane } = Tabs;
 const getLocalCategory = () => (sessionStorage.getItem('version-detail-category') ? JSON.parse(sessionStorage.getItem('version-detail-category') as any) : {})
@@ -36,9 +36,15 @@ export default function VersionDetail() {
     const [initData, setInitData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
     const [tableLoading, setTableLoading] = useState<boolean>(false);
-    const [count,setCount]=useState<number>(0)
+    const [count, setCount] = useState<number>(0)
     const [originData, setOriginData] = useState<any>([]);
     const [dataSource, setDataSource] = useState<any>([])
+    const TabList = [
+        { label: '内容列表', key: 'list', component: ContentList },
+        { label: '变更应用', key: 'app', component: ModifyApp },
+        { label: '变更配置', key: 'config', component: ModifyConfig },
+        { label: '变更SQL', key: 'sql', component: ModifySql },
+    ]
 
     const versionChange = (v: any) => {
         if (!v) {
@@ -76,23 +82,18 @@ export default function VersionDetail() {
         if (selectVersion?.value && appCategory?.value) {
             queryData(selectVersion.label, appCategory.value)
         }
-        if(selectVersion?.value ){
+        if (selectVersion?.value) {
             getDataSource(selectVersion.value)
         }
-        
-    }, [appCategory?.value, selectVersion?.label,selectVersion?.value])
-    useEffect(()=>{
-        return()=>{
+
+    }, [appCategory?.value, selectVersion?.label, selectVersion?.value])
+    useEffect(() => {
+        return () => {
             setCount(0)
         }
-    },[])
+    }, [])
 
-    const TabList = [
-        { label: '内容列表', key: 'list', component: ContentList },
-        { label: '变更应用', key: 'app', component: ModifyApp },
-        { label: '变更配置', key: 'config', component: ModifyConfig },
-        { label: '变更SQL', key: 'sql', component: ModifySql },
-    ]
+
 
     const GetComponent = useMemo(() => TabList.find((e: any) => e.key === activeTab)?.component, [activeTab]) as any
 
@@ -142,7 +143,7 @@ export default function VersionDetail() {
 
         })
     }
-    
+
 
     return (
         <PageContainer className='version-detail-page'>
@@ -181,6 +182,7 @@ export default function VersionDetail() {
                             ></Select>
                         </div>
                     </Space>
+
                     <div className='right-text-container'>
                         <div>
                             <span className='grey-text'>当前版本：</span>
@@ -192,15 +194,16 @@ export default function VersionDetail() {
                         </div>
                     </div>
                 </div>
-                <Spin spinning={loading}>
+                {!selectVersion?.value ?<Empty  description={"该应用下无版本号，暂无数据"}/>:<div>
+                    <Spin spinning={loading}>
                     <Descriptions title="概述" bordered column={4} extra={
                         <Button
-                          type="primary"
+                            type="primary"
                             icon={<RedoOutlined />}
                             onClick={() => {
                                 queryData();
                                 getDataSource()
-                                setCount(count=>count+1)
+                                setCount(count => count + 1)
                             }}
                             size="small"
                         >
@@ -210,7 +213,7 @@ export default function VersionDetail() {
                         <Descriptions.Item label="版本号">{data?.releaseNumber || '--'}</Descriptions.Item>
                         <Descriptions.Item label="应用分类">{data?.categoryCode || '--'}</Descriptions.Item>
                         <Descriptions.Item label="版本负责人">{data?.owner || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="版本状态"><span style={{color:statusMap[data?.status]?.color||"gray"}}>{data.status ? statusMap[data?.status]?.label : '--'}</span></Descriptions.Item>
+                        <Descriptions.Item label="版本状态"><span style={{ color: statusMap[data?.status]?.color || "gray" }}>{data.status ? statusMap[data?.status]?.label : '--'}</span></Descriptions.Item>
                         <Descriptions.Item label="创建时间">{moment(data?.gmtCreate).format("YYYY-MM-DD HH:mm:ss") || '--'}</Descriptions.Item>
                         <Descriptions.Item label="计划发版本时间">{data?.planTime || '--'}</Descriptions.Item>
                         <Descriptions.Item label="发版时间">{data?.finishTime || '--'}</Descriptions.Item>
@@ -231,18 +234,20 @@ export default function VersionDetail() {
                     <detailContext.Provider
                         value={{ releaseId: selectVersion?.value || '', categoryCode: appCategory?.value || '', categoryName: appCategory?.label || '' }}
                     >
-                        <GetComponent 
-                        activeTab={activeTab} 
-                        detailInfo={data} 
-                        infoLoading={tableLoading}
-                        count={count}
-                        dataSource={dataSource}
-                        setDataSource={setDataSource}
-                        originData={originData}
-                        onReload={  queryData}/>
+                        <GetComponent
+                            activeTab={activeTab}
+                            detailInfo={data}
+                            infoLoading={tableLoading}
+                            count={count}
+                            dataSource={dataSource}
+                            setDataSource={setDataSource}
+                            originData={originData}
+                            onReload={queryData} />
                     </detailContext.Provider>
                 </div>
 
+                    </div>}
+         
             </ContentCard>
         </PageContainer >
     )

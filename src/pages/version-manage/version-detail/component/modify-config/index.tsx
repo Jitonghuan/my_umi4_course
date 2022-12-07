@@ -149,7 +149,7 @@ export default function ModifyConfig(props:Iprops) {
                     
                   </div>
 
-                  {total > 2 && (
+                  {/* {total > 2 && (
                     <div className={`pagination-wrap`}>
                       <Pagination
                         pageSize={pageSize}
@@ -164,7 +164,7 @@ export default function ModifyConfig(props:Iprops) {
                         onChange={pageSizeClick}
                       />
                     </div>
-                  )}
+                  )} */}
         </>
     )
 }
