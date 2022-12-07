@@ -7,6 +7,7 @@
 
  import React, { useState, useEffect, useContext } from 'react';
  import { Modal,List, Descriptions,Tag } from 'antd';
+ import AceEditor from '@/components/ace-editor';
  import DetailContext from '@/pages/application/application-detail/context';
  import moment from 'moment';
  import { getAppPublishList } from '../../../service';;
@@ -124,8 +125,17 @@
       
         {curRecord?.gmtCreate ? moment(curRecord?.gmtCreate).format('YYYY-MM-DD HH:mm') : ''}
         </Descriptions.Item>
-      <Descriptions.Item label="变更配置">{curRecord?.config}</Descriptions.Item>
-      <Descriptions.Item label="变更SQL">{curRecord?.sql}</Descriptions.Item>
+      <Descriptions.Item label="变更配置">
+        <div style={{height:200,width:'100%'}}>
+        <AceEditor readOnly height={200} mode="yaml" defaultValue={curRecord?.config?curRecord?.config:""}/>
+        </div>
+       
+        </Descriptions.Item>
+      <Descriptions.Item label="变更SQL">
+      <div style={{height:200,width:'100%'}}>
+      <AceEditor readOnly height={200} mode="sql" defaultValue={curRecord?.sql?curRecord?.sql:""} />
+      </div>
+      </Descriptions.Item>
       </Descriptions>
 
        </div>
