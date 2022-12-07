@@ -1,5 +1,6 @@
 import { Popconfirm, Tooltip,Tag } from 'antd';
 import { statusMap } from '../type';
+import { dateCellRender } from '@/utils';
 export const listSchema = (params:{ 
     toDetail:(record: any, toTab: string) => void;
     downloadVersion:(record: any,) => void;
@@ -148,28 +149,30 @@ export const downloadList = () => {
     return [
         {
             title: '序号',
-            dataIndex: '',
+            dataIndex: "indexNumber",
             width: 40,
             ellipsis: true,
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '下载人',
-            dataIndex: 'id',
+            dataIndex: 'createUser',
             width: 80,
             ellipsis: true,
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
         },
         {
             title: '下载时间',
-            dataIndex: 'time',
+            dataIndex: 'gmtCreate',
             width: 100,
             ellipsis: true,
-            render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
+            render: (value: any, record: any) => {
+                return dateCellRender(value);
+              },
         },
         {
             title: '下载目的',
-            dataIndex: 'id',
+            dataIndex: 'reason',
             width: 240,
             ellipsis: true,
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,

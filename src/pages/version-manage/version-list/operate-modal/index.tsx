@@ -2,17 +2,16 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Drawer, Tag, Form, Button, Table, Modal, Input, Switch, Radio, Select, Space,message } from 'antd';
 import { downloadList } from '../schema';
 import { useReleaseModalOption } from '../../hook';
-import {downLoadUrl,releaseMerge} from '../../service'
+import {downLoadUrl,releaseMerge,getReleaseDownloadList} from '../../service'
 import './index.less';
 
 export default function OperateModal(props: any) {
     const { visible, onClose, action, initData, appCategory ,onSave} = props;
-    const [data, setData] = useState<any>([]);
     const [releaseOptions] = useReleaseModalOption({ id:initData?.id,visible });
-    const [value, setValue] = useState<any>();
     const [downLoadForm] = Form.useForm();
     const [form] = Form.useForm();
-    const [loading,setLoading]=useState<boolean>(false)
+    const [loading,setLoading]=useState<boolean>(false);
+    const [downLoadTableSource,setDownLoadTableSource]=useState<any>([])
     
 
     useEffect(() => {
@@ -20,8 +19,27 @@ export default function OperateModal(props: any) {
             form.resetFields();
         }
     }, [visible]);
+    useEffect(()=>{
+        if(action === 'downloadList'&&visible){
+            getReleaseDownloadList(initData?.id).then((res)=>{
+                if(res?.success){
+                    let dataSource=res?.data;
+                   const data= dataSource?.map((item:any,index:number)=>({
+                        ...item,
+                        indexNumber:index+1
+                    }))
+                    setDownLoadTableSource(data)
 
-    const columns = useMemo(() => downloadList(), [data])
+                }else{
+                    setDownLoadTableSource([])
+
+                }
+
+            })
+        }
+    },[action,visible])
+
+    const columns = useMemo(() => downloadList(), [])
 
     const handleSubmit = async () => {
       
@@ -80,9 +98,9 @@ export default function OperateModal(props: any) {
 
             {action === 'downloadList' &&
                 <>
-                    <div style={{ marginBottom: '10px' }}>下载列表</div>
+                    <p><h3>下载列表</h3></p>
                     <Table
-                        dataSource={data}
+                        dataSource={downLoadTableSource}
                         bordered
                         rowKey="id"
                         pagination={false}

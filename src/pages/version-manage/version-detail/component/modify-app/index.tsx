@@ -183,6 +183,7 @@ export default function ModifyApp(props: Iprops) {
             title: 'ID',
             dataIndex: 'entryCode',
             width: 160,
+            render: (value: string,record:any) => <a href={record?.url} target="_blank">{value}</a>
         },
         {
             title: '类型',

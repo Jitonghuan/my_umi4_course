@@ -35,12 +35,12 @@ export const versionList = (params:{
             width: 160,
             render: (value: string) => <a>{value}</a>
         },
-        // {
-        //     title: '关联需求',
-        //     dataIndex: 'demand',
-        //     width: 100,
-        //     render: (value: string, record: any) => <a onClick={() => { params?.demandDetail(value, record) }}>{value}</a>
-        // },
+        {
+            title: '关联需求',
+            dataIndex: 'demand',
+            width: 100,
+            render: (value: string, record: any) => <a onClick={() => { params?.demandDetail(value, record) }}>{record?.relationDemands?.length||0}</a>
+        },
         {
             title: '版本负责人',
             dataIndex: 'owner',

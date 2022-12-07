@@ -9,6 +9,8 @@ import { history, useLocation, Outlet } from 'umi';
 import { parse, stringify } from 'query-string';
 import ModifyApp from './component/modify-app';
 import ContentList from './component/content-list';
+import ModifyConfig from './component/modify-config';
+import ModifySql from './component/modify-sql'
 import detailContext from './context';
 import { useReleaseOption } from '../hook';
 import { getReleaseList} from '../service';
@@ -24,7 +26,7 @@ export default function VersionDetail() {
     const query: any = parse(location.search);
     const { key, version, releaseId, categoryName, categoryCode } = query || {};
     const { categoryData } = useContext(FeContext);
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<any>({});
     const [visible, setVisible] = useState<boolean>(false);
     const [appCategory, setAppCategroy] = useState<any>(Object.assign(getLocalCategory(), categoryCode ? { value: categoryCode, label: categoryName } : {}));
     const [activeTab, setActiveTab] = useState<string>(key || 'list');
@@ -55,7 +57,8 @@ export default function VersionDetail() {
             versionChange(versionOptions[0]);
         }
         if (!selectVersion?.value) {
-            setData([])
+            setData({})
+            setInitData({})
         }
     }, [versionOptions])
 
@@ -80,8 +83,8 @@ export default function VersionDetail() {
     const TabList = [
         { label: '内容列表', key: 'list', component: ContentList },
         { label: '变更应用', key: 'app', component: ModifyApp },
-        // { label: '变更配置', key: 'config', component: ModifyConfig },
-        // { label: '变更SQL', key: 'sql', component: ModifySql },
+        { label: '变更配置', key: 'config', component: ModifyConfig },
+        { label: '变更SQL', key: 'sql', component: ModifySql },
     ]
 
     const GetComponent = useMemo(() => TabList.find((e: any) => e.key === activeTab)?.component, [activeTab]) as any
@@ -99,6 +102,7 @@ export default function VersionDetail() {
         getReleaseList({ releaseNumber, categoryCode }).then((res) => {
             if (res?.success) {
                 setData(res?.data[0] || {});
+                setInitData(res?.data[0] || {})
             }
         }).finally(() => { setLoading(false) })
     }
@@ -169,10 +173,10 @@ export default function VersionDetail() {
                         <Descriptions.Item label="版本号">{data?.releaseNumber || '--'}</Descriptions.Item>
                         <Descriptions.Item label="应用分类">{data?.categoryCode || '--'}</Descriptions.Item>
                         <Descriptions.Item label="版本负责人">{data?.owner || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="版本状态"><span style={{color:statusMap[data?.status]?.color||"gray"}}>{data.status ? statusMap[data?.status].label : '--'}</span></Descriptions.Item>
+                        <Descriptions.Item label="版本状态"><span style={{color:statusMap[data?.status]?.color||"gray"}}>{data.status ? statusMap[data?.status]?.label : '--'}</span></Descriptions.Item>
                         <Descriptions.Item label="创建时间">{moment(data?.gmtCreate).format("YYYY-MM-DD HH:mm:ss") || '--'}</Descriptions.Item>
                         <Descriptions.Item label="计划发版本时间">{data?.planTime || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="发版时间">{data?.finshTime || '--'}</Descriptions.Item>
+                        <Descriptions.Item label="发版时间">{data?.finishTime || '--'}</Descriptions.Item>
                         <Descriptions.Item label="下载次数"><a onClick={() => { setVisible(true) }}>{data?.downloadCount || 0}</a></Descriptions.Item>
                         <Descriptions.Item label="简述" >{data?.sketch || ''}</Descriptions.Item>
                         <Descriptions.Item label="备注" >{data?.desc || ''}</Descriptions.Item>

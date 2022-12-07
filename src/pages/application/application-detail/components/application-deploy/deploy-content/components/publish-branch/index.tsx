@@ -14,10 +14,13 @@ import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures,updateReleaseDeploy } from '@/pages/application/service';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
+import { optionsToLabelMap } from '@/utils/index';
+import { FeContext } from '@/common/hooks';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
 import { versionList } from '../../../version-publish/schema';
 import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
+import DemandModal from './demand-modal'
 import {  releaseDeploy } from '../../../service';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
@@ -52,6 +55,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const selectRef = useRef(null) as any;
   const [publishType, setPublishType] = useState<string>('branch');
   const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
+  const [demandVisible,setDemandVisible]= useState<boolean>(false);
+  const [curRecord,setCurRecord]=useState<any>({})
+  const { categoryData = [], businessData = [] } = useContext(FeContext);
+  const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
  
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
@@ -166,6 +173,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const verisionColumns = useMemo(() => {
     return versionList({
       demandDetail: (value: string, record: any) => {
+        setCurRecord(record)
+        setDemandVisible(true)
+
       }
     })
   }, [])
@@ -180,11 +190,9 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
   useEffect(()=>{
     if(versionData?.length>0&&publishType==="version"){
       let key=versionData?.filter((item:any) => item.canPublish===true)
-      console.log("key",key)
       if(key?.length>0){
         setReleaseRowKeys(key[0]?.id);
         setDefaultKey([key[0]?.id])
-        console.log("[key[0]?.id]",[key[0]?.id])
 
       }
 
@@ -198,7 +206,6 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
 
   const rowSelection = {
     onChange: (selectedRowKeys:any[], selectedRows: any[]) => {
-      console.log("selectedRowKeys",selectedRowKeys)
         setReleaseRowKeys(selectedRowKeys[0] as number);
     },
     getCheckboxProps: (record: any) => ({
@@ -210,6 +217,14 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
 
   return (
     <div className={rootCls}>
+      <DemandModal visible={demandVisible} onClose={()=>{
+        setDemandVisible(false)
+
+      }} 
+      curRecord={curRecord}
+      appCategoryValue={appCategoryCode||""}
+      appCategoryLabel={categoryDataMap[appData?.appCategoryCode!] || '--'}
+      />
       <div className={`${rootCls}__title`}>{`待发布内容`}</div>
       <Tabs activeKey={publishType} onChange={(key) => {
          setPublishType(key) 

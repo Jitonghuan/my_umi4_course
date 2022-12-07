@@ -6,12 +6,13 @@
  */
 
  import React, { useState, useEffect, useContext, useMemo } from 'react';
- import { Modal, Button, List, Descriptions } from 'antd';
+ import { Modal, Button, List, Descriptions,Tag } from 'antd';
  import VCDescription from '@/components/vc-description';
  import DetailContext from '@/pages/application/application-detail/context';
  import moment from 'moment';
  import { getAppPublishList } from '../../../service';;
  import './index.less';
+ import {statusMap} from './type'
  const rootCls = 'publish-record-compo';
  interface Iprops{
     envTypeCode:string
@@ -96,6 +97,9 @@
                  <div>
                    <label>发布时间</label>: {item?.gmtCreate ? moment(item?.gmtCreate).format('YYYY-MM-DD HH:mm') : ''}
                  </div>
+                 <div>
+                   <label>发布状态</label>:<Tag color={statusMap[item?.status]?.color||"gray"}>{item?.status? statusMap[item?.status]?.label : '--'}</Tag>
+                 </div>
                 
                  <a onClick={() => handleShowDetail(item)}>详情</a>
                </List.Item>
@@ -114,6 +118,9 @@
       <Descriptions.Item label="版本号">{curRecord?.releaseNumber}</Descriptions.Item>
       <Descriptions.Item label="版本TAG">{curRecord?.tag}</Descriptions.Item>
       <Descriptions.Item label="发布人">{curRecord?.createUser}</Descriptions.Item>
+      <Descriptions.Item label="发布状态">
+      <Tag color={statusMap[curRecord?.status]?.color||"gray"}>{curRecord?.status? statusMap[curRecord?.status]?.label : '--'}</Tag>
+        </Descriptions.Item>
       <Descriptions.Item label="发布时间">
       
         {curRecord?.gmtCreate ? moment(curRecord?.gmtCreate).format('YYYY-MM-DD HH:mm') : ''}
