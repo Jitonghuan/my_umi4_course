@@ -1,7 +1,7 @@
 import ViewLogModal from '../view-log-modal';
 import { useState } from 'react';
 import {
-    SnippetsOutlined,
+    FileTextOutlined,
     CloseCircleOutlined
 } from '@ant-design/icons';
 
@@ -11,7 +11,7 @@ export default function OperateBtn() {
         <div className='operate-btn'>
             <ViewLogModal visible={visible} onClose={() => { setVisbible(false) }} />
             <a style={{}} onClick={() => { setVisbible(true) }}>
-                <SnippetsOutlined />
+                <FileTextOutlined />
                 {/* 查看日志 */}
             </a>
             {/* <a style={{ paddingLeft: 4, color: 'red' }} onClick={() => { }}>
