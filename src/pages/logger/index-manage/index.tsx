@@ -7,9 +7,9 @@ import { Input, Table, Popconfirm, Button, Drawer, Form, Select } from 'antd';
 import PageContainer from '@/components/page-container';
 import { getRequest, postRequest } from '@/utils/request';
 import appConfig from '@/app.config';
-import * as APIS from '../search/service';
+import * as APIS from '../search-new/service';
 import { ContentCard } from '@/components/vc-page-content';
-import { useEDitEnvOptions, useCreateIndexMode, useDeleteIndexMode, useEditIndexMode } from '../search/hooks';
+import { useEDitEnvOptions, useCreateIndexMode, useDeleteIndexMode, useEditIndexMode } from '../search-new/hooks';
 export default function DemoPageList() {
   const [addIndexForm] = Form.useForm();
   const [envOptions] = useEDitEnvOptions();

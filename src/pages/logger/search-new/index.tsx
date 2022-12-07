@@ -85,9 +85,9 @@ export default function LoggerSearch() {
             filterForm.setFieldsValue({
                 indexMode: receiveInfo.indexMode || 'app_log'
             })
-            if (receiveInfo.message) {
-                subInfoForm.setFieldsValue({ message: receiveInfo.message });
-            }
+            // if (receiveInfo.message) {
+            //     subInfoForm.setFieldsValue({ message: receiveInfo.message });
+            // }
             if (messageInfo['message']) {
                 let messageDecodedData = decodeURIComponent(escape(window.atob(messageInfo['message'])));
 
