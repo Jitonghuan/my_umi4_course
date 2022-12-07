@@ -16,16 +16,17 @@ import {UpdateItems} from '../type'
 import './index.less';
 
 export default function VersionList() {
-    let sessionData = JSON.parse(sessionStorage.getItem('version_list_form') || '{}');
+    let sessionData:any={}
+    try {
+         JSON.parse(sessionStorage.getItem('version_list_form') || '{}');
+    } catch (error) {   
+    }
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
     const { categoryData } = useContext(FeContext);
     const [appCategory, setAppCategroy] = useState<any>(sessionData['categoryCode'] || categoryData[0] || {});
     const [form] = Form.useForm();
-    form.setFieldsValue({
-        categoryCode: appCategory,
-        releaseNumber: sessionData?.releaseNumber || ''
-    });
+  
     const [action, setAction] = useState<string>('')
     const [selectTime, setSelectTime] = useState<string>('');
     const [operateVisible, setOperateVisible] = useState<boolean>(false);
@@ -35,10 +36,13 @@ export default function VersionList() {
     const [pageSize, setPageSize] = useState<number>(20);
     const [loading, setLoading] = useState<boolean>(false);
     const [optLoading,setOptLoading] = useState<boolean>(false);
-
-    useEffect(() => {
+    useEffect(()=>{
+        form.setFieldsValue({
+            categoryCode: appCategory,
+            releaseNumber: sessionData?.releaseNumber || ''
+        });
         queryList({ pageSize, pageIndex });
-    }, [])
+    },[])
 
     const maxVersion = useMemo(() => {
         const versionList = (data || []).map((item: any) => item.releaseNumber);
