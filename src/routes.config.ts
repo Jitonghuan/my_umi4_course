@@ -133,6 +133,7 @@ export default [
     redirect: `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
   },
 
+
   {
     path: `${baseRoutePath}/application`,
     name: '应用管理',

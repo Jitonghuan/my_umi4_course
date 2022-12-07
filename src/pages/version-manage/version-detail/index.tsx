@@ -21,8 +21,31 @@ import moment from 'moment';
 import './index.less';
 
 const { TabPane } = Tabs;
-const getLocalCategory = () => (sessionStorage.getItem('version-detail-category') ? JSON.parse(sessionStorage.getItem('version-detail-category') as any) : {})
-const getLocalVersion = () => (sessionStorage.getItem('version-detail-version') ? JSON.parse(sessionStorage.getItem('version-detail-version') as any) : {})
+
+const getLocalCategory = () => {
+    let item={}
+    try {
+        item=  sessionStorage.getItem('version-detail-category') ? JSON.parse(sessionStorage.getItem('version-detail-category') as any) : {}
+    
+    } catch (error) {
+        
+    }
+    return item
+
+    
+}
+const getLocalVersion = () => {
+    let item={}
+    try {
+        item=   sessionStorage.getItem('version-detail-version') ? JSON.parse(sessionStorage.getItem('version-detail-version') as any) : {}
+        
+    } catch (error) {
+        
+    }
+    return item
+   
+}
+
 export default function VersionDetail() {
     const query: any = parse(location.search);
     const { key, version, releaseId, categoryName, categoryCode } = query || {};
@@ -45,45 +68,54 @@ export default function VersionDetail() {
         { label: '变更配置', key: 'config', component: ModifyConfig },
         { label: '变更SQL', key: 'sql', component: ModifySql },
     ]
+    
 
     const versionChange = (v: any) => {
-        if (!v) {
-            setSelectVersion({ label: '', value: '' });
-            sessionStorage.removeItem('version-detail-version');
-        } else {
-            setSelectVersion({ label: v.label, value: v.value });
-            sessionStorage.setItem('version-detail-version', JSON.stringify({ label: v.label, value: v.value }));
+        try {
+            if (!v) {
+                setSelectVersion({ label: '', value: '' });
+                sessionStorage.removeItem('version-detail-version');
+            } else {
+                setSelectVersion({ label: v.label, value: v.value });
+                sessionStorage.setItem('version-detail-version', JSON.stringify({ label: v.label, value: v.value }));
+            }
+            
+        } catch (error) {
+            
         }
+       
     }
     const categoryChange = (v: any) => {
-        setAppCategroy({ label: v.label, value: v.value });
-        sessionStorage.setItem('version-detail-category', JSON.stringify({ label: v.label, value: v.value }));
+        setAppCategroy({ label: v?.label, value: v?.value });
+       
+        sessionStorage.setItem('version-detail-category', JSON.stringify({ label: v?.label, value: v?.value }));
+       
         loadVersionOption({ categoryCode: v.value })
         versionChange(null)
     }
 
     useEffect(() => {
-        if (versionOptions.length && !selectVersion?.value) {
+        if (versionOptions?.length && !selectVersion?.value) {
             versionChange(versionOptions[0]);
         }
         if (!selectVersion?.value) {
             setData({})
             setInitData({})
         }
-    }, [versionOptions])
+    }, [JSON.stringify(versionOptions)])
 
     useEffect(() => {
-        if (categoryData.length && !appCategory.value) {
+        if (categoryData?.length && !appCategory.value) {
             categoryChange(categoryData[0])
         }
-    }, [categoryData])
+    }, [JSON.stringify(categoryData) ])
 
     useEffect(() => {
-        if (selectVersion?.value && appCategory?.value) {
-            queryData(selectVersion.label, appCategory.value)
+        if (selectVersion?.label && appCategory?.value) {
+            queryData(selectVersion?.label, appCategory?.value)
         }
         if (selectVersion?.value) {
-            getDataSource(selectVersion.value)
+            getDataSource(selectVersion?.value)
         }
 
     }, [appCategory?.value, selectVersion?.label, selectVersion?.value])

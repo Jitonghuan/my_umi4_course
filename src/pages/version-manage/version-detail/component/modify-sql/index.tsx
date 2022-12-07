@@ -1,5 +1,5 @@
-import React, { useMemo, useState,useEffect } from 'react';
-import { Input, Button, Table, Space, Tooltip,Spin,Tag } from 'antd';
+import React, { useState,useEffect } from 'react';
+import { Space, Tooltip,Spin,Tag } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import { debounce } from 'lodash';
@@ -23,15 +23,21 @@ export default function ModifySql(props:Iprops) {
             setDataSource(originData);
             return;
         }
-        const data = JSON.parse(JSON.stringify(dataSource));
-        const afterFilter: any = [];
-        data?.forEach((item: any) => {
-            if (item.appCode?.indexOf(value) !== -1) {
-                afterFilter.push(item);
-            }
-        });
-
-        setDataSource(afterFilter);
+        try {
+            const data = JSON.parse(JSON.stringify(dataSource));
+            const afterFilter: any = [];
+            data?.forEach((item: any) => {
+                if (item.appCode?.indexOf(value) !== -1) {
+                    afterFilter.push(item);
+                }
+            });
+    
+            setDataSource(afterFilter);
+            
+        } catch (error) {
+            
+        }
+       
     }
     useEffect(()=>{
         if(dataSource?.length>0){
@@ -71,22 +77,10 @@ export default function ModifySql(props:Iprops) {
 
 
     },[JSON.stringify(dataSource)])
-    
-    
-    // const columns = [
-    //     {
-    //         title: '所属应用',
-    //         dataIndex: 'id',
-    //         width: 120,
-    //     },
-    //     {
-    //         title: 'SQL内容',
-    //         dataIndex: 'id',
-    //     },
-    // ]
+
     return (
         <>
-            <div className='table-top'>
+            <div className='content-top'>
                 <div className='flex-space-between'>
                     <Space>
                         <span>SQL总数：{total}</span>
@@ -115,7 +109,7 @@ export default function ModifySql(props:Iprops) {
                               <div style={{marginTop:10}}>
                                     <p className="version-title-content">
                                         <Space size="large">
-                                       <span> <span>版本号：</span><Tag color="pink">{item?.label}</Tag></span>
+                                       <span> <span>版本号：</span><Tag color="cyan">{item?.label}</Tag></span>
                                        <span> <span>应用CODE：</span><Tag color="green">{item?.appCode}</Tag></span>
 
                                         </Space>
@@ -125,7 +119,7 @@ export default function ModifySql(props:Iprops) {
                                    <AceEditor mode="sql" defaultValue={item?.value} height={200} readOnly />
 
                                    </div>
-                                   {/* <Divider /> */}
+                                  
                               </div>
                           )
 

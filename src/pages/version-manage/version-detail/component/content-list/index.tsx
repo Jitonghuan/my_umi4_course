@@ -10,7 +10,6 @@ import { UpdateItems } from '../../../type'
 
 interface Iprops {
     activeTab: string;
-   // filter: any;
     detailInfo: any
     onReload: any;
     infoLoading: boolean
@@ -26,23 +25,33 @@ export default forwardRef(function ContentList(props: Iprops) {
     const [loading, setLoading] = useState<boolean>(false)
     const [originData, setOriginData] = useState<any>([]);
     const filter = debounce((value) => filterData(value), 500)
-    const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat').length, [JSON.stringify(dataSource)])
-    const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat').length, [JSON.stringify(dataSource)])
+    const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat')?.length, [JSON.stringify(dataSource)])
+    const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat')?.length, [JSON.stringify(dataSource)])
 
     const filterData = (value: string) => {
         if (!value) {
             setDataSource(originData);
             return;
         }
-        const data = JSON.parse(JSON.stringify(dataSource));
-        const afterFilter: any = [];
-        data?.forEach((item: any) => {
-            if (item.title?.indexOf(value) !== -1) {
-                afterFilter.push(item);
-            }
-        });
-
-        setDataSource(afterFilter);
+        try {
+            const data = JSON.parse(JSON.stringify(dataSource));
+            const afterFilter: any = [];
+            data?.forEach((item: any) => {
+                if (item.title?.indexOf(value) !== -1) {
+                    afterFilter.push(item);
+                }
+                if(item?.entryCode?.indexOf(value) !== -1){
+                    afterFilter.push(item);
+    
+                }
+            });
+    
+            setDataSource(afterFilter);
+            
+        } catch (error) {
+            
+        }
+       
     }
     const getDataSource = () => {
         setLoading(true)
@@ -134,6 +143,8 @@ export default forwardRef(function ContentList(props: Iprops) {
         const res = await deleteDemand({ ids: [id] })
         if (res?.success) {
             //onSave();
+            onReload()
+            getDataSource()
         }
     }
     const [lockLoading, setLockLoading] = useState<boolean>(false)
@@ -161,6 +172,8 @@ export default forwardRef(function ContentList(props: Iprops) {
     return (
         <>
             <RealteDemandBug type={type} onClose={() => { setType('hide') }} releaseId={releaseId} onSave={() => {
+                 onReload()
+                 getDataSource()
 
             }} />
             <div className='table-top'>

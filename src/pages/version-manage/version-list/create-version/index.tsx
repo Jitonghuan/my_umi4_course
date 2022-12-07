@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Drawer, Tag, Form, Button, DatePicker, Col, Input, Row, Radio, Select, Space, message } from 'antd';
-import UserSelector, { stringToList } from '@/components/user-selector';
-import moment from 'moment';
+import React, { useState, useEffect, } from 'react';
+import { Drawer, Form, Button, DatePicker,  Input, Row, Select,  message } from 'antd';
 import { disabledDate, disabledTime } from '@/utils';
 import { createRelease } from '../../service';
 import { useSearchUser } from '@/pages/DBMS/common-hook';
@@ -101,6 +99,7 @@ export default function AddDrawer(props: any) {
                         allowClear
                         style={{ width: 240 }}
                         options={userNameOptions}
+                        loading={userLoading}
                     />
                 </Form.Item>
                 <Form.Item label="版本简述" name="sketch" rules={[{ required: true, message: '请输入' }]}>

@@ -1,11 +1,10 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Form, Modal, Table, Space, Tooltip, Tag, Descriptions,Divider } from 'antd';
+import { Modal, Table, Space, Tooltip, Tag, } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import moment from 'moment';
 import { debounce } from 'lodash';
 import detailContext from '../../context';
-import { releaseAppRel } from '../../../service';
 import './index.less'
 interface Iprops {
     activeTab: string;
@@ -22,13 +21,8 @@ interface Iprops {
 export default function ModifyApp(props: Iprops) {
     const { activeTab, detailInfo, infoLoading, count,dataSource,originData,setDataSource } = props;
     const { categoryCode, releaseId, categoryName } = useContext(detailContext);
-    const [visible, setVisible] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('hide');
     const [curRecord, setCurRecord] = useState<any>({});
-   // const [dataSource, setDataSource] = useState<any>([])
-   // const [loading, setLoading] = useState<boolean>(false)
-    const [form] = Form.useForm();
-  //  const [originData, setOriginData] = useState<any>([]);
     const [modalData, setModalData] = useState<any>([]);
     const filter = debounce((value) => filterData(value), 500)
 
@@ -49,8 +43,7 @@ export default function ModifyApp(props: Iprops) {
     }
     const mapDo = (params: any) => {
         let data: any = []
-        if (Object.keys(params)?.length > 0) {
-
+        if (typeof(params)==="object"&& Object.keys(params)?.length > 0) {
             for (const key in params) {
                 if (Object.prototype.hasOwnProperty.call(params, key)) {
                     const element = params[key];
@@ -101,19 +94,6 @@ export default function ModifyApp(props: Iprops) {
     const frontTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType !== 'backend').length, [JSON.stringify(dataSource)])
     const backendTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType === 'backend').length, [JSON.stringify(dataSource)])
 
-    // useEffect(() => {
-    //     if (releaseId) {
-    //         getDataSource()
-
-    //     } else {
-    //         setDataSource([])
-    //         setOriginData([])
-
-    //     }
-
-
-
-    // }, [releaseId, activeTab, categoryCode, count])
 
     const columns = [
         {
@@ -215,7 +195,6 @@ export default function ModifyApp(props: Iprops) {
     const clickRow = (type: string, record: any) => {
         setCurRecord(record);
         setMode(type);
-        //modalData
 
     }
     return (
@@ -286,12 +265,12 @@ export default function ModifyApp(props: Iprops) {
                         {modalData?.map((item:any)=>{
                             return(
                                 <div>
-                                      <p className="version-title-content"><label>版本号：</label>{item?.label}</p>
+                                      <p className="version-title-content"><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></p>
                                      <div>
                                      <AceEditor mode="yaml" defaultValue={item?.value} height={200} readOnly />
 
                                      </div>
-                                     {/* <Divider /> */}
+                                    
                                 </div>
                             )
 
@@ -305,12 +284,12 @@ export default function ModifyApp(props: Iprops) {
                       {modalData?.map((item:any)=>{
                           return(
                               <div>
-                                    <p className="version-title-content"><label>版本号：</label>{item?.label}</p>
+                                    <p className="version-title-content"><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></p>
                                    <div>
                                    <AceEditor mode="sql" defaultValue={item?.value} height={200} readOnly />
 
                                    </div>
-                                   {/* <Divider /> */}
+                                 
                               </div>
                           )
 

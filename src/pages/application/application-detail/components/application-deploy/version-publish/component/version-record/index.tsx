@@ -1,13 +1,12 @@
 /**
  * PublishRecord
  * @description 版本发布记录
- * @author moting.nq
- * @create 2022-04-25 16:05
+ * @author muxi.jth
+ * @create 2022-12-7 16:05
  */
 
- import React, { useState, useEffect, useContext, useMemo } from 'react';
- import { Modal, Button, List, Descriptions,Tag } from 'antd';
- import VCDescription from '@/components/vc-description';
+ import React, { useState, useEffect, useContext } from 'react';
+ import { Modal,List, Descriptions,Tag } from 'antd';
  import DetailContext from '@/pages/application/application-detail/context';
  import moment from 'moment';
  import { getAppPublishList } from '../../../service';;
@@ -18,7 +17,7 @@
     envTypeCode:string
  }
  
- export default function PublishRecord(props: any) {
+ export default function PublishRecord(props: Iprops) {
    const { envTypeCode,  } = props;
    const { appData } = useContext(DetailContext);
    const [intervalId, setIntervalId] = useState<any>(null);

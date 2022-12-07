@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getReleaseList,getMergeList } from './service';
-import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
+import {  getRequest, postRequest,  } from '@/utils/request';
 import {
     queryPortalList,
     getDemandByProjectList,
@@ -26,13 +26,13 @@ export function useReleaseOption(props: any) {
         } finally {
             setLoading(false);
         }
-    }, [props]);
+    }, [props?.categoryCode]);
 
     useEffect(() => {
-        if (props.categoryCode) {
+        if (props?.categoryCode) {
             loadData({pageSize:-1});
         }
-    }, []);
+    }, [props?.categoryCode]);
     return [data, loading, loadData]
 }
 

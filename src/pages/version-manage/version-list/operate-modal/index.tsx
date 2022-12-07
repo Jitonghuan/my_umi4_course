@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Drawer, Tag, Form, Button, Table, Modal, Input, Switch, Radio, Select, Space,message } from 'antd';
+import { Form, Button, Table, Modal, Input, Select, message } from 'antd';
 import { downloadList } from '../schema';
 import { useReleaseModalOption } from '../../hook';
 import {downLoadUrl,releaseMerge,getReleaseDownloadList} from '../../service'
@@ -75,6 +75,7 @@ export default function OperateModal(props: any) {
                 </div>
             }
             visible={visible}
+            destroyOnClose
             onCancel={onClose}
             width={900}
             footer={

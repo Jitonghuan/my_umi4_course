@@ -1,5 +1,5 @@
-import React, { useMemo, useState,useEffect } from 'react';
-import { Input, Button, Table, Space, Tooltip,Spin,Tag,Pagination } from 'antd';
+import React, {  useState,useEffect } from 'react';
+import {  Space, Tooltip,Spin,Tag,} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import { debounce } from 'lodash';
@@ -13,25 +13,11 @@ interface Iprops{
 
 
 export default function ModifyConfig(props:Iprops) {
-    const [data, setData] = useState<any>([]);
     const {dataSource,originData,infoLoading,setDataSource}=props;
-    const [visible, setVisible] = useState<boolean>(false);
-    const [searchValue, setSearchValue] = useState<string>('')
     const [pageTotal, setPageTotal] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(2);
-  const [total,setTotal]=useState<number>(0)
-  const [modalData, setModalData] = useState<any>([]);
-    const columns = [
-        {
-            title: '所属应用',
-            dataIndex: 'id',
-            width: 120,
-        },
-        {
-            title: '变更配置内容',
-            dataIndex: 'id',
-        },
-    ]
+    const [pageSize, setPageSize] = useState<number>(2);
+    const [total,setTotal]=useState<number>(0)
+    const [modalData, setModalData] = useState<any>([]);
     const filter = debounce((value) => filterData(value), 500)
 
     const filterData = (value: string) => {
@@ -39,7 +25,8 @@ export default function ModifyConfig(props:Iprops) {
             setDataSource(originData);
             return;
         }
-        const data = JSON.parse(JSON.stringify(dataSource));
+        try {
+            const data = JSON.parse(JSON.stringify(dataSource));
         const afterFilter: any = [];
         data?.forEach((item: any) => {
             if (item.appCode?.indexOf(value) !== -1) {
@@ -48,6 +35,11 @@ export default function ModifyConfig(props:Iprops) {
         });
 
         setDataSource(afterFilter);
+            
+        } catch (error) {
+            
+        }
+        
     }
    
     useEffect(()=>{
@@ -101,7 +93,7 @@ export default function ModifyConfig(props:Iprops) {
 
     return (
         <>
-            <div className='table-top'>
+            <div className='content-top'>
                 <div className='flex-space-between'>
                     <Space>
                         <span>配置总数：{total}</span>
@@ -130,7 +122,7 @@ export default function ModifyConfig(props:Iprops) {
                                     <p className="version-title-content">
                                     <Space size="large">
                                         
-                                        <span><label>版本号：</label><Tag color="pink">{item?.label}</Tag></span>
+                                        <span><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></span>
                                        <span> <label>应用CODE：</label><Tag  color="green">{item?.appCode}</Tag></span>
 
                                         </Space>

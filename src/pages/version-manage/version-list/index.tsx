@@ -1,13 +1,12 @@
 import React, { useMemo, useState, useEffect, useContext } from 'react';
-import { Select, DatePicker, Input } from 'antd';
+import { Select, Input } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { Form, Button, Table, message } from 'antd';
 import { listSchema } from './schema';
 import CreateVersion from './create-version';
-import VCPermission from '@/components/vc-permission';
-import { history, useLocation, Outlet } from 'umi';
-import { parse, stringify } from 'query-string';
+import { history} from 'umi';
+import { stringify } from 'query-string';
 import { FeContext } from '@/common/hooks';
 import OperateModal from './operate-modal';
 import { versionSortFn } from '@/utils';
@@ -16,19 +15,13 @@ import {UpdateItems} from '../type'
 import './index.less';
 
 export default function VersionList() {
-    let sessionData:any={}
-    try {
-         JSON.parse(sessionStorage.getItem('version_list_form') || '{}');
-    } catch (error) {   
-    }
+
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
     const { categoryData } = useContext(FeContext);
-    const [appCategory, setAppCategroy] = useState<any>(sessionData['categoryCode'] || categoryData[0] || {});
+    const [appCategory, setAppCategroy] = useState<any>( {});
     const [form] = Form.useForm();
-  
     const [action, setAction] = useState<string>('')
-    const [selectTime, setSelectTime] = useState<string>('');
     const [operateVisible, setOperateVisible] = useState<boolean>(false);
     const [initData, setInitData] = useState<any>({});
     const [total, setTotal] = useState<number>(0);
@@ -36,11 +29,21 @@ export default function VersionList() {
     const [pageSize, setPageSize] = useState<number>(20);
     const [loading, setLoading] = useState<boolean>(false);
     const [optLoading,setOptLoading] = useState<boolean>(false);
+   
     useEffect(()=>{
-        form.setFieldsValue({
-            categoryCode: appCategory,
-            releaseNumber: sessionData?.releaseNumber || ''
-        });
+        try {
+            let sessionData:any=JSON.parse(sessionStorage.getItem('version_list_form') || '{}');
+            setAppCategroy(sessionData['categoryCode'] || categoryData[0] || {})
+            form.setFieldsValue({
+                categoryCode: sessionData['categoryCode'] || categoryData[0] || {},
+                releaseNumber: sessionData?.releaseNumber || ''
+            });
+            
+        } catch (error) {
+            console.log(error)
+            
+        }
+        
         queryList({ pageSize, pageIndex });
     },[])
 
@@ -48,7 +51,7 @@ export default function VersionList() {
         const versionList = (data || []).map((item: any) => item.releaseNumber);
         const res = versionList.sort((a: any, b: any) => versionSortFn(a, b))
         return res.length ? res[0] : '';
-    }, [data]);
+    }, [JSON.stringify(data)]);
 
     const updateReleaseAction=(params:UpdateItems)=>{
         setOptLoading(true)
@@ -84,7 +87,7 @@ export default function VersionList() {
                 // 跳转到版本详情
                 history.push({
                     pathname: '/matrix/version-manage/detail',
-                    search: stringify({ key: toTab, version: record?.releaseNumber, releaseId: record.id, categoryName: appCategory.label, categoryCode: appCategory.value })
+                    search: stringify({ key: toTab, version: record?.releaseNumber, releaseId: record.id, categoryName: appCategory?.label, categoryCode: appCategory?.value })
                 })
             },
             downloadVersion: (record: any) => {
@@ -112,10 +115,15 @@ export default function VersionList() {
 
 
         }) as any;
-    }, [data, appCategory?.label,appCategory?.value]);
+    }, [ appCategory?.label,appCategory?.value]);
     useEffect(() => {
+       
         let intervalId = setInterval(() => {
-            queryList({ pageSize, pageIndex });
+            if(appCategory?.value){
+                queryList({ pageSize, pageIndex });
+            
+            }
+           
         }, 1000*10);
       
         return () => {
@@ -131,11 +139,16 @@ export default function VersionList() {
             if (res?.success) {
                 setData(res?.data || []);
                 setTotal(res?.data.length)
+                
             }else{
                 setData( []);
                 setTotal(0)
+               
             }
-        }).finally(() => { setLoading(false) })
+        }).finally(() => { 
+            setLoading(false)
+            setOptLoading(false)
+         })
     }
 
     const initSearch = () => {
@@ -164,8 +177,10 @@ export default function VersionList() {
                     initData={initData}
                     appCategory={appCategory}
                     onSave={()=>{
+                        setOptLoading(true)
                         queryList({ pageSize, pageIndex })
                         setOperateVisible(false)
+                       
 
                     }}
                 />

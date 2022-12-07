@@ -1,4 +1,4 @@
-import { Popconfirm, Tooltip,Tag } from 'antd';
+import { Popconfirm, Tooltip} from 'antd';
 import { statusMap } from '../type';
 import { dateCellRender } from '@/utils';
 export const listSchema = (params:{ 
@@ -83,7 +83,7 @@ export const listSchema = (params:{
         {
             title: '操作',
             dataIndex: 'id',
-            width: 200,
+            width: 180,
             fixed: 'right',
             render: (value: any, record: any, index: number) => (
                 <div className="action-cell">

@@ -1,8 +1,6 @@
 
 import React, { useState, useContext, useEffect,  } from 'react';
 import { Descriptions,Spin,Modal} from 'antd';
-import RelateDemand from './component/relate-demand';
-import SubmitPublish from './component/submit-publish';
 import DetailContext from '@/pages/application/application-detail/context';
 import { getAppPublishList } from '../service';
 import AceEditor from '@/components/ace-editor';
@@ -13,17 +11,12 @@ interface Iprops{
     envTypeCode:string;
     isActive:boolean;
     visible:boolean;
-
-
 }
 const rootCls = 'version-deploy-page';
-export default function VersionDeploy(props: Iprops) {
+export default function VersionPublish(props: Iprops) {
     const { pipelineCode, envTypeCode,isActive, visible} = props;
     const { appData } = useContext(DetailContext);
     const { appCode } = appData || {};
-    const [relateDemandVisible, setRelateDemandVisible] = useState<boolean>(false);
-    const [initData, setInitData] = useState<any>({});
-    const [submitVisible, setSubmitVisible] = useState<boolean>(false);
     const [infoDetail,setInfoDetail]=useState<any>({})
     const [loading,setLoading]=useState<boolean>(false)
     const [infoVisible,setInfoVisible]=useState<boolean>(false)
@@ -59,9 +52,6 @@ export default function VersionDeploy(props: Iprops) {
     }
     return (
         <div className='version-publish-page'>
-             <RelateDemand visible={relateDemandVisible} onClose={() => { setRelateDemandVisible(false) }} initData={initData} />
-            <SubmitPublish visible={submitVisible} onClose={() => { setSubmitVisible(false) }} />
-                 
             {/* 发布详情 */}
             <Spin spinning={loading}>
             <Descriptions
@@ -95,7 +85,7 @@ export default function VersionDeploy(props: Iprops) {
 
             </Spin>
            
-       <Modal title="变更详情" visible={infoVisible} width={700} footer={false} onCancel={()=>{setInfoVisible(false)}} >
+       <Modal title="变更详情" visible={infoVisible} width={700} footer={false} onCancel={()=>{setInfoVisible(false)}}  destroyOnClose>
            <AceEditor readOnly height={400} mode={type==="sql"?'sql':"yaml"} defaultValue={
                type==="sql"&&infoDetail?.sql?infoDetail?.sql:type==="config"&&infoDetail?.config?infoDetail?.config:""
            } />

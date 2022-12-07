@@ -1,5 +1,5 @@
 import { addAPIPrefix } from '@/utils';
-import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
+import {  getRequest, postRequest, } from '@/utils/request';
 
 // 获取应用组
 export const getAppType = (data: any) => {
