@@ -154,6 +154,11 @@ export default function VersionList() {
                     onClose={() => { setOperateVisible(false) }}
                     initData={initData}
                     appCategory={appCategory}
+                    onSave={()=>{
+                        queryList({ pageSize, pageIndex })
+                        setOperateVisible(false)
+
+                    }}
                 />
                 <CreateVersion
                     visible={visible}

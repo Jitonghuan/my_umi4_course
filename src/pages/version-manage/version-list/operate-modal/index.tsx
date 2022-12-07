@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Drawer, Tag, Form, Button, Table, Modal, Input, Switch, Radio, Select, Space } from 'antd';
-import UserSelector, { stringToList } from '@/components/user-selector';
+import { Drawer, Tag, Form, Button, Table, Modal, Input, Switch, Radio, Select, Space,message } from 'antd';
 import { downloadList } from '../schema';
 import { useReleaseModalOption } from '../../hook';
-import {downLoadUrl} from '../../service'
+import {downLoadUrl,releaseMerge} from '../../service'
 import './index.less';
 
 export default function OperateModal(props: any) {
-    const { visible, onClose, action, initData, appCategory } = props;
+    const { visible, onClose, action, initData, appCategory ,onSave} = props;
     const [data, setData] = useState<any>([]);
     const [releaseOptions] = useReleaseModalOption({ categoryCode: appCategory?.value || '',curVersionInfo:initData,visible });
     const [value, setValue] = useState<any>();
     const [downLoadForm] = Form.useForm();
     const [form] = Form.useForm();
+    const [loading,setLoading]=useState<boolean>(false)
     
 
     useEffect(() => {
@@ -24,10 +24,23 @@ export default function OperateModal(props: any) {
     const columns = useMemo(() => downloadList(), [data])
 
     const handleSubmit = async () => {
+      
         if (action === 'downloadPackage') {
             const value = await downLoadForm.validateFields();
             window.open(`${downLoadUrl}?id=${initData?.id}&reason=${value?.reason}`,'_blank')
             onClose()
+        }
+        if(action === 'merge'){
+            setLoading(true)
+            releaseMerge({id:initData?.id,mergedId:0}).then((res)=>{
+                if(res?.success){
+                    message.success("操作成功！")
+                    onSave()
+                }
+
+            }).finally(()=>{
+                setLoading(false)
+            })
         }
 
     };
@@ -47,7 +60,7 @@ export default function OperateModal(props: any) {
             width={700}
             footer={
                 action !== 'downloadList' ? <div className="drawer-footer">
-                    <Button type="primary" onClick={handleSubmit}>
+                    <Button type="primary" onClick={handleSubmit} loading={loading}>
                         {action === 'downloadPackage' ? '确认下载' : '确认'}
                     </Button>
                     <Button type="default" onClick={onClose}>

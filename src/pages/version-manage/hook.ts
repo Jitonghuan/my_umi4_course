@@ -48,9 +48,9 @@ export function useReleaseModalOption(props: any) {
                let options:any=[]
               
                data?.map((item:any,index:number)=>{
-                debugger
+              
                    if(item?.releaseNumber===props?.curVersionInfo?.releaseNumber&&item[index+1]?.releaseNumber){
-                    debugger
+                  
                     options.push({
                         value: item.id, label: item.releaseNumber
                     })
@@ -167,3 +167,5 @@ export function useRegulusOnlineBugs(props: any) {
     }, [Object.values(props)])
     return [data, loading, loadData]
 }
+
+//合并版本

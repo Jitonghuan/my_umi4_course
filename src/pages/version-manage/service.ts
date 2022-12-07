@@ -62,3 +62,9 @@ export const releasePublish = (id: number) => {
 
 ///release/download
 export const downLoadUrl=addAPIPrefix('/releaseManage/release/download');
+//合并版本
+export const mergeReleaseUrl=addAPIPrefix('/releaseManage/release/merge');
+export const releaseMerge = (params:{id: number,mergedId:number}) => {
+    return postRequest(mergeReleaseUrl, { data:params });
+};
+
