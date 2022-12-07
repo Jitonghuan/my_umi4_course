@@ -33,12 +33,17 @@ export default function VersionPublish(props: Iprops) {
                 if(res?.data?.length>0){
                     let length=res?.data?.length;
                     let dataSource=res?.data;
-                    const i = dataSource.findIndex((item: any,index:number) => index === length-1);
-                    if(i!==-1){
-                        setInfoDetail(dataSource[i])
+                    if(typeof(dataSource[0])==="object" &&Object.keys(dataSource[0])?.length>0){
+                        setInfoDetail(dataSource[0])
                     }else{
                         setInfoDetail({})
                     }
+                    // const i = dataSource.findIndex((item: any,index:number) => index === length-1);
+                    // if(i!==-1){
+                    //     setInfoDetail(dataSource[i])
+                    // }else{
+                    //     setInfoDetail({})
+                    // }
 
 
 
