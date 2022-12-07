@@ -1,11 +1,11 @@
-import React, { useMemo, useState, useEffect, useContext, useRef } from 'react';
-import { Select, Descriptions, Tabs, DatePicker, Space, Spin } from 'antd';
+import React, { useMemo, useState, useEffect, useContext,} from 'react';
+import { Select, Descriptions, Tabs, Space, Spin } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import './index.less';
-import { Form, Button, Table, message } from 'antd';
+import { Button} from 'antd';
 import { FeContext } from '@/common/hooks';
-import { history, useLocation, Outlet } from 'umi';
+import { history} from 'umi';
 import { parse, stringify } from 'query-string';
 import ModifyApp from './component/modify-app';
 import ContentList from './component/content-list';

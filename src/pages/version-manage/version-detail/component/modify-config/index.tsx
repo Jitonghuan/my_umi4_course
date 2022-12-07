@@ -1,5 +1,5 @@
 import React, { useMemo, useState,useEffect } from 'react';
-import { Input, Button, Table, Space, Tooltip,Spin,Tag } from 'antd';
+import { Input, Button, Table, Space, Tooltip,Spin,Tag,Pagination } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import { debounce } from 'lodash';
@@ -17,6 +17,10 @@ export default function ModifyConfig(props:Iprops) {
     const {dataSource,originData,infoLoading,setDataSource}=props;
     const [visible, setVisible] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>('')
+    const [pageTotal, setPageTotal] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(2);
+  const [total,setTotal]=useState<number>(0)
+  const [modalData, setModalData] = useState<any>([]);
     const columns = [
         {
             title: '所属应用',
@@ -45,8 +49,7 @@ export default function ModifyConfig(props:Iprops) {
 
         setDataSource(afterFilter);
     }
-    const [total,setTotal]=useState<number>(0)
-    const [modalData, setModalData] = useState<any>([]);
+   
     useEffect(()=>{
         if(dataSource?.length>0){
             let sum=0
@@ -55,9 +58,9 @@ export default function ModifyConfig(props:Iprops) {
                 sum= sum+item?.configInfo;
                 if (Object.keys(item?.config)?.length > 0) {
 
-                    for (const key in item?.sql) {
-                        if (Object.prototype.hasOwnProperty.call(item?.sql, key)) {
-                            const element = item?.sql[key];
+                    for (const key in item?.config) {
+                        if (Object.prototype.hasOwnProperty.call(item?.config, key)) {
+                            const element = item?.config[key];
                             data.push({
                                 label: key,
                                 value: element,
@@ -73,6 +76,7 @@ export default function ModifyConfig(props:Iprops) {
 
             })
             setTotal(sum)
+            setPageTotal(sum)
             setModalData(data)
 
 
@@ -80,11 +84,21 @@ export default function ModifyConfig(props:Iprops) {
         }else{
             setTotal(0)
             setModalData([])
+            setPageTotal(0)
 
         }
 
 
     },[JSON.stringify(dataSource)])
+    //触发分页
+  const pageSizeClick = (page: number, pageSize: number) => {
+    let obj = {
+      pageIndex: page,
+      pageSize: pageSize,
+    };
+    setPageSize(pageSize);
+  };
+
     return (
         <>
             <div className='table-top'>
@@ -134,6 +148,23 @@ export default function ModifyConfig(props:Iprops) {
                 </Spin>
                     
                   </div>
+
+                  {total > 2 && (
+                    <div className={`pagination-wrap`}>
+                      <Pagination
+                        pageSize={pageSize}
+                        total={total}
+                        // current={pageIndex}
+                        // showSizeChanger={false}
+                        // onShowSizeChange={(_, next) => {
+                        //   setPageIndex(1);
+                        //   setPageSize(next);
+                        // }}
+
+                        onChange={pageSizeClick}
+                      />
+                    </div>
+                  )}
         </>
     )
 }
