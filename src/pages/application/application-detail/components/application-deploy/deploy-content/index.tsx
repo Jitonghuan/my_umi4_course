@@ -21,7 +21,7 @@ import PublishContent from './components/publish-content';
 import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import { Spin } from 'antd';
-import { listAppEnv } from '@/pages/application/service';
+import { listAppEnv, judgeIsNew } from '@/pages/application/service';
 import './index.less';
 const rootCls = 'deploy-content-compo';
 
@@ -61,6 +61,7 @@ export default function DeployContent(props: DeployContentProps) {
   const publishContentRef = useRef<any>();
   const [deployedLoad, setDeployedLoad] = useState(false);
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
+  const [newPublish, setNewPublish] = useState<boolean>(true);//是否要用新的发布流程
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
@@ -140,43 +141,6 @@ export default function DeployContent(props: DeployContentProps) {
       timerHandle('do', true);
     }
   };
-  // 获取已发布分支列表
-  // const requestDeployBranch = () => {
-  //   setDeployedLoad(true)
-  //   queryFeatureDeployed({
-  //     appCode: appCode!,
-  //     envTypeCode,
-  //     pipelineCode,
-  //     isDeployed: 1,
-  //     masterBranch: masterBranchName.current,
-  //     needRelationInfo: envTypeCode === 'prod' ? 1 : 0
-  //   }).then((res) => {
-  //     setDeployed(res?.data || [])
-  //   }).catch(() => {
-  //     setDeployed([])
-  //   }).finally(() => {
-  //     setDeployedLoad(false);
-  //   })
-  // }
-
-  // 获取未发布分支列表
-  // const requestUnDeployBranch = () => {
-  //   setUnDeployedLoad(true)
-  //   queryFeatureDeployed({
-  //     appCode: appCode!,
-  //     envTypeCode,
-  //     pipelineCode,
-  //     isDeployed: 0,
-  //     masterBranch: masterBranchName.current,
-  //     needRelationInfo: envTypeCode === 'prod' ? 1 : 0
-  //   }).then((res) => {
-  //     setUnDeployed(res?.data || [])
-  //   }).catch(() => {
-  //     setUnDeployed([])
-  //   }).finally(() => {
-  //     setUnDeployedLoad(false);
-  //   })
-  // }
 
   // appCode变化时
   useEffect(() => {
@@ -196,6 +160,7 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     if (!appCode || !envTypeCode) return;
     getEnvList({ envTypeCode, appCode: appData?.appCode, proEnvType: 'benchmark' });
+    // isNewPublish();
   }, [envTypeCode, appCode])
 
   // 获取该应用所有环境列表
@@ -222,6 +187,15 @@ export default function DeployContent(props: DeployContentProps) {
   const stopSpin = () => {
     setLoading(false);
   };
+
+  // 判断该应用是否要用新的发布步骤条
+  const isNewPublish = () => {
+    judgeIsNew({ envTypeCode, appCode: appData?.appCode }).then((res) => {
+      if (res?.success) {
+
+      }
+    })
+  }
 
   return (
     <div className={rootCls}>
@@ -254,6 +228,7 @@ export default function DeployContent(props: DeployContentProps) {
             onSpin={onSpin}
             stopSpin={stopSpin}
             envList={envList}
+            newPublish={newPublish}
           // loadData={requestDeployBranch}
           // refreshList={() => {
           //   requestUnDeployBranch();

@@ -21,6 +21,7 @@ import FrontendTestEnvSteps from './frontend-steps/test';
 import FrontendPreEnvSteps from './frontend-steps/pre';
 import FrontendProdEnvSteps from './frontend-steps/prod';
 import DeploySteps from './steps';
+import NewDeploySteps from './new-steps';
 import './index.less';
 import { RedoOutlined } from '@ant-design/icons';
 
@@ -40,7 +41,7 @@ const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
 };
 
 export default function PublishContent(props: IProps) {
-  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList, loading } = props;
+  const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList, loading, newPublish } = props;
   let { metadata, status, envInfo } = deployInfo;
   const { deployNodes } = status || {}; //步骤条数据
   const { deployEnvs } = envInfo || [];
@@ -184,7 +185,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
       <div className={`${rootCls}__right-top-btns`}>
-        {isShow && deployNodes?.length !== 0 && (
+        {(isShow || newPublish) && deployNodes?.length !== 0 && (
           <Button
             danger
             onClick={() => {
@@ -196,34 +197,41 @@ export default function PublishContent(props: IProps) {
         )}
       </div>
 
-      {/* <CurrSteps
-        deployInfo={deployInfo}
-        onOperate={onOperate}
-        isFrontend={isFrontend}
-        appData={appData}
-        onCancelDeploy={onCancelDeploy}
-        stopSpin={stopSpin}
-        onSpin={onSpin}
-        deployedList={deployedList}
-        getItemByKey={getItemByKey}
-      /> */}
-      <DeploySteps
-        stepData={deployNodes}
-        deployInfo={deployInfo}
-        onOperate={onOperate}
-        isFrontend={isFrontend}
-        envTypeCode={envTypeCode}
-        appData={appData}
-        onCancelDeploy={onCancelDeploy}
-        stopSpin={stopSpin}
-        notShowCancel={notShowCancel}
-        showCancel={showCancel}
-        onSpin={onSpin}
-        deployedList={deployedList}
-        getItemByKey={getItemByKey}
-        pipelineCode={pipelineCode}
-        envList={envList}
-      />
+      {newPublish ?
+        <NewDeploySteps
+          stepData={deployNodes}
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          isFrontend={isFrontend}
+          envTypeCode={envTypeCode}
+          appData={appData}
+          onCancelDeploy={onCancelDeploy}
+          stopSpin={stopSpin}
+          notShowCancel={notShowCancel}
+          showCancel={showCancel}
+          onSpin={onSpin}
+          deployedList={deployedList}
+          getItemByKey={getItemByKey}
+          pipelineCode={pipelineCode}
+          envList={envList}
+        /> :
+        <DeploySteps
+          stepData={deployNodes}
+          deployInfo={deployInfo}
+          onOperate={onOperate}
+          isFrontend={isFrontend}
+          envTypeCode={envTypeCode}
+          appData={appData}
+          onCancelDeploy={onCancelDeploy}
+          stopSpin={stopSpin}
+          notShowCancel={notShowCancel}
+          showCancel={showCancel}
+          onSpin={onSpin}
+          deployedList={deployedList}
+          getItemByKey={getItemByKey}
+          pipelineCode={pipelineCode}
+          envList={envList}
+        />}
       {/* <div className="full-scree-icon">
         <Fullscreen onClick={() => setFullScreeVisible(true)} />
       </div> */}

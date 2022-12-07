@@ -734,3 +734,10 @@ export const deletePipeline = (params: { pipelineCode: string }) =>
     data: params,
   });
 
+
+/** 是否要用新的发布步骤条 */
+export const judgeIsNew = (params: any) =>
+  getRequest(`${appConfig.apiPrefix}/releaseManageappManage/appPipeline/delete/${params.pipelineCode}`, {
+    data: params,
+  });
+
