@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Form, Modal, Table, Space, Tooltip } from 'antd';
+import { Form, Modal, Table, Space, Tooltip, Tag, Descriptions } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import AceEditor from '@/components/ace-editor';
@@ -8,25 +8,29 @@ import { debounce } from 'lodash';
 import detailContext from '../../context';
 import { releaseAppRel } from '../../../service';
 import './index.less'
-interface Iprops{
-    activeTab:string;
-    detailInfo:any;
-    infoLoading:boolean;
-    count:number
-  
+interface Iprops {
+    activeTab: string;
+    detailInfo: any;
+    infoLoading: boolean;
+    count: number
+
 
 }
 
 export default function ModifyApp(props: Iprops) {
-    const { activeTab,detailInfo,infoLoading,count } = props;
-    const { categoryCode, releaseId } = useContext(detailContext);
+    const { activeTab, detailInfo, infoLoading, count } = props;
+    const { categoryCode, releaseId,categoryName } = useContext(detailContext);
     const [visible, setVisible] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('hide');
     const [curRecord, setCurRecord] = useState<any>({});
-    const [dataSource,setDataSource]=useState<any>([])
-    const [loading,setLoading]=useState<boolean>(false)
+    const [dataSource, setDataSource] = useState<any>([])
+    const [loading, setLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
     const [originData, setOriginData] = useState<any>([]);
+    // const [config,setConfig]=useState<any>([]);
+    // const [content,setContent]=useState<any>([]);
+    // const [sql,setSql]=useState<any>([]);
+    const [modalData, setModalData] = useState<any>([]);
     const filter = debounce((value) => filterData(value), 500)
 
     const filterData = (value: string) => {
@@ -44,54 +48,73 @@ export default function ModifyApp(props: Iprops) {
 
         setDataSource(afterFilter);
     }
-    const getDataSource=()=>{
+    const mapDo = (params: any) => {
+        let data: any = []
+        if (Object.keys(params)?.length > 0) {
+
+            for (const key in params) {
+                if (Object.prototype.hasOwnProperty.call(params, key)) {
+                    const element = params[key];
+                    data.push({
+                        label: key,
+                        value: element
+                    })
+
+                }
+            }
+
+        }
+        setModalData(data)
+
+    }
+    const getDataSource = () => {
         setLoading(true)
-        releaseAppRel({releaseId}).then((res)=>{
-            if(res?.success){
-                let data:any=[];
-                (res?.data)?.map((ele:any)=>{
+        releaseAppRel({ releaseId }).then((res) => {
+            if (res?.success) {
+                let data: any = [];
+                (res?.data)?.map((ele: any) => {
                     data.push({
                         ...ele,
-                        configInfo:Object.keys(ele?.config)?.length,
-                        sqlInfo:Object.keys(ele?.sql)?.length,
-                        resourceAddrInfo:Object.keys( ele?.resourceAddr)?.length,
-        
+                        configInfo: Object.keys(ele?.config)?.length,
+                        sqlInfo: Object.keys(ele?.sql)?.length,
+                        relationDemandsInfo: ele?.relationDemands?.length,
+
                     })
-        
+
                 })
                 setDataSource(data)
                 setOriginData(data)
 
-            }else{
+            } else {
                 setDataSource([])
                 setOriginData([])
 
             }
 
-        }).finally(()=>{
+        }).finally(() => {
             setLoading(false)
 
         })
     }
-   
-    
 
-     const frontTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType !== 'backend').length, [JSON.stringify(dataSource)])
-     const backendTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType === 'backend').length, [JSON.stringify(dataSource)])
-    
-    useEffect(()=>{
-        if(releaseId){
+
+
+    const frontTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType !== 'backend').length, [JSON.stringify(dataSource)])
+    const backendTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType === 'backend').length, [JSON.stringify(dataSource)])
+
+    useEffect(() => {
+        if (releaseId) {
             getDataSource()
 
-        }else{
+        } else {
             setDataSource([])
             setOriginData([])
 
         }
-       
-       
 
-    },[releaseId,activeTab,categoryCode,count])
+
+
+    }, [releaseId, activeTab, categoryCode, count])
 
     const columns = [
         {
@@ -107,27 +130,35 @@ export default function ModifyApp(props: Iprops) {
         },
         {
             title: '变更内容',
-            dataIndex: 'resourceAddrInfo',
+            dataIndex: 'relationDemandsInfo',
             width: 100,
-            render: (value: any, record: any) => <a onClick={() => { clickRow('content', record) }}>{value}</a>
+            render: (value: any, record: any) => <a onClick={() => {
+                clickRow('content', record)
+            }}>{value}</a>
         },
         {
             title: '变更配置',
             dataIndex: 'configInfo',
             width: 100,
-            render: (value: string, record: any) => <a onClick={() => { clickRow('config', record) }}>{value}</a>
+            render: (value: string, record: any) => <a onClick={() => {
+                clickRow('config', record)
+                mapDo(record?.config)
+            }}>{value}</a>
         },
         {
             title: '变更SQL',
             dataIndex: 'sqlInfo',
             width: 100,
-            render: (value: string, record: any) => <a onClick={() => { clickRow('sql', record) }}>{value}</a>
+            render: (value: string, record: any) => <a onClick={() => {
+                clickRow('sql', record)
+                mapDo(record?.sql)
+            }}>{value}</a>
         },
         {
             title: '应用版本状态',
             dataIndex: 'appStatus',
             width: 120,
-            render:(value: string, record: any)=><span style={{color:value==="内容开发"?"#209EA5":value==="出包完成"?"#58A55C":"gray"}}>{value}</span>
+            render: (value: string, record: any) => <span style={{ color: value === "内容开发" ? "#209EA5" : value === "出包完成" ? "#58A55C" : "gray" }}>{value}</span>
         },
         {
             title: '版本Tag',
@@ -138,7 +169,7 @@ export default function ModifyApp(props: Iprops) {
             title: '出包时间',
             dataIndex: 'publishTime',
             width: 120,
-            render:(value:string)=><span>{moment(value).format("YYYY-MM-DD HH:mm:ss") || '--'}</span>
+            render: (value: string) => <span>{moment(value).format("YYYY-MM-DD HH:mm:ss") || '--'}</span>
         },
         {
             title: '出包人',
@@ -150,13 +181,16 @@ export default function ModifyApp(props: Iprops) {
     const modalColumns = [
         {
             title: 'ID',
-            dataIndex: 'id',
+            dataIndex: 'entryCode',
             width: 160,
         },
         {
             title: '类型',
-            dataIndex: 'type',
+            dataIndex: 'relatedPlat',
             width: 120,
+            render: (value: string) => <span><Tag color={value === 'demandPlat' ? 'green' : 'blue'}>{value === 'demandPlat' ? '需求' : 'bug'}</Tag></span>
+
+
         },
         {
             title: '标题',
@@ -167,6 +201,13 @@ export default function ModifyApp(props: Iprops) {
             title: '关联分支',
             dataIndex: 'feature',
             width: 220,
+            render: (value: string, record: any) => <span>
+                {record?.branchInfos?.map((ele: any) => {
+                    return <p>{ele?.branchName}</p>
+
+                })}
+
+            </span>
         },
 
     ]
@@ -174,12 +215,22 @@ export default function ModifyApp(props: Iprops) {
     const clickRow = (type: string, record: any) => {
         setCurRecord(record);
         setMode(type);
-        if(type==="config"){
-            form.setFieldsValue({
-                config:record?.config
-            })
+        try {
+            if (type === "config") {
+                form.setFieldsValue({
+                    config: JSON.stringify(record?.config)
+                })
+            }
+            if(type==="sql"){
+
+            }
+
+        } catch (error) {
 
         }
+
+        //modalData
+
     }
     return (
         <>
@@ -217,7 +268,18 @@ export default function ModifyApp(props: Iprops) {
 
             <Modal
                 visible={mode !== 'hide'}
-                title={curRecord?.code || ''}
+                title={<div className="modal-title">
+                    <span>{curRecord?.appCode }</span> 
+                    <span>
+                       <span>当前版本：<span>{detailInfo?.releaseNumber}</span></span> 
+                       <span>
+                       <span className='black-text'>{categoryCode || '---'}</span>&nbsp;&nbsp;
+                       <span className='grey-text'>{categoryName|| '---'}</span>
+                       </span>
+                        
+                        
+                        
+                    </span></div>}
                 onCancel={() => { setMode('hide') }}
                 width={900}
                 footer={null}
@@ -226,7 +288,7 @@ export default function ModifyApp(props: Iprops) {
                 <div className='modify-app-modal'>
                     {mode === 'content' &&
                         <Table
-                            dataSource={[]}
+                            dataSource={curRecord?.relationDemands || []}
                             // loading={loading || updateLoading}
                             bordered
                             rowKey="id"
@@ -234,23 +296,19 @@ export default function ModifyApp(props: Iprops) {
                             columns={modalColumns}
                         ></Table>}
                     {mode === 'config' &&
+                      
                         <Form form={form} preserve={false}>
                             <Form.Item name="config">
-                                <AceEditor mode="yaml" height={500} />
+                                <AceEditor mode="yaml" height={500} readOnly />
                             </Form.Item>
                         </Form>
                     }
                     {mode === 'sql' &&
-                        <div className='modal-sql-container'>
-                            <MonacoSqlEditor
-                                isSqlExecuteBtn={false}
-                                isSqlBueatifyBtn={false}
-                                isSqlExecutePlanBtn={false}
-                                tableFields={{}}
-                                initValue={'initData'}
-                                implementDisabled={false}
-                            />
-                        </div>}
+                         <Form form={form} preserve={false}>
+                         <Form.Item name="sql">
+                             <AceEditor mode="sql" height={500} readOnly />
+                         </Form.Item>
+                     </Form>}
                 </div>
             </Modal>
         </>

@@ -7,7 +7,6 @@ import {
     getRegulusProjects,
     getRegulusOnlineBugs,
 } from '@/pages/application/service';
-
 // 获取版本号下拉框数据
 export function useReleaseOption(props: any) {
     const [data, setData] = useState<any>([]);
@@ -30,11 +29,50 @@ export function useReleaseOption(props: any) {
 
     useEffect(() => {
         if (props.categoryCode) {
-            loadData({});
+            loadData({pageSize:-1});
         }
     }, []);
     return [data, loading, loadData]
 }
+
+// 获取版本号下拉框数据
+export function useReleaseModalOption(props: any) {
+    const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
+    const loadData = useCallback(async () => {
+        try {
+            setLoading(true);
+            const res = await getReleaseList({ categoryCode:props?.categoryCode,pageIndex:1,pageSize:20 });
+            if (res?.success) {
+                const data = res?.data || [];
+               let options:any=[]
+              
+               data?.map((item:any,index:number)=>{
+                debugger
+                   if(item?.releaseNumber===props?.curVersionInfo?.releaseNumber&&item[index+1]?.releaseNumber){
+                    debugger
+                    options.push({
+                        value: item.id, label: item.releaseNumber
+                    })
+                   }
+               })
+                setData(options || []);
+            }
+        } catch (ex) {
+            setData([]);
+        } finally {
+            setLoading(false);
+        }
+    }, [props?.curVersionInfo?.releaseNumber,props.categoryCode]);
+
+    useEffect(() => {
+        if (props?.categoryCode&&props?.curVersionInfo?.releaseNumber&&props?.visible) {
+            loadData();
+        }
+    }, [props?.curVersionInfo?.releaseNumber,props.categoryCode,props?.visible]);
+    return [data, loading, loadData]
+}
+
 
 // 获取项目列表
 export function usePortalList(props: any) {

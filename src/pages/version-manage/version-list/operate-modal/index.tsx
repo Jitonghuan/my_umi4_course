@@ -2,14 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Drawer, Tag, Form, Button, Table, Modal, Input, Switch, Radio, Select, Space } from 'antd';
 import UserSelector, { stringToList } from '@/components/user-selector';
 import { downloadList } from '../schema';
-import { useReleaseOption } from '../../hook';
+import { useReleaseModalOption } from '../../hook';
 import {downLoadUrl} from '../../service'
 import './index.less';
 
 export default function OperateModal(props: any) {
     const { visible, onClose, action, initData, appCategory } = props;
     const [data, setData] = useState<any>([]);
-    const [releaseOptions] = useReleaseOption({ categoryCode: appCategory?.value || '' });
+    const [releaseOptions] = useReleaseModalOption({ categoryCode: appCategory?.value || '',curVersionInfo:initData,visible });
     const [value, setValue] = useState<any>();
     const [downLoadForm] = Form.useForm();
     const [form] = Form.useForm();
@@ -29,6 +29,7 @@ export default function OperateModal(props: any) {
             window.open(`${downLoadUrl}?id=${initData?.id}&reason=${value?.reason}`,'_blank')
             onClose()
         }
+
     };
     return (
         <Modal

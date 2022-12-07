@@ -98,9 +98,12 @@ export default function VersionList() {
             },
             onPublish:(record: any,index:number)=>{
                 releasePublishAction(record?.id)
+            },
+            onDisabledAction:(record: any,index:number)=>{
+
             }
         }) as any;
-    }, [data, appCategory]);
+    }, [data, appCategory?.label,appCategory?.value]);
     useEffect(() => {
         let intervalId = setInterval(() => {
             queryList({ pageSize, pageIndex });

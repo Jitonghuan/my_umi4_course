@@ -384,7 +384,7 @@ export default [
       },
       {
         path: `${baseRoutePath}/application/version-management`,
-        name: '版本管理',
+        name: '主干版本',
         key: 'version-management',
         component: '@/pages/application/version-management',
       },

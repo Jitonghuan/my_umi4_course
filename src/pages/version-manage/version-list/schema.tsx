@@ -6,7 +6,9 @@ export const listSchema = (params:{
     downloadCountList:(record: any) => void;
     mergeVersion:(record: any,) => void;
     onPublish:(record: any,index:number) => void;
-    handleEdit:(record: any,index:number) => void; }) => {
+    handleEdit:(record: any,index:number) => void;
+    onDisabledAction:(record: any,index:number) => void;
+ }) => {
     return [
         {
             title: '序号',
@@ -117,17 +119,22 @@ export const listSchema = (params:{
                         </a>
                     }
                     {record?.status === 'packFinish' &&
-                        <a onClick={() => { params?.mergeVersion(record) }}>
+                    <>
+                   
+
+                    <a onClick={() => { params?.mergeVersion(record) }}>
                             合并
                         </a>
+                    </>
+                        
                     }
                     {record?.status === 'packFinish' &&
                         <Popconfirm
                             title="确定要禁用该版本吗？"
                             onConfirm={() => {
-                                params?.handleEdit(record, index);
+                                params?.onDisabledAction(record, index);
                             }}>
-                            <a>禁用</a>
+                            <a style={{color:"red"}}>禁用</a>
                         </Popconfirm>
                     }
                 </div>
