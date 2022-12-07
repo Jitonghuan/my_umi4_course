@@ -271,11 +271,15 @@ export default function ModifyApp(props: Iprops) {
                 title={<div className="modal-title">
                     <span>{curRecord?.appCode }</span> 
                     <span>
-                       <span>当前版本：<span>{detailInfo?.releaseNumber}</span></span> 
-                       <span>
-                       <span className='black-text'>{categoryCode || '---'}</span>&nbsp;&nbsp;
-                       <span className='grey-text'>{categoryName|| '---'}</span>
-                       </span>
+                        <Space>
+                        <span>当前版本：<span><Tag color="green">{detailInfo?.releaseNumber}</Tag></span></span> 
+                      
+                         <span className='black-text'>{categoryCode || '---'}</span>
+                         <span className='grey-text'>{categoryName|| '---'}</span>
+
+                        </Space>
+                      
+                      
                         
                         
                         

@@ -93,7 +93,7 @@ export default function VersionList() {
             mergeVersion: (record: any) => {
                 openModal('merge', record)
             },
-            handleEdit: (record: any,index:number) => {
+            onLock: (record: any,index:number) => {
                 updateReleaseAction({...record,locked:record?.locked===0?1:0})
             },
             onPublish:(record: any,index:number)=>{
@@ -101,12 +101,10 @@ export default function VersionList() {
             },
             onDisabledAction:(record: any,index:number)=>{
                 updateReleaseAction({...record,status:"disable"})
-
             },
-            // onEnableAction:(record: any,index:number)=>{
-
-
-            // }
+            onEnableAction:(record: any,index:number)=>{
+                updateReleaseAction({...record,status:"packFinish"})
+            }
 
 
         }) as any;

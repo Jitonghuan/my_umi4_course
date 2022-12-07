@@ -6,9 +6,9 @@ export const listSchema = (params:{
     downloadCountList:(record: any) => void;
     mergeVersion:(record: any,) => void;
     onPublish:(record: any,index:number) => void;
-    handleEdit:(record: any,index:number) => void;
+    onLock:(record: any,index:number) => void;
     onDisabledAction:(record: any,index:number) => void;
-    onEnableAction:()=>void;
+    onEnableAction:(record: any,index:number)=>void;
  }) => {
     return [
         {
@@ -91,7 +91,7 @@ export const listSchema = (params:{
                         <Popconfirm
                             title="确定锁定该需求吗？"
                             onConfirm={() => {
-                                params?.handleEdit(record, index);
+                                params?.onLock(record, index);
                             }}>
                             <a> 锁定需求</a>
                         </Popconfirm>
@@ -109,7 +109,7 @@ export const listSchema = (params:{
                         <Popconfirm
                             title="确定要启用该版本吗？"
                             onConfirm={() => {
-                                params?.handleEdit(record, index);
+                                params?.onEnableAction(record, index);
                             }}>
                             <a > 启用版本</a>
                         </Popconfirm>
