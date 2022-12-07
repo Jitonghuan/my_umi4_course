@@ -100,8 +100,15 @@ export default function VersionList() {
                 releasePublishAction(record?.id)
             },
             onDisabledAction:(record: any,index:number)=>{
+                updateReleaseAction({...record,status:"disable"})
 
-            }
+            },
+            // onEnableAction:(record: any,index:number)=>{
+
+
+            // }
+
+
         }) as any;
     }, [data, appCategory?.label,appCategory?.value]);
     useEffect(() => {

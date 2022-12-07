@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getReleaseList } from './service';
+import { getReleaseList,getMergeList } from './service';
 import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
 import {
     queryPortalList,
     getDemandByProjectList,
     getRegulusProjects,
     getRegulusOnlineBugs,
+    
 } from '@/pages/application/service';
 // 获取版本号下拉框数据
 export function useReleaseOption(props: any) {
@@ -42,34 +43,36 @@ export function useReleaseModalOption(props: any) {
     const loadData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await getReleaseList({ categoryCode:props?.categoryCode,pageIndex:1,pageSize:20 });
+            const res = await getMergeList(props?.id);
             if (res?.success) {
-                const data = res?.data || [];
-               let options:any=[]
+                const data = res?.data || {};
+                if(typeof(data)==="object"&& Object.keys(data)?.length>0){
+                    setData( [
+                       {
+                        label:data?.releaseNumber,
+                        value:data?.id
+                       } 
+                    ]);
+                }else{
+                    setData( []);
+
+                }
               
-               data?.map((item:any,index:number)=>{
-              
-                   if(item?.releaseNumber===props?.curVersionInfo?.releaseNumber&&item[index+1]?.releaseNumber){
-                  
-                    options.push({
-                        value: item.id, label: item.releaseNumber
-                    })
-                   }
-               })
-                setData(options || []);
+             
+                
             }
         } catch (ex) {
             setData([]);
         } finally {
             setLoading(false);
         }
-    }, [props?.curVersionInfo?.releaseNumber,props.categoryCode]);
+    }, [props?.id]);
 
     useEffect(() => {
-        if (props?.categoryCode&&props?.curVersionInfo?.releaseNumber&&props?.visible) {
+        if (props?.id&&props?.visible) {
             loadData();
         }
-    }, [props?.curVersionInfo?.releaseNumber,props.categoryCode,props?.visible]);
+    }, [props?.id,props?.visible]);
     return [data, loading, loadData]
 }
 

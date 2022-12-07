@@ -8,7 +8,7 @@ import './index.less';
 export default function OperateModal(props: any) {
     const { visible, onClose, action, initData, appCategory ,onSave} = props;
     const [data, setData] = useState<any>([]);
-    const [releaseOptions] = useReleaseModalOption({ categoryCode: appCategory?.value || '',curVersionInfo:initData,visible });
+    const [releaseOptions] = useReleaseModalOption({ id:initData?.id,visible });
     const [value, setValue] = useState<any>();
     const [downLoadForm] = Form.useForm();
     const [form] = Form.useForm();
@@ -32,7 +32,8 @@ export default function OperateModal(props: any) {
         }
         if(action === 'merge'){
             setLoading(true)
-            releaseMerge({id:initData?.id,mergedId:0}).then((res)=>{
+            const value = await form.validateFields();
+            releaseMerge({id:initData?.id,mergedId:value?.mergedId}).then((res)=>{
                 if(res?.success){
                     message.success("操作成功！")
                     onSave()
@@ -71,7 +72,7 @@ export default function OperateModal(props: any) {
         >
             {action === 'merge' &&
                 <Form form={form} labelCol={{ flex: '120px' }}>
-                    <Form.Item label="选择合并版本：" name="name" rules={[{ required: true, message: '请输入' }]}>
+                    <Form.Item label="选择合并版本：" name="mergedId" rules={[{ required: true, message: '请输入' }]}>
                         <Select style={{ width: 240 }} options={releaseOptions} />
                     </Form.Item>
                 </Form>

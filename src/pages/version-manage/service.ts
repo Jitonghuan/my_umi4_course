@@ -30,6 +30,11 @@ export const getReleaseList = (data: any) => {
     const url = addAPIPrefix('/releaseManage/release/list');
     return getRequest(url, { data: data });
 };
+//release/getMerge
+export const getMergeList = (id: number) => {
+    const url = addAPIPrefix('/releaseManage/release/getMerge');
+    return getRequest(url, { data: {id} });
+};
 
 // 版本关联需求/bug
 export const demandRel = (data: any) => {

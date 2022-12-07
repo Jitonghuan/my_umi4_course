@@ -8,6 +8,7 @@ export const listSchema = (params:{
     onPublish:(record: any,index:number) => void;
     handleEdit:(record: any,index:number) => void;
     onDisabledAction:(record: any,index:number) => void;
+    onEnableAction:()=>void;
  }) => {
     return [
         {
@@ -73,7 +74,7 @@ export const listSchema = (params:{
         },
         {
             title: '发版时间',
-            dataIndex: 'planTime',
+            dataIndex: 'finishTime',
             width: 120,
             ellipsis: true,
             render: (value: string) => <Tooltip title={value}>{value}</Tooltip>,
