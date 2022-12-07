@@ -31,7 +31,7 @@ export default function AddDrawer(props: any) {
                 const res = (maxVersion).split('.');
                 initVersion = `${res[0]}.${res[1]}.${Number(res[2]) + 1}`
             }
-            form.setFieldsValue({ version: initVersion });
+            form.setFieldsValue({ releaseNumber: initVersion });
         }
     }, [visible, maxVersion]);
 

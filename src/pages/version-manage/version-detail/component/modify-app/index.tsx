@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Form, Modal, Table, Space, Tooltip, Tag, Descriptions } from 'antd';
+import { Form, Modal, Table, Space, Tooltip, Tag, Descriptions,Divider } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import MonacoSqlEditor from '@/components/monaco-sql-editor';
 import AceEditor from '@/components/ace-editor';
 import moment from 'moment';
 import { debounce } from 'lodash';
@@ -13,23 +12,23 @@ interface Iprops {
     detailInfo: any;
     infoLoading: boolean;
     count: number
+    originData:any
+    dataSource:any
+    setDataSource:any
 
 
 }
 
 export default function ModifyApp(props: Iprops) {
-    const { activeTab, detailInfo, infoLoading, count } = props;
-    const { categoryCode, releaseId,categoryName } = useContext(detailContext);
+    const { activeTab, detailInfo, infoLoading, count,dataSource,originData,setDataSource } = props;
+    const { categoryCode, releaseId, categoryName } = useContext(detailContext);
     const [visible, setVisible] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('hide');
     const [curRecord, setCurRecord] = useState<any>({});
-    const [dataSource, setDataSource] = useState<any>([])
-    const [loading, setLoading] = useState<boolean>(false)
+   // const [dataSource, setDataSource] = useState<any>([])
+   // const [loading, setLoading] = useState<boolean>(false)
     const [form] = Form.useForm();
-    const [originData, setOriginData] = useState<any>([]);
-    // const [config,setConfig]=useState<any>([]);
-    // const [content,setContent]=useState<any>([]);
-    // const [sql,setSql]=useState<any>([]);
+  //  const [originData, setOriginData] = useState<any>([]);
     const [modalData, setModalData] = useState<any>([]);
     const filter = debounce((value) => filterData(value), 500)
 
@@ -40,8 +39,8 @@ export default function ModifyApp(props: Iprops) {
         }
         const data = JSON.parse(JSON.stringify(dataSource));
         const afterFilter: any = [];
-        data.forEach((item: any) => {
-            if (item.title?.indexOf(value) !== -1) {
+        data?.forEach((item: any) => {
+            if (item.appCode?.indexOf(value) !== -1) {
                 afterFilter.push(item);
             }
         });
@@ -67,54 +66,54 @@ export default function ModifyApp(props: Iprops) {
         setModalData(data)
 
     }
-    const getDataSource = () => {
-        setLoading(true)
-        releaseAppRel({ releaseId }).then((res) => {
-            if (res?.success) {
-                let data: any = [];
-                (res?.data)?.map((ele: any) => {
-                    data.push({
-                        ...ele,
-                        configInfo: Object.keys(ele?.config)?.length,
-                        sqlInfo: Object.keys(ele?.sql)?.length,
-                        relationDemandsInfo: ele?.relationDemands?.length,
+    // const getDataSource = () => {
+    //     setLoading(true)
+    //     releaseAppRel({ releaseId }).then((res) => {
+    //         if (res?.success) {
+    //             let data: any = [];
+    //             (res?.data)?.map((ele: any) => {
+    //                 data.push({
+    //                     ...ele,
+    //                     configInfo: Object.keys(ele?.config)?.length,
+    //                     sqlInfo: Object.keys(ele?.sql)?.length,
+    //                     relationDemandsInfo: ele?.relationDemands?.length,
 
-                    })
+    //                 })
 
-                })
-                setDataSource(data)
-                setOriginData(data)
+    //             })
+    //             setDataSource(data)
+    //             setOriginData(data)
 
-            } else {
-                setDataSource([])
-                setOriginData([])
+    //         } else {
+    //             setDataSource([])
+    //             setOriginData([])
 
-            }
+    //         }
 
-        }).finally(() => {
-            setLoading(false)
+    //     }).finally(() => {
+    //         setLoading(false)
 
-        })
-    }
+    //     })
+    // }
 
 
 
     const frontTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType !== 'backend').length, [JSON.stringify(dataSource)])
     const backendTotal = useMemo(() => (dataSource || []).filter((item: any) => item.appType === 'backend').length, [JSON.stringify(dataSource)])
 
-    useEffect(() => {
-        if (releaseId) {
-            getDataSource()
+    // useEffect(() => {
+    //     if (releaseId) {
+    //         getDataSource()
 
-        } else {
-            setDataSource([])
-            setOriginData([])
+    //     } else {
+    //         setDataSource([])
+    //         setOriginData([])
 
-        }
+    //     }
 
 
 
-    }, [releaseId, activeTab, categoryCode, count])
+    // }, [releaseId, activeTab, categoryCode, count])
 
     const columns = [
         {
@@ -169,7 +168,7 @@ export default function ModifyApp(props: Iprops) {
             title: '出包时间',
             dataIndex: 'publishTime',
             width: 120,
-            render: (value: string) => <span>{moment(value).format("YYYY-MM-DD HH:mm:ss") || '--'}</span>
+            render: (value: string) => <span>{value ? moment(value).format("YYYY-MM-DD HH:mm:ss") : '--'}</span>
         },
         {
             title: '出包人',
@@ -183,7 +182,7 @@ export default function ModifyApp(props: Iprops) {
             title: 'ID',
             dataIndex: 'entryCode',
             width: 160,
-            render: (value: string,record:any) => <a href={record?.url} target="_blank">{value}</a>
+            render: (value: string, record: any) => <a href={record?.url} target="_blank">{value}</a>
         },
         {
             title: '类型',
@@ -216,20 +215,6 @@ export default function ModifyApp(props: Iprops) {
     const clickRow = (type: string, record: any) => {
         setCurRecord(record);
         setMode(type);
-        try {
-            if (type === "config") {
-                form.setFieldsValue({
-                    config: JSON.stringify(record?.config)
-                })
-            }
-            if(type==="sql"){
-
-            }
-
-        } catch (error) {
-
-        }
-
         //modalData
 
     }
@@ -260,7 +245,7 @@ export default function ModifyApp(props: Iprops) {
             </div>
             <Table
                 dataSource={dataSource}
-                loading={loading}
+                loading={infoLoading}
                 bordered
                 rowKey="id"
                 pagination={false}
@@ -270,21 +255,17 @@ export default function ModifyApp(props: Iprops) {
             <Modal
                 visible={mode !== 'hide'}
                 title={<div className="modal-title">
-                    <span>{curRecord?.appCode }</span> 
-                    <span>
-                        <Space>
-                        <span>当前版本：<span><Tag color="green">{detailInfo?.releaseNumber}</Tag></span></span> 
-                      
-                         <span className='black-text'>{categoryCode || '---'}</span>
-                         <span className='grey-text'>{categoryName|| '---'}</span>
-
-                        </Space>
-                      
-                      
-                        
-                        
-                        
-                    </span></div>}
+                    <span>{curRecord?.appCode}</span>
+                    {mode === 'content'&&
+                         <span>
+                         <Space>
+                             <span>当前版本：<span><Tag color="green">{detailInfo?.releaseNumber}</Tag></span></span>
+                             <span className='black-text'>{categoryCode || '---'}</span>
+                             <span className='grey-text'>{categoryName || '---'}</span>
+                         </Space>
+                     </span>
+                    }
+                   </div>}
                 onCancel={() => { setMode('hide') }}
                 width={900}
                 footer={null}
@@ -301,19 +282,40 @@ export default function ModifyApp(props: Iprops) {
                             columns={modalColumns}
                         ></Table>}
                     {mode === 'config' &&
+                    <div className="config-content">
+                        {modalData?.map((item:any)=>{
+                            return(
+                                <div>
+                                      <p className="version-title-content"><label>版本号：</label>{item?.label}</p>
+                                     <div>
+                                     <AceEditor mode="yaml" defaultValue={item?.value} height={200} readOnly />
+
+                                     </div>
+                                     {/* <Divider /> */}
+                                </div>
+                            )
+
+                        })}
+                    </div>
+
                       
-                        <Form form={form} preserve={false}>
-                            <Form.Item name="config">
-                                <AceEditor mode="yaml" height={500} readOnly />
-                            </Form.Item>
-                        </Form>
                     }
                     {mode === 'sql' &&
-                         <Form form={form} preserve={false}>
-                         <Form.Item name="sql">
-                             <AceEditor mode="sql" height={500} readOnly />
-                         </Form.Item>
-                     </Form>}
+                      <div className="sql-content">
+                      {modalData?.map((item:any)=>{
+                          return(
+                              <div>
+                                    <p className="version-title-content"><label>版本号：</label>{item?.label}</p>
+                                   <div>
+                                   <AceEditor mode="sql" defaultValue={item?.value} height={200} readOnly />
+
+                                   </div>
+                                   {/* <Divider /> */}
+                              </div>
+                          )
+
+                      })}
+                  </div>}
                 </div>
             </Modal>
         </>

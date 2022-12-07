@@ -1,10 +1,11 @@
 
-import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions,Spin} from 'antd';
+import React, { useState, useContext, useEffect,  } from 'react';
+import { Descriptions,Spin,Modal} from 'antd';
 import RelateDemand from './component/relate-demand';
 import SubmitPublish from './component/submit-publish';
 import DetailContext from '@/pages/application/application-detail/context';
 import { getAppPublishList } from '../service';
+import AceEditor from '@/components/ace-editor';
 import moment from 'moment';
 import './index.less';
 interface Iprops{
@@ -25,6 +26,8 @@ export default function VersionDeploy(props: Iprops) {
     const [submitVisible, setSubmitVisible] = useState<boolean>(false);
     const [infoDetail,setInfoDetail]=useState<any>({})
     const [loading,setLoading]=useState<boolean>(false)
+    const [infoVisible,setInfoVisible]=useState<boolean>(false)
+    const [type,setType]=useState<string>("")
     useEffect(()=>{
         if(!appCode) return;
         queryDataSource(appCode)
@@ -72,8 +75,14 @@ export default function VersionDeploy(props: Iprops) {
                     {infoDetail?.releaseNumber||'--'}
                 </Descriptions.Item>
                 {/* <Descriptions.Item label="变更需求" > {infoDetail?.releaseNumber||'--'}</Descriptions.Item> */}
-                <Descriptions.Item label="变更配置"> {infoDetail?.config||'--'}</Descriptions.Item>
-                <Descriptions.Item label="变更SQL" > {infoDetail?.sql||'--'}</Descriptions.Item>
+                <Descriptions.Item label="变更配置"><a onClick={()=>{
+                    setInfoVisible(true)
+                    setType('config')
+                }}>{Object.keys(infoDetail?.config)?.length ||'--'}</a> </Descriptions.Item>
+                <Descriptions.Item label="变更SQL" > <a onClick={()=>{
+                    setInfoVisible(true)
+                    setType('sql')
+                }}>{Object.keys(infoDetail?.sql)?.length ||'--'}</a></Descriptions.Item>
                 <Descriptions.Item label="版本TAG"> {infoDetail?.tag||'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布人"> {infoDetail?.createUser||'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布时间"> 
@@ -86,28 +95,10 @@ export default function VersionDeploy(props: Iprops) {
 
             </Spin>
            
-        
+       <Modal title="变更详情" visible={infoVisible} width={700} >
+           <AceEditor readOnly height={500} />
 
-         {/* <div className={`${rootCls}-sider`}>
-         <VersionDetail envTypeCode={envTypeCode}  />
-      </div> */}
-      
-            {/* 版本列表 */}
-            {/* <div className='version-list'>
-                <div className='flex-space-between'>
-                    <div className='ant-descriptions-title'>版本列表</div>
-                    
-                </div>
-                <Table
-                    dataSource={[]}
-                    // loading={loading || updateLoading}
-                    bordered
-                    rowKey="id"
-                    pagination={false}
-                    columns={verisionColumns}
-                   
-                />
-            </div> */}
+       </Modal>
         </div>
     )
 }

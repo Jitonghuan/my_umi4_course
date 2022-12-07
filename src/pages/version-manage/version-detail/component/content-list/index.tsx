@@ -36,7 +36,7 @@ export default forwardRef(function ContentList(props: Iprops) {
         }
         const data = JSON.parse(JSON.stringify(dataSource));
         const afterFilter: any = [];
-        data.forEach((item: any) => {
+        data?.forEach((item: any) => {
             if (item.title?.indexOf(value) !== -1) {
                 afterFilter.push(item);
             }

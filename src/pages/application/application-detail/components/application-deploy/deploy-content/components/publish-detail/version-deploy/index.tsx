@@ -3,6 +3,7 @@ import {  Modal, message,  Form, Select,Input,} from 'antd';
 import { getRequest } from '@/utils/request';
 import { getPipelineUrl } from '@/pages/application/service';
 import { appReleasePublish } from '@/pages/application/service';
+import AceEditor from '@/components/ace-editor';
 
 interface Iprops{
     visible:boolean;
@@ -109,7 +110,7 @@ export default function VersionPublish(props:Iprops){
                 <Form.Item name="pipelineCode" label="选择流水线" rules={[{ required: true, message: '请输入' }]} initialValue={pipelineOptions[0]?.value}>
                 <Select
               options={pipelineOptions}
-              style={{ width: '240px' }}
+              style={{ width: '300px' }}
               showSearch
               defaultValue={pipelineOptions[0]?.value}
               optionFilterProp="label"
@@ -121,11 +122,13 @@ export default function VersionPublish(props:Iprops){
                 </Form.Item>
                 
                 <Form.Item name="config" label="配置" >
-                    <Input.TextArea  style={{width:600}}/>
+                    {/* <Input.TextArea  style={{width:600}}/> */}
+                    <AceEditor mode="yaml"  height={300} />
 
                 </Form.Item>
                 <Form.Item name="sql" label="Sql" >
-                <Input.TextArea  style={{width:600}}/>
+                {/* <Input.TextArea  style={{width:600}}/> */}
+                <AceEditor mode="sql"  height={300} />
                 </Form.Item>
             </Form>
 

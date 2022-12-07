@@ -198,6 +198,15 @@ export default function VersionList() {
                         <Form.Item label="版本号" name="releaseNumber">
                             <Input placeholder='请输入版本号' />
                         </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" onClick={()=>{
+                                form.setFieldsValue({
+                                    releaseNumber:""
+                                })
+                                queryList({ pageSize, pageIndex })
+
+                            }}>重置版本号</Button>
+                        </Form.Item>
                         {/* <Form.Item label="发版时间" name="finishTime">
                             <DatePicker
                                 showTime

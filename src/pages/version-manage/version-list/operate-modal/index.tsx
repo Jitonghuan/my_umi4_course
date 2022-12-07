@@ -76,7 +76,7 @@ export default function OperateModal(props: any) {
             }
             visible={visible}
             onCancel={onClose}
-            width={700}
+            width={900}
             footer={
                 action !== 'downloadList' ? <div className="drawer-footer">
                     <Button type="primary" onClick={handleSubmit} loading={loading}>

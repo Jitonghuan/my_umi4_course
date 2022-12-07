@@ -12,6 +12,7 @@ import ContentList from './component/content-list';
 import ModifyConfig from './component/modify-config';
 import ModifySql from './component/modify-sql'
 import detailContext from './context';
+import { releaseAppRel } from '../service';
 import { useReleaseOption } from '../hook';
 import { getReleaseList} from '../service';
 import OperateModal from '../version-list/operate-modal';
@@ -34,7 +35,10 @@ export default function VersionDetail() {
     const [versionOptions, versionOptionsLoading, loadVersionOption] = useReleaseOption({ categoryCode: appCategory.value });
     const [initData, setInitData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
+    const [tableLoading, setTableLoading] = useState<boolean>(false);
     const [count,setCount]=useState<number>(0)
+    const [originData, setOriginData] = useState<any>([]);
+    const [dataSource, setDataSource] = useState<any>([])
 
     const versionChange = (v: any) => {
         if (!v) {
@@ -72,8 +76,11 @@ export default function VersionDetail() {
         if (selectVersion?.value && appCategory?.value) {
             queryData(selectVersion.label, appCategory.value)
         }
+        if(selectVersion?.value ){
+            getDataSource(selectVersion.value)
+        }
         
-    }, [appCategory, selectVersion])
+    }, [appCategory?.value, selectVersion?.label,selectVersion?.value])
     useEffect(()=>{
         return()=>{
             setCount(0)
@@ -105,6 +112,35 @@ export default function VersionDetail() {
                 setInitData(res?.data[0] || {})
             }
         }).finally(() => { setLoading(false) })
+    }
+    const getDataSource = (releaseId = selectVersion.value) => {
+        setTableLoading(true)
+        releaseAppRel({ releaseId }).then((res) => {
+            if (res?.success) {
+                let data: any = [];
+                (res?.data)?.map((ele: any) => {
+                    data.push({
+                        ...ele,
+                        configInfo: Object.keys(ele?.config)?.length,
+                        sqlInfo: Object.keys(ele?.sql)?.length,
+                        relationDemandsInfo: ele?.relationDemands?.length,
+
+                    })
+
+                })
+                setDataSource(data)
+                setOriginData(data)
+
+            } else {
+                setDataSource([])
+                setOriginData([])
+
+            }
+
+        }).finally(() => {
+            setTableLoading(false)
+
+        })
     }
     
 
@@ -163,6 +199,7 @@ export default function VersionDetail() {
                             icon={<RedoOutlined />}
                             onClick={() => {
                                 queryData();
+                                getDataSource()
                                 setCount(count=>count+1)
                             }}
                             size="small"
@@ -197,8 +234,11 @@ export default function VersionDetail() {
                         <GetComponent 
                         activeTab={activeTab} 
                         detailInfo={data} 
-                        infoLoading={loading}
+                        infoLoading={tableLoading}
                         count={count}
+                        dataSource={dataSource}
+                        setDataSource={setDataSource}
+                        originData={originData}
                         onReload={  queryData}/>
                     </detailContext.Provider>
                 </div>
