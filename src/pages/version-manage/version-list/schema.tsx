@@ -1,4 +1,4 @@
-import { Popconfirm, Tooltip} from 'antd';
+import { Popconfirm, Tooltip,Space} from 'antd';
 import { statusMap } from '../type';
 import { dateCellRender } from '@/utils';
 export const listSchema = (params:{ 
@@ -10,6 +10,7 @@ export const listSchema = (params:{
     onLock:(record: any,index:number) => void;
     onDisabledAction:(record: any,index:number) => void;
     onEnableAction:(record: any,index:number)=>void;
+    userPermission:string
  }) => {
     return [
         {
@@ -86,25 +87,31 @@ export const listSchema = (params:{
             width: 180,
             fixed: 'right',
             render: (value: any, record: any, index: number) => (
-                <div className="action-cell">
+                <Space>
                     <a onClick={() => {params?.toDetail(record, 'list') }}>详情</a>
                     {record.status === 'developing' &&
+                    <span>
+                     {params?.userPermission===record?.owner?
                         <Popconfirm
                             title="确定锁定该需求吗？"
                             onConfirm={() => {
                                 params?.onLock(record, index);
                             }}>
                             <a> 锁定需求</a>
-                        </Popconfirm>
+                        </Popconfirm>:<span style={{color:"gray"}}>锁定需求</span>}
+                        </span>
                     }
-                    {(record?.status === 'waitPack'||record?.status === 'packError' ) &&
-                        <Popconfirm
-                            title="确定要发布该版本吗？"
-                            onConfirm={() => {
-                                params?.onPublish(record, index);
-                            }}>
-                            <a> 发版</a>
-                        </Popconfirm>
+                    {(record?.status === 'waitPack'||record?.status === 'packError' ) &&<span>
+                   {params?.userPermission===record?.owner?
+                   <Popconfirm
+                   title="确定要发布该版本吗？"
+                   onConfirm={() => {
+                       params?.onPublish(record, index);
+                   }}>
+                   <a> 发版</a>
+               </Popconfirm>:<span style={{color:"gray"}}>发版</span>}
+                        
+                        </span>
                     }
                     {record?.status === 'disable' &&
                         <Popconfirm
@@ -121,25 +128,28 @@ export const listSchema = (params:{
                         </a>
                     }
                     {record?.status === 'packFinish' &&
-                    <>
-                   
-
-                    <a onClick={() => { params?.mergeVersion(record) }}>
+                    <span>
+                        {params?.userPermission===record?.owner?  <a onClick={() => { params?.mergeVersion(record) }}>
                             合并
-                        </a>
-                    </>
+                        </a>:<span style={{color:"gray"}}>合并</span>}
+                   
+                    </span>
                         
                     }
                     {record?.status === 'packFinish' &&
-                        <Popconfirm
+                    <span>
+                        {params?.userPermission===record?.owner?  <Popconfirm
                             title="确定要禁用该版本吗？"
                             onConfirm={() => {
                                 params?.onDisabledAction(record, index);
                             }}>
                             <a style={{color:"red"}}>禁用</a>
-                        </Popconfirm>
+                        </Popconfirm>:<span style={{color:"gray"}}>禁用</span>}
+
+                    </span>
+                       
                     }
-                </div>
+                </Space>
             ),
         },
     ]

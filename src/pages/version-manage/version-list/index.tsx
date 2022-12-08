@@ -29,6 +29,21 @@ export default function VersionList() {
     const [pageSize, setPageSize] = useState<number>(20);
     const [loading, setLoading] = useState<boolean>(false);
     const [optLoading,setOptLoading] = useState<boolean>(false);
+    const [userPermission,setUserPermission]= useState<string>("");
+    useEffect(()=>{
+        let user:any={}
+        try {
+            user=  localStorage.getItem('USER_INFO');
+            if (user) {
+                user = JSON.parse(user);
+                setUserPermission(user?.name)
+               
+            }
+            
+        } catch (error) {
+            
+        }
+    },[])
    
     useEffect(()=>{
         try {
@@ -111,7 +126,8 @@ export default function VersionList() {
             },
             onEnableAction:(record: any,index:number)=>{
                 updateReleaseAction({...record,status:"packFinish"})
-            }
+            },
+            userPermission:userPermission
 
 
         }) as any;
