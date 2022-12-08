@@ -114,13 +114,17 @@ export const listSchema = (params:{
                         </span>
                     }
                     {record?.status === 'disable' &&
-                        <Popconfirm
+                    <span>
+                        {params?.userPermission===record?.owner?    <Popconfirm
                             title="确定要启用该版本吗？"
                             onConfirm={() => {
                                 params?.onEnableAction(record, index);
                             }}>
                             <a > 启用版本</a>
-                        </Popconfirm>
+                        </Popconfirm>:<span style={{color:"gray"}}>启用版本</span>}
+
+                    </span>
+                      
                     }
                     {record?.status === 'packFinish' &&
                         <a onClick={() => { params?.downloadVersion(record) }}>
