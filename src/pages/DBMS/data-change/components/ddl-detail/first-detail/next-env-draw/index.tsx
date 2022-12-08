@@ -114,10 +114,22 @@ export default function CreateArticle(props: IProps) {
 
     const selectTimeInterval = (timeValue: number) => {
         const now = new Date().getTime();
-        let end = moment(Number((now + timeValue))).format("YYYY-MM-DD HH:mm:ss");
-        let start = moment(Number(now)).format("YYYY-MM-DD HH:mm:ss");
-        setStartTime(start)
-        setEndTime(end)
+        if(typeof timeValue==="string" &&timeValue==="today"){
+          let start = moment(Number(now )).format("YYYY-MM-DD HH:mm:ss");
+          let end =moment().endOf('day').format('YYYY-MM-DD HH:mm:ss');
+          setStartTime(start) 
+          setEndTime(end)
+    
+    
+    
+        }else if(typeof timeValue==="number"){
+          let end =moment(Number((now + timeValue))).format("YYYY-MM-DD HH:mm:ss") ;
+          let start = moment(Number(now )).format("YYYY-MM-DD HH:mm:ss");
+          setStartTime(start) 
+          setEndTime(end)
+    
+        }
+      
     }
 
     return (
