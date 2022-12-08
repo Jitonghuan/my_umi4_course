@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button,message, Space,Table, Tag, Tooltip, Popconfirm} from 'antd';
 import {ALERT_LEVEL,STATUS_TYPE} from './type';
-import { deleteRules, rulesList, ruleSwitch, } from '../../../service';
+import { deleteRules, rulesList, ruleSwitch } from '../../../service';
 import {postRequest, getRequest, delRequest} from '@/utils/request';
 import RulesEdit from '../../../business/rules-edit';
 interface Iprops{
