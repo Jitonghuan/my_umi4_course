@@ -157,6 +157,8 @@ export default function VersionDetail() {
                         configInfo: Object.keys(ele?.config)?.length,
                         sqlInfo: Object.keys(ele?.sql)?.length,
                         relationDemandsInfo: ele?.relationDemands?.length,
+                        configVersionSum:typeof(ele?.config)==="object"? Object.keys(ele?.config):[],
+                        sqlVersionSum:typeof(ele?.sql)==="object"? Object.keys(ele?.sql):[]
 
                     })
 

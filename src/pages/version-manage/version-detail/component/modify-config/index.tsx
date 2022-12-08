@@ -1,5 +1,5 @@
 import React, {  useState,useEffect } from 'react';
-import {  Space, Tooltip,Spin,Tag,} from 'antd';
+import {  Space, Tooltip,Spin,Tag,Input} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import { debounce } from 'lodash';
@@ -18,7 +18,7 @@ export default function ModifyConfig(props:Iprops) {
     const [pageSize, setPageSize] = useState<number>(2);
     const [total,setTotal]=useState<number>(0)
     const [modalData, setModalData] = useState<any>([]);
-    const filter = debounce((value) => filterData(value), 500)
+    const filter = debounce((value) => filterData(value), 800)
 
     const filterData = (value: string) => {
         if (!value) {
@@ -26,15 +26,19 @@ export default function ModifyConfig(props:Iprops) {
             return;
         }
         try {
-            const data = JSON.parse(JSON.stringify(dataSource));
+        const data = JSON.parse(JSON.stringify(dataSource));
         const afterFilter: any = [];
         data?.forEach((item: any) => {
-            if (item.appCode?.indexOf(value) !== -1) {
+            if (item.appCode?.indexOf(value) !== -1||item?.configVersionSum?.includes(value)) {
                 afterFilter.push(item);
             }
+            console.log("value",value)
+            console.log("item?.configVersionSum",item?.configVersionSum?.includes('1.0.2'))
+           
         });
 
         setDataSource(afterFilter);
+        
             
         } catch (error) {
             
@@ -99,18 +103,27 @@ export default function ModifyConfig(props:Iprops) {
                         <span>配置总数：{total}</span>
                     </Space>
                     <div>
-                        <Tooltip title='请根据应用CODE进行搜索 ' placement="top">
+                        <Tooltip title='请根据应用CODE或版本号进行搜索 ' placement="top">
                             <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
                         </Tooltip>
                         搜索：
-                        <input
+                        {/* <input
                             style={{ width: 200 }}
                             placeholder='输入内容进行查询过滤'
                             className="ant-input ant-input-sm"
                             onChange={(e) => {
                                   filter(e.target.value)
                             }}
-                        ></input>
+                        ></input> */}
+                        <Input
+                            style={{ width: 220 }}
+                            placeholder='输入内容进行查询过滤'
+                            className="ant-input ant-input-sm"
+                            onChange={(e:any) => {
+                                filter(e.target.value)
+                                 
+                            }}
+                        />
                     </div>
                 </div>
             </div>
@@ -128,7 +141,7 @@ export default function ModifyConfig(props:Iprops) {
                                         </Space>
                                     </p>
                                    <div>
-                                   <AceEditor mode="sql" defaultValue={item?.value} height={200} readOnly />
+                                   <AceEditor mode="yaml" defaultValue={item?.value} height={200} readOnly />
 
                                    </div>
                                    {/* <Divider /> */}

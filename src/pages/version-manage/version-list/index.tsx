@@ -63,7 +63,7 @@ export default function VersionList() {
             }
 
         }).finally(()=>{
-            setOptLoading(false)
+           
         })
 
     }
@@ -75,7 +75,7 @@ export default function VersionList() {
                 queryList({ pageSize, pageIndex });
             }
         }).finally(()=>{
-            setOptLoading(false)
+           // setOptLoading(false)
 
         })
     }
@@ -148,6 +148,7 @@ export default function VersionList() {
         }).finally(() => { 
             setLoading(false)
             setOptLoading(false)
+            //setOptLoading(false)
          })
     }
 

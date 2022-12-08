@@ -27,7 +27,7 @@ export default function ModifySql(props:Iprops) {
             const data = JSON.parse(JSON.stringify(dataSource));
             const afterFilter: any = [];
             data?.forEach((item: any) => {
-                if (item.appCode?.indexOf(value) !== -1) {
+                if (item.appCode?.indexOf(value) !== -1||item?.sqlVersionSum?.includes(value)) {
                     afterFilter.push(item);
                 }
             });
@@ -86,7 +86,7 @@ export default function ModifySql(props:Iprops) {
                         <span>SQL总数：{total}</span>
                     </Space>
                     <div>
-                        <Tooltip title='请根据应用CODE进行搜索 ' placement="top">
+                        <Tooltip title='请根据应用CODE或版本号进行搜索 ' placement="top">
                             <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
                         </Tooltip>
                         搜索：

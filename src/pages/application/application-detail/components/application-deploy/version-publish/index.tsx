@@ -73,11 +73,11 @@ export default function VersionPublish(props: Iprops) {
                 <Descriptions.Item label="变更配置"><a onClick={()=>{
                     setInfoVisible(true)
                     setType('config')
-                }}>{1}</a> </Descriptions.Item>
+                }}>{infoDetail?.config?"是":"否"}</a> </Descriptions.Item>
                 <Descriptions.Item label="变更SQL" > <a onClick={()=>{
                     setInfoVisible(true)
                     setType('sql')
-                }}>{1}</a></Descriptions.Item>
+                }}>{infoDetail?.sql?"是":"否"}</a></Descriptions.Item>
                 <Descriptions.Item label="版本TAG"> {infoDetail?.tag||'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布人"> {infoDetail?.createUser||'--'}</Descriptions.Item>
                 <Descriptions.Item label="发布时间"> 
