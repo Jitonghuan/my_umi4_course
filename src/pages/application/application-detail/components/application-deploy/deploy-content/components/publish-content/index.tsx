@@ -285,7 +285,7 @@ export default function PublishContent(props: IProps) {
         loading={loading}
         bordered
         scroll={{ x: '100%' }}
-        rowSelection={{
+        rowSelection={ {
           type: 'checkbox',
           selectedRowKeys,
           onChange: (selectedRowKeys: React.Key[]) => {

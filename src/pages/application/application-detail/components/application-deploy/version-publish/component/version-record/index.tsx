@@ -5,11 +5,15 @@
  * @create 2022-12-7 16:05
  */
 
- import React, { useState, useEffect, useContext } from 'react';
+ import React, { useState, useEffect, useContext,useMemo } from 'react';
  import { Modal,List, Descriptions,Tag } from 'antd';
  import AceEditor from '@/components/ace-editor';
+ import { history} from 'umi';
+ import { stringify } from 'query-string';
  import DetailContext from '@/pages/application/application-detail/context';
  import moment from 'moment';
+ import { FeContext } from '@/common/hooks';
+ import { optionsToLabelMap } from '@/utils/index';
  import { getAppPublishList } from '../../../service';;
  import './index.less';
  import {statusMap} from './type'
@@ -20,6 +24,8 @@
  
  export default function PublishRecord(props: Iprops) {
    const { envTypeCode,  } = props;
+   const { categoryData = [], businessData = [] } = useContext(FeContext);
+   const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
    const { appData } = useContext(DetailContext);
    const [intervalId, setIntervalId] = useState<any>(null);
    const [dataSource,setDataSource]=useState<any>([])
@@ -45,23 +51,24 @@
      queryDataSource({
        appCode:appData?.appCode,
      });
-   }, [appData?.appCode]);
+   }, [appData?.appCode,envTypeCode]);
  
    useEffect(() => {
      let intervalId = setInterval(() => {
-       if (appData?.appCode && envTypeCode) {
+       if (appData?.appCode&&envTypeCode==="version" ) {
          queryDataSource({
             appCode: appData?.appCode,
          });
        }
      }, 8000);
  
-     setIntervalId(intervalId);
+    //setIntervalId(intervalId);
+   // console.log("envTypeCode",envTypeCode)
  
      return () => {
        intervalId && clearInterval(intervalId);
      };
-   }, []);
+   }, [envTypeCode]);
  
  
  
@@ -74,7 +81,7 @@
    return (
      <div className={rootCls}>
        <div className={`${rootCls}__title`}>版本发布记录</div>
-       {dataSource?.filter((v:any) => v?.envTypeCode === envTypeCode)?.length ? (
+       {dataSource?.length ? (
          <div>
            <List
              className="demo-loadmore-list"
@@ -82,11 +89,12 @@
              loading={dataSource?.length>0?false:loading}
              itemLayout="vertical"
             // loadMore={renderLoadMore()}
-             dataSource={dataSource?.filter((v:any) => v?.envTypeCode === envTypeCode) as any[]}
+             dataSource={dataSource as any[]}
              renderItem={(item) => (
                <List.Item>
                  <div>
                    <label>版本号</label>:{item?.releaseNumber||"--"}
+                   
                  </div>
                  <div>
                    <label>版本TAG</label>:{item?.tag||'--'}
@@ -115,7 +123,15 @@
       labelStyle={{ width: 100, justifyContent: 'flex-end' }}
       column={1}
     >
-      <Descriptions.Item label="版本号">{curRecord?.releaseNumber}</Descriptions.Item>
+      <Descriptions.Item label="版本号"> 
+      <a onClick={()=>{
+                       // 跳转到版本详情
+                history.push({
+                  pathname: '/matrix/version-manage/detail',
+                  search: stringify({ key: 'list', version: curRecord?.releaseNumber, releaseId: curRecord?.releaseId, categoryName: categoryDataMap[appData?.appCategoryCode!] || '--', categoryCode: appData?.appCategoryCode })
+              })
+                   }}>{curRecord?.releaseNumber||"--"}</a>
+     </Descriptions.Item>
       <Descriptions.Item label="版本TAG">{curRecord?.tag}</Descriptions.Item>
       <Descriptions.Item label="发布人">{curRecord?.createUser}</Descriptions.Item>
       <Descriptions.Item label="发布状态">

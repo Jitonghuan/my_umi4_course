@@ -77,7 +77,7 @@ export default function OperateModal(props: any) {
             visible={visible}
             destroyOnClose
             onCancel={onClose}
-            width={900}
+            width={action === 'downloadPackage'?600:action === 'merge'?500:900}
             footer={
                 action !== 'downloadList' ? <div className="drawer-footer">
                     <Button type="primary" onClick={handleSubmit} loading={loading}>
@@ -92,7 +92,7 @@ export default function OperateModal(props: any) {
             {action === 'merge' &&
                 <Form form={form} labelCol={{ flex: '120px' }}>
                     <Form.Item label="选择合并版本：" name="mergedId" rules={[{ required: true, message: '请输入' }]}>
-                        <Select style={{ width: 240 }} options={releaseOptions} />
+                        <Select style={{ width: 290 }} options={releaseOptions} />
                     </Form.Item>
                 </Form>
             }
@@ -112,7 +112,7 @@ export default function OperateModal(props: any) {
             {
                 action === 'downloadPackage' &&
                 <>
-                    <Form form={downLoadForm}>
+                    <Form form={downLoadForm} layout="vertical">
                         {/* <Form.Item name="packType" label="下载内容">
                             <Radio.Group>
                                 <Radio value="a">全部</Radio>
@@ -120,8 +120,8 @@ export default function OperateModal(props: any) {
                                 <Radio value="c">XX包</Radio>
                             </Radio.Group>
                         </Form.Item> */}
-                        <Form.Item label='下载理由' name='reason' rules={[{ required: true, message: '请输入下载理由' }]}>
-                            <Input.TextArea style={{ width: 350 }} />
+                        <Form.Item label='请输入下载目的：' name='reason' rules={[{ required: true, message: '请输入下载理由' }]}>
+                            <Input.TextArea placeholder="请输入下载目的" style={{ width: "90%",marginLeft:20 }} />
                         </Form.Item>
                     </Form>
                 </>

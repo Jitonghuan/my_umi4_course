@@ -318,7 +318,7 @@ export default function DeployContent(props: DeployContentProps) {
       </div>
       <div className={`${rootCls}-sider`}>
       {envTypeCode==="version"?<>
-      <VersionPublishRecord />
+      <VersionPublishRecord envTypeCode={envTypeCode} />
 
       </>:
         <PublishRecord env={envTypeCode} appCode={appCode} />}

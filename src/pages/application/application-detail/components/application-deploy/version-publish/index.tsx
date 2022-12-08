@@ -61,7 +61,7 @@ export default function VersionPublish(props: Iprops) {
             <Spin spinning={loading}>
             <Descriptions
                 title="发布详情"
-                labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' ,width:100}}
+                labelStyle={{ color: '#5F677A', textAlign: 'right', whiteSpace: 'nowrap' ,width:120}}
                 contentStyle={{ color: '#000' }}
                 column={3}
                 bordered

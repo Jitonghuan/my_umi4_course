@@ -189,6 +189,7 @@ export default function VersionList() {
                     visible={visible}
                     onClose={() => { setVisible(false) }}
                     categoryData={categoryData}
+                    appCategory={appCategory}
                     maxVersion={maxVersion || ''}
                     onSave={initSearch}
                 />
@@ -221,7 +222,7 @@ export default function VersionList() {
                                 })
                                 queryList({ pageSize, pageIndex })
 
-                            }}>重置版本号</Button>
+                            }}>重置</Button>
                         </Form.Item>
                         {/* <Form.Item label="发版时间" name="finishTime">
                             <DatePicker

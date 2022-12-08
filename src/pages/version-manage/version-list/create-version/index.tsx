@@ -6,7 +6,7 @@ import { useSearchUser } from '@/pages/DBMS/common-hook';
 import './index.less';
 
 export default function AddDrawer(props: any) {
-    const { visible, onClose, categoryData, maxVersion, onSave } = props;
+    const { visible, onClose, categoryData,appCategory, maxVersion, onSave } = props;
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     const [userLoading, userNameOptions, searchUser] = useSearchUser();
@@ -17,19 +17,28 @@ export default function AddDrawer(props: any) {
     useEffect(() => {
         if (visible) {
             form.resetFields();
-            let user: any = localStorage.getItem('USER_INFO');
-            if (user) {
-                user = JSON.parse(user);
-                form.setFieldsValue({
-                    owner: user.name,
-                });
+            let user:any={}
+            try {
+                user=  localStorage.getItem('USER_INFO');
+                if (user) {
+                    user = JSON.parse(user);
+                    form.setFieldsValue({
+                        owner: user.name,
+                    });
+                }
+                
+            } catch (error) {
+                
             }
+         
             let initVersion = '';
             if (maxVersion) {
                 const res = (maxVersion).split('.');
                 initVersion = `${res[0]}.${res[1]}.${Number(res[2]) + 1}`
             }
-            form.setFieldsValue({ releaseNumber: initVersion });
+            form.setFieldsValue({ releaseNumber: initVersion,
+                categoryCode:appCategory?.value
+             });
         }
     }, [visible, maxVersion]);
 
