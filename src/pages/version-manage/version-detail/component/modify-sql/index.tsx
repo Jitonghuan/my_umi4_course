@@ -24,7 +24,7 @@ export default function ModifySql(props:Iprops) {
             return;
         }
         try {
-            const data = JSON.parse(JSON.stringify(dataSource));
+            const data = JSON.parse(JSON.stringify(originData));
             const afterFilter: any = [];
             data?.forEach((item: any) => {
                 if (item.appCode?.indexOf(value) !== -1||item?.sqlVersionSum?.includes(value)) {

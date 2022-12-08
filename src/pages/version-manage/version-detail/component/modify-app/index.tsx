@@ -31,7 +31,7 @@ export default function ModifyApp(props: Iprops) {
             setDataSource(originData);
             return;
         }
-        const data = JSON.parse(JSON.stringify(dataSource));
+        const data = JSON.parse(JSON.stringify(originData));
         const afterFilter: any = [];
         data?.forEach((item: any) => {
             if (item.appCode?.indexOf(value) !== -1) {

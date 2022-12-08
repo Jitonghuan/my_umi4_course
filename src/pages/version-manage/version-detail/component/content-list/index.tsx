@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useMemo, forwardRef,useCallback} from 'react';
+import React, { useEffect, useState, useContext, useMemo, forwardRef} from 'react';
 import { Tag, Button, Table, Space, Tooltip, Popconfirm, message, Spin,Input } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
@@ -28,13 +28,13 @@ export default forwardRef(function ContentList(props: Iprops) {
     const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat')?.length, [JSON.stringify(dataSource)])
     const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat')?.length, [JSON.stringify(dataSource)])
 
-    const filterData = useCallback((value: string) => {
+    const filterData =(value: string) => {
         if (!value) {
             setDataSource(originData);
             return;
         }
         try {
-            const data = JSON.parse(JSON.stringify(dataSource));
+            const data = JSON.parse(JSON.stringify(originData));
             const afterFilter: any = [];
             data?.forEach((item: any) => {
                 if (item.title?.indexOf(value) !== -1||item?.entryCode?.indexOf(value) !== -1) {
@@ -48,7 +48,7 @@ export default forwardRef(function ContentList(props: Iprops) {
             
         }
        
-    },[originData,dataSource])
+    }
     const getDataSource = () => {
         setLoading(true)
         releaseDemandRel({ releaseId }).then((res) => {
