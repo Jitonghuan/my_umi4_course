@@ -77,6 +77,7 @@ export default function TrafficDetail() {
     startTime: number;
     endTime?: number;
     selectTimeType?: string;
+   // keyWord?:string
   }) => {
     setAppLoading(true)
     const now = new Date().getTime();
@@ -87,12 +88,17 @@ export default function TrafficDetail() {
       envCode: params?.envCode,
       start: startTimestamp,
       end: endTimestamp,
+      isPreciseApp:true,
+      keyWord:formInstance?.getFieldValue("appCode")
+      
     }).then(() => {
       queryAppList({
         envCode: params?.envCode,
         start: startTimestamp,
         end: endTimestamp,
-        needMetric: true
+        needMetric: true,
+        isPreciseApp:true,
+        keyWord:formInstance?.getFieldValue("appCode")
       }).then((resp) => {
         setAppOptions(resp);
         const appIndex = resp.findIndex((item: any) => item.value == curRecord?.appCode);
@@ -331,14 +337,7 @@ export default function TrafficDetail() {
     empty
   ])
 
-  const getTime = useCallback((params?: { start: number }) => {
-    const now = new Date().getTime();
-    let curStart: number = params?.start ? params?.start : startTime
-    let start = moment(new Date(Number((now - curStart)))).format('YYYY-MM-DD HH:mm:ss')
-    let end = moment(new Date(Number((now)))).format('YYYY-MM-DD HH:mm:ss')
 
-    return [start, end]
-  }, [startTime])
 
   const timeTypeChange = (v: string) => {
     setCurtIp("");
@@ -466,7 +465,6 @@ export default function TrafficDetail() {
                 setCurtIp("");
                 setHostName("");
                 setCurrentTableData({})
-
                 queryApps({
                   envCode,
                   startTime: startTime,

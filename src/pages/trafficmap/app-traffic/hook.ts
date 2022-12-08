@@ -18,7 +18,7 @@ export const queryEnvList = async () =>
       return [];
     })
 
-export const queryTrafficList = async (params: { envCode: string, start: string, end: string, needMetric?: boolean, keyWord?: string }) =>
+export const queryTrafficList = async (params: { envCode: string, start: string, end: string, needMetric?: boolean, keyWord?: string, isPreciseApp:boolean, }) =>
 
   await getRequest(APIS.getTrafficList, { data: params })
     .then((result) => {
