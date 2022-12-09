@@ -129,7 +129,7 @@ export default function AddModal(props:Iprops){
     }
     return(
         <Modal title={ typeTitleMap[type]} width={800} visible={visible} destroyOnClose onCancel={onClose} onOk={handleSubmit} confirmLoading={enSureLoading}>
-            <Form form={addForm} preserve={false} labelCol={{flex:"110px"}} >
+            <Form form={addForm} preserve={false} labelCol={{flex:"120px"}} >
                 {type==="app"&& <Form.Item label="应用部署名" name="deploymentName" rules={[{ required: true, message: '请填写' }]}>
                     <Select style={{width:280}} options={deployOptions} loading={deployLoading} />
                 </Form.Item>}

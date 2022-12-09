@@ -160,7 +160,7 @@ const DistrictManage = () => {
           <Form.Item label="IP信息" name="hospitalDistrictIp" rules={[{ required: true, message: '请输入IP信息' }]}>
             <Input placeholder="机构IP网段，多个网段用|隔开" />
           </Form.Item>
-          <Form.Item label="描述" name="description">
+          <Form.Item label="描述" name="description" rules={[{ required: true, message: '请输入描述' }]}>
             <Input />
           </Form.Item>
           <Form.Item label="id" name="id" hidden>

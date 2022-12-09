@@ -81,7 +81,7 @@ export function useGetDeploymentNameList(): [
     setLoading(true);
     await getRequest(APIS.deploymentNameListApi)
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           let dataSource = result?.data||[];
        const options=   dataSource?.map((item:string)=>({
             label:item,
