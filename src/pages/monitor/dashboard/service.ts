@@ -11,3 +11,7 @@ export const graphDashboard = (clusterId: string) => {
   const url = `${appConfig.apiPrefix}/monitorManage/centralDashboard`;
   return getRequest(url, { data: { clusterId } });
 }
+export const getCurrentDistrictInfo = (params:{infoType: string,key:string}) => {
+  const url = `${appConfig.apiPrefix}/multiple/common/getCurrentDistrictInfo`;
+  return getRequest(url, { data: params });
+}

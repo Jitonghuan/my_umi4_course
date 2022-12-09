@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
 import { Select, DatePicker, Card, Button, Radio } from 'antd';
 import moment from 'moment';
-
 import PageContainer from '@/components/page-container';
 import VcHulkTable, { usePaginated } from '@cffe/vc-hulk-table';
 import appConfig from '@/app.config';
 import { getRequest } from '@/utils/request';
 import { queryTimeDataApi, ITimeItem, queryDetailTableDataApi } from '../service';
 import { getUrlParams } from '@/utils/index';
-
 import '../rank/index.less';
 
 export interface IProps {

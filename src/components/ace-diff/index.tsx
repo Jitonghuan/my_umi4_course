@@ -5,6 +5,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { diff as DiffEditor } from 'react-ace';
 import { message } from 'antd';
+import 'brace/ext/searchbox';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/mode-sql';

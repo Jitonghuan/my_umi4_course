@@ -56,11 +56,6 @@ export default [
     path: `${baseRoutePath}/test/autotest`,
     redirect: `${baseRoutePath}/test/autotest/dashboard`,
   },
-  // {
-  //   path: `${baseRoutePath}/monitor`,
-  //   redirect: `${baseRoutePath}/monitor/business`,
-
-  // },
   {
     path: `${baseRoutePath}/monitor/basic`,
     redirect: `${baseRoutePath}/monitor/basic/prometheus`,
@@ -121,6 +116,23 @@ export default [
     path: `${baseRoutePath}/DBMS/safe-rule`,
     redirect: `${baseRoutePath}/DBMS/safe-rule/safe-list`,
   },
+  {
+    path: `${baseRoutePath}/steps`,
+    redirect: `${baseRoutePath}/steps/detail`,
+  },
+  {
+    path: `${baseRoutePath}/cluster-recovery`,
+    redirect: `${baseRoutePath}/cluster-recovery/dashboards`,
+  },
+  {
+    path: `${baseRoutePath}/cluster-recovery/scheduling`,
+    redirect: `${baseRoutePath}/cluster-recovery/scheduling/organ`,
+  },
+  {
+    path: `${baseRoutePath}/cluster-recovery/cluster-sync`,
+    redirect: `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
+  },
+
 
   {
     path: `${baseRoutePath}/application`,
@@ -373,7 +385,7 @@ export default [
       },
       {
         path: `${baseRoutePath}/application/version-management`,
-        name: '版本管理',
+        name: '主干版本',
         key: 'version-management',
         component: '@/pages/application/version-management',
       },
@@ -421,6 +433,25 @@ export default [
         ],
       },
     ],
+  },
+  {
+    "path": `${baseRoutePath}/version-manage`,
+    "name": "版本管理",
+    "icon": "icon-Textarea",
+    "routes": [
+      {
+        'path': `${baseRoutePath}/version-manage/list`,
+        'key': "version-list",
+        "name": "版本列表",
+        "component": "@/pages/version-manage/version-list",
+      },
+      {
+        "path": `${baseRoutePath}/version-manage/detail`,
+        "name": "版本详情",
+        "key": "version-detail",
+        "component": "@/pages/version-manage/version-detail",
+      },
+    ]
   },
   {
     path: `${baseRoutePath}/DBMS`,
@@ -954,11 +985,13 @@ export default [
       },
     ],
   },
+ 
+
   {
-    path: `${baseRoutePath}/station`,
-    name: '建站管理',
-    icon: 'icon-activity',
-    routes: [
+    "path": `${baseRoutePath}/station`,
+    "name": "建站管理",
+    "icon": "icon-activity",
+    "routes": [
       {
         path: `${baseRoutePath}/station/product-list`,
         name: '产品列表',
@@ -984,7 +1017,6 @@ export default [
         name: '组件中心',
         key: 'component-center',
         component: '@/pages/station/component-center',
-        routes: [],
       },
       {
         path: `${baseRoutePath}/station/component-detail`,
@@ -1334,6 +1366,7 @@ export default [
       },
     ],
   },
+  
   {
     path: `${baseRoutePath}/database`,
     name: '数据库管理',
