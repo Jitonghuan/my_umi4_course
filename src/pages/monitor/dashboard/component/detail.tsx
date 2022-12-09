@@ -60,7 +60,7 @@ const BoardDetail = (props: IProps) => {
 
   return (
     <PageContainer style={{ padding: 0 }}>
-      <div >
+      {/* <div >
         <span style={{display:"inline-block",float:"right"}}>
         <Tooltip title="请输入Ip或者Id，确认Ip或者Id的流量所在集群">
           <Tag color="#108ee9">流量模拟<QuestionCircleOutlined /></Tag>
@@ -68,7 +68,7 @@ const BoardDetail = (props: IProps) => {
        <Input.Search addonBefore={selectBefore} style={{width:260}} onSearch={onSearch}></Input.Search>
         </span>
        
-      </div>
+      </div> */}
       <div style={{ width: '100%', height: '100%', display: 'block' }} className="grafana-iframe-info">
         <Spin spinning={!iframeLoading} />
         <iframe
