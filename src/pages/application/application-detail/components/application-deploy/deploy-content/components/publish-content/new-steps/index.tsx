@@ -1,21 +1,23 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Steps, Empty, Button } from 'antd';
 import StepItem from './step-item';
-// import './index.less'
+import { statusMap } from './type';
+import { mockData, handleData } from './utils';
 
 // 判断多环境前面的线条以及环境名是否要变蓝
 const changeColor = (data: any, env?: any) => {
     let flag = false;
     if (Array.isArray(env)) {
         for (let i of env) {
-            if (data.nodes && data.nodes[i] && data.nodes[i][0].nodeStatus !== 'wait') {
+            const status = statusMap[data[i][0].status]
+            if (data && data[i] && status !== 'wait') {
                 return true;
             }
         }
     }
     if (!Array.isArray(env) && data[env]) {
         let res = data[env];
-        return res[0].nodeStatus !== 'wait';
+        return statusMap[res[0].status] !== 'wait';
     }
     return flag;
 };
@@ -30,7 +32,7 @@ const judgeColor = (data: any, index: number, type: string, notShowCancel?: any,
         nodes = data[index + 1] || [];
     }
     if (nodes && Array.isArray(nodes)) {
-        let status = type === 'cancel' ? nodes[nodes.length - 1].nodeStatus : nodes[0].nodeStatus;
+        let status = type === 'cancel' ? statusMap[nodes[nodes.length - 1].status] : statusMap[nodes[0].status];
         if (status && status === 'finish') {
             if (notShowCancel) {
                 notShowCancel();
@@ -45,15 +47,16 @@ const judgeColor = (data: any, index: number, type: string, notShowCancel?: any,
 };
 
 //单个stepsComp
-//连续的单环境是一个单独的stepsComp 遇到多环境节点 有几个环境就有几个stepComb
-const StepsComp = ({ items, current, initial, ...other }: any) => (
-    <Steps initial={initial} className="publish-content-compo__steps">
+//连续的单环境是一个单独的stepsComp 遇到多环境 有几个环境就有几个stepComb
+const StepsComp = (props: any) => {
+    const { items, current, initial, ...other } = props;
+    return <Steps initial={initial} className="publish-content-compo__steps">
         {items &&
             items.map((item: any) => (
-                <StepItem title={item.nodeName} status={item.nodeStatus} nodeCode={item.nodeCode} item={item} {...other} />
+                <StepItem title={item.name} status={statusMap[item.status]} nodeStatus={item.status} nodeCode={item.code} item={item} {...other} />
             ))}
     </Steps>
-);
+};
 
 // 单环境
 const SingelEnvSteps = (props: any) => {
@@ -67,8 +70,7 @@ const SingelEnvSteps = (props: any) => {
 // 多环境
 const MultiEnvSteps = (props: any) => {
     const { initial, item, onCancelDeploy, index, data, notShowCancel, showCancel, envList, ...other } = props;
-
-    let envCodeList = item.nodes ? Object.keys(item.nodes) : [];
+    let envCodeList = item ? Object.keys(item) : [];
     const findEnvName = (envCode: string) => {
         const envObj = envList.find((item: any) => item?.value === envCode)
         if (envObj && envObj?.label) {
@@ -83,11 +85,11 @@ const MultiEnvSteps = (props: any) => {
                 {envCodeList.map((envKey: any, i: number) => (
                     <div
                         key={envKey}
-                        className={`sub_process sub_process-${i} ${changeColor(item.nodes, envKey) ? 'sub_process-active' : ''}`}
+                        className={`sub_process sub_process-${i} ${changeColor(item, envKey) ? 'sub_process-active' : ''}`}
                     >
                         <span className="sub_process-title">{findEnvName(envKey)}</span>
 
-                        <StepsComp {...other} initial={initial} env={envKey} items={item.nodes[envKey]} />
+                        <StepsComp {...other} initial={initial} env={envKey} items={item[envKey]} />
                     </div>
                 ))}
             </div>
@@ -96,7 +98,7 @@ const MultiEnvSteps = (props: any) => {
 };
 export default function NewDeploySteps(props: any) {
     const {
-        stepData,
+        stepData = mockData,
         deployInfo,
         onSpin,
         stopSpin,
@@ -111,34 +113,16 @@ export default function NewDeploySteps(props: any) {
     let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
     const [data, setData] = useState<any>([]);
     useEffect(() => {
-        if (stepData && stepData.length !== 0) {
-            const data = handleData(stepData);
-            setData(data);
-        }
-        if (!stepData) {
-            setData([]);
-        }
+        // if (stepData && stepData.length !== 0) {
+        //     const data = handleData(stepData);
+        //     setData(data);
+        // }
+        // if (!stepData) {
+        //     setData([]);
+        // }
+        const data = handleData(mockData);
+        setData(data)
     }, [stepData]);
-
-    // 处理数据 将拿到的一维数组处理成二维数组 连续单个节点的合成一个二维数组 多环境的直接是对象
-    // [{单},{单},{多},{多},{单},{单}]=>[[{单},{单}],{多},{多},[{单},{单}]]
-    const handleData = (value: any) => {
-        let res: any = [];
-        for (var index = 0; index < value.length; index++) {
-            const element = value[index];
-            if (element.nodeType === 'single') {
-                const curr = res[res.length - 1];
-                if (curr && Array.isArray(curr)) {
-                    curr.push(element);
-                } else {
-                    res.push([element]);
-                }
-            } else {
-                res.push(element);
-            }
-        }
-        return res;
-    };
 
     // 获取每个stepComp的initial值
     const getInitValue = (currentIndex: number) => {
@@ -151,8 +135,8 @@ export default function NewDeploySteps(props: any) {
             if (Array.isArray(element)) {
                 init = init + element.length;
             } else {
-                const envList = Object.keys(element.nodes);
-                init = init + element.nodes[envList[0]].length;
+                const envList = Object.keys(element);
+                init = init + element[envList[0]].length;
             }
         }
         return init;

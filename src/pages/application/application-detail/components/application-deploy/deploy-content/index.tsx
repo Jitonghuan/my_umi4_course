@@ -13,6 +13,7 @@ import {
   queryFeatureDeployed,
   queryApplicationStatus,
   queryActiveDeployInfo,
+  getNewDeployInfo
 } from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
@@ -61,13 +62,16 @@ export default function DeployContent(props: DeployContentProps) {
   const publishContentRef = useRef<any>();
   const [deployedLoad, setDeployedLoad] = useState(false);
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
-  const [newPublish, setNewPublish] = useState<boolean>(true);//是否要用新的发布流程
+  // const [newPublish, setNewPublish] = useState<boolean>(true);//是否要用新的发布流程
+  const newPublish = useRef<boolean>(true);
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
     setUpdating(true);
 
-    const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
+    var queryDeployInfo = newPublish.current ? getNewDeployInfo : queryActiveDeployInfo;
+    const resp = await queryDeployInfo({ pipelineCode: pipelineCode });
+    // const res=await getNewDeployInfo({pipelineCode: pipelineCode});
 
     if (resp && resp.success) {
       if (resp?.data) {
@@ -190,7 +194,7 @@ export default function DeployContent(props: DeployContentProps) {
 
   // 判断该应用是否要用新的发布步骤条
   const isNewPublish = () => {
-    judgeIsNew({ envTypeCode, appCode: appData?.appCode }).then((res) => {
+    judgeIsNew({ appCode: appData?.appCode }).then((res) => {
       if (res?.success) {
 
       }
@@ -228,7 +232,7 @@ export default function DeployContent(props: DeployContentProps) {
             onSpin={onSpin}
             stopSpin={stopSpin}
             envList={envList}
-            newPublish={newPublish}
+            newPublish={newPublish.current}
           // loadData={requestDeployBranch}
           // refreshList={() => {
           //   requestUnDeployBranch();

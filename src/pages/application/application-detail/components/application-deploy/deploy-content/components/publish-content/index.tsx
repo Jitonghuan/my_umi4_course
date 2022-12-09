@@ -2,7 +2,7 @@
 // @author CAIHUAZHI <moyan@come-future.com>
 // @create 2021/09/05 22:57
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Modal, Button, Table, Tag, Tooltip, message } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ExclamationCircleOutlined, QuestionCircleOutlined, CopyOutlined } from '@ant-design/icons';
@@ -12,38 +12,16 @@ import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
 import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/service';
 import { IProps } from './types';
-import BackendDevEnvSteps from './backend-steps/dev';
-import BackendTestEnvSteps from './backend-steps/test';
-import BackendPreEnvSteps from './backend-steps/pre';
-import BackendProdEnvSteps from './backend-steps/prod';
-import FrontendDevEnvSteps from './frontend-steps/dev';
-import FrontendTestEnvSteps from './frontend-steps/test';
-import FrontendPreEnvSteps from './frontend-steps/pre';
-import FrontendProdEnvSteps from './frontend-steps/prod';
 import DeploySteps from './steps';
 import NewDeploySteps from './new-steps';
 import './index.less';
-import { RedoOutlined } from '@ant-design/icons';
-
 const rootCls = 'publish-content-compo';
-
-const backendStepsMapping: Record<string, typeof BackendDevEnvSteps> = {
-  dev: BackendDevEnvSteps,
-  test: BackendTestEnvSteps,
-  pre: BackendPreEnvSteps,
-  prod: BackendProdEnvSteps,
-};
-const frontendStepsMapping: Record<string, typeof FrontendDevEnvSteps> = {
-  dev: FrontendDevEnvSteps,
-  test: FrontendTestEnvSteps,
-  pre: FrontendPreEnvSteps,
-  prod: FrontendProdEnvSteps,
-};
 
 export default function PublishContent(props: IProps) {
   const { appCode, envTypeCode, deployedList, deployInfo, onOperate, onSpin, stopSpin, pipelineCode, envList, loading, newPublish } = props;
-  let { metadata, status, envInfo } = deployInfo;
-  const { deployNodes } = status || {}; //步骤条数据
+  let { metadata, envInfo } = deployInfo || {};
+  // const { deployNodes } = status || {}; //步骤条数据
+  const [stepData, setStepData] = useState<any>([]);
   const { deployEnvs } = envInfo || [];
   const { appData } = useContext(DetailContext);
   const { id } = appData || {};
@@ -51,6 +29,14 @@ export default function PublishContent(props: IProps) {
   const isProd = envTypeCode === 'prod';
   const [fullScreeVisible, setFullScreeVisible] = useState(false);
   const [isShow, setIsShow] = useState(false);
+
+  useEffect(() => {
+    if (newPublish) {
+      setStepData(deployInfo?.pipelineInfo?.tasks || [])
+    } else {
+      setStepData(deployInfo?.status?.deployNodes || [])
+    }
+  }, [newPublish, deployInfo])
 
   type reviewStatusTypeItem = {
     color: string;
@@ -126,7 +112,6 @@ export default function PublishContent(props: IProps) {
   };
 
   const isFrontend = appData?.appType === 'frontend';
-  const CurrSteps = isFrontend ? frontendStepsMapping[envTypeCode] : backendStepsMapping[envTypeCode];
 
   const branchNameRender = (branchName: string, record: any) => {
     return (
@@ -185,7 +170,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
       <div className={`${rootCls}__right-top-btns`}>
-        {(isShow || newPublish) && deployNodes?.length !== 0 && (
+        {(isShow || newPublish) && stepData?.length !== 0 && (
           <Button
             danger
             onClick={() => {
@@ -199,7 +184,7 @@ export default function PublishContent(props: IProps) {
 
       {newPublish ?
         <NewDeploySteps
-          stepData={deployNodes}
+          stepData={stepData}
           deployInfo={deployInfo}
           onOperate={onOperate}
           isFrontend={isFrontend}
@@ -216,7 +201,8 @@ export default function PublishContent(props: IProps) {
           envList={envList}
         /> :
         <DeploySteps
-          stepData={deployNodes}
+          // stepData={deployNodes}
+          stepData={stepData}
           deployInfo={deployInfo}
           onOperate={onOperate}
           isFrontend={isFrontend}
@@ -259,30 +245,6 @@ export default function PublishContent(props: IProps) {
               </Tooltip>
             </Button>
           )}
-          {/* <Button
-            icon={<RedoOutlined />}
-            onClick={() => {
-              loadData();
-            }}
-            size="small"
-          >
-            刷新
-        </Button> */}
-          {/* {!isFrontend && !isProd && (
-            <Popconfirm
-              title="确定要重启应用吗？"
-              onConfirm={async () => {
-                await restartApp({
-                  appCode,
-                  envCode: deployInfo.envs,
-                  appCategoryCode: appData?.appCategoryCode,
-                });
-                message.success('操作成功！');
-              }}
-            >
-              <Button>重启</Button>
-            </Popconfirm>
-          )} */}
         </div>
       </div>
 

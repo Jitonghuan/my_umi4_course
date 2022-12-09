@@ -461,6 +461,13 @@ export const queryActiveDeployInfo = async (params: any) => {
   });
 };
 
+export const queryNewDeployInfoUrl = `v2/releaseManage/deploy/getActiveDeployInfo`;
+export const getNewDeployInfo = async (params: any) => {
+  return getRequest(queryNewDeployInfoUrl, {
+    data: params,
+  });
+};
+
 /** 查看feature部署情况 */
 export const queryFeatureDeployed = async (params: {
   /** 应用CODE */

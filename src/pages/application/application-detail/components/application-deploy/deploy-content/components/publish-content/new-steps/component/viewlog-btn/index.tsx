@@ -1,4 +1,4 @@
-import ViewLogModal from '../view-log-modal';
+import ViewLogModal from '../../view-log-modal';
 import { useState } from 'react';
 import {
     FileTextOutlined,
