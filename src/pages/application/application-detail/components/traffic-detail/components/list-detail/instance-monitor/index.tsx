@@ -95,13 +95,15 @@ export default function InstanceMonitor() {
       keyWord: params?.keyWord,
       start: start + '',
       end: end + "",
+      isPreciseApp:true,
     }).then((resp) => {
       queryTrafficList({
         envCode: params?.envCode,
         keyWord: params?.keyWord,
         start: start + '',
         end: end + "",
-        needMetric: true
+        needMetric: true,
+        isPreciseApp:true,
       }).then((res) => {
         let result = res[0]
         data.push({

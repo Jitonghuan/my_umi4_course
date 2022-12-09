@@ -23,7 +23,10 @@ export const queryAppList = (params: {
   start: string;
   end: string;
   envCode: string;
-  needMetric?:boolean
+  needMetric?:boolean;
+  isPreciseApp?:boolean;
+  keyWord:string;
+  
 }) =>
   getRequest(APIS.getTrafficList, {
     data: params,
@@ -46,7 +49,7 @@ interface queryNodeParams {
   start: number;
   end: number;
   envCode: string;
-  appCode: string
+  appCode: string;
 }
 export const queryNodeList = (params: queryNodeParams) =>
   getRequest(APIS.queryPodInfoApi, { data: { ...params, pageSize: 1000 } }).then((res: any) => {
@@ -94,7 +97,7 @@ export const getCountOverview = (params: queryCountOverviewParams) =>
     }
     return [];
   });
-  export const queryTrafficList = async (params: { envCode: string, start: string, end: string, needMetric?: boolean, keyWord?: string }) =>
+  export const queryTrafficList = async (params: { envCode: string, start: string, end: string, needMetric?: boolean, keyWord?: string, isPreciseApp?:boolean, }) =>
 
   await getRequest(APIS.getTrafficList, { data: params })
     .then((result) => {
