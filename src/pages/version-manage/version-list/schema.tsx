@@ -17,6 +17,7 @@ export const listSchema = (params:{
             title: '序号',
             dataIndex: 'id',
             width: 30,
+            render:(value:any,record:any,index:number)=><span>{index+1}</span>
         },
         {
             title: '版本号',

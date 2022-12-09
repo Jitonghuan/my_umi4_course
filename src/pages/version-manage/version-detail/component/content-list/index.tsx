@@ -83,6 +83,9 @@ export default forwardRef(function ContentList(props: Iprops) {
             title: 'ID',
             dataIndex: 'entryCode',
             width: 160,
+            sorter: {
+                compare: (a: any, b: any) => a.entryCode?.toLowerCase().localeCompare(b.entryCode?.toLowerCase()),
+              },
             render: (value: string, record: any) =>
                 <a onClick={() => {
                     if (record?.url) { window.open(record.url, '_blank') }
@@ -92,6 +95,9 @@ export default forwardRef(function ContentList(props: Iprops) {
             title: '标题',
             dataIndex: 'title',
             width: 200,
+            sorter: {
+                compare: (a: any, b: any) => a.title.localeCompare(b.title),
+              },
         },
         {
             title: '类型',
@@ -103,6 +109,9 @@ export default forwardRef(function ContentList(props: Iprops) {
             title: '版本需求状态',
             dataIndex: 'demandStatus',
             width: 120,
+            sorter: {
+                compare: (a: any, b: any) => a.demandStatus.localeCompare(b.demandStatus),
+              },
             render: (value: string) => <span style={{ color: demandStatusTypes[value]?.color || "gray" }}>
 
                 {value}</span>
