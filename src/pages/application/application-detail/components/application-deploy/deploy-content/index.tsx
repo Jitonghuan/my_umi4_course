@@ -63,15 +63,16 @@ export default function DeployContent(props: DeployContentProps) {
   const [deployedLoad, setDeployedLoad] = useState(false);
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
   // const [newPublish, setNewPublish] = useState<boolean>(true);//是否要用新的发布流程
-  const newPublish = useRef<boolean>(true);
+  const newPublish = useRef<boolean>(false);
 
   const requestData = async () => {
     if (!appCode || !isActive || !pipelineCode) return;
     setUpdating(true);
 
+    // const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
+
     var queryDeployInfo = newPublish.current ? getNewDeployInfo : queryActiveDeployInfo;
     const resp = await queryDeployInfo({ pipelineCode: pipelineCode });
-    // const res=await getNewDeployInfo({pipelineCode: pipelineCode});
 
     if (resp && resp.success) {
       if (resp?.data) {
