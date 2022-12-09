@@ -3,7 +3,7 @@
 // @create 2021/08/25 16:21
 
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Tabs, Select, Tag,Modal } from 'antd';
+import { Tabs, Select, Tag, Modal } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import DetailContext from '../../context';
@@ -11,25 +11,23 @@ import SecondPartyPkg from '../second-party-pkg';
 import DeployContent from './deploy-content';
 import { getRequest } from '@/utils/request';
 import { listAppEnvType } from '@/common/apis';
-import { history, useLocation} from 'umi';
-import { parse,stringify } from 'query-string';
-import './index.less';
+import { history, useLocation } from 'umi';
+import { parse, stringify } from 'query-string';
+import { checkReleaseDeploy } from './service';
 import PipeLineManage from './pipelineManage';
 import { getPipelineUrl } from '@/pages/application/service';
-
+import './index.less';
 const { TabPane } = Tabs;
-
 export default function ApplicationDeploy(props: any) {
   const { appData } = useContext(DetailContext);
   let location = useLocation();
   const query = parse(location.search);
-  // const { envTypeData } = useContext(FeContext);
   const [envTypeData, setEnvTypeData] = useState<IOption[]>([]);
   const [currentValue, setCurrentValue] = useState('');
   const [visible, setVisible] = useState<boolean>(false); //流水线管理
   const [datasource, setDatasource] = useState<any>([]); //流水线
   const [pipelineOption, setPipelineOption] = useState<any>([]); //流水线下拉框数据
-
+  const [checkVersion, setCheckVersion] = useState<boolean>(false)
   let env = window.location.href.includes('matrix-zslnyy')
     ? 'prod'
     : window.location.href.includes('matrix-fygs')
@@ -37,25 +35,22 @@ export default function ApplicationDeploy(props: any) {
       : window.location.href.includes('matrix-base-poc')
         ? 'prod'
         : '';
-  const [tabActive, setTabActive] = useState(
+  const [tabActive, setTabActive] = useState<any>(
     query.activeTab || sessionStorage.getItem('__init_env_tab__') || env,
   );
 
   useEffect(() => {
-    sessionStorage.setItem('__init_env_tab__', tabActive+"");
-    const newQuery={
+    sessionStorage.setItem('__init_env_tab__', tabActive + "");
+    const newQuery = {
       ...query,
       activeTab: tabActive
     }
     history.replace({
-      //  query: 
-      //  { ...props.location.query, 
-      //   activeTab: tabActive } 
-      pathname:location.pathname,
+      pathname: location.pathname,
       search: stringify(newQuery),
-      }, 
-      );
-    
+    },
+    );
+
     if (tabActive && +appData?.isClient! === 0) {
       getPipeline(tabActive);
     }
@@ -65,7 +60,7 @@ export default function ApplicationDeploy(props: any) {
     return <SecondPartyPkg {...props} />;
   }
   useEffect(() => {
-    queryData();
+    checkVersionShow()
   }, []);
 
   const nextTab = useMemo(() => {
@@ -76,6 +71,32 @@ export default function ApplicationDeploy(props: any) {
     }
     return data;
   }, [tabActive, envTypeData]);
+  //checkReleaseDeploy
+
+  const checkVersionShow = () => {
+    checkReleaseDeploy(appData?.appCode || "").then((res) => {
+      if (res?.success) {
+        setCheckVersion(res?.data)
+        if (res?.data === true) {
+          queryData(true)
+
+        } else {
+          queryData(false)
+        }
+
+      } else {
+        setCheckVersion(false)
+        queryData(
+          false
+        )
+      }
+
+    })
+  }
+
+
+
+
 
   const warning = () => {
     Modal.warning({
@@ -83,14 +104,14 @@ export default function ApplicationDeploy(props: any) {
       content: '请先为该应用绑定环境哦...',
     });
   };
-  const queryData = () => {
+  const queryData = (hasVersion: boolean) => {
     getRequest(listAppEnvType, {
       data: { appCode: appData?.appCode, isClient: false },
     }).then((result) => {
-      if(result?.success){
+      if (result?.success) {
         const { data } = result || [];
-       
-        if(data?.length<1||!data?.length){
+
+        if (data?.length < 1 || !data?.length) {
           warning()
           return
         }
@@ -109,6 +130,9 @@ export default function ApplicationDeploy(props: any) {
             next.push({ ...el, label: el?.typeName, value: el?.typeCode, sortType: 4 });
           }
         });
+        if (hasVersion === true) {
+          next.push({ label: '版本发布', typeName: '版本发布', typeCode: 'version', value: 'version', sortType: 5 })
+        }
         next.sort((a: any, b: any) => {
           return a.sortType - b.sortType;
         }); //升序
@@ -125,7 +149,7 @@ export default function ApplicationDeploy(props: any) {
         setEnvTypeData(next);
 
       }
-     
+
     });
   };
 
@@ -217,12 +241,13 @@ export default function ApplicationDeploy(props: any) {
                 onChange={handleChange}
                 options={pipelineOption}
               />
-              <SettingOutlined
+              {tabActive !== "version" && <SettingOutlined
                 style={{ marginLeft: '10px' }}
                 onClick={() => {
                   setVisible(true);
                 }}
-              />
+              />}
+
             </span>
           </div>
         }
@@ -234,12 +259,14 @@ export default function ApplicationDeploy(props: any) {
               envTypeCode={item.value}
               pipelineCode={currentValue}
               visible={visible}
+              checkVersion={checkVersion}
               onDeployNextEnvSuccess={() => {
                 const i = envTypeData.findIndex((item) => item.value === tabActive);
                 setTabActive(envTypeData[i + 1]?.value);
                 getPipeline(envTypeData[i + 1]?.value);
               }}
               nextTab={nextTab}
+              handleTabChange={(tab: string) => { handleTabChange(tab) }}
             />
           </TabPane>
         ))}

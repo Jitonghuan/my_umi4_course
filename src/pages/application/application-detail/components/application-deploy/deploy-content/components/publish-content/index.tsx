@@ -233,7 +233,7 @@ export default function PublishContent(props: IProps) {
         <div className="caption-right">
           {!isProd && (
             <span style={{ marginRight: 14 }}>
-              {appData?.deployModel === 'online' && (
+              {appData?.deployModel === 'online'&&envTypeCode!=="version"  && (
                 <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy} style={{ marginLeft: '10px' }}>
                   重新提交
                   <Tooltip placement="topRight" title={resubmitText}>
@@ -243,7 +243,7 @@ export default function PublishContent(props: IProps) {
               )}
             </span>
           )}
-          {appData?.deployModel === 'online' && (
+          {appData?.deployModel === 'online'&&envTypeCode!=="version"  && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
               退出分支
               <Tooltip placement="topRight" title={exitBranch}>
@@ -285,7 +285,7 @@ export default function PublishContent(props: IProps) {
         loading={loading}
         bordered
         scroll={{ x: '100%' }}
-        rowSelection={{
+        rowSelection={ {
           type: 'checkbox',
           selectedRowKeys,
           onChange: (selectedRowKeys: React.Key[]) => {
