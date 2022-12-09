@@ -20,12 +20,13 @@ interface IPros {
   bizMonitorId: string | number;
   bizMonitorType: string;
   envCode: string;
+  probeName?:string
 }
 
 
 
 const RulesEdit = (props: IPros) => {
-  const { type = 'add', onCancel, onConfirm, visible, record = {}, bizMonitorId, bizMonitorType, envCode } = props;
+  const { type = 'add', onCancel, onConfirm, visible,probeName, record = {}, bizMonitorId, bizMonitorType, envCode } = props;
   const [unit, setUnit] = useState('m'); // 单位
   const [getSilenceValue, setGetSilenceValue] = useState(0);
   const [labelTableData, setLabelTableData] = useState<any[]>([]);
@@ -37,14 +38,23 @@ const RulesEdit = (props: IPros) => {
   const [promQL,setPromQL]=useState<string>("")
   //getPromQLApi
   const getPromQL=()=>{
-    getRequest(getPromQLApi,{data:{probeName:""}}).then((res)=>{
+    getRequest(getPromQLApi,{data:{probeName}}).then((res)=>{
       if(res?.success){
-        setPromQL
+        setPromQL(res?.data||"")
+        form.setFieldsValue({
+          expression:res?.data||""
+        })
 
       }
 
     })
   }
+  useEffect(()=>{
+    if(probeName&&visible){
+
+      getPromQL()
+    }
+  },[visible])
 
   const getGroupList = async () => {
     const res = await getRequest(queryGroupList);

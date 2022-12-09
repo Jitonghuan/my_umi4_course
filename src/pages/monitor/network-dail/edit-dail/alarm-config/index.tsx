@@ -68,6 +68,7 @@ export default function AlarmConfig (props:Iprops){
           visible={rulesVisible}
           record={rulesRecord}
           bizMonitorId={curId}
+          probeName={curRecord?.probeName}
           bizMonitorType={"netProbe"}
           envCode={rulesRecord?.envCode||""}
           onCancel={() => setRulesVisible(false)}
