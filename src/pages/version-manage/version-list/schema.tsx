@@ -92,37 +92,37 @@ export const listSchema = (params:{
                     <a onClick={() => {params?.toDetail(record, 'list') }}>详情</a>
                     {record.status === 'developing' &&
                     <span>
-                     {params?.userPermission===record?.owner?
+                  
                         <Popconfirm
                             title="确定锁定该需求吗？"
                             onConfirm={() => {
                                 params?.onLock(record, index);
                             }}>
                             <a> 锁定需求</a>
-                        </Popconfirm>:<span style={{color:"gray"}}>锁定需求</span>}
+                        </Popconfirm>
                         </span>
                     }
                     {(record?.status === 'waitPack'||record?.status === 'packError' ) &&<span>
-                   {params?.userPermission===record?.owner?
+                 
                    <Popconfirm
                    title="确定要发布该版本吗？"
                    onConfirm={() => {
                        params?.onPublish(record, index);
                    }}>
                    <a> 发版</a>
-               </Popconfirm>:<span style={{color:"gray"}}>发版</span>}
+               </Popconfirm>
                         
                         </span>
                     }
                     {record?.status === 'disable' &&
                     <span>
-                        {params?.userPermission===record?.owner?    <Popconfirm
+                      <Popconfirm
                             title="确定要启用该版本吗？"
                             onConfirm={() => {
                                 params?.onEnableAction(record, index);
                             }}>
                             <a > 启用版本</a>
-                        </Popconfirm>:<span style={{color:"gray"}}>启用版本</span>}
+                        </Popconfirm>
 
                     </span>
                       
@@ -134,22 +134,21 @@ export const listSchema = (params:{
                     }
                     {record?.status === 'packFinish' &&
                     <span>
-                        {params?.userPermission===record?.owner?  <a onClick={() => { params?.mergeVersion(record) }}>
+                       <a onClick={() => { params?.mergeVersion(record) }}>
                             合并
-                        </a>:<span style={{color:"gray"}}>合并</span>}
-                   
+                        </a>
                     </span>
                         
                     }
                     {record?.status === 'packFinish' &&
                     <span>
-                        {params?.userPermission===record?.owner?  <Popconfirm
+                        <Popconfirm
                             title="确定要禁用该版本吗？"
                             onConfirm={() => {
                                 params?.onDisabledAction(record, index);
                             }}>
                             <a style={{color:"red"}}>禁用</a>
-                        </Popconfirm>:<span style={{color:"gray"}}>禁用</span>}
+                        </Popconfirm>
 
                     </span>
                        
