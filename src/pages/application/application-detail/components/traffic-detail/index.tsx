@@ -79,6 +79,7 @@ export default function TrafficDetail() {
         keyWord: appData?.appCode,
         start: start + '',
         end: end + '',
+        isPreciseApp:true,
       }
     ).then(() => {
       queryTrafficList(
@@ -87,7 +88,8 @@ export default function TrafficDetail() {
           keyWord: appData?.appCode,
           start: start + '',
           end: end + '',
-          needMetric: true
+          needMetric: true,
+          isPreciseApp:true,
         }
       ).then((resp) => {
 

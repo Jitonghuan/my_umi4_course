@@ -7,7 +7,14 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Steps, Button } from 'antd';
 import { rePushFeVersion, retry } from '@/pages/application/service';
 import { StepItemProps } from '../../types';
-import appConfig from "@/app.config";
+import appConfig from '@/app.config';
+
+const codePushUrlList: any = {
+  yhyy: 'http://code-push.yhyy.com/versions',
+  zslnyy: 'http://code-push.zsgmc.sh.cn/versions',
+  fygs: 'http://codepush.gushangke.com/versions',
+  default: 'http://code-push.cfuture.shop/versions',
+};
 
 /** 发布HTML */
 export default function PushVersionStep(props: StepItemProps) {
@@ -19,6 +26,9 @@ export default function PushVersionStep(props: StepItemProps) {
   const isLoading = status === 'process';
   const isWait = status === 'wait';
   const isError = status === 'error';
+
+  // @ts-ignore
+  const envType = window.matrixConfigData.curEnvType || appConfig.envType;
 
   const handleRetryClick = async () => {
     try {
@@ -46,13 +56,17 @@ export default function PushVersionStep(props: StepItemProps) {
               重试
             </Button>
           )}
-          {
-            appData?.feType === 'pda' && metadata?.pdaDeployType === 'bundles' && status === 'finish' && appConfig.IS_Matrix === 'public' ? (
-              <a style={{marginLeft: '-9px'}} target="_blank" href="http://code-push.cfuture.shop/versions">
-                CodePush版本管理
-              </a>
-            ) : ''
-          }
+          {appData?.feType === 'pda' && metadata?.pdaDeployType === 'bundles' && status === 'finish' ? (
+            <a
+              style={{ marginLeft: '-9px' }}
+              target="_blank"
+              href={codePushUrlList[envType] || codePushUrlList.default}
+            >
+              CodePush版本管理
+            </a>
+          ) : (
+            ''
+          )}
         </>
       }
     />

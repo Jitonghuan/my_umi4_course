@@ -28,3 +28,5 @@ export const networkProbeStatus = addAPIPrefix('/monitorManage/networkProbe/stat
 export const networkProbeType = addAPIPrefix('/monitorManage/networkProbe/probeType');
 
 export const getClusterApi= addAPIPrefix("/monitorManage/cluster")
+
+

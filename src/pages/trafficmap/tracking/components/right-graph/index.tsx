@@ -1,4 +1,3 @@
-import showResourceModal from '@/pages/ticket/resource-apply/resource-show';
 import G6, { Graph, GraphData } from '@antv/g6';
 import React, { useEffect, useState, useMemo, forwardRef, useRef, useImperativeHandle } from 'react';
 import { formatText } from '@/common/util';

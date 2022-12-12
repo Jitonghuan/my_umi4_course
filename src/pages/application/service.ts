@@ -84,7 +84,11 @@ export const reCommitUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reCommit
 
 /** POST 追加分支 */
 export const updateFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/updateFeatures`;
+/** POST 追加版本 */
+export const updateReleaseDeployUrl = `${appConfig.apiPrefix}/releaseManage/releaseDeploy/update`;
 
+/** POST 部署到版本发布 */
+export const appReleasePublishUrl = `${appConfig.apiPrefix}/releaseManage/appRelease/publish`;
 /** POST 重试合并 */
 export const retryMergeUrl = `${appConfig.apiPrefix}/releaseManage/merge/retry`;
 
@@ -521,6 +525,33 @@ export const updateFeatures = (params: {
   postRequest(updateFeaturesUrl, {
     data: params,
   });
+
+
+  /** 追加发布的version列表 */
+export const updateReleaseDeploy = (params: {
+  /** 部署的数据库自增ID */
+  deployId: number;
+  /** 选择的feature分支 */
+  releaseId: number|undefined;
+}) =>
+  postRequest(updateReleaseDeployUrl, {
+    data: params,
+  });
+
+
+  //部署到版本发布
+  export const appReleasePublish = (params: {
+    reusePipelineCode:string;
+    releaseId:number;
+    pipelineCode:string;
+    config:string;
+    sql:string;
+  }) =>
+    postRequest(appReleasePublishUrl, {
+      data: params,
+    });
+  
+
 
 /** 重新提交 */
 export const reCommit = (params: {

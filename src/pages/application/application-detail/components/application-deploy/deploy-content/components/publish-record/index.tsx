@@ -159,7 +159,7 @@ export default function PublishRecord(props: IProps) {
       res = await axios.get(
         `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${item.version}/npm-tile.json`,
       );
-      setNpmJson(res?.data ? JSON.stringify(res.data, null, '\t') : '');
+      setNpmJson(res?.data ? JSON.stringify(res.data, null, 4) : '');
     } catch (e) {}
 
     try {
@@ -172,7 +172,7 @@ export default function PublishRecord(props: IProps) {
         originRes = await axios.get(
           `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${lastItem.version}/npm-tile.json`,
         );
-        setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, '\t') : '');
+        setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, 4) : '');
       }
     } catch (e) {}
     setLoading(false);

@@ -341,7 +341,8 @@ export const getMatrixEnvConfig = () =>
       let envConfigInfo = {
         LogoName: "测试",
         curEnvType: "dev",
-        domainName: "http://c2f.apex-dev.cfuture.shop",
+        // domainName: "http://c2f.apex-dev.cfuture.shop",
+        domainName:"http://c2f.apex.cfuture.shop",
         key: "http://matrix-local.cfuture.shop:9091",
         locationHref: "dev",
         waterMarkName: "测试环境",

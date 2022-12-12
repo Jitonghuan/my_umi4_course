@@ -82,3 +82,6 @@ export const getUserList = addAPIPrefix('/appManage/user/listAll');
 
 /** GET 集群环境查询 */
 export const getEnvCodeList = addAPIPrefix('/monitorManage/rules/envCodeList');
+
+//getPromQLApi
+export const getPromQLApi= addAPIPrefix("/monitorManage/networkProbe/getPromQL")

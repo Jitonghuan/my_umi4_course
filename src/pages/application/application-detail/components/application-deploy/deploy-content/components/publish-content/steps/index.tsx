@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Steps, Empty, Button } from 'antd';
 import StepItem from './step-item';
+import '.././index.less'
 
 // 判断多环境前面的线条以及环境名是否要变蓝
 const changeColor = (data: any, env?: any) => {

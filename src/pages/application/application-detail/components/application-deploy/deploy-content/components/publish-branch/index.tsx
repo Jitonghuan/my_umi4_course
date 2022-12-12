@@ -6,45 +6,24 @@
  * @modified 2021/08/30 moyan
  */
 
-import React, { useState, useRef, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox, Tag, Tooltip, Select, message, Radio } from 'antd';
+import { Table, Input, Button, Modal, Checkbox,  Select, Radio, Tabs } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { createDeploy, updateFeatures } from '@/pages/application/service';
-import { DeployInfoVO } from '@/pages/application/application-detail/types';
-import { datetimeCellRender } from '@/utils';
+import { createDeploy, updateFeatures,updateReleaseDeploy } from '@/pages/application/service';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
+import { optionsToLabelMap } from '@/utils/index';
+import { FeContext } from '@/common/hooks';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
+import { versionList } from '../../../version-publish/schema';
+import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
+import DemandModal from './demand-modal'
+import {  releaseDeploy } from '../../../service';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
-
-export interface PublishBranchProps {
-  /** 是否有发布内容 */
-  hasPublishContent: boolean;
-  deployInfo: DeployInfoVO;
-  env: string;
-  loading: boolean;
-  onSearch: (name?: string) => any;
-  masterBranchChange: any;
-  // loadData: any;
-  dataSource: {
-    id: string | number;
-    branchName: string;
-    desc: string;
-    createUser: string;
-    gmtCreate: string;
-    status: string | number;
-  }[];
-  pipelineCode: string;
-  /** 提交分支事件 */
-  onSubmitBranch: (status: 'start' | 'end') => void;
-  changeBranchName: any;
-}
-
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
   const {
     hasPublishContent,
@@ -57,6 +36,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     pipelineCode,
     changeBranchName,
     loading,
+    versionData,
+    checkVersion
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -72,8 +53,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
-  const [visible, setVisible] = useState(false);//关联需求详情弹窗
-  const [currentData, setCurrentData] = useState<any>([]);
+  const [publishType, setPublishType] = useState<string>('branch');
+  const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
+  const [demandVisible,setDemandVisible]= useState<boolean>(false);
+  const [curRecord,setCurRecord]=useState<any>({})
+  const { categoryData = [], businessData = [] } = useContext(FeContext);
+  const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
+ 
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
     if (appType === 'frontend') {
@@ -83,28 +69,40 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     }
   };
 
-  type reviewStatusTypeItem = {
-    color: string;
-    text: string;
-  };
+  
 
-  const STATUS_TYPE: Record<number, reviewStatusTypeItem> = {
-    1: { text: '未创建', color: 'default' },
-    2: { text: '审核中', color: 'blue' },
-    3: { text: '已关闭', color: 'orange' },
-    4: { text: '未通过', color: 'red' },
-    5: { text: '已删除', color: 'gray' },
-    6: { text: '已通过', color: 'green' },
-  };
+  const branchColumns: any = useMemo(() => {
+    return branchTableSchema({ appData, id, appCode, env }).filter((item) => item.title)
+  }, [dataSource])
 
   const submit = async () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
+      if(publishType==="version"){
+        return await updateReleaseDeploy({
+          deployId: metadata?.id,
+          releaseId: releaseRowKeys,
+        });
+
+      }
       return await updateFeatures({
         id: metadata?.id,
         features: filter,
       });
+
+    }
+
+    if(publishType==="version"){
+      return await   releaseDeploy({
+        releaseId: releaseRowKeys,
+        pipelineCode,
+        envCodes: deployEnv,
+        buildType: getBuildType(),
+        appCode: appCode!,
+        envTypeCode: env,
+        deployModel: appData?.deployModel,
+      })
     }
 
     return await createDeploy({
@@ -116,6 +114,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       envCodes: deployEnv,
       masterBranch: selectMaster, //主干分支
       buildType: getBuildType(),
+      //@ts-ignore
       deployModel: appData?.deployModel,
     });
   };
@@ -165,10 +164,21 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           envSelect.push({ label: item.envName, value: item.envCode });
         });
         setEnvDataList(envSelect);
+      }else{
+        setEnvDataList([]);
       }
-      // setEnvDataList(data.list);
     });
   }, [appCategoryCode, env]);
+  
+  const verisionColumns = useMemo(() => {
+    return versionList({
+      demandDetail: (value: string, record: any) => {
+        setCurRecord(record)
+        setDemandVisible(true)
+
+      }
+    })
+  }, [])
 
   const handleChange = (v: any) => {
     selectRef?.current?.blur();
@@ -176,143 +186,146 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     masterBranchChange(v);
   };
 
-  const branchNameRender = (branchName: string, record: any) => {
-    return (
-      <div>
-        <Link to={'/matrix/application/detail/branch?' + 'appCode=' + appCode + '&' + 'id=' + id}>{branchName}</Link>
-        <span style={{ marginLeft: 8, color: '#3591ff' }}>
-          <CopyToClipboard text={branchName} onCopy={() => message.success('复制成功！')}>
-            <CopyOutlined />
-          </CopyToClipboard>
-        </span>
-      </div>
-    );
+const [defaultKey,setDefaultKey]=useState<number[]>([])
+  useEffect(()=>{
+    if(versionData?.length>0&&publishType==="version"){
+      let key=versionData?.filter((item:any) => item.canPublish===true)
+      if(key?.length>0){
+        setReleaseRowKeys(key[0]?.id);
+        setDefaultKey([key[0]?.id])
+
+      }
+
+
+
+    }
+
+  },[versionData,publishType])
+
+
+
+  const rowSelection = {
+    onChange: (selectedRowKeys:any[], selectedRows: any[]) => {
+        setReleaseRowKeys(selectedRowKeys[0] as number);
+    },
+    getCheckboxProps: (record: any) => ({
+      disabled: !record?.canPublish, 
+      //name: record.name,
+    }),
   };
+
 
   return (
     <div className={rootCls}>
-      <div className={`${rootCls}__title`}>待发布的分支</div>
+      <DemandModal visible={demandVisible} onClose={()=>{
+        setDemandVisible(false)
 
-      <div className="table-caption">
-        <div className="caption-left">
-          <h4>主干分支：</h4>
-          <Select
-            ref={selectRef}
-            options={masterBranchOptions}
-            value={selectMaster}
-            style={{ width: '300px', marginRight: '20px' }}
-            onChange={handleChange}
-            showSearch
-            optionFilterProp="label"
-            // labelInValue
-            filterOption={(input, option) => {
-              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+      }} 
+      curRecord={curRecord}
+      appCategoryValue={appCategoryCode||""}
+      appCategoryLabel={categoryDataMap[appData?.appCategoryCode!] || '--'}
+      />
+      <div className={`${rootCls}__title`}>{`待发布内容`}</div>
+      <Tabs activeKey={publishType} onChange={(key) => {
+         setPublishType(key) 
+         }}>
+        {/* 发布分支 */}
+        <Tabs.TabPane tab='待发布分支' key='branch' >
+          <>
+            <div className="table-caption">
+              <div className="caption-left">
+                <h4>主干分支：</h4>
+                <Select
+                  ref={selectRef}
+                  options={masterBranchOptions}
+                  value={selectMaster}
+                  style={{ width: '300px', marginRight: '20px' }}
+                  onChange={handleChange}
+                  showSearch
+                  optionFilterProp="label"
+                  // labelInValue
+                  filterOption={(input, option) => {
+                    //@ts-ignore
+                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                  }}
+                />
+                <h4>开发分支名称：</h4>
+                <Input.Search
+                  placeholder="搜索分支"
+                  value={searchText}
+                  onChange={(e) => {
+                    setSearchText(e.target.value), changeBranchName(e.target.value)
+                  }}
+                  onPressEnter={() => onSearch?.(searchText)}
+                  onSearch={() => onSearch?.(searchText)}
+                />
+              </div>
+              <div className="caption-right">
+                {appData?.deployModel === 'online' && (
+                  <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+                    {hasPublishContent ? '追加分支' : '提交分支'}
+                  </Button>
+                )}
+              </div>
+            </div>
+            <Table
+              rowKey="id"
+              bordered
+              dataSource={dataSource}
+              loading={loading}
+              pagination={false}
+              columns={branchColumns}
+              scroll={{ x: '100%' }}
+              rowSelection={{
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                  setSelectedRowKeys(selectedRowKeys as any);
+                },
+              }}
+            />
+          </>
+        </Tabs.TabPane>
+          {/* 发布版本 */}
+        {checkVersion===true&&env!=="prod"&&(
+
+        <Tabs.TabPane tab='待发布版本' key='version'>
+        <>
+        <div className="table-caption">
+              <div className="caption-left">
+                <h3>待发布版本列表</h3>
+              </div>
+              <div>
+              <Button type='primary' disabled={!releaseRowKeys} onClick={()=>{
+                  submitClick()
+              }}>
+                   {hasPublishContent ? '更新发布' : '提交发布'}
+                
+                </Button>
+              </div>
+          </div>
+      
+          <Table
+            dataSource={versionData}
+            bordered
+            rowKey="id"
+            defaultSelectedRowKeys={defaultKey}
+            pagination={false}
+            columns={verisionColumns}
+            //@ts-ignore
+            rowSelection={{
+              type:"radio" ,
+              ...rowSelection,
             }}
           />
-          <h4>开发分支名称：</h4>
-          <Input.Search
-            placeholder="搜索分支"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value), changeBranchName(e.target.value)
-            }}
-            onPressEnter={() => onSearch?.(searchText)}
-            onSearch={() => onSearch?.(searchText)}
-          />
-        </div>
-        <div className="caption-right">
-          {appData?.deployModel === 'online' && (
-            <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-              {hasPublishContent ? '追加分支' : '提交分支'}
-            </Button>
-          )}
-          {/* <Button
-            icon={<RedoOutlined />}
-            onClick={() => {
-              loadData();
-            }}
-            size="small"
-          >
-            刷新
-        </Button> */}
-        </div>
-      </div>
-      <Table
-        rowKey="id"
-        bordered
-        dataSource={dataSource}
-        loading={loading}
-        pagination={false}
-        scroll={{ x: '100%' }}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys,
-          onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-            setSelectedRowKeys(selectedRowKeys as any);
-          },
-        }}
-      >
-        <Table.Column dataIndex="branchName" title="分支名" fixed="left" render={branchNameRender} width={320} />
-        <Table.Column
-          dataIndex="desc"
-          title="变更原因"
-          width={200}
-          ellipsis={{
-            showTitle: false,
-          }}
-          render={(value) => (
-            <Tooltip placement="topLeft" title={value}>
-              {value}
-            </Tooltip>
-          )}
-        />
-        <Table.Column dataIndex="id" title="ID" width={80} />
-        <Table.Column
-          dataIndex="status"
-          width={120}
-          align="center"
-          title="分支review状态"
-          render={(text: number) => (
-            <Tag color={STATUS_TYPE[text]?.color || 'red'}>{STATUS_TYPE[text]?.text || '---'}</Tag>
-          )}
-        />
-        {env === 'prod' && (
-          <Table.Column
-            dataIndex={['relationStatus', 'statusList']}
-            width={220}
-            align="center"
-            title="关联需求状态"
-            render={(value: any) => (
-              Array.isArray(value) && value.length ? (
-                value.map((item: any) => (
-                  <div className='demand-cell'>
-                    <Tooltip title={item.title}><a target="_blank" href={item.url}>{item.title}</a></Tooltip>
-                    <Tag color={item.status === '待发布' ? '#87d068' : '#59a6ed'}>{item.status}</Tag>
-                  </div>
-                ))
-              ) : null
-            )}
-          />
+        </>
+      </Tabs.TabPane>
+
         )}
-        <Table.Column dataIndex="gmtCreate" title="创建时间" width={140} ellipsis render={(value) => <Tooltip title={datetimeCellRender(value)}>{datetimeCellRender(value)}</Tooltip>} />
-        <Table.Column dataIndex="createUser" title="创建人" width={80} />
-        {appData?.appType === 'frontend' ? (
-          <Table.Column
-            fixed="right"
-            title="和master对比"
-            align="center"
-            width={110}
-            render={(item) => (
-              <a
-                target="_blank"
-                href={`${appData?.gitAddress.replace('.git', '')}/-/compare/master...${item.branchName}?view=parallel`}
-              >
-                查看
-              </a>
-            )}
-          />
-        ) : null}
-      </Table>
+
+      
+      </Tabs>
+
 
       <Modal
         title="选择发布环境"
@@ -320,17 +333,18 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         confirmLoading={confirmLoading}
         onOk={() => {
           setConfirmLoading(true);
-          return submit()
-            .then(() => {
+          return submit().then(() => {
               setDeployVisible(false);
               onSubmitBranch?.('end');
-            })
-            .finally(() => setConfirmLoading(false));
+            }).finally(() => {setConfirmLoading(false)
+            
+            });
         }}
         onCancel={() => {
           setDeployVisible(false);
           setConfirmLoading(false);
           onSubmitBranch?.('end');
+         
         }}
         maskClosable={false}
       >
