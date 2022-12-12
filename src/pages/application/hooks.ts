@@ -96,16 +96,16 @@ export function useAppListData(
 }
 
 // 获取应用详情
-export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
+export function useAppDetail( appCode?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
   const [data, setData] = useState<AppItemVO>();
   const [loading, setLoading] = useState(false);
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const appList = await queryApps({
-        id: appId || undefined,
+     //   id: appId || undefined,
         // 有 appId 时就不需要 appCode
-        appCode: appId ? undefined : appCode,
+        appCode:  appCode,
         pageIndex: 1,
         pageSize: 10,
       });
@@ -115,26 +115,27 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
             setData(item);
           }
           return;
-        } else if (appId) {
-          if (item?.id === appId) {
-            setData(item);
-          }
-          return;
-        }
+        } 
+        // else if (appId) {
+        //   if (item?.id === appId) {
+        //     setData(item);
+        //   }
+        //   return;
+        // }
       });
     } finally {
       setLoading(false);
     }
-  }, [appId, appCode]);
+  }, [ appCode]);
 
   useEffect(() => {
-    if (!appId && !appCode) {
+    if ( !appCode) {
       setLoading(false);
       return setData(undefined);
     }
 
     loadData();
-  }, [appId, appCode]);
+  }, [ appCode]);
 
   return [data, loading, loadData];
 }

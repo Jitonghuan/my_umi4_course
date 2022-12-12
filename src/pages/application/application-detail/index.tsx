@@ -30,9 +30,9 @@ export default function ApplicationDetail(props: IProps) {
   // const { location, children } = props;
   let location:any = useLocation();
   const query:any = parse(location.search);
-  const appId=query?.id||"";
+  //const appId=query?.id||"";
   const appCode=query.appCode;
-  const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
+  const [appData, isLoading, queryAppData] = useAppDetail(appCode);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
   const tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(location.pathname)?.[1];
@@ -160,7 +160,6 @@ export default function ApplicationDetail(props: IProps) {
   return (
     <PageContainer className="application-detail-page">
       <FilterCard className="layout-compact">
-        {console.log("--location.search,",location.search)}
         <Tabs
           activeKey={tabActiveKey}
           onChange={(key) => {

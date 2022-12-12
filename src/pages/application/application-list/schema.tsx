@@ -44,7 +44,7 @@ export const createTableSchema = ({
             
             history.push({
               pathname: 'detail',
-              search: `id=${record.id}&appCode=${record.appCode}`,
+              search: `?appCode=${record.appCode}`,
               
             })
           }}
@@ -133,7 +133,7 @@ export const createTableSchema = ({
             onClick={() => {
               history.push({
                 pathname: 'detail',
-                search: `id=${record.id}&appCode=${record.appCode}&deploymentName=${record?.deploymentName}`,
+                search: `?appCode=${record.appCode}&deploymentName=${record?.deploymentName}`,
               });
             }}
           >
