@@ -8,7 +8,7 @@ import { parse, stringify } from 'query-string';
 export default function ViewLog(props: any) {
     const query: any = parse(location.search);
     // const { location, children } = props;
-    const { appCode = '', envCode = '' } = query || {};
+    const { taskCode = '', instanceCode = '' } = query || {};
     const [log, setLog] = useState<string>('');
     let ws = useRef<WebSocket>();
     let scrollBegin = useRef<boolean>(true);
@@ -17,36 +17,38 @@ export default function ViewLog(props: any) {
     const { matrixConfigData } = useContext(FeContext);
 
     useEffect(() => {
-        ws.current = new WebSocket(
-            window.location.href?.includes('gushangke')
-                ? `ws://matrix-api.gushangke.com/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&action=watchContainerLog&tailLine=200`
-                : `${matrixConfigData.wsPrefixName}/v1/appManage/deployInfo/instance/ws?appCode=${appCode}&envCode=${envCode}&action=watchContainerLog&tailLine=200`,
-        ); //建立通道
-        let dom: any = document?.getElementById('result-log');
-        ws.current.onmessage = (evt: any) => {
-            if (dom) {
-                // 获取滚动条到滚动区域底部的高度
-                const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
-                let bottom = 0;
-                if (scrollB) {
-                    // 计算滚动条到日志div底部的距离
-                    bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+        if (taskCode && instanceCode) {
+            ws.current = new WebSocket(
+                window.location.href?.includes('gushangke')
+                    ? `ws://matrix-api.gushangke.com/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`
+                    : `${matrixConfigData.wsPrefixName}/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`,
+            ); //建立通道
+            let dom: any = document?.getElementById('result-log');
+            ws.current.onmessage = (evt: any) => {
+                if (dom) {
+                    // 获取滚动条到滚动区域底部的高度
+                    const scrollB = dom?.scrollHeight - dom?.scrollTop - dom?.clientHeight;
+                    let bottom = 0;
+                    if (scrollB) {
+                        // 计算滚动条到日志div底部的距离
+                        bottom = (scrollB / dom?.scrollHeight) * dom?.clientHeight;
+                    }
+                    //如果返回结果是字符串，就拼接字符串，或者push到数组，
+                    logData.current += evt.data;
+                    setLog(logData.current);
+                    let html = ansi_up.ansi_to_html(logData.current);
+                    dom.innerHTML = html;
+                    if (bottom <= 20) {
+                        dom.scrollTo(0, dom.scrollHeight);
+                    }
                 }
-                //如果返回结果是字符串，就拼接字符串，或者push到数组，
-                logData.current += evt.data;
-                setLog(logData.current);
-                let html = ansi_up.ansi_to_html(logData.current);
-                dom.innerHTML = html;
-                if (bottom <= 20) {
-                    dom.scrollTo(0, dom.scrollHeight);
-                }
-            }
-        };
-        ws.current.onerror = () => {
-            message.warning('webSocket 链接失败');
-        };
+            };
+            ws.current.onerror = () => {
+                message.warning('webSocket 链接失败');
+            };
+        }
 
-    }, [appCode, envCode])
+    }, [taskCode, instanceCode])
 
     // 下载日志
     const downloadLog = () => {

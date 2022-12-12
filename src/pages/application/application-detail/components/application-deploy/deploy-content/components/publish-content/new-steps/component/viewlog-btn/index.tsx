@@ -1,4 +1,3 @@
-import ViewLogModal from '../../view-log-modal';
 import { useState } from 'react';
 import {
     FileTextOutlined,
@@ -7,16 +6,15 @@ import {
 
 export default function OperateBtn() {
     const [visible, setVisbible] = useState<Boolean>(false);
+    const toLogDetail = () => {
+
+    }
     return (
         <div className='operate-btn'>
-            <ViewLogModal visible={visible} onClose={() => { setVisbible(false) }} />
-            <a style={{}} onClick={() => { setVisbible(true) }}>
+            <a style={{}} onClick={() => { toLogDetail }}>
                 <FileTextOutlined />
                 {/* 查看日志 */}
             </a>
-            {/* <a style={{ paddingLeft: 4, color: 'red' }} onClick={() => { }}>
-                <CloseCircleOutlined />
-            </a> */}
         </div>
     )
 }

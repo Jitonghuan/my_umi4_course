@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { retryDelFeature, downloadSource, retry, getMergeMessage } from '@/pages/application/service';
 import { Steps, Button, Modal, message } from 'antd';
-import { LoadingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ExclamationCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { fePublishVerify } from '@/pages/application/service';
 import OperateBtn from './component/viewlog-btn';
 import { conflictItem } from './type';
@@ -87,6 +87,13 @@ export default function StepItem(props: any) {
         setVisible(false);
         onOperate('mergeEnd');
     };
+    const toLogDetail = () => {
+        let taskCode = '';
+        let instanceCode = '';
+        console.log(item, 'item')
+        const url = `/matrix/application/view-log?taskCode=${taskCode}&instanceCode=${instanceCode}`;
+        window.open(url, '_blank');
+    }
     return <>
         <MergeConflict
             visible={mergeVisible}
@@ -117,7 +124,13 @@ export default function StepItem(props: any) {
             title={
                 <div className='flex'>
                     {props.title}
-                    {status !== 'wait' && <OperateBtn />}
+                    {status !== 'wait' && (
+                        <div className='operate-btn'>
+                            <a style={{}} onClick={() => { toLogDetail }}>
+                                <FileTextOutlined />
+                                {/* 查看日志 */}
+                            </a>
+                        </div>)}
                 </div>
             }
             description={

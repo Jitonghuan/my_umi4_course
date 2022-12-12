@@ -165,8 +165,12 @@ export default function DeployContent(props: DeployContentProps) {
   useEffect(() => {
     if (!appCode || !envTypeCode) return;
     getEnvList({ envTypeCode, appCode: appData?.appCode, proEnvType: 'benchmark' });
-    // isNewPublish();
   }, [envTypeCode, appCode])
+
+  useEffect(() => {
+    if (!appCode) return;
+    isNewPublish();
+  }, [appCode])
 
   // 获取该应用所有环境列表
   const getEnvList = (params: any) => {
@@ -195,9 +199,9 @@ export default function DeployContent(props: DeployContentProps) {
 
   // 判断该应用是否要用新的发布步骤条
   const isNewPublish = () => {
-    judgeIsNew({ appCode: appData?.appCode }).then((res) => {
+    judgeIsNew({ appCode: appData?.appCode }).then((res: any) => {
       if (res?.success) {
-
+        res?.version === 'v1' ? newPublish.current = false : newPublish.current = true;
       }
     })
   }
