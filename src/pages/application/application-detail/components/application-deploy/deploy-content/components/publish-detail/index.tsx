@@ -287,7 +287,7 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-         {checkVersion===true&& appData?.deployModel === 'online'&&envTypeCode !== 'prod' && (
+         {checkVersion===true&& appData?.deployModel === 'online'&&envTypeCode !== 'prod'&&envTypeCode !== 'dev' && (
           <Button type="primary" onClick={()=>{
             setVersionPublishVisiable(true)
             onOperate('versionPublishStart');
