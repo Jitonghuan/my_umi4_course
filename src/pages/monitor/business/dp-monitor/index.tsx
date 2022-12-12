@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { List, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
 import PageContainer from '@/components/page-container';
 import {
@@ -9,7 +9,8 @@ import {
   PlayCircleOutlined,
   PauseCircleOutlined,
 } from '@ant-design/icons';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse } from 'query-string';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { envTypeData } from '../schema';
 import { useEnvListOptions, useGetListMonitor, useEnableMonitor, useDisableMonitor, useDelMonitor } from './hooks';
@@ -19,6 +20,8 @@ const { Panel } = Collapse;
 
 export default function DpMonitor() {
   const [form] = Form.useForm();
+  let location:any = useLocation();
+  const query :any= parse(location.search);
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
   const [listSource, total, getListMonitor] = useGetListMonitor();
@@ -28,6 +31,17 @@ export default function DpMonitor() {
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
 
   const [delMonitor] = useDelMonitor();
+  useEffect(()=>{
+    if(query?.monitorName&&query?.type==="db"){
+
+      form.setFieldsValue({
+        monitorName:query?.monitorName
+      })
+      getListMonitor(1, 10,query?.monitorName);
+
+
+    }
+  },[])
 
   const editMonitor = (item: any) => {
     history.push(

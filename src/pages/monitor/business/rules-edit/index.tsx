@@ -17,16 +17,18 @@ interface IPros {
   onConfirm: () => void;
   visible: boolean;
   record?: any;
+  entryType?:string;
   bizMonitorId: string | number;
   bizMonitorType: string;
   envCode: string;
   probeName?:string
+  monitorName?:string;
 }
 
 
 
 const RulesEdit = (props: IPros) => {
-  const { type = 'add', onCancel, onConfirm, visible,probeName, record = {}, bizMonitorId, bizMonitorType, envCode } = props;
+  const { type = 'add', onCancel, onConfirm, visible,probeName,entryType,monitorName, record = {}, bizMonitorId, bizMonitorType, envCode } = props;
   const [unit, setUnit] = useState('m'); // 单位
   const [getSilenceValue, setGetSilenceValue] = useState(0);
   const [labelTableData, setLabelTableData] = useState<any[]>([]);
@@ -83,7 +85,8 @@ const RulesEdit = (props: IPros) => {
     const data = {
       ...params,
       receiver: (params?.receiver || []).join(','),
-      labels: stepTableMap(labelTableData),
+      labels:Object.assign(stepTableMap(labelTableData) ,{type:entryType},{monitorName}),
+      //labels: stepTableMap(labelTableData),
       annotations: stepTableMap(annotationsTableData),
       duration: `${params.duration}${unit}`,
       bizMonitorId,
