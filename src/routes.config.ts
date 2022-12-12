@@ -515,6 +515,13 @@ export default [
         hideInMenu: true,
       },
       {
+        path: `${baseRoutePath}/DBMS/struct-apply`,
+        name: '结构变更申请',
+        key: 'data-change',
+        component: '@/pages/DBMS/data-change/components/struct-apply',
+        hideInMenu: true,
+      },
+      {
         path: `${baseRoutePath}/DBMS/safe-rule`,
         name: '安全规则',
         key: 'safe-rule',
