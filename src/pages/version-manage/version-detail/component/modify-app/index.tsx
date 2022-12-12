@@ -3,6 +3,7 @@ import { Modal, Table, Space, Tooltip, Tag, } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import moment from 'moment';
+import { history } from 'umi';
 import { debounce } from 'lodash';
 import detailContext from '../../context';
 import './index.less'
@@ -100,6 +101,13 @@ export default function ModifyApp(props: Iprops) {
             title: '应用CODE',
             dataIndex: 'appCode',
             width: 120,
+            // render: (value: string) => <a onClick={()=>{
+            //     history.push({
+            //         pathname:"/matrix/application/detail/overview",
+            //         search:`id=${}&appCode=${value}`
+
+            //     })
+            // }}>{value}</a>
         },
         {
             title: '应用类型',
