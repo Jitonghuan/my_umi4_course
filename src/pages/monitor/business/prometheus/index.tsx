@@ -22,7 +22,7 @@ export default function DpMonitor() {
 
   const [delMonitor] = useDelMonitor();
   useEffect(()=>{
-    if(query?.monitorName&&query?.type==="interface"){
+    if(query?.monitorName&&query?.tab==="interface"){
 
       form.setFieldsValue({
         name:query?.monitorName
