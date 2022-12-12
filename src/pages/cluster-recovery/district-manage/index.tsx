@@ -120,7 +120,7 @@ const DistrictManage = () => {
           },
           {
             title: '流量标识',
-            dataIndex: 'hospitalDistrictIp',
+            dataIndex: 'flowMark',
           },
           {
             title: '流量策略',
@@ -171,7 +171,7 @@ const DistrictManage = () => {
           <Form.Item label="机构Code" name="hospitalDistrictCode" rules={[{ required: true, message: '请输入机构Code' }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="流量标识" name="hospitalDistrictCode" rules={[{ required: true, message: '请输入流量标识' }]}>
+          <Form.Item label="流量标识" name="flowMark" rules={[{ required: true, message: '请输入流量标识' }]}>
             <Select  options={identifiOptions}/>
           </Form.Item>
           <Form.Item label="环境code" name="envCode" rules={[{ required: true, message: '请输入环境code' }]}>

@@ -1,11 +1,11 @@
 export const identifiOptions=[{
     label:"ID",
-    value:"ID",
-    key:"ID"
+    value:"id",
+    key:"id"
 
 },{
     label:"IP",
-    value:"IP",
-    key:"IP"
+    value:"ip",
+    key:"ip"
 
 }]

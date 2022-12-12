@@ -3,11 +3,15 @@ import { Modal, Select, Button, message, Empty,Form,Spin,Tag } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import {diffConfig,useNacosNamespaceList,useNacosDataIdList,syncConfig} from './hooks';
 import { queryCommonEnvCode } from '../../dashboards/cluster-board/hook';
-import {syncOptions} from './type'
+import {syncOptions} from './type';
+import { history,useLocation } from 'umi';
 import AceDiff from '@/components/ace-diff';
 import './index.less'
 export default function NacosSync(){
     const [nacosForm]=Form.useForm()
+    let location:any = useLocation();
+    const diffInfo = location.state?.diffInfo;
+    const entryType=location.state?.type;
     const [loading, setLoading] = useState<boolean>(false);
     const [pending, setPending] = useState<boolean>(false);
     const [completed, setCompleted] = useState<boolean>(false);
@@ -18,6 +22,7 @@ export default function NacosSync(){
     const [namespaceDiffInfo,setNamespaceDiffInfo]=useState<any>({})
     const [namespaceLoading,namespaceOptions,queryNacosNamespaceList]=useNacosNamespaceList();
     const [dataIdloading, dataIdOptions, queryNacosDataIdList]=useNacosDataIdList()
+    
     
     const getEnvCode=()=>{
         setLoading(true)
@@ -99,10 +104,24 @@ export default function NacosSync(){
      
 
     }
+
     useEffect(()=>{
+      if(entryType&&entryType==="isConfDiff"&& Object.keys(diffInfo)?.length>0){
         nacosForm.setFieldsValue({
-            type:"single"
-        })
+          type:diffInfo?.type,
+          dataId:diffInfo?.dataId,
+          namespace:diffInfo?.namespace
+      })
+      startDiffConfig()
+
+
+      }else{
+        nacosForm.setFieldsValue({
+          type:"single"
+      })
+
+      }
+       
         getEnvCode()
     },[])
     useEffect(()=>{

@@ -4,6 +4,8 @@
 // https://come-future.yuque.com/sekh46/bbgc7f/vlkirb#oRCTM
 
 import { addAPIPrefix } from '@/utils';
+import appConfig from "@/app.config";
+import { getRequest } from "@/utils/request";
 
 
 /** GET 流量地图 */
@@ -120,3 +122,12 @@ export const getNacosNamespaceApi= addAPIPrefix('/opsManage/k8s/multiple/getNaco
 
 /* GET 获取DataId */
 export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNsDataId');
+
+export const graphDashboard = (clusterId: string) => {
+    const url = `${appConfig.apiPrefix}/monitorManage/centralDashboard`;
+    return getRequest(url, { data: { clusterId } });
+  }
+  export const getCurrentDistrictInfo = (params:{infoType: string,key:string}) => {
+    const url = `${appConfig.apiPrefix}/multiple/common/getCurrentDistrictInfo`;
+    return getRequest(url, { data: params });
+  }

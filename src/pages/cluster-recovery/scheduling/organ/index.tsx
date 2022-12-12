@@ -50,6 +50,7 @@ export default function TrafficScheduling() {
                   hospitalDistrictCode: item.name,
                   hospitalDistrictName: item?.title,
                   ip: ip,
+                  flowMark:item?.flowMark,
                 });
               }
 
@@ -61,6 +62,7 @@ export default function TrafficScheduling() {
                   hospitalDistrictCode: item.name,
                   hospitalDistrictName: item?.title,
                   ip: ip,
+                  flowMark:item?.flowMark,
                 });
               }
             }

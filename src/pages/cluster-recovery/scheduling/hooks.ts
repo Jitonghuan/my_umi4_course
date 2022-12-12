@@ -19,6 +19,7 @@ export function useClusterSource(): [any, boolean, (envCode: string) => void] {
                   title: ele.hospitalDistrictName,
                   name: ele.hospitalDistrictCode,
                   nowDisPatchCluster: ele?.nowDisPatchCluster,
+                  flowMark:ele?.flowMark,
                   options: [
                     { label: 'A集群', value: 'cluster_a', ip: ele.hospitalDistrictIp },
                     { label: 'B集群', value: 'cluster_b', ip: ele.hospitalDistrictIp },

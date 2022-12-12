@@ -8,7 +8,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { useAppOptions } from './hooks';
 import { postRequest, getRequest } from '@/utils/request';
 import * as APIS from '../../service';
-import appConfig from '@/app.config';
+import {history} from 'umi'
 import { queryCommonEnvCode } from '../../dashboards/cluster-board/hook';
 
 export default function Application() {
@@ -53,10 +53,31 @@ export default function Application() {
               if (result.success) {
                 const source = result.data || {};
                 if (typeof source === 'object') {
-                  const next = Object.keys(source).map((appName) => {
-                    return { appName, ...source[appName] };
-                  });
-                  setClusterData(next);
+                  if(source?.isConfDiff===true){
+                    setClusterData([]);
+                    history.push({
+                      pathname:"/matrix/cluster-recovery/cluster-sync/nacos",
+                    },{
+                      type:"isConfDiff",
+                      diffInfo:{
+                      
+                          type:source?.type,
+                          namespace:source?.namespace,
+                          dataId:source?.dataId
+
+
+                        
+                      }
+                    })
+
+                  }else{
+                    const next = Object.keys(source).map((appName) => {
+                      return { appName, ...source[appName] };
+                    });
+                    setClusterData(next);
+
+                  }
+                 
                   setCompleted(true);
                 } else if (typeof source === 'string') {
                   message.info(source);
