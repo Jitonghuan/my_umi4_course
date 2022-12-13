@@ -10,28 +10,30 @@ import { useEnvListOptions, useGetListMonitor, useDelMonitor } from './hooks';
 import './index.less';
 import { useAppOptions } from '@/pages/monitor/business/hooks';
 
-export default function DpMonitor() {
+export default function DpMonitor(props:any) {
   const [form] = Form.useForm();
-  let location:any = useLocation();
-  const query :any= parse(location.search);
+  const {tab,queryMonitorName}=props
+  // let location:any = useLocation();
+  // const query :any= parse(location.search);
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
-  const [listSource, total, getListMonitor] = useGetListMonitor();
+  const [listSource, total, getListMonitor] = useGetListMonitor(queryMonitorName,tab);
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
 
   const [delMonitor] = useDelMonitor();
   useEffect(()=>{
-    if(query?.monitorName&&query?.tab==="interface"){
+    if(queryMonitorName&&tab==="interface"){
+     
 
       form.setFieldsValue({
-        name:query?.monitorName
+        name:queryMonitorName
       })
-      getListMonitor(1, 10,query?.monitorName);
+      getListMonitor(1, 10,queryMonitorName);
 
 
     }
-  },[])
+  },[tab,queryMonitorName])
   const editMonitor = (item: any) => {
     history.push(
       {

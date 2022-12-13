@@ -18,13 +18,14 @@ import './index.less';
 import { useAppOptions } from '@/pages/monitor/business/hooks';
 const { Panel } = Collapse;
 
-export default function DpMonitor() {
+export default function DpMonitor(props:any) {
+  const {tab,queryMonitorName}=props
   const [form] = Form.useForm();
-  let location:any = useLocation();
-  const query :any= parse(location.search);
+  // let location:any = useLocation();
+  // const query :any= parse(location.search);
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
-  const [listSource, total, getListMonitor] = useGetListMonitor();
+  const [listSource, total, getListMonitor] = useGetListMonitor(queryMonitorName,tab);
   const [enableMonitor] = useEnableMonitor();
   const [disableMonitor] = useDisableMonitor();
   const [currentEnvType, setCurrentEnvType] = useState('');
@@ -32,16 +33,17 @@ export default function DpMonitor() {
 
   const [delMonitor] = useDelMonitor();
   useEffect(()=>{
-    if(query?.monitorName&&query?.tab==="db"){
+    if(queryMonitorName&&tab==="db"){
+     // debugger
 
       form.setFieldsValue({
-        monitorName:query?.monitorName
+        monitorName:queryMonitorName
       })
-      getListMonitor(1, 10,query?.monitorName);
+      getListMonitor(1, 10,queryMonitorName);
 
 
     }
-  },[])
+  },[tab,queryMonitorName])
 
   const editMonitor = (item: any) => {
     history.push(

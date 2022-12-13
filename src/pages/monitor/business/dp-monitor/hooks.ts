@@ -45,15 +45,19 @@ export function useAppOptions() {
   return [source];
 }
 
-export function useGetListMonitor() {
+export function useGetListMonitor(queryMonitorName:string,tab:string) {
   const [listSource, setListSource] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageCurrentIndex] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
 
   useEffect(() => {
-    getListMonitor(1, 10);
-  }, []);
+    if(!queryMonitorName){
+      getListMonitor(1, 10);
+
+    }
+   
+  }, [queryMonitorName]);
 
   const getListMonitor = async (
     pageIndex: number,
