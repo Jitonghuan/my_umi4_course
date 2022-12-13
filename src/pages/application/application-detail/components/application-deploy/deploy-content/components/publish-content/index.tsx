@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import DetailContext from '@/pages/application/application-detail/context';
 import { Fullscreen } from '@cffe/internal-icon';
 import { datetimeCellRender } from '@/utils';
-import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/application/service';
+import { cancelDeploy, reCommit, withdrawFeatures, newWithdrawFeatures, newReCommit, newCancelDeploy } from '@/pages/application/service';
 import { IProps } from './types';
 import DeploySteps from './steps';
 import NewDeploySteps from './new-steps';
@@ -55,13 +55,13 @@ export default function PublishContent(props: IProps) {
   // 重新提交分支
   const handleReDeploy = () => {
     onOperate('retryDeployStart');
-
+    const recommit: any = newPublish ? newReCommit : reCommit;
     Modal.confirm({
       title: '确定要重新提交吗?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const features = deployedList.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
-        return reCommit({
+        return recommit({
           id: metadata.id,
           features,
         }).then(() => {
@@ -78,7 +78,7 @@ export default function PublishContent(props: IProps) {
   // 批量退出分支
   const handleBatchExit = () => {
     onOperate('batchExitStart');
-
+    const withdraw: any = newPublish ? newWithdrawFeatures : withdrawFeatures;
     Modal.confirm({
       title: '确定要批量退出吗?',
       icon: <ExclamationCircleOutlined />,
@@ -87,14 +87,14 @@ export default function PublishContent(props: IProps) {
           .filter((item) => selectedRowKeys.includes(item.id))
           .map((item) => item.branchName);
 
-        return withdrawFeatures({
+        return withdraw({
           // appCode,
           // envTypeCode,
           features,
           id: metadata?.id,
           // isClient: false,
           // pipelineCode,
-        }).then((res) => {
+        }).then((res: any) => {
           if (res?.code === 1001) {
             Modal.error({
               title: '退出分支出错！',
@@ -127,6 +127,7 @@ export default function PublishContent(props: IProps) {
   };
 
   function onCancelDeploy(envCode?: string) {
+    const cancel = newPublish ? newCancelDeploy : cancelDeploy;
     Modal.confirm({
       title: '确定要取消当前发布吗？',
       icon: <ExclamationCircleOutlined />,
@@ -227,7 +228,7 @@ export default function PublishContent(props: IProps) {
         <div className="caption-right">
           {!isProd && (
             <span style={{ marginRight: 14 }}>
-              {appData?.deployModel === 'online'&&envTypeCode!=="version"  && (
+              {appData?.deployModel === 'online' && envTypeCode !== "version" && (
                 <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy} style={{ marginLeft: '10px' }}>
                   重新提交
                   <Tooltip placement="topRight" title={resubmitText}>
@@ -237,7 +238,7 @@ export default function PublishContent(props: IProps) {
               )}
             </span>
           )}
-          {appData?.deployModel === 'online'&&envTypeCode!=="version"  && (
+          {appData?.deployModel === 'online' && envTypeCode !== "version" && (
             <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
               退出分支
               <Tooltip placement="topRight" title={exitBranch}>
@@ -255,7 +256,7 @@ export default function PublishContent(props: IProps) {
         loading={loading}
         bordered
         scroll={{ x: '100%' }}
-        rowSelection={ {
+        rowSelection={{
           type: 'checkbox',
           selectedRowKeys,
           onChange: (selectedRowKeys: React.Key[]) => {

@@ -1,27 +1,31 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Form, Button, Select, message, Modal } from 'antd';
 import { FeContext } from '@/common/hooks';
+import { ContentCard } from '@/components/vc-page-content';
+import PageContainer from '@/components/page-container';
 import { AnsiUp } from 'ansi-up';
 import { history, useLocation, Outlet } from 'umi';
 import { parse, stringify } from 'query-string';
+import './index.less'
 
 export default function ViewLog(props: any) {
     const query: any = parse(location.search);
     // const { location, children } = props;
-    const { taskCode = '', instanceCode = '' } = query || {};
+    const { taskCode = '', instanceCode = '', appCode, appName } = query || {};
     const [log, setLog] = useState<string>('');
     let ws = useRef<WebSocket>();
     let scrollBegin = useRef<boolean>(true);
     const logData = useRef<string>('');
     let ansi_up = new AnsiUp();
     const { matrixConfigData } = useContext(FeContext);
+    // ${matrixConfigData.wsPrefixName}
 
     useEffect(() => {
         if (taskCode && instanceCode) {
             ws.current = new WebSocket(
                 window.location.href?.includes('gushangke')
                     ? `ws://matrix-api.gushangke.com/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`
-                    : `${matrixConfigData.wsPrefixName}/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`,
+                    : `ws://10.10.129.36:8080/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`,
             ); //建立通道
             let dom: any = document?.getElementById('result-log');
             ws.current.onmessage = (evt: any) => {
@@ -90,43 +94,51 @@ export default function ViewLog(props: any) {
         history.back();
     };
     return (
-        <div>
-            <div
-                id="result-log"
-                className="result-log"
-                style={{
-                    whiteSpace: 'pre-line',
-                    padding: 8,
-                    lineHeight: 2,
-                    fontSize: 16,
-                    color: '#12a182',
-                    wordBreak: 'break-word',
-                }}
-            >
-                {log}
-            </div>
+        <PageContainer className='app-view-log'>
+            <ContentCard>
+                <div className='flex-end'>
+                    <div className="app-message">
+                        <h4>{appCode || '--'}</h4>
+                        <span>{appName || '--'}</span>&nbsp;<span className="deploy-model-division"></span>&nbsp;
+                </div>
+                </div>
+                <div
+                    id="result-log"
+                    className="result-log"
+                    style={{
+                        whiteSpace: 'pre-line',
+                        padding: 8,
+                        lineHeight: 2,
+                        fontSize: 16,
+                        color: '#12a182',
+                        wordBreak: 'break-word',
+                    }}
+                >
+                    {log}
+                </div>
 
-            <div style={{ height: 30, textAlign: 'center', position: 'relative' }}>
+                <div style={{ height: 30, textAlign: 'center', position: 'relative' }}>
 
-                <span className="event-button">
-                    <Button type="primary" onClick={downloadLog}>
-                        下载日志
+                    <span className="event-button">
+                        <Button type="primary" onClick={downloadLog}>
+                            下载日志
             </Button>
-                    <Button type="primary" onClick={scrollTop} style={{ marginLeft: 4 }}>
-                        回到顶部
+                        <Button type="primary" onClick={scrollTop} style={{ marginLeft: 4 }}>
+                            回到顶部
             </Button>
-                    <Button type="primary" onClick={scrollBottom} style={{ marginLeft: 4 }}>
-                        回到底部
+                        <Button type="primary" onClick={scrollBottom} style={{ marginLeft: 4 }}>
+                            回到底部
             </Button>
-                    <Button type="primary" onClick={clearScreen} style={{ marginLeft: 4 }}>
-                        清空屏幕
+                        <Button type="primary" onClick={clearScreen} style={{ marginLeft: 4 }}>
+                            清空屏幕
             </Button>
-                    <Button type="primary" onClick={closeSocket} style={{ marginLeft: 4 }}>
-                        关闭
-            </Button>
-                </span>
-            </div>
-        </div>
+                        {/* <Button type="primary" onClick={closeSocket} style={{ marginLeft: 4 }}>
+                            关闭
+            </Button> */}
+                    </span>
+                </div>
+            </ContentCard>
+        </PageContainer >
 
     )
 }

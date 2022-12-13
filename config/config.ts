@@ -48,8 +48,17 @@ export default defineConfig({
       },
       changeOrigin: true,
     },
+    '/v2': {
+      target: 'http://matrix-test.cfuture.shop/',
+      // target: 'http://matrix.cfuture.shop/',
+      // target: 'http://matrix-api-test.cfuture.shop/',
+      // target: 'http://10.10.129.36:8080',//木南本地
+      headers: {
+        "Connection": "keep-alive",
+      },
+    },
     '/v1': {
-      // target: 'http://matrix-test.cfuture.shop/',
+      target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',
       // target: 'http://matrix-api-test.cfuture.shop/',
       //target: 'http://10.10.129.67:8080',//青枫本地
@@ -57,7 +66,7 @@ export default defineConfig({
       // target: 'http://10.10.130.108:8000', // 可乐本地
       //target: 'http://10.10.129.52:8080', // 丹青本地
       // target: 'https://release.zy91.com:4443/futuredog',
-      target: 'http://10.10.129.36:8080',//木南本地
+      // target: 'http://10.10.129.36:8080',//木南本地
       // target: 'http://10.10.129.159:8080',//时雨本地
       // target: 'http://10.10.129.24:8080',//习习本地
       // target: 'http://10.10.129.170:8080',//不辣本地
@@ -66,6 +75,7 @@ export default defineConfig({
       },
       changeOrigin: true,
     },
+
   },
   plugins: [
     require.resolve("@hbos/umi-plugin-theme-hbos")

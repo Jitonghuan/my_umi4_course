@@ -32,16 +32,17 @@ const judgeColor = (data: any, index: number, type: string, notShowCancel?: any,
         nodes = data[index + 1] || [];
     }
     if (nodes && Array.isArray(nodes)) {
-        let status = type === 'cancel' ? statusMap[nodes[nodes.length - 1].status] : statusMap[nodes[0].status];
-        if (status && status === 'finish') {
-            if (notShowCancel) {
-                notShowCancel();
-            }
-            return true;
-        }
-        if (showCancel) {
-            showCancel();
-        }
+        console.log(nodes, 'nodes')
+        // let status = type === 'cancel' ? statusMap[nodes[nodes.length - 1].status] : statusMap[nodes[0].status];
+        // if (status && status === 'finish') {
+        //     if (notShowCancel) {
+        //         notShowCancel();
+        //     }
+        //     return true;
+        // }
+        // if (showCancel) {
+        //     showCancel();
+        // }
     }
     return flag;
 };
@@ -98,7 +99,7 @@ const MultiEnvSteps = (props: any) => {
 };
 export default function NewDeploySteps(props: any) {
     const {
-        stepData = mockData,
+        stepData,
         deployInfo,
         onSpin,
         stopSpin,
@@ -113,15 +114,15 @@ export default function NewDeploySteps(props: any) {
     let { metadata, branchInfo, envInfo, buildInfo } = deployInfo;
     const [data, setData] = useState<any>([]);
     useEffect(() => {
-        // if (stepData && stepData.length !== 0) {
-        //     const data = handleData(stepData);
-        //     setData(data);
-        // }
-        // if (!stepData) {
-        //     setData([]);
-        // }
-        const data = handleData(mockData);
-        setData(data)
+        if (stepData) {
+            const data = handleData(stepData);
+            setData(data);
+        }
+        if (!stepData) {
+            setData([]);
+        }
+        // const data = handleData(mockData);
+        // setData(data)
     }, [stepData]);
 
     // 获取每个stepComp的initial值

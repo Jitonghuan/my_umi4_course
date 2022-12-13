@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { retryDelFeature, downloadSource, retry, getMergeMessage } from '@/pages/application/service';
+import React, { useState, useContext } from 'react';
+import { retryDelFeature, downloadSource, retry, getMergeMessage, getMessage } from '@/pages/application/service';
 import { Steps, Button, Modal, message } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { fePublishVerify } from '@/pages/application/service';
@@ -8,17 +8,21 @@ import { conflictItem } from './type';
 import MergeConflict from '../../merge-conflict';
 import NoConflict from '../../merge-conflict/NoConflict';
 import BatchDeployModal from './component/batch-deploy-modal';
+import DetailContext from '@/pages/application/application-detail/context';
+import ViewLogModal from './component/view-log-modal';
 
 export default function StepItem(props: any) {
     // status为步骤条的状态 nodeStatus为节点的状态 item为这个节点对象
     const { title, status, nodeStatus, nodeCode, onOperate, deployInfo, pipelineCode, envTypeCode, env = '', onSpin = () => { }, stopSpin = () => { }, item, ...other } = props;
     const { metadata, branchInfo, envInfo, buildInfo } = props.deployInfo || {};
+    const { appData } = useContext(DetailContext);
     const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
     const [visible, setVisible] = useState(false); //无冲突
     const [mergeMessage, setMergeMessage] = useState<any>([]);
     const [supportEnv, setSupportEnv] = useState<string[]>(['']); //支持下载资源的环境
     const [disabled, setDisabled] = useState<boolean>(false);
     const [deployVisible, setDeployVisible] = useState(false);//确认部署弹窗
+    const [viewLogVisible, setViewLogVisible] = useState(false);//查看日志弹窗
 
     // 重试
     const handleRetry = async () => {
@@ -55,7 +59,7 @@ export default function StepItem(props: any) {
     // 解决冲突
     const openMergeConflict = () => {
         onSpin();
-        getMergeMessage({ releaseBranch: branchInfo?.releaseBranch, pipelineCode })
+        getMessage({ releaseBranch: branchInfo?.releaseBranch, pipelineCode, instanceCode: item?.instanceCode, taskCode: item.code })
             .then((res) => {
                 if (!res.success) {
                     return;
@@ -88,13 +92,19 @@ export default function StepItem(props: any) {
         onOperate('mergeEnd');
     };
     const toLogDetail = () => {
-        let taskCode = '';
-        let instanceCode = '';
         console.log(item, 'item')
-        const url = `/matrix/application/view-log?taskCode=${taskCode}&instanceCode=${instanceCode}`;
+        const url = `/matrix/application/view-log?taskCode=${item?.code}&instanceCode=${item?.instanceCode}&appCode=${appData?.appCode}&appName=${appData?.appName}`;
         window.open(url, '_blank');
     }
     return <>
+        {viewLogVisible && <ViewLogModal
+            visible={viewLogVisible}
+            onClose={() => { setViewLogVisible(false) }}
+            taskCode={item?.code || ''}
+            instanceCode={item?.instanceCode || ''}
+            taskName={item?.name || ''}
+        />
+        }
         <MergeConflict
             visible={mergeVisible}
             handleCancel={handleCancelMerge}
@@ -124,9 +134,9 @@ export default function StepItem(props: any) {
             title={
                 <div className='flex'>
                     {props.title}
-                    {status !== 'wait' && (
+                    {status !== 'wait' && nodeCode !== 'start' && nodeCode !== 'end' && (
                         <div className='operate-btn'>
-                            <a style={{}} onClick={() => { toLogDetail }}>
+                            <a style={{}} onClick={() => { setViewLogVisible(true) }}>
                                 <FileTextOutlined />
                                 {/* 查看日志 */}
                             </a>
@@ -183,7 +193,7 @@ export default function StepItem(props: any) {
                                 message.info('资源开始下载');
                             }}
                         >
-                            下载资源
+                            下载
                         </Button>
                     )}
                     {['WaitConfirm', 'Batch1', 'Batch2', 'Pause'].includes(nodeStatus) && (

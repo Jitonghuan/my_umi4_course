@@ -67,8 +67,8 @@ export default function DeployContent(props: DeployContentProps) {
   const [versionData, setVersionData] = useState<any>([]);//请求版本列表数据
   useEffect(() => {
     if (appData?.appCode) {
-      getVersionList()
-
+      isNewPublish();
+      getVersionList();
     }
 
   }, [appData?.appCode])
@@ -98,7 +98,7 @@ export default function DeployContent(props: DeployContentProps) {
 
     if (resp && resp.success) {
       if (resp?.data) {
-        setDeployInfo(resp.data);
+        setDeployInfo(resp?.data || {});
       }
       if (!resp.data) {
         setDeployInfo({});
@@ -189,11 +189,6 @@ export default function DeployContent(props: DeployContentProps) {
     getEnvList({ envTypeCode, appCode: appData?.appCode, proEnvType: 'benchmark' });
   }, [envTypeCode, appCode])
 
-  useEffect(() => {
-    if (!appCode) return;
-    isNewPublish();
-  }, [appCode])
-
   // 获取该应用所有环境列表
   const getEnvList = (params: any) => {
     getRequest(listAppEnv, {
@@ -223,7 +218,9 @@ export default function DeployContent(props: DeployContentProps) {
   const isNewPublish = () => {
     judgeIsNew({ appCode: appData?.appCode }).then((res: any) => {
       if (res?.success) {
-        res?.version === 'v1' ? newPublish.current = false : newPublish.current = true;
+        console.log(newPublish.current, 'before')
+        res?.data === 'v1' ? newPublish.current = false : newPublish.current = true;
+        console.log(newPublish.current, 'after')
       }
     })
   }
@@ -300,6 +297,7 @@ export default function DeployContent(props: DeployContentProps) {
               changeBranchName={(branchName: string) => {
                 // cachebranchName.current = branchName;
               }}
+              newPublish={newPublish.current}
             />
           )}
 
