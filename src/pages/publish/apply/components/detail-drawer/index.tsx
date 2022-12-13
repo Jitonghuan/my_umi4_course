@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Drawer, Card, Row, Col, Select, Divider, Table } from 'antd';
+import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table,Empty,Row, Col, Select, Divider,} from 'antd';
+import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined,LoadingOutlined} from '@ant-design/icons'
 import { DEPLOY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
 import { createApplyDetailSchemaColumns } from '../../schema';
 import { getApplyRelInfoReq } from '@/pages/publish/service';
@@ -16,11 +17,26 @@ export interface IPorps {
 }
 
 const rootCls = 'apply-detail-drawer';
+const { Step } = Steps;
+const StatusMapping: Record<string, number> = {
+  wait:1,
+  pass:2,
+  reject:2,
+  abort:2
+};
 
 const DetailDrawer = (props: IPorps) => {
   const { id, visible, onClose, categoryData, businessDataList, envsUrlList } = props;
   const [baseInfo, setBaseInfo] = useState<any>({});
   const [plans, setPlans] = useState<any[]>([]);
+  let userInfo: any = localStorage.getItem('USER_INFO');
+  let userName=""
+  if (userInfo) {
+    userInfo = JSON.parse(userInfo);
+    userName= userInfo ? userInfo.name : ''
+  }
+ 
+
 
   const handleClose = () => {
     setBaseInfo({});
@@ -128,6 +144,45 @@ const DetailDrawer = (props: IPorps) => {
             </div>
           );
         })}
+      </div>
+      <div className={`${rootCls}-ticket`}>
+      <Card size="small" style={{ width: "90%" ,marginTop:16 }} title={<span>审批进度：<span className="processing-title">{auditStatusDesc}</span></span>}>
+          <Spin spinning={false}>
+          <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
+           <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
+           <Step title="库Owner" icon={<DingdingOutlined />} 
+           description={`审批人:
+           ${ ''}
+         `} />
+           {/* LoadingOutlined */}
+           <Step title={info?.currentStatusDesc} icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
+              info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
+              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:  info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
+              status==="wait"?<LoadingOutlined style={{color:"#2db7f5"}} />:
+              <CheckCircleTwoTone />} 
+              description={
+             <Spin spinning={false}>
+             {status==="wait"&&owner?.join(',')?.includes(userName)?(
+                <Space> 
+                <Tag color="geekblue" onClick={()=>{
+              
+             }}>同意</Tag> 
+             <Tag color="volcano" onClick={()=>{}}>拒绝</Tag>   
+             </Space>):null}
+            
+          
+
+             </Spin>
+          } />
+         </Steps>
+
+
+          </Spin>
+        
+
+          </Card>
+
+
       </div>
     </Drawer>
   );
