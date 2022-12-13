@@ -45,13 +45,17 @@ export function useAppOptions() {
   return [source];
 }
 
-export function useGetListMonitor() {
+export function useGetListMonitor(queryMonitorName:string,tab:string) {
   const [listSource, setListSource] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
-    getListMonitor(1, 10);
-  }, []);
+    if(!queryMonitorName){
+      getListMonitor(1, 10);
+
+    }
+   
+  }, [queryMonitorName]);
 
   const getListMonitor = async (
     pageIndex: number,
@@ -62,9 +66,11 @@ export function useGetListMonitor() {
     envCode?: string,
   ) => {
     await getRequest(APIS.queryPrometheusList, {
+      
       data: { pageIndex: pageIndex || 1, pageSize: pageSize || 10, name, metricsUrl, appCode, envCode },
     }).then((result) => {
       if (result?.success) {
+       
         let ListSource = result?.data?.dataSource || [];
         setListSource(ListSource);
         setTotal(result?.data?.pageInfo.total);

@@ -387,7 +387,8 @@ export default function DpMonitorEdit(props: any) {
               pageIndex: 1,
               pageSize: 20
             })
-          }}
+          }}  
+          entryType="biz-log"
         />
       </ContentCard>
     </PageContainer>
