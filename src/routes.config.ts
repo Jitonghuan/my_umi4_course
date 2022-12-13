@@ -1056,7 +1056,7 @@ export default [
         name: '浙一双集群管理',
         key: 'cluster-cluster-zy',
         component: '@/pages/cluster/cluster-zy',
-        hideInMenu: process.env.NODE_ENV === 'development',
+        hideInMenu: process.env.BUILD_ENV === 'dev',
         routes: [
           {
             path: `${baseRoutePath}/cluster/cluster-zy/dashboards`,
@@ -1107,7 +1107,7 @@ export default [
         name: '天台双集群管理',
         key: 'cluster-clusterTt',
         component: '@/pages/cluster/cluster-tt',
-        hideInMenu: process.env.NODE_ENV === 'development',
+        hideInMenu: process.env.BUILD_ENV === 'dev',
         routes: [
           {
             path: `${baseRoutePath}/cluster/cluster-tt/dashboards`,
