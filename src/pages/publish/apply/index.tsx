@@ -116,6 +116,10 @@ export default function ApplyList() {
         categoryData={categoryData}
         businessDataList={businessDataList}
         envsUrlList={envsUrlList}
+        onSave={()=>{
+          queryAppList();
+          setApplyDetailVisible(false);
+        }}
       />
 
       <FilterCard>
