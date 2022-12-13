@@ -27,7 +27,7 @@ export default function ViewLogModal(props: any) {
     const { matrixConfigData } = useContext(FeContext);
 
     useEffect(() => {
-        if (visible && appData?.appCode) {
+        if (visible && appData?.appCode && taskCode && instanceCode) {
             ws.current = new WebSocket(
                 window.location.href?.includes('gushangke')
                     ? `ws://matrix-api.gushangke.com/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`
@@ -46,7 +46,6 @@ export default function ViewLogModal(props: any) {
                     //如果返回结果是字符串，就拼接字符串，或者push到数组，
                     logData.current += evt.data;
                     setLog(logData.current);
-                    // scrollBottom();
                     let html = ansi_up.ansi_to_html(logData.current);
                     dom.innerHTML = html;
                     if (bottom <= 20) {
@@ -65,7 +64,7 @@ export default function ViewLogModal(props: any) {
                 ws.current.close();
             }
         }
-    }, [visible, appData])
+    }, [visible, appData, taskCode, instanceCode])
 
     //回到底部
     const scrollBottom = () => {

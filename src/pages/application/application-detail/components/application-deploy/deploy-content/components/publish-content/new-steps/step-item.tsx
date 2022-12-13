@@ -3,7 +3,6 @@ import { retryDelFeature, downloadSource, retry, getMergeMessage, getMessage } f
 import { Steps, Button, Modal, message } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { fePublishVerify } from '@/pages/application/service';
-import OperateBtn from './component/viewlog-btn';
 import { conflictItem } from './type';
 import MergeConflict from '../../merge-conflict';
 import NoConflict from '../../merge-conflict/NoConflict';
