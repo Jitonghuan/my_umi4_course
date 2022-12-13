@@ -172,7 +172,7 @@ export const handleMultiEnvNodes = (multiNode: PipeType[], allNodes: PipeType[])
     multiNode.map((i: any) => {
         // 假设只分叉一次 ，找到当前环境的节点列表 ，结果均为单节点
         const arr = findNext(i, allNodes);
-        multiEnvNode[i.extra.envCode] = arr;
+        multiEnvNode[i.extra.options.envCode] = arr;
         // 找到单节点列表最后一个单节点
         const code = arr[arr.length - 1].code;
         // 找到此单节点后面的节点，即合并节点

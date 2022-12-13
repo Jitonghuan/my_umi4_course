@@ -62,16 +62,14 @@ export default function DeployContent(props: DeployContentProps) {
   const [envList, setEnvList] = useState([])
   const [deployedLoad, setDeployedLoad] = useState(false);
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
-  // const [newPublish, setNewPublish] = useState<boolean>(true);//是否要用新的发布流程
-  const newPublish = useRef<boolean>(false);
+  const newPublish = useRef<any>(undefined);//是否是新的cicd
   const [versionData, setVersionData] = useState<any>([]);//请求版本列表数据
   useEffect(() => {
-    if (appData?.appCode) {
-      isNewPublish();
-      getVersionList();
-    }
+    if (!appCode || !isActive || !pipelineCode) return;
+    isNewPublish();
+    getVersionList();
 
-  }, [appData?.appCode])
+  }, [appCode, isActive, pipelineCode])
 
   const getVersionList = () => {
     appActiveReleases({ appCode: appData?.appCode }).then((res) => {
@@ -153,7 +151,7 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   // 定时请求发布内容
-  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: false });
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: false, delay: true });
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;
@@ -170,16 +168,16 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   // appCode变化时
-  useEffect(() => {
-    if (!appCode || !isActive || !pipelineCode) return;
-    timerHandle('do', true);
-  }, [appCode, isActive, pipelineCode]);
+  // useEffect(() => {
+  //   if (!appCode || !isActive || !pipelineCode) return;
+  //   timerHandle('do', true);
+  // }, [appCode, isActive, pipelineCode]);
 
   useEffect(() => {
     if (visible) {
       timerHandle('stop');
     }
-    if (!visible) {
+    if (!visible && isNewPublish !== undefined) {
       timerHandle('do', true);
     }
   }, [visible]);
@@ -218,11 +216,9 @@ export default function DeployContent(props: DeployContentProps) {
   const isNewPublish = () => {
     judgeIsNew({ appCode: appData?.appCode }).then((res: any) => {
       if (res?.success) {
-        console.log(newPublish.current, 'before')
         res?.data === 'v1' ? newPublish.current = false : newPublish.current = true;
-        console.log(newPublish.current, 'after')
       }
-    })
+    }).finally(() => { timerHandle('do', true) })
   }
 
   return (

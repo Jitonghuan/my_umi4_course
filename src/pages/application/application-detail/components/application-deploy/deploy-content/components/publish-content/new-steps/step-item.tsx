@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { retryDelFeature, downloadSource, retry, getMergeMessage, getMessage } from '@/pages/application/service';
+import { retryDelFeature, downloadSource, retry, getMergeMessage, newRetry, getMessage } from '@/pages/application/service';
 import { Steps, Button, Modal, message } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { fePublishVerify } from '@/pages/application/service';
@@ -11,7 +11,7 @@ import DetailContext from '@/pages/application/application-detail/context';
 import ViewLogModal from './component/view-log-modal';
 
 export default function StepItem(props: any) {
-    // status为步骤条的状态 nodeStatus为节点的状态 item为这个节点对象
+    // status为步骤条节点（wait/process/finish/eror)的状态 nodeStatus为节点的状态 item为这个节点对象
     const { title, status, nodeStatus, nodeCode, onOperate, deployInfo, pipelineCode, envTypeCode, env = '', onSpin = () => { }, stopSpin = () => { }, item, ...other } = props;
     const { metadata, branchInfo, envInfo, buildInfo } = props.deployInfo || {};
     const { appData } = useContext(DetailContext);
@@ -22,16 +22,17 @@ export default function StepItem(props: any) {
     const [disabled, setDisabled] = useState<boolean>(false);
     const [deployVisible, setDeployVisible] = useState(false);//确认部署弹窗
     const [viewLogVisible, setViewLogVisible] = useState(false);//查看日志弹窗
+    const [retryLoading, setRetryLoading] = useState<boolean>(false);
 
     // 重试
     const handleRetry = async () => {
         try {
-            const params = { id: metadata?.id };
-            if (env) {
-                Object.assign(params, { envCode: env });
-            }
-            await retry({ ...params });
+            setRetryLoading(true)
+            // onOperate('deleteFeatureRetryStart');
+            const params = { id: metadata?.id, taskCode: item?.code || '' };
+            await newRetry({ ...params });
         } finally {
+            setRetryLoading(false)
             onOperate('deleteFeatureRetryEnd');
         }
     };
@@ -169,7 +170,7 @@ export default function StepItem(props: any) {
                         )
                     }
                     {
-                        nodeStatus === 'Failed' && <Button style={{ marginTop: 4 }} onClick={handleRetry}>重试</Button>
+                        nodeStatus === 'Failed' && nodeStatus !== 'WaitInput' && <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading}>重试</Button>
                     }
                     {  nodeStatus === 'WaitInput' && (
                         <div style={{ marginTop: 2 }}>

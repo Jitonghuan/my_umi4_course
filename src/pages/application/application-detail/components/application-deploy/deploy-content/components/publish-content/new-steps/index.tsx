@@ -22,27 +22,15 @@ const changeColor = (data: any, env?: any) => {
     return flag;
 };
 
-// 判断多环境的取消发布按钮是否要出现以及结尾是否要变蓝----前（后）一个节点状态不为wait时
-const judgeColor = (data: any, index: number, type: string, notShowCancel?: any, showCancel?: any) => {
+// 判断多环境结尾是否要变蓝----后一个节点状态不为wait时
+const judgeColor = (data: any, index: number) => {
     let flag = false;
-    let nodes = [];
-    if (type === 'cancel') {
-        nodes = data[index - 1];
-    } else {
-        nodes = data[index + 1] || [];
-    }
-    if (nodes && Array.isArray(nodes)) {
-        console.log(nodes, 'nodes')
-        // let status = type === 'cancel' ? statusMap[nodes[nodes.length - 1].status] : statusMap[nodes[0].status];
-        // if (status && status === 'finish') {
-        //     if (notShowCancel) {
-        //         notShowCancel();
-        //     }
-        //     return true;
-        // }
-        // if (showCancel) {
-        //     showCancel();
-        // }
+    let nodes = data[index + 1] || [];
+    if (nodes.length && Array.isArray(nodes)) {
+        let status = statusMap[nodes[0].status];
+        if (status && status === 'finish') {
+            return true;
+        }
     }
     return flag;
 };
@@ -70,7 +58,7 @@ const SingelEnvSteps = (props: any) => {
 
 // 多环境
 const MultiEnvSteps = (props: any) => {
-    const { initial, item, onCancelDeploy, index, data, notShowCancel, showCancel, envList, ...other } = props;
+    const { initial, item, onCancelDeploy, index, data, envList, ...other } = props;
     let envCodeList = item ? Object.keys(item) : [];
     const findEnvName = (envCode: string) => {
         const envObj = envList.find((item: any) => item?.value === envCode)
@@ -81,7 +69,7 @@ const MultiEnvSteps = (props: any) => {
         }
     }
     return (
-        <div style={{ margin: '0 15px' }} className={`${judgeColor(data, index, 'finish') ? 'suject-finish' : ''}`}>
+        <div style={{ margin: '0 15px' }} className={`${judgeColor(data, index) ? 'suject-finish' : ''}`}>
             <div className={`sub_process-wrapper ${changeColor(item, envCodeList) ? 'sub_process-wrapper-active' : ''}`}>
                 {envCodeList.map((envKey: any, i: number) => (
                     <div
@@ -105,8 +93,6 @@ export default function NewDeploySteps(props: any) {
         stopSpin,
         onCancelDeploy,
         envTypeCode,
-        notShowCancel = () => { },
-        showCancel = () => { },
         isFrontend,
         envList = [],
         ...other

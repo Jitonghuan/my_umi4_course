@@ -649,6 +649,10 @@ export const retry = (params: {
   postRequest(retryUrl, {
     data: params,
   });
+export const newRetryUrl = `v2/releaseManage/deploy/retryTask`;
+export const newRetry = (params: any) => postRequest(newRetryUrl, {
+  data: params,
+});
 
 export const confirmDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmDeploy`;
 
