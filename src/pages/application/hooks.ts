@@ -96,16 +96,16 @@ export function useAppListData(
 }
 
 // 获取应用详情
-export function useAppDetail( appCode?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
+export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | undefined, boolean, () => Promise<void>] {
   const [data, setData] = useState<AppItemVO>();
   const [loading, setLoading] = useState(false);
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const appList = await queryApps({
-     //   id: appId || undefined,
+        id: appId || undefined,
         // 有 appId 时就不需要 appCode
-        appCode:  appCode,
+        appCode: appId ? undefined : appCode,
         pageIndex: 1,
         pageSize: 10,
       });
@@ -115,30 +115,31 @@ export function useAppDetail( appCode?: string): [AppItemVO | undefined, boolean
             setData(item);
           }
           return;
-        } 
-        // else if (appId) {
-        //   if (item?.id === appId) {
-        //     setData(item);
-        //   }
-        //   return;
-        // }
+        } else if (appId) {
+          if (item?.id === appId) {
+            setData(item);
+          }
+          return;
+        }
       });
     } finally {
       setLoading(false);
     }
-  }, [ appCode]);
+  }, [appId, appCode]);
 
   useEffect(() => {
-    if ( !appCode) {
+    if (!appId && !appCode) {
       setLoading(false);
       return setData(undefined);
     }
 
     loadData();
-  }, [ appCode]);
+  }, [appId, appCode]);
 
   return [data, loading, loadData];
 }
+
+
 
 /**
  * 获取应用下的环境列表，返回的数据按 envTypeCode 分组

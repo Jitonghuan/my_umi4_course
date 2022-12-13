@@ -30,14 +30,15 @@ export default function ApplicationDetail(props: IProps) {
   // const { location, children } = props;
   let location:any = useLocation();
   const query:any = parse(location.search);
-  //const appId=query?.id||"";
+  const appId=query?.id||"";
   const appCode=query.appCode;
-  const [appData, isLoading, queryAppData] = useAppDetail(appCode);
+  const [appData, isLoading, queryAppData] = useAppDetail(+appId, appCode);
   const [appEnvDataSource, setAppEnvDataSource] = useState<Record<string, any>[]>([]);
   const tabActiveKey = useMemo(() => {
     const currRoute = /\/([\w-]+)$/.exec(location.pathname)?.[1];
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
+
   // 页面销毁时清空缓存
   useEffect(() => () => sessionStorage.removeItem('__init_env_tab__'), []);
   let currentUseNacos: any = [];

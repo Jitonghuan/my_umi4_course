@@ -41,12 +41,12 @@ export const createTableSchema = ({
       render: (text, record) => (
         <a
           onClick={() =>{
-            
             history.push({
               pathname: 'detail',
-              search: `?appCode=${record.appCode}`,
+              search: `id=${record.id}&appCode=${record.appCode}`,
               
             })
+
           }}
         >
           {text}
@@ -133,9 +133,10 @@ export const createTableSchema = ({
             onClick={() => {
               history.push({
                 pathname: 'detail',
-                search: `?appCode=${record.appCode}&deploymentName=${record?.deploymentName}`,
+                search: `id=${record.id}&appCode=${record.appCode}&deploymentName=${record?.deploymentName}`,
               });
             }}
+
           >
             详情
           </a>
