@@ -30,6 +30,7 @@ export interface AlarmEditorProps {
   onSave: () => any;
   bizMonitorId?: string;
   bizMonitorType?: string;
+  entryType?:string;
 }
 
 export default function AlarmEditor(props: AlarmEditorProps) {
