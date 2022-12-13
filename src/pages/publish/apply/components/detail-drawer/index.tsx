@@ -41,7 +41,7 @@ const DetailDrawer = (props: IPorps) => {
 
   const onAuditApply=(result:number)=>{
     setLoading(true)
-    auditApply({processInstanceId: baseInfo?.applyId, result}).then((res)=>{
+    auditApply({processInstanceId: baseInfo?.processInstanceId, result}).then((res:any)=>{
       if(res?.success){
         message.success("审批成功！")
         onSave && onSave()
