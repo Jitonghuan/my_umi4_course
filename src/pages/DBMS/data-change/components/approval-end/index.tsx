@@ -6,7 +6,7 @@
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/approval-end/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Card, Descriptions, Space, Tag, Table,Drawer, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table, Drawer, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip, Segmented } from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
@@ -14,13 +14,13 @@ import AceEditor from '@/components/ace-editor';
 import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import RollbackSql from '../rollback-sql'
-
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
 import { parse } from 'query-string';
 import { CurrentStatusStatus, PrivWfType } from '../../../authority-manage/components/authority-apply/schema'
-import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog } from './hook'
+import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog, useGetSyncInfo } from './hook';
+import { createDiffTableColumns } from '../struct-apply/schema'
 import './index.less';
 
 const runModeOptions = [
@@ -50,26 +50,30 @@ const StatusMapping: Record<string, number> = {
 const { Paragraph } = Typography;
 export default function ApprovalEnd() {
   const [info, setInfo] = useState<any>({});
+  const [syncInfo, setSyncInfo] = useState<any>({})
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
-  const [sqlForm] =Form.useForm()
+  const [sqlForm] = Form.useForm()
   const [visiable, setVisiable] = useState<boolean>(false);
   const [runSqlform] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false);
-  const [showSql,setShowSql]=useState<boolean>(false)
+  const [showSql, setShowSql] = useState<boolean>(false)
   const [status, setstatus] = useState<string>("");
   const [runMode, setRunMode] = useState<string>("now")
   const [owner, setOwner] = useState<any>([]);
   const [auditLoading, auditTicket] = useAuditTicket();
-  //useRunSql
   const [runLoading, runSql] = useRunSql();
   const [statusText, setStatusText] = useState<string>("");
   const [executeResultData, setExecuteResultData] = useState<any>([])
   const [reviewContentData, setReviewContentData] = useState<any>([])
   const [dateString, setDateString] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string | number>('createTables');
+  const [createTablesData, setCreateTablesData] = useState<any>([])
+  const [modifyTablesData, setModifyTablesData] = useState<any>([])
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
+  let sqlWfType = initInfo?.record?.sqlWfType
   const afferentId = Number(query?.id)
   let userInfo: any = localStorage.getItem('USER_INFO');
   let userName = ""
@@ -78,6 +82,16 @@ export default function ApprovalEnd() {
     userName = userInfo ? userInfo.name : ''
   }
   const [visible, setVisible] = useState<boolean>(false)
+  const diffColumns = useMemo(() => {
+    return createDiffTableColumns({
+      onDetail: (record, index) => {
+        setShowSql(true);
+        sqlForm.setFieldsValue({
+          showSql: record?.syncSQLContent?.replace(/\\n/g, '<br/>')
+        })
+      },
+    }) as any;
+  }, []);
 
   const { confirm } = Modal;
   useEffect(() => {
@@ -145,11 +159,8 @@ export default function ApprovalEnd() {
       onOk(close) {
         form.validateFields().then((info) => {
           auditTicket({ reason: info?.reason, auditType, id: initInfo?.record?.id || afferentId }).then(() => {
-
-            // history.back()
             close()
           }).then(() => {
-            // afferentId ? getInfo(afferentId) : getInfo()
             if (query?.detail === "true" && query?.id) {
               getInfo(afferentId)
               getWorkflowLog(afferentId)
@@ -166,20 +177,28 @@ export default function ApprovalEnd() {
       },
     });
   };
+
   const getInfo = (id?: number) => {
     setLoading(true)
-    useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
+    if (sqlWfType === "sync") {
+      useGetSyncInfo(initInfo?.record?.id || id).then((res) => {
+        if (Object.keys(res)?.length < 1) return
+        setSyncInfo(res)
+        setModifyTablesData(res?.syncTableInfoList?.modifyTables)
+        setCreateTablesData(res?.syncTableInfoList?.createTables)
+      })
 
+
+    }
+
+    useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
       if (Object.keys(res)?.length < 1) return
       setInfo(res)
       let auditUsers = [];
-
       const executeResult = JSON.parse(res?.executeResult || "{}")
-      //reviewContent
       const reviewContent = JSON.parse(res?.reviewContent || "{}")
       setReviewContentData(reviewContent)
       setExecuteResultData(executeResult)
-
       if (res?.audit?.length > 0) {
         setstatus(res?.audit[0]?.AuditStatus)
         setStatusText(res?.audit[0]?.AuditStatusDesc)
@@ -194,7 +213,11 @@ export default function ApprovalEnd() {
     }).finally(() => {
       setLoading(false)
     })
+
+
+
   }
+
   const range = (start: number, end: number) => {
     const result = [];
     for (let i = start; i < end; i++) {
@@ -217,20 +240,20 @@ export default function ApprovalEnd() {
     const endMinutes = Number(moment(info?.runEndTime).minutes());
     const startSeconds = Number(moment(info?.runStartTime).seconds());
     const endSeconds = Number(moment(info?.runEndTime).seconds());
-   
+
     if (current) {
-     
+
       const startDate = moment(info?.runStartTime).endOf("days").date();
       const endDate = moment(info?.runEndTime).endOf("days").date();
-     
-      if( endDate=== startDate){
+
+      if (endDate === startDate) {
         return {
-          disabledHours: () => range(0, startHours).concat(range( endHours+1,24)),
-          disabledMinutes: () => current.hours() === startHours?range( 0, startMinutes):current.hours() === endHours?range( endMinutes+1,60):[],
-          disabledSeconds: () => current.minutes() === startMinutes?range( 0, startSeconds):current.minutes() === endMinutes?range( endSeconds+1,60):[],
+          disabledHours: () => range(0, startHours).concat(range(endHours + 1, 24)),
+          disabledMinutes: () => current.hours() === startHours ? range(0, startMinutes) : current.hours() === endHours ? range(endMinutes + 1, 60) : [],
+          disabledSeconds: () => current.minutes() === startMinutes ? range(0, startSeconds) : current.minutes() === endMinutes ? range(endSeconds + 1, 60) : [],
         }
       }
-  
+
       if (current.date() === startDate) {
         return {
           disabledHours: () => range(0, startHours),
@@ -240,15 +263,11 @@ export default function ApprovalEnd() {
       }
       if (current.date() === endDate) {
         return {
-          disabledHours: () => range( endHours+1,24),
-          disabledMinutes: () => range( endMinutes+1,60),
-          disabledSeconds: () => range(endSeconds+1,60),
+          disabledHours: () => range(endHours + 1, 24),
+          disabledMinutes: () => range(endMinutes + 1, 60),
+          disabledSeconds: () => range(endSeconds + 1, 60),
         }
       }
-
-     
-
-     
     }
   };
 
@@ -269,25 +288,25 @@ export default function ApprovalEnd() {
                 <Table.Column title={item} width={400} ellipsis dataIndex={item} key={item} render={(value) => (
 
                   <span >
-                     <a onClick={()=>{
+                    <a onClick={() => {
                       setShowSql(true)
                       sqlForm.setFieldsValue({
-                        showSql:value?.replace(/\\n/g, '<br/>')
+                        showSql: value?.replace(/\\n/g, '<br/>')
                       })
                     }}>{value?.replace(/\\n/g, '<br/>')}</a>
-                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
+
                   </span>
 
                 )} /> : item === "完整SQL内容" ? <Table.Column width={400} ellipsis title={item} dataIndex={item} key={item} render={(value) => (
 
                   <span >
-                     <a onClick={()=>{
+                    <a onClick={() => {
                       setShowSql(true)
                       sqlForm.setFieldsValue({
-                        showSql:value?.replace(/\\n/g, '<br/>')
+                        showSql: value?.replace(/\\n/g, '<br/>')
                       })
                     }}>{value?.replace(/\\n/g, '<br/>')}</a>
-                    {/* <Paragraph copyable> {value?.replace(/\\n/g, '<br/>')}</Paragraph> */}
+
                   </span>
 
                 )} /> : <Table.Column title={item} width={80} ellipsis dataIndex={item} key={item} render={(value) => (
@@ -300,6 +319,9 @@ export default function ApprovalEnd() {
 
     )
   }
+  const changeInfoOption = (value: string | number) => {
+    setActiveTab(value);
+  };
 
 
   const columns = useMemo(() => {
@@ -307,14 +329,14 @@ export default function ApprovalEnd() {
   }, []);
   return (
     <PageContainer className="approval-end">
-        <Drawer title="sql详情" visible={showSql} footer={false} width={"70%"} onClose={()=>{setShowSql(false)}} destroyOnClose>
+      <Drawer title="sql详情" visible={showSql} footer={false} width={"70%"} onClose={() => { setShowSql(false) }} destroyOnClose>
         <Form form={sqlForm} preserve={false}>
           <Form.Item name="showSql">
-          <AceEditor mode="sql" height={900} readOnly={true} />
+            <AceEditor mode="sql" height={900} readOnly={true} />
           </Form.Item>
 
         </Form>
-       
+
 
       </Drawer>
       <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id} />
@@ -324,7 +346,7 @@ export default function ApprovalEnd() {
             runSqlform.validateFields().then((info) => {
               if (info?.runMode === "now") {
                 runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
-                  // afferentId ? getInfo(afferentId) : getInfo()
+
 
                   setVisible(false)
                 }).then(() => {
@@ -338,7 +360,7 @@ export default function ApprovalEnd() {
                 })
               } else {
                 runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
-                  //afferentId ? getInfo(afferentId) : getInfo()
+
 
                   setVisible(false)
                 }).then(() => {
@@ -378,7 +400,7 @@ export default function ApprovalEnd() {
                     //@ts-ignore
                     disabledTime={disabledDateTime}
                     placeholder="请选择执行时间"
-                    
+
                   />
                 </Form.Item>
               </>)
@@ -408,19 +430,16 @@ export default function ApprovalEnd() {
             <div>
               <div className="second-info">
                 <span className="second-info-left">
-                  {/* <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span> */}
-                  <span><Space><span>工单号:</span><span>{info?.id}</span></Space></span>
-                  <span><Space><span>申请人:</span><span><Tag color="#2db7f5">{info?.userName}</Tag></span></Space></span>
+
+                  <span><Space><span>工单号:</span><span>{sqlWfType === "sync" ? syncInfo?.id : info?.id}</span></Space></span>
+                  <span><Space><span>申请人:</span><span><Tag color="#2db7f5">{sqlWfType === "sync" ? syncInfo?.userName : info?.userName}</Tag></span></Space></span>
                   <span><Space><span>工单状态:</span><span><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor || "default"}>{info?.currentStatusDesc}</Tag> </span></Space></span>
                 </span>
                 <span className="second-info-right">
                   <Space>
-                    {status === "wait" && info?.userName === userName &&
+                    {status === "wait" && sqlWfType === "sync" ? syncInfo?.userName : info?.userName === userName &&
                       <Tag color="orange" onClick={() => { showConfirm("abort") }} >撤销工单</Tag>
                     }
-
-
-
                   </Space>
                 </span>
 
@@ -440,21 +459,51 @@ export default function ApprovalEnd() {
             contentStyle={{ color: '#000' }}
             column={3}
           >
-            <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>
-            <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>
-            <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>
+            {sqlWfType === "sync" && <Descriptions.Item label="源环境">{syncInfo?.fromEnvCode || ""}</Descriptions.Item>}
+            {sqlWfType === "sync" && <Descriptions.Item label="实例">{syncInfo?.fromInstanceName || ""}</Descriptions.Item>}
+            {sqlWfType === "sync" && <Descriptions.Item label="变更库">{syncInfo?.fromDbCode || ""}</Descriptions.Item>}
+            {sqlWfType === "sync" && <Descriptions.Item label="目标环境">{syncInfo?.toEnvCode || ""}</Descriptions.Item>}
+            {sqlWfType === "sync" && <Descriptions.Item label="实例">{syncInfo?.toInstanceName || ""}</Descriptions.Item>}
+            {sqlWfType === "sync" && <Descriptions.Item label="变更库">{syncInfo?.toDbCode || ""}</Descriptions.Item>}
+
+            {sqlWfType !== "sync" && <Descriptions.Item label="环境">{info?.envCode}</Descriptions.Item>}
+            {sqlWfType !== "sync" && <Descriptions.Item label="实例">{info?.instanceName}</Descriptions.Item>}
+            {sqlWfType !== "sync" && <Descriptions.Item label="变更库">{info?.dbCode}</Descriptions.Item>}
+
+
             <Descriptions.Item label="上线理由" span={3}>{info?.remark}</Descriptions.Item>
+
             <Descriptions.Item label="变更sql" span={3} >
-              <span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}><a onClick={()=>{setShowSql(true);
-              sqlForm.setFieldsValue({
-                showSql:info?.sqlContent?.replace(/\\n/g, '<br/>')
-              })
-            }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</a></span></Descriptions.Item>
+              <span style={{ maxWidth: '57vw', display: 'inline-block', overflow: "scroll", whiteSpace: "nowrap" }}><a onClick={() => {
+                setShowSql(true);
+                sqlForm.setFieldsValue({
+                  showSql: info?.sqlContent?.replace(/\\n/g, '<br/>')
+                })
+              }}>{info?.sqlContent?.replace(/\\n/g, '<br/>')}</a></span></Descriptions.Item>
+
             <Descriptions.Item label="sql可执行时间范围" span={3}>{info?.runStartTime}--{info?.runEndTime}</Descriptions.Item>
             <Descriptions.Item label="是否允许定时执行" span={3}>{info?.allowTiming ? "是" : "否"}</Descriptions.Item>
 
           </Descriptions>
         </Spin>
+        {/* sqlWfType==="sync" */}
+        {/* --------------新建的表 、修改的表----------------- */}
+        {sqlWfType === "sync" && <div  >
+          <div className='table-header'>
+            <Segmented
+              onChange={changeInfoOption} value={activeTab}
+              options={[
+
+                { label: '新建的表', value: 'createTables', },
+
+                { label: '修改的表', value: 'modifyTables', },
+
+              ]}
+            />
+
+          </div>
+          <Table columns={diffColumns} dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData} />
+        </div>}
         {/* ------------------------------- */}
         <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
           <Spin spinning={auditLoading}>
@@ -516,6 +565,7 @@ export default function ApprovalEnd() {
           </div>
           {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
             {reviewContentData?.length > 0 && (
+
               renderInfo(reviewContentData[0])
             )}
           </Table>)}
@@ -528,6 +578,7 @@ export default function ApprovalEnd() {
             </Table> : <Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
               {reviewContentData?.length > 0 && (
                 renderInfo(reviewContentData[0])
+
               )}
             </Table>
           )}
