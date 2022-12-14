@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Drawer, Card, Row, Col, Select, Divider, Table } from 'antd';
+import { Drawer,Button,Table,Row, Col,Space,Spin,message} from 'antd';
 import { DEPLOY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
 import { createApplyDetailSchemaColumns } from '../../schema';
-import { getApplyRelInfoReq } from '@/pages/publish/service';
+import { getApplyRelInfoReq ,auditApply} from '@/pages/publish/service';
 import { getEnvName } from '@/utils';
 import moment from 'moment';
 
@@ -13,15 +13,16 @@ export interface IPorps {
   businessDataList: any[];
   envsUrlList: any[];
   onClose: () => void;
+  onSave:()=>void;
 }
 
 const rootCls = 'apply-detail-drawer';
 
 const DetailDrawer = (props: IPorps) => {
-  const { id, visible, onClose, categoryData, businessDataList, envsUrlList } = props;
+  const { id, visible, onClose, onSave,categoryData, businessDataList, envsUrlList } = props;
   const [baseInfo, setBaseInfo] = useState<any>({});
   const [plans, setPlans] = useState<any[]>([]);
-
+  const [loading,setLoading]=useState<boolean>(false)
   const handleClose = () => {
     setBaseInfo({});
     setPlans([]);
@@ -37,6 +38,21 @@ const DetailDrawer = (props: IPorps) => {
       });
     }
   }, [id, visible]);
+
+  const onAuditApply=(result:number)=>{
+    setLoading(true)
+    auditApply({processInstanceId: baseInfo?.processInstanceId, result}).then((res:any)=>{
+      if(res?.success){
+        message.success("审批成功！")
+        onSave && onSave()
+      }
+
+    }).finally(()=>{
+     
+      setLoading(false)
+
+    })
+  }
 
   return (
     <Drawer title="发布申请详情" visible={visible} width={'80%'} onClose={() => handleClose()} className={`${rootCls}`}>
@@ -128,6 +144,34 @@ const DetailDrawer = (props: IPorps) => {
             </div>
           );
         })}
+      </div>
+      <div className={`${rootCls}-ticket`}>
+      <div className={`${rootCls}-ticket-box`}>
+      <span className="approval-button">
+        {baseInfo?.applyStatus===0&& <Spin spinning={loading}>
+          <Space>
+          <Button type="primary" onClick={()=>{
+          onAuditApply(1)
+          }}>通过</Button>
+          <Button type="primary" ghost onClick={()=>{
+          onAuditApply(3)
+          }}>撤销</Button>
+          <Button type="primary" danger onClick={()=>{
+          onAuditApply(2)
+          }}>拒绝</Button>
+
+          </Space>
+          </Spin>}
+
+        </span> 
+
+      </div>
+        
+
+       
+     
+
+
       </div>
     </Drawer>
   );
