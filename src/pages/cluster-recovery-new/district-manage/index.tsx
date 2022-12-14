@@ -4,7 +4,7 @@ import { ContentCard } from '@/components/vc-page-content';
 import { Button, Form, Input, Popconfirm, Table, Modal, message,Select } from 'antd';
 import { getRequest, postRequest, putRequest, delRequest } from '@/utils/request';
 import { addHospitalDistrictInfo, updateHospitalDistrictInfo, getHospitalDistrictInfo, deleteHospitalDistrictInfo } from '../service';
-import { getCommonEnvCode } from '@/pages/cluster-recovery/service';
+import { getCommonEnvCode } from '@/pages/cluster-recovery-new/service';
 import {identifiOptions} from './type'
 import './index.less';
 
