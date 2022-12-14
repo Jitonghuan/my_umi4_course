@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { Spin ,Input,Select,Tag,Tooltip,Modal} from 'antd';
 import {QuestionCircleOutlined} from '@ant-design/icons';
-import {getCurrentDistrictInfo} from '../../service'
+import {getCurrentDistrictInfo,graphDashboard} from '../../service'
 interface IProps {
-  url: string;
   count:number
+  envCode:string
 }
 const { Option } = Select;
 const BoardDetail = (props: IProps) => {
-  const { url,count } = props;
+  const { count,envCode } = props;
   const [infoType,setInfoType]=useState<string>("ip")
   const [iframeLoading, setIframeLoading] = useState<boolean>(false);
+  const [url,setUrl]=useState<string>('')
 
   const hideSlideMenu = () => {
     document?.getElementsByTagName('iframe')?.[0]?.contentWindow?.postMessage({ showMenu: false }, '*');
@@ -20,8 +21,27 @@ const BoardDetail = (props: IProps) => {
     }, 800);
   };
 
+  const getClusterTopologyUrl=()=>{
+    graphDashboard(envCode).then((res)=>{
+      if(res?.success){
+        setUrl(res?.data?.url)
+
+      }
+
+    })
+  }
+  useEffect(()=>{
+    if(envCode){
+      getClusterTopologyUrl()
+    }
+    
+  },[envCode,count])
+
   useEffect(() => {
-    setIframeLoading(false);
+    if(url){
+      setIframeLoading(false);
+    }
+    
   }, [url]);
   const onSelect=(value: string)=>{
     setInfoType(value)

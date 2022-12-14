@@ -120,13 +120,14 @@ export const getSyncStrategyListApi= addAPIPrefix('/opsManage/k8s/multiple/syncS
 /* GET 获取命名空间 */
 export const getNacosNamespaceApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNamespace');
 //multiple/common/getClusterTopologyUrl?envCode=base-dev
+export const getClusterTopologyUrlApi= addAPIPrefix('/opsManage/k8s/multiple/common/getClusterTopologyUrl');
 
 /* GET 获取DataId */
 export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNsDataId');
 
-export const graphDashboard = (clusterId: string) => {
-    const url = `${appConfig.apiPrefix}/monitorManage/centralDashboard`;
-    return getRequest(url, { data: { clusterId } });
+  export const graphDashboard = (envCode: string) => {
+
+    return getRequest(getClusterTopologyUrlApi, { data: { envCode } });
   }
   export const getCurrentDistrictInfo = (params:{infoType: string,key:string}) => {
     const url = `${appConfig.apiPrefix}/multiple/common/getCurrentDistrictInfo`;

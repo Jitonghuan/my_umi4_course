@@ -9,31 +9,15 @@ import ClusterTable from './clusterTable';
 import { useABHistogram, useClusterLineData,queryCommonEnvCode } from './hook';
 import './index.less';
 interface Iprops{
-  count:number
+  count:number,
+  envCode:string
 }
 
 export default function Dashboards(props:Iprops) {
-  const {count}=props
+  const {count,envCode}=props
   const [clusterAData, clusterBData, lineloading, loadCluster] = useClusterLineData();
   const [histogramData, loading, loadHistogram] = useABHistogram();
-  const [envCode,setEnvCode]=useState<string>("")
-  const getEnvCode=()=>{
-    queryCommonEnvCode().then((res:any)=>{
-      if(res?.success){
-        setEnvCode(res?.data)
-        let envCode=res?.data
-        if(envCode){
-          loadHistogram(true,envCode);
-          loadCluster(true,envCode);
-        }
-       
-      }else{
-        setEnvCode("")
-      }
-
-    })
-  }
-
+  
   useEffect(() => {
     let intervalId = setInterval(() => {
       if(envCode){
@@ -45,20 +29,22 @@ export default function Dashboards(props:Iprops) {
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, [envCode]);
 
-  useEffect(() => {
-    // if (appConfig.IS_Matrix !== 'public') {
-      getEnvCode()
-    // }
-  }, []);
+ 
   useEffect(()=>{
+    if(count===0&&envCode){
+      loadHistogram(false,envCode);
+      loadCluster(false,envCode);
+      
+    }
+   
     if(count!==0&&envCode){
       loadHistogram(true,envCode);
       loadCluster(true,envCode);
       
     }
-  },[count])
+  },[count,envCode])
 
   return (
     <ContentCard className="cluster-dashboards">
