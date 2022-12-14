@@ -78,6 +78,10 @@ export default function PublishContent(props: IProps) {
   // 批量退出分支
   const handleBatchExit = () => {
     onOperate('batchExitStart');
+    if (!metadata?.id) {
+      message.error('未检测到活跃的部署单！');
+      return;
+    }
     const withdraw: any = newPublish ? newWithdrawFeatures : withdrawFeatures;
     Modal.confirm({
       title: '确定要批量退出吗?',
@@ -127,15 +131,11 @@ export default function PublishContent(props: IProps) {
   };
 
   function onCancelDeploy(envCode?: string) {
-    const cancel = newPublish ? newCancelDeploy : cancelDeploy;
     Modal.confirm({
       title: '确定要取消当前发布吗？',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        return cancelDeploy({
-          id: metadata?.id,
-          envCode,
-        }).then(() => { });
+        return cancelDeploy({ id: metadata?.id, envCode }).then(() => { });
       },
     });
   }
@@ -171,7 +171,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
       <div className={`${rootCls}__right-top-btns`}>
-        {(isShow || newPublish) && stepData?.length !== 0 && (
+        {isShow && !newPublish && stepData?.length !== 0 && (
           <Button
             danger
             onClick={() => {
@@ -193,8 +193,6 @@ export default function PublishContent(props: IProps) {
           appData={appData}
           onCancelDeploy={onCancelDeploy}
           stopSpin={stopSpin}
-          notShowCancel={notShowCancel}
-          showCancel={showCancel}
           onSpin={onSpin}
           deployedList={deployedList}
           getItemByKey={getItemByKey}

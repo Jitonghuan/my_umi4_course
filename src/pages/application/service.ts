@@ -117,7 +117,7 @@ export const retryDelFeatureUrl = `${appConfig.apiPrefix}/releaseManage/deploy/r
 
 /** POST 取消部署 */
 export const cancelDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/cancel`;
-export const newCancelDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/cancel`;
+export const newCancelDeployUrl = `/v2/releaseManage/deploy/cancelTask`;
 
 /** POST 部署到下一个环境 */
 export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/reuse`;
@@ -801,12 +801,16 @@ export const getMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeReq
 export const getMergeMessage = async (params: any) => await getRequest(getMergeMessageUrl, { data: params });
 
 /** GET 新的发布流程 解决冲突-获取冲突信息 */
-export const getMessageUrl = `v2/releaseManage/getTaskToUpdateContents`;
+export const getMessageUrl = `v2/releaseManage/deploy/getTaskToUpdateContents`;
 export const getMessage = async (params: any) => await getRequest(getMessageUrl, { data: params });
 
 /** POST 解决冲突-提交冲突 */
 export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/commit`;
 export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });
+
+/** POST新流程 解决冲突-提交冲突 */
+export const newPushMergeMessageUrl = `v2/releaseManage/deploy/conflict/resolve`;
+export const newPushMergeMessage = async (params: any) => await postRequest(newPushMergeMessageUrl, { data: params });
 
 /** GET 应用部署-获取流水线 */
 export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;

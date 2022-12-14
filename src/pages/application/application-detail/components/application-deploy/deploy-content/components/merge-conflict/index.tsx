@@ -4,12 +4,12 @@ import { CheckCircleTwoTone, QuestionCircleFilled } from '@ant-design/icons';
 import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
-import { pushMergeMessage } from '@/pages/application/service';
+import { pushMergeMessage, newPushMergeMessage } from '@/pages/application/service';
 
 export default function MergeConflict(prop: MergeProp) {
-  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick, id } = prop;
+  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick, id, isNewPublish = false, code = '' } = prop;
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
-  const [chooseFile, setChooseFile] = useState<any>([]); //当前选中的文件
+  const [chooseFile, setChooseFile] = useState<any>({}); //当前选中的文件
   const [loading, setLoading] = useState(false);
   const conflictCount = useMemo(() => allFile.filter((e: conflictItem) => !e.resolved).length, [allFile]);
   const resolvedCount = useMemo(() => allFile.filter((e: conflictItem) => e.resolved).length, [allFile]);
@@ -18,7 +18,7 @@ export default function MergeConflict(prop: MergeProp) {
     setChooseFile(file);
   };
   useEffect(() => {
-    if (mergeMessage) {
+    if (mergeMessage && mergeMessage?.length) {
       setAllFile(mergeMessage);
       setChooseFile(mergeMessage[0]);
     }
@@ -44,7 +44,15 @@ export default function MergeConflict(prop: MergeProp) {
       content: item.content,
     }));
     setLoading(true);
-    pushMergeMessage({ messages: params, id })
+    const requestData: any = { id };
+    if (isNewPublish) {
+      requestData.taskCode = code;
+      requestData.contents = params;
+    } else {
+      requestData.messages = params;
+    }
+    const commitMerge = isNewPublish ? newPushMergeMessage : pushMergeMessage;
+    commitMerge({ ...requestData })
       .then((res) => {
         if (res.success) {
           // setLoading(false);
@@ -116,7 +124,7 @@ export default function MergeConflict(prop: MergeProp) {
             type="primary"
             onClick={handleOk}
             loading={loading}
-            disabled={allFile.some((item: conflictItem) => !item.resolved)}
+            disabled={!allFile.length || allFile.some((item: conflictItem) => !item.resolved)}
           >
             提交
           </Button>,
@@ -146,25 +154,16 @@ export default function MergeConflict(prop: MergeProp) {
             />
           </div>
           <div className="content-editor">
-            <div className="conflict-file">
-              <span>{chooseFile?.filePath}</span>
-              <Button danger={chooseFile?.resolved} onClick={handleResolved} type="primary" size="small">
-                {chooseFile?.resolved ? '标记为未解决' : '标记为已解决'}
-              </Button>
-            </div>
-            {/* <CodeMirrorEditor
-              {...chooseFile}
-              value={chooseFile?.releaseBranch?.content}
-              orig={chooseFile?.featureBranch?.content}
-              onchange={handleChange}
-            /> */}
-            {/* <MonacoEditorMerge
-              {...chooseFile}
-              value={chooseFile?.releaseBranch?.content}
-              orig={chooseFile?.featureBranch?.content}
-              onchange={handleChange}
-            ></MonacoEditorMerge> */}
-            <MonacoEditor onchange={handleChange} {...chooseFile}></MonacoEditor>
+            {(allFile || [])?.length ? <>
+              <div className="conflict-file">
+                <span>{chooseFile?.filePath}</span>
+                <Button danger={chooseFile?.resolved} onClick={handleResolved} type="primary" size="small">
+                  {chooseFile?.resolved ? '标记为未解决' : '标记为已解决'}
+                </Button>
+              </div>
+              <MonacoEditor onchange={handleChange} {...chooseFile}></MonacoEditor>
+            </> : null
+            }
           </div>
         </div>
       </Modal>

@@ -125,13 +125,13 @@ export default function BatchDeployModal({
                     {text1}
                     {text2}
                 </div>
-                {showBuildUrl && jenkinsUrl && (
+                {/* {showBuildUrl && jenkinsUrl && (
                     <div>
                         <a target="_blank" href={jenkinsUrl}>
                             查看构建详情
               </a>
                     </div>
-                )}
+                )} */}
             </>
         );
     }, [deployInfo, deployingBatch]);

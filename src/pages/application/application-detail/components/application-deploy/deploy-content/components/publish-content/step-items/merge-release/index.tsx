@@ -49,11 +49,11 @@ export default function MergeReleaseStep(props: StepItemProps) {
     onSpin();
     getMergeMessage({ releaseBranch: branchInfo?.releaseBranch, pipelineCode })
       .then((res) => {
-        if (!res.success) {
+        if (!res?.success) {
           return;
         }
         // 如果data为null 则显示无冲突弹窗
-        if (!res.data) {
+        if (!res?.data) {
           setVisible(true);
           onOperate('mergeStart');
           return;

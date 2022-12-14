@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { retryDelFeature, downloadSource, retry, getMergeMessage, newRetry, getMessage } from '@/pages/application/service';
+import { retryDelFeature, downloadSource, newCancelDeploy, getMergeMessage, newRetry, getMessage, cancelDeploy } from '@/pages/application/service';
 import { Steps, Button, Modal, message } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { fePublishVerify } from '@/pages/application/service';
@@ -59,13 +59,13 @@ export default function StepItem(props: any) {
     // 解决冲突
     const openMergeConflict = () => {
         onSpin();
-        getMessage({ releaseBranch: branchInfo?.releaseBranch, pipelineCode, instanceCode: item?.instanceCode, taskCode: item.code })
+        getMessage({ instanceCode: item?.instanceCode || '', taskCode: item.code || '' })
             .then((res) => {
-                if (!res.success) {
+                if (!res?.success) {
                     return;
                 }
                 // 如果data为null 则显示无冲突弹窗
-                if (!res.data) {
+                if (!res?.data) {
                     setVisible(true);
                     onOperate('mergeStart');
                     return;
@@ -96,6 +96,16 @@ export default function StepItem(props: any) {
         const url = `/matrix/application/view-log?taskCode=${item?.code}&instanceCode=${item?.instanceCode}&appCode=${appData?.appCode}&appName=${appData?.appName}`;
         window.open(url, '_blank');
     }
+    // 取消发布
+    const onCancelDeploy = () => {
+        Modal.confirm({
+            title: '确定要取消当前发布吗？',
+            icon: <ExclamationCircleOutlined />,
+            onOk: async () => {
+                return newCancelDeploy({ id: metadata?.id, taskCode: item?.code }).then(() => { }).finally(() => { onOperate('cancelEnd'); });
+            },
+        });
+    }
     return <>
         {viewLogVisible && <ViewLogModal
             visible={viewLogVisible}
@@ -112,6 +122,8 @@ export default function StepItem(props: any) {
             mergeMessage={mergeMessage}
             releaseBranch={branchInfo?.releaseBranch}
             retryMergeClick={handleRetry}
+            isNewPublish={true}
+            code={item?.code || ''}
         ></MergeConflict>
         <BatchDeployModal
             visible={deployVisible}
@@ -134,13 +146,14 @@ export default function StepItem(props: any) {
             title={
                 <div className='flex'>
                     {props.title}
-                    {status !== 'wait' && nodeCode !== 'start' && nodeCode !== 'end' && (
-                        <div className='operate-btn'>
+                    <div className='operate-btn' style={{ width: 13 }}>
+                        {status !== 'wait' && nodeCode !== 'start' && nodeCode !== 'end' && (
                             <a style={{}} onClick={() => { setViewLogVisible(true) }}>
                                 <FileTextOutlined />
                                 {/* 查看日志 */}
                             </a>
-                        </div>)}
+                        )}
+                    </div>
                 </div>
             }
             description={
@@ -170,7 +183,7 @@ export default function StepItem(props: any) {
                         )
                     }
                     {
-                        nodeStatus === 'Failed' && nodeStatus !== 'WaitInput' && <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading}>重试</Button>
+                        status === 'error' && nodeStatus !== 'WaitInput' && <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading}>重试</Button>
                     }
                     {  nodeStatus === 'WaitInput' && (
                         <div style={{ marginTop: 2 }}>
@@ -208,6 +221,7 @@ export default function StepItem(props: any) {
                                 </a>
                         </div>
                     )}
+                    {nodeStatus === 'Running' && <Button danger size='small' onClick={onCancelDeploy}>取消</Button>}
                 </>
             }
         />

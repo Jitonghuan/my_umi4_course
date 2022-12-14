@@ -1,6 +1,5 @@
 declare type PipeType = {
     id: number;
-    runAfter: string[]
     children?: PipeType[];
     [name: string]: any
 }
@@ -19,7 +18,6 @@ export const mockData: PipeType[] = [
         "modifyUser": "qqq",
         "createUser": "qqq",
         "extra": {},
-        runAfter: [''],
     },
     {
         "id": 2,
@@ -34,44 +32,90 @@ export const mockData: PipeType[] = [
         "gmtEnd": "qqq",
         "modifyUser": "qqq",
         "createUser": "qqq",
-        "extra": {},
-        runAfter: ['start'],
+        "extra": {
+            runAfter: ['start'],
+        },
+    },
+    {
+        "id": 2,
+        "code": "maven1",
+        name: 'maven构建',
+        "instanceCode": "qqq",
+        "executorKind": "qqq",
+        "executorName": "qqq",
+        "status": "Success",
+        "consTimeSec": 1,
+        "gmtBegin": "qqq",
+        "gmtEnd": "qqq",
+        "modifyUser": "qqq",
+        "createUser": "qqq",
+        "extra": {
+            options: {
+                envCode: 'base'
+            },
+            runAfter: ['merge'],
+        },
     },
     {
         "id": 3,
+        "code": "maven2",
+        name: 'maven构建',
+        "instanceCode": "qqq",
+        "executorKind": "qqq",
+        "executorName": "qqq",
+        "status": "Success",
+        "consTimeSec": 1,
+        "gmtBegin": "qqq",
+        "gmtEnd": "qqq",
+        "modifyUser": "qqq",
+        "createUser": "qqq",
+        "extra": {
+            options: {
+                envCode: 'hbos'
+            },
+            runAfter: ['merge'],
+        },
+    },
+    {
+        "id": 4,
         "code": "building1",
         name: '部署',
         "instanceCode": "qqq",
         "executorKind": "qqq",
         "executorName": "qqq",
-        "status": "Batch1",
+        "status": "Success",
         "consTimeSec": 1,
         "gmtBegin": "qqq",
         "gmtEnd": "qqq",
         "modifyUser": "qqq",
         "createUser": "qqq",
         "extra": {
-            envCode: 'base'
+            runAfter: ['maven1'],
+            options: {
+                envCode: 'base'
+            }
         },
-        runAfter: ['merge'],
     },
     {
-        "id": 4,
+        "id": 5,
         "code": "building2",
         name: '部署',
         "instanceCode": "qqq",
         "executorKind": "qqq",
         "executorName": "qqq",
-        "status": "Pause",
+        "status": "Running",
         "consTimeSec": 1,
         "gmtBegin": "qqq",
         "gmtEnd": "qqq",
         "modifyUser": "qqq",
         "createUser": "qqq",
         "extra": {
-            envCode: 'hbos'
+            runAfter: ['maven2'],
+            options: {
+                envCode: 'hbos'
+            }
         },
-        runAfter: ['merge'],
+
     },
     {
         "id": 6,
@@ -80,16 +124,18 @@ export const mockData: PipeType[] = [
         "instanceCode": "qqq",
         "executorKind": "qqq",
         "executorName": "qqq",
-        "status": "Initializing",
+        "status": "Success",
         "consTimeSec": 1,
         "gmtBegin": "qqq",
         "gmtEnd": "qqq",
         "modifyUser": "qqq",
         "createUser": "qqq",
         "extra": {
-            envCode: 'base'
+            runAfter: ['building1'],
+            options: {
+                envCode: 'base'
+            }
         },
-        runAfter: ['building1'],
     },
     {
         "id": 7,
@@ -105,9 +151,12 @@ export const mockData: PipeType[] = [
         "modifyUser": "qqq",
         "createUser": "qqq",
         "extra": {
-            envCode: 'hbos'
+            runAfter: ['building2'],
+            options: {
+                envCode: 'hbos'
+            }
         },
-        runAfter: ['building2'],
+
     },
     {
         "id": 8,
@@ -122,8 +171,10 @@ export const mockData: PipeType[] = [
         "gmtEnd": "qqq",
         "modifyUser": "qqq",
         "createUser": "qqq",
-        "extra": {},
-        runAfter: ['pushVersion1', 'pushVersion2'],
+        "extra": {
+            runAfter: ['pushVersion1', 'pushVersion2'],
+
+        },
     },
 ]
 

@@ -177,7 +177,7 @@ export default function DeployContent(props: DeployContentProps) {
     if (visible) {
       timerHandle('stop');
     }
-    if (!visible && isNewPublish !== undefined) {
+    if (!visible && newPublish.current !== undefined) {
       timerHandle('do', true);
     }
   }, [visible]);
