@@ -119,6 +119,7 @@ export const getSyncStrategyListApi= addAPIPrefix('/opsManage/k8s/multiple/syncS
 
 /* GET 获取命名空间 */
 export const getNacosNamespaceApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNamespace');
+//multiple/common/getClusterTopologyUrl?envCode=base-dev
 
 /* GET 获取DataId */
 export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNsDataId');
