@@ -263,3 +263,10 @@ export const queryAppList = () => {
     return [];
   });
 };
+
+export const auditUrl = `${appConfig.apiPrefix}/publishManage/apply/audit`;
+
+export const auditApply = (params: { processInstanceId: string, result:number }) =>
+  postRequest(auditUrl, {
+    data: params,
+  });
