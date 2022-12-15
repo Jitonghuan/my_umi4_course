@@ -217,6 +217,8 @@ export default function DeployContent(props: DeployContentProps) {
     judgeIsNew({ appCode: appData?.appCode }).then((res: any) => {
       if (res?.success) {
         res?.data === 'v1' ? newPublish.current = false : newPublish.current = true;
+      } else {
+        newPublish.current = false;
       }
     }).finally(() => { timerHandle('do', true) })
   }

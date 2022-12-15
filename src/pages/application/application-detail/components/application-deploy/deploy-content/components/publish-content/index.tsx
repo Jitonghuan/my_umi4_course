@@ -79,7 +79,7 @@ export default function PublishContent(props: IProps) {
   const handleBatchExit = () => {
     onOperate('batchExitStart');
     if (!metadata?.id) {
-      message.error('未检测到活跃的部署单！');
+      message.error('未检测到部署单！');
       return;
     }
     const withdraw: any = newPublish ? newWithdrawFeatures : withdrawFeatures;

@@ -7,8 +7,9 @@
 
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { Modal, Radio, Spin, message, Select, Tag } from 'antd';
+import { LoadingOutlined, FileTextOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { confirmDeploy, queryEnvsReq, applyHaveNoUpPlanList } from '@/pages/application/service';
+import { newConfirmDeploy, queryEnvsReq, applyHaveNoUpPlanList } from '@/pages/application/service';
 // import { IProps } from './types';
 import { getRequest, postRequest } from '@/utils/request';
 
@@ -16,6 +17,7 @@ export default function BatchDeployModal({
     envTypeCode,
     env,
     envs,
+    nodeStatus,
     status,
     visible,
     deployInfo,
@@ -23,6 +25,8 @@ export default function BatchDeployModal({
     onOperate,
     deployingBatch,
     id,
+    taskCode,
+    openViewLogModal,
     jenkinsUrl,
     showBuildUrl = false,
 }: any) {
@@ -33,6 +37,8 @@ export default function BatchDeployModal({
     const [deployApplyOptions, setDeployApplyOptions] = useState<any>();
     const [currentAppIds, setCurrentAppIds] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    // 是否在等待用户点击继续部署第二批
+    const isPaused = nodeStatus && nodeStatus === 'Paused';
 
     useEffect(() => {
         if (!appCategoryCode) return;
@@ -105,17 +111,11 @@ export default function BatchDeployModal({
             localStorage.removeItem('DEPLOYBATCH');
             localStorage.removeItem('APPLY_IDS');
         }
-        if (deployingBatch && deployingBatch === 'Batch1') {
-            // text1 = (
-            //   <span>{envName}正在部署中...</span>
-            // );
-            text2 = <span>第一批正在部署中,请等待.....</span>;
-        } else if (deployingBatch && deployingBatch === 'Pause') {
-            // text1 = (
-            //   <span>{envName}正在部署中...</span>
-            // );
+        if (isPaused) {
             text2 = <span>第一批已部署完成，点击继续按钮发布第二批</span>;
-        } else if (deployingBatch && deployingBatch === 'Batch2') {
+        } else if (deployingBatch && deployingBatch === 1) {
+            text2 = <span>第一批正在部署中,请等待.....</span>;
+        } else if (deployingBatch && deployingBatch === 2) {
             text2 = <span>第二批正在部署中,请等待.....</span>;
         }
         return (
@@ -124,14 +124,11 @@ export default function BatchDeployModal({
                     <Spin spinning />
                     {text1}
                     {text2}
+                    <a style={{ marginLeft: 10 }} onClick={openViewLogModal}>
+                        <FileTextOutlined />
+                        {/* 查看日志 */}
+                    </a>
                 </div>
-                {/* {showBuildUrl && jenkinsUrl && (
-                    <div>
-                        <a target="_blank" href={jenkinsUrl}>
-                            查看构建详情
-              </a>
-                    </div>
-                )} */}
             </>
         );
     }, [deployInfo, deployingBatch]);
@@ -144,8 +141,8 @@ export default function BatchDeployModal({
 
     const handleOk = () => {
         setLoading(true);
-        const currentDeployBatch = deployingBatch && deployingBatch === 'Pause' ? 2 : deployBatch;
-        confirmDeploy({ deployingBatch: currentDeployBatch, applyIds: currentAppIds, envCode: env, id })
+        const currentDeployBatch = isPaused ? 2 : deployBatch;
+        newConfirmDeploy({ batch: currentDeployBatch, applyIds: currentAppIds, taskCode, envCode: env, id })
             .then((res) => {
                 if (res && res.success) {
                     setLoading(false);
@@ -164,8 +161,8 @@ export default function BatchDeployModal({
         <Modal
             title="分批部署"
             visible={visible}
-            confirmLoading={deployingBatch === 'Batch1' || deployingBatch === 'Batch2' || loading}
-            okText={deployingBatch && deployingBatch === 'Pause' ? '继续' : '确认'}
+            confirmLoading={([1, 2].includes(deployingBatch) && !isPaused) || loading}
+            okText={isPaused ? '继续' : '确认'}
             onOk={handleOk}
             onCancel={onCancel}
         >
@@ -177,7 +174,7 @@ export default function BatchDeployModal({
             <div style={{ marginTop: 8 }}>
                 <span>发布批次：</span>
                 <Radio.Group
-                    disabled={['Pause', 'Batch1', 'Batch2'].includes(deployingBatch)}
+                    disabled={[1, 2].includes(deployingBatch) || isPaused}
                     value={deployBatch}
                     onChange={(v) => {
                         setDeployBatch(v.target.value);
@@ -204,7 +201,7 @@ export default function BatchDeployModal({
             )}
 
             <h3 style={{ marginTop: 20 }}>发布详情</h3>
-            {['Pause', 'Batch1', 'Batch2'].includes(deployingBatch) ? detail : ''}
+            {([1, 2].includes(deployingBatch) || isPaused) ? detail : ''}
         </Modal>
     );
 }

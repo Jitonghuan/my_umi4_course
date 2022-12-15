@@ -12,7 +12,6 @@ export const statusMap: any = {
     Queue: 'process',
     Running: 'process',
     Paused: 'process',
-    Pause: 'process',
     Failed: 'error',
     Timeout: 'error',
     StopByUser: 'error',

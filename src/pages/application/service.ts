@@ -672,6 +672,10 @@ export const confirmDeploy = (params: {
     data: params,
   });
 
+export const newConfirmDeployUrl = `v2/releaseManage/deploy/batchDeploy`;
+export const newConfirmDeploy = (params: any) => postRequest(newConfirmDeployUrl, { data: params });
+
+
 /** 重试生产环境合并master */
 export const reMergeMaster = (params: {
   /** 部署的数据库自增ID */

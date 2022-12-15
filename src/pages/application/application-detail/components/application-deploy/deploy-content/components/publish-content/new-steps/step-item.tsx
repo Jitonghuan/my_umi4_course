@@ -126,16 +126,19 @@ export default function StepItem(props: any) {
             code={item?.code || ''}
         ></MergeConflict>
         <BatchDeployModal
-            visible={deployVisible}
+            visible={['WaitConfirm', 'Paused'].includes(nodeStatus) && deployVisible}
             deployInfo={deployInfo}
+            openViewLogModal={() => { setViewLogVisible(true) }}
             onCancel={() => setDeployVisible(false)}
             onOperate={onOperate}
             envTypeCode={envTypeCode}
-            env={env}
+            env={item?.extra?.options?.envCode || ''}
             envs={deployInfo?.envInfo?.deployEnvs || []}
-            status={status}
-            deployingBatch={nodeStatus}
+            nodeStatus={nodeStatus || ''}
+            status={status || ''}
+            deployingBatch={item?.extra?.options?.batch || ''}
             id={metadata?.id}
+            taskCode={item?.code || ''}
             // jenkinsUrl={jenkinsUrl}
             showBuildUrl={false}
         />
@@ -209,7 +212,7 @@ export default function StepItem(props: any) {
                             下载
                         </Button>
                     )}
-                    {['WaitConfirm', 'Batch1', 'Batch2', 'Pause'].includes(nodeStatus) && (
+                    {['WaitConfirm', 'Paused'].includes(nodeStatus) && (
                         <div>
                             <a
                                 style={{ marginTop: 2, marginLeft: -9 }}
