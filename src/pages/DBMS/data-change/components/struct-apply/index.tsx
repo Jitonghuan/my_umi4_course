@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { Tabs, Form, Select, Input, Button, Radio, Segmented, Table,Drawer,Space,Spin,message } from 'antd';
+import React, { useState, useEffect, useMemo} from 'react';
+import { Tabs, Form, Select, Input, Button, Radio, Segmented, Table,Drawer,Space,Spin,message,Divider } from 'antd';
 import { createDiffTableColumns } from './schema'
 import ShuttleFrame from '@/components/shuttle-frame';
 import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
-import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request';
+import { getRequest } from '@/utils/request';
 import { history } from 'umi';
 import * as APIS from '../../../common-service';
 import AceEditor from '@/components/ace-editor';
@@ -26,6 +26,7 @@ export default function StructApply() {
     const [targetSource, setTargetSource] = useState<any>([]);
     const [form] = Form.useForm()
     const [sqlForm] = Form.useForm()
+    const [subForm] =Form.useForm()
     const [showSql, setShowSql] = useState<boolean>(false)
     const [startTime, setStartTime] = useState<string | null>('')
     const [endTime, setEndTime] = useState<string | null>('')
@@ -45,6 +46,8 @@ export default function StructApply() {
     const [toInstanceId,setToInstanceId]=useState<any>([]);
     const [toDbcodeOption,setToDbcodeOption]=useState<any>([]);
     const [toDbCode,setToDbCode]=useState<string>('')
+    const [allSql,setAllSql]=useState<string>('')
+    const [diffLoading,setDiffLoading]=useState<boolean>(false)
 
      
     useEffect(() => {
@@ -53,12 +56,37 @@ export default function StructApply() {
     
       }, [])
     const getDiffInfo=()=>{
+        setDiffLoading(true)
         const payloads:diffTableParams= form.getFieldsValue()
         useCompareSyncInfo({...payloads,comparedTables:targetSource}).then((res)=>{
             setModifyTablesData(res?.syncTableInfoList?.modifyTables)
             setCreateTablesData(res?.syncTableInfoList?.createTables)
             setSubmitId(res?.id)
+            let modifAllSqlContent=""
+            let createAllSqlContent=""
+            if(res?.syncTableInfoList?.modifyTables?.length>0){
+                let sqlArry:any=[]
+                res?.syncTableInfoList?.modifyTables?.map((item:any)=>{
+                    sqlArry.push(item?.syncSQLContent)
 
+                })
+                modifAllSqlContent=sqlArry?.join('; \n')
+
+            }
+            if(res?.syncTableInfoList?.createTables?.length>0){
+                let sqlArry:any=[]
+                res?.syncTableInfoList?.createTables?.map((item:any)=>{
+                    sqlArry.push(item?.syncSQLContent)
+
+                })
+                createAllSqlContent=sqlArry?.join('; \n')
+            }
+           
+
+            setAllSql(`${createAllSqlContent} ${createAllSqlContent?";":""}  \n ${modifAllSqlContent}`)
+
+        }).finally(()=>{
+            setDiffLoading(false)
         })
     }
     const getToInstanceList = async (envCode:string) => {
@@ -126,12 +154,13 @@ export default function StructApply() {
     };
     const handleSubmit=async()=>{
         const payloads:createItems=await form.validateFields()
+        const params=subForm.getFieldsValue()
         if(!startTime||!endTime) {
             message.warning("请选择时间！")
             return
         }
         setSubmitLoading(true)
-        createSync({...payloads,id:submitId,runStartTime:startTime||"",runEndTime:endTime||"",title:payloads?.title,remark:payloads?.remark,allowTiming:payloads?.allowTiming}).then((res)=>{
+        createSync({id:submitId,runStartTime:startTime||"",runEndTime:endTime||"",title:params?.title,remark:params?.remark,allowTiming:params?.allowTiming}).then((res)=>{
 
             if(res?.success){
                 history.push({
@@ -147,25 +176,24 @@ export default function StructApply() {
     }
 
 
-    useEffect(()=>{
-        const allValues=form.getFieldsValue()
-        console.log( form.getFieldValue("toDbCode"),"0000")
-        if(allValues?.fromEnvCode&&allValues?.fromInstanceId&&allValues?.fromDbCode&&allValues?.toEnvCode&&allValues?.toInstanceId&&toDbCode&&targetSource.length>0){
+    // useEffect(()=>{
+    //     const allValues=form.getFieldsValue()
+    //     if(allValues?.fromEnvCode&&allValues?.fromInstanceId&&allValues?.fromDbCode&&allValues?.toEnvCode&&allValues?.toInstanceId&&toDbCode&&targetSource.length>0){
        
-            getDiffInfo()
-        }
+    //         getDiffInfo()
+    //     }
 
-    },[ form.getFieldsValue()?.fromEnvCode,
-        form.getFieldsValue()?.fromInstanceId,
-        form.getFieldsValue()?.fromDbCode,
-        form.getFieldsValue()?.toEnvCode,
-        form.getFieldValue('toInstanceId'),
-      //  form.getFieldValue("toDbCode"),
-        toDbCode,
-        JSON.stringify(targetSource)
+    // },[ form.getFieldsValue()?.fromEnvCode,
+    //     form.getFieldsValue()?.fromInstanceId,
+    //     form.getFieldsValue()?.fromDbCode,
+    //     form.getFieldsValue()?.toEnvCode,
+    //     form.getFieldValue('toInstanceId'),
+    //   //  form.getFieldValue("toDbCode"),
+    //     toDbCode,
+    //     JSON.stringify(targetSource)
 
 
-    ])
+    // ])
     const onValuesChange=(changedValues:any, allValues:any)=>{
         
 
@@ -232,7 +260,7 @@ export default function StructApply() {
                         <Spin spinning={submitLoading}>
                         <Space>
                            
-                          <Button type="primary" disabled={(!createTablesData?.length&&!modifyTablesData?.length)||(createTablesData?.length<1&&modifyTablesData?.length<1)}  onClick={handleSubmit}>提交</Button>
+                         
                           <Button type="primary"  onClick={()=>{
                                 history.push({
                                     pathname: "/matrix/DBMS/data-change",
@@ -252,9 +280,7 @@ export default function StructApply() {
                 <div className={`${rootCls}-content-wrapper`}>
                     <div className={`${rootCls}-content`}>
                         <Form labelCol={{ flex: '90px' }} form={form} labelWrap onValuesChange={onValuesChange}>
-                            <Form.Item label="标题" name="title" rules={[{ required: true, message: '请填写' }]}>
-                                <Input style={{ width: 300 }} />
-                            </Form.Item>
+                          
                             {/* <Form.Item label="来源库"> */}
                             <div className="select-db-action">
                                 <div className="db-wrapper">
@@ -285,7 +311,7 @@ export default function StructApply() {
 
                                     </Form.Item>
                                     <Form.Item label="库" name="toDbCode" rules={[{ required: true, message: '请填写' }]}>
-                                        <Select style={{ width: 220 }} options={toDbcodeOption}  value={toDbCode} onChange={(dbCode:string)=>{setToDbCode(dbCode)}}  loading={toDbLoading}/>
+                                        <Select style={{ width: 220 }} options={toDbcodeOption} showSearch allowClear  value={toDbCode} onChange={(dbCode:string)=>{setToDbCode(dbCode)}}  loading={toDbLoading}/>
                                     </Form.Item>
 
                                 </div>
@@ -300,7 +326,7 @@ export default function StructApply() {
                                 }} />
                             </Form.Item>
 
-                            { chooseTable===true&&
+                            { chooseTable===false&&
                             <Spin spinning={tablesOptionsLoading}>
                                  <Form.Item  style={{marginLeft:80}}>
                                     <ShuttleFrame
@@ -317,20 +343,16 @@ export default function StructApply() {
                                
 
                             }
+                            <Form.Item style={{marginLeft:90}}>
+                                <Button type="primary" 
+                                disabled={
+                                    !form.getFieldsValue()?.fromEnvCode || !form.getFieldsValue()?.fromInstanceId|| !form.getFieldsValue()?.fromDbCode|| !form.getFieldsValue()?.toEnvCode|| !form.getFieldsValue()?.toInstanceId||!toDbCode||!chooseTable&& targetSource.length<1
+                                }
+                                 onClick={getDiffInfo} loading={diffLoading}>开始对比</Button>
+                            </Form.Item>
 
-                            <Form.Item label="执行时间" className="nesting-form-item">
-                                <DateSelector getDateValue={(params: { startTime: string, endTime: string }) => {
-                                    setStartTime(params?.startTime)
-                                    setEndTime(params?.endTime)
-
-                                }} />
-                            </Form.Item>
-                            <Form.Item name="allowTiming" label="是否允许定时执行" rules={[{ required: true, message: '请填写' }]}>
-                                <Radio.Group options={options} />
-                            </Form.Item>
-                            <Form.Item name="remark" label="理由" rules={[{ required: true, message: '请填写' }]}>
-                                <Input style={{ width: 300 }} />
-                            </Form.Item>
+                          
+                           
                         </Form>
                     </div>
 
@@ -343,12 +365,45 @@ export default function StructApply() {
                                 { label: '修改的表', value: 'modifyTables', },
 
                             ]} />
-                            <Table columns={columns} dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData} />
+                            <Table columns={columns} loading={diffLoading} dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData} />
 
                         </div>
-                        {/* <div className="view-all-sql">
-                            <Button type="primary">查看完整SQL</Button>
-                        </div> */}
+                        <div className="view-all-sql">
+                            <Button type="primary" onClick={()=>{
+                                 setShowSql(true);
+                                 sqlForm.setFieldsValue({
+                                    showSql:allSql
+                                //    showSql: record?.syncSQLContent?.replace(/\\n/g, '<br/>')
+                                 })
+                            }}>查看完整SQL</Button>
+                        </div>
+                        <Divider/>
+                        {(createTablesData?.length>0||modifyTablesData?.length>0)&&  <div>
+                            <Form form={subForm} labelCol={{ flex: '130px' }}>
+                            <Form.Item label="标题" name="title" rules={[{ required: true, message: '请填写' }]}>
+                                <Input style={{ width: 300 }} />
+                            </Form.Item>
+                            <Form.Item name="remark" label="理由" rules={[{ required: true, message: '请填写' }]}>
+                                <Input style={{ width: 300 }} />
+                            </Form.Item>
+                            <Form.Item label="执行时间" className="nesting-form-item">
+                                <DateSelector getDateValue={(params: { startTime: string, endTime: string }) => {
+                                    setStartTime(params?.startTime)
+                                    setEndTime(params?.endTime)
+
+                                }} />
+                            </Form.Item>
+                            <Form.Item name="allowTiming" label="是否允许定时执行" rules={[{ required: true, message: '请填写' }]}>
+                                <Radio.Group options={options} />
+                            </Form.Item>
+                            <Form.Item style={{marginLeft:140}}>
+                            <Button type="primary" disabled={(!createTablesData?.length&&!modifyTablesData?.length)||(createTablesData?.length<1&&modifyTablesData?.length<1)}  onClick={handleSubmit}>提交</Button>
+                            </Form.Item>
+
+                            </Form>
+                      
+                        </div>}
+                      
 
 
                     </div>
@@ -362,6 +417,7 @@ export default function StructApply() {
           <Form.Item name="showSql">
             <AceEditor mode="sql" height={900} readOnly={true} />
           </Form.Item>
+
 
         </Form>
 

@@ -437,7 +437,7 @@ export default function ApprovalEnd() {
                 </span>
                 <span className="second-info-right">
                   <Space>
-                    {status === "wait" && sqlWfType === "sync" ? syncInfo?.userName : info?.userName === userName &&
+                    {status === "wait" && info?.userName === userName &&
                       <Tag color="orange" onClick={() => { showConfirm("abort") }} >撤销工单</Tag>
                     }
                   </Space>

@@ -177,7 +177,7 @@ export default function AuthorityApply (){
                 })
 
               }}>
-                结构变更
+                结构同步
               </Button>
 
             <Button type="primary" onClick={()=>{
