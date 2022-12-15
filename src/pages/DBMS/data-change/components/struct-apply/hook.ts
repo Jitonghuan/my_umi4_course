@@ -13,29 +13,33 @@ export interface createItems{
     runEndTime:string,
     allowTiming:string
 }
+export const createSync = (paramsObj: createItems) =>
+postRequest(APIS.createSyncInfoApi, {
+  data: paramsObj,
+});
 
-export function useCreateSyncInfo(): [
-    boolean,
-    (paramsObj: createItems) => Promise<void>,
-  ] {
-    const [loading, setLoading] = useState<boolean>(false);
-    const createSync = async (paramsObj:createItems) => {
-      setLoading(true);
-      await postRequest(APIS.createSyncInfoApi, { data: paramsObj })
-        .then((result) => {
-          if (result?.success) {
-            message.success('提交成功！');
-          } else {
-            return;
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
+// export function useCreateSyncInfo(): [
+//     boolean,
+//     (paramsObj: createItems) => Promise<void>,
+//   ] {
+//     const [loading, setLoading] = useState<boolean>(false);
+//     const createSync = async (paramsObj:createItems) => {
+//       setLoading(true);
+//       await postRequest(APIS.createSyncInfoApi, { data: paramsObj })
+//         .then((result) => {
+//           if (result?.success) {
+//             message.success('提交成功！');
+//           } else {
+//             return;
+//           }
+//         })
+//         .finally(() => {
+//           setLoading(false);
+//         });
+//     };
   
-    return [loading, createSync];
-  }
+//     return [loading, createSync];
+//   }
 export interface diffTableParams{
     fromEnvCode:string,
     fromInstanceId:number,

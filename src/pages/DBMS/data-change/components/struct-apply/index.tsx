@@ -10,7 +10,7 @@ import * as APIS from '../../../common-service';
 import AceEditor from '@/components/ace-editor';
 import DateSelector from '@/components/date-selector';
 import { useEnvList, querySqlResultInfo, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, queryTables } from '../../../common-hook'
-import { useCompareSyncInfo, useCreateSyncInfo,diffTableParams,createItems } from './hook'
+import { useCompareSyncInfo, createSync,diffTableParams,createItems } from './hook'
 import './index.less';
 export const options = [
     { label: '是', value: true },
@@ -33,7 +33,7 @@ export default function StructApply() {
     const [createTablesData, setCreateTablesData] = useState<any>([])
     const [modifyTablesData, setModifyTablesData] = useState<any>([])
     const [submitId,setSubmitId]=useState<number|undefined>()
-    const [submitLoading,createSync]=useCreateSyncInfo()
+    const [submitLoading,setSubmitLoading]= useState<boolean>(false)
     const [tablesOptionsLoading, setTablesOptionsLoading] = useState<boolean>(false);
     const [tablesSource, setTablesSource] = useState<any>([]);
     const [envOptionLoading, envOptions, queryEnvList] = useEnvList();
@@ -43,7 +43,8 @@ export default function StructApply() {
     const [toInstanceLoading,setToInstanceLoading]=useState<boolean>(false)
     const [toDbLoading,setToDbLoading]=useState<boolean>(false)
     const [toInstanceId,setToInstanceId]=useState<any>([]);
-    const [toDbcode,setToDbcode]=useState<any>([]);
+    const [toDbcodeOption,setToDbcodeOption]=useState<any>([]);
+    const [toDbCode,setToDbCode]=useState<string>('')
 
      
     useEffect(() => {
@@ -54,10 +55,9 @@ export default function StructApply() {
     const getDiffInfo=()=>{
         const payloads:diffTableParams= form.getFieldsValue()
         useCompareSyncInfo({...payloads,comparedTables:targetSource}).then((res)=>{
-            debugger
             setModifyTablesData(res?.syncTableInfoList?.modifyTables)
             setCreateTablesData(res?.syncTableInfoList?.createTables)
-            setSubmitId(res.id)
+            setSubmitId(res?.id)
 
         })
     }
@@ -101,7 +101,7 @@ export default function StructApply() {
                 });
               });
              
-              setToDbcode(dataArry);
+              setToDbcodeOption(dataArry);
              
             }
           
@@ -130,42 +130,85 @@ export default function StructApply() {
             message.warning("请选择时间！")
             return
         }
-        createSync({...payloads,id:submitId,runStartTime:startTime||"",runEndTime:endTime||""}).then(()=>{
-            history.push({
-                pathname: "/matrix/DBMS/data-change",
+        setSubmitLoading(true)
+        createSync({...payloads,id:submitId,runStartTime:startTime||"",runEndTime:endTime||"",title:payloads?.title,remark:payloads?.remark,allowTiming:payloads?.allowTiming}).then((res)=>{
 
-              })
+            if(res?.success){
+                history.push({
+                    pathname: "/matrix/DBMS/data-change",
+    
+                  })
+
+            }
+          
+        }).finally(()=>{
+            setSubmitLoading(false)
         })
     }
 
 
     useEffect(()=>{
         const allValues=form.getFieldsValue()
-        console.log(targetSource,'targetSource',allValues?.fromEnvCode&&allValues?.fromInstanceId&&allValues?.fromDbCode&&allValues?.toEnvCode&&allValues?.toInstanceId&&allValues?.toDbCode&&targetSource.length>0)
-        if(allValues?.fromEnvCode&&allValues?.fromInstanceId&&allValues?.fromDbCode&&allValues?.toEnvCode&&allValues?.toInstanceId&&allValues?.toDbCode&&targetSource.length>0){
-          
+        console.log( form.getFieldValue("toDbCode"),"0000")
+        if(allValues?.fromEnvCode&&allValues?.fromInstanceId&&allValues?.fromDbCode&&allValues?.toEnvCode&&allValues?.toInstanceId&&toDbCode&&targetSource.length>0){
+       
             getDiffInfo()
         }
 
-    },[JSON.stringify( form.getFieldsValue()),targetSource])
+    },[ form.getFieldsValue()?.fromEnvCode,
+        form.getFieldsValue()?.fromInstanceId,
+        form.getFieldsValue()?.fromDbCode,
+        form.getFieldsValue()?.toEnvCode,
+        form.getFieldValue('toInstanceId'),
+      //  form.getFieldValue("toDbCode"),
+        toDbCode,
+        JSON.stringify(targetSource)
+
+
+    ])
     const onValuesChange=(changedValues:any, allValues:any)=>{
         
 
         if(changedValues?.fromEnvCode){
             getInstanceList(changedValues?.fromEnvCode)
+            form.setFieldsValue({
+                fromInstanceId:"",
+                fromDbCode:""
+
+            })
+            setTablesSource([])
 
         }
         if(changedValues?.toEnvCode){
             getToInstanceList(changedValues?.toEnvCode)
+            form.setFieldsValue({
+                toInstanceId:"",
+                toDbCode:""
+
+            })
+            setToDbCode("")
         }
         if(changedValues?.fromInstanceId){
             queryDatabases({instanceId:changedValues?.fromInstanceId})
+            form.setFieldsValue({
+              
+                fromDbCode:""
+
+            })
+            setTablesSource([])
         }
         if(changedValues?.toInstanceId){
             queryToDatabases({instanceId:changedValues?.toInstanceId})
+            form.setFieldsValue({
+              
+                toDbCode:""
+
+            })
+            setToDbCode("")
         }
         if(changedValues?.fromDbCode){
             queryTablesOptions({dbCode:changedValues?.fromDbCode,instanceId:allValues?.fromInstanceId})
+            setTablesSource([])
         }
 
 
@@ -188,7 +231,8 @@ export default function StructApply() {
 
                         <Spin spinning={submitLoading}>
                         <Space>
-                          <Button type="primary" disabled={createTablesData?.length<1&&modifyTablesData?.length<1}  onClick={handleSubmit}>提交</Button>
+                           
+                          <Button type="primary" disabled={(!createTablesData?.length&&!modifyTablesData?.length)||(createTablesData?.length<1&&modifyTablesData?.length<1)}  onClick={handleSubmit}>提交</Button>
                           <Button type="primary"  onClick={()=>{
                                 history.push({
                                     pathname: "/matrix/DBMS/data-change",
@@ -241,8 +285,7 @@ export default function StructApply() {
 
                                     </Form.Item>
                                     <Form.Item label="库" name="toDbCode" rules={[{ required: true, message: '请填写' }]}>
-                                        <Select style={{ width: 220 }} options={toDbcode}  loading={toDbLoading}/>
-
+                                        <Select style={{ width: 220 }} options={toDbcodeOption}  value={toDbCode} onChange={(dbCode:string)=>{setToDbCode(dbCode)}}  loading={toDbLoading}/>
                                     </Form.Item>
 
                                 </div>
