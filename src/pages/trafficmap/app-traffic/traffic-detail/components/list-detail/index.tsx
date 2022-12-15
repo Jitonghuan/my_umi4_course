@@ -10,9 +10,13 @@ import CallInfo from './call-info';
 import InstanceMonitor from './instance-monitor';
 import JvmMonitor from './jvm-monitor';
 import './index.less'
+interface Iprops{
+  getNowTab:(tab:string)=>void;
+}
 
 type TabPosition = 'instance' | 'jvm' | 'call';
-export default function CreateArticle() {
+export default function CreateArticle(props:Iprops) {
+  const {getNowTab}=props
   const { appCode, hostIP, isClick } = useContext(DetailContext);
   const [filterMode, setFilterMode] = useState<TabPosition>('instance');
   const [searchValue, setSearchValue] = useState<string>('');
@@ -20,6 +24,7 @@ export default function CreateArticle() {
 
   const handleModeChange = (e: RadioChangeEvent) => {
     setFilterMode(e.target.value);
+    getNowTab(e.target.value)
   };
 
 

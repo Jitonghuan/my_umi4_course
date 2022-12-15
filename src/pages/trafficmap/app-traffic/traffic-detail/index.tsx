@@ -9,11 +9,22 @@ import { RedoOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import ListDetail from './components/list-detail';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { queryAppList, queryEnvList, queryNodeList, getCountOverview } from './hook';
+import { queryAppList, queryEnvList, queryNodeList, getCountOverview ,queryTrafficList} from './hook';
 import DetailContext from './context';
 import './index.less';
 import { throttle } from 'lodash';
 const { RangePicker } = DatePicker;
+interface nodeDataSourceItems{
+  start?: number, 
+  end?: number,
+  envCode?: string, 
+  appCode?: string, 
+  appId?: string, 
+  deployName?: string, 
+  selectTimeType?: string,
+  ip?:string;
+   hostName?:string 
+}
 
 export default function TrafficDetail() {
 
@@ -45,6 +56,11 @@ export default function TrafficDetail() {
   const [count, setCount] = useState<number>(0);
   const [selectTimeType, setSelectTimeType] = useState<string>('lastTime');
   const [rangTime, setRangeTime] = useState<any>([]);
+  const [nowTab,setNowTab]=useState<string>("")
+  const getNowTab=(tab:string)=>{
+    setNowTab(tab)
+
+  }
   useEffect(() => {
     queryEnvs()
     return () => {
@@ -77,7 +93,6 @@ export default function TrafficDetail() {
     startTime: number;
     endTime?: number;
     selectTimeType?: string;
-   // keyWord?:string
   }) => {
     setAppLoading(true)
     const now = new Date().getTime();
@@ -124,7 +139,7 @@ export default function TrafficDetail() {
     })
   }
   //获取左侧数据
-  const getNodeDataSource = (params?: { start?: number, end?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string, selectTimeType?: string }) => {
+  const getNodeDataSource = (params?:nodeDataSourceItems) => {
     setLoading(true)
     params = params || {}
     params.start = params?.start || startTime;
@@ -144,6 +159,7 @@ export default function TrafficDetail() {
       end: endTimestamp,
       appCode: curApp,
       envCode: curEnv,
+      
     }).then((res: any) => {
       if (res[0]) {
         setCurtIp(res[0].hostIP);
@@ -237,6 +253,30 @@ export default function TrafficDetail() {
     }
   };
 
+  const getClickData=(params?:nodeDataSourceItems)=>{
+    const now = new Date().getTime();
+    const type = params?.selectTimeType || selectTimeType;
+    const startTimestamp: any = type === 'lastTime' ? Number((now - startTime) / 1000) + "" : startTime;
+    const endTimestamp: any = type === 'lastTime' ? Number((now ) / 1000) + "" : endTime;
+    let curEnv = formInstance.getFieldsValue()?.envCode
+      queryTrafficList({
+        envCode: curEnv,
+        start: startTimestamp,
+        end: endTimestamp,
+        needMetric: true,
+        isPreciseApp:true,
+        keyWord:formInstance?.getFieldValue("appCode"),
+        ip:params?.ip,
+        hostName:params?.hostName
+      }).then((resp) => {
+        setCurrentTableData(resp[0])
+       
+      })
+
+
+
+  }
+
   const leftContent = useMemo(() => {
     return (
       <>
@@ -286,7 +326,7 @@ export default function TrafficDetail() {
               </span>
             </p>
             {nodeDataSource?.length < 1 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"暂无数据"} />}
-            {nodeDataSource?.length > 0 && nodeDataSource?.map((element: any, index: number) => {
+            {nodeDataSource?.length > 0 &&nowTab!=="call" && nodeDataSource?.map((element: any, index: number) => {
               const nowData = countOverView?.instanceCallInfos?.filter((item: any) => item?.instanceIp === element?.hostIP)
 
               const instanceRt = nowData?.length > 0 ? Number(nowData[0]?.instanceRt || 0).toFixed(2) : "0";
@@ -295,11 +335,18 @@ export default function TrafficDetail() {
               return (
                 <ul>
                   <li className={`left-content-detail-info ${index === isClick ? "is-click" : "not-click"}`}>
-                    <span><span style={{ paddingRight: 8 }}>{element?.health === 0 ? <Badge status="error" /> : <Badge status="success" />}</span><span className={`title-ip`} onClick={() => {
+                    <span><span style={{ paddingRight: 8 }}>{element?.health === 0 ? <Badge status="error" /> : <Badge status="success" />}</span>
+                    <span className={`title-ip`} onClick={() => {
                       setIsClick(index)
                       setCurtIp(element?.hostIP);
                       setHostName(element?.hostName);
-                      setCurrentTableData(element)
+                      getClickData({
+                      selectTimeType: selectTimeType,
+                       ip:element?.hostIP,
+                       hostName:element?.hostName
+
+                      })
+                      // setCurrentTableData(element)
                     }}>{element?.hostIP}</span></span>
                     <span>
                       <span className={isCountHovering ? "count-hovering" : "not-hover"} > {requestCounts || 0}</span>/
@@ -317,11 +364,11 @@ export default function TrafficDetail() {
         </div>
       </>
     )
-  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty])
+  }, [nodeDataSource, loading, countOverView,nowTab, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty])
   const rightContent = useMemo(() => {
     return (
       <>
-        <ListDetail />
+        <ListDetail  getNowTab={(tab:string)=>{getNowTab(tab)}}/>
 
       </>
     )
