@@ -12,15 +12,15 @@ interface Iprops {
     detailInfo: any;
     infoLoading: boolean;
     count: number
-    originData:any
-    dataSource:any
-    setDataSource:any
+    originData: any
+    dataSource: any
+    setDataSource: any
 
 
 }
 
 export default function ModifyApp(props: Iprops) {
-    const { activeTab, detailInfo, infoLoading, count,dataSource,originData,setDataSource } = props;
+    const { activeTab, detailInfo, infoLoading, count, dataSource, originData, setDataSource } = props;
     const { categoryCode, releaseId, categoryName } = useContext(detailContext);
     const [mode, setMode] = useState<string>('hide');
     const [curRecord, setCurRecord] = useState<any>({});
@@ -44,7 +44,7 @@ export default function ModifyApp(props: Iprops) {
     }
     const mapDo = (params: any) => {
         let data: any = []
-        if (typeof(params)==="object"&& Object.keys(params)?.length > 0) {
+        if (typeof (params) === "object" && Object.keys(params)?.length > 0) {
             for (const key in params) {
                 if (Object.prototype.hasOwnProperty.call(params, key)) {
                     const element = params[key];
@@ -101,13 +101,13 @@ export default function ModifyApp(props: Iprops) {
             title: '应用CODE',
             dataIndex: 'appCode',
             width: 120,
-            // render: (value: string) => <a onClick={()=>{
-            //     history.push({
-            //         pathname:"/matrix/application/detail/overview",
-            //         search:`id=${}&appCode=${value}`
+            render: (value: string) => <a onClick={() => {
+                history.push({
+                    pathname: "/matrix/application/detail/overview",
+                    search: `appCode=${value}`
 
-            //     })
-            // }}>{value}</a>
+                })
+            }}>{value}</a>
         },
         {
             title: '应用类型',
@@ -243,16 +243,16 @@ export default function ModifyApp(props: Iprops) {
                 visible={mode !== 'hide'}
                 title={<div className="modal-title">
                     <span>{curRecord?.appCode}</span>
-                    {mode === 'content'&&
-                         <span>
-                         <Space>
-                             <span>当前版本：<span><Tag color="green">{detailInfo?.releaseNumber}</Tag></span></span>
-                             <span className='black-text'>{categoryCode || '---'}</span>
-                             <span className='grey-text'>{categoryName || '---'}</span>
-                         </Space>
-                     </span>
+                    {mode === 'content' &&
+                        <span>
+                            <Space>
+                                <span>当前版本：<span><Tag color="green">{detailInfo?.releaseNumber}</Tag></span></span>
+                                <span className='black-text'>{categoryCode || '---'}</span>
+                                <span className='grey-text'>{categoryName || '---'}</span>
+                            </Space>
+                        </span>
                     }
-                   </div>}
+                </div>}
                 onCancel={() => { setMode('hide') }}
                 width={900}
                 footer={null}
@@ -269,40 +269,40 @@ export default function ModifyApp(props: Iprops) {
                             columns={modalColumns}
                         ></Table>}
                     {mode === 'config' &&
-                    <div className="config-content">
-                        {modalData?.map((item:any)=>{
-                            return(
-                                <div>
-                                      <p className="version-title-content"><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></p>
-                                     <div>
-                                     <AceEditor mode="yaml" defaultValue={item?.value} height={200} readOnly />
+                        <div className="config-content">
+                            {modalData?.map((item: any) => {
+                                return (
+                                    <div>
+                                        <p className="version-title-content"><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></p>
+                                        <div>
+                                            <AceEditor mode="yaml" defaultValue={item?.value} height={200} readOnly />
 
-                                     </div>
-                                    
-                                </div>
-                            )
+                                        </div>
 
-                        })}
-                    </div>
+                                    </div>
+                                )
 
-                      
+                            })}
+                        </div>
+
+
                     }
                     {mode === 'sql' &&
-                      <div className="sql-content">
-                      {modalData?.map((item:any)=>{
-                          return(
-                              <div>
-                                    <p className="version-title-content"><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></p>
-                                   <div>
-                                   <AceEditor mode="sql" defaultValue={item?.value} height={200} readOnly />
+                        <div className="sql-content">
+                            {modalData?.map((item: any) => {
+                                return (
+                                    <div>
+                                        <p className="version-title-content"><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></p>
+                                        <div>
+                                            <AceEditor mode="sql" defaultValue={item?.value} height={200} readOnly />
 
-                                   </div>
-                                 
-                              </div>
-                          )
+                                        </div>
 
-                      })}
-                  </div>}
+                                    </div>
+                                )
+
+                            })}
+                        </div>}
                 </div>
             </Modal>
         </>

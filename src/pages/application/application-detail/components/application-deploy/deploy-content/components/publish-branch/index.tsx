@@ -63,9 +63,9 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [form] = Form.useForm();
 
   // 是否是gmc应用下的prod
-  const isGmcProd = appCategoryCode === 'gmc' && env === 'prod';
+  const isGmcProd = checkVersion === true && appCategoryCode === 'gmc' && env === 'prod';
   // 是否要显示版本管理tab
-  const isShowVersionTab = checkVersion === true && ((env !== "prod" && env !== "dev") || isGmcProd);
+  const isShowVersionTab = (checkVersion === true && env !== "prod" && env !== "dev") || isGmcProd;
 
 
   const getBuildType = () => {
@@ -102,6 +102,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     }
 
     if (publishType === "version") {
+      let params = {};
+      if (isGmcProd) {
+        params = form.getFieldsValue();
+      }
       return await releaseDeploy({
         releaseId: releaseRowKeys,
         pipelineCode,
@@ -110,6 +114,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         appCode: appCode!,
         envTypeCode: env,
         deployModel: appData?.deployModel,
+        ...params,
       })
     }
 
@@ -340,7 +345,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <Modal
         title="选择发布环境"
         visible={deployVisible}
-        width={isGmcProd ? 800 : 550}
+        width={publishType === "version" && isGmcProd ? 800 : 550}
         confirmLoading={confirmLoading}
         onOk={() => {
           setConfirmLoading(true);
@@ -372,7 +377,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
               </Radio.Group>
             </div>
           )}
-          {isGmcProd && (
+          {publishType === "version" && isGmcProd && (
             <div style={{ marginTop: '10px' }}>
               <Form form={form} labelCol={{ flex: "40px" }} preserve={false}>
                 <Form.Item name="config" label="配置" >
