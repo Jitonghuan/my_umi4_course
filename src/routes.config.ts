@@ -691,20 +691,21 @@ export default [
         name: '前端监控',
         component: '@/pages/fe-monitor/basic/index',
       },
-     { "path": `${baseRoutePath}/monitor/network-dail`,
-      "name": "网络拨测",
-      "component": "@/pages/monitor/network-dail",
-      "key": "network-dail",
-     
-    },
-    {
-      "path": `${baseRoutePath}/monitor/dail-edit`,
-      "name": "拨测编辑",
-      "component": "@/pages/monitor/network-dail/edit-dail",
-      "key": "network-dail",
-      "hideInMenu": true,
-      
-    },
+      {
+        "path": `${baseRoutePath}/monitor/network-dail`,
+        "name": "网络拨测",
+        "component": "@/pages/monitor/network-dail",
+        "key": "network-dail",
+
+      },
+      {
+        "path": `${baseRoutePath}/monitor/dail-edit`,
+        "name": "拨测编辑",
+        "component": "@/pages/monitor/network-dail/edit-dail",
+        "key": "network-dail",
+        "hideInMenu": true,
+
+      },
       {
         path: `${baseRoutePath}/monitor/prometheus-edit`,
         name: '编辑Prometheus',
@@ -736,7 +737,7 @@ export default [
         name: '报警中心',
         component: '@/pages/monitor/alarm-center',
       },
-      
+
       {
         path: `${baseRoutePath}/monitor/template`,
         name: '监控配置',
@@ -985,7 +986,7 @@ export default [
       },
     ],
   },
- 
+
 
   {
     "path": `${baseRoutePath}/station`,
@@ -1056,7 +1057,6 @@ export default [
         name: '浙一双集群管理',
         key: 'cluster-cluster-zy',
         component: '@/pages/cluster/cluster-zy',
-        hideInMenu:window.location.href.includes("matrix-test"),
         routes: [
           {
             path: `${baseRoutePath}/cluster/cluster-zy/dashboards`,
@@ -1107,7 +1107,6 @@ export default [
         name: '天台双集群管理',
         key: 'cluster-clusterTt',
         component: '@/pages/cluster/cluster-tt',
-        hideInMenu:window.location.href.includes("matrix-test"),
         routes: [
           {
             path: `${baseRoutePath}/cluster/cluster-tt/dashboards`,
@@ -1368,7 +1367,7 @@ export default [
       },
     ],
   },
-  
+
   {
     path: `${baseRoutePath}/database`,
     name: '数据库管理',

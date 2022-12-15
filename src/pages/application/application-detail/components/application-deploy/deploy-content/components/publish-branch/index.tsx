@@ -8,10 +8,10 @@
 
 import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox,  Select, Radio, Tabs } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs, Form } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { createDeploy, updateFeatures,updateReleaseDeploy } from '@/pages/application/service';
+import { createDeploy, updateFeatures, updateReleaseDeploy } from '@/pages/application/service';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { optionsToLabelMap } from '@/utils/index';
@@ -21,7 +21,8 @@ import './index.less';
 import { versionList } from '../../../version-publish/schema';
 import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
 import DemandModal from './demand-modal'
-import {  releaseDeploy } from '../../../service';
+import { releaseDeploy } from '../../../service';
+import AceEditor from '@/components/ace-editor';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
@@ -55,11 +56,18 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const selectRef = useRef(null) as any;
   const [publishType, setPublishType] = useState<string>('branch');
   const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
-  const [demandVisible,setDemandVisible]= useState<boolean>(false);
-  const [curRecord,setCurRecord]=useState<any>({})
+  const [demandVisible, setDemandVisible] = useState<boolean>(false);
+  const [curRecord, setCurRecord] = useState<any>({})
   const { categoryData = [], businessData = [] } = useContext(FeContext);
   const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
- 
+  const [form] = Form.useForm();
+
+  // 是否是gmc应用下的prod
+  const isGmcProd = appCategoryCode === 'gmc' && env === 'prod';
+  // 是否要显示版本管理tab
+  const isShowVersionTab = checkVersion === true && ((env !== "prod" && env !== "dev") || isGmcProd);
+
+
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
     if (appType === 'frontend') {
@@ -69,7 +77,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     }
   };
 
-  
+
 
   const branchColumns: any = useMemo(() => {
     return branchTableSchema({ appData, id, appCode, env }).filter((item) => item.title)
@@ -79,7 +87,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
-      if(publishType==="version"){
+      if (publishType === "version") {
         return await updateReleaseDeploy({
           deployId: metadata?.id,
           releaseId: releaseRowKeys,
@@ -93,8 +101,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
     }
 
-    if(publishType==="version"){
-      return await   releaseDeploy({
+    if (publishType === "version") {
+      return await releaseDeploy({
         releaseId: releaseRowKeys,
         pipelineCode,
         envCodes: deployEnv,
@@ -164,12 +172,12 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           envSelect.push({ label: item.envName, value: item.envCode });
         });
         setEnvDataList(envSelect);
-      }else{
+      } else {
         setEnvDataList([]);
       }
     });
   }, [appCategoryCode, env]);
-  
+
   const verisionColumns = useMemo(() => {
     return versionList({
       demandDetail: (value: string, record: any) => {
@@ -186,11 +194,11 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     masterBranchChange(v);
   };
 
-const [defaultKey,setDefaultKey]=useState<number[]>([])
-  useEffect(()=>{
-    if(versionData?.length>0&&publishType==="version"){
-      let key=versionData?.filter((item:any) => item.canPublish===true)
-      if(key?.length>0){
+  const [defaultKey, setDefaultKey] = useState<number[]>([])
+  useEffect(() => {
+    if (versionData?.length > 0 && publishType === "version") {
+      let key = versionData?.filter((item: any) => item.canPublish === true)
+      if (key?.length > 0) {
         setReleaseRowKeys(key[0]?.id);
         setDefaultKey([key[0]?.id])
 
@@ -200,16 +208,16 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
 
     }
 
-  },[versionData,publishType])
+  }, [versionData, publishType])
 
 
 
   const rowSelection = {
-    onChange: (selectedRowKeys:any[], selectedRows: any[]) => {
-        setReleaseRowKeys(selectedRowKeys[0] as number);
+    onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
+      setReleaseRowKeys(selectedRowKeys[0] as number);
     },
     getCheckboxProps: (record: any) => ({
-      disabled: !record?.canPublish, 
+      disabled: !record?.canPublish,
       //name: record.name,
     }),
   };
@@ -217,134 +225,138 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
 
   return (
     <div className={rootCls}>
-      <DemandModal visible={demandVisible} onClose={()=>{
+      <DemandModal visible={demandVisible} onClose={() => {
         setDemandVisible(false)
 
-      }} 
-      curRecord={curRecord}
-      appCategoryValue={appCategoryCode||""}
-      appCategoryLabel={categoryDataMap[appData?.appCategoryCode!] || '--'}
+      }}
+        curRecord={curRecord}
+        appCategoryValue={appCategoryCode || ""}
+        appCategoryLabel={categoryDataMap[appData?.appCategoryCode!] || '--'}
       />
       <div className={`${rootCls}__title`}>{`待发布内容`}</div>
       <Tabs activeKey={publishType} onChange={(key) => {
-         setPublishType(key) 
-         }}>
-        {/* 发布分支 */}
-        <Tabs.TabPane tab='待发布分支' key='branch' >
-          <>
-            <div className="table-caption">
-              <div className="caption-left">
-                <h4>主干分支：</h4>
-                <Select
-                  ref={selectRef}
-                  options={masterBranchOptions}
-                  value={selectMaster}
-                  style={{ width: '300px', marginRight: '20px' }}
-                  onChange={handleChange}
-                  showSearch
-                  optionFilterProp="label"
-                  // labelInValue
-                  filterOption={(input, option) => {
-                    //@ts-ignore
-                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                  }}
-                />
-                <h4>开发分支名称：</h4>
-                <Input.Search
-                  placeholder="搜索分支"
-                  value={searchText}
-                  onChange={(e) => {
-                    setSearchText(e.target.value), changeBranchName(e.target.value)
-                  }}
-                  onPressEnter={() => onSearch?.(searchText)}
-                  onSearch={() => onSearch?.(searchText)}
-                />
+        setPublishType(key)
+      }}>
+        {/* 发布分支-gmc大类下prod环境下不需要 */}
+        {!isGmcProd && (
+          <Tabs.TabPane tab='待发布分支' key='branch' >
+            <>
+              <div className="table-caption">
+                <div className="caption-left">
+                  <h4>主干分支：</h4>
+                  <Select
+                    ref={selectRef}
+                    options={masterBranchOptions}
+                    value={selectMaster}
+                    style={{ width: '300px', marginRight: '20px' }}
+                    onChange={handleChange}
+                    showSearch
+                    optionFilterProp="label"
+                    // labelInValue
+                    filterOption={(input, option) => {
+                      //@ts-ignore
+                      return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                    }}
+                  />
+                  <h4>开发分支名称：</h4>
+                  <Input.Search
+                    placeholder="搜索分支"
+                    value={searchText}
+                    onChange={(e) => {
+                      setSearchText(e.target.value), changeBranchName(e.target.value)
+                    }}
+                    onPressEnter={() => onSearch?.(searchText)}
+                    onSearch={() => onSearch?.(searchText)}
+                  />
+                </div>
+                <div className="caption-right">
+                  {appData?.deployModel === 'online' && (
+                    <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+                      {hasPublishContent ? '追加分支' : '提交分支'}
+                    </Button>
+                  )}
+                </div>
               </div>
-              <div className="caption-right">
-                {appData?.deployModel === 'online' && (
-                  <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-                    {hasPublishContent ? '追加分支' : '提交分支'}
-                  </Button>
-                )}
-              </div>
-            </div>
-            <Table
-              rowKey="id"
-              bordered
-              dataSource={dataSource}
-              loading={loading}
-              pagination={false}
-              columns={branchColumns}
-              scroll={{ x: '100%' }}
-              rowSelection={{
-                type: 'checkbox',
-                selectedRowKeys,
-                onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                  setSelectedRowKeys(selectedRowKeys as any);
-                },
-              }}
-            />
-          </>
-        </Tabs.TabPane>
-          {/* 发布版本 */}
-        {checkVersion===true&&env!=="prod"&&env!=="dev"&&(
+              <Table
+                rowKey="id"
+                bordered
+                dataSource={dataSource}
+                loading={loading}
+                pagination={false}
+                columns={branchColumns}
+                scroll={{ x: '100%' }}
+                rowSelection={{
+                  type: 'checkbox',
+                  selectedRowKeys,
+                  onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                    setSelectedRowKeys(selectedRowKeys as any);
+                  },
+                }}
+              />
+            </>
+          </Tabs.TabPane>
+        )}
+        {/* 发布版本 */}
+        {isShowVersionTab && (
 
-        <Tabs.TabPane tab='待发布版本' key='version'>
-        <>
-        <div className="table-caption">
-              <div className="caption-left">
-                <h3>待发布版本列表</h3>
+          <Tabs.TabPane tab='待发布版本' key='version'>
+            <>
+              <div className="table-caption">
+                <div className="caption-left">
+                  <h3>待发布版本列表</h3>
+                </div>
+                <div>
+                  <Button type='primary' disabled={!releaseRowKeys} onClick={() => {
+                    submitClick()
+                  }}>
+                    {hasPublishContent ? '更新发布' : '提交发布'}
+
+                  </Button>
+                </div>
               </div>
-              <div>
-              <Button type='primary' disabled={!releaseRowKeys} onClick={()=>{
-                  submitClick()
-              }}>
-                   {hasPublishContent ? '更新发布' : '提交发布'}
-                
-                </Button>
-              </div>
-          </div>
-      
-          <Table
-            dataSource={versionData}
-            bordered
-            rowKey="id"
-            defaultSelectedRowKeys={defaultKey}
-            pagination={false}
-            columns={verisionColumns}
-            //@ts-ignore
-            rowSelection={{
-              type:"radio" ,
-              ...rowSelection,
-            }}
-          />
-        </>
-      </Tabs.TabPane>
+
+              <Table
+                dataSource={versionData}
+                bordered
+                rowKey="id"
+                defaultSelectedRowKeys={defaultKey}
+                pagination={false}
+                columns={verisionColumns}
+                //@ts-ignore
+                rowSelection={{
+                  type: "radio",
+                  ...rowSelection,
+                }}
+              />
+            </>
+          </Tabs.TabPane>
 
         )}
 
-      
+
       </Tabs>
 
 
       <Modal
         title="选择发布环境"
         visible={deployVisible}
+        width={isGmcProd ? 800 : 550}
         confirmLoading={confirmLoading}
         onOk={() => {
           setConfirmLoading(true);
           return submit().then(() => {
-              setDeployVisible(false);
-              onSubmitBranch?.('end');
-            }).finally(() => {setConfirmLoading(false)
-            
-            });
+            setDeployVisible(false);
+            onSubmitBranch?.('end');
+          }).finally(() => {
+            setConfirmLoading(false)
+
+          });
         }}
         onCancel={() => {
           setDeployVisible(false);
           setConfirmLoading(false);
           onSubmitBranch?.('end');
-         
+
         }}
         maskClosable={false}
       >
@@ -360,6 +372,19 @@ const [defaultKey,setDefaultKey]=useState<number[]>([])
               </Radio.Group>
             </div>
           )}
+          {isGmcProd && (
+            <div style={{ marginTop: '10px' }}>
+              <Form form={form} labelCol={{ flex: "40px" }} preserve={false}>
+                <Form.Item name="config" label="配置" >
+                  <AceEditor mode="yaml" height={300} />
+
+                </Form.Item>
+                <Form.Item name="sql" label="Sql" >
+                  <AceEditor mode="sql" height={300} />
+                </Form.Item>
+              </Form>
+            </div>)
+          }
         </div>
       </Modal>
     </div>
