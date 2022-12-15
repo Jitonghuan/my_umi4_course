@@ -70,7 +70,7 @@ export default function StructApply() {
                     sqlArry.push(item?.syncSQLContent)
 
                 })
-                modifAllSqlContent=sqlArry?.join('; \n')
+                modifAllSqlContent=sqlArry?.join('; \n \n \n \n')
 
             }
             if(res?.syncTableInfoList?.createTables?.length>0){
@@ -79,11 +79,11 @@ export default function StructApply() {
                     sqlArry.push(item?.syncSQLContent)
 
                 })
-                createAllSqlContent=sqlArry?.join('; \n')
+                createAllSqlContent=sqlArry?.join('; \n \n \n \n')
             }
            
 
-            setAllSql(`${createAllSqlContent} ${createAllSqlContent?";":""}  \n ${modifAllSqlContent}`)
+            setAllSql(`${createAllSqlContent} ${createAllSqlContent?";":""} \n \n ${modifAllSqlContent}`)
 
         }).finally(()=>{
             setDiffLoading(false)
@@ -365,7 +365,17 @@ export default function StructApply() {
                                 { label: '修改的表', value: 'modifyTables', },
 
                             ]} />
-                            <Table columns={columns} loading={diffLoading} dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData} />
+                            <Table 
+                            columns={columns} 
+                            loading={diffLoading}
+                             dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData}
+                             pagination={{
+                                // current: taskTablePageInfo.pageIndex,
+                               
+                                showSizeChanger: true,
+                                showTotal: () => `总共 ${activeTab === "createTables" ? createTablesData?.length : modifyTablesData?.length} 条数据`,
+                              }}
+                              />
 
                         </div>
                         <div className="view-all-sql">
