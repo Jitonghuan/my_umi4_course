@@ -73,7 +73,7 @@ export default function ApprovalEnd() {
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
-  let sqlWfType = initInfo?.record?.sqlWfType
+  let sqlWfType = initInfo?.record?.sqlWfType||query?.sqlWfType
   const afferentId = Number(query?.id)
   let userInfo: any = localStorage.getItem('USER_INFO');
   let userName = ""
