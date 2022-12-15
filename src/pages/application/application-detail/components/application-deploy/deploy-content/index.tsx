@@ -212,7 +212,7 @@ export default function DeployContent(props: DeployContentProps) {
     setLoading(false);
   };
 
-  // 判断该应用是否要用新的发布步骤条
+  // 判断该应用是否要用新的发布流程
   const isNewPublish = () => {
     judgeIsNew({ appCode: appData?.appCode }).then((res: any) => {
       if (res?.success) {
