@@ -247,6 +247,7 @@ export default function UserScheduling(props: any) {
     <Divider style={{marginTop:0}}/>
     <div className="user-table">
       <div>
+      <div><h3>A集群</h3></div>
       <Table
         columns={clusterA_userColumns}
         dataSource={clusterA_patientData}
@@ -257,6 +258,7 @@ export default function UserScheduling(props: any) {
 
       </div>
       <div style={{marginLeft:10}}>
+      <div><h3>B集群</h3></div>
       <Table
         columns={clusterB_userColumns}
         dataSource={clusterB_patientData}

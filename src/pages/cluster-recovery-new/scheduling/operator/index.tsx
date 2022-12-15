@@ -256,6 +256,7 @@ export default function OperatorScheduling() {
       <Divider style={{marginTop:0}}/>
       <div className="operate-table">
         <div>
+          <div><h3>A集群</h3></div>
         <Table
           columns={clusterA_operatorColumns}
           dataSource={clusterA_operatorData}
@@ -266,6 +267,7 @@ export default function OperatorScheduling() {
 
         </div>
         <div style={{marginLeft:10}}>
+        <div><h3>B集群</h3></div>
         <Table
           columns={clusterB_operatorColumns}
           dataSource={clusterB_operatorData}

@@ -968,7 +968,7 @@ export default [
     "routes": [
       {
         "path": `${baseRoutePath}/cluster-recovery/dashboards`,
-        "name": "集群大盘",
+        "name": "流量大盘",
         "key": "dashboards",
         "component": "@/pages/cluster-recovery-new/dashboards",
        
