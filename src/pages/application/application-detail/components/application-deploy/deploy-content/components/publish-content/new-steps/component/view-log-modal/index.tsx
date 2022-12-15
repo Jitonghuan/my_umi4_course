@@ -31,7 +31,7 @@ export default function ViewLogModal(props: any) {
             ws.current = new WebSocket(
                 window.location.href?.includes('gushangke')
                     ? `ws://matrix-api.gushangke.com/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`
-                    : `${matrixConfigData.wsPrefixName}v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`,
+                    : `${matrixConfigData.wsPrefixName}/v2/releaseManage/deploy/ws?taskCode=${taskCode}&instanceCode=${instanceCode}&reqType=taskLog`,
             ); //建立通道
             let dom: any = document?.getElementById('publich-result-log-modal');
             ws.current.onmessage = (evt: any) => {
