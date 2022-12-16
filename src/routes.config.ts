@@ -985,9 +985,6 @@ export default [
       },
     ],
   },
-<<<<<<< HEAD
- 
-=======
   {
     "path": `${baseRoutePath}/cluster-recovery`,
     "name": "集群容灾",
@@ -1102,7 +1099,6 @@ export default [
      
     ]
   },
->>>>>>> feature_cluster_feat_20221124094821
 
   {
     "path": `${baseRoutePath}/station`,
