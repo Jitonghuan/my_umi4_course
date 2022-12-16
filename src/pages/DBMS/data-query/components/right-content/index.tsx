@@ -204,7 +204,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             columns={columns}
                             dataSource={logsSource}
                             loading={logsloading}
-                            scroll={{ x: '100%' }}
+                            scroll={{ x: '100%',y:"calc(50vh - 190px) " }}
                             bordered
                             pagination={{
                                 current: pageInfo.pageIndex,
@@ -272,7 +272,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                     columns={columns}
                     dataSource={logsSource}
                     loading={logsloading}
-                    scroll={{ x: '100%' }}
+                    scroll={{ x: '100%',y:"calc(50vh - 190px) " }}
                     bordered
                     pagination={{
                         current: pageInfo.pageIndex,
@@ -311,7 +311,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                         <Table dataSource={dataSource}
                         
 
-                         loading={logsloading} bordered scroll={{ x: '100%'}} pagination={{
+                         loading={logsloading} bordered scroll={{ x: '100%',y:"calc(50vh - 190px) " }} pagination={{
 
                             showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
                         }} >
@@ -380,7 +380,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                 <Table dataSource={dataSource} loading={logsloading} pagination={{
 
                                     showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
-                                }} bordered scroll={{ x: '100%' }} >
+                                }} bordered scroll={{ x: '100%' ,y:"calc(50vh - 190px) " }} >
                                     {dataSource?.length > 0 && (
                                         Object.keys(dataSource[0])?.map((item: any) => {
                                             return (
@@ -436,7 +436,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             <Table dataSource={dataSource} loading={logsloading} pagination={{
 
                                 showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
-                            }} bordered scroll={{ x: '100%'}} >
+                            }} bordered scroll={{ x: '100%',y:"calc(50vh - 190px) " }} >
                                 {dataSource?.length > 0 && (
                                     Object.keys(dataSource[0])?.map((item: any) => {
                                         return (
@@ -622,7 +622,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                 <Table dataSource={dataSource} pagination={{
 
                                     showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
-                                }} loading={logsloading} bordered scroll={{ x: '100%', }} >
+                                }} loading={logsloading} bordered scroll={{ x: '100%',y:"calc(50vh - 190px) "  }} >
                                     {dataSource?.length > 0 && (
                                         Object.keys(dataSource[0])?.map((item: any) => {
                                             return (
