@@ -8,12 +8,14 @@ import {
   getGCNumChartOption,
   getMemoryChartOption,
   getGCDataChartOption,
+  getThreadsChartOption
 } from './schema';
 import {
   queryGcCount,
   queryGcTime,
   queryJvmHeap,
   queryJvmMetaspace,
+  queryJvmCurrentThreads
 } from './hook';
 const layoutGrid = {
   xs: 1,
@@ -23,6 +25,15 @@ const layoutGrid = {
   xl: 2,
   xxl: 2,
   xxxl: 2,
+};
+const jvmLayoutGrid = {
+  xs: 1,
+  sm: 1,
+  md: 1,
+  lg: 1,
+  xl: 1,
+  xxl: 1,
+  xxxl: 1,
 };
 export default function InstanceMonitor() {
   const { appCode, envCode, startTime, hostName, hostIP, count, endTime, selectTimeType } = useContext(DetailContext);
@@ -61,6 +72,15 @@ export default function InstanceMonitor() {
             requestParams={{ envCode, appCode, ip: hostIP, startTime: startTime, hostName: hostName, count, endTime, selectTimeType }}
           />
         ))}
+      </VCCardLayout>
+      <VCCardLayout grid={jvmLayoutGrid} >
+      <AppCard
+            key={5}
+            title= 'JVM线程数/每分钟'
+            getOption= {getThreadsChartOption}
+            queryFn= {queryJvmCurrentThreads}
+            requestParams={{ envCode, appCode, ip: hostIP, startTime: startTime, endTime, selectTimeType, hostName: hostName, count }}
+          />
       </VCCardLayout>
       <div>
 
