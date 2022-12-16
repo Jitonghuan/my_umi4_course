@@ -5,6 +5,8 @@ export interface MergeProp {
   mergeMessage: conflictItem[];
   releaseBranch: string;
   id: any;
+  isNewPublish?: boolean;
+  code?: string;
 }
 
 export interface conflictItem {
