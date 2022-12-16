@@ -402,3 +402,82 @@ export interface ITableSchema {
     };
   };
   
+  // JVM线程
+export const getThreadsChartOption: any = (xAxis = [], dataSource = []) => {
+  let arry: any = [];
+  let nameArry: any = [];
+  dataSource?.map((item: any, index: number) => {
+    item?.map((ele: any) => {
+      arry.push({
+        name: ele?.name,
+        data: ele.data,
+        type: 'line',
+      });
+      nameArry.push(ele?.name);
+
+    })
+
+
+
+  });
+
+
+  return {
+    tooltip: {
+      trigger: 'axis',
+    },
+    grid: {
+      bottom: 45,
+      top: 30,
+      left: 30,
+      right: 40,
+      containLabel: true,
+    },
+    legend: {
+      bottom: 0,
+      data: nameArry,
+      //data: ['元空间'],
+      icon: 'rect',
+    },
+    color: ['#4BA2FF', '#54DA81'],
+    xAxis: {
+      type: 'category',
+      axisLine: {
+        lineStyle: {
+          color: '#4BA2FF',
+        },
+      },
+      axisLabel: {
+        color: '#999',
+        formatter(value: string) {
+          return value.substr(0, value.length - 3);
+        },
+      },
+      data: xAxis,
+    },
+    dataZoom: [
+      {
+        type: 'inside', //slider表示有滑动块的，inside表示内置的
+        show: false,
+      },
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        name: '单位：个',
+        axisLabel: {
+          color: '#999',
+        },
+        splitNumber: 3,
+      },
+    ],
+    series: arry
+    // series: [
+    //   {
+    //     name: '元空间',
+    //     data: dataSource?.[0] || [],
+    //     type: 'line',
+    //   },
+    // ],
+  };
+};

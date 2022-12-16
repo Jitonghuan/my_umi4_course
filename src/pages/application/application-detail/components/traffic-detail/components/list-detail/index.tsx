@@ -12,13 +12,19 @@ import JvmMonitor from './jvm-monitor';
 import './index.less'
 
 type TabPosition = 'instance' | 'jvm' | 'call';
-export default function CreateArticle() {
+interface Iprops{
+  getNowTab:(tab:string)=>void;
+}
+
+export default function CreateArticle(props:Iprops) {
+  const {getNowTab}=props
   const { appCode, hostIP, isClick } = useContext(DetailContext);
   const [filterMode, setFilterMode] = useState<TabPosition>('instance');
   const [searchValue, setSearchValue] = useState<string>('');
   const [data, setData] = useState<any>([]);
   const handleModeChange = (e: RadioChangeEvent) => {
     setFilterMode(e.target.value);
+    getNowTab(e.target.value)
   };
 
 

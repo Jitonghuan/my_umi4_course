@@ -614,6 +614,8 @@ export default function TrafficDetail() {
             initWidth={329}
             least={20}
             isSonPage={true}
+            closeTag={nowTab==="call"}
+           
           />}
 
         </ContentCard>

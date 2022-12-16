@@ -148,16 +148,16 @@ export default function InstanceMonitor() {
     },
       {
         resourceName: "已使用量",
-        cpu: currentTableData?.svcCpuUsage,
-        wss: currentTableData?.svcWssUsage,
-        rss: currentTableData?.svcRssUsage,
+        cpu: Number(currentTableData?.svcCpuUsage).toFixed(2),
+        wss: Number( currentTableData?.svcWssUsage).toFixed(2),
+        rss: Number( currentTableData?.svcRssUsage).toFixed(2),
         disk: `--`
       },
       {
         resourceName: "使用百分比",
         cpu: `${currentTableData?.svcCpuRate}%`,
         wss: `${currentTableData?.svcWssRate}% `,
-        rss: `${currentTableData?.svcRssRate}%`,
+        rss: `${Number(currentTableData?.svcRssRate).toFixed(2)}%`,
         disk: `--`
       }
     )

@@ -15,6 +15,18 @@ import { throttle } from 'lodash';
 const { RangePicker } = DatePicker;
 
 import './index.less'
+interface nodeDataSourceItems{
+  start?: number, 
+  end?: number,
+  envCode?: string, 
+  appCode?: string, 
+  appId?: string, 
+  deployName?: string, 
+  selectTimeType?: string,
+  ip?:string;
+   hostName?:string 
+}
+
 export default function TrafficDetail() {
 
   const [formInstance] = Form.useForm();
@@ -37,7 +49,11 @@ export default function TrafficDetail() {
   const [selectTimeType, setSelectTimeType] = useState<string>('lastTime');
   const [rangTime, setRangeTime] = useState<any>([]);
   const [endTime, setEndTime] = useState<number>();
+  const [nowTab,setNowTab]=useState<string>("")
+  const getNowTab=(tab:string)=>{
+    setNowTab(tab)
 
+  }
   useEffect(() => {
     if (appData?.appCode) {
       setAppCode(appData?.appCode)
@@ -121,7 +137,7 @@ export default function TrafficDetail() {
   const [startTime, setStartTime] = useState<number>(5 * 60 * 1000);
   const [count, setCount] = useState<number>(0)
   //获取左侧数据
-  const getNodeDataSource = (params?: { start?: number, envCode?: string, appCode?: string, appId?: string, deployName?: string, end?: number, selectTimeType?: string }) => {
+  const getNodeDataSource = (params?:nodeDataSourceItems) => {
     setLoading(true)
     params = params || {}
     params.start = params?.start || startTime;
@@ -193,6 +209,29 @@ export default function TrafficDetail() {
 
 
     })
+
+  }
+  const getClickData=(params?:nodeDataSourceItems)=>{
+    const now = new Date().getTime();
+    const type = params?.selectTimeType || selectTimeType;
+    const startTimestamp: any = type === 'lastTime' ? Number((now - startTime) / 1000) + "" : startTime;
+    const endTimestamp: any = type === 'lastTime' ? Number((now ) / 1000) + "" : endTime;
+    let curEnv = formInstance.getFieldsValue()?.envCode
+      queryTrafficList({
+        envCode: curEnv,
+        start: startTimestamp,
+        end: endTimestamp,
+        needMetric: true,
+        isPreciseApp:true,
+        keyWord:appData?.appCode,
+        ip:params?.ip,
+        hostName:params?.hostName
+      }).then((resp) => {
+        setCurrentTableData(resp[0])
+       
+      })
+
+
 
   }
 
@@ -283,7 +322,7 @@ export default function TrafficDetail() {
               </span>
             </p>
             {nodeDataSource?.length < 1 && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"暂无数据"} />}
-            {nodeDataSource?.length > 0 && nodeDataSource?.map((element: any, index: number) => {
+            {nodeDataSource?.length > 0 &&nowTab!=="call" &&  nodeDataSource?.map((element: any, index: number) => {
               const nowData = countOverView?.instanceCallInfos?.filter((item: any) => item?.instanceIp === element?.hostIP)
 
               const instanceRt = nowData?.length > 0 ? Number(nowData[0]?.instanceRt || 0).toFixed(2) : "0";
@@ -296,7 +335,13 @@ export default function TrafficDetail() {
                       setIsClick(index)
                       setCurtIp(element?.hostIP);
                       setHostName(element?.hostName);
-                      setCurrentTableData(element)
+                      getClickData({
+                        selectTimeType: selectTimeType,
+                         ip:element?.hostIP,
+                         hostName:element?.hostName
+  
+                        })
+                      // setCurrentTableData(element)
                     }}>{element?.hostIP}</span></span>
                     <span>
                       <span className={isCountHovering ? "count-hovering" : "not-hover"} > {requestCounts || 0}</span>/
@@ -318,7 +363,7 @@ export default function TrafficDetail() {
   const rightContent = useMemo(() => {
     return (
       <>
-        <ListDetail />
+        <ListDetail getNowTab={(tab:string)=>{getNowTab(tab)}} />
 
       </>
     )
@@ -537,6 +582,7 @@ export default function TrafficDetail() {
             initWidth={200}
             least={20}
             isSonPage={true}
+            closeTag={nowTab==="call"}
           />}
 
         </ContentCard>

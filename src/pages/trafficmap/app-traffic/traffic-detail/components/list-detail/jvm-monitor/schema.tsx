@@ -466,7 +466,7 @@ export const getThreadsChartOption: any = (xAxis = [], dataSource = []) => {
     yAxis: [
       {
         type: 'value',
-        name: '单位：MB',
+        name: '单位：个',
         axisLabel: {
           color: '#999',
         },
