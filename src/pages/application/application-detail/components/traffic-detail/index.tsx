@@ -359,7 +359,7 @@ export default function TrafficDetail() {
         </div>
       </>
     )
-  }, [nodeDataSource, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty, appData?.appCode, appData?.deploymentName])
+  }, [nodeDataSource,nowTab, loading, countOverView, isCountHovering, isFailHovering, isRTHovering, appCode, isClick, empty, appData?.appCode, appData?.deploymentName])
   const rightContent = useMemo(() => {
     return (
       <>

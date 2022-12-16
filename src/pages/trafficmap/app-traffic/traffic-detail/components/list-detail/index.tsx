@@ -38,7 +38,8 @@ export default function CreateArticle(props:Iprops) {
           <Radio.Button value="call">调用信息</Radio.Button>
         </Radio.Group>
         <div>
-          {isClick === appCode ? <span>{appCode}</span> : <span>{appCode} {hostIP ? <span>| {hostIP}</span> : null}</span>}
+        {filterMode==="call"? <span>{appCode}</span> : isClick === appCode ? <span>{appCode}</span> : <span>{appCode} {hostIP ? <span>| {hostIP}</span> : null}</span>}
+          {/* {isClick === appCode ? <span>{appCode}</span> : <span>{appCode} {hostIP ? <span>| {hostIP}</span> : null}</span>} */}
           {filterMode === 'call' &&
             <Input
               value={searchValue}
