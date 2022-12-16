@@ -145,6 +145,13 @@ export default [
         component: '@/pages/application/all-application',
       },
       {
+        path: `${baseRoutePath}/application/view-log`,
+        name: '日志详情',
+        key: 'appList',
+        hideInMenu: true,
+        component: '@/pages/application/view-log',
+      },
+      {
         path: `${baseRoutePath}/application/list`,
         name: '应用列表',
         key: 'appList',
@@ -691,20 +698,21 @@ export default [
         name: '前端监控',
         component: '@/pages/fe-monitor/basic/index',
       },
-     { "path": `${baseRoutePath}/monitor/network-dail`,
-      "name": "网络拨测",
-      "component": "@/pages/monitor/network-dail",
-      "key": "network-dail",
-     
-    },
-    {
-      "path": `${baseRoutePath}/monitor/dail-edit`,
-      "name": "拨测编辑",
-      "component": "@/pages/monitor/network-dail/edit-dail",
-      "key": "network-dail",
-      "hideInMenu": true,
-      
-    },
+      {
+        "path": `${baseRoutePath}/monitor/network-dail`,
+        "name": "网络拨测",
+        "component": "@/pages/monitor/network-dail",
+        "key": "network-dail",
+
+      },
+      {
+        "path": `${baseRoutePath}/monitor/dail-edit`,
+        "name": "拨测编辑",
+        "component": "@/pages/monitor/network-dail/edit-dail",
+        "key": "network-dail",
+        "hideInMenu": true,
+
+      },
       {
         path: `${baseRoutePath}/monitor/prometheus-edit`,
         name: '编辑Prometheus',
@@ -736,7 +744,7 @@ export default [
         name: '报警中心',
         component: '@/pages/monitor/alarm-center',
       },
-      
+
       {
         path: `${baseRoutePath}/monitor/template`,
         name: '监控配置',

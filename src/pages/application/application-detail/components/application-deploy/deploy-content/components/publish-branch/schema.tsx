@@ -13,7 +13,7 @@ export interface PublishBranchProps {
     loading: boolean;
     onSearch: (name?: string) => any;
     masterBranchChange: any;
-    checkVersion:boolean;
+    checkVersion: boolean;
     // loadData: any;
     dataSource: {
         id: string | number;
@@ -27,7 +27,8 @@ export interface PublishBranchProps {
     /** 提交分支事件 */
     onSubmitBranch: (status: 'start' | 'end') => void;
     changeBranchName: any;
-    versionData:any;
+    versionData: any;
+    newPublish: boolean;
 }
 
 export const branchTableSchema = ({ id, appCode, appData, env }) => {

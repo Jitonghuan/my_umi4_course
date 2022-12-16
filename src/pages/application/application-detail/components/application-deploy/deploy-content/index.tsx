@@ -8,7 +8,13 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
-import {queryFeatureDeployed,queryApplicationStatus,queryActiveDeployInfo} from '@/pages/application/service';
+import {
+  queryDeployList,
+  queryFeatureDeployed,
+  queryApplicationStatus,
+  queryActiveDeployInfo,
+  getNewDeployInfo
+} from '@/pages/application/service';
 import { DeployInfoVO, IStatusInfoProps } from '@/pages/application/application-detail/types';
 import { getRequest } from '@/utils/request';
 import PublishDetail from './components/publish-detail';
@@ -18,8 +24,8 @@ import PublishRecord from './components/publish-record';
 import VersionPublishDetail from '../version-publish';
 import VersionPublishRecord from '../version-publish/component/version-record'
 import { Spin } from 'antd';
+import { listAppEnv, judgeIsNew } from '@/pages/application/service';
 import { appActiveReleases } from '../service';
-import { listAppEnv } from '@/pages/application/service';
 import './index.less';
 const rootCls = 'deploy-content-compo';
 
@@ -35,13 +41,13 @@ export interface DeployContentProps {
   onDeployNextEnvSuccess: () => void;
   // 下一个tab
   nextTab: string;
- // versionData:any;
-  checkVersion:boolean;
-  handleTabChange:(tab:string)=>void;
+  // versionData:any;
+  checkVersion: boolean;
+  handleTabChange: (tab: string) => void;
 }
 
 export default function DeployContent(props: DeployContentProps) {
-  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab,checkVersion,handleTabChange } = props;
+  const { envTypeCode, isActive, onDeployNextEnvSuccess, pipelineCode, visible, nextTab, checkVersion, handleTabChange } = props;
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
   const cachebranchName = useRef<string>();
@@ -56,23 +62,23 @@ export default function DeployContent(props: DeployContentProps) {
   const [envList, setEnvList] = useState([])
   const [deployedLoad, setDeployedLoad] = useState(false);
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
+  const newPublish = useRef<any>(undefined);//是否是新的cicd
   const [versionData, setVersionData] = useState<any>([]);//请求版本列表数据
-  useEffect(()=>{
-    if(appData?.appCode){
-      getVersionList()
+  useEffect(() => {
+    if (!appCode || !isActive || !pipelineCode) return;
+    isNewPublish();
+    getVersionList();
 
-    }
-
-  },[appData?.appCode])
+  }, [appCode, isActive, pipelineCode])
 
   const getVersionList = () => {
     appActiveReleases({ appCode: appData?.appCode }).then((res) => {
-      if (res?.success &&res?.data?.length>0) {
+      if (res?.success && res?.data?.length > 0) {
         setVersionData(res?.data)
-       
-      }else{
+
+      } else {
         setVersionData([])
-       
+
       }
 
     })
@@ -83,11 +89,14 @@ export default function DeployContent(props: DeployContentProps) {
     if (!appCode || !isActive || !pipelineCode) return;
     setUpdating(true);
 
-    const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
+    // const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
+
+    var queryDeployInfo = newPublish.current ? getNewDeployInfo : queryActiveDeployInfo;
+    const resp = await queryDeployInfo({ pipelineCode: pipelineCode });
 
     if (resp && resp.success) {
       if (resp?.data) {
-        setDeployInfo(resp.data);
+        setDeployInfo(resp?.data || {});
       }
       if (!resp.data) {
         setDeployInfo({});
@@ -142,7 +151,7 @@ export default function DeployContent(props: DeployContentProps) {
   };
 
   // 定时请求发布内容
-  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: false });
+  const { getStatus: getTimerStatus, handle: timerHandle } = useInterval(requestData, 8000, { immediate: false, delay: true });
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;
@@ -157,55 +166,18 @@ export default function DeployContent(props: DeployContentProps) {
       timerHandle('do', true);
     }
   };
-  // 获取已发布分支列表
-  // const requestDeployBranch = () => {
-  //   setDeployedLoad(true)
-  //   queryFeatureDeployed({
-  //     appCode: appCode!,
-  //     envTypeCode,
-  //     pipelineCode,
-  //     isDeployed: 1,
-  //     masterBranch: masterBranchName.current,
-  //     needRelationInfo: envTypeCode === 'prod' ? 1 : 0
-  //   }).then((res) => {
-  //     setDeployed(res?.data || [])
-  //   }).catch(() => {
-  //     setDeployed([])
-  //   }).finally(() => {
-  //     setDeployedLoad(false);
-  //   })
-  // }
-
-  // 获取未发布分支列表
-  // const requestUnDeployBranch = () => {
-  //   setUnDeployedLoad(true)
-  //   queryFeatureDeployed({
-  //     appCode: appCode!,
-  //     envTypeCode,
-  //     pipelineCode,
-  //     isDeployed: 0,
-  //     masterBranch: masterBranchName.current,
-  //     needRelationInfo: envTypeCode === 'prod' ? 1 : 0
-  //   }).then((res) => {
-  //     setUnDeployed(res?.data || [])
-  //   }).catch(() => {
-  //     setUnDeployed([])
-  //   }).finally(() => {
-  //     setUnDeployedLoad(false);
-  //   })
-  // }
 
   // appCode变化时
-  useEffect(() => {
-    if (!appCode || !isActive || !pipelineCode) return;
-    timerHandle('do', true);
-  }, [appCode, isActive, pipelineCode]);
+  // useEffect(() => {
+  //   if (!appCode || !isActive || !pipelineCode) return;
+  //   timerHandle('do', true);
+  // }, [appCode, isActive, pipelineCode]);
 
   useEffect(() => {
     if (visible) {
       timerHandle('stop');
     }
-    if (!visible) {
+    if (!visible && newPublish.current !== undefined) {
       timerHandle('do', true);
     }
   }, [visible]);
@@ -240,38 +212,50 @@ export default function DeployContent(props: DeployContentProps) {
     setLoading(false);
   };
 
+  // 判断该应用是否要用新的发布流程
+  const isNewPublish = () => {
+    judgeIsNew({ appCode: appData?.appCode }).then((res: any) => {
+      if (res?.success) {
+        res?.data === 'v1' ? newPublish.current = false : newPublish.current = true;
+      } else {
+        newPublish.current = false;
+      }
+    }).finally(() => { timerHandle('do', true) })
+  }
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
         <Spin spinning={loading}>
-          {envTypeCode==="version"?<VersionPublishDetail
-          //@ts-ignore
-           isActive={isActive}
-           envTypeCode={envTypeCode}
-           pipelineCode={pipelineCode}
-           visible={visible}
-
-           />:
-            <PublishDetail
+          {envTypeCode === "version" ? <VersionPublishDetail
+            //@ts-ignore
+            isActive={isActive}
             envTypeCode={envTypeCode}
-            deployInfo={deployInfo}
-            appStatusInfo={appStatusInfo}
             pipelineCode={pipelineCode}
-            nextTab={nextTab}
-            checkVersion={checkVersion}
-            versionData={versionData}
-            onOperate={(type) => {
-              if (type === 'deployNextEnvSuccess') {
-                onDeployNextEnvSuccess();
-                return;
-              }
-              requestData();
-              onOperate(type);
-            }}
-            handleTabChange={(tab:string)=>{handleTabChange(tab)}}
-          />
+            visible={visible}
+
+          /> :
+            <PublishDetail
+              envTypeCode={envTypeCode}
+              deployInfo={deployInfo}
+              appStatusInfo={appStatusInfo}
+              pipelineCode={pipelineCode}
+              nextTab={nextTab}
+              checkVersion={checkVersion}
+              versionData={versionData}
+              newPublish={newPublish.current}
+              onOperate={(type) => {
+                if (type === 'deployNextEnvSuccess') {
+                  onDeployNextEnvSuccess();
+                  return;
+                }
+                requestData();
+                onOperate(type);
+              }}
+              handleTabChange={(tab: string) => { handleTabChange(tab) }}
+            />
           }
-        
+
           <PublishContent
             appCode={appCode!}
             envTypeCode={envTypeCode}
@@ -284,14 +268,15 @@ export default function DeployContent(props: DeployContentProps) {
             onSpin={onSpin}
             stopSpin={stopSpin}
             envList={envList}
+            newPublish={newPublish.current}
           // loadData={requestDeployBranch}
           // refreshList={() => {
           //   requestUnDeployBranch();
           //   requestDeployBranch();
           // }}
           />
-           {envTypeCode!=="version"&&(
-              <PublishBranch
+          {envTypeCode !== "version" && (
+            <PublishBranch
               deployInfo={deployInfo}
               hasPublishContent={!!(deployed && deployed.length)}
               dataSource={unDeployed}
@@ -311,17 +296,18 @@ export default function DeployContent(props: DeployContentProps) {
               changeBranchName={(branchName: string) => {
                 // cachebranchName.current = branchName;
               }}
+              newPublish={newPublish.current}
             />
-           )}
-         
+          )}
+
         </Spin>
       </div>
       <div className={`${rootCls}-sider`}>
-      {envTypeCode==="version"?<>
-      <VersionPublishRecord envTypeCode={envTypeCode} />
+        {envTypeCode === "version" ? <>
+          <VersionPublishRecord envTypeCode={envTypeCode} />
 
-      </>:
-        <PublishRecord env={envTypeCode} appCode={appCode} />}
+        </> :
+          <PublishRecord env={envTypeCode} appCode={appCode} />}
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ export interface IProps {
   pipelineCode: string;
   envList: any;
   loading: boolean;
+  newPublish: boolean;
   // loadData: any;
   // refreshList: any;
 }
