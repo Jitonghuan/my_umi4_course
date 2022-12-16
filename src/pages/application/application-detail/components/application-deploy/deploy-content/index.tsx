@@ -243,6 +243,7 @@ export default function DeployContent(props: DeployContentProps) {
               nextTab={nextTab}
               checkVersion={checkVersion}
               versionData={versionData}
+              newPublish={newPublish.current}
               onOperate={(type) => {
                 if (type === 'deployNextEnvSuccess') {
                   onDeployNextEnvSuccess();

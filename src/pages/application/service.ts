@@ -121,9 +121,12 @@ export const newCancelDeployUrl = `/v2/releaseManage/deploy/cancelTask`;
 
 /** POST 部署到下一个环境 */
 export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/reuse`;
+export const newDeployReuseUrl = `v2/releaseManage/deploy/create/reuse`;
 
 /** POST 部署主干分支*/
 export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/master`;
+
+export const newDeployMasterUrl = `v2/releaseManage/deploy/create/master`
 
 /** GET 根据应用分类code查询发布环境列表 */
 export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
@@ -731,6 +734,8 @@ export const deployReuse = (params: {
     data: params,
   });
 
+export const newDeployReuse = (params: any) => postRequest(newDeployReuseUrl, { data: params });
+
 /** 部署master*/
 export const deployMaster = (params: {
   /** 应用code */
@@ -745,6 +750,8 @@ export const deployMaster = (params: {
   postRequest(deployMasterUrl, {
     data: params,
   });
+
+export const newDeployMaster = (params: any) => postRequest(newDeployMasterUrl, { data: params })
 
 /** 根据应用分类code查询发布环境列表 */
 export const queryEnvsReq = (params: {
