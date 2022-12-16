@@ -409,6 +409,11 @@ export default function ApprovalEnd() {
         </Modal>
         <div>
           <h3>工单标题：{info?.title}<span style={{ float: "right" }}>
+            <Space>
+              <Button onClick={()=>{
+                
+              }}>刷新</Button>
+
             <Button type="primary" className="back-go" onClick={() => {
               history.push({
                 pathname: "/matrix/DBMS/data-change",
@@ -417,6 +422,9 @@ export default function ApprovalEnd() {
             }}>
               返回
               </Button>
+
+            </Space>
+            
 
           </span></h3>
 
