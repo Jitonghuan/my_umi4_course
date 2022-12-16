@@ -163,6 +163,7 @@ export default function DpMonitorEdit(props: any) {
   }
 
   function resetValidate(name: number) {
+   // debugger
     let metricsQuery = tagrgetForm.getFieldValue('metricsQuery');
     Object.assign(metricsQuery[name], {
       valueColumn: '',
@@ -461,13 +462,18 @@ export default function DpMonitorEdit(props: any) {
                             {fields.map(({ key, name, ...restField }) => (
                               <div>
                                 <div style={{color: '#1972cc', marginBottom: '10px'}}>
-                                  指标{name + 1} <DeleteOutlined onClick={() => remove(name)} />
+                                  指标{name + 1} <DeleteOutlined onClick={() =>{remove(name);} } />
                                 </div>
                                 <Space key={key} className="space-list-item" direction="vertical">
                                   <Form.Item
                                     noStyle
                                     shouldUpdate={(prevValues, curValues) =>
-                                      prevValues.name.metricName == curValues.name.metricName
+                                      prevValues.name.metricName !== curValues.name.metricName
+                                      // ||
+                                      
+                                      // prevValues.name.valueColumn !== curValues.name.valueColumn||
+                                      // prevValues.name.valueColumn == curValues.name.valueColumn
+                                      
                                     }
                                   >
                                     <Form.Item
@@ -508,10 +514,11 @@ export default function DpMonitorEdit(props: any) {
                                       name={[name, 'valueColumn']}
                                       rules={[{ required: true, message: '输入指标值' }]}
                                       {...restField}
+                                     // shouldUpdate={true}
                                     >
                                       <Select>
                                         {
-                                          (sqlRes[key]?.values || []).map((item: string) => (
+                                          (sqlRes[name]?.values || []).map((item: string) => (
                                             <Select.Option key={item} value={item}>{item}</Select.Option>
                                           ))
                                         }
@@ -765,6 +772,8 @@ export default function DpMonitorEdit(props: any) {
             })
           }}
           type={rulesType}
+          entryType="biz-db"
+          monitorName={logForm?.getFieldValue('monitorName')}
           />
       </ContentCard>
     </PageContainer>
