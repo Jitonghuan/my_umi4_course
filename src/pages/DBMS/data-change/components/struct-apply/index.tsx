@@ -176,24 +176,7 @@ export default function StructApply() {
     }
 
 
-    // useEffect(()=>{
-    //     const allValues=form.getFieldsValue()
-    //     if(allValues?.fromEnvCode&&allValues?.fromInstanceId&&allValues?.fromDbCode&&allValues?.toEnvCode&&allValues?.toInstanceId&&toDbCode&&targetSource.length>0){
-       
-    //         getDiffInfo()
-    //     }
-
-    // },[ form.getFieldsValue()?.fromEnvCode,
-    //     form.getFieldsValue()?.fromInstanceId,
-    //     form.getFieldsValue()?.fromDbCode,
-    //     form.getFieldsValue()?.toEnvCode,
-    //     form.getFieldValue('toInstanceId'),
-    //   //  form.getFieldValue("toDbCode"),
-    //     toDbCode,
-    //     JSON.stringify(targetSource)
-
-
-    // ])
+    
     const onValuesChange=(changedValues:any, allValues:any)=>{
         
 
@@ -370,8 +353,6 @@ export default function StructApply() {
                             loading={diffLoading}
                              dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData}
                              pagination={{
-                                // current: taskTablePageInfo.pageIndex,
-                               
                                 showSizeChanger: true,
                                 showTotal: () => `总共 ${activeTab === "createTables" ? createTablesData?.length : modifyTablesData?.length} 条数据`,
                               }}

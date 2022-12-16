@@ -105,13 +105,14 @@ export default function ApprovalEnd() {
   }, [afferentId])
   useEffect(() => {
     let intervalId = setInterval(() => {
-      if (query?.detail === "true" && query?.id) {
-        getInfo(afferentId)
-        getWorkflowLog(afferentId)
-      } else {
-        getInfo()
-        getWorkflowLog(initInfo?.record?.id)
-      }
+      onRefresh()
+      // if (query?.detail === "true" && query?.id) {
+      //   getInfo(afferentId)
+      //   getWorkflowLog(afferentId)
+      // } else {
+      //   getInfo()
+      //   getWorkflowLog(initInfo?.record?.id)
+      // }
     }, 10000 * 6);
 
     return () => {
@@ -161,13 +162,14 @@ export default function ApprovalEnd() {
           auditTicket({ reason: info?.reason, auditType, id: initInfo?.record?.id || afferentId }).then(() => {
             close()
           }).then(() => {
-            if (query?.detail === "true" && query?.id) {
-              getInfo(afferentId)
-              getWorkflowLog(afferentId)
-            } else {
-              getInfo()
-              getWorkflowLog(initInfo?.record?.id)
-            }
+            onRefresh()
+            // if (query?.detail === "true" && query?.id) {
+            //   getInfo(afferentId)
+            //   getWorkflowLog(afferentId)
+            // } else {
+            //   getInfo()
+            //   getWorkflowLog(initInfo?.record?.id)
+            // }
           })
         })
 
@@ -323,6 +325,16 @@ export default function ApprovalEnd() {
     setActiveTab(value);
   };
 
+  const onRefresh=()=>{
+    if (query?.detail === "true" && query?.id) {
+      getInfo(afferentId)
+      getWorkflowLog(afferentId)
+    } else {
+      getInfo()
+      getWorkflowLog(initInfo?.record?.id)
+    }
+  }
+
 
   const columns = useMemo(() => {
     return createTableColumns() as any;
@@ -350,13 +362,14 @@ export default function ApprovalEnd() {
 
                   setVisible(false)
                 }).then(() => {
-                  if (query?.detail === "true" && query?.id) {
-                    getInfo(afferentId)
-                    getWorkflowLog(afferentId)
-                  } else {
-                    getInfo()
-                    getWorkflowLog(initInfo?.record?.id)
-                  }
+                  onRefresh()
+                  // if (query?.detail === "true" && query?.id) {
+                  //   getInfo(afferentId)
+                  //   getWorkflowLog(afferentId)
+                  // } else {
+                  //   getInfo()
+                  //   getWorkflowLog(initInfo?.record?.id)
+                  // }
                 })
               } else {
                 runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
@@ -364,13 +377,14 @@ export default function ApprovalEnd() {
 
                   setVisible(false)
                 }).then(() => {
-                  if (query?.detail === "true" && query?.id) {
-                    getInfo(afferentId)
-                    getWorkflowLog(afferentId)
-                  } else {
-                    getInfo()
-                    getWorkflowLog(initInfo?.record?.id)
-                  }
+                  onRefresh()
+                  // if (query?.detail === "true" && query?.id) {
+                  //   getInfo(afferentId)
+                  //   getWorkflowLog(afferentId)
+                  // } else {
+                  //   getInfo()
+                  //   getWorkflowLog(initInfo?.record?.id)
+                  // }
                 })
               }
             })
@@ -410,9 +424,7 @@ export default function ApprovalEnd() {
         <div>
           <h3>工单标题：{info?.title}<span style={{ float: "right" }}>
             <Space>
-              <Button onClick={()=>{
-                
-              }}>刷新</Button>
+              <Button onClick={onRefresh} type="primary" ghost>刷新</Button>
 
             <Button type="primary" className="back-go" onClick={() => {
               history.push({
@@ -510,7 +522,10 @@ export default function ApprovalEnd() {
             />
 
           </div>
-          <Table columns={diffColumns} dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData} />
+          <Table columns={diffColumns} dataSource={activeTab === "createTables" ? createTablesData : modifyTablesData} loading={loading}   pagination={{
+                                showSizeChanger: true,
+                                showTotal: () => `总共 ${activeTab === "createTables" ? createTablesData?.length : modifyTablesData?.length} 条数据`,
+                              }} />
         </div>}
         {/* ------------------------------- */}
         <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
@@ -529,13 +544,14 @@ export default function ApprovalEnd() {
                     <Tag color="success" onClick={() => {
                       auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
                         setTimeout(() => {
-                          if (query?.detail === "true" && query?.id) {
-                            getInfo(afferentId)
-                            getWorkflowLog(afferentId)
-                          } else {
-                            getInfo()
-                            getWorkflowLog(initInfo?.record?.id)
-                          }
+                          onRefresh()
+                          // if (query?.detail === "true" && query?.id) {
+                          //   getInfo(afferentId)
+                          //   getWorkflowLog(afferentId)
+                          // } else {
+                          //   getInfo()
+                          //   getWorkflowLog(initInfo?.record?.id)
+                          // }
 
                         }, 300);
                       })
