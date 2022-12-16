@@ -138,46 +138,29 @@ export default function InstanceMonitor() {
     let data = []
     data.push({
       resourceName: "资源配额",
-      cpu: currentTableData?.cpuLimit,
-      wss: getDiviNumber(getMultiNumber(currentTableData?.memLimit, currentTableData?.WSS) || "", currentTableData?.WSS),
-      rss: getDiviNumber(getMultiNumber(currentTableData?.memLimit, currentTableData?.RSS) || "", currentTableData?.RSS),
-      disk: currentTableData?.diskLimit || "--"
+      cpu: currentTableData?.svcCpuQuota,
+      wss: currentTableData?.svcWssQuota,
+      rss: currentTableData?.svcRssQuota,
+      disk:  "--"
     },
       {
         resourceName: "已使用量",
-        cpu: parseInt(getMultiNumber(currentTableData?.cpuLimit, (Number(currentTableData?.cpu) * 0.01).toString())),
-        wss: getMultiNumber(currentTableData?.memLimit, (Number(currentTableData?.WSS) * 0.01).toString()),
-        rss: getMultiNumber(currentTableData?.memLimit, (Number(currentTableData?.RSS) * 0.01).toString()),
-        disk: `${parseInt(currentTableData?.disk)}MB`
+        cpu: Number(currentTableData?.svcCpuUsage).toFixed(2),
+        wss: Number( currentTableData?.svcWssUsage).toFixed(2),
+        rss: Number( currentTableData?.svcRssUsage).toFixed(2),
+        disk: `--`
       },
       {
         resourceName: "使用百分比",
-        cpu: `${currentTableData?.cpu}%`,
-        wss: `${currentTableData?.WSS}% `,
-        rss: `${currentTableData?.RSS}%`,
-        disk: `${getDiviNumber(currentTableData?.disk, currentTableData?.diskLimit)}`
+        cpu: `${currentTableData?.svcCpuRate}%`,
+        wss: `${currentTableData?.svcWssRate}% `,
+        rss: `${Number(currentTableData?.svcRssRate).toFixed(2)}%`,
+        disk: `--`
       }
     )
     setNodeDataSource(data)
   }, [currentTableData])
-  const getDiviNumber = (first: string, second: string) => {
-    if (!first || !second) {
-      return "--"
-    }
-    let number = ""
-    number = (Number(first) / Number(second)).toFixed(2)
-    return number
-
-  }
-  const getMultiNumber = (first: string, second: string) => {
-    if (!first || !second) {
-      return "--"
-    }
-    let number = ""
-    number = (Number(first) * Number(second)).toFixed(2)
-    return number
-
-  }
+  
   return (
     <>
       <Card className="monitor-app-body">

@@ -11,11 +11,12 @@ export interface Iprops{
     least?:number//左边内容可以拖拽的最小宽度；
     dataChangeinitWidth?:number;
     getIconAction?:(close:boolean)=>void;
-    isSonPage?:boolean
+    isSonPage?:boolean;
+    closeTag?:boolean
 }
 
 export default function ResizeLayout(props:Iprops) {
-    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150,dataChangeinitWidth,getIconAction,isSonPage=false} =props
+    const {leftContent,rightContent,showIcon=true,initWidth=150,least=150,dataChangeinitWidth,getIconAction,isSonPage=false,closeTag=false} =props
     const [siderWidth, setSiderWidth] = useState<any>(
        //@ts-ignore
       dataChangeinitWidth?dataChangeinitWidth: parseInt(localStorage.getItem('siderWidth')) ? parseInt(localStorage.getItem('siderWidth')):initWidth
@@ -30,6 +31,18 @@ export default function ResizeLayout(props:Iprops) {
       setStartPageX(event.pageX);
       setDragging(true);
     };
+    useEffect(()=>{
+      if(closeTag){
+
+     setClose(true)
+     setSiderWidth(least)
+      }else{
+        setSiderWidth(initWidth)
+      }
+      return()=>{
+        setClose(false)
+      }
+    },[closeTag])
     
     const handleMouseMove = (event:any) => {
       const currentSiderWidth = siderWidth + event.pageX - startPageX;
@@ -51,9 +64,11 @@ export default function ResizeLayout(props:Iprops) {
 
     },[])
     const onIconClick=(e:any)=>{
+    //  debugger
       e.stopPropagation();
       setClose(!close);
       setSiderWidth(close?initWidth:least)
+      //localStorage.setItem('siderWidth', close?initWidth+"":least+"");
       setStartPageX(e.pageX);
       setDragging(false);
       if(getIconAction){
@@ -65,7 +80,7 @@ export default function ResizeLayout(props:Iprops) {
      
         <div className="dragger-layout-page" style={{ paddingLeft: pxWidth,height:isSonPage?'calc(100vh - 124px)' :"100vh"}}>
         <div className="dragger-sider" style={{ width: pxWidth }}>
-         {leftContent}
+         {!close&& leftContent}
         </div>
         <div className="dragger-container">
         {rightContent}
