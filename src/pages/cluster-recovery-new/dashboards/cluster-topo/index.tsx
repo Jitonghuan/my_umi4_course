@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
-import { Spin ,Select} from 'antd';
+import { Spin} from 'antd';
+import {graphDashboard} from '../../service'
 interface IProps {
-  url: string;
+  count:number
+  envCode:string
 }
-const { Option } = Select;
+
 const BoardDetail = (props: IProps) => {
-  const { url } = props;
-  const [infoType,setInfoType]=useState<string>("ip")
+  const { count,envCode } = props;
+ 
   const [iframeLoading, setIframeLoading] = useState<boolean>(false);
+  const [url,setUrl]=useState<string>('')
 
   const hideSlideMenu = () => {
     document?.getElementsByTagName('iframe')?.[0]?.contentWindow?.postMessage({ showMenu: false }, '*');
@@ -17,32 +20,43 @@ const BoardDetail = (props: IProps) => {
     }, 800);
   };
 
-  useEffect(() => {
-    setIframeLoading(false);
-  }, [url]);
-  const onSelect=(value: string)=>{
-    setInfoType(value)
-  }
-  const selectBefore = (
-    <Select defaultValue="ip" className="select-before" onChange={onSelect}>
-      <Option value="ip">IP</Option>
-      <Option value="id">ID</Option>
-    </Select>
-  );
+  const getClusterTopologyUrl=()=>{
+    graphDashboard(envCode).then((res)=>{
+      if(res?.success){
+        setUrl(res?.data)
 
+      }
+
+    })
+  }
+  useEffect(()=>{
+    if(envCode){
+      getClusterTopologyUrl()
+    }
+    
+  },[envCode,count])
+
+  useEffect(() => {
+    if(url){
+      setIframeLoading(false);
+    }
+    
+  }, [url]);
+
+  
  
 
   return (
     <PageContainer style={{ padding: 0 }}>
-      {/* <div >
-        <span style={{display:"inline-block",float:"right"}}>
+      <div >
+        {/* <span style={{display:"inline-block",float:"right"}}>
         <Tooltip title="请输入Ip或者Id，确认Ip或者Id的流量所在集群">
           <Tag color="#108ee9">流量模拟<QuestionCircleOutlined /></Tag>
         </Tooltip>
        <Input.Search addonBefore={selectBefore} style={{width:260}} onSearch={onSearch}></Input.Search>
-        </span>
+        </span> */}
        
-      </div> */}
+      </div>
       <div style={{ width: '100%', height: '100%', display: 'block' }} className="grafana-iframe-info">
         <Spin spinning={!iframeLoading} />
         <iframe
@@ -60,3 +74,5 @@ const BoardDetail = (props: IProps) => {
 };
 
 export default BoardDetail;
+
+

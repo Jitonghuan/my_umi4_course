@@ -1,8 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { Button, Form, Input, Popconfirm, Table, Modal, message } from 'antd';
+import PageContainer from '@/components/page-container';
+import { ContentCard } from '@/components/vc-page-content';
+import { Button, Form, Input, Popconfirm, Table, Modal, message,Select } from 'antd';
 import { getRequest, postRequest, putRequest, delRequest } from '@/utils/request';
 import { addHospitalDistrictInfo, updateHospitalDistrictInfo, getHospitalDistrictInfo, deleteHospitalDistrictInfo } from '../service';
-import { getCommonEnvCode } from '@/pages/cluster/hook';
+import { getCommonEnvCode } from '@/pages/cluster-recovery-new/service';
+import {identifiOptions} from './type'
 import './index.less';
 
 const DistrictManage = () => {
@@ -93,9 +96,18 @@ const DistrictManage = () => {
   }
 
   return (
-    <div className="district-manage-wrapper">
+      <PageContainer>
+          <ContentCard>
+        
       <div className="district-header">
-        <Button type="primary" onClick={onAddClick}>新增机构</Button>
+          <div className="table-caption">
+              <div className="caption-left"><h3>机构列表</h3></div>
+              <div className="caption-right">
+              <Button type="primary" onClick={onAddClick}>新增机构</Button>
+              </div>
+
+          </div>
+       
       </div>
       <Table
         scroll={{x: '100%'}}
@@ -107,7 +119,11 @@ const DistrictManage = () => {
             dataIndex: 'hospitalDistrictName',
           },
           {
-            title: 'IP信息',
+            title: '流量标识',
+            dataIndex: 'flowMark',
+          },
+          {
+            title: '流量策略',
             dataIndex: 'hospitalDistrictIp',
           },
           {
@@ -151,8 +167,12 @@ const DistrictManage = () => {
           <Form.Item label="机构名称" name="hospitalDistrictName" rules={[{ required: true, message: '请输入机构名称' }]}>
             <Input />
           </Form.Item>
+         
           <Form.Item label="机构Code" name="hospitalDistrictCode" rules={[{ required: true, message: '请输入机构Code' }]}>
             <Input />
+          </Form.Item>
+          <Form.Item label="流量标识" name="flowMark" rules={[{ required: true, message: '请输入流量标识' }]}>
+            <Select  options={identifiOptions}/>
           </Form.Item>
           <Form.Item label="环境code" name="envCode" rules={[{ required: true, message: '请输入环境code' }]}>
             <Input />
@@ -168,7 +188,13 @@ const DistrictManage = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+   
+
+          </ContentCard>
+        
+
+      </PageContainer>
+   
   )
 }
 
