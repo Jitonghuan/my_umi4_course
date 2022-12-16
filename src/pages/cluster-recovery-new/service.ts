@@ -92,10 +92,10 @@ export const deleteHospitalDistrictInfo = addAPIPrefix('/opsManage/multiple/comm
 //文档地址：https://come-future.yuque.com/sekh46/bbgc7f/vlkirb#oRCTM
 
 /** GET Nacos配置比对 */
-export const diffConfigApi= addAPIPrefix('/opsManage/k8s/multiple/diffConfig');
+export const diffConfigApi= addAPIPrefix('/opsManage/k8s/multiple/diffNacosConfig');
 
 /** POST Nacos配置同步 */
-export const syncConfigApi= addAPIPrefix('/opsManage/k8s/multiple/syncConfig');
+export const syncConfigApi= addAPIPrefix('/opsManage/k8s/multiple/syncNacosConfig');
 
 /* 集群同步配置白屏化需求  */
 
