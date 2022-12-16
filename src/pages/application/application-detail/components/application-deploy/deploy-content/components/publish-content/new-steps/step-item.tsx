@@ -149,7 +149,7 @@ export default function StepItem(props: any) {
             title={
                 <div className='flex'>
                     {props.title}
-                    <div className='operate-btn' style={{ width: 13 }}>
+                    <div className='operate-btn' style={{ width: 5 }}>
                         {status !== 'wait' && nodeCode !== 'start' && nodeCode !== 'end' && (
                             <a style={{}} onClick={() => { setViewLogVisible(true) }}>
                                 <FileTextOutlined />
