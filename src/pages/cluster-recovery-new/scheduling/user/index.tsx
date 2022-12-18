@@ -81,12 +81,16 @@ export default function UserScheduling(props: any) {
 
   }
   const delClusterA_patient = (current: any) => {
+    
+    try {
     clusterA_patientData.map((item, index) => {
+    
       if (item === current) {
+       
         return clusterA_patientData.splice(index, 1);
       }
     });
-    try {
+   
         localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(clusterA_patientData);
         setClusterA_patientData(localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []);
         
@@ -97,6 +101,7 @@ export default function UserScheduling(props: any) {
   };
 
   const delClusterB_patient = (current: any) => {
+    
     clusterB_patientData.map((item, index) => {
       if (item === current) {
         return clusterB_patientData.splice(index, 1);
@@ -139,9 +144,12 @@ export default function UserScheduling(props: any) {
           try {
             clusterA_patientData.push(params);
             localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(clusterA_patientData);
+           
             setClusterA_patientData(localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []);
+            console.log("localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []",localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : [])
               
           } catch (error) {
+            console.log("error",error)
               
           }
        
@@ -171,8 +179,8 @@ export default function UserScheduling(props: any) {
         getEnvCode()
     // }
     return () => {
-        localStorage.removeItem('CLUSTERB_PATIENT_DATA');
-        localStorage.removeItem('CLUSTERA_PATIENT_DATA');
+        // localStorage.removeItem('CLUSTERB_PATIENT_DATA');
+        // localStorage.removeItem('CLUSTERA_PATIENT_DATA');
       };
   }, []);
 

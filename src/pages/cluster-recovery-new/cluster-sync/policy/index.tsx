@@ -149,6 +149,7 @@ export default function SyncPolicy(){
              <Card size="small" title= {<><span>配置项</span><span className="title-tooltip">{`A->B:以下Nacos配置项不会被替换!`}</span></>} extra={<a style={{fontSize:16}} onClick={()=>{
                  setType("config")
                  setVisible(true)
+                 setCurRecord({})
              }}>新增配置项</a>} headStyle={{background:"#d4e6f7"}} style={{ width: "100%" }}>
                 <p>
                     <Table loading={loading} dataSource={nacosConfTableSource}>
@@ -176,6 +177,7 @@ export default function SyncPolicy(){
              <Card size="small" title={<><span>配置项</span><span className="title-tooltip">{`A->B:以下JVM配置项不会被替换!`}</span></>} extra={<a style={{fontSize:16}} onClick={()=>{
                  setType("jvm")
                  setVisible(true)
+                 setCurRecord({})
              }}>新增JVM参数</a>} headStyle={{background:"#d4e6f7"}} style={{ width: "100%"}}>
                 <p>
                     <Table  loading={loading} dataSource={jvmParamTableSource}>

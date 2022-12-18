@@ -93,7 +93,7 @@ export default function Dashboards(){
             {value==="cluster-topo"&&<div>
             <span style={{display:"inline-block"}}>
         <Tooltip title="请输入Ip或者Id，确认Ip或者Id的流量所在集群">
-          <Tag color="#108ee9">流量模拟<QuestionCircleOutlined /></Tag>
+          <Tag color="geekblue">流量模拟<QuestionCircleOutlined /></Tag>
         </Tooltip>
        <Input.Search addonBefore={selectBefore} style={{width:260}} onSearch={onSearch}></Input.Search>
         </span>

@@ -53,6 +53,9 @@ export default function AddModal(props:Iprops){
             getDeploymentNameList()
 
         }
+        return()=>{
+            addForm.resetFields()
+        }
 
     },[visible])
 
@@ -131,12 +134,12 @@ export default function AddModal(props:Iprops){
         <Modal title={ typeTitleMap[type]} width={800} visible={visible} destroyOnClose onCancel={onClose} onOk={handleSubmit} confirmLoading={enSureLoading}>
             <Form form={addForm} preserve={false} labelCol={{flex:"120px"}} >
                 {type==="app"&& <Form.Item label="应用部署名" name="deploymentName" rules={[{ required: true, message: '请填写' }]}>
-                    <Select style={{width:280}} options={deployOptions} loading={deployLoading} />
+                    <Select style={{width:280}} options={deployOptions} showSearch allowClear loading={deployLoading} />
                 </Form.Item>}
                 {type==="namespace"&&<Form.Item label="命名空间名称" name="namespace" rules={[{ required: true, message: '请填写' }]}>
-                  <Select style={{width:280}} options={namespaceOptions} loading={loading} />
+                  <Select style={{width:280}} options={namespaceOptions} showSearch allowClear loading={loading} />
                 </Form.Item>}
-                {type==="config"&&<>
+                {(type==="config"||type==="edit-config")&&<>
                 <Form.Item label="A集群配置项" name="clusterA" rules={[{ required: true, message: '请填写' }]}>
                 <Input style={{width:280}} />
                 </Form.Item>
@@ -147,7 +150,7 @@ export default function AddModal(props:Iprops){
                 <Input style={{width:280}} />
                 </Form.Item>
                 </>}
-                {type==="jvm"&&<>
+                {(type==="jvm"||type==="edit-jvm")&&<>
                 <Form.Item label="A集群JVM参数" name="clusterA" rules={[{ required: true, message: '请填写' }]}>
                 <Input style={{width:280}} />
                 </Form.Item>

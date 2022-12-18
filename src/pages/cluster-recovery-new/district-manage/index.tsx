@@ -52,7 +52,8 @@ const DistrictManage = () => {
       hospitalDistrictIp: record.hospitalDistrictIp,
       envCode: record.envCode,
       description: record.description,
-      id: record.id
+      id: record.id,
+      flowMark:record?.flowMark
     });
   }
 
