@@ -118,7 +118,7 @@ export default function ApplyList() {
         envsUrlList={envsUrlList}
         onSave={()=>{
           queryAppList();
-          setApplyDetailVisible(false);
+          //setApplyDetailVisible(false);
         }}
       />
 
