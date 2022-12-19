@@ -23,6 +23,8 @@ export default function NacosSync(){
     const [namespaceLoading,namespaceOptions,queryNacosNamespaceList]=useNacosNamespaceList();
     const [dataIdloading, dataIdOptions, queryNacosDataIdList]=useNacosDataIdList()
     const [change,setChange]=useState<boolean>(false)
+    const [firstDataId,setFirstDataId]=useState<string>("")
+    const [firstNamespace,setFirstNamespace]=useState<string>("")
 
     
     
@@ -36,9 +38,9 @@ export default function NacosSync(){
               queryNacosNamespaceList(curEnvCode)
               
             }
-            if(curEnvCode&&entryType==="isConfDiff"){
-              startDiffConfig(curEnvCode)
-            }
+            // if(curEnvCode&&entryType==="isConfDiff"){
+            //   startDiffConfig(curEnvCode)
+            // }
             
           }else{
             setEnvCode("")
@@ -120,6 +122,14 @@ export default function NacosSync(){
           dataId:diffInfo?.dataId,
           namespace:diffInfo?.namespace
       })
+      startDiffConfig(diffInfo?.envCode)
+      setFirstDataId(diffInfo?.dataId)
+      setFirstNamespace(diffInfo?.namespace)
+      queryNacosDataIdList({
+        envCode,
+        namespace:diffInfo?.namespace
+      })
+     
       }else{
         nacosForm.setFieldsValue({
           type:"single"
@@ -133,11 +143,11 @@ export default function NacosSync(){
       if(namespaceOptions.length>0){
         try {
           nacosForm.setFieldsValue({
-            namespace:namespaceOptions[1]?.value
-        }) 
+            namespace:firstNamespace?firstNamespace: namespaceOptions[1]?.value
+        })
         queryNacosDataIdList({
           envCode,
-          namespace:namespaceOptions[1]?.value
+          namespace:firstNamespace?firstNamespace: namespaceOptions[1]?.value
         })
         } catch (error) {    
         }
@@ -153,7 +163,7 @@ export default function NacosSync(){
       if(dataIdOptions.length>0){
         try {
           nacosForm.setFieldsValue({
-            dataId:dataIdOptions[0]?.value
+            dataId:firstDataId?firstDataId:dataIdOptions[0]?.value
         }) 
       
         } catch (error) {    
@@ -197,6 +207,8 @@ export default function NacosSync(){
                      setChange(true)
                      setNamespaceDiffInfo({})
                      setConfigDiffInfo({})
+                     setFirstDataId("")
+                     setFirstNamespace("")
                     if(curSyncType==="single"){
                       queryNacosDataIdList({
                         envCode,
@@ -212,6 +224,7 @@ export default function NacosSync(){
                      setChange(true)
                      setNamespaceDiffInfo({})
                      setConfigDiffInfo({})
+                     setFirstDataId("")
                   }} loading={dataIdloading} />
                   </Form.Item>}
                 

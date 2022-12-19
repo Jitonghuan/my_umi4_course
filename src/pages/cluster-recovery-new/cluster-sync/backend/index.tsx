@@ -68,7 +68,8 @@ export default function Application() {
                           
                               type:source?.type,
                               namespace:source?.namespace,
-                              dataId:source?.dataId
+                              dataId:source?.dataId,
+                              envCode
     
     
                             
