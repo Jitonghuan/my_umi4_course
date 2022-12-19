@@ -3,7 +3,7 @@
 // @create 2021/09/06 20:08
 
 import React, { useState, useContext, useEffect, useMemo } from 'react';
-import { Descriptions, Button, Modal, message,Radio, Typography, } from 'antd';
+import { Descriptions, Button, Modal, message, Radio, Typography, } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { getRequest } from '@/utils/request';
 import { UploadOutlined } from '@ant-design/icons';
@@ -15,7 +15,7 @@ import NextDeploy from './next-deploy';
 import MasterDeploy from './master-deploy';
 import OfflineDeploy from './offline-deploy';
 import EntryProject from './entry-project';
-import {restartApp,checkOfflineDeploy} from '@/pages/application/service';
+import { restartApp, checkOfflineDeploy } from '@/pages/application/service';
 import { IProps } from './types';
 import ServerStatus from '../server-status';
 import { getPipelineUrl } from '@/pages/application/service';
@@ -25,13 +25,13 @@ import './index.less';
 const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
-  
-  let { deployInfo, envTypeCode, onOperate, appStatusInfo, nextTab, pipelineCode,checkVersion,handleTabChange,versionData } = props;
+
+  let { deployInfo, envTypeCode, onOperate, appStatusInfo, nextTab, pipelineCode, checkVersion, handleTabChange, versionData } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, feType, deployModel } = appData || {};
-  const [envLoading,setEnvLoading]=useState<boolean>(false);
+  const [envLoading, setEnvLoading] = useState<boolean>(false);
   const [deployNextEnvVisible, setDeployNextEnvVisible] = useState(false);
   const [deployMasterVisible, setDeployMasterVisible] = useState(false);
   const [envProjectVisible, setEnvProjectVisible] = useState(false);
@@ -48,7 +48,8 @@ export default function PublishDetail(props: IProps) {
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [beforeUploadInfo, setBeforeUploadInfo] = useState<boolean>(true);
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
-  const [versionPublishVisiable,setVersionPublishVisiable]=useState<boolean>(false)
+  const [versionPublishVisiable, setVersionPublishVisiable] = useState<boolean>(false);
+  const gmcVersion = checkVersion === true && appCategoryCode === 'gmc';
 
   let newNextEnvTypeCode = '';
   useEffect(() => {
@@ -138,7 +139,7 @@ export default function PublishDetail(props: IProps) {
           setProjectEnvCodeOptions(envs);
         }
       }
-    }).finally(()=>{
+    }).finally(() => {
       setEnvLoading(false)
     });
   };
@@ -151,7 +152,7 @@ export default function PublishDetail(props: IProps) {
       },
     });
   };
-  
+
   // 部署到下一个环境
   const deployNext = () => {
     onOperate('deployNextEnvStart');
@@ -161,9 +162,9 @@ export default function PublishDetail(props: IProps) {
   const cancelDeployNext = () => {
     onOperate('deployNextEnvEnd');
     setDeployNextEnvVisible(false);
-   // setConfirmLoading(false);
+    // setConfirmLoading(false);
   };
-  
+
 
   // 部署 master
   const deployToMaster = () => {
@@ -174,7 +175,7 @@ export default function PublishDetail(props: IProps) {
   const cancelDeployToMaster = () => {
     onOperate('deployMasterEnd');
     setDeployMasterVisible(false);
-   // setConfirmLoading(false);
+    // setConfirmLoading(false);
   };
 
 
@@ -260,7 +261,7 @@ export default function PublishDetail(props: IProps) {
         window.open(data, '_blank');
       }
     }
-    
+
   }
   const beforeUploadAction = (envCode: string) => {
     // setBeforeUploadInfo(true);
@@ -272,7 +273,7 @@ export default function PublishDetail(props: IProps) {
       }
     });
   };
-  const changeEnv=(e:any)=>{
+  const changeEnv = (e: any) => {
     onOperate('uploadImageStart');
     setDeployEnv(e.target.value);
     beforeUploadAction(e.target.value);
@@ -287,12 +288,12 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-         {checkVersion===true&& appData?.deployModel === 'online'&&envTypeCode !== 'prod'&&envTypeCode !== 'dev' && (
-          <Button type="primary" onClick={()=>{
+        {checkVersion === true && appData?.deployModel === 'online' && envTypeCode !== 'prod' && envTypeCode !== 'dev' && (
+          <Button type="primary" onClick={() => {
             setVersionPublishVisiable(true)
             onOperate('versionPublishStart');
-           
-            }}>
+
+          }}>
             部署到版本发布
           </Button>
         )}
@@ -315,7 +316,7 @@ export default function PublishDetail(props: IProps) {
             发布回滚
           </Button>
         ) : null} */}
-         
+
         {envTypeCode !== 'prod' && appData?.deployModel === 'online' && feType !== 'pda' && (
           <Button
             type="primary"
@@ -332,7 +333,7 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        {envTypeCode !== 'prod' && feType !== 'pda' && appData?.deployModel === 'online' && (
+        {!gmcVersion && envTypeCode !== 'prod' && feType !== 'pda' && appData?.deployModel === 'online' && (
           <Button type="primary" onClick={deployNext}>
             部署到下个环境
           </Button>
@@ -353,12 +354,12 @@ export default function PublishDetail(props: IProps) {
         bordered
       >
         <Descriptions.Item label="CRID" contentStyle={{ whiteSpace: 'nowrap' }}>
-        
+
           {metadata?.id || '--'}
         </Descriptions.Item>
         <Descriptions.Item label="部署分支" span={appData?.appType === 'frontend' ? 1 : 2}>
           {branchInfo?.releaseBranch ? <Paragraph copyable>{branchInfo?.releaseBranch}</Paragraph> : '---'}
-         
+
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
@@ -426,56 +427,56 @@ export default function PublishDetail(props: IProps) {
       {/* --------------------- modals --------------------- */}
 
       {/* 部署到 下一个环境 */}
-      <NextDeploy 
-      deployNextEnvVisible={deployNextEnvVisible}  
-      curPipelineCode={pipelineCode}    
-      pipelineOptions={pipelineOptions}  
-      onSave={()=>{
-       setDeployNextEnvVisible(false);
-        onOperate('deployNextEnvSuccess');
-      }} 
-      onClose={cancelDeployNext} 
-      nextEnvDataList={nextEnvDataList}/>
+      <NextDeploy
+        deployNextEnvVisible={deployNextEnvVisible}
+        curPipelineCode={pipelineCode}
+        pipelineOptions={pipelineOptions}
+        onSave={() => {
+          setDeployNextEnvVisible(false);
+          onOperate('deployNextEnvSuccess');
+        }}
+        onClose={cancelDeployNext}
+        nextEnvDataList={nextEnvDataList} />
 
       {/* 部署到主干分支 */}
-      <MasterDeploy 
-      deployMasterVisible={deployMasterVisible} 
-      masterBranchOptions={masterBranchOptions}
-      envDataList={envDataList}
-      selectMaster={selectMaster}
-      deployModel={deployModel}
-      appData={appData}
-      curPipelineCode={pipelineCode}
-      feType={feType}
-      changeMaster={(value:string)=>{setSelectMaster(value)}}
-      onSave={()=>{
-         setDeployMasterVisible(false);
-        // setDeployMasterEnv([]);
-         onOperate('deployMasterEnd');
-      }}
-      onClose={cancelDeployToMaster}
+      <MasterDeploy
+        deployMasterVisible={deployMasterVisible}
+        masterBranchOptions={masterBranchOptions}
+        envDataList={envDataList}
+        selectMaster={selectMaster}
+        deployModel={deployModel}
+        appData={appData}
+        curPipelineCode={pipelineCode}
+        feType={feType}
+        changeMaster={(value: string) => { setSelectMaster(value) }}
+        onSave={() => {
+          setDeployMasterVisible(false);
+          // setDeployMasterEnv([]);
+          onOperate('deployMasterEnd');
+        }}
+        onClose={cancelDeployToMaster}
       />
-     
+
       {/* 离线部署 */}
-      <OfflineDeploy 
-      deployVisible={deployVisible}
-      curPipelineCode={pipelineCode}
-      deployModel={deployModel}
-      onClose={handleCancel}
-      feType={feType}
-      envLoading={envLoading}
-      beforeUploadInfo={beforeUploadInfo}
-      changeEnv={(e:any)=>changeEnv(e)}
-      deployEnv={deployEnv}
-      offlineEnvData={offlineEnvData}
-      onSave={()=>{
-        setDeployVisible(false);
-        setDeployEnv([]);
-        onOperate('uploadImageEnd');
-      }}
+      <OfflineDeploy
+        deployVisible={deployVisible}
+        curPipelineCode={pipelineCode}
+        deployModel={deployModel}
+        onClose={handleCancel}
+        feType={feType}
+        envLoading={envLoading}
+        beforeUploadInfo={beforeUploadInfo}
+        changeEnv={(e: any) => changeEnv(e)}
+        deployEnv={deployEnv}
+        offlineEnvData={offlineEnvData}
+        onSave={() => {
+          setDeployVisible(false);
+          setDeployEnv([]);
+          onOperate('uploadImageEnd');
+        }}
 
       />
-    
+
 
       {/* 重启按钮 */}
       <Modal
@@ -501,32 +502,33 @@ export default function PublishDetail(props: IProps) {
         </div>
       </Modal>
       {/* 跳转项目环境信息页面按钮 */}
-      <EntryProject 
-      envProjectVisible={envProjectVisible}
-      onClose={()=>{
-        setEnvProjectVisible(false);
-      }}
-      appData={appData}
-      projectEnvCodeOptions={projectEnvCodeOptions}
-      envLoading={envLoading}
+      <EntryProject
+        envProjectVisible={envProjectVisible}
+        onClose={() => {
+          setEnvProjectVisible(false);
+        }}
+        appData={appData}
+        projectEnvCodeOptions={projectEnvCodeOptions}
+        envLoading={envLoading}
       />
-     {/* --------- 部署到版本发布弹窗----- */}
-      <VersionDeploy 
-      visible={versionPublishVisiable} 
-      onClose={()=>{setVersionPublishVisiable(false)
-        onOperate('versionPublishEnd');
-      }} 
-      handleTabChange={(tab:string)=>{handleTabChange(tab)}}
-      appCode={appData?.appCode}
-      curPipelineCode={pipelineCode}
-      onSave={()=>{
-        setVersionPublishVisiable(false)
-        onOperate('versionPublishEnd');
+      {/* --------- 部署到版本发布弹窗----- */}
+      <VersionDeploy
+        visible={versionPublishVisiable}
+        onClose={() => {
+          setVersionPublishVisiable(false)
+          onOperate('versionPublishEnd');
+        }}
+        handleTabChange={(tab: string) => { handleTabChange(tab) }}
+        appCode={appData?.appCode}
+        curPipelineCode={pipelineCode}
+        onSave={() => {
+          setVersionPublishVisiable(false)
+          onOperate('versionPublishEnd');
 
-      }}
-      versionData={versionData}
-       />
-     
+        }}
+        versionData={versionData}
+      />
+
     </div>
   );
 }

@@ -54,19 +54,17 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
-  const [publishType, setPublishType] = useState<string>('branch');
+  // 是否是gmc应用下的prod
+  const isGmcProd = checkVersion === true && appCategoryCode === 'gmc' && env === 'prod';
+  // 是否要显示版本管理tab
+  const isShowVersionTab = (checkVersion === true && env !== "prod" && env !== "dev") || isGmcProd;
+  const [publishType, setPublishType] = useState<string>(isGmcProd ? 'version' : 'branch');
   const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
   const [demandVisible, setDemandVisible] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any>({})
   const { categoryData = [], businessData = [] } = useContext(FeContext);
   const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
   const [form] = Form.useForm();
-
-  // 是否是gmc应用下的prod
-  const isGmcProd = checkVersion === true && appCategoryCode === 'gmc' && env === 'prod';
-  // 是否要显示版本管理tab
-  const isShowVersionTab = (checkVersion === true && env !== "prod" && env !== "dev") || isGmcProd;
-
 
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
