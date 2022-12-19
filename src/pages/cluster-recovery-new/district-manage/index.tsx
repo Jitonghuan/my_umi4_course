@@ -3,7 +3,7 @@ import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { Button, Form, Input, Popconfirm, Table, Modal, message,Select } from 'antd';
 import { getRequest, postRequest, putRequest, delRequest } from '@/utils/request';
-import { addHospitalDistrictInfo, updateHospitalDistrictInfo, getHospitalDistrictInfo, deleteHospitalDistrictInfo } from '../service';
+import { addHospitalDistrictInfo, updateHospitalDistrictInfo, getHospitalDistrictInfo, deleteHospitalDistrictInfo,getEnvListApi } from '../service';
 import { getCommonEnvCode } from '@/pages/cluster-recovery-new/service';
 import {identifiOptions} from './type'
 import './index.less';
@@ -15,9 +15,12 @@ const DistrictManage = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
+  const [envOptions,setEnvOptions]=useState<any>([])
+  const [envLoading,setEnvLoading]= useState<boolean>(false);
 
   useEffect(() => {
     getEnvCode();
+    getEnvOptions()
   }, []);
 
   function getEnvCode() {
@@ -95,6 +98,25 @@ const DistrictManage = () => {
     form.resetFields();
     setVisible(false);
   }
+  
+  const getEnvOptions=()=>{
+    setEnvLoading(true)
+    setEnvOptions([])
+    getRequest(getEnvListApi).then((res)=>{
+      if(res?.success){
+      const data=  res?.data?.map((item:string)=>({
+         label:item,
+         value:item,
+       }))
+
+       setEnvOptions(data)
+
+      }
+
+    }).finally(()=>{
+      setEnvLoading(false)
+    })
+  }
 
   return (
       <PageContainer>
@@ -169,17 +191,18 @@ const DistrictManage = () => {
             <Input />
           </Form.Item>
          
-          <Form.Item label="机构Code" name="hospitalDistrictCode" rules={[{ required: true, message: '请输入机构Code' }]}>
+          <Form.Item label="机构Code" tooltip="机构唯一标识" name="hospitalDistrictCode" rules={[{ required: true, message: '请输入机构Code' }]}>
             <Input />
+          </Form.Item>
+          <Form.Item label="环境Code" name="envCode" rules={[{ required: true, message: '请输入环境code' }]}>
+            <Select showSearch allowClear options={envOptions} loading={envLoading} />
           </Form.Item>
           <Form.Item label="流量标识" name="flowMark" rules={[{ required: true, message: '请输入流量标识' }]}>
             <Select  options={identifiOptions}/>
           </Form.Item>
-          <Form.Item label="环境code" name="envCode" rules={[{ required: true, message: '请输入环境code' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="IP信息" name="hospitalDistrictIp" rules={[{ required: true, message: '请输入IP信息' }]}>
-            <Input placeholder="机构IP网段，多个网段用|隔开" />
+         
+          <Form.Item label="流量信息" name="hospitalDistrictIp" rules={[{ required: true, message: '请输入IP信息' }]}>
+            <Input placeholder="IP或ID, 当IP有多个网段时，多个网段用 | 分割" />
           </Form.Item>
           <Form.Item label="描述" name="description" rules={[{ required: true, message: '请输入描述' }]}>
             <Input />

@@ -34,6 +34,10 @@ export default function NacosSync(){
             let curEnvCode=res?.data
             if(curEnvCode){
               queryNacosNamespaceList(curEnvCode)
+              
+            }
+            if(curEnvCode&&entryType==="isConfDiff"){
+              startDiffConfig(curEnvCode)
             }
             
           }else{
@@ -74,12 +78,13 @@ export default function NacosSync(){
 
 
     },[envCode])
-    const startDiffConfig=()=>{
+    const startDiffConfig=(curEnvCode?:string)=>{
       setLoading(true);
       try{
-        const params=nacosForm.getFieldsValue()     
+        const params=nacosForm.getFieldsValue()  
+        let envCodeParam=curEnvCode||envCode 
         diffConfig({
-            envCode,
+            envCode:envCodeParam,
             ...params
         }).then((result)=>{
             if (result?.success && !result?.data) {
@@ -115,9 +120,6 @@ export default function NacosSync(){
           dataId:diffInfo?.dataId,
           namespace:diffInfo?.namespace
       })
-      startDiffConfig()
-
-
       }else{
         nacosForm.setFieldsValue({
           type:"single"
@@ -219,7 +221,7 @@ export default function NacosSync(){
            
           </div>
           <div className="caption-right">
-            <Button type="primary" ghost disabled={!envCode|| loading || pending} onClick={startDiffConfig}>
+            <Button type="primary" ghost disabled={!envCode|| loading || pending} onClick={()=>{startDiffConfig()}}>
               开始比对配置
             </Button>
             <Button
@@ -285,7 +287,7 @@ export default function NacosSync(){
               }}
              description={""}
                >
-          {loading ? '加载中...' : completed ? '暂无数据' : <a onClick={startDiffConfig}>点击开始进行配置比对</a>}
+          {loading ? '加载中...' : completed ? '暂无数据' : <a onClick={()=>{startDiffConfig()}}>点击开始进行配置比对</a>}
          </Empty></> }
        
       </ContentCard>

@@ -62,7 +62,7 @@ export default function ClusterPage() {
             disabled={loading || !tableData?.length}
             onClick={() =>
               history.push({
-                pathname: './cluster-sync-detail'
+                pathname: '/matrix/cluster-recovery/cluster-sync-detail'
               },
 
                 { commonEnvCode:envCode,

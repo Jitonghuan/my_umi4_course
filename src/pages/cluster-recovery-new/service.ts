@@ -133,3 +133,5 @@ export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacos
     const url = `${appConfig.apiPrefix}/opsManage/k8s/multiple/getCurrentDistrictInfo`;
     return getRequest(url, { data: params });
   }
+
+  export const getEnvListApi= addAPIPrefix('/monitorManage/envCode/list');
