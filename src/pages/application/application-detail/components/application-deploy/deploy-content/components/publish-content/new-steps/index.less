@@ -9,6 +9,11 @@
     background: #ffffff;
     border-radius: 2px;
     border: 1px solid #e4e7ed;
+    .ant-btn.ant-btn-sm {
+      height: 20px;
+      font-size: 12px;
+      padding: 0 4px;
+    }
     &__steps {
         margin-top: 0;
         border: 0;
@@ -18,13 +23,7 @@
         .ant-steps-item-custom.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon{
           margin-left:8px
         }
-    
-       .ant-btn.ant-btn-sm {
-          height: 20px;
-          font-size: 13px;
-          padding: 0 4px;
-        }
-    
+  
         .ant-steps-item {
           // flex: 1;
           flex: unset;
@@ -62,7 +61,7 @@
       }
     
       .sub_process-wrapper-active::before {
-        background-color: #3591ff;
+        background-color: #3591ff !important;
       }
     
       .last_process-wrapper {

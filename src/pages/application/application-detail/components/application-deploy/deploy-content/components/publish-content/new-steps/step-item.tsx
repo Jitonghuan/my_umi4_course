@@ -159,7 +159,7 @@ export default function StepItem(props: any) {
                 </div>
             }
             description={
-                <div className='flex-column'>
+                <>
                     {
                         nodeStatus === 'WaitApprove' && (
                             <div>
@@ -184,17 +184,15 @@ export default function StepItem(props: any) {
                             </div>
                         )
                     }
-                    {
-                        status === 'error' && nodeStatus !== 'WaitInput' && <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading}>重试</Button>
-                    }
+
                     {nodeStatus === 'WaitInput' && (
                         <div style={{ marginTop: 2 }}>
-                            <Button onClick={openMergeConflict} disabled={(props?.deployedList || []).length === 0}>
+                            <Button onClick={openMergeConflict} size='small' disabled={(props?.deployedList || []).length === 0}>
                                 解决冲突
                       </Button>
                         </div>
                     )}
-                    {nodeStatus === 'WaitDownload' && (
+                    {nodeStatus === 'WaitDownload' && <div>
                         <Button
                             style={{ marginTop: 4 }}
                             target="_blank"
@@ -210,9 +208,9 @@ export default function StepItem(props: any) {
                         >
                             下载
                         </Button>
-                    )}
+                    </div>}
                     {['WaitConfirm', 'Paused'].includes(nodeStatus) && (
-                        <div className='flex-column' style={{ fontSize: 13 }}>
+                        <div className='flex-column' style={{ fontSize: 12 }}>
                             <a
                                 style={{ marginTop: 2, marginLeft: -9 }}
                                 onClick={() => {
@@ -223,21 +221,27 @@ export default function StepItem(props: any) {
                                 </a>
                         </div>
                     )}
-                    {status !== 'wait' && nodeCode.startsWith('deploy') && < a
-                        style={{ marginLeft: '-12px' }}
-                        onClick={() => {
-                            localStorage.setItem('__init_env_tab__', envTypeCode);
-                            history.replace({
-                                pathname: `deployInfo`,
-                                search: `viewLogEnv=${env || ""}&viewLogEnvType=${envTypeCode}&id=${metadata?.id}&appCode=${appData?.appCode}&type=viewLog_goBack`
-                            });
-                        }}
-                    >
-                        查看部署信息
+                    {status !== 'wait' && nodeCode.startsWith('deploy') &&
+                        <div>
+                            < a
+                                style={{ marginLeft: '-12px', fontSize: 12 }}
+                                onClick={() => {
+                                    localStorage.setItem('__init_env_tab__', envTypeCode);
+                                    history.replace({
+                                        pathname: `deployInfo`,
+                                        search: `viewLogEnv=${env || ""}&viewLogEnvType=${envTypeCode}&id=${metadata?.id}&appCode=${appData?.appCode}&type=viewLog_goBack`
+                                    });
+                                }}
+                            >
+                                查看部署信息
                 </a>
+                        </div>
                     }
-                    {['WaitConfirm', 'Paused', 'Running'].includes(nodeStatus) && <Button danger size='small' onClick={onCancelDeploy}>取消</Button>}
-                </div>
+                    {
+                        status === 'error' && nodeStatus !== 'WaitInput' && <div> <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading} size='small'>重试</Button></div>
+                    }
+                    {['WaitConfirm', 'Paused', 'Running'].includes(nodeStatus) && <div> <Button danger size='small' onClick={onCancelDeploy}>取消</Button></div>}
+                </>
             }
         />
     </>

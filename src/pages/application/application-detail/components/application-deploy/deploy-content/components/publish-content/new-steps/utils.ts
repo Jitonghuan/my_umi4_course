@@ -78,7 +78,7 @@ export const mockData: PipeType[] = [
     },
     {
         "id": 4,
-        "code": "building1",
+        "code": "deploy-0",
         name: '部署',
         "instanceCode": "qqq",
         "executorKind": "qqq",
