@@ -59,6 +59,7 @@ export default function Application() {
                     Modal.confirm({
                       title: '该应用A,B集群配置不一致，需要跳转至配置同步页面进行配置同步后再进行应用同步！',
                       onOk: () => {
+                        console.log("source",source)
                         history.push({
                           pathname:"/matrix/cluster-recovery/cluster-sync/nacos",
                         },{
