@@ -370,9 +370,10 @@ export default function PublishDetail(props: IProps) {
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
-        <Descriptions.Item label="冲突分支" span={4}>
-          {branchInfo?.conflictFeature || '--'}
-        </Descriptions.Item>
+        {!newPublish &&
+          <Descriptions.Item label="冲突分支" span={4}>
+            {branchInfo?.conflictFeature || '--'}
+          </Descriptions.Item>}
         <Descriptions.Item label="主干分支" span={4}>
           {branchInfo?.masterBranch || '--'}
         </Descriptions.Item>
