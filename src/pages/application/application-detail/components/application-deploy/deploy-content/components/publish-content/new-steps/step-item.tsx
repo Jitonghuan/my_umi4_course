@@ -26,6 +26,8 @@ export default function StepItem(props: any) {
     const [deployVisible, setDeployVisible] = useState(false);//确认部署弹窗
     const [viewLogVisible, setViewLogVisible] = useState(false);//查看日志弹窗
     const [retryLoading, setRetryLoading] = useState<boolean>(false);
+    const [sourceBranch, setSourceBranch] = useState<string>('');//源分支
+    const [targetBranch, setTargetBranch] = useState<string>(''); //冲突分支
 
     // 重试
     const handleRetry = async () => {
@@ -73,11 +75,13 @@ export default function StepItem(props: any) {
                     onOperate('mergeStart');
                     return;
                 }
-                const dataArray = res?.data.map((item: conflictItem, index: number) => ({
+                const dataArray = res?.data?.changes.map((item: conflictItem, index: number) => ({
                     ...item,
                     id: index + 1,
                     resolved: false,
                 }));
+                setSourceBranch(res?.data?.sourceBranch || '');
+                setTargetBranch(res?.data?.targetBranch || "");
                 setMergeMessage(dataArray);
                 setMergeVisible(true);
                 onOperate('mergeStart');
@@ -123,6 +127,8 @@ export default function StepItem(props: any) {
             retryMergeClick={handleRetry}
             isNewPublish={true}
             code={item?.code || ''}
+            targetBranch={targetBranch}
+            sourceBranch={sourceBranch}
         ></MergeConflict>
         <BatchDeployModal
             visible={['WaitConfirm', 'Paused'].includes(nodeStatus) && deployVisible}
