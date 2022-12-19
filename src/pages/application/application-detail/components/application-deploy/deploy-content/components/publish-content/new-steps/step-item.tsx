@@ -14,8 +14,8 @@ import { history, useLocation } from 'umi';
 
 export default function StepItem(props: any) {
     // status为步骤条节点（wait/process/finish/eror)的状态 nodeStatus为节点的状态 item为这个节点对象
-    const { title, status, nodeStatus, nodeCode, onOperate, deployInfo, pipelineCode, envTypeCode, env = '', onSpin = () => { }, stopSpin = () => { }, item, ...other } = props;
-    // const env=i
+    const { title, status, nodeStatus, nodeCode, onOperate, deployInfo, pipelineCode, envTypeCode, onSpin = () => { }, stopSpin = () => { }, item, ...other } = props;
+    const env = item?.extra?.options?.envCode || '';
     const { metadata, branchInfo, envInfo, buildInfo } = props.deployInfo || {};
     const { appData } = useContext(DetailContext);
     const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
@@ -148,7 +148,7 @@ export default function StepItem(props: any) {
             title={
                 <div className='flex'>
                     {props.title}
-                    <div className='operate-btn' style={{ width: 5 }}>
+                    <div className='operate-btn' style={{ width: 12 }}>
                         {status !== 'wait' && nodeCode !== 'start' && nodeCode !== 'end' && (
                             <a style={{}} onClick={() => { setViewLogVisible(true) }}>
                                 <FileTextOutlined />
@@ -212,7 +212,7 @@ export default function StepItem(props: any) {
                         </Button>
                     )}
                     {['WaitConfirm', 'Paused'].includes(nodeStatus) && (
-                        <div>
+                        <div className='flex-column' style={{ fontSize: 13 }}>
                             <a
                                 style={{ marginTop: 2, marginLeft: -9 }}
                                 onClick={() => {
@@ -221,30 +221,21 @@ export default function StepItem(props: any) {
                             >
                                 确认部署
                                 </a>
-                            <Button
-                                size="small"
-                                type="link"
+                            <a
                                 style={{ marginLeft: '-22px' }}
                                 onClick={() => {
                                     localStorage.setItem('__init_env_tab__', envTypeCode);
                                     history.replace({
                                         pathname: `deployInfo`,
                                         search: `viewLogEnv=${env || ""}&viewLogEnvType=${envTypeCode}&id=${metadata?.id}&appCode=${appData?.appCode}&type=viewLog_goBack`
-                                        // query: {
-                                        //   viewLogEnv: env || '',
-                                        //   viewLogEnvType: envTypeCode,
-                                        //   type: 'viewLog_goBack',
-                                        //   id: `${id}`,
-                                        //   appCode: appCode,
-                                        // },
                                     });
                                 }}
                             >
                                 查看部署信息
-                </Button>
+                </a>
                         </div>
                     )}
-                    {nodeStatus === 'Running' && <Button danger size='small' onClick={onCancelDeploy}>取消</Button>}
+                    {['WaitConfirm', 'Paused', 'Running'].includes(nodeStatus) && <Button danger size='small' onClick={onCancelDeploy}>取消</Button>}
                 </>
             }
         />

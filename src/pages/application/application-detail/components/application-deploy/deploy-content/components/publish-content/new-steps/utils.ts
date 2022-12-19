@@ -83,7 +83,7 @@ export const mockData: PipeType[] = [
         "instanceCode": "qqq",
         "executorKind": "qqq",
         "executorName": "qqq",
-        "status": "Success",
+        "status": "WaitConfirm",
         "consTimeSec": 1,
         "gmtBegin": "qqq",
         "gmtEnd": "qqq",
