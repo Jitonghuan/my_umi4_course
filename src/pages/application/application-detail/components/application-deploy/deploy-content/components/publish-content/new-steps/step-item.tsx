@@ -9,10 +9,13 @@ import NoConflict from '../../merge-conflict/NoConflict';
 import BatchDeployModal from './component/batch-deploy-modal';
 import DetailContext from '@/pages/application/application-detail/context';
 import ViewLogModal from './component/view-log-modal';
+import { history, useLocation } from 'umi';
+
 
 export default function StepItem(props: any) {
     // status为步骤条节点（wait/process/finish/eror)的状态 nodeStatus为节点的状态 item为这个节点对象
-    const { title, status, nodeStatus, nodeCode, onOperate, deployInfo, pipelineCode, envTypeCode, env = '', onSpin = () => { }, stopSpin = () => { }, item, ...other } = props;
+    const { title, status, nodeStatus, nodeCode, onOperate, deployInfo, pipelineCode, envTypeCode, onSpin = () => { }, stopSpin = () => { }, item, ...other } = props;
+    const env = item?.extra?.options?.envCode || '';
     const { metadata, branchInfo, envInfo, buildInfo } = props.deployInfo || {};
     const { appData } = useContext(DetailContext);
     const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
@@ -23,6 +26,8 @@ export default function StepItem(props: any) {
     const [deployVisible, setDeployVisible] = useState(false);//确认部署弹窗
     const [viewLogVisible, setViewLogVisible] = useState(false);//查看日志弹窗
     const [retryLoading, setRetryLoading] = useState<boolean>(false);
+    const [sourceBranch, setSourceBranch] = useState<string>('');//源分支
+    const [targetBranch, setTargetBranch] = useState<string>(''); //冲突分支
 
     // 重试
     const handleRetry = async () => {
@@ -70,11 +75,13 @@ export default function StepItem(props: any) {
                     onOperate('mergeStart');
                     return;
                 }
-                const dataArray = res?.data.map((item: conflictItem, index: number) => ({
+                const dataArray = res?.data?.changes.map((item: conflictItem, index: number) => ({
                     ...item,
                     id: index + 1,
                     resolved: false,
                 }));
+                setSourceBranch(res?.data?.sourceBranch || '');
+                setTargetBranch(res?.data?.targetBranch || "");
                 setMergeMessage(dataArray);
                 setMergeVisible(true);
                 onOperate('mergeStart');
@@ -91,11 +98,7 @@ export default function StepItem(props: any) {
         setVisible(false);
         onOperate('mergeEnd');
     };
-    const toLogDetail = () => {
-        console.log(item, 'item')
-        const url = `/matrix/application/view-log?taskCode=${item?.code}&instanceCode=${item?.instanceCode}&appCode=${appData?.appCode}&appName=${appData?.appName}`;
-        window.open(url, '_blank');
-    }
+
     // 取消发布
     const onCancelDeploy = () => {
         Modal.confirm({
@@ -124,6 +127,8 @@ export default function StepItem(props: any) {
             retryMergeClick={handleRetry}
             isNewPublish={true}
             code={item?.code || ''}
+            targetBranch={targetBranch}
+            sourceBranch={sourceBranch}
         ></MergeConflict>
         <BatchDeployModal
             visible={['WaitConfirm', 'Paused'].includes(nodeStatus) && deployVisible}
@@ -149,14 +154,14 @@ export default function StepItem(props: any) {
             title={
                 <div className='flex'>
                     {props.title}
-                    <div className='operate-btn' style={{ width: 5 }}>
-                        {status !== 'wait' && nodeCode !== 'start' && nodeCode !== 'end' && (
+                    {nodeCode !== 'start' && nodeCode !== 'end' && <div className='operate-btn' style={{ width: 12 }}>
+                        {status !== 'wait' && (
                             <a style={{}} onClick={() => { setViewLogVisible(true) }}>
                                 <FileTextOutlined />
                                 {/* 查看日志 */}
                             </a>
                         )}
-                    </div>
+                    </div>}
                 </div>
             }
             description={
@@ -185,17 +190,15 @@ export default function StepItem(props: any) {
                             </div>
                         )
                     }
-                    {
-                        status === 'error' && nodeStatus !== 'WaitInput' && <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading}>重试</Button>
-                    }
-                    {  nodeStatus === 'WaitInput' && (
+
+                    {nodeStatus === 'WaitInput' && (
                         <div style={{ marginTop: 2 }}>
-                            <Button onClick={openMergeConflict} disabled={(props?.deployedList || []).length === 0}>
+                            <Button onClick={openMergeConflict} size='small' disabled={(props?.deployedList || []).length === 0}>
                                 解决冲突
                       </Button>
                         </div>
                     )}
-                    { nodeStatus === 'WaitDownload' && (
+                    {nodeStatus === 'WaitDownload' && <div>
                         <Button
                             style={{ marginTop: 4 }}
                             target="_blank"
@@ -211,9 +214,9 @@ export default function StepItem(props: any) {
                         >
                             下载
                         </Button>
-                    )}
+                    </div>}
                     {['WaitConfirm', 'Paused'].includes(nodeStatus) && (
-                        <div>
+                        <div className='flex-column' style={{ fontSize: 12 }}>
                             <a
                                 style={{ marginTop: 2, marginLeft: -9 }}
                                 onClick={() => {
@@ -224,7 +227,26 @@ export default function StepItem(props: any) {
                                 </a>
                         </div>
                     )}
-                    {nodeStatus === 'Running' && <Button danger size='small' onClick={onCancelDeploy}>取消</Button>}
+                    {status !== 'wait' && nodeCode.startsWith('deploy') &&
+                        <div>
+                            < a
+                                style={{ marginLeft: '-12px', fontSize: 12 }}
+                                onClick={() => {
+                                    localStorage.setItem('__init_env_tab__', envTypeCode);
+                                    history.replace({
+                                        pathname: `deployInfo`,
+                                        search: `viewLogEnv=${env || ""}&viewLogEnvType=${envTypeCode}&id=${metadata?.id}&appCode=${appData?.appCode}&type=viewLog_goBack`
+                                    });
+                                }}
+                            >
+                                查看部署信息
+                </a>
+                        </div>
+                    }
+                    {
+                        status === 'error' && nodeStatus !== 'WaitInput' && <div> <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading} size='small'>重试</Button></div>
+                    }
+                    {['WaitConfirm', 'Paused', 'Running'].includes(nodeStatus) && <div> <Button danger size='small' onClick={onCancelDeploy}>取消</Button></div>}
                 </>
             }
         />

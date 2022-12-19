@@ -7,6 +7,8 @@ export interface MergeProp {
   id: any;
   isNewPublish?: boolean;
   code?: string;
+  sourceBranch?: string;
+  targetBranch?: string;
 }
 
 export interface conflictItem {

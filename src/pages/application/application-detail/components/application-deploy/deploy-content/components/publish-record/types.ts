@@ -3,6 +3,7 @@ export interface IProps {
   env: string;
   // appcode
   appCode?: string;
+  newPublish?: boolean;
 }
 
 // 数据结构

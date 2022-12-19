@@ -307,7 +307,7 @@ export default function DeployContent(props: DeployContentProps) {
           <VersionPublishRecord envTypeCode={envTypeCode} />
 
         </> :
-          <PublishRecord env={envTypeCode} appCode={appCode} />}
+          <PublishRecord env={envTypeCode} appCode={appCode} newPublish={newPublish.current} />}
       </div>
     </div>
   );
