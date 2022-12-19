@@ -148,18 +148,18 @@ export default function StepItem(props: any) {
             title={
                 <div className='flex'>
                     {props.title}
-                    <div className='operate-btn' style={{ width: 12 }}>
-                        {status !== 'wait' && nodeCode !== 'start' && nodeCode !== 'end' && (
+                    {nodeCode !== 'start' && nodeCode !== 'end' && <div className='operate-btn' style={{ width: 12 }}>
+                        {status !== 'wait' && (
                             <a style={{}} onClick={() => { setViewLogVisible(true) }}>
                                 <FileTextOutlined />
                                 {/* 查看日志 */}
                             </a>
                         )}
-                    </div>
+                    </div>}
                 </div>
             }
             description={
-                <>
+                <div className='flex-column'>
                     {
                         nodeStatus === 'WaitApprove' && (
                             <div>
@@ -187,14 +187,14 @@ export default function StepItem(props: any) {
                     {
                         status === 'error' && nodeStatus !== 'WaitInput' && <Button style={{ marginTop: 4 }} onClick={handleRetry} loading={retryLoading}>重试</Button>
                     }
-                    {  nodeStatus === 'WaitInput' && (
+                    {nodeStatus === 'WaitInput' && (
                         <div style={{ marginTop: 2 }}>
                             <Button onClick={openMergeConflict} disabled={(props?.deployedList || []).length === 0}>
                                 解决冲突
                       </Button>
                         </div>
                     )}
-                    { nodeStatus === 'WaitDownload' && (
+                    {nodeStatus === 'WaitDownload' && (
                         <Button
                             style={{ marginTop: 4 }}
                             target="_blank"
@@ -221,22 +221,23 @@ export default function StepItem(props: any) {
                             >
                                 确认部署
                                 </a>
-                            <a
-                                style={{ marginLeft: '-22px' }}
-                                onClick={() => {
-                                    localStorage.setItem('__init_env_tab__', envTypeCode);
-                                    history.replace({
-                                        pathname: `deployInfo`,
-                                        search: `viewLogEnv=${env || ""}&viewLogEnvType=${envTypeCode}&id=${metadata?.id}&appCode=${appData?.appCode}&type=viewLog_goBack`
-                                    });
-                                }}
-                            >
-                                查看部署信息
-                </a>
                         </div>
                     )}
+                    {status !== 'wait' && nodeCode.startsWith('deploy') && < a
+                        style={{ marginLeft: '-12px' }}
+                        onClick={() => {
+                            localStorage.setItem('__init_env_tab__', envTypeCode);
+                            history.replace({
+                                pathname: `deployInfo`,
+                                search: `viewLogEnv=${env || ""}&viewLogEnvType=${envTypeCode}&id=${metadata?.id}&appCode=${appData?.appCode}&type=viewLog_goBack`
+                            });
+                        }}
+                    >
+                        查看部署信息
+                </a>
+                    }
                     {['WaitConfirm', 'Paused', 'Running'].includes(nodeStatus) && <Button danger size='small' onClick={onCancelDeploy}>取消</Button>}
-                </>
+                </div>
             }
         />
     </>

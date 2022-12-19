@@ -1,0 +1,211 @@
+
+  .publish-content-compo-wrapper-new {
+    padding: 20px;
+    // width: 100%;
+    max-height: 360px;
+    overflow: auto;
+    margin-top: 16px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 2px;
+    border: 1px solid #e4e7ed;
+    &__steps {
+        margin-top: 0;
+        border: 0;
+        padding: 24px 0px 0;
+        height: 120px;
+    
+        .ant-steps-item-custom.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon{
+          margin-left:8px
+        }
+    
+       .ant-btn.ant-btn-sm {
+          height: 20px;
+          font-size: 13px;
+          padding: 0 4px;
+        }
+    
+        .ant-steps-item {
+          // flex: 1;
+          flex: unset;
+          min-width: 150px;
+          position: relative;
+    
+          &-container{
+            &:hover{
+             .operate-btn{
+               display: flex;
+             }
+            }
+            .operate-btn{
+              display: flex;
+              font-size: 13px;
+              margin-left: 5px;
+              // &:hover{
+              //   display: flex;
+              // }
+            }
+          }
+    
+          &:last-child {
+            min-width: max-content;
+          }
+    
+          .ant-steps-item-title {
+            padding-right: 30px;
+    
+            &::after {
+              left: calc(100% - 20px);
+            }
+          }
+        }
+      }
+    
+      .sub_process-wrapper-active::before {
+        background-color: #3591ff;
+      }
+    
+      .last_process-wrapper {
+        position: relative;
+        width: 500px;
+        margin: -40px 0 0 330px;
+        top: -60px;
+        box-sizing: border-box;
+        padding-right: 10px;
+      }
+    
+      .full-scree-icon {
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        justify-content: flex-end;
+        position: relative;
+        top: -25px;
+        right: 5px;
+      }
+    
+      .cancel-btn {
+        color: #d48806;
+        position: absolute;
+        left: -4px;
+        top: 42px;
+      }
+    
+      .single-cancel-btn {
+        position: absolute;
+        right: 4px;
+        top: 4px;
+      }
+    
+    
+    .suject-finish {
+      .sub_process-wrapper::after {
+        background-color:  #3591ff;
+      }
+    }
+    
+    .sub_process {
+      box-sizing: border-box;
+      padding-left: 97px;
+      height: 118px;
+      position: relative;
+    
+      &-wrapper {
+        position: relative;
+        display: inline-block;
+    
+        &::before {
+          position: absolute;
+          content: '';
+          left: 0;
+          top: 46px;
+          width: 1px;
+          height: calc(100% - 133px);
+          background-color: #d2d8e6;
+        }
+    
+        &::after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 46px;
+          width: 1px;
+          height: calc(100% - 133px);
+          background-color: #d2d8e6;
+        }
+        .ant-steps-item:first-child{
+          margin-left: 25px;
+        }
+      }
+    
+      &-steps {
+        padding: 24px 0 24px 30px;
+        box-sizing: border-box;
+      }
+    
+      .ant-steps-item {
+        flex-grow: 1;
+      }
+    
+      .ant-steps-item:last-child {
+        box-sizing: border-box;
+        padding-right: 50px;
+    
+        &::after {
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 50px;
+          height: 16px;
+          border-bottom: 1px solid #d2d8e6;
+          border-radius: 0 0 12px 0;
+          content: '';
+        }
+      }
+    
+      .ant-steps-item-finish {
+        &::after {
+          border-color:  #3591ff !important;
+        }
+      }
+    
+      &-title {
+        position: absolute;
+        color: #00000073;
+        left: 0;
+        top: -1px;
+        width: 120px;
+        height: 42px;
+        border-bottom: 1px solid #d2d8e6;
+        border-radius: 0 0 0 12px;
+        box-sizing: border-box;
+        padding: 4px;
+        display: flex;
+        align-items: flex-end;
+        cursor: pointer;
+        font-size: 12px;
+    
+        span {
+          margin-left: 6px;
+        }
+      }
+    
+      &-0 {
+        margin-top: 15px;
+    
+        &::before {
+          content: none;
+        }
+      }
+    
+      &-active {
+        .sub_process-title {
+          border-color:  #3591ff;
+          color:  #3591ff;
+        }
+      }
+     
+    }
+  }
+
+  

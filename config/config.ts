@@ -56,6 +56,7 @@ export default defineConfig({
       headers: {
         "Connection": "keep-alive",
       },
+      changeOrigin: true,
     },
     '/v1': {
       target: 'http://matrix-test.cfuture.shop/',

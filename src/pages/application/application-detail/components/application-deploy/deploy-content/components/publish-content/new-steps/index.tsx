@@ -3,6 +3,7 @@ import { Steps, Empty, Button } from 'antd';
 import StepItem from './step-item';
 import { statusMap } from './type';
 import { mockData, handleData } from './utils';
+import './index.less'
 
 // 判断多环境前面的线条以及环境名是否要变蓝
 const changeColor = (data: any, env?: any) => {
@@ -130,7 +131,7 @@ export default function NewDeploySteps(props: any) {
     };
 
     return (
-        <div className="publish-content-compo-wrapper" style={{ display: 'flex' }}>
+        <div className="publish-content-compo-wrapper-new" style={{ display: 'flex' }}>
             {data.length !== 0 ? (
                 data.map((item: any, index: number) =>
                     !Array.isArray(item) ? (
