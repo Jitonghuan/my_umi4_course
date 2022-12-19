@@ -217,12 +217,14 @@ const DetailDrawer = (props: IPorps) => {
         })}
       </div>
       <div className={`${rootCls}-ticket`}>
+        {!(baseInfo?.applyStatus!==0&&auditLogs?.length===0)&&
+        <>
          <div style={{padding:30}}>
       <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
         {/* <Step title="开始" /> */}
 
        
-        {auditGroups?.length>0&&<Step title="一级审批" icon={StatusFirstMappingIcon[status]|| <MobileOutlined /> } 
+        {auditGroups?.length>0&&<Step title="一级审批" icon={StatusFirstMappingIcon[status]|| <CheckCircleTwoTone/> } 
            description={<p> 
              <p>
                审批人:
@@ -273,6 +275,8 @@ const DetailDrawer = (props: IPorps) => {
 
          </div>
 
+        </>}
+        
 
       </div>
     </Drawer>
