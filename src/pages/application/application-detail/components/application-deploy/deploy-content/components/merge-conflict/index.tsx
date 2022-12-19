@@ -112,9 +112,9 @@ export default function MergeConflict(prop: MergeProp) {
           <div className='flex-space-between'>
             <div>冲突详情</div>
             <div className='flex-column modal-title'>
-              {<div className='title-item'>
+              {<div className='flex'>
                 <Tooltip title={`源分支：${sourceBranch}`}>
-                  冲突分支：{sourceBranch}
+                  <span className='title-item'>冲突分支：{sourceBranch}</span>
                 </Tooltip>
                 <span style={{ marginLeft: 5, color: '#3591ff' }}>
                   <CopyToClipboard text={sourceBranch} onCopy={() => message.success('复制成功！')}>
@@ -122,9 +122,9 @@ export default function MergeConflict(prop: MergeProp) {
                   </CopyToClipboard>
                 </span>
               </div>}
-              {<div className='title-item'>
+              {<div className='flex'>
                 <Tooltip title={`目标分支：${targetBranch}`}>
-                  目标分支：{targetBranch}
+                  <span className='title-item'>目标分支：{targetBranch}</span>
                 </Tooltip>
                 <span style={{ marginLeft: 5, color: '#3591ff' }}>
                   <CopyToClipboard text={targetBranch} onCopy={() => message.success('复制成功！')}>
