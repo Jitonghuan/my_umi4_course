@@ -1,13 +1,18 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Modal, Button, List, Tooltip, message, Popconfirm } from 'antd';
-import { CheckCircleTwoTone, QuestionCircleFilled } from '@ant-design/icons';
+import { CheckCircleTwoTone, QuestionCircleFilled, CopyOutlined } from '@ant-design/icons';
 import MonacoEditor from './MonacoEditor';
 import './index.less';
 import { MergeProp, conflictItem } from './types';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { pushMergeMessage, newPushMergeMessage } from '@/pages/application/service';
+const mockData = 'feature_testqa_20221215164919,feature_maye_fix_20221129165158,feature_testqa_20221215164919,feature_testqa_20221215164919,feature_testqa_20221215164919,feature_testqa_20221215164919';
+const mockData1 = 'feature_testqa_20221215164919,feature_maye_fix_20221129165158,fe,f164919';
+
+
 
 export default function MergeConflict(prop: MergeProp) {
-  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick, id, isNewPublish = false, code = '' } = prop;
+  const { visible, handleCancel, mergeMessage, releaseBranch, retryMergeClick, id, isNewPublish = false, code = '', sourceBranch = '', targetBranch = '' } = prop;
   const [allFile, setAllFile] = useState<any>([]); //所有冲突的文件
   const [chooseFile, setChooseFile] = useState<any>({}); //当前选中的文件
   const [loading, setLoading] = useState(false);
@@ -102,7 +107,33 @@ export default function MergeConflict(prop: MergeProp) {
   return (
     <>
       <Modal
-        title="冲突详情"
+        // title="冲突详情"
+        title={isNewPublish ?
+          <div className='flex-space-between'>
+            <div>冲突详情</div>
+            <div className='flex-column modal-title'>
+              {<div className='flex'>
+                <Tooltip title={`源分支：${sourceBranch}`}>
+                  <span className='title-item'>冲突分支：{sourceBranch}</span>
+                </Tooltip>
+                <span style={{ marginLeft: 5, color: '#3591ff' }}>
+                  <CopyToClipboard text={sourceBranch} onCopy={() => message.success('复制成功！')}>
+                    <CopyOutlined />
+                  </CopyToClipboard>
+                </span>
+              </div>}
+              {<div className='flex'>
+                <Tooltip title={`目标分支：${targetBranch}`}>
+                  <span className='title-item'>目标分支：{targetBranch}</span>
+                </Tooltip>
+                <span style={{ marginLeft: 5, color: '#3591ff' }}>
+                  <CopyToClipboard text={targetBranch} onCopy={() => message.success('复制成功！')}>
+                    <CopyOutlined />
+                  </CopyToClipboard>
+                </span>
+              </div>}
+            </div>
+          </div> : '冲突详情'}
         className="monaco-edit-dialog"
         visible={visible}
         onCancel={handleCancel}
