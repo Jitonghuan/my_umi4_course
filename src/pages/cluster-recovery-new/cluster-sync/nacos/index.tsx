@@ -125,10 +125,10 @@ export default function NacosSync(){
       startDiffConfig(diffInfo?.envCode)
       setFirstDataId(diffInfo?.dataId)
       setFirstNamespace(diffInfo?.namespace)
-      queryNacosDataIdList({
-        envCode,
-        namespace:diffInfo?.namespace
-      })
+      // queryNacosDataIdList({
+      //   envCode:,
+      //   namespace:diffInfo?.namespace
+      // })
      
       }else{
         nacosForm.setFieldsValue({
