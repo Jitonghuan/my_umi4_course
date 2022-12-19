@@ -24,7 +24,7 @@ import appConfig from '@/app.config';
 const rootCls = 'publish-record-compo';
 
 export default function PublishRecord(props: IProps) {
-  const { env, appCode } = props;
+  const { env, appCode, newPublish } = props;
 
   const { appData } = useContext(DetailContext);
   const { appCategoryCode, deploymentName, appType } = appData || {};
@@ -289,8 +289,8 @@ export default function PublishRecord(props: IProps) {
           </Tabs>
         </Modal>
       )}
-      <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
-        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
+      <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)} >
+        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} newPublish={newPublish} />
       </Modal>
     </div>
   );

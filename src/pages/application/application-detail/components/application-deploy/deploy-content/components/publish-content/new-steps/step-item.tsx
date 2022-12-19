@@ -15,6 +15,7 @@ import { history, useLocation } from 'umi';
 export default function StepItem(props: any) {
     // status为步骤条节点（wait/process/finish/eror)的状态 nodeStatus为节点的状态 item为这个节点对象
     const { title, status, nodeStatus, nodeCode, onOperate, deployInfo, pipelineCode, envTypeCode, env = '', onSpin = () => { }, stopSpin = () => { }, item, ...other } = props;
+    // const env=i
     const { metadata, branchInfo, envInfo, buildInfo } = props.deployInfo || {};
     const { appData } = useContext(DetailContext);
     const [mergeVisible, setMergeVisible] = useState(false); //冲突详情
@@ -93,11 +94,7 @@ export default function StepItem(props: any) {
         setVisible(false);
         onOperate('mergeEnd');
     };
-    const toLogDetail = () => {
-        console.log(item, 'item')
-        const url = `/matrix/application/view-log?taskCode=${item?.code}&instanceCode=${item?.instanceCode}&appCode=${appData?.appCode}&appName=${appData?.appName}`;
-        window.open(url, '_blank');
-    }
+
     // 取消发布
     const onCancelDeploy = () => {
         Modal.confirm({

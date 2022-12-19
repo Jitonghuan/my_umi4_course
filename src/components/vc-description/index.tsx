@@ -60,7 +60,7 @@ const funcName = (props: any) => {
     finish: { text: '发布完成', color: 'green' },
   };
 
-  const { dataSource = {}, ...rest } = props;
+  const { dataSource = {}, newPublish = false, ...rest } = props;
   let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
   let envType = appConfig.envType;
 
@@ -79,10 +79,10 @@ const funcName = (props: any) => {
     } catch (e) {
       return url
         ? [
-            {
-              subJenkinsUrl: url,
-            },
-          ]
+          {
+            subJenkinsUrl: url,
+          },
+        ]
         : [];
     }
   }
@@ -127,10 +127,10 @@ const funcName = (props: any) => {
         }
       </Descriptions.Item>
 
-      <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
+      {!newPublish && <Descriptions.Item label="jenkins" contentStyle={{ display: 'block' }}>
         {appConfig.IS_Matrix === 'public' &&
-        dataSource?.jenkinsUrl &&
-        (env === 'prod' ? dataSource?.deployId > 43222 : dataSource?.deployId > 1595) ? (
+          dataSource?.jenkinsUrl &&
+          (env === 'prod' ? dataSource?.deployId > 43222 : dataSource?.deployId > 1595) ? (
           <>
             {getJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -213,8 +213,8 @@ const funcName = (props: any) => {
           </>
         ) : null}
         {appConfig.IS_Matrix === 'public' &&
-        dataSource?.jenkinsUrl &&
-        (env === 'prod' ? dataSource?.deployId < 43222 : dataSource?.deployId < 1595) ? (
+          dataSource?.jenkinsUrl &&
+          (env === 'prod' ? dataSource?.deployId < 43222 : dataSource?.deployId < 1595) ? (
           <>
             {getOldJenkins(dataSource?.jenkinsUrl)?.map((jenkinsItem: any) => (
               <div style={{ marginBottom: '5px' }}>
@@ -226,7 +226,7 @@ const funcName = (props: any) => {
             ))}
           </>
         ) : null}
-      </Descriptions.Item>
+      </Descriptions.Item>}
       {dataSource?.tagName !== '' && <Descriptions.Item label="tag">{dataSource?.tagName}</Descriptions.Item>}
       <div style={{ borderTop: '1px solid #d3d7e0', height: '1px' }}></div>
       <div style={{ marginLeft: 24, display: 'block' }}>功能分支:</div>
