@@ -474,6 +474,8 @@ export default function DpMonitorEdit(props: any) {
             })
           }}
           type={rulesType}
+          entryType="biz-api"
+          monitorName={logForm?.getFieldValue('name')}
         />
       </ContentCard>
     </PageContainer>

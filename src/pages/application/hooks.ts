@@ -139,6 +139,8 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
   return [data, loading, loadData];
 }
 
+
+
 /**
  * 获取应用下的环境列表，返回的数据按 envTypeCode 分组
  */

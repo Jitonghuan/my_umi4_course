@@ -15,7 +15,10 @@ export type Params = [
   {
     /** 控制是否在首次渲染时立即执行 */
     immediate: boolean;
+    /** 是否需要在执行一些操作之后再手动开启定时器 默认不 */
+    delay: boolean
   }?,
+
 ];
 
 export interface Response {
@@ -63,7 +66,9 @@ export default (...params: Params): Response => {
   // 首次渲染时立即执行
   useMemo(() => {
     const [fn, interval, options] = cacheRef.current.params;
-    createInterval(options?.immediate);
+    if (!options?.delay) {
+      createInterval(options?.immediate);
+    }
   }, []);
 
   // 组件卸载时清除定时器

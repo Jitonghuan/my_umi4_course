@@ -324,7 +324,6 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       const { metaspace = [] } = res.data;
       let curxAxis: any[] = [];
       let metaspaceArry: any = [];
-      const fullCount: string[] = [];
       metaspace?.map((ele: any, index_one: number) => {
         let dataSource: any = [];
         let dataName: any = '';
@@ -333,7 +332,7 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
 
           // 数据结构变一下
           dataSource.push([moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'), Number(item[1]).toFixed(2)]);
-          // dataSource.push(Number(item[1]).toFixed(2));
+         
 
           dataName = '元空间_' + Object.keys(ele)[0];
         });
@@ -342,8 +341,7 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
           data: dataSource,
         });
 
-        // xAxis.push(moment(Number(el[0]) * 1000).format('MM-DD HH:mm:ss'));
-        // fullCount.push(Number(el[1]).toFixed(2));
+        
       });
 
       curxAxis = curxAxis.filter((currentValue, index, arr) => {
@@ -369,6 +367,62 @@ export const queryJvmMetaspace = (params: { [key: string]: string }) =>
       sum: {},
     };
   });
+
+
+// 应⽤JVM堆内存使⽤
+export const jvmCurrentThreadsApi = `${appConfig.apiPrefix}/monitorManage/app/jvmCurrentThreads`;
+export const queryJvmCurrentThreads = (params: { [key: string]: string }) =>
+  getRequest(jvmCurrentThreadsApi, { ...params }).then((res: any) => {
+    if (res.success) {
+      const { currentThreads = [] } = res.data;
+      let curxAxis: any[] = [];
+      let threadsArry: any = [];
+      currentThreads?.map((ele: any, index_one: number) => {
+        let dataSource: any = [];
+        let dataName: any = '';
+        ele[Object.keys(ele)[0]]?.map((item: any, index_two: number) => {
+          curxAxis.push(Number(item[0]) * 1000);
+
+          // 数据结构变一下
+          dataSource.push([moment(Number(item[0]) * 1000).format('MM-DD HH:mm:ss'), Number(item[1]).toFixed(2)]);
+         
+
+          dataName = '线程数_' + Object.keys(ele)[0];
+        });
+        threadsArry.push({
+          name: dataName,
+          data: dataSource,
+        });
+
+        
+      });
+
+      curxAxis = curxAxis.filter((currentValue, index, arr) => {
+        return arr.indexOf(currentValue) === index;
+      });
+      curxAxis.sort((a: any, b: any) => {
+        return a - b;
+      });
+      let xAxis: any = [];
+      curxAxis?.map((item) => {
+        xAxis.push(moment(Number(item)).format('MM-DD HH:mm:ss'));
+      });
+      return {
+        count: {
+          xAxis,
+          dataSource: [threadsArry],
+        },
+        sum: {},
+      };
+    }
+    return {
+      count: {},
+      sum: {},
+    };
+  });
+
+
+
 
 /**
  * POD明细列表

@@ -89,7 +89,6 @@ const Coms = (props: IProps) => {
       start = startTime;
       end = Number(endTime);
     }
-    console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), 'jvm监控')
     queryFn({
       data: {
         appCode: requestParams.appCode,

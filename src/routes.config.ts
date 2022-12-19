@@ -145,6 +145,13 @@ export default [
         component: '@/pages/application/all-application',
       },
       {
+        path: `${baseRoutePath}/application/view-log`,
+        name: '日志详情',
+        key: 'appList',
+        hideInMenu: true,
+        component: '@/pages/application/view-log',
+      },
+      {
         path: `${baseRoutePath}/application/list`,
         name: '应用列表',
         key: 'appList',

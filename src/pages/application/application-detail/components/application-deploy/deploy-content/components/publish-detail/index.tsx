@@ -26,7 +26,7 @@ const rootCls = 'publish-detail-compo';
 const { Paragraph } = Typography;
 export default function PublishDetail(props: IProps) {
 
-  let { deployInfo, envTypeCode, onOperate, appStatusInfo, nextTab, pipelineCode, checkVersion, handleTabChange, versionData } = props;
+  let { deployInfo, envTypeCode, onOperate, appStatusInfo, nextTab, pipelineCode, checkVersion, handleTabChange, versionData, newPublish } = props;
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
   const { appData } = useContext(DetailContext);
@@ -436,7 +436,9 @@ export default function PublishDetail(props: IProps) {
           onOperate('deployNextEnvSuccess');
         }}
         onClose={cancelDeployNext}
-        nextEnvDataList={nextEnvDataList} />
+        nextEnvDataList={nextEnvDataList}
+        newPublish={newPublish}
+      />
 
       {/* 部署到主干分支 */}
       <MasterDeploy
@@ -455,6 +457,7 @@ export default function PublishDetail(props: IProps) {
           onOperate('deployMasterEnd');
         }}
         onClose={cancelDeployToMaster}
+        newPublish={newPublish}
       />
 
       {/* 离线部署 */}

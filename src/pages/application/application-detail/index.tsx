@@ -38,6 +38,7 @@ export default function ApplicationDetail(props: IProps) {
     const currRoute = /\/([\w-]+)$/.exec(location.pathname)?.[1];
     return activeKeyMap[currRoute!] || currRoute;
   }, [location.pathname]);
+
   // 页面销毁时清空缓存
   useEffect(() => () => sessionStorage.removeItem('__init_env_tab__'), []);
   let currentUseNacos: any = [];
@@ -160,7 +161,6 @@ export default function ApplicationDetail(props: IProps) {
   return (
     <PageContainer className="application-detail-page">
       <FilterCard className="layout-compact">
-        {console.log("--location.search,",location.search)}
         <Tabs
           activeKey={tabActiveKey}
           onChange={(key) => {

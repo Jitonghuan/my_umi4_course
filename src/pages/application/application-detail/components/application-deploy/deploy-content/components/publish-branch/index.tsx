@@ -11,7 +11,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs, Form } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { createDeploy, updateFeatures, updateReleaseDeploy } from '@/pages/application/service';
+import { createDeploy, updateFeatures, updateReleaseDeploy, newCreateDeploy, newUpdateFetures, newUpdateReleaseDeploy } from '@/pages/application/service';
 import { listAppEnv } from '@/pages/application/service';
 import { getRequest } from '@/utils/request';
 import { optionsToLabelMap } from '@/utils/index';
@@ -38,7 +38,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     changeBranchName,
     loading,
     versionData,
-    checkVersion
+    checkVersion,
+    newPublish
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -86,13 +87,15 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
       if (publishType === "version") {
-        return await updateReleaseDeploy({
+        const updateRelease = newPublish ? newUpdateFetures : updateReleaseDeploy;
+        return await updateRelease({
           deployId: metadata?.id,
           releaseId: releaseRowKeys,
         });
 
       }
-      return await updateFeatures({
+      const updateFeature = newPublish ? newUpdateFetures : updateFeatures;
+      return await updateFeature({
         id: metadata?.id,
         features: filter,
       });
@@ -115,8 +118,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         ...params,
       })
     }
-
-    return await createDeploy({
+    const create = newPublish ? newCreateDeploy : createDeploy;
+    return await create({
       appCode: appCode!,
       envTypeCode: env,
       features: filter,

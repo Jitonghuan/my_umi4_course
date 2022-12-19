@@ -75,17 +75,22 @@ export const checkResultUrl = `${appConfig.apiPrefix}/appManage/dependencyManage
 
 /** POST 创建部署 */
 export const createDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create`;
+export const newCreateDeployUrl = `v2/releaseManage/deploy/create`;
 
 /** POST 退出 */
 export const withdrawFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/withdrawFeatures`;
+export const newWithdrawFeaturesUrl = 'v2/releaseManage/deploy/withdrawFeatures'
 
 /** POST 重新提交分支 */
 export const reCommitUrl = `${appConfig.apiPrefix}/releaseManage/deploy/reCommit`;
+export const newReCommitUrl = `v2/releaseManage/deploy/reCommit`;
 
 /** POST 追加分支 */
 export const updateFeaturesUrl = `${appConfig.apiPrefix}/releaseManage/deploy/updateFeatures`;
+export const newUpdateFeaturesUrl = `v2/releaseManage/deploy/updateFeatures`;
 /** POST 追加版本 */
 export const updateReleaseDeployUrl = `${appConfig.apiPrefix}/releaseManage/releaseDeploy/update`;
+export const newUpdateReleaseDeployUrl = `v2/releaseManage/releaseDeploy/update`;
 
 /** POST 部署到版本发布 */
 export const appReleasePublishUrl = `${appConfig.apiPrefix}/releaseManage/appRelease/publish`;
@@ -112,12 +117,16 @@ export const retryDelFeatureUrl = `${appConfig.apiPrefix}/releaseManage/deploy/r
 
 /** POST 取消部署 */
 export const cancelDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/cancel`;
+export const newCancelDeployUrl = `/v2/releaseManage/deploy/cancelTask`;
 
 /** POST 部署到下一个环境 */
 export const deployReuseUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/reuse`;
+export const newDeployReuseUrl = `v2/releaseManage/deploy/create/reuse`;
 
 /** POST 部署主干分支*/
 export const deployMasterUrl = `${appConfig.apiPrefix}/releaseManage/deploy/create/master`;
+
+export const newDeployMasterUrl = `v2/releaseManage/deploy/create/master`
 
 /** GET 根据应用分类code查询发布环境列表 */
 export const queryEnvsReqUrl = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
@@ -465,6 +474,13 @@ export const queryActiveDeployInfo = async (params: any) => {
   });
 };
 
+export const queryNewDeployInfoUrl = `v2/releaseManage/deploy/getActiveDeployInfo`;
+export const getNewDeployInfo = async (params: any) => {
+  return getRequest(queryNewDeployInfoUrl, {
+    data: params,
+  });
+};
+
 /** 查看feature部署情况 */
 export const queryFeatureDeployed = async (params: {
   /** 应用CODE */
@@ -508,6 +524,13 @@ export const createDeploy = (params: {
     data: params,
   });
 
+// 新的创建部署
+export const newCreateDeploy = (params: any) =>
+  postRequest(newCreateDeployUrl, {
+    data: params,
+  });
+
+
 /** 追加发布的feature列表 */
 export const updateFeatures = (params: {
   /** 部署的数据库自增ID */
@@ -519,31 +542,43 @@ export const updateFeatures = (params: {
     data: params,
   });
 
+export const newUpdateFetures = (params: any) =>
+  postRequest(newUpdateFeaturesUrl, {
+    data: params,
+  });
 
-  /** 追加发布的version列表 */
+
+
+/** 追加发布的version列表 */
 export const updateReleaseDeploy = (params: {
   /** 部署的数据库自增ID */
   deployId: number;
   /** 选择的feature分支 */
-  releaseId: number|undefined;
+  releaseId: number | undefined;
 }) =>
   postRequest(updateReleaseDeployUrl, {
     data: params,
   });
 
+export const newUpdateReleaseDeploy = (params: any) =>
+  postRequest(newUpdateReleaseDeployUrl, {
+    data: params,
+  });
 
-  //部署到版本发布
-  export const appReleasePublish = (params: {
-    reusePipelineCode:string;
-    releaseId:number;
-    pipelineCode:string;
-    config:string;
-    sql:string;
-  }) =>
-    postRequest(appReleasePublishUrl, {
-      data: params,
-    });
-  
+
+
+//部署到版本发布
+export const appReleasePublish = (params: {
+  reusePipelineCode: string;
+  releaseId: number;
+  pipelineCode: string;
+  config: string;
+  sql: string;
+}) =>
+  postRequest(appReleasePublishUrl, {
+    data: params,
+  });
+
 
 
 /** 重新提交 */
@@ -556,6 +591,12 @@ export const reCommit = (params: {
   postRequest(reCommitUrl, {
     data: params,
   });
+
+export const newReCommit = (params: any) =>
+  postRequest(newReCommitUrl, {
+    data: params,
+  });
+
 
 /** 重试合并 */
 export const retryMerge = (params: {
@@ -572,6 +613,13 @@ export const withdrawFeatures = (params: { id: number; features: any }) =>
     data: params,
     hideToast: true,
   });
+
+export const newWithdrawFeatures = (params: any) =>
+  postRequest(newWithdrawFeaturesUrl, {
+    data: params,
+    hideToast: true,
+  });
+
 
 /** 重新构建 */
 export const retryBuild = (params: {
@@ -604,6 +652,10 @@ export const retry = (params: {
   postRequest(retryUrl, {
     data: params,
   });
+export const newRetryUrl = `v2/releaseManage/deploy/retryTask`;
+export const newRetry = (params: any) => postRequest(newRetryUrl, {
+  data: params,
+});
 
 export const confirmDeployUrl = `${appConfig.apiPrefix}/releaseManage/deploy/confirmDeploy`;
 
@@ -622,6 +674,10 @@ export const confirmDeploy = (params: {
   postRequest(confirmProdDeployUrl, {
     data: params,
   });
+
+export const newConfirmDeployUrl = `v2/releaseManage/deploy/batchDeploy`;
+export const newConfirmDeploy = (params: any) => postRequest(newConfirmDeployUrl, { data: params });
+
 
 /** 重试生产环境合并master */
 export const reMergeMaster = (params: {
@@ -658,6 +714,12 @@ export const cancelDeploy = (params: {
     data: params,
   });
 
+export const newCancelDeploy = (params: any) =>
+  postRequest(newCancelDeployUrl, {
+    data: params,
+  });
+
+
 /** 部署到下个环境 */
 export const deployReuse = (params: {
   /** 部署的数据库自增ID */
@@ -671,6 +733,8 @@ export const deployReuse = (params: {
   postRequest(deployReuseUrl, {
     data: params,
   });
+
+export const newDeployReuse = (params: any) => postRequest(newDeployReuseUrl, { data: params });
 
 /** 部署master*/
 export const deployMaster = (params: {
@@ -686,6 +750,8 @@ export const deployMaster = (params: {
   postRequest(deployMasterUrl, {
     data: params,
   });
+
+export const newDeployMaster = (params: any) => postRequest(newDeployMasterUrl, { data: params })
 
 /** 根据应用分类code查询发布环境列表 */
 export const queryEnvsReq = (params: {
@@ -745,9 +811,17 @@ export const rollbackFeApp = async (data: any) => postRequest(rollbackFeAppUrl, 
 export const getMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/getChanges`;
 export const getMergeMessage = async (params: any) => await getRequest(getMergeMessageUrl, { data: params });
 
+/** GET 新的发布流程 解决冲突-获取冲突信息 */
+export const getMessageUrl = `v2/releaseManage/deploy/getTaskToUpdateContents`;
+export const getMessage = async (params: any) => await getRequest(getMessageUrl, { data: params });
+
 /** POST 解决冲突-提交冲突 */
 export const pushMergeMessageUrl = `${appConfig.apiPrefix}/releaseManage/mergeRequest/commit`;
 export const pushMergeMessage = async (params: any) => await postRequest(pushMergeMessageUrl, { data: params });
+
+/** POST新流程 解决冲突-提交冲突 */
+export const newPushMergeMessageUrl = `v2/releaseManage/deploy/conflict/resolve`;
+export const newPushMergeMessage = async (params: any) => await postRequest(newPushMergeMessageUrl, { data: params });
 
 /** GET 应用部署-获取流水线 */
 export const getPipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/list`;
@@ -762,6 +836,13 @@ export const updatePipelineUrl = `${appConfig.apiPrefix}/appManage/appPipeline/u
 /** 删除流水线 */
 export const deletePipeline = (params: { pipelineCode: string }) =>
   delRequest(`${appConfig.apiPrefix}/releaseManageappManage/appPipeline/delete/${params.pipelineCode}`, {
+    data: params,
+  });
+
+
+/** 是否要用新的发布步骤条 */
+export const judgeIsNew = (params: any) =>
+  getRequest(`${appConfig.apiPrefix}/appManage/checkDeployVersion`, {
     data: params,
   });
 
