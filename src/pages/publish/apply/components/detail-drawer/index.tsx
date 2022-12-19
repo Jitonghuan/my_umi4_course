@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Drawer, Button, Table, Row, Col, Space, Spin, message, Steps, Tag } from 'antd';
 import { DEPLOY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
 import { createApplyDetailSchemaColumns } from '../../schema';
@@ -6,6 +6,7 @@ import { getApplyRelInfoReq, auditApply } from '@/pages/publish/service';
 import { CloseCircleOutlined, MobileOutlined,DingdingOutlined, CheckCircleTwoTone, StarOutlined, LoadingOutlined } from '@ant-design/icons'
 import { getEnvName } from '@/utils';
 import moment from 'moment';
+import { createTableColumns } from './schema';
 
 
 
@@ -59,7 +60,19 @@ const DetailDrawer = (props: IPorps) => {
   const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [auditGroups, setAuditGroups] = useState<any[]>([]);
+  const [auditLogs,setAuditLogs] = useState<any[]>([]);
   const [status,setStatus]=useState<string>('')
+  const [infoLoading,setInfoLoading]= useState<boolean>(false)
+  let userInfo: any = localStorage.getItem('USER_INFO');
+  
+  let userName=""
+  if (userInfo) {
+    userInfo = JSON.parse(userInfo);
+    userName= userInfo ? userInfo.name : ''
+  }
+ 
+
+ 
   const handleClose = () => {
     setBaseInfo({});
     setPlans([]);
@@ -72,11 +85,13 @@ const DetailDrawer = (props: IPorps) => {
     }
   }, [id, visible]);
   const getRelInfo=()=>{
+    setInfoLoading(true)
     getApplyRelInfoReq({ id }).then((data) => {
-      const { base = {}, plans = [], auditGroups = [] } = data;
+      const { base = {}, plans = [], auditGroups = [],auditLogs=[] } = data;
       setBaseInfo(base);
       setPlans(plans);
       setAuditGroups(auditGroups)
+      setAuditLogs(auditLogs)
       if(auditGroups?.length>0){
         setStatus(`first_${auditGroups[0]?.auditStatus}`)
       }else{
@@ -86,6 +101,8 @@ const DetailDrawer = (props: IPorps) => {
       if(auditGroups?.length>1&&auditGroups[0]?.auditStatus===1){ 
           setStatus(`second_${auditGroups[1]?.auditStatus}`) 
       }
+    }).finally(()=>{
+      setInfoLoading(false)
     });
 
   }
@@ -105,7 +122,9 @@ const DetailDrawer = (props: IPorps) => {
 
     })
   }
-
+  const columns = useMemo(() => {
+    return createTableColumns() as any;
+  }, []);
   return (
     <Drawer title="发布申请详情" visible={visible} width={'80%'} onClose={() => handleClose()} className={`${rootCls}`}>
       <div className={`${rootCls}-box`} style={{ marginBottom: 16 }}>
@@ -198,8 +217,11 @@ const DetailDrawer = (props: IPorps) => {
         })}
       </div>
       <div className={`${rootCls}-ticket`}>
-      <div style={{padding:30}}>
+         <div style={{padding:30}}>
       <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
+        {/* <Step title="开始" /> */}
+
+       
         {auditGroups?.length>0&&<Step title="一级审批" icon={StatusFirstMappingIcon[status]|| <MobileOutlined /> } 
            description={<p> 
              <p>
@@ -207,7 +229,8 @@ const DetailDrawer = (props: IPorps) => {
                 {auditGroups[0]?.auditGroups?.join(',') || ''}
              </p> 
              <>
-          {status==="first_0"&&<Space>
+            
+          {status==="first_0"&&auditGroups[0]?.auditGroups?.includes(userName)&& <Space>
           <Button loading={loading} type="primary" onClick={()=>{
             onAuditApply(1)
             }}>通过</Button>
@@ -221,7 +244,7 @@ const DetailDrawer = (props: IPorps) => {
             {auditGroups?.length>1&&<Step title="二级审批" icon={StatusSecondMappingIcon[status]|| <DingdingOutlined  style={{color:"gray"}}/> }  
            description={<p>
              <p>审批人:{auditGroups[1]?.auditGroups?.join(',') || ''}</p>
-             {status==="second_0"&&
+             {status==="second_0" &&auditGroups[1]?.auditGroups?.includes(userName)&&
               <Space>
               <Button loading={loading} type="primary" onClick={()=>{
              onAuditApply(1)
@@ -237,6 +260,18 @@ const DetailDrawer = (props: IPorps) => {
          }/>}
          </Steps>
         </div>
+         <div className="approval-log" >
+          <p><h3>审批日志</h3></p>
+          <Table columns={columns} bordered dataSource={auditLogs} loading={infoLoading} 
+           pagination={{
+            // current: taskTablePageInfo.pageIndex,
+            // total: total,
+            // pageSize: pageSize,
+            showSizeChanger: true,
+            showTotal: () => `总共 ${auditLogs?.length} 条数据`,
+          }} />
+
+         </div>
 
 
       </div>
