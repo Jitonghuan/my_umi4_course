@@ -160,7 +160,7 @@ export default function PublishRecord(props: IProps) {
         `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${item.version}/npm-tile.json`,
       );
       setNpmJson(res?.data ? JSON.stringify(res.data, null, 4) : '');
-    } catch (e) {}
+    } catch (e) { }
 
     try {
       let lastItem = data.find(
@@ -174,7 +174,7 @@ export default function PublishRecord(props: IProps) {
         );
         setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, 4) : '');
       }
-    } catch (e) {}
+    } catch (e) { }
     setLoading(false);
   }
 
@@ -199,7 +199,7 @@ export default function PublishRecord(props: IProps) {
                   <label>{recordFieldMapOut['deployedTime']}</label>:
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
-                {item.version && (
+                {appType !== "backend" && (
                   <div>
                     <label>版本号</label>:{item['version']}
                   </div>

@@ -9,6 +9,8 @@ import NoConflict from '../../merge-conflict/NoConflict';
 import BatchDeployModal from './component/batch-deploy-modal';
 import DetailContext from '@/pages/application/application-detail/context';
 import ViewLogModal from './component/view-log-modal';
+import { history, useLocation } from 'umi';
+
 
 export default function StepItem(props: any) {
     // status为步骤条节点（wait/process/finish/eror)的状态 nodeStatus为节点的状态 item为这个节点对象
@@ -222,6 +224,27 @@ export default function StepItem(props: any) {
                             >
                                 确认部署
                                 </a>
+                            <Button
+                                size="small"
+                                type="link"
+                                style={{ marginLeft: '-22px' }}
+                                onClick={() => {
+                                    localStorage.setItem('__init_env_tab__', envTypeCode);
+                                    history.replace({
+                                        pathname: `deployInfo`,
+                                        search: `viewLogEnv=${env || ""}&viewLogEnvType=${envTypeCode}&id=${metadata?.id}&appCode=${appData?.appCode}&type=viewLog_goBack`
+                                        // query: {
+                                        //   viewLogEnv: env || '',
+                                        //   viewLogEnvType: envTypeCode,
+                                        //   type: 'viewLog_goBack',
+                                        //   id: `${id}`,
+                                        //   appCode: appCode,
+                                        // },
+                                    });
+                                }}
+                            >
+                                查看部署信息
+                </Button>
                         </div>
                     )}
                     {nodeStatus === 'Running' && <Button danger size='small' onClick={onCancelDeploy}>取消</Button>}
