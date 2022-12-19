@@ -22,6 +22,8 @@ export default function NacosSync(){
     const [namespaceDiffInfo,setNamespaceDiffInfo]=useState<any>({})
     const [namespaceLoading,namespaceOptions,queryNacosNamespaceList]=useNacosNamespaceList();
     const [dataIdloading, dataIdOptions, queryNacosDataIdList]=useNacosDataIdList()
+    const [change,setChange]=useState<boolean>(false)
+
     
     
     const getEnvCode=()=>{
@@ -92,6 +94,7 @@ export default function NacosSync(){
                 setNamespaceDiffInfo(result?.data)
               }
               setCompleted(true);
+              setChange(false)
             }
   
         }).finally(()=>{
@@ -179,6 +182,9 @@ export default function NacosSync(){
                   </p>}>
                       <Select style={{width:200}} options={syncOptions} onChange={(value:string)=>{
                      setCurSyncType(value)
+                     setChange(true)
+                     setNamespaceDiffInfo({})
+                     setConfigDiffInfo({})
 
 
                       }} />
@@ -186,6 +192,9 @@ export default function NacosSync(){
                   </Form.Item>
                   <Form.Item label="命名空间" name="namespace">
                   <Select style={{width:200}} options={namespaceOptions} loading={namespaceLoading} onChange={(value:string)=>{
+                     setChange(true)
+                     setNamespaceDiffInfo({})
+                     setConfigDiffInfo({})
                     if(curSyncType==="single"){
                       queryNacosDataIdList({
                         envCode,
@@ -197,7 +206,11 @@ export default function NacosSync(){
                   }} />
                   </Form.Item>
                   {curSyncType==="single"&&   <Form.Item label="Data ID" name="dataId">
-                  <Select  style={{width:200}} options={dataIdOptions} loading={dataIdloading} />
+                  <Select  style={{width:200}} options={dataIdOptions} onChange={()=>{
+                     setChange(true)
+                     setNamespaceDiffInfo({})
+                     setConfigDiffInfo({})
+                  }} loading={dataIdloading} />
                   </Form.Item>}
                 
 
@@ -211,7 +224,7 @@ export default function NacosSync(){
             </Button>
             <Button
               type="primary"
-              disabled={!(envCode && Object.keys(configDiffInfo)?.length>0) || loading || pending}
+              disabled={change || !(envCode && Object.keys(configDiffInfo)?.length>0) || loading || pending}
               onClick={handleSyncClick}
             >
               开始同步

@@ -80,36 +80,38 @@ export default function UserScheduling(props: any) {
         }})
 
   }
-  const delClusterA_patient = (current: any) => {
-    
+ 
+  const delClusterA_patient = (current: any,delIndex:number) => {
     try {
     clusterA_patientData.map((item, index) => {
-    
-      if (item === current) {
+      if (delIndex == index) {
        
-        return clusterA_patientData.splice(index, 1);
-      }
-    });
-   
+        clusterA_patientData.splice(index, 1);
         localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(clusterA_patientData);
         setClusterA_patientData(localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []);
         
+      }
+    });
+   
+       
     } catch (error) {
         
     }
    
   };
+  
 
-  const delClusterB_patient = (current: any) => {
-    
-    clusterB_patientData.map((item, index) => {
-      if (item === current) {
-        return clusterB_patientData.splice(index, 1);
-      }
-    });
+  const delClusterB_patient = (current: any,delIndex:number) => {
+   
     try {
-        localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(clusterB_patientData);
-        setClusterB_patientData(localStorage.CLUSTERB_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERB_PATIENT_DATA) : []);
+      clusterB_patientData.map((item, index) => {
+        if (delIndex === index) {
+           clusterB_patientData.splice(index, 1);
+           localStorage.CLUSTERB_PATIENT_DATA = JSON.stringify(clusterB_patientData);
+           setClusterB_patientData(localStorage.CLUSTERB_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERB_PATIENT_DATA) : []);
+        }
+      });
+       
         
     } catch (error) {
         
@@ -120,21 +122,21 @@ export default function UserScheduling(props: any) {
  
   const clusterA_userColumns = useMemo(() => {
     return createClusterATableColumns({
-      onDetele: (text: any, record: any) => {
-        delClusterA_patient(text);
+      onDetele: ( record: any,index:number) => {
+        delClusterA_patient(record,index);
        
       },
 
     }) as any;
-  }, []);
+  }, [clusterA_patientData]);
   const clusterB_userColumns  = useMemo(() => {
     return createClusterBTableColumns({
-      onDetele: (text: any, record: any) => {
-        delClusterB_patient(text);
+      onDetele: (record: any,index:number) => {
+        delClusterB_patient(record,index);
       },
 
     }) as any;
-  }, []);
+  }, [clusterB_patientData]);
 
 
   //缓存数据
@@ -146,7 +148,7 @@ export default function UserScheduling(props: any) {
             localStorage.CLUSTERA_PATIENT_DATA = JSON.stringify(clusterA_patientData);
            
             setClusterA_patientData(localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []);
-            console.log("localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : []",localStorage.CLUSTERA_PATIENT_DATA ? JSON.parse(localStorage.CLUSTERA_PATIENT_DATA) : [])
+           
               
           } catch (error) {
             console.log("error",error)
@@ -179,8 +181,8 @@ export default function UserScheduling(props: any) {
         getEnvCode()
     // }
     return () => {
-        // localStorage.removeItem('CLUSTERB_PATIENT_DATA');
-        // localStorage.removeItem('CLUSTERA_PATIENT_DATA');
+        localStorage.removeItem('CLUSTERB_PATIENT_DATA');
+        localStorage.removeItem('CLUSTERA_PATIENT_DATA');
       };
   }, []);
 

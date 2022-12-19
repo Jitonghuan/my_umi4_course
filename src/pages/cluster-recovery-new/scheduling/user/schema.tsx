@@ -23,10 +23,10 @@ export const createClusterATableColumns = (params: {
             key: 'action',
             width: 50,
             fixed:"right",
-            render: (text: any, record: any) => (
+            render: (_: string, record, index: number) => (
               <a
                 onClick={() => {
-                    params?.onDetele(text,record)
+                    params?.onDetele(record,index)
                  // delClusterA_operator(text);
                 }}
               >
@@ -57,10 +57,10 @@ export const createClusterATableColumns = (params: {
             key: 'action',
             width: 50,
             fixed:"right",
-            render: (text: any, record: any) => (
+            render: (_: string, record, index: number) => (
               <a
                 onClick={() => {
-                    params?.onDetele(text,record)
+                    params?.onDetele(record,index)
                 }}
               >
                 <DeleteOutlined />

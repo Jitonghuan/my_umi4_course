@@ -22,10 +22,10 @@ export default function OperatorScheduling() {
   ); //B集群操作者信息
 
 
-  const delClusterA_operator = (current: any) => {
+  const delClusterA_operator = (current: any,delIndex:number) => {
     clusterA_operatorData.map((item, index) => {
-      if (item === current) {
-        return clusterA_operatorData.splice(index, 1);
+      if (delIndex == index) {
+        clusterA_operatorData.splice(index, 1);
       }
     });
     try {
@@ -39,10 +39,10 @@ export default function OperatorScheduling() {
     }
    
   };
-  const delClusterB_operator = (current: any) => {
+  const delClusterB_operator = (current: any,delIndex:number) => {
     clusterB_operatorData.map((item, index) => {
-      if (item === current) {
-        return clusterB_operatorData.splice(index, 1);
+      if (delIndex == index) {
+      clusterB_operatorData.splice(index, 1);
       }
     });
     try {
@@ -75,21 +75,21 @@ export default function OperatorScheduling() {
   }
   const clusterA_operatorColumns = useMemo(() => {
     return createClusterATableColumns({
-      onDetele: (text: any, record: any) => {
-        delClusterA_operator(text);
+      onDetele: (record: any,index:number) => {
+        delClusterA_operator(record,index);
        
       },
 
     }) as any;
-  }, []);
+  }, [clusterA_operatorData]);
   const clusterB_operatorColumns = useMemo(() => {
     return createClusterBTableColumns({
-      onDetele: (text: any, record: any) => {
-        delClusterB_operator(text);
+      onDetele: (record: any,index:number) => {
+        delClusterB_operator(record,index);
       },
 
     }) as any;
-  }, []);
+  }, [clusterB_operatorData]);
 
   //缓存数据
   const addUser = (params: any) => {

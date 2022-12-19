@@ -53,22 +53,31 @@ export default function Application() {
               if (result.success) {
                 const source = result.data || {};
                 if (typeof source === 'object') {
+                  //"isConfDiff": true,
                   if(source?.isConfDiff===true){
                     setClusterData([]);
-                    history.push({
-                      pathname:"/matrix/cluster-recovery/cluster-sync/nacos",
-                    },{
-                      type:"isConfDiff",
-                      diffInfo:{
-                      
-                          type:source?.type,
-                          namespace:source?.namespace,
-                          dataId:source?.dataId
+                    Modal.confirm({
+                      title: '该应用A,B集群配置不一致，需要跳转至配置同步页面进行配置同步后再进行应用同步！',
+                      onOk: () => {
+                        history.push({
+                          pathname:"/matrix/cluster-recovery/cluster-sync/nacos",
+                        },{
+                          type:"isConfDiff",
+                          diffInfo:{
+                          
+                              type:source?.type,
+                              namespace:source?.namespace,
+                              dataId:source?.dataId
+    
+    
+                            
+                          }
+                        })
 
-
-                        
                       }
+
                     })
+                  
 
                   }else{
                     const next = Object.keys(source).map((appName) => {
