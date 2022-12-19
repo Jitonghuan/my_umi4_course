@@ -12,6 +12,15 @@ getRequest(APIS.getSqlInfoApi,{data:{id}}).then((res: any) => {
   return {};
 });
 
+//getSyncinfoApi
+export const useGetSyncInfo = ( id: number) =>
+getRequest(APIS.getSyncInfoApi,{data:{id}}).then((res: any) => {
+  if (res?.success) {
+    const dataSource = res?.data || {};
+    return dataSource;
+  }
+  return {};
+});
 //auditApi
 export function useAuditTicket(): [
     boolean,

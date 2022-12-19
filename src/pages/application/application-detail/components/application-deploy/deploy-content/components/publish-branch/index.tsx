@@ -8,7 +8,7 @@
 
 import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs, Form } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, updateReleaseDeploy, newCreateDeploy, newUpdateFetures, newUpdateReleaseDeploy } from '@/pages/application/service';
@@ -22,6 +22,7 @@ import { versionList } from '../../../version-publish/schema';
 import { STATUS_TYPE, branchTableSchema, PublishBranchProps } from './schema';
 import DemandModal from './demand-modal'
 import { releaseDeploy } from '../../../service';
+import AceEditor from '@/components/ace-editor';
 const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 export default function PublishBranch(publishBranchProps: PublishBranchProps, props: any) {
@@ -54,12 +55,17 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const [pdaDeployType, setPdaDeployType] = useState('bundles');
   const selectRef = useRef(null) as any;
-  const [publishType, setPublishType] = useState<string>('branch');
+  // 是否是gmc应用下的prod
+  const isGmcProd = checkVersion === true && appCategoryCode === 'gmc' && env === 'prod';
+  // 是否要显示版本管理tab
+  const isShowVersionTab = (checkVersion === true && env !== "prod" && env !== "dev") || isGmcProd;
+  const [publishType, setPublishType] = useState<string>(isGmcProd ? 'version' : 'branch');
   const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
   const [demandVisible, setDemandVisible] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any>({})
   const { categoryData = [], businessData = [] } = useContext(FeContext);
   const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
+  const [form] = Form.useForm();
 
   const getBuildType = () => {
     let { appType, isClient } = appData || {};
@@ -97,6 +103,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     }
 
     if (publishType === "version") {
+      let params = {};
+      if (isGmcProd) {
+        params = form.getFieldsValue();
+      }
       return await releaseDeploy({
         releaseId: releaseRowKeys,
         pipelineCode,
@@ -105,6 +115,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         appCode: appCode!,
         envTypeCode: env,
         deployModel: appData?.deployModel,
+        ...params,
       })
     }
     const create = newPublish ? newCreateDeploy : createDeploy;
@@ -232,65 +243,67 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <Tabs activeKey={publishType} onChange={(key) => {
         setPublishType(key)
       }}>
-        {/* 发布分支 */}
-        <Tabs.TabPane tab='待发布分支' key='branch' >
-          <>
-            <div className="table-caption">
-              <div className="caption-left">
-                <h4>主干分支：</h4>
-                <Select
-                  ref={selectRef}
-                  options={masterBranchOptions}
-                  value={selectMaster}
-                  style={{ width: '300px', marginRight: '20px' }}
-                  onChange={handleChange}
-                  showSearch
-                  optionFilterProp="label"
-                  // labelInValue
-                  filterOption={(input, option) => {
-                    //@ts-ignore
-                    return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-                  }}
-                />
-                <h4>开发分支名称：</h4>
-                <Input.Search
-                  placeholder="搜索分支"
-                  value={searchText}
-                  onChange={(e) => {
-                    setSearchText(e.target.value), changeBranchName(e.target.value)
-                  }}
-                  onPressEnter={() => onSearch?.(searchText)}
-                  onSearch={() => onSearch?.(searchText)}
-                />
+        {/* 发布分支-gmc大类下prod环境下不需要 */}
+        {!isGmcProd && (
+          <Tabs.TabPane tab='待发布分支' key='branch' >
+            <>
+              <div className="table-caption">
+                <div className="caption-left">
+                  <h4>主干分支：</h4>
+                  <Select
+                    ref={selectRef}
+                    options={masterBranchOptions}
+                    value={selectMaster}
+                    style={{ width: '300px', marginRight: '20px' }}
+                    onChange={handleChange}
+                    showSearch
+                    optionFilterProp="label"
+                    // labelInValue
+                    filterOption={(input, option) => {
+                      //@ts-ignore
+                      return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                    }}
+                  />
+                  <h4>开发分支名称：</h4>
+                  <Input.Search
+                    placeholder="搜索分支"
+                    value={searchText}
+                    onChange={(e) => {
+                      setSearchText(e.target.value), changeBranchName(e.target.value)
+                    }}
+                    onPressEnter={() => onSearch?.(searchText)}
+                    onSearch={() => onSearch?.(searchText)}
+                  />
+                </div>
+                <div className="caption-right">
+                  {appData?.deployModel === 'online' && (
+                    <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
+                      {hasPublishContent ? '追加分支' : '提交分支'}
+                    </Button>
+                  )}
+                </div>
               </div>
-              <div className="caption-right">
-                {appData?.deployModel === 'online' && (
-                  <Button type="primary" disabled={!selectedRowKeys?.length} onClick={submitClick}>
-                    {hasPublishContent ? '追加分支' : '提交分支'}
-                  </Button>
-                )}
-              </div>
-            </div>
-            <Table
-              rowKey="id"
-              bordered
-              dataSource={dataSource}
-              loading={loading}
-              pagination={false}
-              columns={branchColumns}
-              scroll={{ x: '100%' }}
-              rowSelection={{
-                type: 'checkbox',
-                selectedRowKeys,
-                onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-                  setSelectedRowKeys(selectedRowKeys as any);
-                },
-              }}
-            />
-          </>
-        </Tabs.TabPane>
+              <Table
+                rowKey="id"
+                bordered
+                dataSource={dataSource}
+                loading={loading}
+                pagination={false}
+                columns={branchColumns}
+                scroll={{ x: '100%' }}
+                rowSelection={{
+                  type: 'checkbox',
+                  selectedRowKeys,
+                  onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+                    setSelectedRowKeys(selectedRowKeys as any);
+                  },
+                }}
+              />
+            </>
+          </Tabs.TabPane>
+        )}
         {/* 发布版本 */}
-        {checkVersion === true && env !== "prod" && (
+        {isShowVersionTab && (
 
           <Tabs.TabPane tab='待发布版本' key='version'>
             <>
@@ -333,6 +346,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <Modal
         title="选择发布环境"
         visible={deployVisible}
+        width={publishType === "version" && isGmcProd ? 800 : 550}
         confirmLoading={confirmLoading}
         onOk={() => {
           setConfirmLoading(true);
@@ -364,6 +378,19 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
               </Radio.Group>
             </div>
           )}
+          {publishType === "version" && isGmcProd && (
+            <div style={{ marginTop: '10px' }}>
+              <Form form={form} labelCol={{ flex: "40px" }} preserve={false}>
+                <Form.Item name="config" label="配置" >
+                  <AceEditor mode="yaml" height={300} />
+
+                </Form.Item>
+                <Form.Item name="sql" label="Sql" >
+                  <AceEditor mode="sql" height={300} />
+                </Form.Item>
+              </Form>
+            </div>)
+          }
         </div>
       </Modal>
     </div>

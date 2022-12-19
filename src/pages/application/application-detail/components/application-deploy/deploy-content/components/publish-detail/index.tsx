@@ -48,7 +48,8 @@ export default function PublishDetail(props: IProps) {
   const [selectMaster, setSelectMaster] = useState<any>('');
   const [beforeUploadInfo, setBeforeUploadInfo] = useState<boolean>(true);
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode: appData?.appCode || '' });
-  const [versionPublishVisiable, setVersionPublishVisiable] = useState<boolean>(false)
+  const [versionPublishVisiable, setVersionPublishVisiable] = useState<boolean>(false);
+  const gmcVersion = checkVersion === true && appCategoryCode === 'gmc';
 
   let newNextEnvTypeCode = '';
   useEffect(() => {
@@ -287,7 +288,7 @@ export default function PublishDetail(props: IProps) {
             重启应用
           </Button>
         )} */}
-        {checkVersion === true && appData?.deployModel === 'online' && envTypeCode !== 'prod' && (
+        {checkVersion === true && appData?.deployModel === 'online' && envTypeCode !== 'prod' && envTypeCode !== 'dev' && (
           <Button type="primary" onClick={() => {
             setVersionPublishVisiable(true)
             onOperate('versionPublishStart');
@@ -332,7 +333,7 @@ export default function PublishDetail(props: IProps) {
           </Button>
         )}
 
-        {envTypeCode !== 'prod' && feType !== 'pda' && appData?.deployModel === 'online' && (
+        {!gmcVersion && envTypeCode !== 'prod' && feType !== 'pda' && appData?.deployModel === 'online' && (
           <Button type="primary" onClick={deployNext}>
             部署到下个环境
           </Button>
