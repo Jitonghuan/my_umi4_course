@@ -322,7 +322,7 @@ export default function SqlEditor(props: Iprops) {
       </div>
       {/* calc(100vh - 560px)*/}
       {/* <div style={{height:"100%"}}> */}
-      <div ref={codeContainerRef} className="editor-container" style={{height:"calc(100vh - 600px)",minHeight: 300 ,maxHeight:"calc(100vh - 760px)"}} />
+      <div ref={codeContainerRef} className="editor-container" style={{height:" calc(50vh - 88px) ",minHeight: 300 ,maxHeight:"50%"}} />
       {/* </div> */}
     
 

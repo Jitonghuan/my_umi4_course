@@ -178,7 +178,7 @@ export const createTableColumns = (params: {
       key: 'sqlWfType',
       width:110,
       ellipsis: true,
-      render: (text) => <Tooltip title={text==="sql"?"数据变更":"结构变更"}>{text==="sql"?<Tag color="purple">数据变更</Tag>:<Tag color="cyan">结构变更</Tag>}</Tooltip>,
+      render: (text) => <Tooltip title={text==="sql"?"数据变更":text==="sync"?"结构同步":"结构变更"}>{text==="sql"?<Tag color="purple">数据变更</Tag>:text==="sync"?<Tag color="geekblue">结构同步</Tag>:<Tag color="cyan">结构变更</Tag>}</Tooltip>,
     },
     {
       title: '当前状态',
