@@ -993,7 +993,7 @@ export default [
       },
     ],
   },
- 
+
 
   {
     "path": `${baseRoutePath}/station`,
@@ -1374,7 +1374,7 @@ export default [
       },
     ],
   },
-  
+
   {
     path: `${baseRoutePath}/database`,
     name: '数据库管理',

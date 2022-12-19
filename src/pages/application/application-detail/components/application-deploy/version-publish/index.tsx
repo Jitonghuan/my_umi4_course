@@ -1,9 +1,13 @@
 
-import React, { useState, useContext, useEffect,  } from 'react';
+import React, { useState, useContext, useEffect,useMemo  } from 'react';
 import { Descriptions,Spin,Modal} from 'antd';
 import DetailContext from '@/pages/application/application-detail/context';
 import { getAppPublishList } from '../service';
 import AceEditor from '@/components/ace-editor';
+import { history} from 'umi';
+import { FeContext } from '@/common/hooks';
+import { optionsToLabelMap } from '@/utils/index';
+import { stringify } from 'query-string';
 import moment from 'moment';
 import './index.less';
 interface Iprops{
@@ -15,6 +19,8 @@ interface Iprops{
 const rootCls = 'version-deploy-page';
 export default function VersionPublish(props: Iprops) {
     const { pipelineCode, envTypeCode,isActive, visible} = props;
+    const { categoryData = [], businessData = [] } = useContext(FeContext);
+    const categoryDataMap = useMemo(() => optionsToLabelMap(categoryData), [categoryData]);
     const { appData } = useContext(DetailContext);
     const { appCode } = appData || {};
     const [infoDetail,setInfoDetail]=useState<any>({})
@@ -67,7 +73,13 @@ export default function VersionPublish(props: Iprops) {
                 bordered
             >
                 <Descriptions.Item label="版本号" contentStyle={{ whiteSpace: 'nowrap' }}>
-                    {infoDetail?.releaseNumber||'--'}
+                  <a onClick={()=>{
+                       // 跳转到版本详情
+                history.push({
+                  pathname: '/matrix/version-manage/detail',
+                  search: stringify({ key: 'list', version: infoDetail?.releaseNumber, releaseId: infoDetail?.releaseId, categoryName: categoryDataMap[appData?.appCategoryCode!] || '--', categoryCode: appData?.appCategoryCode })
+              })
+                   }}> {infoDetail?.releaseNumber||'--'}</a> 
                 </Descriptions.Item>
                 {/* <Descriptions.Item label="变更需求" > {infoDetail?.releaseNumber||'--'}</Descriptions.Item> */}
                 <Descriptions.Item label="变更配置"><a onClick={()=>{
