@@ -1,10 +1,14 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Drawer,Button,Table,Row, Col,Space,Spin,message} from 'antd';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Drawer, Button, Table, Row, Col, Space, Spin, message, Steps, Tag } from 'antd';
 import { DEPLOY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
 import { createApplyDetailSchemaColumns } from '../../schema';
-import { getApplyRelInfoReq ,auditApply} from '@/pages/publish/service';
+import { getApplyRelInfoReq, auditApply } from '@/pages/publish/service';
+import { CloseCircleOutlined, MobileOutlined,MinusCircleOutlined,DingdingOutlined, CheckCircleTwoTone, StarOutlined, LoadingOutlined } from '@ant-design/icons'
 import { getEnvName } from '@/utils';
 import moment from 'moment';
+import { createTableColumns } from './schema';
+
+
 
 export interface IPorps {
   id: string;
@@ -12,17 +16,63 @@ export interface IPorps {
   categoryData: any[];
   businessDataList: any[];
   envsUrlList: any[];
-  onClose: () => void;
-  onSave:()=>void;
+  onClose: (reload?:boolean) => void;
+  onSave: () => void;
 }
 
 const rootCls = 'apply-detail-drawer';
+const { Step } = Steps;
+const StatusMapping: Record<string, number> = {
+  first_0: 1,//一级审批待审批状态
+  first_2:1,//一级审批拒绝状态，结束流程，
+  first_3:1,//一级审批撤销状态，结束流程，
+  first_1:2,//第一层通过状态来到二级审批
+  second_0:2,//二级审批待审批状态
+  second_1:2,//二级审批通过状态，此时结束
+  second_2:2,//二级审批拒绝状态，此时结束
+  second_3:2,//二级审批撤销状态，此时结束
+
+ 
+};
+// first_2
+const StatusFirstMappingIcon: Record<string, React.ReactNode> = {
+  first_0: <MinusCircleOutlined /> ,//一级审批待审批状态
+  first_2:<CloseCircleOutlined style={{color:"red"}}/>,//一级审批拒绝状态，结束流程，
+  first_3:<CloseCircleOutlined style={{color:"red"}}/>,//一级审批撤销状态，结束流程，
+  first_1:<CheckCircleTwoTone/>,//第一层通过状态来到二级审批
+ 
+
+ 
+};
+const StatusSecondMappingIcon: Record<string, React.ReactNode> = {
+  second_0:<MinusCircleOutlined /> ,//二级审批待审批状态
+  second_1:<CheckCircleTwoTone/>,//二级审批通过状态，此时结束
+  second_2:<CloseCircleOutlined style={{color:"red"}}/>,//二级审批拒绝状态，此时结束
+  second_3:<CloseCircleOutlined style={{color:"red"}}/>,//二级审批撤销状态，此时结束
+
+ 
+ 
+};
 
 const DetailDrawer = (props: IPorps) => {
-  const { id, visible, onClose, onSave,categoryData, businessDataList, envsUrlList } = props;
+  const { id, visible, onClose, onSave, categoryData, businessDataList, envsUrlList } = props;
   const [baseInfo, setBaseInfo] = useState<any>({});
   const [plans, setPlans] = useState<any[]>([]);
-  const [loading,setLoading]=useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [auditGroups, setAuditGroups] = useState<any[]>([]);
+  const [auditLogs,setAuditLogs] = useState<any[]>([]);
+  const [status,setStatus]=useState<string>('')
+  const [infoLoading,setInfoLoading]= useState<boolean>(false)
+  let userInfo: any = localStorage.getItem('USER_INFO');
+  
+  let userName=""
+  if (userInfo) {
+    userInfo = JSON.parse(userInfo);
+    userName= userInfo ? userInfo.name : ''
+  }
+ 
+
+ 
   const handleClose = () => {
     setBaseInfo({});
     setPlans([]);
@@ -31,29 +81,56 @@ const DetailDrawer = (props: IPorps) => {
 
   useEffect(() => {
     if (id && visible) {
-      getApplyRelInfoReq({ id }).then((data) => {
-        const { base = {}, plans = [] } = data;
-        setBaseInfo(base);
-        setPlans(plans);
-      });
+      getRelInfo()
     }
   }, [id, visible]);
+  const getRelInfo=()=>{
+    setInfoLoading(true)
+    getApplyRelInfoReq({ id }).then((data) => {
+      const { base = {}, plans = [], auditGroups = [],auditLogs=[] } = data;
+      setBaseInfo(base);
+      setPlans(plans);
+      setAuditGroups(auditGroups)
+      setAuditLogs(auditLogs)
+      if(auditGroups?.length>0){
+        setStatus(`first_${auditGroups[0]?.auditStatus}`)
+      }else{
+        setStatus("")
+       
+      }
+      if(auditGroups?.length>1&&auditGroups[0]?.auditStatus===1){ 
+          setStatus(`second_${auditGroups[1]?.auditStatus}`) 
+      }
+    }).finally(()=>{
+      setInfoLoading(false)
+    });
 
-  const onAuditApply=(result:number)=>{
+  }
+
+  const onAuditApply = (result: number) => {
     setLoading(true)
-    auditApply({processInstanceId: baseInfo?.processInstanceId, result}).then((res:any)=>{
-      if(res?.success){
-        message.success("审批成功！")
-        onSave && onSave()
+    auditApply({ processInstanceId: baseInfo?.processInstanceId, result }).then((res: any) => {
+      if (res?.success) {
+        message.success("操作成功！")
+        getRelInfo()
+
+       
+        if(result===3){
+          onClose(true);
+        }else{
+          onSave && onSave()
+        }
       }
 
-    }).finally(()=>{
-     
+    }).finally(() => {
+
       setLoading(false)
 
     })
   }
-
+  const columns = useMemo(() => {
+    return createTableColumns() as any;
+  }, []);
   return (
     <Drawer title="发布申请详情" visible={visible} width={'80%'} onClose={() => handleClose()} className={`${rootCls}`}>
       <div className={`${rootCls}-box`} style={{ marginBottom: 16 }}>
@@ -148,17 +225,13 @@ const DetailDrawer = (props: IPorps) => {
       <div className={`${rootCls}-ticket`}>
       <div className={`${rootCls}-ticket-box`}>
       <span className="approval-button">
-        {baseInfo?.applyStatus===0&& <Spin spinning={loading}>
+        {baseInfo?.applyStatus===0&&baseInfo?.createUser===userName&& <Spin spinning={loading}>
           <Space>
-          <Button type="primary" onClick={()=>{
-          onAuditApply(1)
-          }}>通过</Button>
+         
           <Button type="primary" ghost onClick={()=>{
           onAuditApply(3)
           }}>撤销</Button>
-          <Button type="primary" danger onClick={()=>{
-          onAuditApply(2)
-          }}>拒绝</Button>
+        
 
           </Space>
           </Spin>}
@@ -166,11 +239,67 @@ const DetailDrawer = (props: IPorps) => {
         </span> 
 
       </div>
-        
+
+        {!(baseInfo?.applyStatus!==0&&auditLogs?.length===0)&&
+        <>
+         <div style={{padding:30}}>
+      <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
+        {/* <Step title="开始" /> */}
 
        
-     
+        {auditGroups?.length>0&&<Step title="一级审批" icon={StatusFirstMappingIcon[status]|| <CheckCircleTwoTone/> } 
+           description={<p> 
+             <p>
+               审批人:
+                {auditGroups[0]?.auditGroups?.join(',') || ''}
+             </p> 
+             <>
+            
+          {baseInfo?.applyStatus===0&& status==="first_0"&&auditGroups[0]?.auditGroups?.includes(userName)&& <Space>
+          <Button loading={loading} type="primary" onClick={()=>{
+            onAuditApply(1)
+            }}>通过</Button>
+            <Button loading={loading} type="primary" danger onClick={()=>{
+          onAuditApply(2)
+          }}>拒绝</Button>
+          </Space>}   
+               
+             </>
+           </p>} />}
+            {auditGroups?.length>1&&<Step title="二级审批" icon={StatusSecondMappingIcon[status]|| <DingdingOutlined  style={{color:"gray"}}/> }  
+           description={<p>
+             <p>审批人:{auditGroups[1]?.auditGroups?.join(',') || ''}</p>
+             { baseInfo?.applyStatus===0&&status==="second_0" &&auditGroups[1]?.auditGroups?.includes(userName)&&
+              <Space>
+              <Button loading={loading} type="primary" onClick={()=>{
+             onAuditApply(1)
+             }}>通过</Button>
+             <Button type="primary" loading={loading} danger onClick={()=>{
+           onAuditApply(2)
+           }}>拒绝</Button>
+                
+              </Space>
+              }
+            
+           </p>
+         }/>}
+         </Steps>
+        </div>
+         <div className="approval-log" >
+          <p><h3>审批日志</h3></p>
+          <Table columns={columns} bordered dataSource={auditLogs} loading={infoLoading} 
+           pagination={{
+            // current: taskTablePageInfo.pageIndex,
+            // total: total,
+            // pageSize: pageSize,
+            showSizeChanger: true,
+            showTotal: () => `总共 ${auditLogs?.length} 条数据`,
+          }} />
 
+         </div>
+
+        </>}
+        
 
       </div>
     </Drawer>
