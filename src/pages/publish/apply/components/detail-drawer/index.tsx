@@ -3,7 +3,7 @@ import { Drawer, Button, Table, Row, Col, Space, Spin, message, Steps, Tag } fro
 import { DEPLOY_TYPE_MAP, APP_TYPE_MAP, AppType } from '../../const';
 import { createApplyDetailSchemaColumns } from '../../schema';
 import { getApplyRelInfoReq, auditApply } from '@/pages/publish/service';
-import { CloseCircleOutlined, MobileOutlined,DingdingOutlined, CheckCircleTwoTone, StarOutlined, LoadingOutlined } from '@ant-design/icons'
+import { CloseCircleOutlined, MobileOutlined,MinusCircleOutlined,DingdingOutlined, CheckCircleTwoTone, StarOutlined, LoadingOutlined } from '@ant-design/icons'
 import { getEnvName } from '@/utils';
 import moment from 'moment';
 import { createTableColumns } from './schema';
@@ -36,7 +36,7 @@ const StatusMapping: Record<string, number> = {
 };
 // first_2
 const StatusFirstMappingIcon: Record<string, React.ReactNode> = {
-  first_0: <LoadingOutlined /> ,//一级审批待审批状态
+  first_0: <MinusCircleOutlined /> ,//一级审批待审批状态
   first_2:<CloseCircleOutlined style={{color:"red"}}/>,//一级审批拒绝状态，结束流程，
   first_3:<CloseCircleOutlined style={{color:"red"}}/>,//一级审批撤销状态，结束流程，
   first_1:<CheckCircleTwoTone/>,//第一层通过状态来到二级审批
@@ -45,7 +45,7 @@ const StatusFirstMappingIcon: Record<string, React.ReactNode> = {
  
 };
 const StatusSecondMappingIcon: Record<string, React.ReactNode> = {
-  second_0:<LoadingOutlined/> ,//二级审批待审批状态
+  second_0:<MinusCircleOutlined /> ,//二级审批待审批状态
   second_1:<CheckCircleTwoTone/>,//二级审批通过状态，此时结束
   second_2:<CloseCircleOutlined style={{color:"red"}}/>,//二级审批拒绝状态，此时结束
   second_3:<CloseCircleOutlined style={{color:"red"}}/>,//二级审批撤销状态，此时结束
@@ -255,7 +255,7 @@ const DetailDrawer = (props: IPorps) => {
              </p> 
              <>
             
-          {status==="first_0"&&auditGroups[0]?.auditGroups?.includes(userName)&& <Space>
+          {baseInfo?.applyStatus===0&& status==="first_0"&&auditGroups[0]?.auditGroups?.includes(userName)&& <Space>
           <Button loading={loading} type="primary" onClick={()=>{
             onAuditApply(1)
             }}>通过</Button>
@@ -269,7 +269,7 @@ const DetailDrawer = (props: IPorps) => {
             {auditGroups?.length>1&&<Step title="二级审批" icon={StatusSecondMappingIcon[status]|| <DingdingOutlined  style={{color:"gray"}}/> }  
            description={<p>
              <p>审批人:{auditGroups[1]?.auditGroups?.join(',') || ''}</p>
-             {status==="second_0" &&auditGroups[1]?.auditGroups?.includes(userName)&&
+             { baseInfo?.applyStatus===0&&status==="second_0" &&auditGroups[1]?.auditGroups?.includes(userName)&&
               <Space>
               <Button loading={loading} type="primary" onClick={()=>{
              onAuditApply(1)
