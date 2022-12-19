@@ -106,8 +106,8 @@ export function useAppDetail(appId?: number, appCode?: string): [AppItemVO | und
         id: appId || undefined,
         // 有 appId 时就不需要 appCode
         appCode: appId ? undefined : appCode,
-        pageIndex: 1,
-        pageSize: 10,
+        pageIndex: -1,
+        pageSize: -1,
       });
       appList?.map((item: any) => {
         if (appCode) {
