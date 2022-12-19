@@ -16,7 +16,7 @@ export interface IPorps {
   categoryData: any[];
   businessDataList: any[];
   envsUrlList: any[];
-  onClose: () => void;
+  onClose: (reload?:boolean) => void;
   onSave: () => void;
 }
 
@@ -111,9 +111,15 @@ const DetailDrawer = (props: IPorps) => {
     setLoading(true)
     auditApply({ processInstanceId: baseInfo?.processInstanceId, result }).then((res: any) => {
       if (res?.success) {
-        message.success("审批成功！")
+        message.success("操作成功！")
         getRelInfo()
-        onSave && onSave()
+
+       
+        if(result===3){
+          onClose(true);
+        }else{
+          onSave && onSave()
+        }
       }
 
     }).finally(() => {
@@ -217,6 +223,23 @@ const DetailDrawer = (props: IPorps) => {
         })}
       </div>
       <div className={`${rootCls}-ticket`}>
+      <div className={`${rootCls}-ticket-box`}>
+      <span className="approval-button">
+        {baseInfo?.applyStatus===0&&baseInfo?.createUser===userName&& <Spin spinning={loading}>
+          <Space>
+         
+          <Button type="primary" ghost onClick={()=>{
+          onAuditApply(3)
+          }}>撤销</Button>
+        
+
+          </Space>
+          </Spin>}
+
+        </span> 
+
+      </div>
+
         {!(baseInfo?.applyStatus!==0&&auditLogs?.length===0)&&
         <>
          <div style={{padding:30}}>

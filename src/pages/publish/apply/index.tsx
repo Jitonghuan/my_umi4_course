@@ -110,7 +110,10 @@ export default function ApplyList() {
       <DetailDrawer
         id={curRecord?.id || ''}
         visible={applyDetailVisible}
-        onClose={() => {
+        onClose={(reload) => {
+          if (reload) {
+            queryAppList();
+          }
           setApplyDetailVisible(false);
         }}
         categoryData={categoryData}
