@@ -32,7 +32,6 @@ import {
 } from '@/common/hooks';
 import './index.less';
 import 'antd/dist/antd.variable.min.css';
-import { parse } from 'querystring';
 import { Outlet, useLocation, history } from 'umi';
 import routelist, { baseRoutePath } from '@/routes.config';
 import { getBtnPermission } from '@/common/apis'
@@ -252,7 +251,6 @@ export default function Layout(props: any) {
       setStyle('globalLight');
       localStorage.setItem('__matrix_theme', JSON.stringify('globalLight'));
       document.body.removeAttribute('matrix-theme');
-
       document.body.setAttribute('arco-theme', 'light');
     } else {
       setStyle('matrixDark');

@@ -78,4 +78,11 @@ export const rollbackSQLApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflo
 //下载数据
 export const exportResultApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/sql/query/export`;
 
+export const getSyncInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sync/info`;
+
+//对比数据库结构
+export const compareSyncInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sync/compare`;
+//提交结构同步工单
+export const createSyncInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sync/create`;
+
 

@@ -102,6 +102,16 @@ export default function ApprovalEnd() {
       clearInterval(intervalId);
     };
   }, []);
+  const onRefresh=()=>{
+    if ((query?.detail === "true" && query?.id) || query?.parentId) {
+      getInfo(afferentId)
+      getWorkflowLog(afferentId)
+    } else if (query?.entry !== "DDL") {
+      getInfo()
+      getWorkflowLog(initInfo?.record?.id)
+    }
+  }
+
 
   useEffect(() => {
     if (!initInfo?.record?.id && !query?.parentId) return
@@ -418,6 +428,8 @@ export default function ApprovalEnd() {
         </Modal>
         <div>
           <h3>工单标题：{info?.title}<span style={{ float: "right" }}>
+          <Space>
+              <Button onClick={onRefresh} type="primary" ghost>刷新</Button>
             <Button type="primary" className="back-go" onClick={() => {
               history.push({
                 pathname: "/matrix/DBMS/data-change",
@@ -426,6 +438,7 @@ export default function ApprovalEnd() {
             }}>
               返回
               </Button>
+            </Space>
 
           </span></h3>
 

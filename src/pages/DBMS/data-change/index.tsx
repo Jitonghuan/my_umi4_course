@@ -1,5 +1,5 @@
 import React, { useState, useMemo,useEffect } from 'react';
-import {Form, Button, Table,Select,Input } from 'antd';
+import {Form, Button, Table,Select,Input ,Space} from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest } from '@/utils/request';
@@ -166,18 +166,31 @@ export default function AuthorityApply (){
       </FilterCard>
       <ContentCard>
         <div className="table-caption">
-          {/* <div className="caption-left"> */}
+          <div className="caption-left">
             <h3>数据变更列表</h3>
-          {/* </div> */}
-          {/* <div className="caption-right"> */}
-          
+          </div>
+          <div className="caption-right">
+            <Space>
+              <Button type="primary" onClick={()=>{
+                history.push({
+                  pathname:"./struct-apply"
+                })
+
+              }}>
+                结构同步
+              </Button>
+
             <Button type="primary" onClick={()=>{
                history.push({
                 pathname:"./change-apply"
               })
             }}>数据变更</Button>
          
-          {/* </div> */}
+
+            </Space>
+          
+          
+          </div>
         </div>
 
         <div>
