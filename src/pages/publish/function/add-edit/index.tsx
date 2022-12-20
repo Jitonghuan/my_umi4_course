@@ -57,7 +57,7 @@ interface EditTableProps {
 
 const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultValueObj = {} }) => {
   // 应用分类列表
-  const { categoryData } = useContext(FeContext);
+  const { categoryData,matrixConfigData } = useContext(FeContext);
   const categorys = useMemo(() => {
     return (
       categoryData?.map((el) => {
@@ -439,7 +439,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
             <div className="page-top-form">
               <Space size={16}>{renderForm(formLists)}</Space>
               <div>
-                {type === 'add' && (
+                {type === 'add'&& matrixConfigData?.curEnvType!=="jyglj" && (
                   <Button
                     type="primary"
                     onClick={() => {
@@ -461,7 +461,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                     关联Jira需求单
                   </Button>
                 )}
-                {type === 'add' && (
+                {type === 'add'&& matrixConfigData?.curEnvType!=="jyglj" && (
                   <Button
                     type="primary"
                     style={{ marginLeft: 6 }}
@@ -484,7 +484,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                     关联需求管理平台
                   </Button>
                 )}
-                {type === 'add' && (
+                {type === 'add'&& matrixConfigData?.curEnvType!=="jyglj" && (
                   <Button
                     type="primary"
                     style={{ marginLeft: 6 }}
