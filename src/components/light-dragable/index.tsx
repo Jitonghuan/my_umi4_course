@@ -80,7 +80,7 @@ export default function ResizeLayout(props:Iprops) {
      
         <div className="dragger-layout-page" style={{ paddingLeft: pxWidth,height:isSonPage?'calc(100vh - 124px)' :"100vh"}}>
         <div className="dragger-sider" style={{ width: pxWidth }}>
-         {!close&& leftContent}
+         { leftContent}
         </div>
         <div className="dragger-container">
         {rightContent}
