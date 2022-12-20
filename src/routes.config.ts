@@ -579,6 +579,35 @@ export default [
           },
         ],
       },
+      {
+        path: `${baseRoutePath}/config/registry`,
+        name: '注册中心',
+        key: 'registry',
+        component: '@/pages/config/registry-center',
+        routes: [
+          {
+            path: `${baseRoutePath}/config/registry/provider`,
+            name: '生产者列表',
+            key: 'registry',
+            component: '@/pages/config/registry-center/providers-list',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/config/registry/consumer`,
+            name: '消费者列表',
+            key: 'registry',
+            component: '@/pages/config/registry-center/consumers-list',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/config/registry/subscriber`,
+            name: '订阅实例列表',
+            key: 'registry',
+            component: '@/pages/config/registry-center/subscribers-list',
+            hideInMenu: true,
+          },
+        ],
+      },
     ],
   },
   {
