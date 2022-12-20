@@ -85,13 +85,13 @@ export const createTableColumns = (params: {
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
-          {/* <a
+          <a
             onClick={() => {
               params?.onView(record);
             }}
           >
             详情
-          </a> */}
+          </a>
           <a
             onClick={() => {
               params?.onEdit(record);
