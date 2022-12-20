@@ -25,6 +25,7 @@ export default function NacosSync(){
     const [change,setChange]=useState<boolean>(false)
     const [firstDataId,setFirstDataId]=useState<string>("")
     const [firstNamespace,setFirstNamespace]=useState<string>("")
+    const [isSame,setIsSame]=useState<boolean>(false)
 
     
     
@@ -82,6 +83,7 @@ export default function NacosSync(){
     },[envCode])
     const startDiffConfig=(curEnvCode?:string)=>{
       setLoading(true);
+      setIsSame(false)
       try{
         const params=nacosForm.getFieldsValue()  
         let envCodeParam=curEnvCode||envCode 
@@ -95,6 +97,9 @@ export default function NacosSync(){
               }
             if(result?.success&&Object.keys(result?.data)?.length>0){
               if(curSyncType==="single"){
+                if(result?.data?.clusterA==="AB集群配置一致"){
+                  setIsSame(true)
+                }
                 setConfigDiffInfo(result?.data)
               }
               if(curSyncType==="namespace"){
@@ -248,7 +253,7 @@ export default function NacosSync(){
         </div>
        
      
-        {(Object.keys(configDiffInfo)?.length>0&&curSyncType==="single")? <div>
+        {(Object.keys(configDiffInfo)?.length>0&&curSyncType==="single"&&!isSame)? <div>
            <Spin spinning={loading}>
            <div className="diff-config-header" >
             <span style={{width:"46vw"}}>A集群配置信息</span>
@@ -300,7 +305,7 @@ export default function NacosSync(){
               }}
              description={""}
                >
-          {loading ? '加载中...' : completed ? '暂无数据' : <a onClick={()=>{startDiffConfig()}}>点击开始进行配置比对</a>}
+          {isSame?"A、B集群配置信息一致！": loading ? '加载中...' : completed ? '暂无数据' : <a onClick={()=>{startDiffConfig()}}>点击开始进行配置比对</a>}
          </Empty></> }
        
       </ContentCard>

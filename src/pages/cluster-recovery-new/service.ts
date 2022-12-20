@@ -120,7 +120,7 @@ export const getSyncStrategyListApi= addAPIPrefix('/opsManage/k8s/multiple/syncS
 /* GET 获取命名空间 */
 export const getNacosNamespaceApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNamespace');
 
-export const getClusterTopologyUrlApi= addAPIPrefix('/opsManage/k8s/multiple/getClusterTopologyUrl');
+export const getClusterTopologyUrlApi= addAPIPrefix('/opsManage/multiple/common/getClusterTopologyUrl');
 
 /* GET 获取DataId */
 export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacosNsDataId');
@@ -130,7 +130,7 @@ export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacos
     return getRequest(getClusterTopologyUrlApi, { data: { envCode } });
   }
   export const getCurrentDistrictInfo = (params:{infoType: string,key:string}) => {
-    const url = `${appConfig.apiPrefix}/opsManage/k8s/multiple/getCurrentDistrictInfo`;
+    const url = `${appConfig.apiPrefix}/opsManage/multiple/common/getCurrentDistrictInfo`;
     return getRequest(url, { data: params });
   }
 
