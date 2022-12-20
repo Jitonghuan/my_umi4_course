@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from 'react';
-import { Form, Button, Table, message } from 'antd';
+import { Form, Button, Table, message, Input } from 'antd';
 import clusterContext from '../context';
 import { nodeListTableSchema } from '../schema';
 import { RedoOutlined } from '@ant-design/icons';
@@ -22,6 +22,7 @@ export default function NodeList() {
   const [baseData, total, loading, loadData] = useNodeListData({ clusterCode: clusterCode || '' }); //表格的基础数据
   const [data, setData] = useState<any>([]); //表格的完整数据
   const [expand, setExpand] = useState<boolean>(true);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (baseData && baseData.length) {
@@ -127,7 +128,7 @@ export default function NodeList() {
         baseTags={cluster.labels}
         initData={initData}
       ></SetTag>
-      <div className="flex-space-between">
+      {/* <div className="flex-space-between">
         <h3>节点列表</h3>
         <Button
           icon={<RedoOutlined />}
@@ -139,9 +140,31 @@ export default function NodeList() {
         >
           刷新
         </Button>
-        {/* <div className="caption-right">
-                    <Button type="primary" onClick={() => { setVisble(true) }}>新增节点</Button>
-                </div> */}
+      </div> */}
+      <div className="table-caption">
+        <div className="caption-left">
+          <h3>节点列表</h3>
+        </div>
+        <div className="caption-right">
+          <Form form={form} onFinish={(value) => { console.log(value, 'value') }} layout="inline">
+            <Form.Item label="标签名称：" name="tagName">
+              <Input placeholder='输入标签名称(支持输入多个)' style={{ width: 180 }} />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">查询</Button>
+            </Form.Item>
+          </Form>
+          <Button
+            icon={<RedoOutlined />}
+            onClick={() => {
+              loadData();
+            }}
+            style={{ marginRight: '10px' }}
+            size="small"
+          >
+            刷新
+        </Button>
+        </div>
       </div>
       <Table
         dataSource={data}
