@@ -113,7 +113,7 @@ export default function MergeConflict(prop: MergeProp) {
             <div>冲突详情</div>
             <div className='flex-column modal-title'>
               {<div className='flex'>
-                <Tooltip title={`源分支：${sourceBranch}`}>
+                <Tooltip title={`冲突分支：${sourceBranch}`}>
                   <span className='title-item'>冲突分支：{sourceBranch}</span>
                 </Tooltip>
                 <span style={{ marginLeft: 5, color: '#3591ff' }}>
