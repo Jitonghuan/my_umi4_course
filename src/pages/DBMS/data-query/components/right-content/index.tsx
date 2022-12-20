@@ -320,7 +320,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                     return (
                                         <Table.Column title={item}  dataIndex={item} key={item} ellipsis={true}  render={(value) => (
                                             <Tooltip placement="topLeft" title={value}>
-                                              {value}
+                                              {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                             </Tooltip>
                                           )} />
                                     )
@@ -386,7 +386,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                             return (
                                                 <Table.Column title={item} dataIndex={item}  ellipsis={true} key={item}  render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
-                                                      {value}
+                                                       {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                     </Tooltip>
                                                   )}/>
                                             )
@@ -442,7 +442,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                         return (
                                             <Table.Column title={item} dataIndex={item} key={item}  ellipsis={true}  render={(value) => (
                                                 <Tooltip placement="topLeft" title={value}>
-                                                  {value}
+                                                  {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                 </Tooltip>
                                               )}/>
                                         )
@@ -628,7 +628,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                             return (
                                                 <Table.Column title={item}  ellipsis={true} dataIndex={item} key={item}  render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
-                                                      {value}
+                                                       {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                     </Tooltip>
                                                   )} />
                                             )
