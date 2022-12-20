@@ -244,7 +244,7 @@ export default function NacosSync(){
             </Button>
             <Button
               type="primary"
-              disabled={change || !envCode || loading || pending ||!completed}
+              disabled={isSame|| change || !envCode || loading || pending ||!completed}
               onClick={handleSyncClick}
             >
               开始同步
