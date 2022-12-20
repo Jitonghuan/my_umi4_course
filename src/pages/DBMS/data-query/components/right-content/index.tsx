@@ -311,16 +311,16 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                         <Table dataSource={dataSource}
                         
 
-                         loading={logsloading} bordered scroll={{ x: '100%',y:"calc(50vh - 190px) " }} pagination={{
+                         loading={logsloading} bordered scroll={{ y:"calc(50vh - 190px) ",x: '100%'  }} pagination={{
 
                             showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
                         }} >
                             {dataSource?.length > 0 && (
                                 Object.keys(dataSource[0])?.map((item: any) => {
                                     return (
-                                        <Table.Column title={item}  dataIndex={item} key={item} ellipsis={true}  render={(value) => (
+                                        <Table.Column title={item} width={100} dataIndex={item} ellipsis key={item} render={(value) => (
                                             <Tooltip placement="topLeft" title={value}>
-                                              {value}
+                                              {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                             </Tooltip>
                                           )} />
                                     )
@@ -377,16 +377,16 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                                     </span>
                                 </p>
-                                <Table dataSource={dataSource} loading={logsloading} pagination={{
+                                <Table dataSource={dataSource}  loading={logsloading} pagination={{
 
                                     showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
-                                }} bordered scroll={{ x: '100%' ,y:"calc(50vh - 190px) " }} >
+                                }} bordered scroll={{ y:"calc(50vh - 190px) " ,x: '100%' }} >
                                     {dataSource?.length > 0 && (
                                         Object.keys(dataSource[0])?.map((item: any) => {
                                             return (
-                                                <Table.Column title={item} dataIndex={item}  ellipsis={true} key={item}  render={(value) => (
+                                                <Table.Column title={item} dataIndex={item}  width={100} ellipsis key={item}  render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
-                                                      {value}
+                                                       {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                     </Tooltip>
                                                   )}/>
                                             )
@@ -433,16 +433,16 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                                 </span>
                             </p>
-                            <Table dataSource={dataSource} loading={logsloading} pagination={{
+                            <Table dataSource={dataSource}  loading={logsloading} pagination={{
 
                                 showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
-                            }} bordered scroll={{ x: '100%',y:"calc(50vh - 190px) " }} >
+                            }} bordered scroll={{y:"calc(50vh - 190px) ",x: '100%'  }} >
                                 {dataSource?.length > 0 && (
                                     Object.keys(dataSource[0])?.map((item: any) => {
                                         return (
-                                            <Table.Column title={item} dataIndex={item} key={item}  ellipsis={true}  render={(value) => (
+                                            <Table.Column title={item} dataIndex={item} key={item}  width={100} ellipsis render={(value) => (
                                                 <Tooltip placement="topLeft" title={value}>
-                                                  {value}
+                                                  {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                 </Tooltip>
                                               )}/>
                                         )
@@ -619,16 +619,16 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
 
                                     </span>
                                 </p>
-                                <Table dataSource={dataSource} pagination={{
+                                <Table dataSource={dataSource}  pagination={{
 
                                     showTotal: () => `总共 ${dataSource?.length || 0} 条数据`,
-                                }} loading={logsloading} bordered scroll={{ x: '100%',y:"calc(50vh - 190px) "  }} >
+                                }} loading={logsloading} bordered scroll={{ y:"calc(50vh - 190px) ",x: '100%'   }} >
                                     {dataSource?.length > 0 && (
                                         Object.keys(dataSource[0])?.map((item: any) => {
                                             return (
-                                                <Table.Column title={item}  ellipsis={true} dataIndex={item} key={item}  render={(value) => (
+                                                <Table.Column title={item}   width={100}  dataIndex={item} key={item} ellipsis  render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
-                                                      {value}
+                                                       {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                     </Tooltip>
                                                   )} />
                                             )
