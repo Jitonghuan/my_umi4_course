@@ -8,7 +8,9 @@ import { history } from 'umi';
 import { nodeDrain, nodeUpdate, getNode } from '../service';
 import AddNode from './add-node';
 import SetTag from './set-tag';
+import debounce from 'lodash/debounce';
 import './index.less';
+
 export default function NodeList() {
   const [visible, setVisble] = useState(false);
   const { clusterCode, clusterName } = useContext(clusterContext);
@@ -23,6 +25,7 @@ export default function NodeList() {
   const [data, setData] = useState<any>([]); //表格的完整数据
   const [expand, setExpand] = useState<boolean>(true);
   const [form] = Form.useForm();
+  const [originData, setOriginData] = useState<any>([]);
 
   useEffect(() => {
     if (baseData && baseData.length) {
@@ -31,10 +34,12 @@ export default function NodeList() {
         if (res?.success) {
           const { items } = res?.data || {};
           setData(items || []);
+          setOriginData(items || []);
         }
       });
     } else {
-      setData([])
+      setData([]);
+      setOriginData([]);
     }
   }, [baseData]);
 
@@ -103,6 +108,30 @@ export default function NodeList() {
     }) as any;
   }, [data, expand, setExpand]);
 
+  const filter = debounce((value) => filterData(value), 500)
+
+  const filterData = (value: string) => {
+    if (!value) {
+      setData(originData);
+      return;
+    }
+    const res = JSON.parse(JSON.stringify(originData));
+    const afterFilter: any = [];
+    res.forEach((item: any) => {
+      const judgeLabel = Object.keys(item?.labels || {}).find((e) => {
+        return `${e}=${item.labels[e]}`.indexOf(value) !== -1
+      })
+      if (item.nodeIp?.indexOf(value) !== -1 || item.nodeName?.indexOf(value) !== -1 || judgeLabel) {
+        afterFilter.push(item);
+      }
+    });
+    setData(afterFilter);
+  }
+
+  const valueChange = (changeValue: any) => {
+    filter(changeValue?.searchWord);
+  }
+
   return (
     <div className="cluster-node-list">
       <AddNode
@@ -146,17 +175,15 @@ export default function NodeList() {
           <h3>节点列表</h3>
         </div>
         <div className="caption-right">
-          <Form form={form} onFinish={(value) => { console.log(value, 'value') }} layout="inline">
-            <Form.Item label="标签名称：" name="tagName">
-              <Input placeholder='输入标签名称(支持输入多个)' style={{ width: 180 }} />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">查询</Button>
+          <Form form={form} layout="inline" onValuesChange={valueChange}>
+            <Form.Item label="搜索：" name="searchWord">
+              <Input placeholder='输入节点名/IP/标签名' style={{ width: 220 }} disabled={!originData?.length} />
             </Form.Item>
           </Form>
           <Button
             icon={<RedoOutlined />}
             onClick={() => {
+              form.resetFields();
               loadData();
             }}
             style={{ marginRight: '10px' }}

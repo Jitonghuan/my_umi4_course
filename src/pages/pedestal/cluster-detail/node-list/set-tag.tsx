@@ -118,7 +118,7 @@ export default function SetTag(props: any) {
           {(base || []).map((item: any, i: any) => {
             return (
               <TagConfirm
-                content={`${item.key}:${item.value}`}
+                content={`${item.key}=${item.value}`}
                 title={() => <div>
                   该操作只是暂时移除标签<br />如要提交修改请点击弹窗确认按钮
                 </div>}
