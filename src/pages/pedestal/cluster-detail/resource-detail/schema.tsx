@@ -83,6 +83,19 @@ export const resourceDetailTableSchema = ({
       ),
     },
     {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      width: 170,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (value) => (
+        <Tooltip placement="topLeft" title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+    {
       title: '概述',
       dataIndex: 'overview',
       width: 200,
