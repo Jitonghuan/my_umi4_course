@@ -4,6 +4,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { Button, Form, Table, Input, Select } from 'antd';
 import { createTableColumns, clusterTypeOption } from './schema';
 import CreateCluster from './create-cluster';
+import {history} from 'umi';
 import { useDeleteCluster, useQueryEnvList, useClusterList } from './hook';
 export default function ClusterList() {
   const [clusterForm] = Form.useForm();
@@ -27,8 +28,13 @@ export default function ClusterList() {
         setMode('EDIT');
       },
       onView: (record) => {
-        setcurRecord(record);
-        setMode('VIEW');
+        // setcurRecord(record);
+        // setMode('VIEW');
+        history.push({
+          pathname:'/matrix/database/instance-list',
+          search:`clusterId=${record?.id}&clusterName=${record?.name}`
+
+        })
       },
       onDelete: async (id) => {
         deleteCluster({ id }).then(() => {

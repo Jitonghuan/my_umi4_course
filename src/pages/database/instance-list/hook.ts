@@ -16,11 +16,12 @@ export function useInstanceList() {
   const getInstanceList = async (paramObj: {
     name?: string;
     type?: number | string;
-    clusterName?: string;
+    clusterId?: string;
     pageIndex?: number;
     pageSize?: number;
   }) => {
     setLoading(true);
+    console.log("paramObj",paramObj)
     await getRequest(APIS.getInstanceList, { data: paramObj })
       .then((result) => {
         if (result?.success) {

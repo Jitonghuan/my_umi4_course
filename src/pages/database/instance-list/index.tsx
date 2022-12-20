@@ -2,12 +2,15 @@ import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { Button, Table, Form, Input, Select } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { history } from 'umi';
+import { history,useLocation } from 'umi';
+import { parse,stringify } from 'query-string';
 import { createTableColumns, instanceTypeOption } from './schema';
 import CreateInstance from './components/create-instance';
 import { useDeleteInstance, useGetClusterList, useInstanceList } from './hook';
 export default function InstanceList() {
   const [instanceForm] = Form.useForm();
+  let location = useLocation();
+  const query:any = parse(location.search);
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
@@ -15,10 +18,25 @@ export default function InstanceList() {
   const [delLoading, deleteInstance] = useDeleteInstance();
   useEffect(() => {
     getClusterList();
-    getInstanceList({
-      pageIndex: 1,
-      pageSize: 20,
-    });
+    if(query?.clusterId){
+    instanceForm.setFieldsValue({
+      clusterId:{ value:query?.clusterId,label:query?.clusterName,key:query?.clusterId}
+    })
+      getInstanceList({
+        pageIndex: 1,
+        pageSize: 20,
+        clusterId:Number(query?.clusterId)
+
+      });
+
+    }else{
+      getInstanceList({
+        pageIndex: 1,
+        pageSize: 20,
+      });
+
+    }
+   
   }, []);
   const columns = useMemo(() => {
     return createTableColumns({
@@ -71,7 +89,7 @@ export default function InstanceList() {
 
   const loadListData = (params: any) => {
     let value = instanceForm.getFieldsValue();
-    getInstanceList({ ...params, ...value });
+    getInstanceList({ ...params, ...value ,clusterId:value?.clusterId?.value});
   };
 
   return (
@@ -98,6 +116,7 @@ export default function InstanceList() {
             onFinish={(values: any) => {
               getInstanceList({
                 ...values,
+                clusterId:values?.clusterId?.value,
                 pageIndex: 1,
                 pageSize: 20,
               });
@@ -116,8 +135,16 @@ export default function InstanceList() {
             <Form.Item label="类型" name="type">
               <Select placeholder="请选择实例类型" options={instanceTypeOption} style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="所属集群" name="clusterName">
-              <Select placeholder="请选择集群" options={clusterOptions} allowClear showSearch style={{ width: 200 }} />
+            <Form.Item label="所属集群" name="clusterId">
+              <Select placeholder="请选择集群" options={clusterOptions} labelInValue  allowClear showSearch 
+                // filterOption={(input, option) => {
+                //   return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                // }} 
+                onChange={(data:any)=>{
+                  console.log("data",data)
+
+                }}
+                style={{ width: 200 }} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">

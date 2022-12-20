@@ -47,13 +47,13 @@ export const createTableColumns = (params: {
       title: '所属环境',
       dataIndex: 'envCode',
       key: 'envCode',
-      width: '14%',
+      width: '10%',
     },
     {
       title: '部署类型',
       dataIndex: 'clusterType',
       key: 'clusterType',
-      width: '14%',
+      width: '12%',
       render: (value: number) => {
         return <Tag color={CLUSTER_TYPE[value]?.color || 'default'}>{CLUSTER_TYPE[value]?.tagText}</Tag>;
       },
@@ -81,7 +81,7 @@ export const createTableColumns = (params: {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '10%',
+      width: '16%',
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>

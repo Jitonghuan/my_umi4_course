@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 11:08:37
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-21 00:48:49
+ * @LastEditTime: 2022-12-20 13:04:42
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -195,6 +195,9 @@ export const createTableColumns = (params: {
       dataIndex: 'name',
       key: 'name',
       width: '14%',
+      render:(value,record,index)=>(
+        <a onClick={() => params.onManage(record, index)}>{value}</a>
+      )
     },
     {
       title: 'Host',
@@ -247,9 +250,10 @@ export const createTableColumns = (params: {
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
-          <a onClick={() => params.onEdit(record, index)}>编辑</a>
+        
           <a onClick={() => params.onManage(record, index)}>管理</a>
           <a onClick={() => params.onViewPerformance(record, index)}>性能</a>
+          <a onClick={() => params.onEdit(record, index)}>编辑</a>
           <Popconfirm
             title="确认删除?"
             onConfirm={() => {
