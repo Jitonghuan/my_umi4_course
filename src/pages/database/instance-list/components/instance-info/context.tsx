@@ -3,6 +3,8 @@ export interface ContextTypes {
     /** 所属集群Id */
     clusterId?: number;
     clusterRole?:number;
+    instanceId?:number;
+    
     /** 请求应用数据 */
     // queryAppData?: () => void;
   }

@@ -134,6 +134,7 @@ export default [
   },
 
 
+
   {
     path: `${baseRoutePath}/application`,
     name: '应用管理',
@@ -1399,6 +1400,51 @@ export default [
         key: 'instance-list',
         component: '@/pages/database/instance-list/components/instance-info',
         hideInMenu: true,
+        routes:[
+          {
+            path: `${baseRoutePath}/database/info/detail`,
+            name: '实例详情',
+            key: 'instance-list',
+            component: '@/pages/database/instance-list/components/instance-info/components/instance-detail',
+          },
+          {
+            path: `${baseRoutePath}/database/info/trend`,
+            name: '性能趋势',
+            key: 'instance-list',
+            component: '@/pages/database/overview/trends',
+          },
+          {
+            path: `${baseRoutePath}/database/info/database`,
+            name: '数据库管理',
+            key: 'instance-list',
+            component: '@/pages/database/database-manage',
+          },
+          {
+            path: `${baseRoutePath}/database/info/session`,
+            name: '会话管理',
+            key: 'instance-list',
+            component: '@/pages/database/instance-list/components/instance-info/components/session-diag',
+          },
+          {
+            path: `${baseRoutePath}/database/info/account`,
+            name: '账号管理',
+            key: 'instance-list',
+            component: '@/pages/database/account-manage',
+          },
+          {
+            path: `${baseRoutePath}/database/info/sql`,
+            name: '慢sql',
+            key: 'instance-list',
+            component: '@/pages/database/wait-page',
+          },
+          {
+           path: `${baseRoutePath}/database/info/waitting`,
+           name: '敬请期待',
+           key: 'instance-list',
+           component: '@/pages/database/wait-page',
+         },
+
+        ]
       },
 
       {

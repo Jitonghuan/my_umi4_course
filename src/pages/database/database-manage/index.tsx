@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState,useContext } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Modal, Form, Input, message,Space } from 'antd';
@@ -9,19 +9,22 @@ import { getSchemaList } from '../service';
 import { useDeleteSchema } from './hook';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useSyncMetaData } from '../instance-list/hook';
+import DetailContext from '../instance-list/components/instance-info/context';
 import './index.less';
-export interface SchemaProps {
-  clusterId: number;
-  clusterRole:number
-}
+// export interface SchemaProps {
+//   clusterId: number;
+//   clusterRole:number
+// }
 
-export default function DEMO(props: SchemaProps) {
+export default function DataBasePage(props:any) {
   const [form] = Form.useForm();
-  const { clusterId ,clusterRole} = props;
+  // const { clusterId ,clusterRole} = props;
   const [ensureForm] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteSchema] = useDeleteSchema();
   const [syncLoading, syncMetaData] = useSyncMetaData();
+  const {clusterId,clusterRole}=useContext(DetailContext)
+  
   useEffect(() => {
     if (!clusterId) return;
   }, [clusterId]);

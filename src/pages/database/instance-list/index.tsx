@@ -46,7 +46,7 @@ export default function InstanceList() {
       },
       onManage: (record, index) => {
         history.push({
-          pathname: 'info',
+          pathname: '/matrix/database/info',
          }, {
             curRecord: record,
             instanceId: record?.id,
@@ -57,7 +57,7 @@ export default function InstanceList() {
       },
       onViewPerformance: (record, index) => {
         history.push({
-          pathname: 'info',
+          pathname: '/matrix/database/info',
          }, {
             curRecord: record,
             instanceId: record?.id,
@@ -180,6 +180,7 @@ export default function InstanceList() {
             columns={columns}
             dataSource={dataSource}
             loading={listLoading}
+            scroll={{x:"100%"}}
             pagination={{
               current: pageInfo.pageIndex,
               total: pageInfo.total,

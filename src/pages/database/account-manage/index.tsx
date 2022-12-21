@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState,useContext } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Modal, Form, Input, message } from 'antd';
@@ -9,23 +9,25 @@ import CreateAccount from './components/create-account';
 import UpdatePassword from './components/update-password';
 import { useDeleteAccount } from './hook';
 import GrantModal from './components/grant';
+import  DetailContext  from '../instance-list/components/instance-info/context'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import './index.less';
-export interface AccountProps {
-  clusterId: number;
-  clusterRole:number
-}
-export default function AccountList(props: AccountProps) {
-  //clusterId={clusterId}
+// export interface AccountProps {
+//   clusterId: number;
+//   clusterRole:number
+// }
+export default function AccountList(props:any) {
+ 
   const [form] = Form.useForm();
   const [ensureForm] = Form.useForm();
-  const { clusterId ,clusterRole} = props;
+  // const { clusterId ,clusterRole} = props;
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [updateMode, setUpdateMode] = useState<EditorMode>('HIDE');
   const [grantMode, setGrantMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteAccount] = useDeleteAccount();
   const [curId, setCurId] = useState<any>();
   const [curRecord, setCurRecord] = useState<any>({});
+  const {clusterId,clusterRole}=useContext(DetailContext)
   useEffect(() => {
     if (!clusterId) return;
   }, [clusterId]);

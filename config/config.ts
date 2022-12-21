@@ -48,6 +48,13 @@ export default defineConfig({
       },
       changeOrigin: true,
     },
+    '/matrix-dbms': {
+      target: 'http://matrix-test.cfuture.shop/',
+      headers: {
+        "Connection": "keep-alive",
+      },
+      changeOrigin: true,
+    },
     '/v2': {
       target: 'http://matrix-test.cfuture.shop/',
       // target: 'http://matrix.cfuture.shop/',

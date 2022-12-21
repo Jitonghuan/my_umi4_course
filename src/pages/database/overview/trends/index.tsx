@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Select } from 'antd';
 import CpuUtilization from './cpu-utilization-line';
 import TpsQps from './tps-qps-line';
@@ -7,11 +7,12 @@ import SessionConnection from './ session-connection-line';
 import ExecutionsCount from './executions-count';
 import TrafficThroughput from './traffic-throughput';
 import { useQueryPerformanceTrends } from './hooks';
+import  DetailContext  from '../../instance-list/components/instance-info/context'
 import './index.less';
 
-export interface DashboardProps {
-  instanceId: any;
-}
+// export interface DashboardProps {
+//   instanceId: any;
+// }
 export const START_TIME_ENUMS = [
   {
     label: 'Last 15 minutes',
@@ -51,8 +52,8 @@ export const START_TIME_ENUMS = [
   },
 ];
 
-export default function DashboardsInfo(props: DashboardProps) {
-  const { instanceId } = props;
+export default function DashboardsInfo(props:any) {
+  // const { instanceId } = props;
 
   const [lineData, loading, queryPerformanceTrends] = useQueryPerformanceTrends();
 
@@ -66,7 +67,7 @@ export default function DashboardsInfo(props: DashboardProps) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-
+  const {instanceId}=useContext(DetailContext)
   useEffect(() => {
     if (instanceId) {
       queryPerformanceTrends({

@@ -4,18 +4,23 @@ import { ContentCard } from '@/components/vc-page-content';
 import { Button, Card, Descriptions, Spin } from 'antd';
 import { INSTANCE_TYPE } from '../../../../schema';
 import { useSyncMetaData } from '../../../../hook';
-import  DetailContext  from '../../context'
-export interface instanceInfoProps {
-  loading: boolean;
-  infoData: any;
-  topoData: any;
-  // clusterId: number;
-  getInstanceDetail: (paramsObj: { id: number }) => Promise<void>;
-}
-export default function InstanceInfo(props: instanceInfoProps) {
-  const { loading, infoData, topoData, getInstanceDetail } = props;
+import { useGetInstanceDetail } from '../../../../hook';
+import DetailContext from '../../context'
+// interface Iprops{
+//   clusterId:number;
+//   instanceId:number
+// }
+export default function InstanceInfo(props:any) {
   const [syncLoading, syncMetaData] = useSyncMetaData();
-  const {clusterId} =useContext(DetailContext);
+  // const {clusterId,instanceId} =props;
+  const [infoLoading, infoData, topoData, getInstanceDetail] = useGetInstanceDetail();
+  const {clusterId,instanceId}=useContext(DetailContext)
+  useEffect(() => {
+    if (instanceId) {
+      getInstanceDetail({ id: instanceId });
+    }
+  }, [instanceId]);
+  
   G6.registerNode(
     'tree-node',
     {
@@ -84,7 +89,7 @@ export default function InstanceInfo(props: instanceInfoProps) {
     'single-node',
   );
   useEffect(() => {
-    if (topoData.length > 0) {
+    if (topoData?.length > 0) {
       let childrenArry: any = [];
       let masterName = '';
       let labelData: any = [];
@@ -246,7 +251,7 @@ export default function InstanceInfo(props: instanceInfoProps) {
         <div id="container"></div>
       </Card>
       <div style={{ marginTop: 14 }}>
-        <Spin spinning={loading || syncLoading}>
+        <Spin spinning={infoLoading || syncLoading}>
           <Descriptions
             title="基本信息"
             bordered

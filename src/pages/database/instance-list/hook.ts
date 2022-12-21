@@ -27,12 +27,33 @@ export function useInstanceList() {
           let dataSource = result.data?.dataSource;
           let dataArry: any = [];
           dataSource?.map((item: any) => {
+            let slaveInfoData:any=[]
+            if(typeof(item?.slaveInfo)==="object" ){
+              item?.slaveInfo?.map((ele:any)=>{
+                slaveInfoData.push({
+                  ...ele,
+                  clusterType:ele?.cluster?.clusterType,
+                  envCode:ele?.cluster?.envCode,
+                  clusterName:ele?.cluster?.name,
+                  key:ele?.id,
+                })
+
+              })
+
+
+            }
+            
             dataArry.push({
-              ...item?.instance,
-              status: item?.status,
-              clusterName: item?.clusterName,
-              envCode: item?.envCode,
-            });
+
+              ...item?.masterInfo,
+              clusterType:item?.masterInfo?.cluster?.clusterType,
+              envCode:item?.masterInfo?.cluster?.envCode,
+              clusterName:item?.masterInfo?.cluster?.name,
+              key:item?.masterInfo?.id,
+              children:item?.slaveInfo?slaveInfoData:null,
+            
+             
+            })
           });
           const pageInfo = result.data.pageInfo;
           setSource(dataArry);
