@@ -1,19 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useContext } from 'react';
 import G6 from '@antv/g6';
 import { ContentCard } from '@/components/vc-page-content';
 import { Button, Card, Descriptions, Spin } from 'antd';
 import { INSTANCE_TYPE } from '../../../../schema';
 import { useSyncMetaData } from '../../../../hook';
+import  DetailContext  from '../../context'
 export interface instanceInfoProps {
   loading: boolean;
   infoData: any;
   topoData: any;
-  clusterId: number;
+  // clusterId: number;
   getInstanceDetail: (paramsObj: { id: number }) => Promise<void>;
 }
 export default function InstanceInfo(props: instanceInfoProps) {
-  const { loading, infoData, topoData, clusterId, getInstanceDetail } = props;
+  const { loading, infoData, topoData, getInstanceDetail } = props;
   const [syncLoading, syncMetaData] = useSyncMetaData();
+  const {clusterId} =useContext(DetailContext);
   G6.registerNode(
     'tree-node',
     {

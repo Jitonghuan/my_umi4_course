@@ -8,9 +8,9 @@ type clusterTypeItem = {
 };
 
 export const CLUSTER_TYPE: Record<number, clusterTypeItem> = {
-  3: { tagText: 'operator模式', color: 'green' },
+  3: { tagText: 'operator模式', color: 'green' },//
   4: { tagText: '主机部署', color: 'cyan' },
-  5: { tagText: '云数据库', color: 'geekblue' },
+  5: { tagText: '云数据库', color: 'geekblue' },//
 };
 export const clusterTypeOption = [
   {

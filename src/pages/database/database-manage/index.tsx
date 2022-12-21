@@ -1,34 +1,42 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Button, Modal, Form, Input, message } from 'antd';
+import { Button, Modal, Form, Input, message,Space } from 'antd';
 import useTable from '@/utils/useTable';
-import { createTableColumns } from './schema';
+import { createTableColumns,readonlyColumns } from './schema';
 import CreateDataBase from './create-database';
 import { getSchemaList } from '../service';
 import { useDeleteSchema } from './hook';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useSyncMetaData } from '../instance-list/hook';
+import './index.less';
 export interface SchemaProps {
   clusterId: number;
+  clusterRole:number
 }
 
 export default function DEMO(props: SchemaProps) {
   const [form] = Form.useForm();
-  const { clusterId } = props;
+  const { clusterId ,clusterRole} = props;
   const [ensureForm] = Form.useForm();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteSchema] = useDeleteSchema();
+  const [syncLoading, syncMetaData] = useSyncMetaData();
   useEffect(() => {
     if (!clusterId) return;
   }, [clusterId]);
+  const readonlyTableColumns=useMemo(()=>{
+    return readonlyColumns() as any;
+  },[])
   const columns = useMemo(() => {
+    
     return createTableColumns({
       onDelete: async (record) => {
         ensureModal(record);
       },
       delLoading: delLoading,
     }) as any;
-  }, []);
+  }, [clusterRole]);
 
   const ensureModal = (record: any) => {
     // ensureForm.resetFields();
@@ -84,7 +92,7 @@ export default function DEMO(props: SchemaProps) {
   });
 
   return (
-    <PageContainer>
+    <PageContainer className="database-card">
       <CreateDataBase
         mode={mode}
         clusterId={clusterId}
@@ -99,9 +107,31 @@ export default function DEMO(props: SchemaProps) {
 
       <TableSearch
         bordered
-        splitLayout={false}
-        columns={columns}
+        
+        // splitLayout={false}
+        formLayout="inline"
+        columns={clusterRole===3? columns:readonlyTableColumns}
         {...tableProps}
+        formOptions={[
+          {
+            key: '1',
+            type: 'input',
+            label: '数据库名称',
+            dataIndex: 'name',
+            width: '200px',
+            placeholder: '请输入',
+            
+          },
+          {
+            key: '2',
+            type: 'input',
+            label: '授权账号',
+            dataIndex: 'owner',
+            width: '200px',
+            placeholder: '请输入',
+            
+          },
+        ]}
         pagination={{
           ...tableProps.pagination,
           showTotal: (total) => `共 ${total} 条`,
@@ -111,7 +141,17 @@ export default function DEMO(props: SchemaProps) {
         }}
         extraNode={
           <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+            <Space>
             <Button
+                type="primary"
+                loading={syncLoading}
+                onClick={() => {
+                  syncMetaData({ clusterId });
+                }}
+              >
+                同步元数据
+              </Button>
+              {clusterRole===3&&   <Button
               type="primary"
               ghost
               onClick={() => {
@@ -119,7 +159,10 @@ export default function DEMO(props: SchemaProps) {
               }}
             >
               创建数据库
-            </Button>
+            </Button>}
+           
+            </Space>
+           
           </div>
         }
         className="table-form"

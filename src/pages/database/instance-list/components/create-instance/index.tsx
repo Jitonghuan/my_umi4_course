@@ -97,12 +97,12 @@ export default function CreateInstance(props: CreateInstanceProps) {
             <Form.Item label="实例名称" name="name" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode === 'VIEW'} style={{ width: 360 }} />
             </Form.Item>
-            <Form.Item label="数据库类型" name="instanceType">
+            <Form.Item label="数据库类型" name="instanceType" rules={[{ required: true, message: '请输入' }]}>
               <Select options={instanceTypeOption} disabled={mode !== 'ADD'} style={{ width: 360 }} />
             </Form.Item>
-            <Form.Item label="数据库版本" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
+            {/* <Form.Item label="数据库版本" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode !== 'ADD'} style={{ width: 360 }} />
-            </Form.Item>
+            </Form.Item> */}
 
             <Row className="row-layout" style={{ width: '100%' }}>
               <Form.Item
@@ -116,7 +116,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
                   allowClear
                   showSearch
                   options={clusterOptions}
-                  disabled={mode !== 'ADD'}
+                  // disabled={mode !== 'ADD'}
                   // style={{ width: 360 }}
                   placeholder="请选择"
                 />

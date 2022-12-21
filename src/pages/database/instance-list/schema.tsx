@@ -157,8 +157,8 @@ type clusterRoleTypeItem = {
 };
 
 export const ROLE_TYPE: Record<number, clusterRoleTypeItem> = {
-  3: { tagText: '主库', color: 'green' },
-  4: { tagText: '从库', color: 'blue' },
+  3: { tagText: '主库', color: '#2db7f5' },
+  4: { tagText: '从库', color: '#87d068' },
 };
 export const roleTypeOption = [
   {
@@ -222,6 +222,15 @@ export const createTableColumns = (params: {
       width: '14%',
     },
     {
+      title: '实例角色',
+      dataIndex: 'clusterRole',
+      key: 'clusterRole',
+      width: '14%',
+      render:(value:number)=>(
+        <Tag color={ROLE_TYPE[value]?.color||"default"}>{ROLE_TYPE[value]?.tagText}</Tag>
+      )
+    },
+    {
       title: '所属环境',
       dataIndex: 'envCode',
       key: 'envCode',
@@ -252,7 +261,7 @@ export const createTableColumns = (params: {
         <Space>
         
           <a onClick={() => params.onManage(record, index)}>管理</a>
-          <a onClick={() => params.onViewPerformance(record, index)}>性能</a>
+          {/* <a onClick={() => params.onViewPerformance(record, index)}>性能</a> */}
           <a onClick={() => params.onEdit(record, index)}>编辑</a>
           <Popconfirm
             title="确认删除?"

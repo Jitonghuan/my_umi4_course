@@ -21,7 +21,6 @@ export function useInstanceList() {
     pageSize?: number;
   }) => {
     setLoading(true);
-    console.log("paramObj",paramObj)
     await getRequest(APIS.getInstanceList, { data: paramObj })
       .then((result) => {
         if (result?.success) {
@@ -204,7 +203,7 @@ export function useGetInstanceDetail(): [boolean, any, any, (paramsObj: { id: nu
     setLoading(true);
     await getRequest(`${APIS.getInstanceDetail}`, { data: { id: paramsObj?.id } })
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           let dataSource = result?.data;
           setData(dataSource?.instance || {});
           setTopoData(dataSource?.topology || []);
