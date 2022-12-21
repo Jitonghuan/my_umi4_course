@@ -198,16 +198,18 @@ export default function UserScheduling(props: any) {
   clusterA_patientData.map((element: any) => {
     element['envCode'] = envCode;
     clusterAP.push(element);
-    return clusterAP;
+    // return clusterAP;
   });
   clusterB_patientData.map((element: any) => {
     element['envCode'] = envCode;
     clusterBP.push(element);
-    return clusterBP;
+    // return clusterBP;
   });
  
   let arryParams = clusterAP.concat(clusterBP);
-    postRequest(`${APIS.addMultipleClusterUser}?envCode=${envCode}`, { data: [...arryParams] }).then((res) => {
+    postRequest(`${APIS.addMultipleClusterUser}?envCode=${envCode}`, { data: {
+      userSwitchType:"user",
+      userInfo:arryParams} }).then((res) => {
       if (res.success) {
         message.success({
           content: '调度成功！',

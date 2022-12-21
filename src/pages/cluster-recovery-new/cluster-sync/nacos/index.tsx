@@ -197,7 +197,7 @@ export default function NacosSync(){
                     单配置项同步: 对某个命名空间下的单个不一致配置项进行同步，B集群Data ID不存在时自动创建。
                     <br/>命名空间同步: 同步该命名空间下的所有配置项，B集群命名该命名空间不存在时自动创建。
                   </p>}>
-                      <Select style={{width:200}} options={syncOptions} onChange={(value:string)=>{
+                      <Select style={{width:200}} options={syncOptions} showSearch onChange={(value:string)=>{
                      setCurSyncType(value)
                      setChange(true)
                      setNamespaceDiffInfo({})
@@ -208,7 +208,7 @@ export default function NacosSync(){
 
                   </Form.Item>
                   <Form.Item label="命名空间" name="namespace">
-                  <Select style={{width:200}} options={namespaceOptions} loading={namespaceLoading} onChange={(value:string)=>{
+                  <Select style={{width:200}} options={namespaceOptions} showSearch loading={namespaceLoading} onChange={(value:string)=>{
                      setChange(true)
                      setNamespaceDiffInfo({})
                      setConfigDiffInfo({})
@@ -225,7 +225,7 @@ export default function NacosSync(){
                   }} />
                   </Form.Item>
                   {curSyncType==="single"&&   <Form.Item label="Data ID" name="dataId">
-                  <Select  style={{width:200}} options={dataIdOptions} onChange={()=>{
+                  <Select  style={{width:200}} showSearch options={dataIdOptions} onChange={()=>{
                      setChange(true)
                      setNamespaceDiffInfo({})
                      setConfigDiffInfo({})

@@ -198,15 +198,18 @@ export default function OperatorScheduling() {
     clusterA_operatorData.map((element: any) => {
       element['envCode'] = envCode;
       clusterAO.push(element);
-      return clusterAO;
+      // return clusterAO;
     });
     clusterB_operatorData.map((element: any) => {
       element['envCode'] = envCode;
       clusterBO.push(element);
-      return clusterBO;
+      // return clusterBO;
     });
     let arryParams = clusterAO.concat(clusterBO);
-    postRequest(`${APIS.addMultipleClusterUser}?envCode=${envCode}`, { data: [...arryParams] }).then((res) => {
+    postRequest(`${APIS.addMultipleClusterUser}?envCode=${envCode}`, { data: {
+      userSwitchType:"operator",
+      userInfo:arryParams
+    }}).then((res) => {
       if (res.success) {
         message.success({
           content: '调度成功！',
