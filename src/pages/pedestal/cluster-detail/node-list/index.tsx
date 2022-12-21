@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from 'react';
-import { Form, Button, Table, message } from 'antd';
+import { Form, Button, Table, message, Input } from 'antd';
 import clusterContext from '../context';
 import { nodeListTableSchema } from '../schema';
 import { RedoOutlined } from '@ant-design/icons';
@@ -8,7 +8,9 @@ import { history } from 'umi';
 import { nodeDrain, nodeUpdate, getNode } from '../service';
 import AddNode from './add-node';
 import SetTag from './set-tag';
+import debounce from 'lodash/debounce';
 import './index.less';
+
 export default function NodeList() {
   const [visible, setVisble] = useState(false);
   const { clusterCode, clusterName } = useContext(clusterContext);
@@ -22,6 +24,8 @@ export default function NodeList() {
   const [baseData, total, loading, loadData] = useNodeListData({ clusterCode: clusterCode || '' }); //表格的基础数据
   const [data, setData] = useState<any>([]); //表格的完整数据
   const [expand, setExpand] = useState<boolean>(true);
+  const [form] = Form.useForm();
+  const [originData, setOriginData] = useState<any>([]);
 
   useEffect(() => {
     if (baseData && baseData.length) {
@@ -30,10 +34,12 @@ export default function NodeList() {
         if (res?.success) {
           const { items } = res?.data || {};
           setData(items || []);
+          setOriginData(items || []);
         }
       });
     } else {
-      setData([])
+      setData([]);
+      setOriginData([]);
     }
   }, [baseData]);
 
@@ -102,6 +108,30 @@ export default function NodeList() {
     }) as any;
   }, [data, expand, setExpand]);
 
+  const filter = debounce((value) => filterData(value), 500)
+
+  const filterData = (value: string) => {
+    if (!value) {
+      setData(originData);
+      return;
+    }
+    const res = JSON.parse(JSON.stringify(originData));
+    const afterFilter: any = [];
+    res.forEach((item: any) => {
+      const judgeLabel = Object.keys(item?.labels || {}).find((e) => {
+        return `${e}=${item.labels[e]}`.indexOf(value) !== -1
+      })
+      if (item.nodeIp?.indexOf(value) !== -1 || item.nodeName?.indexOf(value) !== -1 || judgeLabel) {
+        afterFilter.push(item);
+      }
+    });
+    setData(afterFilter);
+  }
+
+  const valueChange = (changeValue: any) => {
+    filter(changeValue?.searchWord);
+  }
+
   return (
     <div className="cluster-node-list">
       <AddNode
@@ -127,7 +157,7 @@ export default function NodeList() {
         baseTags={cluster.labels}
         initData={initData}
       ></SetTag>
-      <div className="flex-space-between">
+      {/* <div className="flex-space-between">
         <h3>节点列表</h3>
         <Button
           icon={<RedoOutlined />}
@@ -139,9 +169,29 @@ export default function NodeList() {
         >
           刷新
         </Button>
-        {/* <div className="caption-right">
-                    <Button type="primary" onClick={() => { setVisble(true) }}>新增节点</Button>
-                </div> */}
+      </div> */}
+      <div className="table-caption">
+        <div className="caption-left">
+          <h3>节点列表</h3>
+        </div>
+        <div className="caption-right">
+          <Form form={form} layout="inline" onValuesChange={valueChange}>
+            <Form.Item label="搜索：" name="searchWord">
+              <Input placeholder='输入节点名/IP/标签名' style={{ width: 220 }} disabled={!originData?.length} />
+            </Form.Item>
+          </Form>
+          <Button
+            icon={<RedoOutlined />}
+            onClick={() => {
+              form.resetFields();
+              loadData();
+            }}
+            style={{ marginRight: '10px' }}
+            size="small"
+          >
+            刷新
+        </Button>
+        </div>
       </div>
       <Table
         dataSource={data}
