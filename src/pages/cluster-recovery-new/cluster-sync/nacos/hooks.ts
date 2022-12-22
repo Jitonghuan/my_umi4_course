@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as APIS from '../../service';
-import { getRequest } from '@/utils/request';
+import { getRequest,postRequest } from '@/utils/request';
 import appConfig from '@/app.config';
 //Nacos配置比对
 interface diffParams{
@@ -23,7 +23,7 @@ interface diffParams{
 
 }
 export const syncConfig = (params:diffParams) =>
-getRequest(APIS.syncConfigApi, {
+postRequest(APIS.syncConfigApi, {
    data: params,
  });
 
