@@ -132,6 +132,10 @@ export default [
     path: `${baseRoutePath}/cluster-recovery/cluster-sync`,
     redirect: `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
   },
+  {
+    path: `${baseRoutePath}/config/registry`,
+    redirect: `${baseRoutePath}/config/registry/provider`,
+  },
 
 
   {
@@ -608,6 +612,13 @@ export default [
           },
         ],
       },
+      {
+        path: `${baseRoutePath}/config/registry/service-detail`,
+        name: '服务详情',
+        key: 'registry',
+        hideInMenu: true,
+        component: '@/pages/config/registry-center/service-detail',
+      }
     ],
   },
   {

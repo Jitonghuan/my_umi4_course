@@ -1,17 +1,22 @@
 import { Space, Tooltip, Popconfirm } from 'antd';
+import { parse, stringify } from 'query-string';
+import { history, useLocation } from 'umi';
+import type { ColumnsType } from 'antd/lib/table';
 
 // 生产/消费列表
-export const tableColumns = (params: {
-    toDetail: (record: any, index: number) => void;
-    toSubscriber: (record: any, index: number) => void;
-    handleDel: (record: any, index: number) => void;
-}) => {
+export const tableColumns = ({
+    toSubscriber,
+    handleDel,
+    tabKey,
+    envCode,
+    clickNamespace,
+}: any) => {
     return [
         {
             title: '服务名称',
-            dataIndex: 'serviceName',
-            key: 'serviceName',
-            width: '30%',
+            dataIndex: 'name',
+            key: 'name',
+            width: '35%',
             ellipsis: true,
             render: (text: string) => <Tooltip title={text}>{text}</Tooltip>,
         },
@@ -25,17 +30,17 @@ export const tableColumns = (params: {
         },
         {
             title: '实例数',
-            dataIndex: 'groupName',
-            key: 'groupName',
-            width: '8%',
+            dataIndex: 'clusterCount',
+            key: 'clusterCount',
+            width: '5%',
             ellipsis: true,
             render: (text: string) => <Tooltip title={text}>{text}</Tooltip>,
         },
         {
             title: '健康实例数',
-            dataIndex: 'groupName',
-            key: 'groupName',
-            width: '8%',
+            dataIndex: 'healthyInstanceCount',
+            key: 'healthyInstanceCount',
+            width: '7%',
             ellipsis: true,
             render: (text: string) => <Tooltip title={text}>{text}</Tooltip>,
         },
@@ -45,10 +50,19 @@ export const tableColumns = (params: {
             key: 'option',
             width: '12%',
             render: (_: string, record: any) => (
-                //根据不同类型跳转
                 <Space>
-                    <a onClick={() => { toDetail(record) }}>详情</a>
-                    <a onClick={() => { toSubscriber(record) }}>订阅实例</a>
+                    <a onClick={() => {
+                        history.push({
+                            pathname: '/matrix/config/registry/service-detail',
+                            search: stringify({ serviceName: record?.name, groupName: record?.groupName, key: tabKey, envCode, namespaceId: clickNamespace?.namespaceId || '' })
+                        })
+                    }}>详情</a>
+                    <a onClick={() => {
+                        history.replace({
+                            pathname: '/matrix/config/registry/subscriber',
+                            search: stringify({ key: 'subscriber', serviceName: record?.name, groupName: record?.groupName, })
+                        })
+                    }}>订阅实例</a>
                     <Popconfirm
                         title="确认删除?"
                         onConfirm={() => { handleDel(record) }}

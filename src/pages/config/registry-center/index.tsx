@@ -9,8 +9,6 @@ import { parse, stringify } from 'query-string';
 import DetailContext from './context';
 import { getNacosEnvs } from '../nacos-config/hook';
 import { getNacosNamespaces } from '../nacos-config/components/namespace/hook';
-import { namespace } from 'd3-selection';
-const mockData = [{ namespaceShowName: 'test', namespaceId: 1 }]
 
 const { TabPane } = Tabs;
 
@@ -26,10 +24,16 @@ export default function ClusterDetail(props: any) {
     const query: any = parse(location.search);
     const [envOptions, setEnvOptions] = useState<any>([]);
     const [loading, setLoading] = useState<boolean>(false)
-    const [curEnvCode, setCurEnvCode] = useState<string>('')
+    const [curEnvCode, setCurEnvCode] = useState<string>(query?.env || '')
     const [activeTab, setActiveTab] = useState<string>(query?.key || 'provider');
     const [namespaces, setNamespaces] = useState<any>([]);
     const [curNamespaceData, setCurNamespaceData] = useState<any>({});//当前选中的namespace数据
+
+    useEffect(() => {
+        if (query?.key) {
+            setActiveTab(query?.key)
+        }
+    }, [query?.key])
 
     useEffect(() => {
         getEnvOptions()
@@ -41,11 +45,32 @@ export default function ClusterDetail(props: any) {
         }
     }, [curEnvCode])
 
+    // 点击namespce
+    const handleNamespaceClick = (ns: any) => {
+        history.push({
+            pathname: location.pathname,
+            search: stringify({ ...query, namespaceId: ns.namespaceId })
+        })
+        setCurNamespaceData(ns);
+    }
+
+    // 切换环境
+    const handleEnvChange = (env: any) => {
+        history.push({
+            pathname: location.pathname,
+            search: stringify({ ...query, env: env })
+        })
+        setCurEnvCode(env);
+    }
+
+    // 获取环境
     const getEnvOptions = () => {
         setLoading(true)
         getNacosEnvs().then((res) => {
             setEnvOptions(res)
-            setCurEnvCode(res[0]?.value)
+            if (!curEnvCode) {
+                setCurEnvCode(res[0]?.value)
+            }
         }).finally(() => {
             setLoading(false)
         })
@@ -64,6 +89,7 @@ export default function ClusterDetail(props: any) {
         history.replace(r);
     }
 
+    // 获取namespace
     const getNamespace = (envCode = curEnvCode) => {
         setLoading(true)
         getNacosNamespaces(envCode || "").then((res) => {
@@ -76,7 +102,12 @@ export default function ClusterDetail(props: any) {
             }
             data = data.concat(otherNamespace);
             setNamespaces(data);
-            setCurNamespaceData(otherNamespace[0])
+            if (query?.namespaceId || query?.namespaceId === '') {
+                const exist = data.find(i => i.namespaceId === query.namespaceId);
+                setCurNamespaceData(exist ? exist : otherNamespace[0])
+            } else {
+                setCurNamespaceData(otherNamespace[0])
+            }
         }).finally(() => {
             setLoading(false)
         })
@@ -91,7 +122,7 @@ export default function ClusterDetail(props: any) {
                     tabBarExtraContent={
                         <div style={{ display: 'flex', height: 24, alignItems: "center", }}>
                             <b>选择环境：</b> <Select style={{ width: 210 }} value={curEnvCode} showSearch loading={loading} options={envOptions} onChange={(value: string) => {
-                                setCurEnvCode(value)
+                                handleEnvChange(value)
                             }} />
                         </div>
                     }
@@ -101,12 +132,12 @@ export default function ClusterDetail(props: any) {
                     ))}
                 </Tabs>
                 <DetailContext.Provider
-                    value={{ envCode: curEnvCode, tabKey: activeTab, clickNamespace: curNamespaceData }}
+                    value={{ envCode: curEnvCode, tabKey: activeTab, clickNamespace: curNamespaceData, loading: loading }}
                 >
                     <VCPermission code={window.location.pathname} isShowErrorPage>
                         {/* 每个tab页下都有namespace */}
                         <div className="namespace-wrapper">
-                            <Spin spinning={loading}>
+                            <Spin style={{ width: '100%' }} spinning={loading}>
                                 {namespaces?.map((item: any, index: number) => {
                                     return (
                                         <>
@@ -114,7 +145,7 @@ export default function ClusterDetail(props: any) {
                                                 key={item?.namespaceShowName}
                                                 className={curNamespaceData.namespaceId === item.namespaceId ? 'all-namespaces__onClick' : "all-namespaces__unClick"}
                                                 onClick={() => {
-                                                    setCurNamespaceData(item);
+                                                    handleNamespaceClick(item);
                                                 }}
                                             >{item?.namespaceShowName}</span>
                                             {index !== namespaces?.length - 1 && <span style={{ marginLeft: 10 }}>|</span>}
@@ -129,7 +160,7 @@ export default function ClusterDetail(props: any) {
                         </div> :
                             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"请先选择namespace"} />
                         }
-                        {curNamespaceData.namespaceShowName && <Outlet />}
+                        {curNamespaceData?.namespaceShowName && <Outlet />}
                     </VCPermission>
                 </DetailContext.Provider>
             </ContentCard>
