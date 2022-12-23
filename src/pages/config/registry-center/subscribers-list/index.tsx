@@ -15,14 +15,14 @@ export default function SubscriberList() {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [total, setTotal] = useState<number>(0);
     const { envCode, tabKey, clickNamespace, loading } = useContext(DetailContext);
-    const [curRecord, setcurRecord] = useState<any>({});//当前table一行数据
     const [tabelLoading, setTableLoading] = useState<boolean>(false);
     const [tableSource, setTableSource] = useState<any>([]);
+    const pageData = useMemo(() => tableSource.slice((pageIndex - 1) * pageSize, pageIndex * pageSize), [pageIndex, pageSize, tableSource])
 
     useEffect(() => {
         if (serviceName) {
             form.setFieldsValue({ serviceName, groupName });
-            getList({ pageSize, pageIndex });
+            getList();
         }
         history.push({
             pathname: location.pathname,
@@ -57,34 +57,24 @@ export default function SubscriberList() {
         },
     ]
 
-    useEffect(() => {
-        // if (envCode && clickNamespace?.namespaceShowName) {
-        //     getList({ pageIndex, pageSize });
-        // }
-    }, [envCode, clickNamespace])
-
-    const getList = async (params: any) => {
+    const getList = async () => {
         const values = await form.validateFields();
-        getSubscribers({ namespaceId: clickNamespace?.namespaceId, envCode, ...values, ...params }).then((res) => {
+        getSubscribers({ namespaceId: clickNamespace?.namespaceId, envCode, ...values }).then((res) => {
             if (res?.success) {
-                setTableSource(res?.data?.dataSource || []);
-                setTotal(res?.data?.count || 0)
+                setTableSource(res?.data?.subscriberInfo?.subscribers || []);
+                setTotal(res?.data?.subscriberInfo?.count || 0)
             }
         })
     }
 
     const pageSizeClick = (pagination: any) => {
         setPageIndex(pagination.current);
-        let obj = {
-            pageIndex: pagination.current,
-            pageSize: pagination.pageSize,
-        };
-        getList(obj);
+        getList();
     }
 
     const initSearch = () => {
         setPageIndex(1);
-        getList({ pageSize, pageIndex: 1 })
+        getList()
     }
 
     return (<>
@@ -114,7 +104,7 @@ export default function SubscriberList() {
                     <Table
                         rowKey="id"
                         columns={columns}
-                        dataSource={tableSource}
+                        dataSource={pageData || []}
                         loading={tabelLoading || loading}
                         bordered
                         scroll={{ y: window.innerHeight - 440 }}
