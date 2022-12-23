@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { retryDelFeature, downloadSource, newCancelDeploy, getMergeMessage, newRetry, getMessage, cancelDeploy } from '@/pages/application/service';
+import { newDownloadSource, downloadSource, newCancelDeploy, getMergeMessage, newRetry, getMessage, cancelDeploy } from '@/pages/application/service';
 import { Steps, Button, Modal, message } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import { fePublishVerify } from '@/pages/application/service';
@@ -198,18 +198,18 @@ export default function StepItem(props: any) {
                       </Button>
                         </div>
                     )}
-                    {nodeStatus === 'WaitDownload' && <div>
+                    {nodeStatus === 'Success' && item?.executorKind === 'DOWNLOAD' && <div>
                         <Button
                             style={{ marginTop: 4 }}
                             target="_blank"
                             disabled={disabled}
-                            href={`${downloadSource}?id=${metadata?.id}&envCode=${env}`}
+                            href={`${newDownloadSource}?id=${metadata?.id}&taskCode=${item?.code || ''}`}
                             onClick={() => {
                                 setDisabled(true);
                                 setTimeout(() => {
                                     setDisabled(false);
                                 }, 5000);
-                                message.info('资源开始下载');
+                                message.info('开始下载');
                             }}
                         >
                             下载
