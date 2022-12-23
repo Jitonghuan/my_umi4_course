@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Form, Input, Modal, Button, Space, Table, Switch } from 'antd';
-import { UploadOutlined, CloseOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Form, Input, message, Button, Space, Table, Switch } from 'antd';
 import DetailContext from '../context';
-import { getProviders } from '../service';
+import { getProviders, delService } from '../service';
 import { tableColumns } from '../schema';
 const mockData = [{ namespaceShowName: 'test', namespaceId: 1 }]
 export default function ProviderList() {
@@ -18,8 +17,14 @@ export default function ProviderList() {
 
     const columns = useMemo(() => {
         return tableColumns({
-            toSubscriber: () => { },
-            handleDel: () => { },
+            handleDel: async (record: any) => {
+                const { name, groupName } = record;
+                const res = await delService({ namespaceId: clickNamespace?.namespaceId, envCode, serviceName: name, groupName });
+                if (res?.success) {
+                    message.success('删除成功！');
+                    initSearch();
+                }
+            },
             tabKey,
             envCode,
             clickNamespace,

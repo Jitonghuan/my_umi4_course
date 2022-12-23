@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { Form, Input, Modal, Button, Space, Table, Switch } from 'antd';
+import { Form, Input, Modal, Button, message, Table, Switch } from 'antd';
 import { UploadOutlined, CloseOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { tableColumns } from '../schema';
 import DetailContext from '../context';
-import { getConsumers } from '../service';
-const mockData = [{ serviceName: 'test', groupName: 'groupName1' }]
+import { getConsumers, delService } from '../service';
 
 export default function ConsumerList() {
     const [form] = Form.useForm();
@@ -39,8 +38,14 @@ export default function ConsumerList() {
             tabKey,
             envCode,
             clickNamespace,
-            toSubscriber: () => { },
-            handleDel: () => { }
+            handleDel: async (record: any) => {
+                const { name, groupName } = record;
+                const res = await delService({ namespaceId: clickNamespace?.namespaceId, envCode, serviceName: name, groupName });
+                if (res?.success) {
+                    message.success('删除成功！');
+                    initSearch();
+                }
+            }
         })
     }, [pageData, envCode, clickNamespace, tabKey])
 
@@ -51,8 +56,7 @@ export default function ConsumerList() {
 
     const initSearch = () => {
         setPageIndex(1);
-        setSwitchValue(true);
-        getList(true)
+        getList();
     }
 
     return (<>

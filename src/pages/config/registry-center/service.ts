@@ -30,3 +30,9 @@ export const updateServiceInstance = (data: any) => {
     const url = addAPIPrefix('/configManage/registry/updateServiceInstance');
     return postRequest(url, { data: data });
 };
+
+// 删除服务
+export const delService = (data: any) => {
+    const url = addAPIPrefix('/configManage/registry/deleteService');
+    return delRequest(url, { data: data });
+};

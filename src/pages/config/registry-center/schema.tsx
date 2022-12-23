@@ -5,7 +5,6 @@ import type { ColumnsType } from 'antd/lib/table';
 
 // 生产/消费列表
 export const tableColumns = ({
-    toSubscriber,
     handleDel,
     tabKey,
     envCode,
