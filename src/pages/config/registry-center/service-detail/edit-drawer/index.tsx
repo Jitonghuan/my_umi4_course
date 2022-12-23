@@ -46,7 +46,7 @@ export default function ServiceEdit(props: IProp) {
         newValue.metadata = JSON.stringify(metadataObj);
         newValue.weight = Number(newValue.weight)
         setLoading(true);
-        updateServiceInstance({ ...newValue, serviceName, groupName, envCode, namespaceId }).then((res) => {
+        updateServiceInstance({ ...newValue, clusterName: initData?.clusterName, ephemeral: initData?.ephemeral, serviceName, groupName, envCode, namespaceId }).then((res) => {
             if (res?.success) {
                 message.success('编辑成功！');
                 onClose();
@@ -79,7 +79,7 @@ export default function ServiceEdit(props: IProp) {
                     <span>{initData?.ip || ''}</span>
                 </Form.Item>
                 <Form.Item label="端口" name='port'>
-                    <span>{initData?.port || ''}</span>
+                    <span>{initData?.port}</span>
                 </Form.Item>
                 <Form.Item label="权重" name="weight" rules={[{ required: true, message: '请输入' }]}>
                     <Input style={{ width: 120 }} />

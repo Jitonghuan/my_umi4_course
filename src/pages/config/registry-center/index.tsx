@@ -94,7 +94,7 @@ export default function ClusterDetail(props: any) {
         setLoading(true)
         getNacosNamespaces(envCode || "").then((res) => {
             let data = [];
-            //public的放第一位 且不能默认选中
+            //public的放第一位 且不能默认选中 默认选中registry
             const publicNamespace = res.find((item: any) => item.type === 0);
             const otherNamespace = res.filter((item: any) => item.type !== 0);
             if (publicNamespace) {
@@ -102,11 +102,16 @@ export default function ClusterDetail(props: any) {
             }
             data = data.concat(otherNamespace);
             setNamespaces(data);
+            const registry = data.find(i => i.namespaceId === 'registry');
             if (query?.namespaceId || query?.namespaceId === '') {
                 const exist = data.find(i => i.namespaceId === query.namespaceId);
-                setCurNamespaceData(exist ? exist : otherNamespace[0])
+                if (exist) {
+                    setCurNamespaceData(exist)
+                } else {
+                    setCurNamespaceData(registry ? registry : otherNamespace[0])
+                }
             } else {
-                setCurNamespaceData(otherNamespace[0])
+                setCurNamespaceData(registry ? registry : otherNamespace[0])
             }
         }).finally(() => {
             setLoading(false)
