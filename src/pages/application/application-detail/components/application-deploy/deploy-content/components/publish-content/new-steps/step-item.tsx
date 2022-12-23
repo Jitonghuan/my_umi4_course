@@ -203,6 +203,7 @@ export default function StepItem(props: any) {
                             style={{ marginTop: 4 }}
                             target="_blank"
                             disabled={disabled}
+                            size='small'
                             href={`${newDownloadSource}?id=${metadata?.id}&taskCode=${item?.code || ''}`}
                             onClick={() => {
                                 setDisabled(true);
