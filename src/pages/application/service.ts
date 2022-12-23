@@ -148,7 +148,7 @@ export const configUploadUrl = `${appConfig.apiPrefix}/appManage/config/upload`;
 
 /** GET 下载镜像或资源 */
 export const downloadSource = `${appConfig.apiPrefix}/releaseManage/deploy/offlineDownload`;
-export const newDownloadSource = `v2/releaseManage/deploy/offlineDownload`;
+export const newDownloadSource = `/v2/releaseManage/deploy/offlineDownload`;
 /** GET 下载资源包 */
 // export const downloadResource = `${appConfig.apiPrefix}/releaseManage/deploy/downloadFeResource`;
 
