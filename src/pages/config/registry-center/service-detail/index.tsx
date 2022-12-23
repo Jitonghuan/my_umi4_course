@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Form, Input, Modal, Button, Space, Table, Descriptions, Spin, Tooltip, message, Select, Popconfirm, Divider } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
@@ -7,8 +7,8 @@ import { getServiceDetail, updateServiceInstance } from '../service';
 import ServiceEdit from './edit-drawer';
 import { parse, stringify } from 'query-string';
 import { history, useLocation } from 'umi';
+import debounce from 'lodash/debounce';
 import './index.less';
-const mockData = [{ ip: '192.123.123.12', port: '80' }]
 
 export default function ServiceDetail() {
     let location: any = useLocation();
@@ -18,7 +18,10 @@ export default function ServiceDetail() {
     const [initData, setInitData] = useState<any>([]);
     const [tableSource, setTableSource] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
-    const [deployName, setDeployName] = useState<string>('')
+    const [deployName, setDeployName] = useState<string>('');
+    const [form] = Form.useForm();
+    const [originData, setOriginData] = useState<any>([]);
+    const searchValueInput = useRef(null) as any;
 
     useEffect(() => {
         if (serviceName && groupName && key && envCode) {
@@ -99,11 +102,13 @@ export default function ServiceDetail() {
     ]
 
     const getList = () => {
+        const value = form.getFieldsValue();
         setTableLoading(true)
-        getServiceDetail({ serviceName, groupName, envCode, namespaceId }).then((res) => {
+        getServiceDetail({ serviceName, groupName, envCode, namespaceId, ...value }).then((res) => {
             if (res?.success) {
                 setDeployName(res?.data?.deployName || '')
                 setTableSource(res?.data?.instancesInfo?.list || []);
+                setOriginData(res?.data?.instancesInfo?.list || [])
             }
         }).finally(() => { setTableLoading(false) })
     }
@@ -122,6 +127,23 @@ export default function ServiceDetail() {
 
     const goBack = () => {
         history.go(-1);
+    }
+
+    const filter = debounce((value) => filterData(value), 500)
+
+    const filterData = (value: string, update = true) => {
+        if (!value) {
+            setTableSource(originData);
+            return;
+        }
+        const data = JSON.parse(JSON.stringify(originData));
+        const afterFilter: any = [];
+        data.forEach((item: any) => {
+            if (item.ip?.indexOf(value) !== -1 || (item?.metadata?.application || '').indexOf(value) !== -1) {
+                afterFilter.push(item);
+            }
+        });
+        setTableSource(afterFilter);
     }
 
     return (
@@ -145,6 +167,9 @@ export default function ServiceDetail() {
                         extra={
                             <Space>
                                 <Button type="primary" icon={<RedoOutlined />} onClick={() => {
+                                    if (searchValueInput.current) {
+                                        searchValueInput.current.value = ('');
+                                    }
                                     getList()
                                 }}>刷新</Button>
                                 <Button onClick={goBack}>返回</Button>
@@ -156,7 +181,21 @@ export default function ServiceDetail() {
                         <Descriptions.Item labelStyle={{ width: '120px' }} label="服务名" span={12}>{serviceName || ''}</Descriptions.Item>
                     </Descriptions>
                 </Spin>
-                <h2 style={{ marginTop: 20 }}>服务实例</h2>
+                <h2 style={{ marginTop: 15 }}>服务实例</h2>
+                <div style={{ marginBottom: 10 }} className='flex-end'>
+                    搜索：
+                    <input
+                        ref={searchValueInput}
+                        style={{ width: 200 }}
+                        className="ant-input ant-input-sm"
+                        onChange={(e) => {
+                            filter(e.target.value)
+                        }}
+                        disabled={!originData?.length}
+                        placeholder='请输入IP/应用部署名搜索'
+                    ></input>
+                </div>
+
                 <div className="table">
                     <Table
                         rowKey="id"
