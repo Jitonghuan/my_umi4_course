@@ -40,7 +40,7 @@ export default function ServiceEdit(props: IProp) {
         try {
             metadataObj = JSON.parse(newValue?.metadata || '{}')
         } catch (error) {
-            message.error('输入的原数据格式有误，请重新输入');
+            message.error('输入的元数据格式有误，请输入合法的json格式');
             return;
         }
         newValue.metadata = JSON.stringify(metadataObj);
