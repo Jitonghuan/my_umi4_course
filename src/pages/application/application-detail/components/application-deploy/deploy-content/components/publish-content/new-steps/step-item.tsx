@@ -202,6 +202,7 @@ export default function StepItem(props: any) {
                         <Button
                             style={{ marginTop: 4 }}
                             target="_blank"
+                            download
                             disabled={disabled}
                             size='small'
                             href={`${newDownloadSource}?id=${metadata?.id}&taskCode=${item?.code || ''}`}
