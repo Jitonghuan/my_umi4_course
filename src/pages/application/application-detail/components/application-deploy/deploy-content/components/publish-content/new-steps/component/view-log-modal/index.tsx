@@ -57,7 +57,7 @@ export default function ViewLogModal(props: any) {
                 message.warning('webSocket 链接失败');
             };
         }
-        if (!visible) {
+        return () => {
             logData.current = '';
             setLog('');
             if (ws.current) {
