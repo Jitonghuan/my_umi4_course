@@ -1,5 +1,8 @@
 //数据库管理接口
 //https://come-future.yuque.com/sekh46/bbgc7f/zphmwi/edit#KjKDb
+
+//二期
+// https://come-future.yuque.com/sekh46/bbgc7f/ywgfqx?singleDoc#ko3BP
 import appConfig from '@/app.config';
 let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
 const dbmsApiPrefix=`matrix-dbms`;
@@ -21,7 +24,7 @@ export const createAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/cre
 export const deleteAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/delete`;
 
 /**6、 POST 账号授权 */
-export const grantAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/grantAccount`;
+export const grantAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/batchGrant`;
 
 /**7、 PUT 修改密码 */
 export const changePassword = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/changePassword`;
@@ -81,3 +84,37 @@ export const performanceTrends = `${dbmsApiPrefix}${appConfig.apiPrefix}/instanc
 
 /**26、 GET 枚举数据 */
 export const getEnumerateData = `${dbmsApiPrefix}${appConfig.apiPrefix}/getEnumerateData`;
+
+
+/* -------------------------二期------------------ */
+
+export const  getPrivsDetail =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/privsDetail`;
+
+export const  getPreviewGrantSql =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/previewGrantSql`;
+
+export const  getTableColumnList =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/getTableColumnList`;
+
+export const  previewGrantSql =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/previewGrantSql`;
+
+export const  modifyPrivs =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/modifyPrivs`;
+
+/* ----会话管理----- */
+// 会话快照
+export const  snapshotApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/snapshot/stat`;
+// 会话kill
+export const  sessionKillApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/kill`;
+//sql限流-列表 
+export const  sessionRateLimitListApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/list`;
+//sql限流-创建 
+export const  addsessionRateLimitApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/add`;
+//sql限流-获取sql模板
+export const  getSqlTemplate =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/getSqlTemplate`;
+//sql限流-修改 
+export const  updateRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimiter/update`;
+//sql限流-关闭 
+export const  closeDownRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimiter/closeDown`;
+// 锁分析
+export const  lockSession =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/lock`;
+// 实例-容量分析模块
+//空间分析 
+export const  getCapacityStatistic =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/statistic`;

@@ -123,16 +123,16 @@ export const createTableColumns = (params: {
               params?.onGrant(record);
             }}
           >
-            授权
+            权限管理
           </a>
-          <a
+          {/* <a
           
             onClick={() => {
               params?.onRecovery(record);
             }}
           >
             回收
-          </a>
+          </a> */}
           <a
          
             onClick={() => {

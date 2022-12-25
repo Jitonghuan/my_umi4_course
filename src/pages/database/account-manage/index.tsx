@@ -8,7 +8,7 @@ import { createTableColumns ,readonlyColumns} from './schema';
 import CreateAccount from './components/create-account';
 import UpdatePassword from './components/update-password';
 import { useDeleteAccount } from './hook';
-import GrantModal from './components/grant';
+import GrantModal from './components/grant-default';
 import  DetailContext  from '../instance-list/components/instance-info/context'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import './index.less';
@@ -46,13 +46,13 @@ export default function AccountList(props:any) {
         setUpdateMode('EDIT');
       },
       onGrant: (record) => {
-        setCurRecord({ ...record, grantType: 1 });
+        setCurRecord({ ...record });
         setGrantMode('ADD');
       },
-      onRecovery: (record) => {
-        setCurRecord({ ...record, grantType: 2 });
-        setGrantMode('EDIT');
-      },
+      // onRecovery: (record) => {
+      //   setCurRecord({ ...record, grantType: 2 });
+      //   setGrantMode('EDIT');
+      // },
       deleteLoading: delLoading,
     }) as any;
   }, []);
