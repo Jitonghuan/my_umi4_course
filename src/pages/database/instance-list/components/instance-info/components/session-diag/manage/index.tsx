@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState,useContext } from 'react';
-import { Button, Space, Input,Table,Spin,Statistic,message,Select } from 'antd';
+import { Button, Space, Input,Table,Spin,Statistic,message,Select,Popconfirm } from 'antd';
 import  DetailContext  from '../../../context'
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import { useGetSnapshot,sessionKill } from "./hook";
@@ -205,7 +205,13 @@ export default function SessionManage() {
 
                     </div>
                     <div className="caption-right">
-                        <Button type="primary" loading={killLoading} onClick={onSessionKill}>结束选中会话</Button>
+                    <Popconfirm
+                    title="确认结束会话吗?"
+                    onConfirm={onSessionKill}
+                      >
+            <Button type="primary" loading={killLoading} >结束选中会话</Button>
+          </Popconfirm>
+                       
                     </div>
                 </div>
                
