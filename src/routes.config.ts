@@ -132,6 +132,10 @@ export default [
     path: `${baseRoutePath}/cluster-recovery/cluster-sync`,
     redirect: `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
   },
+  {
+    path: `${baseRoutePath}/config/registry`,
+    redirect: `${baseRoutePath}/config/registry/provider`,
+  },
 
 
   {
@@ -579,6 +583,42 @@ export default [
           },
         ],
       },
+      {
+        path: `${baseRoutePath}/config/registry`,
+        name: '注册中心',
+        key: 'registry',
+        component: '@/pages/config/registry-center',
+        routes: [
+          {
+            path: `${baseRoutePath}/config/registry/provider`,
+            name: '生产者列表',
+            key: 'registry',
+            component: '@/pages/config/registry-center/providers-list',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/config/registry/consumer`,
+            name: '消费者列表',
+            key: 'registry',
+            component: '@/pages/config/registry-center/consumers-list',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/config/registry/subscriber`,
+            name: '订阅实例列表',
+            key: 'registry',
+            component: '@/pages/config/registry-center/subscribers-list',
+            hideInMenu: true,
+          },
+        ],
+      },
+      {
+        path: `${baseRoutePath}/config/registry/service-detail`,
+        name: '服务详情',
+        key: 'registry',
+        hideInMenu: true,
+        component: '@/pages/config/registry-center/service-detail',
+      }
     ],
   },
   {
