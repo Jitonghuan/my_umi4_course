@@ -19,28 +19,28 @@ export default function DatabaseOverView() {
   useEffect(() => {
     getEnumerateData().then((result) => {
       if (result?.success) {
-        let databaseType = result?.data?.databaseType;
+        let databaseType = result?.data?.databaseType||[];
         let clusterDeployType = result?.data?.clusterDeployType;
         let databaseTypeArry: any = [];
         let clusterDeployTypeArry: any = [];
-        let options: any = [];
+        // let options: any = [];
 
         databaseType?.map((item: any) => {
           databaseTypeArry.push(item?.label);
-          options.push({
-            label: item?.label,
-            value: item?.values,
-          });
+          // options.push({
+          //   label: item?.label,
+          //   value: item?.values,
+          // });
         });
         clusterDeployType?.map((item: any) => {
           clusterDeployTypeArry.push(item?.label);
         });
 
-        setDatabaseType(options);
+        setDatabaseType(databaseType);
         setPieTypeData(databaseTypeArry);
         setColumnTypeData(clusterDeployTypeArry);
-        getOverviewInstances({ instanceType: options[0].value });
-        setActiveValue(options[0].value);
+        getOverviewInstances({ instanceType: databaseType[0]?.value });
+        setActiveValue(databaseType[0]?.value);
       }
     });
   }, []);

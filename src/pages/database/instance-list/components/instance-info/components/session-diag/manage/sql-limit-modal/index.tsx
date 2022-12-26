@@ -289,12 +289,12 @@ export default function SQLLimit(props: Iprops) {
         </Form.Item>
         <Form.Item label="最大并发度" name="maxiConcurrency" rules={[{ required: true, message: '这是必填项' }]} tooltip="">
 
-          <InputNumber />
+          <InputNumber min={1} />
 
         </Form.Item>
         <div style={{ display: 'flex' }}>
           <Form.Item label="限流时间" style={{ width: '18%' }} name="limitTime" rules={[{ required: true, message: '这是必填项' }]} >
-            <InputNumber />
+            <InputNumber  min={1}/>
           </Form.Item>
           <span style={{ marginLeft: 40, marginTop: 4, display: 'inline-block' }}>
             <span>分钟</span> <span style={{ color: 'red' }}>(限流是应急措施，问题解决后，请及时关闭)</span>

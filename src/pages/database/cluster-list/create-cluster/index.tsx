@@ -28,19 +28,22 @@ export default function ClusterEditor(props: ClusterEditorProps) {
     if (mode !== 'ADD') {
       editForm.setFieldsValue({
         ...curRecord,
+        owner:curRecord?.owner===""?[]:curRecord?.owner
       });
     }
 
     return () => {
       seViewDisabled(false);
       editForm.resetFields();
+      setAddLoading(false);
     };
   }, [mode]);
   const handleSubmit = async () => {
-    setAddLoading(true);
+   
     const params: any = await editForm.validateFields();
     if (mode === 'ADD') {
-      addCluster({ ...params,owner:params?.owner?.join(',') })
+      setAddLoading(true);
+      addCluster({ ...params,owner: typeof(params?.owner)==="string"?params?.owner: params?.owner?.join(',') })
         .then((res: any) => {
           if (res?.code === 1000) {
             message.success(res.data);
@@ -53,7 +56,8 @@ export default function ClusterEditor(props: ClusterEditorProps) {
     }
 
     if (mode === 'EDIT') {
-      updateCluster({ ...params, owner:params?.owner?.join(','),id: curRecord?.id })
+      setAddLoading(true);
+      updateCluster({ ...params, owner:typeof(params?.owner)==="string"?params?.owner: params?.owner?.join(','),id: curRecord?.id })
         .then((res: any) => {
           if (res?.code === 1000) {
             message.success(res.data);
@@ -105,7 +109,7 @@ export default function ClusterEditor(props: ClusterEditorProps) {
             <Select disabled={mode !== 'ADD'} style={{ width: 360 }} options={clusterTypeOption} />
           </Form.Item>
           <Form.Item label="数据管理员" name="owner" rules={[{ required: true, message: '请输入' }]}>
-            <Select mode="multiple" disabled={mode !== 'ADD'} allowClear showSearch style={{ width: 360 }} options={userOptions} />
+            <Select mode="multiple"  allowClear showSearch style={{ width: 360 }} options={userOptions} />
           </Form.Item>
 
           <Form.Item label="读写地址" name="masterVipHost" rules={[{ required: true, message: '请选择' }]}>

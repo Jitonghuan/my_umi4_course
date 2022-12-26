@@ -9,13 +9,6 @@ export const createTableColumns = () => {
         dataIndex: 'id',
         key: 'id',
         width: 50,
-        // width: 200,
-        // ellipsis:true,
-        // render:(value,record,index)=>(
-        //  <Tooltip title={value}>
-          
-        //  </Tooltip> 
-        // )
       },
       {
         title: '用户',
@@ -23,6 +16,9 @@ export const createTableColumns = () => {
         key: 'user',
         width: 50,
         ellipsis:true,
+        sorter: {
+          compare: (a: any, b: any) => a.user.localeCompare(b.user),
+        },
         render:(value,record,index)=>(
           <Tooltip title={value}>
             <span>{value}</span>
@@ -35,26 +31,36 @@ export const createTableColumns = () => {
         key: 'host',
         width: 190,
         ellipsis: true,
-       
+        sorter: {
+          compare: (a: any, b: any) => a.host.localeCompare(b.host),
+        },
       },
       {
         title: '数据库名',
         dataIndex: 'db',
         key: 'db',
         width: 180,
+        sorter: {
+          compare: (a: any, b: any) => a.db.localeCompare(b.db),
+        },
       },
       {
         title: '命令',
         dataIndex: 'command',
         key: 'command',
         width: 90,
-       
+        sorter: {
+          compare: (a: any, b: any) => a.command.localeCompare(b.command),
+        },
       },
       {
         title: '执行时间',
         dataIndex: 'trxStarted',
         key: 'trxStarted',
         width: 180,
+        sorter: {
+          compare: (a: any, b: any) => a.trxStarted - b.trxStarted,
+        },
         render:(value:string)=><span>
         {value?dateCellRender(value):null}
       </span>
@@ -64,6 +70,9 @@ export const createTableColumns = () => {
         dataIndex: 'state',
         key: 'state',
         width: 100,
+        sorter: {
+          compare: (a: any, b: any) => a.state.localeCompare(b.state),
+        },
         // render: (value: number) => {
         //   return <Tag color={CLUSTER_STATUS_TYPE[value]?.color || 'default'}>{CLUSTER_STATUS_TYPE[value]?.tagText}</Tag>;
         // },
@@ -74,6 +83,9 @@ export const createTableColumns = () => {
         key: 'sql',
         width: 200,
         ellipsis:true,
+        sorter: {
+          compare: (a: any, b: any) => a.sql.localeCompare(b.sql),
+        },
         render:(value:string)=>{
           <Tooltip title={value}>
             {value}
@@ -87,6 +99,9 @@ export const createTableColumns = () => {
         dataIndex: 'trxRunTime',
         key: 'trxRunTime',
         width: 90,
+        sorter: {
+          compare: (a: any, b: any) => a.trxRunTime - b.trxRunTime,
+        },
        
        
       },

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Drawer, Form, Button, Select, Input, Row, Tag, message } from 'antd';
 import { addInstance, updateInstance } from '../../hook';
-import { instanceTypeOption, roleTypeOption } from '../../schema';
+import { roleTypeOption } from '../../schema';
+
 import { useGetClusterList } from '../../hook';
 import CreateCluster from '../../../cluster-list/create-cluster';
 import './index.less';
@@ -11,14 +12,16 @@ export interface CreateInstanceProps {
   curRecord?: any;
   onClose: () => any;
   onSave: () => any;
+  instanceTypeOption:any
 }
 
 export default function CreateInstance(props: CreateInstanceProps) {
-  const { mode, onClose, onSave, curRecord } = props;
+  const { mode, onClose, onSave, curRecord,instanceTypeOption } = props;
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [editForm] = Form.useForm<Record<string, string>>();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [clusterMode, setClusterMode] = useState<EditorMode>('HIDE');
+
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -116,7 +119,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
                   allowClear
                   showSearch
                   options={clusterOptions}
-                  // disabled={mode !== 'ADD'}
+                  disabled={mode !== 'ADD'}
                   // style={{ width: 360 }}
                   placeholder="请选择"
                 />
@@ -135,7 +138,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
               )}
             </Row>
             <Form.Item label="集群角色" name="clusterRole" rules={[{ required: true, message: '请选择' }]}>
-              <Select options={roleTypeOption} disabled={mode !== 'ADD'} style={{ width: 360 }} />
+              <Select options={roleTypeOption}  style={{ width: 360 }} />
             </Form.Item>
             <Form.Item label="实例地址" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="格式如：192.168.0.1" />

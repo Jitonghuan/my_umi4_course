@@ -71,7 +71,7 @@ export const updateCluster = `${dbmsApiPrefix}${appConfig.apiPrefix}/cluster/upd
 export const deleteCluster = `${dbmsApiPrefix}${appConfig.apiPrefix}/cluster/delete`;
 
 /**23、 GET 同步元数据 */
-export const syncMetaData = `${dbmsApiPrefix}${appConfig.apiPrefix}/syncMetaData`;
+export const syncMetaData = `${dbmsApiPrefix}${appConfig.apiPrefix}/overview/syncMetaData`;
 
 /**24、GET 获取应用环境 */
 export const envList = `${appConfig.apiPrefix}/appManage/env/list`;
@@ -83,7 +83,7 @@ export const getCharacterSetList = `${dbmsApiPrefix}${appConfig.apiPrefix}/datab
 export const performanceTrends = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/performanceTrends`;
 
 /**26、 GET 枚举数据 */
-export const getEnumerateData = `${dbmsApiPrefix}${appConfig.apiPrefix}/getEnumerateData`;
+export const getEnumerateData = `${dbmsApiPrefix}${appConfig.apiPrefix}/overview/getEnumerateData`;
 
 
 /* -------------------------二期------------------ */

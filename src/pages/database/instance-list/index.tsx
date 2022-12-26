@@ -4,7 +4,8 @@ import { Button, Table, Form, Input, Select } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history,useLocation } from 'umi';
 import { parse,stringify } from 'query-string';
-import { createTableColumns, instanceTypeOption } from './schema';
+import { createTableColumns,  } from './schema';
+import {getEnumerateData} from '../overview/hook'
 import CreateInstance from './components/create-instance';
 import { useDeleteInstance, useGetClusterList, useInstanceList } from './hook';
 export default function InstanceList() {
@@ -16,6 +17,18 @@ export default function InstanceList() {
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [listLoading, pageInfo, dataSource, getInstanceList] = useInstanceList();
   const [delLoading, deleteInstance] = useDeleteInstance();
+  const [instanceTypeOption,setInstanceTypeOption]=useState<any>([])
+  const getOptions=()=>{
+    getEnumerateData().then((res)=>{
+      if(res?.success){
+        setInstanceTypeOption(res?.data?.databaseType)
+      }
+
+    })
+  }
+  useEffect(()=>{
+    getOptions()
+  },[])
   useEffect(() => {
     getClusterList();
     if(query?.clusterId){
@@ -100,6 +113,7 @@ export default function InstanceList() {
         onClose={() => {
           setMode('HIDE');
         }}
+        instanceTypeOption={instanceTypeOption}
         onSave={() => {
           setMode('HIDE');
           loadListData({

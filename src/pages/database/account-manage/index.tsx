@@ -64,6 +64,7 @@ export default function AccountList(props:any) {
     method: 'GET',
     form,
     formatter: (params) => {
+
       return {
         ...params,
         clusterId,
@@ -158,6 +159,7 @@ export default function AccountList(props:any) {
       />
       <TableSearch
         bordered
+        form={form}
         formLayout="inline"
         // splitLayout={false}
         formOptions={[

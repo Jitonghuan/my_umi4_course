@@ -1,10 +1,11 @@
 import React, { useMemo, useEffect, useState,useContext } from 'react';
-import { Button, Space, Input,Table,Spin,Statistic,message } from 'antd';
+import { Button, Space, Input,Table,Spin,Statistic,message,Select } from 'antd';
 import  DetailContext  from '../../../context'
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import { useGetSnapshot,sessionKill } from "./hook";
 import { createTableColumns,createUserTableColumns,createDbTableColumns,createOriginTableColumns } from "./schema";
 import { layoutGrid,infoLayoutGrid } from "./type";
+import { debounce } from 'lodash';
 import SqlLimit from './sql-limit-modal'
 
 import './index.less';
@@ -48,6 +49,7 @@ export default function SessionManage() {
       }, []);
       const rowSelection = {
         // defaultSelectedRowKeys: defaultRow,
+        selectedRowKeys:rowSelected,
         onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             setRowSelected(selectedRowKeys)
@@ -72,12 +74,68 @@ export default function SessionManage() {
         })
     }
     
-
+    const filter = debounce((value) => onSearch(value), 500)
     const onSearch=(value:string)=>{
-        originData
+       let data:any=[]
+       if(!value){
+        setOriginData(snapshotInfo?.sessionList)
+       }
+       if(value){
+        (snapshotInfo?.sessionList||[])?.map((ele:any)=>{
+            if(ele?.user?.indexOf(value)>-1){
+                data.push(ele)
+            }
+            if(ele?.host?.indexOf(value)>-1){
+                data.push(ele)
+            }
+            if(ele?.db?.indexOf(value)>-1){
+                data.push(ele)
+            }
+            if(ele?.command?.indexOf(value)>-1){
+                data.push(ele)
+            }
+            if(ele?.state?.indexOf(value)>-1){
+                data.push(ele)
+            }
+            if(ele?.sql?.indexOf(value)>-1){
+                data.push(ele)
+            }
+        })
+
+        const dataSource=[...new Set(data)]
+        setOriginData(dataSource)
+
+
+       }
+      
+       
      
 
         //setOriginData
+
+    }
+    const querySearch=(value:string)=>{
+        let data:any=[]
+        if(value==="all"){
+            setOriginData(snapshotInfo?.sessionList)
+        }
+        if(value==="active"){
+            (snapshotInfo?.sessionList||[])?.map((ele:any)=>{
+                if(ele?.trxRunTime&&ele?.trxRunTime!==0){
+                    data.push(ele)
+                }
+            })
+            setOriginData(data)
+        }
+        if(value==="error"){
+            (snapshotInfo?.sessionList||[])?.map((ele:any)=>{
+                if(ele?.trxRunTime>120){
+                    data.push(ele)
+                }
+            })
+            setOriginData(data)
+
+        }
 
     }
 
@@ -102,8 +160,8 @@ export default function SessionManage() {
                 </div>
                 <Spin spinning={snapshotLoading}>
                 <VCCardLayout  grid={infoLayoutGrid}>
-                <Statistic  title="异常会话" value={snapshotInfo?.wrongSessions||0}  />
-                <Statistic title="活跃会话" value={snapshotInfo?.actionSessions||0}  />
+                <Statistic  title="异常会话" value={snapshotInfo?.wrongSessions||0}  valueStyle={{ color: '#cf1322' }} />
+                <Statistic title="活跃会话" value={snapshotInfo?.actionSessions||0}  valueStyle={{ color: '#3f8600' }} />
                 <Statistic title="会话总数" value={snapshotInfo?.sessionTotal||0}  />
                 {/* <Statistic title="限流任务" value={snapshotInfo?.wrongSessions||0}  /> */}
                 <Statistic title="连接使用率/最大连接数" value={snapshotInfo?.connectUsage||0} suffix={`/ ${snapshotInfo?.maxConnect||0}`}   />
@@ -127,12 +185,22 @@ export default function SessionManage() {
                             <Button type="primary" onClick={()=>{
                                 setMode("ADD")
                             }}>SQL限流</Button>
-                            <Input placeholder="活跃会话" id="search" style={{ width: 240 }} onKeyUp={(e)=>{
-                                console.log('e',e.target.value)
-                                onSearch(e.target.value)
+                            <Select placeholder="活跃会话"  defaultValue={'all'} style={{ width: 200 }} onChange={querySearch} options={[{
+                                label:"全部会话",
+                                value:"all"
 
-                            }} />
-                            <Input placeholder="搜索会话" style={{ width: 240 }} />
+                            },{
+                                label:"活跃会话",
+                                value:"active"
+                            },{
+                                label:"异常会话",
+                                value:"error"
+                            }]} />
+                            <Input placeholder="搜索会话" style={{ width: 280 }} onKeyUp={(e)=>{
+                              
+                              filter(e.target.value)
+
+                            }}  />
                         </Space>
 
                     </div>
@@ -143,7 +211,7 @@ export default function SessionManage() {
                 </div>
                 <Table 
                 columns={columns} 
-                key='id'
+                key='index'
                 scroll={{x:"100%"}}
                 dataSource={originData||[]}
                 rowSelection={{

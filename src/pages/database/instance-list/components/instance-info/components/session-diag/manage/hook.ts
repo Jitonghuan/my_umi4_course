@@ -15,7 +15,14 @@ export function useGetSnapshot(): [boolean, any, (paramsObj: { instanceId: numbe
         .then((result) => {
           if (result?.success) {
             let dataSource = result?.data;
-            setData(dataSource || {});
+            const data=(dataSource?.sessionList||[])?.map((ele:any,index:number)=>({
+              ...ele,
+              index:index
+
+            }))
+            setData({...dataSource,
+              sessionList:data
+            } || {});
           } 
         })
         .finally(() => {
