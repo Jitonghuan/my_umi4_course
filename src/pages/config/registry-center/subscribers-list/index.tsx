@@ -71,12 +71,13 @@ export default function SubscriberList() {
 
     const getList = async () => {
         const values = await form.validateFields();
+        setTableLoading(true)
         getSubscribers({ namespaceId: clickNamespace?.namespaceId, envCode, ...values }).then((res) => {
             if (res?.success) {
                 setTableSource(res?.data?.subscriberInfo?.subscribers || []);
                 setTotal(res?.data?.subscriberInfo?.count || 0)
             }
-        })
+        }).finally(() => { setTableLoading(false) })
     }
 
     const pageSizeClick = (pagination: any) => {
