@@ -29,8 +29,8 @@ export const tableColumns = ({
         },
         {
             title: '实例数',
-            dataIndex: 'clusterCount',
-            key: 'clusterCount',
+            dataIndex: 'ipCount',
+            key: 'ipCount',
             width: '5%',
             ellipsis: true,
             render: (text: string) => <Tooltip title={text}>{text}</Tooltip>,
