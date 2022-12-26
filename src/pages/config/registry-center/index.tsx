@@ -84,6 +84,7 @@ export default function ClusterDetail(props: any) {
             pathname: `${path}/${key}`,
             search: stringify(Object.assign(query, {
                 key: key || 'provider',
+                type: undefined,
             })),
         }
         history.replace(r);

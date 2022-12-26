@@ -5,6 +5,7 @@ import { getProviders, delService } from '../service';
 import { tableColumns } from '../schema';
 const mockData = [{ namespaceShowName: 'test', namespaceId: 1 }]
 export default function ProviderList() {
+    let sessionData: any = sessionStorage.getItem('registry_provider_params') || '{}';
     const [form] = Form.useForm();
     const [pageSize, setPageSize] = useState<number>(20);
     const [pageIndex, setPageIndex] = useState<number>(1);
@@ -29,11 +30,15 @@ export default function ProviderList() {
             envCode,
             clickNamespace,
         })
-    }, [pageData, envCode, clickNamespace, tabKey]);
+    }, [pageData, envCode, clickNamespace, tabKey])
 
     useEffect(() => {
         if (envCode && clickNamespace?.namespaceShowName) {
-            getList();
+            const data = JSON.parse(sessionData)
+            const hasIpValue = data?.hasIpCount === undefined ? true : data?.hasIpCount
+            form.setFieldsValue(data);
+            setSwitchValue(hasIpValue);
+            getList(hasIpValue);
         }
     }, [envCode, clickNamespace])
 
@@ -65,20 +70,35 @@ export default function ProviderList() {
         <div className="provider-wrapper main-container">
             <>
                 <div className="search-form">
-                    <Form layout="inline" form={form} onFinish={() => { getList() }} onReset={() => { form.resetFields(); initSearch() }}>
+                    <Form
+                        layout="inline"
+                        form={form}
+                        onFinish={(value: any) => {
+                            sessionStorage.setItem('registry_provider_params', JSON.stringify(value || {}));
+                            getList();
+                        }}
+                        onReset={() => {
+                            sessionStorage.setItem('registry_provider_params', JSON.stringify({ serviceName: '', groupName: '' }));
+                            form.resetFields();
+                            initSearch();
+                        }}
+                    >
                         <Form.Item label="服务名称" name="serviceName">
                             <Input placeholder="请输入服务名称" style={{ width: 180 }} />
-
                         </Form.Item >
                         <Form.Item label="分组名称" name="groupName">
                             <Input placeholder="请输入分组名称" style={{ width: 180 }} />
-
                         </Form.Item>
                         {/* <Form.Item label="应用名称" name="deployName">
                             <Input placeholder="请输入应用名称" style={{ width: 180 }} />
                         </Form.Item> */}
                         <Form.Item label="隐藏空服务" name="hasIpCount">
-                            <Switch checked={switchValue} onChange={(value: boolean) => { setSwitchValue(value); getList(value) }} />
+                            <Switch checked={switchValue} onChange={(value: boolean) => {
+                                sessionStorage.setItem('registry_provider_params', JSON.stringify({ ...JSON.parse(sessionData), hasIpCount: value } || {}));
+                                setSwitchValue(value);
+                                getList(value)
+                            }}
+                            />
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">查询</Button>
@@ -86,10 +106,9 @@ export default function ProviderList() {
                         <Form.Item>
                             <Button type="default" htmlType="reset" >重置</Button>
                         </Form.Item>
-
                     </Form>
-
                 </div>
+
                 <div className="registry-table">
                     <Table
                         rowKey="id"
@@ -111,7 +130,6 @@ export default function ProviderList() {
                         }}
                         onChange={pageSizeClick}
                     />
-
                 </div>
             </>
         </div>

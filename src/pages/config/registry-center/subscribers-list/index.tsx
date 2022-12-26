@@ -7,9 +7,10 @@ import { parse, stringify } from 'query-string';
 import { history, useLocation } from 'umi';
 
 export default function SubscriberList() {
+    let sessionData: any = sessionStorage.getItem('registry_subscriber_params') || '{}';
     let location: any = useLocation();
     const query: any = parse(location.search);
-    const { serviceName, groupName } = query || {}
+    const { serviceName, groupName, type } = query || {}
     const [form] = Form.useForm();
     const [pageSize, setPageSize] = useState<number>(20);
     const [pageIndex, setPageIndex] = useState<number>(1);
@@ -20,13 +21,24 @@ export default function SubscriberList() {
     const pageData = useMemo(() => tableSource.slice((pageIndex - 1) * pageSize, pageIndex * pageSize), [pageIndex, pageSize, tableSource])
 
     useEffect(() => {
+        if (envCode && clickNamespace?.namespaceShowName) {
+            const data = JSON.parse(sessionData)
+            form.setFieldsValue(data);
+            if (data?.serviceName) {
+                getList();
+            }
+        }
+    }, [envCode, clickNamespace])
+
+    useEffect(() => {
+        // 跳转过来的时候请求 但是数据只保留一次 之后不再回填
         if (serviceName) {
             form.setFieldsValue({ serviceName, groupName });
             getList();
         }
         history.push({
             pathname: location.pathname,
-            search: stringify({ ...query, serviceName: '', groupName: '' })
+            search: stringify({ ...query, serviceName: undefined, groupName: undefined })
         })
     }, [serviceName, groupName])
 
@@ -77,28 +89,36 @@ export default function SubscriberList() {
         getList()
     }
 
+    const goBack = () => {
+        history.push({
+            pathname: `/matrix/config/registry/${type}`,
+            search: stringify({ key: type, envCode, namespaceId: clickNamespace?.namespaceId || '' })
+        })
+    }
+
     return (<>
         <div className="provider-wrapper">
             <>
-                <div className="search-form">
-                    <Form layout="inline" form={form} onFinish={getList}>
-                        <Form.Item label="服务名称" name="serviceName" rules={[{ required: true, message: '请输入服务名称再查询' }]}>
-                            <Input placeholder="请输入服务名称" style={{ width: 200 }} />
-
-                        </Form.Item >
-                        <Form.Item label="分组名称" name="groupName">
-                            <Input placeholder="请输入分组名称" style={{ width: 200 }} />
-
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">查询</Button>
-                        </Form.Item>
-                        {/* <Form.Item>
-                            <Button type="default" htmlType="reset" >重置</Button>
-                        </Form.Item> */}
-
-                    </Form>
-
+                <div className='flex-space-between' style={{ alignItems: 'center' }}>
+                    <div className="search-form">
+                        <Form layout="inline" form={form} onFinish={(value: any) => {
+                            getList();
+                            sessionStorage.setItem('registry_subscriber_params', JSON.stringify(value || {}));
+                        }}>
+                            <Form.Item label="服务名称" name="serviceName" rules={[{ required: true, message: '请输入服务名称再查询' }]}>
+                                <Input placeholder="请输入服务名称" style={{ width: 200 }} />
+                            </Form.Item >
+                            <Form.Item label="分组名称" name="groupName">
+                                <Input placeholder="请输入分组名称" style={{ width: 200 }} />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">查询</Button>
+                            </Form.Item>
+                        </Form>
+                    </div>
+                    {(type === 'provider' || type === 'consumer') && <div>
+                        <Button onClick={goBack}>返回</Button>
+                    </div>}
                 </div>
                 <div className="registry-table">
                     <Table

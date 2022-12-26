@@ -59,7 +59,7 @@ export const tableColumns = ({
                     <a onClick={() => {
                         history.replace({
                             pathname: '/matrix/config/registry/subscriber',
-                            search: stringify({ key: 'subscriber', serviceName: record?.name, groupName: record?.groupName, })
+                            search: stringify({ key: 'subscriber', serviceName: record?.name, groupName: record?.groupName, type: tabKey })
                         })
                     }}>订阅实例</a>
                     <Popconfirm
