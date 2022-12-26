@@ -1,0 +1,68 @@
+.registry-page{
+    .ant-card-body{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        .main-container{
+            display: flex;
+            flex-direction: column;
+            flex:1;
+            overflow: auto;
+            .registry-table{
+                flex: 1;
+                overflow: auto;
+            }
+        }
+    }
+    .namespace-wrapper{
+        display: flex;
+        width: 100%;
+        max-height: 55px;
+        min-height: 30px;
+        background-color: rgba(233,233,233,0.6);
+        padding: 6px 6px;
+        overflow: auto;
+        //align-items: center;
+        .all-namespaces__onClick{
+            color: #00CED1;
+            margin-left: 10px;
+            &:hover{
+            cursor: pointer;
+           } 
+        }
+        .all-namespaces__unClick{
+            margin-left: 10px;
+            &:hover{
+              cursor: pointer;
+             } 
+          }
+
+          .ant-spin-nested-loading{
+              width: 100%;
+          }
+        }
+    .namesapce-title{
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        font-size: larger;
+        font-weight: bold;
+        >span + span{
+            margin-left: 12px;
+        }
+            height: 28px;
+            background-color: rgba(173, 215, 250, 0.6);
+            &::before {
+                display: inline-block;
+                content: '';
+                margin-right: 8px;
+                width: 4px;
+                height: 28px;
+                background: #1973cc;
+            }
+        
+        } 
+        .search-form{
+            margin: 15px 0px;
+        }
+}
