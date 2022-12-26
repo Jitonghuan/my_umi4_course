@@ -461,7 +461,7 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
                     关联Jira需求单
                   </Button>
                 )}
-                {type === 'add'&& matrixConfigData?.curEnvType!=="jyglj" && (
+                {type === 'add' && (
                   <Button
                     type="primary"
                     style={{ marginLeft: 6 }}
