@@ -55,7 +55,7 @@ export function useGetSnapshot(): [boolean, any, (paramsObj: { instanceId: numbe
     return await postRequest(`${APIS.getSqlTemplate}`, { data: {sql} });
   };
 
-  export function useGetSessionRateLimitList(): [boolean, any,any, (paramsObj: { instanceId: number,runStatus:number}) => Promise<void>] {
+  export function useGetSessionRateLimitList(): [boolean, any,any,any, (paramsObj: { instanceId: number,runStatus:number,startTime?:string,stopTime?:string,pageSize?:number,pageIndex?:number}) => Promise<void>] {
     const [loading, setLoading] = useState<boolean>(false);
   
     const [endData,setEndData]= useState<any>([]);
@@ -65,18 +65,17 @@ export function useGetSnapshot(): [boolean, any, (paramsObj: { instanceId: numbe
       pageSize:20,
       total:0
     })
-    const getSessionRateLimitList = async (paramsObj: { instanceId: number,runStatus:number}) => {
+    const getSessionRateLimitList = async (paramsObj: { instanceId: number,runStatus:number,startTime?:string,stopTime?:string,pageSize?:number,pageIndex?:number}) => {
       setLoading(true);
       setEndData([])
-      await getRequest(`${APIS.sessionRateLimitListApi}`, { data: {...paramsObj} })
+      await getRequest(`${APIS.sessionRateLimitListApi}`, { data: {...paramsObj,pageSize:paramsObj?.pageSize||20,pageIndex:paramsObj?.pageIndex||1} })
         .then((result) => {
           if (result?.success) {
             let dataSource = result?.data?.dataSource;
          
-            // if(paramsObj?.runStatus===2){
               setEndData(dataSource || []);
               setEndPageInfo(result?.data?.pageInfo)
-            // }
+          
             
           } 
         })
@@ -85,17 +84,18 @@ export function useGetSnapshot(): [boolean, any, (paramsObj: { instanceId: numbe
         });
     };
   
-    return [loading, endData,endPageInfo, getSessionRateLimitList];
+    return [loading, endData,endPageInfo,setEndPageInfo, getSessionRateLimitList];
   }
 
   export const closeDownRateLimiter = async (id:number) => {
-    return await putRequest(`${APIS.closeDownRateLimiter}`, { data: {id} });
+    return await putRequest(`${APIS.closeDownRateLimiter}?id=${id}`, { data: {id} });
   };
-  export const getLockSession = async (instanceId:number) => {
-    return await getRequest(`${APIS.lockSession}`, { data: {instanceId} });
+  export const getLockSession = async (params:{instanceId:number,
+    startTime?:string, stopTime?:string}) => {
+    return await getRequest(`${APIS.lockSession}`, { data: params});
   };
 
-  export function useGetRunSessionList(): [boolean, any,any, (paramsObj: { instanceId: number,runStatus:number}) => Promise<void>] {
+  export function useGetRunSessionList(): [boolean, any,any,any, (paramsObj: { instanceId: number,runStatus:number,pageSize?:number,pageIndex?:number}) => Promise<void>] {
     const [loading, setLoading] = useState<boolean>(false);
     const [data, setData] = useState<any>([]);
    
@@ -105,10 +105,10 @@ export function useGetSnapshot(): [boolean, any, (paramsObj: { instanceId: numbe
       total:0
     })
    
-    const getSessionRateLimitList = async (paramsObj: { instanceId: number,runStatus:number}) => {
+    const getSessionRateLimitList = async (paramsObj: { instanceId: number,runStatus:number,pageSize?:number,pageIndex?:number}) => {
       setLoading(true);
       setData([]);
-      await getRequest(`${APIS.sessionRateLimitListApi}`, { data: {...paramsObj} })
+      await getRequest(`${APIS.sessionRateLimitListApi}`, { data: {...paramsObj,pageSize:paramsObj?.pageSize||20,pageIndex:paramsObj?.pageIndex||1} })
         .then((result) => {
           if (result?.success) {
             let dataSource = result?.data?.dataSource;
@@ -124,5 +124,5 @@ export function useGetSnapshot(): [boolean, any, (paramsObj: { instanceId: numbe
         });
     };
   
-    return [loading, data,pageInfo,getSessionRateLimitList];
+    return [loading, data,pageInfo,setPageInfo,getSessionRateLimitList];
   }

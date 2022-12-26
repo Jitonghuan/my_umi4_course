@@ -14,6 +14,7 @@ export const columns: ColumnsType<DataType> = [
 
 export const createDatabseEditColumns = (params: {
   schemaOptions: any
+  onDelete:(record:any)=>void;
 }) => {
   return [
    
@@ -74,6 +75,29 @@ export const createDatabseEditColumns = (params: {
         );
       },
     },
+    {
+      title: '操作',
+      valueType: 'option',
+      width: 200,
+      render: (text, record, _, action) => [
+        // <a
+        //   key="editable"
+        //   onClick={() => {
+        //     action?.startEditable?.(record.id);
+        //   }}
+        // >
+        //   编辑
+        // </a>,
+        <a
+          key="delete"
+          onClick={() => {
+          params?.onDelete(record)
+          }}
+        >
+          删除
+        </a>,
+      ],
+    },
   
   ]
 }
@@ -81,7 +105,8 @@ export const createDatabseEditColumns = (params: {
 export const createTableEditColumns = (params: {
   schemaOptions: any
   tableOptions:any
-  onDataBaseChange:(value:string)=>void
+  onDataBaseChange:(value:string)=>void;
+  onDelete:(record:any)=>void;
 }) => {
   return [
     {
@@ -168,6 +193,29 @@ export const createTableEditColumns = (params: {
         );
       },
     },
+    {
+      title: '操作',
+      valueType: 'option',
+      width: 200,
+      render: (text, record, _, action) => [
+        // <a
+        //   key="editable"
+        //   onClick={() => {
+        //     action?.startEditable?.(record.id);
+        //   }}
+        // >
+        //   编辑
+        // </a>,
+        <a
+          key="delete"
+          onClick={() => {
+          params?.onDelete(record)
+          }}
+        >
+          删除
+        </a>,
+      ],
+    },
   
   ]
 }
@@ -178,6 +226,7 @@ export const createEditColumns = (params: {
   columnOptions:any
   onDataBaseChange:(value:string)=>void
   onTableChange:(database:string,table:string)=>void
+  onDelete:(record:any)=>void;
 }) => {
   return [
     {
@@ -293,6 +342,29 @@ export const createEditColumns = (params: {
           ></Select>
         );
       },
+    },
+    {
+      title: '操作',
+      valueType: 'option',
+      width: 200,
+      render: (text, record, _, action) => [
+        // <a
+        //   key="editable"
+        //   onClick={() => {
+        //     action?.startEditable?.(record.id);
+        //   }}
+        // >
+        //   编辑
+        // </a>,
+        <a
+          key="delete"
+          onClick={() => {
+          params?.onDelete(record)
+          }}
+        >
+          删除
+        </a>,
+      ],
     },
   ]
 }

@@ -112,9 +112,9 @@ export const  getSqlTemplate =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/ra
 //sql限流-修改 
 export const  updateRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimiter/update`;
 //sql限流-关闭 
-export const  closeDownRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimiter/closeDown`;
+export const  closeDownRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/closeDown`;
 // 锁分析
-export const  lockSession =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/lock`;
+export const  lockSession =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/lock/list`;
 // 实例-容量分析模块
 //空间分析 
 export const  getCapacityStatistic =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/statistic`;

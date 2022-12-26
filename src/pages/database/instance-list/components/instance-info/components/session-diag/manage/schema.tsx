@@ -10,12 +10,12 @@ export const createTableColumns = () => {
         key: 'id',
         width: 50,
         // width: 200,
-        ellipsis:true,
-        render:(value,record,index)=>(
-         <Tooltip title={value}>
+        // ellipsis:true,
+        // render:(value,record,index)=>(
+        //  <Tooltip title={value}>
           
-         </Tooltip> 
-        )
+        //  </Tooltip> 
+        // )
       },
       {
         title: '用户',
@@ -208,7 +208,7 @@ export const createTableColumns = () => {
         ellipsis:true,
         render:(value,record,index)=>(
           <Tooltip title={value}>
-            <span>{value}</span>
+            <span><Tag color={value==="digest"?"cyan":"green"}>{value==="digest"?"Sql指纹":"Sql关键字"}</Tag></span>
           </Tooltip> 
          )
       },
@@ -227,6 +227,12 @@ export const createTableColumns = () => {
         key: 'limitTime',
        
       },
+      //hitCount
+      {
+        title: '命中次数',
+        dataIndex: 'hitCount',
+        key: 'hitCount',
+      },
       {
         title: '开始时间',
         dataIndex: 'jobStartTime',
@@ -238,8 +244,8 @@ export const createTableColumns = () => {
       },
       {
         title: '剩余时间（s)',
-        dataIndex: 'jobEndTime',
-        key: 'jobEndTime',
+        dataIndex: 'remainTime',
+        key: 'remainTime',
         // render:(value:string)=><span>
         //   {value?dateCellRender(value):null}
         // </span>
@@ -249,7 +255,7 @@ export const createTableColumns = () => {
         dataIndex: 'runStatus',
         key: 'runStatus',
         render(value): React.ReactNode {
-          return (<span>{value===1?<><Badge color="green"/>运行中</>:<><Badge/>停止</>}</span>)
+          return (<span>{value===1?<><Badge color="green"/>&nbsp; 运行中</>:<><Badge color="red"/>&nbsp; 停止</>}</span>)
         }
        
       },
@@ -257,6 +263,8 @@ export const createTableColumns = () => {
         title: '限流规则',
         dataIndex: 'sqlKeyWorld',
         key: 'sqlKeyWorld',
+        render:(value,record,index:number)=><span>{
+          record?.limitMode==="keyWorld"?record?.sqlKeyWorld:record?.sqlTemplate}</span>
        
       },
       {
@@ -288,7 +296,7 @@ export const createTableColumns = () => {
         ellipsis:true,
         render:(value,record,index)=>(
           <Tooltip title={value}>
-            <span>{value}</span>
+            <span><Tag color={value==="digest"?"cyan":"green"}>{value==="digest"?"Sql指纹":"Sql关键字"}</Tag></span>
           </Tooltip> 
          )
       },
@@ -329,6 +337,9 @@ export const createTableColumns = () => {
         title: '限流规则',
         dataIndex: 'sqlKeyWorld',
         key: 'sqlKeyWorld',
+        render:(value,record,index:number)=><span>{
+          record?.limitMode==="keyWorld"?record?.sqlKeyWorld:record?.sqlTemplate}</span>
+       
        
       },
      

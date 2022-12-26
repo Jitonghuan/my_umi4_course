@@ -17,6 +17,7 @@ export default function SessionManage() {
     const [killLoading,setKillLoading]=useState<boolean>(false)
     const [visible,setVisible]=useState<boolean>(false)
     const [mode,setMode]=useState<EditorMode>("HIDE")
+    const [originData,setOriginData]= useState<any>([])
     useEffect(()=>{
         if (!instanceId) return
        
@@ -24,6 +25,14 @@ export default function SessionManage() {
         
 
     },[instanceId])
+    useEffect(()=>{
+        if(snapshotInfo?.sessionList?.length){
+            let data=JSON.parse(JSON.stringify(snapshotInfo?.sessionList))
+            setOriginData(data)
+
+        }
+
+    },[snapshotInfo?.sessionList?.length])
     const columns = useMemo(() => {
         return createTableColumns() as any;
       }, []);
@@ -62,6 +71,16 @@ export default function SessionManage() {
             setKillLoading(false)
         })
     }
+    
+
+    const onSearch=(value:string)=>{
+        originData
+     
+
+        //setOriginData
+
+    }
+
     return (
         <div className={rootCls}>
             <SqlLimit mode={mode} 
@@ -108,7 +127,11 @@ export default function SessionManage() {
                             <Button type="primary" onClick={()=>{
                                 setMode("ADD")
                             }}>SQL限流</Button>
-                            <Input placeholder="活跃会话" style={{ width: 240 }} />
+                            <Input placeholder="活跃会话" id="search" style={{ width: 240 }} onKeyUp={(e)=>{
+                                console.log('e',e.target.value)
+                                onSearch(e.target.value)
+
+                            }} />
                             <Input placeholder="搜索会话" style={{ width: 240 }} />
                         </Space>
 
@@ -122,11 +145,18 @@ export default function SessionManage() {
                 columns={columns} 
                 key='id'
                 scroll={{x:"100%"}}
-                dataSource={snapshotInfo?.sessionList||[]}
+                dataSource={originData||[]}
                 rowSelection={{
                     type: "checkbox",
                     ...rowSelection,
                 }}
+                pagination={{
+                   
+                    showTotal: (total) => `总共 ${snapshotInfo?.sessionList?.length} 条数据`,
+                    showSizeChanger: true,
+                    // size: 'small',
+                    // defaultPageSize: 20,
+                  }}
                  />
             </div>
            

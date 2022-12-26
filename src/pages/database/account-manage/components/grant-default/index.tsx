@@ -46,9 +46,11 @@ export default function ScriptEditor(props: GrantProps) {
     const tableActionRef = useRef<ActionType>();
     const tableRef = useRef<ProFormInstance>();
     const [columnTableSource, setColumnTableSource] = useState<any>([])
-    const [TableSource, setTableSource] = useState<any>([])
+    const [tableSource, setTableSource] = useState<any>([])
     const [databaseSource, setDataBaseSource] = useState<any>([])
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+    const [tableEditableKeys, setTableEditableRowKeys] = useState<React.Key[]>([]);
+    const [dataBaseEditableKeys, setDataBaseEditableRowKeys] = useState<React.Key[]>([]);
     const [type, setType] = useState<string>('');
     const [form] = Form.useForm();
     const [tableForm] = Form.useForm();
@@ -141,6 +143,10 @@ export default function ScriptEditor(props: GrantProps) {
     const databseTableColumns = useMemo(() => {
         return createDatabseEditColumns({
             schemaOptions,
+            onDelete:(record:any)=>{
+                setDataBaseSource(databaseSource.filter((item) => item.id !== record.id))
+               
+            }
         }) as any
 
     }, [schemaOptions])
@@ -152,6 +158,10 @@ export default function ScriptEditor(props: GrantProps) {
             onDataBaseChange: (value: string) => {
                 getTableColumnListData(value)
             },
+            onDelete:(record:any)=>{
+                setTableSource(tableSource.filter((item) => item.id !== record.id))
+               
+            }
 
         }) as any
 
@@ -167,6 +177,10 @@ export default function ScriptEditor(props: GrantProps) {
             },
             onTableChange: (database, table) => {
                 getTableColumnListData(database, table)
+            },
+            onDelete:(record:any)=>{
+                setColumnTableSource(columnTableSource.filter((item) => item.id !== record.id))
+               
             }
         }) as any
 
@@ -201,7 +215,7 @@ const handleSubmit=()=>{
     modifyPrivs({clusterId,id:curRecord?.id,oldPrivs,newPrivs:{
         globalPrivs:rowSelected,
         dbPrivs:databaseSource,
-        tablePrivs:TableSource,
+        tablePrivs:tableSource,
         columnPrivs:columnTableSource
     }}).then((res)=>{
         if(res?.success){
@@ -224,7 +238,7 @@ const handleSubmit=()=>{
                {
                 globalPrivs:rowSelected,
                 dbPrivs:databaseSource,
-                tablePrivs:TableSource,
+                tablePrivs:tableSource,
                 columnPrivs:columnTableSource
                } 
             }
@@ -247,7 +261,7 @@ const handleSubmit=()=>{
                         key="getValue"
                         type="primary"
                         loading={ensureLoading}
-                        disabled={!oldPrivs?.length||!rowSelected||!databaseSource||!TableSource||!columnTableSource||!curRecord?.id||!clusterId}
+                        disabled={!oldPrivs?.length||!rowSelected||!curRecord?.id||!clusterId}
                         onClick={() => {
                          handleSubmit()
                         }}
@@ -258,13 +272,13 @@ const handleSubmit=()=>{
                         key="getValue"
                         type="primary"
                         loading={ensureLoading}
-                        disabled={!oldPrivs?.length||!rowSelected||!databaseSource||!TableSource||!columnTableSource||!curRecord?.user||!curRecord?.host}
+                        disabled={!oldPrivs?.length||!rowSelected||!curRecord?.user||!curRecord?.host}
                         onClick={() => {
                             setPreviewSqlMode("VIEW") 
                         }}
                     >
                         预览SQL
-         </Button>,
+                   </Button>,
                     <Button
                         key="cancel"
                         style={{ marginRight: 10 }}
@@ -322,12 +336,12 @@ const handleSubmit=()=>{
                                         pagination={false}
                                         editable={{
                                             form: databaseForm,
-                                            editableKeys,
+                                            editableKeys:dataBaseEditableKeys,
                                             onCancel: async () => { setType("") },
                                             onSave: async () => {
 
                                             },
-                                            onChange: setEditableRowKeys,
+                                            onChange: setDataBaseEditableRowKeys,
                                             actionRender: (row, config, dom) => [dom.save, dom.cancel],
                                         }}
                                     /> 
@@ -352,12 +366,12 @@ const handleSubmit=()=>{
                                     pagination={false}
                                     editable={{
                                         form: tableForm,
-                                        editableKeys,
+                                        editableKeys:tableEditableKeys,
                                         onCancel: async () => { setType("") },
                                         onSave: async () => {
 
                                         },
-                                        onChange: setEditableRowKeys,
+                                        onChange: setTableEditableRowKeys,
                                         actionRender: (row, config, dom) => [dom.save, dom.cancel],
                                     }}
                                 />
