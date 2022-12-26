@@ -207,11 +207,13 @@ export default function SessionManage() {
                     <div className="caption-right">
                         <Button type="primary" loading={killLoading} onClick={onSessionKill}>结束选中会话</Button>
                     </div>
-
                 </div>
+               
                 <Table 
                 columns={columns} 
-                key='index'
+                // key='index'
+                rowKey="id"
+                // rowKey
                 scroll={{x:"100%"}}
                 dataSource={originData||[]}
                 rowSelection={{

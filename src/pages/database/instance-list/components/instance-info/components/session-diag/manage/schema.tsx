@@ -55,14 +55,14 @@ export const createTableColumns = () => {
       },
       {
         title: '执行时间',
-        dataIndex: 'trxStarted',
-        key: 'trxStarted',
+        dataIndex: 'time',
+        key: 'time',
         width: 180,
         sorter: {
-          compare: (a: any, b: any) => a.trxStarted - b.trxStarted,
+          compare: (a: any, b: any) => a.time - b.time,
         },
         render:(value:string)=><span>
-        {value?dateCellRender(value):null}
+       {value} min
       </span>
       },
       {
@@ -87,9 +87,12 @@ export const createTableColumns = () => {
           compare: (a: any, b: any) => a.sql.localeCompare(b.sql),
         },
         render:(value:string)=>{
-          <Tooltip title={value}>
-            {value}
+          return(
+            <Tooltip title={value}>
+            <span>{value}</span>
+           
           </Tooltip>
+          )
 
         }
       },
