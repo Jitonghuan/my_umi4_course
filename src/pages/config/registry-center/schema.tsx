@@ -2,6 +2,10 @@ import { Space, Tooltip, Popconfirm } from 'antd';
 import { parse, stringify } from 'query-string';
 import { history, useLocation } from 'umi';
 import type { ColumnsType } from 'antd/lib/table';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+
+const providerTooltip = '生产者在注册中心进行注册，为消费者提供服务';
+const consumerTooltip = '消费者在注册中心订阅生产者提供的服务';
 
 // 生产/消费列表
 export const tableColumns = ({
@@ -12,7 +16,12 @@ export const tableColumns = ({
 }: any) => {
     return [
         {
-            title: '服务名称',
+            title: <div><span>{`${tabKey === 'provider' ? '注册' : '订阅'}服务名称`}
+                <Tooltip title={tabKey === 'provider' ? providerTooltip : consumerTooltip} placement="top">
+                    <QuestionCircleOutlined style={{ marginLeft: '4px' }} />
+                </Tooltip>
+            </span>
+            </div>,
             dataIndex: 'name',
             key: 'name',
             width: '35%',
@@ -56,12 +65,12 @@ export const tableColumns = ({
                             search: stringify({ serviceName: record?.name, groupName: record?.groupName, key: tabKey, envCode, namespaceId: clickNamespace?.namespaceId || '' })
                         })
                     }}>详情</a>
-                    <a onClick={() => {
+                    {tabKey === 'provider' && <a onClick={() => {
                         history.replace({
                             pathname: '/matrix/config/registry/subscriber',
                             search: stringify({ key: 'subscriber', serviceName: record?.name, groupName: record?.groupName, type: tabKey })
                         })
-                    }}>订阅实例</a>
+                    }}>订阅实例</a>}
                     <Popconfirm
                         title="确认删除?"
                         onConfirm={() => { handleDel(record) }}
