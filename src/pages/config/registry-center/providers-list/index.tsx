@@ -65,7 +65,7 @@ export default function ProviderList() {
         <div className="provider-wrapper main-container">
             <>
                 <div className="search-form">
-                    <Form layout="inline" form={form} onFinish={() => { getList() }} onReset={() => { form.resetFields(); setSwitchValue(true); initSearch() }}>
+                    <Form layout="inline" form={form} onFinish={() => { getList() }} onReset={() => { form.resetFields(); initSearch() }}>
                         <Form.Item label="服务名称" name="serviceName">
                             <Input placeholder="请输入服务名称" style={{ width: 180 }} />
 
