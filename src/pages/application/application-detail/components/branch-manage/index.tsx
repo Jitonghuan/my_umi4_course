@@ -13,6 +13,7 @@ import { postRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import appConfig from '@/app.config';
+import AppendDemand from './append-demand';
 import './index.less'
 
 export default function BranchManage() {
@@ -26,6 +27,8 @@ export default function BranchManage() {
   const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const selectRef = useRef(null) as any;
+  const [visible, setVisible] = useState<boolean>(false);
+  const [initData, setInitData] = useState<any>({})
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -200,6 +203,9 @@ export default function BranchManage() {
           align="center"
           render={(_, record: any, index) => (
             <div className="action-cell">
+              <a onClick={() => { setInitData(record); setVisible(true) }}>
+                追加需求
+              </a>
               {appConfig.envType !== 'base-poc' && (
                 <a onClick={() => creatReviewUrl(record)}>
                   创建Review
@@ -231,6 +237,23 @@ export default function BranchManage() {
         onClose={() => setBranchEditMode('HIDE')}
         masterBranchOptions={masterBranchOptions}
         selectMaster={selectMaster}
+      />
+      <AppendDemand
+        visible={visible}
+        appCode={appCode!}
+        appCategoryCode={appCategoryCode || ''}
+        onSubmit={() => {
+          setVisible(false);
+          queryBranchList({
+            pageIndex: 1,
+            branchType: 'feature',
+            masterBranch: selectMaster,
+          });
+        }}
+        onClose={() => setVisible(false)}
+        masterBranchOptions={masterBranchOptions}
+        selectMaster={selectMaster}
+        initData={initData}
       />
     </ContentCard>
   );
