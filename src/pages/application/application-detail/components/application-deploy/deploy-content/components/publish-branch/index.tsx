@@ -59,7 +59,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const isGmcProd = checkVersion === true && appCategoryCode === 'gmc' && env === 'prod';
   // 是否要显示版本管理tab
   const isShowVersionTab = (checkVersion === true && env !== "prod" && env !== "dev") || isGmcProd;
-  const [publishType, setPublishType] = useState<string>(isGmcProd ? 'version' : 'branch');
+  const [publishType, setPublishType] = useState<string>(isGmcProd || env === 'version' ? 'version' : 'branch');
   const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
   const [demandVisible, setDemandVisible] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any>({})
@@ -243,8 +243,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <Tabs activeKey={publishType} onChange={(key) => {
         setPublishType(key)
       }}>
-        {/* 发布分支-gmc大类下prod环境下不需要 */}
-        {!isGmcProd && (
+        {/* 发布分支- gmc大类下prod环境下/发布版本环境大类下 不需要 */}
+        {!isGmcProd && env !== "version" && (
           <Tabs.TabPane tab='待发布分支' key='branch' >
             <>
               <div className="table-caption">
@@ -303,7 +303,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           </Tabs.TabPane>
         )}
         {/* 发布版本 */}
-        {isShowVersionTab && (
+        {(isShowVersionTab || env === "version") && (
 
           <Tabs.TabPane tab='待发布版本' key='version'>
             <>

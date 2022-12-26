@@ -275,30 +275,28 @@ export default function DeployContent(props: DeployContentProps) {
           //   requestDeployBranch();
           // }}
           />
-          {envTypeCode !== "version" && (
-            <PublishBranch
-              deployInfo={deployInfo}
-              hasPublishContent={!!(deployed && deployed.length)}
-              dataSource={unDeployed}
-              env={envTypeCode}
-              versionData={versionData}
-              checkVersion={checkVersion}
-              onSearch={searchUndeployedBranch}
-              pipelineCode={pipelineCode}
-              onSubmitBranch={(status) => {
-                timerHandle(status === 'start' ? 'stop' : 'do', true);
-              }}
-              masterBranchChange={(masterBranch: string) => {
-                masterBranchName.current = masterBranch;
-                timerHandle('do', true);
-              }}
-              loading={unDeployedLoad}
-              changeBranchName={(branchName: string) => {
-                // cachebranchName.current = branchName;
-              }}
-              newPublish={newPublish.current}
-            />
-          )}
+          <PublishBranch
+            deployInfo={deployInfo}
+            hasPublishContent={!!(deployed && deployed.length)}
+            dataSource={unDeployed}
+            env={envTypeCode}
+            versionData={versionData}
+            checkVersion={checkVersion}
+            onSearch={searchUndeployedBranch}
+            pipelineCode={pipelineCode}
+            onSubmitBranch={(status) => {
+              timerHandle(status === 'start' ? 'stop' : 'do', true);
+            }}
+            masterBranchChange={(masterBranch: string) => {
+              masterBranchName.current = masterBranch;
+              timerHandle('do', true);
+            }}
+            loading={unDeployedLoad}
+            changeBranchName={(branchName: string) => {
+              // cachebranchName.current = branchName;
+            }}
+            newPublish={newPublish.current}
+          />
 
         </Spin>
       </div>
