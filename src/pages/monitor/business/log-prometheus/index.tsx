@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { List, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
+import { List, Collapse, Form, Select, Input, Button, Space, Tag, Empty, Popconfirm } from 'antd';
 import PageContainer from '@/components/page-container';
 import { PlusOutlined, BarChartOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
 import { history } from 'umi';
@@ -82,17 +82,27 @@ export default function DpMonitor() {
                   >
                     编辑
                   </Button>
-                  <Button
-                    danger
-                    type="link"
-                    icon={<DeleteOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
+                  <Popconfirm
+                    title="确定要删除吗？"
+                    onCancel={(e) => {
+                      e && e.stopPropagation();
+                    }}
+                    onConfirm={(e) => {
+                      e && e.stopPropagation();
                       delMonitorClick(item.id);
                     }}
                   >
-                    删除
-                  </Button>
+                    <Button
+                      danger
+                      type="link"
+                      icon={<DeleteOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      删除
+                    </Button>
+                  </Popconfirm>
                 </Space>
               </div>
             }

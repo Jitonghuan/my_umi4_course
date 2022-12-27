@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
-import { Spin ,Input,Select,Tag,Tooltip,Modal} from 'antd';
-import {QuestionCircleOutlined} from '@ant-design/icons';
-import {getCurrentDistrictInfo} from '../service'
+import { Spin, Input, Select, Tag, Tooltip, Modal } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { getCurrentDistrictInfo } from '../service';
 interface IProps {
   url: string;
 }
 const { Option } = Select;
 const BoardDetail = (props: IProps) => {
   const { url } = props;
-  const [infoType,setInfoType]=useState<string>("ip")
+  const [infoType, setInfoType] = useState<string>('ip');
   const [iframeLoading, setIframeLoading] = useState<boolean>(false);
 
   const hideSlideMenu = () => {
@@ -22,9 +22,9 @@ const BoardDetail = (props: IProps) => {
   useEffect(() => {
     setIframeLoading(false);
   }, [url]);
-  const onSelect=(value: string)=>{
-    setInfoType(value)
-  }
+  const onSelect = (value: string) => {
+    setInfoType(value);
+  };
   const selectBefore = (
     <Select defaultValue="ip" className="select-before" onChange={onSelect}>
       <Option value="ip">IP</Option>
@@ -33,15 +33,13 @@ const BoardDetail = (props: IProps) => {
   );
 
   const onSearch = (value: string) => {
-
     getCurrentDistrictInfo({
       infoType,
-      key:value
-
-    }).then((res)=>{
-      if(res?.success){
+      key: value,
+    }).then((res) => {
+      if (res?.success) {
         Modal.info({
-          title: res?.data||"",
+          title: res?.data || '',
           content: (
             <div>
               {/* <p>some messages...some messages...</p>
@@ -50,13 +48,9 @@ const BoardDetail = (props: IProps) => {
           ),
           onOk() {},
         });
-
       }
-
-    })
-    
-  }
- 
+    });
+  };
 
   return (
     <PageContainer style={{ padding: 0 }}>
@@ -67,9 +61,12 @@ const BoardDetail = (props: IProps) => {
         </Tooltip>
        <Input.Search addonBefore={selectBefore} style={{width:260}} onSearch={onSearch}></Input.Search>
         </span>
-       
+
       </div> */}
-      <div style={{ width: '100%', height: '100%', display: 'block' }} className="grafana-iframe-info">
+      <div
+        style={{ width: '100%', height: '100%', display: 'block', paddingBottom: '100px' }}
+        className="grafana-iframe-info"
+      >
         <Spin spinning={!iframeLoading} />
         <iframe
           className="grafana-iframe"
