@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select, Space } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -148,14 +148,14 @@ export default function BranchManage() {
           width={400}
           render={(value) => (
             <div>
-              <p>
+              <div>
                 <span>{value}</span>
                 <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
                   <span style={{ marginLeft: 8, color: '#3591ff' }}>
                     <CopyOutlined />
                   </span>
                 </CopyToClipboard>
-              </p>
+              </div>
             </div>
           )}
         />
@@ -170,6 +170,23 @@ export default function BranchManage() {
             <Tooltip placement="topLeft" title={value}>
               {value}
             </Tooltip>
+          )}
+        />
+        <Table.Column
+          title="关联需求"
+          dataIndex={['relationStatus', 'statusList']}
+          width={200}
+          ellipsis={{
+            showTitle: false,
+          }}
+          render={(value) => (
+            Array.isArray(value) && value.length ? (
+              value.map((item: any) => (
+                <div className='demand-cell'>
+                  <Tooltip title={item.title}><a target="_blank" href={item.url} style={{ fontSize: 13 }}>{item.title}</a></Tooltip>
+                </div>
+              ))
+            ) : null
           )}
         />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
@@ -200,12 +217,12 @@ export default function BranchManage() {
           title="操作"
           width={200}
           fixed="right"
-          align="center"
+          // align="center"
           render={(_, record: any, index) => (
-            <div className="action-cell">
-              <a onClick={() => { setInitData(record); setVisible(true) }}>
+            <Space>
+              {!(record?.relationStatus?.statusList || []).length && <a onClick={() => { setInitData(record); setVisible(true) }}>
                 关联需求
-              </a>
+              </a>}
               {appConfig.envType !== 'base-poc' && (
                 <a onClick={() => creatReviewUrl(record)}>
                   创建Review
@@ -217,7 +234,7 @@ export default function BranchManage() {
                   作废
                 </a>
               </Popconfirm>
-            </div>
+            </Space>
           )}
         />
       </Table>

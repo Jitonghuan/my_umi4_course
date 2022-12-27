@@ -29,6 +29,7 @@ export interface PublishBranchProps {
     changeBranchName: any;
     versionData: any;
     newPublish: boolean;
+    isHbosVersion: boolean;
 }
 
 export const branchTableSchema = ({ id, appCode, appData, env }) => {

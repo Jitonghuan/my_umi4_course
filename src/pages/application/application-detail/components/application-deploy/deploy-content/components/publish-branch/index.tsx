@@ -39,7 +39,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     loading,
     versionData,
     checkVersion,
-    newPublish
+    newPublish,
+    isHbosVersion
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -59,7 +60,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const isGmcProd = checkVersion === true && appCategoryCode === 'gmc' && env === 'prod';
   // 是否要显示版本管理tab
   const isShowVersionTab = (checkVersion === true && env !== "prod" && env !== "dev") || isGmcProd;
-  const [publishType, setPublishType] = useState<string>(isGmcProd || env === 'version' ? 'version' : 'branch');
+  const [publishType, setPublishType] = useState<string>((isGmcProd || isHbosVersion) ? 'version' : 'branch');
   const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
   const [demandVisible, setDemandVisible] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any>({})
@@ -110,7 +111,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       return await releaseDeploy({
         releaseId: releaseRowKeys,
         pipelineCode,
-        envCodes: deployEnv,
+        envCodes: isHbosVersion ? ['release-env'] : deployEnv,
         buildType: getBuildType(),
         appCode: appCode!,
         envTypeCode: env,
@@ -137,7 +138,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const submitClick = () => {
     // 二方包 或 有已发布
     // if (String(appData?.isClient) === '1' || hasPublishContent) {
-    if (hasPublishContent) {
+    if (hasPublishContent || isHbosVersion) {
       return confirm({
         title: '确定要提交发布吗?',
         icon: <ExclamationCircleOutlined />,
@@ -303,7 +304,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           </Tabs.TabPane>
         )}
         {/* 发布版本 */}
-        {(isShowVersionTab || env === "version") && (
+        {(isShowVersionTab || isHbosVersion) && (
 
           <Tabs.TabPane tab='待发布版本' key='version'>
             <>

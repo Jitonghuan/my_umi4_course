@@ -64,6 +64,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
   const newPublish = useRef<any>(undefined);//是否是新的cicd
   const [versionData, setVersionData] = useState<any>([]);//请求版本列表数据
+  const isHbosVersion = appData?.appCategoryCode === 'hbos' && checkVersion && envTypeCode === 'version';
   useEffect(() => {
     if (!appCode || !isActive || !pipelineCode) return;
     isNewPublish();
@@ -275,7 +276,7 @@ export default function DeployContent(props: DeployContentProps) {
           //   requestDeployBranch();
           // }}
           />
-          <PublishBranch
+          {(envTypeCode !== 'version' || isHbosVersion) && <PublishBranch
             deployInfo={deployInfo}
             hasPublishContent={!!(deployed && deployed.length)}
             dataSource={unDeployed}
@@ -296,7 +297,9 @@ export default function DeployContent(props: DeployContentProps) {
               // cachebranchName.current = branchName;
             }}
             newPublish={newPublish.current}
+            isHbosVersion={isHbosVersion}
           />
+          }
 
         </Spin>
       </div>
