@@ -204,7 +204,7 @@ export default function BranchManage() {
           render={(_, record: any, index) => (
             <div className="action-cell">
               <a onClick={() => { setInitData(record); setVisible(true) }}>
-                追加需求
+                关联需求
               </a>
               {appConfig.envType !== 'base-poc' && (
                 <a onClick={() => creatReviewUrl(record)}>

@@ -6,7 +6,6 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Modal, Input, Form, message, Select, Radio } from 'antd';
 import { usePortalList, useRegulesPortal, useDemands, useRegulusOnlineBugs } from './hook';
 import { debounce } from 'lodash';
-import { mock } from '@/pages/trafficmap/app-traffic/traffic-detail/components/list-detail/call-info/schema';
 
 export interface IProps {
     visible?: boolean;
@@ -19,44 +18,11 @@ export interface IProps {
     initData: any
 }
 
-const mockData = {
-    project: { name: '测试项目2', id: 10012002 },
-    type: 'demand',
-    data: [
-        {
-            "projectId": "10012002",
-            "projectCode": "PROJECT-20221027135942",
-            "projectName": "测试项目2",
-            "id": "10018001",
-            "type": null,
-            "codes": "REQUIREMENT-20221102102218",
-            "title": "test",
-            "state": "开发中",
-            "dutyUserName": "何珍珍",
-            "planStartTime": null,
-            "planEndTime": null
-        },
-        {
-            "projectId": "10012002",
-            "projectCode": "PROJECT-20221027135942",
-            "projectName": "测试项目2",
-            "id": "10018002",
-            "type": null,
-            "codes": "REQUIREMENT-20221102102234",
-            "title": "test1",
-            "state": "开发中",
-            "dutyUserName": "何珍珍",
-            "planStartTime": null,
-            "planEndTime": null
-        }
-    ]
-}
-
 export default function AppendDemand(props: IProps) {
     const { visible, appCode, masterBranchOptions, onClose, onSubmit, appCategoryCode, selectMaster, initData } = props;
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
-    const [platformValue, setPlatformValue] = useState<string>('');
+    const [platformValue, setPlatformValue] = useState<string>('demand');
     const [portalList, listLoading, loadPortalList] = usePortalList({});
     const [regulusPortal, regulusLoading, loadRegulusPortal] = useRegulesPortal({});
     const [demands, demandsLoading, loadDemands] = useDemands({});
@@ -68,22 +34,58 @@ export default function AppendDemand(props: IProps) {
     useEffect(() => {
         if (visible) {
             form.setFieldsValue(initData);
-            form.setFieldsValue({ relatedPlat: mockData?.type })
-            setPlatformValue(mockData?.type);
-            loadPortalList();
         }
     }, [visible])
 
     const handleSubmit = async () => {
         const values = await form.validateFields();
-
+        let demandIdList = values.demandId?.map((item: any) => item.value + '');
+        // setLoading(true);
+        // try {
+        //   const res = await createFeatureBranch({
+        //     appCode,
+        //     relatedPlat: values?.relatedPlat,
+        //     demandId: demandIdList,
+        //     branchName: values?.branchName,
+        //     desc: values?.desc,
+        //     masterBranch: values?.masterBranch,
+        //   });
+        //   if (res.success) {
+        //     message.success('操作成功！');
+        //     onSubmit?.();
+        //   }
+        // } finally {
+        //   setLoading(false);
+        // }
     }
+
+    const selectplatform = (e: any) => {
+        setPlatformValue(e.target.value);
+        form.setFieldsValue({
+            projectId: undefined,
+            demandId: undefined,
+            desc: '',
+        });
+        e.target.value === 'demand' ? loadPortalList() : loadRegulusPortal();
+    };
+
+    const onChangeDemand = (data: any) => {
+        let demandInfo: any = [];
+        data?.map((item: any) => {
+            demandInfo.push(item.label);
+        });
+
+        let info = demandInfo.toString();
+        form.setFieldsValue({
+            desc: info,
+        });
+    };
 
     return (
         <Modal
             destroyOnClose
             width={600}
-            title='追加需求'
+            title='关联需求'
             visible={visible}
             onOk={handleSubmit}
             onCancel={onClose}
@@ -102,7 +104,7 @@ export default function AppendDemand(props: IProps) {
                     name="relatedPlat"
                     rules={[{ required: appCategoryCode === 'hbos' ? true : false, message: '请选择需要关联的平台' }]}
                 >
-                    <Radio.Group value={platformValue} disabled={['demand', 'regulus'].includes(mockData?.type)} onChange={(e) => { setPlatformValue(e.target.value) }}>
+                    <Radio.Group value={platformValue} onChange={selectplatform}>
                         <Radio value="demand">需求</Radio>
                         <Radio value="regulus">bug</Radio>
                     </Radio.Group>
@@ -115,12 +117,15 @@ export default function AppendDemand(props: IProps) {
                     <Select
                         options={projectList || []}
                         onChange={(value) => {
+                            form.setFieldsValue({
+                                demandId: undefined,
+                                desc: '',
+                            });
                             platformValue === 'demand' ? loadDemands({ projectId: value }) : loadBugs({ projectId: value })
                         }}
                         showSearch
                         allowClear
                         optionFilterProp="label"
-                        defaultValue={mockData?.data?.map((e) => ({ ...e, disabled: true }))}
                         loading={listLoading || regulusLoading}
                     ></Select>
                 </Form.Item>
@@ -134,7 +139,7 @@ export default function AppendDemand(props: IProps) {
                     <Select
                         mode="multiple"
                         options={demandList || []}
-                        onChange={() => { }}
+                        onChange={onChangeDemand}
                         showSearch
                         allowClear
                         labelInValue
