@@ -104,15 +104,7 @@ export default function SessionManage() {
 
         const dataSource=[...new Set(data)]
         setOriginData(dataSource)
-
-
        }
-      
-       
-     
-
-        //setOriginData
-
     }
     const querySearch=(value:string)=>{
         let data:any=[]

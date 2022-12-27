@@ -117,4 +117,4 @@ export const  closeDownRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/sess
 export const  lockSession =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/lock/list`;
 // 实例-容量分析模块
 //空间分析 
-export const  getCapacityStatistic =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/statistic`;
+export const  getCapacityStatistic =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listCapacityInfo`;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState,createContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { infoOptions } from '../../schema';
 import { history,useLocation } from 'umi';
@@ -19,7 +19,7 @@ export default function InstanceInfo() {
   const clusterId = curRecordData?.clusterId;
   const optType = curRecordData?.optType;
   const clusterRole=curRecordData?.curRecord?.clusterRole;
-  const [activeTab, setActiveTab] = useState<string | number>('session');
+  const [activeTab, setActiveTab] = useState<string | number>('capacity');
   
   const changeInfoOption = (value: string | number) => {
     setActiveTab(value);
@@ -27,7 +27,7 @@ export default function InstanceInfo() {
   useEffect(() => {
     if (optType) {
       if (optType === 'instance-list-manage') {
-        setActiveTab('session');
+        setActiveTab('capacity');
       }
       if (optType === 'instance-list-trend' || optType === 'overview-list-trend') {
         setActiveTab('trend');
@@ -47,7 +47,7 @@ export default function InstanceInfo() {
   return (
     <PageContainer>
       <Segmented block size="small" options={infoOptions} onChange={changeInfoOption} value={activeTab} />
-      <DetailContext.Provider value={{ clusterId,clusterRole,instanceId }}>
+      <DetailContext.Provider value={{ clusterId,clusterRole,instanceId,envCode:curRecordData?.envCode }}>
         <>
         {activeTab === 'detail' && (
         <SessionManage

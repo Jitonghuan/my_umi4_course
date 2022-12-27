@@ -54,16 +54,16 @@ export const createTableColumns = () => {
         },
       },
       {
-        title: '执行时间',
+        title: '执行时间（秒）',
         dataIndex: 'time',
         key: 'time',
         width: 180,
         sorter: {
           compare: (a: any, b: any) => a.time - b.time,
         },
-        render:(value:string)=><span>
-       {value} min
-      </span>
+      //   render:(value:string)=><span>
+      //  {value} min
+      // </span>
       },
       {
         title: '状态',
@@ -98,7 +98,7 @@ export const createTableColumns = () => {
       },
     
       {
-        title: '事务持续时间',
+        title: '事务持续时间（秒）',
         dataIndex: 'trxRunTime',
         key: 'trxRunTime',
         width: 90,

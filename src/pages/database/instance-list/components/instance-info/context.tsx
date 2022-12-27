@@ -4,6 +4,7 @@ export interface ContextTypes {
     clusterId?: number;
     clusterRole?:number;
     instanceId?:number;
+    envCode?:string;
     
     /** 请求应用数据 */
     // queryAppData?: () => void;

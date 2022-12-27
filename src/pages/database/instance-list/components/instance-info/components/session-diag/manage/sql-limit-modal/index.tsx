@@ -83,6 +83,7 @@ export default function SQLLimit(props: Iprops) {
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [value, setValue] = useState<number | undefined>()
   const [timeRange, setTimeRange] = useState<any>([]);
+  const [limitMode,setLimitMode]=useState<string>('keyWorld')
   const columns = useMemo(() => {
     return createSqlTableColumns({
       onClose: (record: any) => {
@@ -106,6 +107,7 @@ export default function SQLLimit(props: Iprops) {
       setIsUpdate(false)
       form.resetFields()
       setSql("")
+      setLimitMode("keyWorld")
     }
   }, [mode])
 
@@ -116,7 +118,7 @@ export default function SQLLimit(props: Iprops) {
       addSessionRateLimit({
         ...values,
         instanceId,
-        SqlTemplate: sql
+        // SqlTemplate: sql
       }).then((res) => {
         if (res?.success) {
           message.success('添加成功！')
@@ -134,7 +136,7 @@ export default function SQLLimit(props: Iprops) {
       updateRateLimiter({
         ...values,
         instanceId,
-        SqlTemplate: sql,
+        // SqlTemplate: sql,
         id: initData?.id
 
 
@@ -174,14 +176,24 @@ export default function SQLLimit(props: Iprops) {
     })
   }
   const getSql = () => {
-    const sql = form.getFieldsValue()?.sqlKeyWords
+    const sql =limitMode==="keyWorld"? form.getFieldsValue()?.sqlKeyWords:form.getFieldsValue()?.SqlTemplate
     setSql("")
     getSqlTemplate(sql).then((res) => {
-
       if (res?.success) {
         setSql(res?.data || "")
+        if(limitMode==="keyWorld"){
+          form.setFieldsValue({
+            sqlKeyWords:res?.data || ""
+          })
 
-
+        }
+        if(limitMode==="digest"){
+     
+        form.setFieldsValue({
+          SqlTemplate:res?.data || ""
+        })
+        }
+       
       }
 
     })
@@ -281,8 +293,10 @@ export default function SQLLimit(props: Iprops) {
 
       </Tabs>
       {tabActiveKey === "create" && <Form labelCol={{ flex: '110px' }} form={form}>
-        <Form.Item label="限流模式" name="limitMode" rules={[{ required: true, message: '这是必填项' }]}>
-          <Radio.Group options={options} disabled={isUpdate} />
+        <Form.Item label="限流模式" name="limitMode" initialValue={'keyWorld'} rules={[{ required: true, message: '这是必填项' }]}>
+          <Radio.Group options={options} disabled={isUpdate} defaultValue={"keyWorld"} onChange={(e)=>{
+            setLimitMode(e.target.value)
+          }} />
         </Form.Item>
         <Form.Item label="SQL类型" name="sqlType" rules={[{ required: true, message: '这是必填项' }]}>
           <Select style={{ width: 320 }} disabled={isUpdate} options={sqlTypes} />
@@ -303,21 +317,21 @@ export default function SQLLimit(props: Iprops) {
         </div>
 
         <div style={{ display: 'flex' }}>
-          <Form.Item label="SQL关键字" name="sqlKeyWords" style={{ width: '88%' }} rules={[{ required: true, message: '这是必填项' }]} >
+          <Form.Item label={limitMode==="keyWorld"?"SQL关键字":"SQL模板"} name={limitMode==="keyWorld"?"sqlKeyWords":"SqlTemplate"} style={{ width: '88%' }} rules={[{ required: true, message: '这是必填项' }]} >
 
             <AceEditor height={200} mode="sql" />
           </Form.Item>
           <div style={{ marginTop: 100 }}>
-            <Button type="primary" onClick={getSql} >关键字生成与校验</Button>
+            <Button type="primary" onClick={getSql} >{limitMode==="keyWorld"?"关键字生成与校验":"SQL模版生成和校验"}</Button>
           </div>
         </div>
-        <Form.Item style={{ marginLeft: 108 }}>
+        {/* <Form.Item style={{ marginLeft: 108 }}>
           <Alert message="限流关键词示例" type="info"
             description={<><p>原始语句：SELECT * FROM test where name = 'das'</p>
               <p>关键词:SELECT~FROM~test~where~name (也可以带上具体参数，即增加"～das"）</p></>}
             showIcon />
 
-        </Form.Item>
+        </Form.Item> */}
       </Form>}
       {tabActiveKey === "run" && <div>
         <div>
