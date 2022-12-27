@@ -1459,6 +1459,12 @@ export default [
         key: 'cluster-list',
         component: '@/pages/database/cluster-list',
       },
+      {
+        path: `${baseRoutePath}/database/backup`,
+        name: '备份管理',
+        key: 'backup',
+        component: '@/pages/database/backup',
+      }
     ],
   },
   {

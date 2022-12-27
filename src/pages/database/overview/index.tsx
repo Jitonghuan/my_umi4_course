@@ -1,10 +1,9 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { FilterCard } from '@/components/vc-page-content';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import { history } from 'umi';
-import { Card, Segmented, Table, Statistic,Spin } from 'antd';
+import { Card, Segmented, Table, Statistic,Spin,Progress } from 'antd';
 import { tableSchema,sqlTableSchema } from './schema';
 import { useQueryOverviewDashboards, useQueryOverviewInstances, getEnumerateData } from './hook';
 import PieOne from './dashboard/pie-one';
@@ -72,21 +71,23 @@ export default function DatabaseOverView() {
   }, []);
   const upperGridStyle: React.CSSProperties = {
     width: '50%',
-    height: 280,
+    height: 200,
     margin: 12,
   };
   const lowSqlGridStyle: React.CSSProperties = {
-    width: '34%',
-    height: 452,
+    width: '28%',
+    height: 370,
     margin: 12,
   };
 
   return (
     <PageContainer className="database-overview">
 
-      <FilterCard>
+     
+      <ContentCard>
+      {/* <FilterCard> */}
         <div style={{ display: 'flex' }}>
-          <div style={{ width: '66%', }}>
+          <div style={{ width: '72%', }}>
             <div style={{ width: '100%', display: 'flex' }}>
               <Card style={upperGridStyle}>
                 <PieOne dataSource={infodata} pieTypeData={pieTypeData} />
@@ -119,7 +120,7 @@ export default function DatabaseOverView() {
             columns={sqlTableSchemaColumns} 
             loading={loading}
             dataSource={infodata?.slowLogBlackList||[]}
-            scroll={{ y: window.innerHeight - 370 }}
+            scroll={{ y: window.innerHeight - 450 }}
             locale={{
               emptyText: (
                 <div className="custom-table-holder">
@@ -133,8 +134,7 @@ export default function DatabaseOverView() {
 
           </Card>
         </div>
-      </FilterCard>
-      <ContentCard>
+      {/* </FilterCard> */}
         <Segmented
           size="large"
           //  block
@@ -147,7 +147,7 @@ export default function DatabaseOverView() {
           }}
         />
         <div style={{ marginTop: 10 }}>
-          <Table loading={tableLoading} columns={tableColumns} dataSource={tableData || []} />
+          <Table  scroll={{x:"100%"}} loading={tableLoading} columns={tableColumns} dataSource={tableData || []} />
         </div>
       </ContentCard>
 

@@ -1,4 +1,4 @@
-import { Button, Space ,Tooltip} from 'antd';
+import { Button, Space ,Tooltip,Progress} from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import './index.less';
 //3:mysql 4:postgresql 5:redis 6:mongdb 7:rds
@@ -57,29 +57,55 @@ export const tableSchema = ({
       width: 200,
     },
     {
+      title: '健康状态',
+      dataIndex: 'status',
+
+      width: 100,
+      render:(status)=><span>{status==="正常"?<span style={{color:"green"}}>正常</span>:<span style={{color:"red"}}>繁忙</span>}</span>
+    },
+    {
       title: 'CPU',
       dataIndex: 'cpu',
-      width: 180,
+      width: 200,
       render: (value: any) => {
-        return <span>{value}%</span>;
+        return <div  style={{margin:12}}> 
+        {value}%
+        <Progress percent={Number(value)}
+        // status="active" 
+        showInfo={false} 
+        strokeColor={Number(value)>100?"red":"#1a78fd"} 
+       
+         />
+         </div>;
       },
     },
     {
       title: 'Memory',
       dataIndex: 'memory',
 
-      width: 220,
+      width: 200,
       render: (value: any) => {
-        return <span>{value}%</span>;
+        return <div style={{margin:12}}> 
+           {value}%
+        <Progress 
+        // status="active"  
+        showInfo={false} percent={Number(value)}  />
+        </div>;
       },
     },
     {
       title: 'Disk',
       dataIndex: 'disk',
 
-      width: 300,
+      width: 200,
       render: (value: any) => {
-        return <span>{value}%</span>;
+        return <div style={{margin:12}}> 
+         {value}%
+        <Progress 
+        // status="active"
+        showInfo={false}
+         percent={Number(value)}  strokeColor={Number(value)>100?"red":"#1a78fd"}  />
+        </div>;
       },
     },
     {
@@ -87,18 +113,25 @@ export const tableSchema = ({
       dataIndex: 'tps',
 
       width: 200,
+      // render: (value: any) => {
+      //   return <div style={{margin:12}}> <Progress percent={Number(value)}   /></div>;
+      // },
     },
     {
       title: 'QPS',
       dataIndex: 'qps',
-
       width: 200,
+      // render: (value: any) => {
+      //   return <div style={{margin:12}}> <Progress percent={Number(value)}  /></div>;
+      // },
     },
     {
       title: 'SlowQueries',
       dataIndex: 'slowQueries',
-
       width: 200,
+      // render: (value: any) => {
+      //   return <div style={{margin:12}}> <Progress percent={Number(value)}  /></div>;
+      // },
     },
     {
       title: 'ConnectedThreads',
@@ -115,6 +148,7 @@ export const tableSchema = ({
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
+      fixed:"right",
       width: 50,
       render: (value: string, record: any, index: number) => {
         return (

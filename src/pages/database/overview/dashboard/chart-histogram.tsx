@@ -21,8 +21,8 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
     xField: 'type',
     yField: 'value',
     seriesField: 'type',
-    minColumnWidth: 20,
-    maxColumnWidth: 30,
+    minColumnWidth: 10,
+    maxColumnWidth: 20,
     label: {
       content: (originData: any) => {
         // const val = parseFloat(originData.value);
@@ -51,7 +51,9 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
   return (
     <>
       <h3>按集群部署类型分布情况</h3>
-      <div style={{ padding: 10, height: 210 }}>
+      <div 
+      style={{ padding: 0, height: 150 }}
+      >
       
         {
             useMemo(() =>  <Column {...config} />, [dataSource,columnTypeData])

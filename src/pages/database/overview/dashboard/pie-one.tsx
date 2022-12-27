@@ -24,6 +24,7 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
   });
 
   const config = {
+    // padding:14,
     appendPadding: 10,
     data,
     angleField: 'value',
@@ -43,7 +44,7 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
       autoRotate: false,
       style: {
         textAlign: 'center',
-        fontSize: 14,
+        fontSize: 12,
       },
     },
     interactions: [
@@ -61,7 +62,7 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
           whiteSpace: 'pre-wrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-          fontSize: 18,
+          fontSize: 14,
         },
         content: '总实例数',
       },
@@ -72,7 +73,9 @@ export default function OverviewDashboards(props: OverviewDashboardsIProps) {
     <>
       <h3>按数据库类型分布情况</h3>
 
-      <div style={{ padding: 10, height: 220 }}>
+      <div 
+      style={{ padding: 0, height: 160 }}
+        >
        
         {
             useMemo(() => <Pie {...config} />, [dataSource,pieTypeData])
