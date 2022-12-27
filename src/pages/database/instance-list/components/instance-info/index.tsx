@@ -11,15 +11,16 @@ import SchemaManage from '../../../database-manage';
 import Trends from '../../../overview/trends';
 import SessionDiag from './components/session-diag';
 import CapacityAnalyze from "./components/capacity-analyze";
+import LoggerManage from './components/logger'
 
 export default function InstanceInfo() {
   let location:any = useLocation();
   const curRecordData: any = location?.state;
-  const instanceId = curRecordData?.instanceId;
-  const clusterId = curRecordData?.clusterId;
-  const optType = curRecordData?.optType;
+  const instanceId:number = curRecordData?.instanceId;
+  const clusterId:number = curRecordData?.clusterId;
+  const optType:string = curRecordData?.optType;
   const clusterRole=curRecordData?.curRecord?.clusterRole;
-  const [activeTab, setActiveTab] = useState<string | number>('capacity');
+  const [activeTab, setActiveTab] = useState<string | number>('logger');
   
   const changeInfoOption = (value: string | number) => {
     setActiveTab(value);
@@ -27,7 +28,7 @@ export default function InstanceInfo() {
   useEffect(() => {
     if (optType) {
       if (optType === 'instance-list-manage') {
-        setActiveTab('capacity');
+        setActiveTab('logger');
       }
       if (optType === 'instance-list-trend' || optType === 'overview-list-trend') {
         setActiveTab('trend');
@@ -47,36 +48,15 @@ export default function InstanceInfo() {
   return (
     <PageContainer>
       <Segmented block size="small" options={infoOptions} onChange={changeInfoOption} value={activeTab} />
-      <DetailContext.Provider value={{ clusterId,clusterRole,instanceId,envCode:curRecordData?.envCode }}>
+      <DetailContext.Provider value={{ clusterId,clusterRole,instanceId,envCode:curRecordData?.curRecord?.envCode }}>
         <>
-        {activeTab === 'detail' && (
-        <SessionManage
-          // clusterId={clusterId}
-          // instanceId={instanceId}
-        />
-      )}
-      {activeTab === 'database' && <SchemaManage 
-      // clusterId={clusterId} clusterRole={clusterRole} 
-       />}
-      {activeTab === 'account' && <AccountManage 
-      // clusterId={clusterId} clusterRole={clusterRole} 
-      />}
-      {activeTab === 'trend' && <Trends 
-      // instanceId={instanceId}
-       />}
+      {activeTab === 'detail' && (<SessionManage/>)}
+      {activeTab === 'database' && <SchemaManage />}
+      {activeTab === 'account' && <AccountManage />}
+      {activeTab === 'trend' && <Trends />}
       {activeTab === 'session' && <SessionDiag  />}
-      {activeTab === 'sql' && (
-        <div
-          className="unstart-demo"
-          style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-        >
-          {empty}
-        </div>
-      )}
-      {activeTab === 'capacity' && (
-        <CapacityAnalyze />
-        
-      )}
+      {activeTab === 'logger' && <LoggerManage/>}
+      {activeTab === 'capacity' && ( <CapacityAnalyze />)}
        </>
        </DetailContext.Provider>
         

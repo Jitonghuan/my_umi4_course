@@ -1,16 +1,63 @@
 
-import React, { useEffect, useState,useContext } from 'react';
-import { Button,Table,Radio,Statistic } from 'antd';
+import React, { useEffect, useState,useContext,useMemo } from 'react';
+import { Button,Table,Radio,Statistic,Spin } from 'antd';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import  DetailContext  from '../../context'
-import {useGetCapacityStatistic} from './hook'
-import {infoLayoutGrid} from './schema'
+import {useGetCapacityStatistic,useGetAbnormalTableList,useGetTableSpaceList} from './hook'
+import {infoLayoutGrid,createAbnormalTableColumns,createSpaceTableColumns} from './schema'
 import './index.less';
 const rootCls = 'capacity-analyze-compo';
 export default function Capacity(){
-    const [radioValue,setRadioValue]=useState<string>("database");
-    const {clusterId,clusterRole,instanceId} =useContext(DetailContext);
-    const [loading, info, getCapacityStatistic]=useGetCapacityStatistic()
+    const [radioValue,setRadioValue]=useState<string>("table");
+    const {clusterId,clusterRole,instanceId,envCode=""} =useContext(DetailContext);
+    const [loading, info, getCapacityStatistic]=useGetCapacityStatistic();
+    const [tableLoading, dataSource, pageInfo,setPageInfo, getAbnormalTableList] = useGetAbnormalTableList()
+    const [spaceTableLoading, spaceDataSource, spacePageInfo,setSpacePageInfo, getTableSpaceList]=useGetTableSpaceList()
+    useEffect(()=>{
+        if(envCode&&instanceId){
+            getCapacityStatistic({envCode,instanceId})
+            getAbnormalTableList({envCode,instanceId})
+            getTableSpaceList({envCode,instanceId})
+        }
+
+    },[])
+    const abnormalColumns = useMemo(() => {
+        return createAbnormalTableColumns() as any;
+      }, []);
+    const spaceColumns = useMemo(() => {
+        return createSpaceTableColumns() as any;
+      }, []);
+     const pageSizeClick=(pagination: any)=>{
+        setPageInfo({
+            pageIndex:pagination.current
+          })
+      
+          let obj = {
+            pageIndex: pagination.current,
+            pageSize: pagination.pageSize,
+          };
+          getAbnormalTableList({envCode,instanceId,...obj})
+        
+     }
+     const spaceTablePageSizeClick=(pagination: any)=>{
+        setSpacePageInfo({
+            pageIndex:pagination.current
+          })
+      
+          let obj = {
+            pageIndex: pagination.current,
+            pageSize: pagination.pageSize,
+          };
+          getTableSpaceList({envCode,instanceId,...obj})
+        
+
+    }
+     const reload=()=>{
+        getCapacityStatistic({envCode,instanceId})
+        getAbnormalTableList({envCode,instanceId})
+        getTableSpaceList({envCode,instanceId})
+     }
+    
     return (
         <div className={rootCls}>
             <div>
@@ -19,7 +66,7 @@ export default function Capacity(){
                   <h3 className={`${rootCls}__title`}>容量概况</h3>
             </div>
             <div className="caption-right">
-                <Button type="primary">重新分析</Button>
+                <Button type="primary" onClick={reload}>重新分析</Button>
             </div>
 
            
@@ -27,32 +74,69 @@ export default function Capacity(){
             </div>
             </div>
             <div>
+            <Spin spinning={loading}>
             <VCCardLayout  grid={infoLayoutGrid}>
-                <Statistic  title="异常表" value={info?.DiskCapacity||0}  valueStyle={{ color: '#cf1322' }} />
-                <Statistic title="近一周日均增长" value={info?.AvgDailyIncreases||0}  valueStyle={{ color: '#3f8600' }} />
-                <Statistic title="空间可用天数" value={info?.AvailableTime||0}  />
-                {/* <Statistic title="限流任务" value={snapshotInfo?.wrongSessions||0}  /> */}
-                <Statistic title="占用空间" value={info?.DiskUsed||0} suffix={`G`}   />
-                  
-
+                <Statistic  title="异常表" value={dataSource?.length||0}  valueStyle={{ color: '#cf1322' }} />
+                <Statistic title="近一周日均增长" value={info?.avgDailyIncreases||0}  valueStyle={{ color: '#3f8600' }} />
+                <Statistic title="空间可用天数" value={info?.availableTime||0}  />
+                <Statistic title="占用空间/总空间" value={`${info?.diskUsed||0} G`} suffix={`/ ${info?.diskCapacity||0} G`}   />
                 </VCCardLayout>
+
+            </Spin>
+          
             </div>
           
-            <div>
+            <div className="abnormal-table">
             <h3 className={`${rootCls}__title`}>异常表</h3>
-            <Table/>
+            <Table columns={abnormalColumns} dataSource={dataSource}
+            loading={tableLoading} 
+             pagination={{
+                current: pageInfo?.pageIndex,
+                total:pageInfo?.total,
+                pageSize:pageInfo?.pageSize,
+                showSizeChanger: true,
+                onShowSizeChange: (_, size) => {
+                  setPageInfo({
+                    pageSize:size,
+                    pageIndex:1
+                  })
+                },
+                showTotal: () => `总共 ${pageInfo?.total} 条数据`,
+              }}
+              onChange={pageSizeClick}
+            
+            />
             </div>
 
-            <div>
+            <div className="space-table">
                 <Radio.Group  optionType="button" buttonStyle="solid"  value={radioValue} onChange={(e)=>{
                     setRadioValue(e.target.value)
 
                 }} options={[
-                    {label:"库空间",value:"database"},
+                    // {label:"库空间",value:"database"},
                     {label:"表空间",value:"table"},
                 ]}  />
                 <div>
-                    <Table />
+                    <Table 
+                    columns={spaceColumns} 
+                    dataSource={spaceDataSource} 
+                    loading={spaceTableLoading}
+                    pagination={{
+                        current: spacePageInfo?.pageIndex,
+                        total:spacePageInfo?.total,
+                        pageSize:spacePageInfo?.pageSize,
+                        showSizeChanger: true,
+                        onShowSizeChange: (_, size) => {
+                        
+                          setSpacePageInfo({
+                            pageSize:size,
+                            pageIndex:1
+                          })
+                        },
+                        showTotal: () => `总共 ${spacePageInfo?.total} 条数据`,
+                      }}
+                      onChange={spaceTablePageSizeClick}
+                     />
                 </div>
             </div>
         </div>

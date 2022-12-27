@@ -68,10 +68,10 @@ export const infoOptions = [
     label: (
       <div style={{ padding: 4 }}>
         <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<ForkOutlined />} />
-        <div>慢SQL</div>
+        <div>日志管理</div>
       </div>
     ),
-    value: 'sql',
+    value: 'logger',
   },
   {
     label: (

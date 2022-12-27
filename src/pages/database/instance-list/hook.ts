@@ -51,6 +51,7 @@ export function useInstanceList() {
               clusterName:item?.masterInfo?.cluster?.name,
               key:item?.masterInfo?.id,
               children:item?.slaveInfo?slaveInfoData:null,
+              
             
              
             })

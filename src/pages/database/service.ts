@@ -118,3 +118,7 @@ export const  lockSession =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/lock/
 // 实例-容量分析模块
 //空间分析 
 export const  getCapacityStatistic =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listCapacityInfo`;
+//异常表 
+export const  getAbnormalTableList =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listAbnormalTable`;
+//异常表 
+export const  getTableSpaceList =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listTableSpace`;

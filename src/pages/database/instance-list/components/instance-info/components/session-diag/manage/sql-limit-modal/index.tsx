@@ -188,7 +188,6 @@ export default function SQLLimit(props: Iprops) {
 
         }
         if(limitMode==="digest"){
-     
         form.setFieldsValue({
           SqlTemplate:res?.data || ""
         })
