@@ -149,6 +149,7 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
       top: 0,
       right: 0,
       icon: 'circle',
+      type: 'scroll', //分页类型
       textStyle: {
         //图例字体大小
         fontSize: 10,
@@ -157,20 +158,20 @@ export function ABClusterHistogram(histogramData: Record<string, any>) {
     },
     //提示信息
     tooltip: {},
-    color: [
-      '#BC8F8F',
-      '#EE6363',
-      '#DDA0DD',
-      '#FF8247',
-      '#FF69B4',
-      '#9370DB',
-      '#2E8B57',
-      '#4682B4',
-      '#8B864E',
-      '#3A5FCD',
-      '#191970',
-      '#8C8898',
-    ],
+    // color: [
+    //   '#BC8F8F',
+    //   '#EE6363',
+    //   '#DDA0DD',
+    //   '#FF8247',
+    //   '#FF69B4',
+    //   '#9370DB',
+    //   '#2E8B57',
+    //   '#4682B4',
+    //   '#8B864E',
+    //   '#3A5FCD',
+    //   '#191970',
+    //   '#8C8898',
+    // ],
 
     dataset: {
       source: [
