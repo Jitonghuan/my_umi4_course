@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from 'react';
-import { Table, Form, Select, Input, Button, Space, Empty } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Form, Select, Input, Button, Space, Empty, Popconfirm } from 'antd';
 import PageContainer from '@/components/page-container';
 import { PlusOutlined, FormOutlined, DeleteOutlined, BarChartOutlined } from '@ant-design/icons';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import { parse } from 'query-string';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { envTypeData } from '../schema';
@@ -10,30 +10,26 @@ import { useEnvListOptions, useGetListMonitor, useDelMonitor } from './hooks';
 import './index.less';
 import { useAppOptions } from '@/pages/monitor/business/hooks';
 
-export default function DpMonitor(props:any) {
+export default function DpMonitor(props: any) {
   const [form] = Form.useForm();
-  const {tab,queryMonitorName}=props
+  const { tab, queryMonitorName } = props;
   // let location:any = useLocation();
   // const query :any= parse(location.search);
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
-  const [listSource, total, getListMonitor] = useGetListMonitor(queryMonitorName,tab);
+  const [listSource, total, getListMonitor] = useGetListMonitor(queryMonitorName, tab);
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
 
   const [delMonitor] = useDelMonitor();
-  useEffect(()=>{
-    if(queryMonitorName&&tab==="interface"){
-     
-
+  useEffect(() => {
+    if (queryMonitorName && tab === 'interface') {
       form.setFieldsValue({
-        name:queryMonitorName
-      })
-      getListMonitor(1, 10,queryMonitorName);
-
-
+        name: queryMonitorName,
+      });
+      getListMonitor(1, 10, queryMonitorName);
     }
-  },[tab,queryMonitorName])
+  }, [tab, queryMonitorName]);
   const editMonitor = (item: any) => {
     history.push(
       {
@@ -216,17 +212,27 @@ export default function DpMonitor(props:any) {
                     >
                       编辑
                     </Button>
-                    <Button
-                      danger
-                      type="link"
-                      icon={<DeleteOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                    <Popconfirm
+                      title="确定要删除吗？"
+                      onCancel={(e) => {
+                        e && e.stopPropagation();
+                      }}
+                      onConfirm={(e) => {
+                        e && e.stopPropagation();
                         delMonitorClick(record.id);
                       }}
                     >
-                      删除
-                    </Button>
+                      <Button
+                        danger
+                        type="link"
+                        icon={<DeleteOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        删除
+                      </Button>
+                    </Popconfirm>
                   </Space>
                 ),
               },
