@@ -35,9 +35,8 @@ export default function AppendDemand(props: IProps) {
     useEffect(() => {
         if (visible) {
             form.resetFields();
-            form.setFieldsValue({ relatedPlat: 'demandPlat' });
+            form.setFieldsValue({ relatedPlat: 'demandPlat', branchName: initData?.branchName, masterBranch: initData?.masterBranch });
             loadPortalList();
-            form.setFieldsValue({ ...initData, projectId: '' });
         }
     }, [visible])
 
