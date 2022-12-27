@@ -73,7 +73,7 @@ export const tableSchema = ({
         <Progress percent={Number(value)}
         // status="active" 
         showInfo={false} 
-        strokeColor={Number(value)>100?"red":"#1a78fd"} 
+        strokeColor={Number(value)>70?"red":"#1a78fd"} 
        
          />
          </div>;
@@ -104,7 +104,7 @@ export const tableSchema = ({
         <Progress 
         // status="active"
         showInfo={false}
-         percent={Number(value)}  strokeColor={Number(value)>100?"red":"#1a78fd"}  />
+         percent={Number(value)}  strokeColor={Number(value)>70?"red":"#1a78fd"}  />
         </div>;
       },
     },
