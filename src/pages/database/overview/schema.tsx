@@ -1,4 +1,4 @@
-import { Button, Space } from 'antd';
+import { Button, Space ,Tooltip} from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import './index.less';
 //3:mysql 4:postgresql 5:redis 6:mongdb 7:rds
@@ -127,3 +127,41 @@ export const tableSchema = ({
       },
     },
   ] as ColumnProps[];
+  export const sqlTableSchema = () =>
+    [
+      {
+        title: '排名',
+        dataIndex: 'name',
+        width: 50,
+        render: (value: any,record:any,index:number) => {
+          return <span>{index+1}</span>
+        },
+      },
+      {
+        title: '实例',
+        dataIndex: 'instancename',
+        width: 100,
+        ellipsis:true,
+        render: (value: any) => {
+          return <Tooltip title={value}>{value}</Tooltip>
+        },
+      },
+      {
+        title: '库名',
+        dataIndex: 'db_max',
+        width: 120,
+        ellipsis:true,
+        render: (value: any) => {
+          return <Tooltip title={value}>{value}</Tooltip>
+        },
+      },
+      {
+        title: '执行次数',
+        dataIndex: 'sum',
+        width: 100,
+        sorter: {
+          compare: (a: any, b: any) => a.sum - b.sum,
+        },
+      },
+     
+    ] as ColumnProps[];
