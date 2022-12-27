@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react';
-import { List, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { List, Table, Collapse, Form, Select, Input, Button, Space, Tag, Empty, Popconfirm } from 'antd';
 import PageContainer from '@/components/page-container';
 import {
   PlusOutlined,
@@ -9,7 +9,7 @@ import {
   PlayCircleOutlined,
   PauseCircleOutlined,
 } from '@ant-design/icons';
-import { history,useLocation } from 'umi';
+import { history, useLocation } from 'umi';
 import { parse } from 'query-string';
 import { FilterCard, ContentCard } from '@/components/vc-page-content';
 import { envTypeData } from '../schema';
@@ -18,32 +18,30 @@ import './index.less';
 import { useAppOptions } from '@/pages/monitor/business/hooks';
 const { Panel } = Collapse;
 
-export default function DpMonitor(props:any) {
-  const {tab,queryMonitorName}=props
+export default function DpMonitor(props: any) {
+  const { tab, queryMonitorName } = props;
   const [form] = Form.useForm();
   // let location:any = useLocation();
   // const query :any= parse(location.search);
   const [appOptions] = useAppOptions(); // 应用code列表
   const [envCodeOption, getEnvCodeList] = useEnvListOptions();
-  const [listSource, total, getListMonitor] = useGetListMonitor(queryMonitorName,tab);
+  const [listSource, total, getListMonitor] = useGetListMonitor(queryMonitorName, tab);
   const [enableMonitor] = useEnableMonitor();
   const [disableMonitor] = useDisableMonitor();
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
 
   const [delMonitor] = useDelMonitor();
-  useEffect(()=>{
-    if(queryMonitorName&&tab==="db"){
-     // debugger
+  useEffect(() => {
+    if (queryMonitorName && tab === 'db') {
+      // debugger
 
       form.setFieldsValue({
-        monitorName:queryMonitorName
-      })
-      getListMonitor(1, 10,queryMonitorName);
-
-
+        monitorName: queryMonitorName,
+      });
+      getListMonitor(1, 10, queryMonitorName);
     }
-  },[tab,queryMonitorName])
+  }, [tab, queryMonitorName]);
 
   const editMonitor = (item: any) => {
     history.push(
@@ -117,41 +115,71 @@ export default function DpMonitor(props:any) {
                     编辑
                   </Button>
                   {item.status === 0 ? (
-                    <Button
-                      type="link"
-                      style={{ color: '#52c41a' }}
-                      icon={<PlayCircleOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                    <Popconfirm
+                      title="确定要启用吗？"
+                      onCancel={(e) => {
+                        e && e.stopPropagation();
+                      }}
+                      onConfirm={(e) => {
+                        e && e.stopPropagation();
                         enableMonitorClick(item.id);
                       }}
                     >
-                      启用
-                    </Button>
+                      <Button
+                        type="link"
+                        style={{ color: '#52c41a' }}
+                        icon={<PlayCircleOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        启用
+                      </Button>
+                    </Popconfirm>
                   ) : (
-                    <Button
-                      type="link"
-                      style={{ color: '#FF7B15' }}
-                      icon={<PauseCircleOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                    <Popconfirm
+                      title="确定要停用吗？"
+                      onCancel={(e) => {
+                        e && e.stopPropagation();
+                      }}
+                      onConfirm={(e) => {
+                        e && e.stopPropagation();
                         disableMonitorClick(item.id);
                       }}
                     >
-                      停用
-                    </Button>
+                      <Button
+                        type="link"
+                        style={{ color: '#FF7B15' }}
+                        icon={<PauseCircleOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        停用
+                      </Button>
+                    </Popconfirm>
                   )}
-                  <Button
-                    danger
-                    type="link"
-                    icon={<DeleteOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
+                  <Popconfirm
+                    title="确定要删除吗？"
+                    onCancel={(e) => {
+                      e && e.stopPropagation();
+                    }}
+                    onConfirm={(e) => {
+                      e && e.stopPropagation();
                       delMonitorClick(item.id);
                     }}
                   >
-                    删除
-                  </Button>
+                    <Button
+                      danger
+                      type="link"
+                      icon={<DeleteOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      删除
+                    </Button>
+                  </Popconfirm>
                 </Space>
               </div>
             }
