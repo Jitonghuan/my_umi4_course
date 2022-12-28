@@ -105,13 +105,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
     if (publishType === "version") {
       let params = {};
-      if (isGmcProd) {
+      if (isGmcProd || isHbosVersion) {
         params = form.getFieldsValue();
       }
       return await releaseDeploy({
         releaseId: releaseRowKeys,
         pipelineCode,
-        envCodes: deployEnv,
+        envCodes: isHbosVersion ? ['release-env'] : deployEnv,
         buildType: getBuildType(),
         appCode: appCode!,
         envTypeCode: env,
@@ -350,10 +350,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         width={((publishType === "version" && isGmcProd) || isHbosVersion) ? 800 : 550}
         confirmLoading={confirmLoading}
         onOk={() => {
-          if (!deployEnv?.length) {
-            message.error('请选择要发布的环境！');
-            return;
-          }
+          // if (!deployEnv?.length) {
+          //   message.error('请选择要发布的环境！');
+          //   return;
+          // }
           setConfirmLoading(true);
           return submit().then(() => {
             setDeployVisible(false);
@@ -372,8 +372,12 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         maskClosable={false}
       >
         <div>
-          <span>发布环境：</span>
-          <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
+          {!isHbosVersion && (
+            <>
+              <span>发布环境：</span>
+              <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
+            </>
+          )}
           {feType === 'pda' && (
             <div style={{ marginTop: '10px' }}>
               <span>打包类型：</span>
