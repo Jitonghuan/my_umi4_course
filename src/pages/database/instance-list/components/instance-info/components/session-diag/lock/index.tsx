@@ -118,17 +118,17 @@ export default function LockAnalyze() {
             Object.keys(dataSource[0])?.map((item: any) => {
               return (
                 <>
-                {item?.includes("时间")?<Table.Column title={item} dataIndex={item} width={170} key={item} ellipsis={true} render={(value) => (
+                {item?.includes("时间")?<Table.Column title={item} dataIndex={item} width={170} key={item}  render={(value) => (
                  
                   <span> {value?datetimeCellRender(value):""}</span> 
                 
-                )} />: item?.includes("sql")?<Table.Column title={item} dataIndex={item} width={275} key={item} ellipsis={true} render={(value) => (
+                )} />: item?.includes("sql")?<Table.Column title={item} dataIndex={item} width={275} key={item}  render={(value) => (
                  
                   <Tooltip placement="topLeft" title={value}>
                   {value}
                 </Tooltip>
                 
-                )} />: <Table.Column title={item} dataIndex={item} key={item} ellipsis={true} render={(value) => (
+                )} />: <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
                   <Tooltip placement="topLeft" title={value}>
                     {value}
                   </Tooltip>
