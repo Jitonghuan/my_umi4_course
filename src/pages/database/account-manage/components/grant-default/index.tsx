@@ -7,16 +7,16 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Modal, Space,  Button, Form, Segmented, Table, Spin,message } from 'antd';
-import {  useGetSchemaList } from '../../hook';
-import { getPrivsDetail, getTableColumnList,modifyPrivs } from "./hook";
+import { Modal, Space, Button, Form, Segmented, Table, Spin, message } from 'antd';
+import { useGetSchemaList } from '../../hook';
+import { getPrivsDetail, getTableColumnList, modifyPrivs } from "./hook";
 import GrantRecycle from '../grant-recycle';
 import { columns, DataType, createEditColumns, createDatabseEditColumns, createTableEditColumns, } from "./schema";
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
-import PreviewSql   from "../preview-sql";
-
+import PreviewSql from "../preview-sql";
+import { schemaStructOption, globalDataTreeOption, globalManageOption, } from '../../schema';
 import './index.less';
 
 export interface GrantProps {
@@ -63,10 +63,10 @@ export default function ScriptEditor(props: GrantProps) {
     const [infoLoading, setInfoLoading] = useState<boolean>(false)
     const [tableOptions, setTableOptions] = useState<any>([]);
     const [columnOptions, setCoumnOptions] = useState<any>([]);
-    const [rowSelected, setRowSelected] = useState<any>([])
     const [defaultRow, setDefaultRow] = useState<any>([])
-    const [ensureLoading,setEnsureLoading]= useState<boolean>(false);
-    const [previewSqlMode,setPreviewSqlMode]= useState<EditorMode>('HIDE');
+    const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
+    const [previewSqlMode, setPreviewSqlMode] = useState<EditorMode>('HIDE');
+    const [count,setCount]=useState<number>(0)
 
     const getTableColumnListData = (dbName?: string, tableName?: string) => {
         getTableColumnList({ clusterId, dbName, tableName }).then((res) => {
@@ -92,10 +92,14 @@ export default function ScriptEditor(props: GrantProps) {
             getPrivsDetailData()
             getSchemaList({ clusterId })
         }
+        return()=>{
+            setActiveValue('global')
+        }
     }, [clusterId, mode])
     const getPrivsDetailData = () => {
         setInfoLoading(true)
         setGlobalPrivs([])
+        setDefaultRow([])
         setDbPrivs([])
         setTablePrivs([])
         setColumnPrivs([])
@@ -104,33 +108,32 @@ export default function ScriptEditor(props: GrantProps) {
                 let dataSource = res?.data;
                 setOldPrivs(dataSource)
                 const { globalPrivs = [], dbPrivs = [], tablePrivs = [], columnPrivs = [] } = dataSource;
-                let globalPrivsDataSource = globalPrivs?.map((item: string, index: number) => ({
-                    title: item,
-                    key: index
-                }))
+                let globalPrivsDataSource: any = globalPrivs?.map((item: string, index: number) => (item.toLowerCase()));
                 setGlobalPrivs(globalPrivsDataSource);
+                setDefaultRow(globalPrivsDataSource)
                 if (dbPrivs?.length > 0) {
-                    //   let data=   dbPrivs?.map((item:any)=>({
-                    //       ...item,
-                    //       privs:item?.privs?.join(',')
-                    //   }))
+                       let data=   dbPrivs?.map((item:any)=>({
+                          ...item,
+                          privs:item?.privs?.join(' ')
+                      }))
                     setDbPrivs(dbPrivs);
-
+                    setDataBaseSource(data)
                 }
                 if (tablePrivs?.length > 0) {
-                    // let data=   tablePrivs?.map((item:any)=>({
-                    //     ...item,
-                    //     privs:item?.privs?.join(',')
-                    // }))
+                     let data=   tablePrivs?.map((item:any)=>({
+                        ...item,
+                        privs:item?.privs?.join(' ')
+                    }))
                     setTablePrivs(tablePrivs);
-
+                    setTableSource(data)
                 }
                 if (columnPrivs?.length > 0) {
-                    // let data=   columnPrivs?.map((item:any)=>({
-                    //     ...item,
-                    //     privs:item?.privs?.join(',')
-                    // }))
+                     let data=   columnPrivs?.map((item:any)=>({
+                        ...item,
+                        privs:item?.privs?.join(' ')
+                    }))
                     setColumnPrivs(columnPrivs)
+                    setColumnTableSource(data)
                 }
             }
 
@@ -143,9 +146,9 @@ export default function ScriptEditor(props: GrantProps) {
     const databseTableColumns = useMemo(() => {
         return createDatabseEditColumns({
             schemaOptions,
-            onDelete:(record:any)=>{
+            onDelete: (record: any) => {
                 setDataBaseSource(databaseSource.filter((item) => item.id !== record.id))
-               
+
             }
         }) as any
 
@@ -158,9 +161,9 @@ export default function ScriptEditor(props: GrantProps) {
             onDataBaseChange: (value: string) => {
                 getTableColumnListData(value)
             },
-            onDelete:(record:any)=>{
+            onDelete: (record: any) => {
                 setTableSource(tableSource.filter((item) => item.id !== record.id))
-               
+
             }
 
         }) as any
@@ -178,9 +181,9 @@ export default function ScriptEditor(props: GrantProps) {
             onTableChange: (database, table) => {
                 getTableColumnListData(database, table)
             },
-            onDelete:(record:any)=>{
+            onDelete: (record: any) => {
                 setColumnTableSource(columnTableSource.filter((item) => item.id !== record.id))
-               
+
             }
         }) as any
 
@@ -193,62 +196,60 @@ export default function ScriptEditor(props: GrantProps) {
 
         return () => {
             objectForm.resetFields();
+            setCount(0)
 
         };
     }, [mode]);
 
-    const rowSelection = {
-        defaultSelectedRowKeys: defaultRow,
-        onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            let data = selectedRows?.map((ele) => (
-                ele?.title
-            ))
-            setRowSelected(data)
-            setDefaultRow(selectedRowKeys)
-        },
-
-    };
-
-const handleSubmit=()=>{
-    setEnsureLoading(true)
-    modifyPrivs({clusterId,id:curRecord?.id,oldPrivs,newPrivs:{
-        globalPrivs:rowSelected,
-        dbPrivs:databaseSource,
-        tablePrivs:tableSource,
-        columnPrivs:columnTableSource
-    }}).then((res)=>{
-        if(res?.success){
-            message.success("提交成功！")
-            onSave()
-
-        }
-
-    }).finally(()=>{
-        setEnsureLoading(false)
-    })
-}
+    const rowSelection = useMemo(() => {
+        return {
+            selectedRowKeys: defaultRow,
+            onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+                console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                setDefaultRow(selectedRowKeys)
+            },
+        };
+    }, [defaultRow])
+    const handleSubmit = () => {
+        setEnsureLoading(true)
+        modifyPrivs({
+            clusterId, id: curRecord?.id, oldPrivs, newPrivs: {
+                globalPrivs: defaultRow,
+                dbPrivs: databaseSource,
+                tablePrivs: tableSource,
+                columnPrivs: columnTableSource
+            }
+        }).then((res) => {
+            if (res?.success) {
+                message.success("提交成功！")
+                onSave()
+            }
+        }).finally(() => {
+            setEnsureLoading(false)
+        })
+    }
     return (
         <>
-        <PreviewSql   mode={previewSqlMode}   onClose={() => { setPreviewSqlMode("HIDE") }} 
-           
-            curRecord={curRecord} 
-            oldPrivs={oldPrivs}
-            newPrivs={
-               {
-                globalPrivs:rowSelected,
-                dbPrivs:databaseSource,
-                tablePrivs:tableSource,
-                columnPrivs:columnTableSource
-               } 
-            }
-            onSave={() => { setPreviewSqlMode("HIDE") }} />
-            <GrantRecycle 
-            mode={grantRecycleMode} 
-            onClose={() => { setGrantRecycleMode("HIDE") }} 
-            clusterId={clusterId}
-            curRecord={curRecord} 
-            onSave={() => { setGrantRecycleMode("HIDE") }} />
+            <PreviewSql 
+                mode={previewSqlMode} 
+                onClose={() => { setPreviewSqlMode("HIDE") }}
+                curRecord={curRecord}
+                oldPrivs={oldPrivs}
+                newPrivs={
+                    {
+                        globalPrivs: defaultRow,
+                        dbPrivs: databaseSource,
+                        tablePrivs: tableSource,
+                        columnPrivs: columnTableSource
+                    }
+                }
+                onSave={() => { setPreviewSqlMode("HIDE") }} />
+            <GrantRecycle
+                mode={grantRecycleMode}
+                onClose={() => { setGrantRecycleMode("HIDE") }}
+                clusterId={clusterId}
+                curRecord={curRecord}
+                onSave={() => { setGrantRecycleMode("HIDE") }} />
             <Modal
                 title={<Space><span>{"编辑权限"}</span><span>(当前用户：<span style={{ color: '#1E90FF' }}>{curRecord?.user}</span>)</span></Space>}
                 width={'70%'}
@@ -261,20 +262,21 @@ const handleSubmit=()=>{
                         key="getValue"
                         type="primary"
                         loading={ensureLoading}
-                        disabled={!oldPrivs?.length||!rowSelected||!curRecord?.id||!clusterId}
+                        disabled={count===0}
                         onClick={() => {
-                         handleSubmit()
+                            handleSubmit()
                         }}
                     >
                         确认
-          </Button>,
+                   </Button>,
                     <Button
                         key="getValue"
                         type="primary"
                         loading={ensureLoading}
-                        disabled={!oldPrivs?.length||!rowSelected||!curRecord?.user||!curRecord?.host}
+                        // disabled={!oldPrivs?.length || !defaultRow || !curRecord?.user || !curRecord?.host}
                         onClick={() => {
-                            setPreviewSqlMode("VIEW") 
+                            setPreviewSqlMode("VIEW")
+                            setCount(count=>count+1)
                         }}
                     >
                         预览SQL
@@ -288,14 +290,14 @@ const handleSubmit=()=>{
                         }}
                     >
                         取消
-          </Button>,
+                  </Button>,
 
                 ]}
             >
                 <div>
                     <div className="table-caption">
                         <div className="caption-left">
-                            {/* optionType="button" buttonStyle="solid" */}
+
                             <Segmented options={options} onChange={(e: any) => { setActiveValue(e) }} value={activeValue} />
                         </div>
                         <div className="caption-right">
@@ -308,9 +310,10 @@ const handleSubmit=()=>{
                                 type: "checkbox",
                                 ...rowSelection,
                             }}
+                            rowKey="key"
                             loading={infoLoading}
                             columns={columns}
-                            dataSource={globalPrivs}
+                            dataSource={globalDataTreeOption.concat(schemaStructOption, globalManageOption)}
                             pagination={false}
 
                         />
@@ -319,38 +322,40 @@ const handleSubmit=()=>{
                         {activeValue === "database" &&
                             <div>
 
-                                    <EditableProTable
-                                        rowKey="id"
-                                        loading={infoLoading}
-                                        actionRef={databaseActionRef}
-                                        formRef={databaseRef}
-                                        recordCreatorProps={{
-                                            position: 'bottom',
-                                            // newRecordType: 'dataSource',
-                                            creatorButtonText: '添加',
-                                            record: { id: (Math.random() * 1000000).toFixed(0) },
-                                        }}
-                                        columns={databseTableColumns}
-                                        value={dbPrivs}
-                                        onChange={setDataBaseSource}
-                                        pagination={false}
-                                        editable={{
-                                            form: databaseForm,
-                                            editableKeys:dataBaseEditableKeys,
-                                            onCancel: async () => { setType("") },
-                                            onSave: async () => {
+                                <EditableProTable
+                                    // rowKey="id"
+                                    loading={infoLoading}
+                                    scroll={{x:'100%'}}
+                                    actionRef={databaseActionRef}
+                                    formRef={databaseRef}
+                                    recordCreatorProps={{
+                                        position: 'bottom',
+                                        // newRecordType: 'dataSource',
+                                        creatorButtonText: '添加',
+                                        record: { id: (Math.random() * 1000000).toFixed(0) },
+                                    }}
+                                    columns={databseTableColumns}
+                                    value={databaseSource}
+                                    onChange={setDataBaseSource}
+                                    pagination={false}
+                                    editable={{
+                                        form: databaseForm,
+                                        editableKeys: dataBaseEditableKeys,
+                                        onCancel: async () => { setType("") },
+                                        onSave: async () => {
 
-                                            },
-                                            onChange: setDataBaseEditableRowKeys,
-                                            actionRender: (row, config, dom) => [dom.save, dom.cancel],
-                                        }}
-                                    /> 
+                                        },
+                                        onChange: setDataBaseEditableRowKeys,
+                                        actionRender: (row, config, dom) => [dom.save, dom.cancel],
+                                    }}
+                                />
                             </div>
                         }
                         {activeValue === "table" &&
                             <Spin spinning={infoLoading}>
                                 <EditableProTable
-                                    rowKey="id"
+                                    // rowKey="id"
+                                    scroll={{x:'100%'}}
                                     loading={infoLoading}
                                     actionRef={tableActionRef}
                                     formRef={tableRef}
@@ -361,12 +366,12 @@ const handleSubmit=()=>{
                                         record: { id: (Math.random() * 1000000).toFixed(0) },
                                     }}
                                     columns={tableColumns}
-                                    value={tablePrivs}
+                                    value={tableSource}
                                     onChange={setTableSource}
                                     pagination={false}
                                     editable={{
                                         form: tableForm,
-                                        editableKeys:tableEditableKeys,
+                                        editableKeys: tableEditableKeys,
                                         onCancel: async () => { setType("") },
                                         onSave: async () => {
 
@@ -382,6 +387,7 @@ const handleSubmit=()=>{
                             <EditableProTable
                                 // rowKey="column"
                                 loading={infoLoading}
+                                scroll={{x:'100%'}}
                                 actionRef={actionRef}
                                 formRef={ref}
                                 recordCreatorProps={{
@@ -391,7 +397,7 @@ const handleSubmit=()=>{
                                     record: { id: (Math.random() * 1000000).toFixed(0) },
                                 }}
                                 columns={cloumnTableColumns}
-                                value={columnPrivs}
+                                value={columnTableSource}
                                 onChange={setColumnTableSource}
                                 pagination={false}
                                 editable={{

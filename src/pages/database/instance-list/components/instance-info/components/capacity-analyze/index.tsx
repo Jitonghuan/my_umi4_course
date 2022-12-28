@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState,useContext,useMemo } from 'react';
-import { Button,Table,Radio,Statistic,Spin } from 'antd';
+import { Button,Table,Input,Statistic,Spin } from 'antd';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import  DetailContext  from '../../context';
 import { ContentCard } from '@/components/vc-page-content';
@@ -111,7 +111,22 @@ export default function Capacity(){
             </div>
 
             <div className="space-table">
-            <h3 className={`${rootCls}__title`}>表空间</h3>
+            <div className="table-caption">
+                 <div className="caption-left">
+                 <h3 className={`${rootCls}__title`}>表空间</h3>
+                 </div>
+                 <div className="caption-right">
+                   <Input.Search  style={{width:280}} placeholder="请输入关键字进行搜索" onSearch={(value)=>{
+                     console.log("value",value)
+                     getTableSpaceList({envCode,instanceId,
+                      pageIndex:spacePageInfo?.pageIndex,
+                      pageSize:spacePageInfo?.pageSize,
+                      keyWord:value
+                    })
+                   }}/>
+                 </div>
+           </div>
+          
                 {/* <Radio.Group  optionType="button" buttonStyle="solid"  value={radioValue} onChange={(e)=>{
                     setRadioValue(e.target.value)
 

@@ -56,7 +56,7 @@ export function useGetCapacityStatistic(): [boolean, any, (paramsObj: { instance
   
     return [loading, data,pageInfo,setPageInfo,getAbnormalTableList];
   }
-  export function useGetTableSpaceList(): [boolean, any,any,any, (paramsObj: { instanceId: number,envCode:string,pageSize?:number,pageIndex?:number}) => Promise<void>] {
+  export function useGetTableSpaceList(): [boolean, any,any,any, (paramsObj: { instanceId: number,envCode:string,pageSize?:number,pageIndex?:number,keyWord?:string}) => Promise<void>] {
     const [loading, setLoading] = useState<boolean>(false);
     const [data, setData] = useState<any>([]);
    
@@ -66,7 +66,7 @@ export function useGetCapacityStatistic(): [boolean, any, (paramsObj: { instance
       total:0
     })
    
-    const getTableSpaceList = async (paramsObj: { instanceId: number,envCode:string,pageSize?:number,pageIndex?:number}) => {
+    const getTableSpaceList = async (paramsObj: { instanceId: number,envCode:string,pageSize?:number,pageIndex?:number,keyWord?:string}) => {
       setLoading(true);
       setData([]);
       await getRequest(`${APIS.getTableSpaceList}`, { data: {...paramsObj,pageSize:paramsObj?.pageSize||20,pageIndex:paramsObj?.pageIndex||1} })

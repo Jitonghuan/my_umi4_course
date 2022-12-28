@@ -22,6 +22,7 @@ export const createDatabseEditColumns = (params: {
       title: '库名',
       dataIndex: 'dbName',
       key: 'dbName',
+      width:300,
       formItemProps: () => {
         return {
           rules: [
@@ -64,7 +65,8 @@ export const createDatabseEditColumns = (params: {
           errorType: 'default',
         };
       },
-      renderFormItem: () => {
+      renderFormItem: (text, record, _, action) => {
+        console.log("record",record)
         return (
           <Select
             options={schemaDataTreeOption}
@@ -78,16 +80,9 @@ export const createDatabseEditColumns = (params: {
     {
       title: '操作',
       valueType: 'option',
-      width: 200,
+      width: 100,
       render: (text, record, _, action) => [
-        // <a
-        //   key="editable"
-        //   onClick={() => {
-        //     action?.startEditable?.(record.id);
-        //   }}
-        // >
-        //   编辑
-        // </a>,
+     
         <a
           key="delete"
           onClick={() => {
@@ -113,6 +108,7 @@ export const createTableEditColumns = (params: {
       title: '库名',
       dataIndex: 'dbName',
       key: 'dbName',
+      width:300,
       formItemProps: () => {
         return {
           rules: [
@@ -144,6 +140,7 @@ export const createTableEditColumns = (params: {
       key: 'tableName',
       dataIndex: 'tableName',
       valueType: 'select',
+      width:300,
       formItemProps: () => {
         return {
           rules: [
@@ -196,16 +193,9 @@ export const createTableEditColumns = (params: {
     {
       title: '操作',
       valueType: 'option',
-      width: 200,
+      width: 100,
       render: (text, record, _, action) => [
-        // <a
-        //   key="editable"
-        //   onClick={() => {
-        //     action?.startEditable?.(record.id);
-        //   }}
-        // >
-        //   编辑
-        // </a>,
+      
         <a
           key="delete"
           onClick={() => {
@@ -233,6 +223,7 @@ export const createEditColumns = (params: {
       title: '库名',
       dataIndex: 'dbName',
       key: 'dbName',
+      width:300,
       formItemProps: () => {
         return {
           rules: [
@@ -346,16 +337,8 @@ export const createEditColumns = (params: {
     {
       title: '操作',
       valueType: 'option',
-      width: 200,
+      width: 100,
       render: (text, record, _, action) => [
-        // <a
-        //   key="editable"
-        //   onClick={() => {
-        //     action?.startEditable?.(record.id);
-        //   }}
-        // >
-        //   编辑
-        // </a>,
         <a
           key="delete"
           onClick={() => {

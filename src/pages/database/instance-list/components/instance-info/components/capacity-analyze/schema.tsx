@@ -102,15 +102,6 @@ export const createSpaceTableColumns = () => {
         compare: (a: any, b: any) => a.engine.localeCompare(b.engine),
       },
     },
-    // {
-    //   title: '物理文件大小',
-    //   dataIndex: 'command',
-    //   key: 'command',
-    //   width: 90,
-    //   sorter: {
-    //     compare: (a: any, b: any) => a.command.localeCompare(b.command),
-    //   },
-    // },
     {
       title: '表空间',
       dataIndex: 'tableLength',
@@ -119,9 +110,9 @@ export const createSpaceTableColumns = () => {
       sorter: {
         compare: (a: any, b: any) => a.tableLength - b.tableLength,
       },
-    //   render:(value:string)=><span>
-    //  {value} min
-    // </span>
+      render: (value: any) => {
+        return <span>{value} GB</span>;
+      },
     },
     {
       title: '表空间占比',
@@ -131,9 +122,9 @@ export const createSpaceTableColumns = () => {
       sorter: {
         compare: (a: any, b: any) => a.perTableLength - b.perTableLength,
       },
-      // render: (value: number) => {
-      //   return <Tag color={CLUSTER_STATUS_TYPE[value]?.color || 'default'}>{CLUSTER_STATUS_TYPE[value]?.tagText}</Tag>;
-      // },
+      render: (value: any) => {
+        return <span>{value} %</span>;
+      },
     },
     {
       title: '索引空间',
@@ -147,7 +138,7 @@ export const createSpaceTableColumns = () => {
       render:(value:string)=>{
         return(
           <Tooltip title={value}>
-          <span>{value}</span>
+          <span>{value} GB</span>
          
         </Tooltip>
         )
@@ -163,6 +154,9 @@ export const createSpaceTableColumns = () => {
       sorter: {
         compare: (a: any, b: any) => a.dataLength - b.dataLength,
       },
+      render: (value: any) => {
+        return <span>{value} GB</span>;
+      },
      
      
     },
@@ -173,6 +167,9 @@ export const createSpaceTableColumns = () => {
       width: 90,
       sorter: {
         compare: (a: any, b: any) => a.perDataFree - b.perDataFree,
+      },
+      render: (value: any) => {
+        return <span>{value} %</span>;
       },
      
      
@@ -195,6 +192,9 @@ export const createSpaceTableColumns = () => {
       width: 90,
       sorter: {
         compare: (a: any, b: any) => a.avgRowLength - b.avgRowLength,
+      },
+      render: (value: any) => {
+        return <span>{value} KB</span>;
       },
      
      
