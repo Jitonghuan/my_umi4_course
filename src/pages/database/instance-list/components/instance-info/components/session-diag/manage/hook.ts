@@ -56,7 +56,7 @@ export function useGetSnapshot(): [boolean, any, (paramsObj: { instanceId: numbe
   };
 
   export const updateRateLimiter = async (paramsObj: AddSessionRateLimitItem) => {
-    return await postRequest(`${APIS.updateRateLimiter}`, { data: paramsObj });
+    return await putRequest(`${APIS.updateRateLimiter}`, { data: paramsObj });
   };
   export const getSqlTemplate = async (sql:string) => {
     return await postRequest(`${APIS.getSqlTemplate}`, { data: {sql} });

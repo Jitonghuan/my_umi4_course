@@ -1,6 +1,6 @@
 import { Space, Avatar, Popconfirm, Tag, Spin,Tooltip,Badge } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { dateCellRender } from '@/utils';
+import { datetimeCellRender } from '@/utils';
  export const infoLayoutGrid = {
     xs: 1,
     sm: 1,
@@ -55,7 +55,7 @@ export const createAbnormalTableColumns = () => {
       //   compare: (a: any, b: any) => a.command.localeCompare(b.command),
       // },
       render:(value)=><span>
-        {value?dateCellRender(value):""}
+        {value?datetimeCellRender(value):""}
       </span>
     },
    

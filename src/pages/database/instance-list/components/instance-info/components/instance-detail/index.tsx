@@ -255,17 +255,17 @@ export default function InstanceInfo(props:any) {
           <Descriptions
             title="基本信息"
             bordered
-            extra={
-              <Button
-                type="primary"
-                loading={syncLoading}
-                onClick={() => {
-                  syncMetaData({ clusterId });
-                }}
-              >
-                同步元数据
-              </Button>
-            }
+            // extra={
+            //   <Button
+            //     type="primary"
+            //     loading={syncLoading}
+            //     onClick={() => {
+            //       syncMetaData({ clusterId });
+            //     }}
+            //   >
+            //     同步元数据
+            //   </Button>
+            // }
           >
             <Descriptions.Item label="实例ID">{infoData?.id || '-'}</Descriptions.Item>
             <Descriptions.Item label="实例名称">{infoData?.name || '-'}</Descriptions.Item>

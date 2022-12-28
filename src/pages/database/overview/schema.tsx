@@ -149,7 +149,7 @@ export const tableSchema = ({
       dataIndex: 'operation',
       key: 'operation',
       fixed:"right",
-      width: 50,
+      width: 150,
       render: (value: string, record: any, index: number) => {
         return (
           <Space>

@@ -25,7 +25,7 @@ const tabs = [
   }
 ]
 const options = [
-  { label: '关键字', value: 'keyWorld' },
+  // { label: '关键字', value: 'keyWorld' },
   { label: 'sql指纹', value: 'digest' },
 
 ];
@@ -83,7 +83,7 @@ export default function SQLLimit(props: Iprops) {
   const [isUpdate, setIsUpdate] = useState<boolean>(false)
   const [value, setValue] = useState<number | undefined>()
   const [timeRange, setTimeRange] = useState<any>([]);
-  const [limitMode,setLimitMode]=useState<string>('keyWorld')
+  const [limitMode,setLimitMode]=useState<string>('digest')
   const columns = useMemo(() => {
     return createSqlTableColumns({
       onClose: (record: any) => {
@@ -94,8 +94,18 @@ export default function SQLLimit(props: Iprops) {
         setInitData(record)
         setTabActiveKey('create')
         form.setFieldsValue({
-          ...record
+          ...record,
         })
+        if(record?.limitMode==="digest"){
+          form.setFieldsValue({
+            SqlTemplate:record?.sqlTemplate || ""
+          })
+
+        }else{
+          form.setFieldsValue({
+            sqlKeyWords:record?.sqlKeyWorld || ""
+          })
+        }
       }
     }) as any;
   }, []);
@@ -107,7 +117,7 @@ export default function SQLLimit(props: Iprops) {
       setIsUpdate(false)
       form.resetFields()
       setSql("")
-      setLimitMode("keyWorld")
+      setLimitMode("digest")
     }
   }, [mode])
 
@@ -143,8 +153,8 @@ export default function SQLLimit(props: Iprops) {
       }).then((result) => {
         if (result?.success) {
           message.success('修改成功！')
-
-          setTabActiveKey('end')
+          setTabActiveKey('run')
+          setIsUpdate(false)
         }
 
       }).finally(() => {
@@ -220,12 +230,6 @@ export default function SQLLimit(props: Iprops) {
     });
   };
 
-  // useEffect(()=>{
-  //   if(form.getFieldValue("sqlKeyWords")){
-
-  //     setDisabled(false)
-  //   }
-  // },[form.getFieldValue("sqlKeyWords")])
   useEffect(() => {
 
   }, [mode])
@@ -284,7 +288,9 @@ export default function SQLLimit(props: Iprops) {
     >
       <Tabs activeKey={tabActiveKey}
         onChange={(key) => {
+          // debugger
           setTabActiveKey(key);
+          setIsUpdate(false)
         }}>
         {tabs?.map((item: any, index: number) => (
           <TabPane tab={item.label} key={item.value}></TabPane>
@@ -292,8 +298,8 @@ export default function SQLLimit(props: Iprops) {
 
       </Tabs>
       {tabActiveKey === "create" && <Form labelCol={{ flex: '110px' }} form={form}>
-        <Form.Item label="限流模式" name="limitMode" initialValue={'keyWorld'} rules={[{ required: true, message: '这是必填项' }]}>
-          <Radio.Group options={options} disabled={isUpdate} defaultValue={"keyWorld"} onChange={(e)=>{
+        <Form.Item label="限流模式" name="limitMode" initialValue={'digest'} rules={[{ required: true, message: '这是必填项' }]}>
+          <Radio.Group options={options} disabled={isUpdate} defaultValue={"digest"} onChange={(e)=>{
             setLimitMode(e.target.value)
           }} />
         </Form.Item>
@@ -302,12 +308,12 @@ export default function SQLLimit(props: Iprops) {
         </Form.Item>
         <Form.Item label="最大并发度" name="maxiConcurrency" rules={[{ required: true, message: '这是必填项' }]} tooltip="">
 
-          <InputNumber min={1} />
+          <InputNumber min={0} />
 
         </Form.Item>
         <div style={{ display: 'flex' }}>
           <Form.Item label="限流时间" style={{ width: '18%' }} name="limitTime" rules={[{ required: true, message: '这是必填项' }]} >
-            <InputNumber  min={1}/>
+            <InputNumber  min={0}/>
           </Form.Item>
           <span style={{ marginLeft: 40, marginTop: 4, display: 'inline-block' }}>
             <span>分钟</span> <span style={{ color: 'red' }}>(限流是应急措施，问题解决后，请及时关闭)</span>
@@ -385,7 +391,7 @@ export default function SQLLimit(props: Iprops) {
                     defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
                   }}
                   format="YYYY-MM-DD HH:mm:ss" />
-                <Button type="primary">查看</Button>
+                {/* <Button type="primary">查看</Button> */}
               </Space>
 
             </div>

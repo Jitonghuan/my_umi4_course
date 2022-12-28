@@ -3,6 +3,7 @@ import { Button, Space, Input, Table, Radio, DatePicker, Tooltip } from 'antd';
 import VCCardLayout from '@cffe/vc-b-card-layout';
 import { getLockSession } from '../manage/hook'
 import DetailContext from '../../../context'
+import { datetimeCellRender } from '@/utils';
 import moment from 'moment';
 import './index.less';
 const rootCls = 'Lock-analyze-compo';
@@ -101,7 +102,9 @@ export default function LockAnalyze() {
       <div>
         <Table dataSource={dataSource} bordered
           loading={loading}
-          scroll={{ x: '100%' }}
+          //252
+          scroll={{ x: '100%',y:window.innerHeight-252 }}
+          pagination={false}
           locale={{
             emptyText: (
               <div className="custom-table-holder">
@@ -114,11 +117,24 @@ export default function LockAnalyze() {
           {dataSource?.length > 0 && (
             Object.keys(dataSource[0])?.map((item: any) => {
               return (
-                <Table.Column title={item} dataIndex={item} key={item} ellipsis={true} render={(value) => (
+                <>
+                {item?.includes("时间")?<Table.Column title={item} dataIndex={item} width={170} key={item} ellipsis={true} render={(value) => (
+                 
+                  <span> {value?datetimeCellRender(value):""}</span> 
+                
+                )} />: item?.includes("sql")?<Table.Column title={item} dataIndex={item} width={275} key={item} ellipsis={true} render={(value) => (
+                 
+                  <Tooltip placement="topLeft" title={value}>
+                  {value}
+                </Tooltip>
+                
+                )} />: <Table.Column title={item} dataIndex={item} key={item} ellipsis={true} render={(value) => (
                   <Tooltip placement="topLeft" title={value}>
                     {value}
                   </Tooltip>
-                )} />
+                )} />}
+               
+                </>
               )
             })
 

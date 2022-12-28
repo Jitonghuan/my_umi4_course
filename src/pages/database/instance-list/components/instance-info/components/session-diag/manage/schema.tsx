@@ -1,6 +1,6 @@
 import { Space, Avatar, Popconfirm, Tag, Spin,Tooltip,Badge } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { dateCellRender } from '@/utils';
+import { datetimeCellRender } from '@/utils';
 // 列表页-表格
 export const createTableColumns = () => {
     return [
@@ -256,7 +256,7 @@ export const createTableColumns = () => {
         dataIndex: 'jobStartTime',
         key: 'jobStartTime',
         render:(value:string)=><span>
-          {value?dateCellRender(value):null}
+          {value?datetimeCellRender(value):null}
         </span>
        
       },
@@ -337,7 +337,7 @@ export const createTableColumns = () => {
         dataIndex: 'jobStartTime',
         key: 'jobStartTime',
         render:(value:string)=><span>
-        {value?dateCellRender(value):null}
+        {value?datetimeCellRender(value):null}
       </span>
        
       },
@@ -346,7 +346,7 @@ export const createTableColumns = () => {
         dataIndex: 'jobEndTime',
         key: 'jobEndTime',
         render:(value:string)=><span>
-        {value?dateCellRender(value):null}
+        {value?datetimeCellRender(value):null}
       </span>
        
       },
