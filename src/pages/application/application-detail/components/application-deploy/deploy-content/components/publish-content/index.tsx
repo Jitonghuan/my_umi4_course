@@ -82,6 +82,9 @@ export default function PublishContent(props: IProps) {
       message.error('未检测到部署单！');
       return;
     }
+    if (envTypeCode === 'version' && selectedRowKeys?.length !== deployedList?.length) {
+      message.error('版本发布退出分支必须选中所有分支退出！')
+    }
     const withdraw: any = newPublish ? newWithdrawFeatures : withdrawFeatures;
     Modal.confirm({
       title: '确定要批量退出吗?',
@@ -227,7 +230,7 @@ export default function PublishContent(props: IProps) {
           {!isProd && (
             <span style={{ marginRight: 14 }}>
               {appData?.deployModel === 'online' && envTypeCode !== "version" && (
-                <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleReDeploy} style={{ marginLeft: '10px' }}>
+                <Button type="primary" disabled={!selectedRowKeys.length || !deployedList?.length} onClick={handleReDeploy} style={{ marginLeft: '10px' }}>
                   重新提交
                   <Tooltip placement="topRight" title={resubmitText}>
                     <QuestionCircleOutlined />
@@ -236,8 +239,8 @@ export default function PublishContent(props: IProps) {
               )}
             </span>
           )}
-          {appData?.deployModel === 'online' && envTypeCode !== "version" && (
-            <Button type="primary" disabled={!selectedRowKeys.length} onClick={handleBatchExit}>
+          {appData?.deployModel === 'online' && (
+            <Button type="primary" disabled={!selectedRowKeys.length || !deployedList?.length} onClick={handleBatchExit}>
               退出分支
               <Tooltip placement="topRight" title={exitBranch}>
                 <QuestionCircleOutlined />

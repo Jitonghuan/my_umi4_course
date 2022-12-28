@@ -12,7 +12,7 @@ export interface IProps {
   stopSpin: any;
   pipelineCode: string;
   envList: any;
-  loading: boolean;
+  loading?: boolean;
   newPublish: boolean;
   // loadData: any;
   // refreshList: any;

@@ -316,6 +316,14 @@ export const createFeatureBranch = (params: {
     data: params,
   });
 
+export const createDemandUrl = `${appConfig.apiPrefix}/releaseManage/demandBranchRel/create`;
+/** 关联需求 */
+export const createDemand = (params: any) =>
+  postRequest(createDemandUrl, {
+    data: params,
+  });
+
+
 // 新建主干分支
 export const createMasterBranch = (params: any) => postRequest(createMasterBranchUrl, { data: params });
 

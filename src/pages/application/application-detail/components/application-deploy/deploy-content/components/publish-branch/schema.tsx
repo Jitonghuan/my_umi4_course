@@ -10,7 +10,7 @@ export interface PublishBranchProps {
     hasPublishContent: boolean;
     deployInfo: DeployInfoVO;
     env: string;
-    loading: boolean;
+    loading?: boolean;
     onSearch: (name?: string) => any;
     masterBranchChange: any;
     checkVersion: boolean;
@@ -29,6 +29,7 @@ export interface PublishBranchProps {
     changeBranchName: any;
     versionData: any;
     newPublish: boolean;
+    isHbosVersion: boolean;
 }
 
 export const branchTableSchema = ({ id, appCode, appData, env }) => {

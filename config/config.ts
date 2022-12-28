@@ -70,7 +70,7 @@ export default defineConfig({
       // target: 'http://10.10.129.36:8080',//木南本地
       // target: 'http://10.10.129.159:8080',//时雨本地
       // target: 'http://10.10.129.24:8080',//习习本地
-      // target: 'http://10.10.129.170:8080',//不辣本地
+      // target: 'http://10.10.128.224:8080',//不辣本地
       headers: {
         "Connection": "keep-alive",
       },

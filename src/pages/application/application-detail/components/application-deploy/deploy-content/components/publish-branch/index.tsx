@@ -8,7 +8,7 @@
 
 import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs, Form } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs, Form, message } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, updateReleaseDeploy, newCreateDeploy, newUpdateFetures, newUpdateReleaseDeploy } from '@/pages/application/service';
@@ -39,7 +39,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
     loading,
     versionData,
     checkVersion,
-    newPublish
+    newPublish,
+    isHbosVersion
   } = publishBranchProps;
   const { appData } = useContext(DetailContext);
   const { metadata, branchInfo } = deployInfo || {};
@@ -59,7 +60,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const isGmcProd = checkVersion === true && appCategoryCode === 'gmc' && env === 'prod';
   // 是否要显示版本管理tab
   const isShowVersionTab = (checkVersion === true && env !== "prod" && env !== "dev") || isGmcProd;
-  const [publishType, setPublishType] = useState<string>(isGmcProd ? 'version' : 'branch');
+  const [publishType, setPublishType] = useState<string>((isGmcProd || isHbosVersion) ? 'version' : 'branch');
   const [releaseRowKeys, setReleaseRowKeys] = useState<number>();
   const [demandVisible, setDemandVisible] = useState<boolean>(false);
   const [curRecord, setCurRecord] = useState<any>({})
@@ -104,13 +105,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
 
     if (publishType === "version") {
       let params = {};
-      if (isGmcProd) {
+      if (isGmcProd || isHbosVersion) {
         params = form.getFieldsValue();
       }
       return await releaseDeploy({
         releaseId: releaseRowKeys,
         pipelineCode,
-        envCodes: deployEnv,
+        envCodes: isHbosVersion ? ['release-env'] : deployEnv,
         buildType: getBuildType(),
         appCode: appCode!,
         envTypeCode: env,
@@ -243,8 +244,8 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <Tabs activeKey={publishType} onChange={(key) => {
         setPublishType(key)
       }}>
-        {/* 发布分支-gmc大类下prod环境下不需要 */}
-        {!isGmcProd && (
+        {/* 发布分支- gmc大类下prod环境下/发布版本环境大类下 不需要 */}
+        {!isGmcProd && env !== "version" && (
           <Tabs.TabPane tab='待发布分支' key='branch' >
             <>
               <div className="table-caption">
@@ -303,7 +304,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
           </Tabs.TabPane>
         )}
         {/* 发布版本 */}
-        {isShowVersionTab && (
+        {(isShowVersionTab || isHbosVersion) && (
 
           <Tabs.TabPane tab='待发布版本' key='version'>
             <>
@@ -346,9 +347,13 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <Modal
         title="选择发布环境"
         visible={deployVisible}
-        width={publishType === "version" && isGmcProd ? 800 : 550}
+        width={((publishType === "version" && isGmcProd) || isHbosVersion) ? 800 : 550}
         confirmLoading={confirmLoading}
         onOk={() => {
+          // if (!deployEnv?.length) {
+          //   message.error('请选择要发布的环境！');
+          //   return;
+          // }
           setConfirmLoading(true);
           return submit().then(() => {
             setDeployVisible(false);
@@ -367,8 +372,12 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         maskClosable={false}
       >
         <div>
-          <span>发布环境：</span>
-          <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
+          {!isHbosVersion && (
+            <>
+              <span>发布环境：</span>
+              <Checkbox.Group value={deployEnv} onChange={(v) => setDeployEnv(v)} options={envDataList || []} />
+            </>
+          )}
           {feType === 'pda' && (
             <div style={{ marginTop: '10px' }}>
               <span>打包类型：</span>
@@ -378,7 +387,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
               </Radio.Group>
             </div>
           )}
-          {publishType === "version" && isGmcProd && (
+          {((publishType === "version" && isGmcProd) || isHbosVersion) && (
             <div style={{ marginTop: '10px' }}>
               <Form form={form} labelCol={{ flex: "40px" }} preserve={false}>
                 <Form.Item name="config" label="配置" >
