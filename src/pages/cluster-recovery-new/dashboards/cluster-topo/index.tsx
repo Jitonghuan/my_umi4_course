@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { Spin} from 'antd';
-import {graphDashboard} from '../../service'
+import {graphDashboard} from '../../service';
+import './index.less'
 interface IProps {
   count:number
   envCode:string
