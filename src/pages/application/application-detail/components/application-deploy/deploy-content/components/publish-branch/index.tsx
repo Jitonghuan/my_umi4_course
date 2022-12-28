@@ -8,7 +8,7 @@
 
 import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs, Form } from 'antd';
+import { Table, Input, Button, Modal, Checkbox, Select, Radio, Tabs, Form, message } from 'antd';
 import { ExclamationCircleOutlined, CopyOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
 import { createDeploy, updateFeatures, updateReleaseDeploy, newCreateDeploy, newUpdateFetures, newUpdateReleaseDeploy } from '@/pages/application/service';
@@ -111,7 +111,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       return await releaseDeploy({
         releaseId: releaseRowKeys,
         pipelineCode,
-        envCodes: isHbosVersion ? ['release-env'] : deployEnv,
+        envCodes: deployEnv,
         buildType: getBuildType(),
         appCode: appCode!,
         envTypeCode: env,
@@ -138,7 +138,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
   const submitClick = () => {
     // 二方包 或 有已发布
     // if (String(appData?.isClient) === '1' || hasPublishContent) {
-    if (hasPublishContent || isHbosVersion) {
+    if (hasPublishContent) {
       return confirm({
         title: '确定要提交发布吗?',
         icon: <ExclamationCircleOutlined />,
@@ -347,7 +347,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
       <Modal
         title="选择发布环境"
         visible={deployVisible}
-        width={publishType === "version" && isGmcProd ? 800 : 550}
+        width={((publishType === "version" && isGmcProd) || isHbosVersion) ? 800 : 550}
         confirmLoading={confirmLoading}
         onOk={() => {
           setConfirmLoading(true);
@@ -379,7 +379,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
               </Radio.Group>
             </div>
           )}
-          {publishType === "version" && isGmcProd && (
+          {((publishType === "version" && isGmcProd) || isHbosVersion) && (
             <div style={{ marginTop: '10px' }}>
               <Form form={form} labelCol={{ flex: "40px" }} preserve={false}>
                 <Form.Item name="config" label="配置" >

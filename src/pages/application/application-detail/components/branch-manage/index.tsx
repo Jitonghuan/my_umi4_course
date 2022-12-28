@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select, Space } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select, Space, Tag } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -173,17 +173,21 @@ export default function BranchManage() {
           )}
         />
         <Table.Column
-          title="关联需求"
+          title="关联需求/bug"
           dataIndex={['relationStatus', 'statusList']}
           width={200}
           ellipsis={{
             showTitle: false,
           }}
-          render={(value) => (
+          render={(value, record: any) => (
             Array.isArray(value) && value.length ? (
               value.map((item: any) => (
                 <div className='demand-cell'>
-                  <Tooltip title={item.title}><a target="_blank" href={item.url} style={{ fontSize: 13 }}>{item.title}</a></Tooltip>
+                  <Tooltip title={item.title}>{record.relatedPlat === 'demandPlat' ?
+                    <a target='_blank' href={item.url} >{item.title}</a> :
+                    <span>{item.title}</span>
+                  }</Tooltip>
+                  <Tag color={record.relatedPlat === 'demandPlat' ? '#2db7f5' : '#f50'}>{record.relatedPlat === 'demandPlat' ? '需求' : 'bug'}</Tag>
                 </div>
               ))
             ) : null
