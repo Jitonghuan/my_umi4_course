@@ -10,7 +10,7 @@ export interface PublishBranchProps {
     hasPublishContent: boolean;
     deployInfo: DeployInfoVO;
     env: string;
-    loading: boolean;
+    loading?: boolean;
     onSearch: (name?: string) => any;
     masterBranchChange: any;
     checkVersion: boolean;

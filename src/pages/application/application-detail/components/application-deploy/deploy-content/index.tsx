@@ -264,7 +264,7 @@ export default function DeployContent(props: DeployContentProps) {
             pipelineCode={pipelineCode}
             deployedList={deployed}
             appStatusInfo={appStatusInfo}
-            loading={deployedLoad}
+            // loading={deployedLoad}
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
@@ -292,7 +292,7 @@ export default function DeployContent(props: DeployContentProps) {
               masterBranchName.current = masterBranch;
               timerHandle('do', true);
             }}
-            loading={unDeployedLoad}
+            // loading={unDeployedLoad}
             changeBranchName={(branchName: string) => {
               // cachebranchName.current = branchName;
             }}
