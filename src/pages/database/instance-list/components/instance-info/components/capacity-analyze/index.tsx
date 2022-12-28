@@ -2,7 +2,8 @@
 import React, { useEffect, useState,useContext,useMemo } from 'react';
 import { Button,Table,Radio,Statistic,Spin } from 'antd';
 import VCCardLayout from '@cffe/vc-b-card-layout';
-import  DetailContext  from '../../context'
+import  DetailContext  from '../../context';
+import { ContentCard } from '@/components/vc-page-content';
 import {useGetCapacityStatistic,useGetAbnormalTableList,useGetTableSpaceList} from './hook'
 import {infoLayoutGrid,createAbnormalTableColumns,createSpaceTableColumns} from './schema'
 import './index.less';
@@ -59,6 +60,7 @@ export default function Capacity(){
      }
     
     return (
+      <ContentCard>
         <div className={rootCls}>
             <div>
             <div className="table-caption">
@@ -109,18 +111,20 @@ export default function Capacity(){
             </div>
 
             <div className="space-table">
-                <Radio.Group  optionType="button" buttonStyle="solid"  value={radioValue} onChange={(e)=>{
+            <h3 className={`${rootCls}__title`}>表空间</h3>
+                {/* <Radio.Group  optionType="button" buttonStyle="solid"  value={radioValue} onChange={(e)=>{
                     setRadioValue(e.target.value)
 
                 }} options={[
                     // {label:"库空间",value:"database"},
                     {label:"表空间",value:"table"},
-                ]}  />
+                ]}  /> */}
                 <div>
                     <Table 
                     columns={spaceColumns} 
                     dataSource={spaceDataSource} 
                     loading={spaceTableLoading}
+                    scroll={{x:"100%"}}
                     pagination={{
                         current: spacePageInfo?.pageIndex,
                         total:spacePageInfo?.total,
@@ -140,5 +144,6 @@ export default function Capacity(){
                 </div>
             </div>
         </div>
+        </ContentCard>
     )
 }

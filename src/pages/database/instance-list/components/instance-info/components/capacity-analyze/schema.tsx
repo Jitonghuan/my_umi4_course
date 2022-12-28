@@ -18,7 +18,7 @@ export const createAbnormalTableColumns = () => {
       title: '表/集合名',
       dataIndex: 'tableName',
       key: 'tableName',
-     
+      // width: 290,
       ellipsis:true,
      
       render:(value,record,index)=>(
@@ -31,7 +31,7 @@ export const createAbnormalTableColumns = () => {
       title: '数据库名',
       dataIndex: 'tableSchema',
       key: 'tableSchema',
-      // width: 190,
+      // width: 120,
       ellipsis: true,
       // sorter: {
       //   compare: (a: any, b: any) => a.host.localeCompare(b.host),
@@ -69,7 +69,7 @@ export const createSpaceTableColumns = () => {
       title: '表名',
       dataIndex: 'tableName',
       key: 'tableName',
-      width: 100,
+      width: 190,
       ellipsis:true,
       sorter: {
         compare: (a: any, b: any) => a.tableName.localeCompare(b.tableName),
@@ -84,7 +84,7 @@ export const createSpaceTableColumns = () => {
       title: '数据库名',
       dataIndex: 'tableSchema',
       key: 'tableSchema',
-      width: 190,
+      width: 120,
       ellipsis: true,
       sorter: {
         compare: (a: any, b: any) => a.tableSchema.localeCompare(b.tableSchema),
@@ -97,7 +97,7 @@ export const createSpaceTableColumns = () => {
       title: '存储引擎',
       dataIndex: 'engine',
       key: 'engine',
-      width: 180,
+      width: 120,
       sorter: {
         compare: (a: any, b: any) => a.engine.localeCompare(b.engine),
       },
@@ -115,7 +115,7 @@ export const createSpaceTableColumns = () => {
       title: '表空间',
       dataIndex: 'tableLength',
       key: 'tableLength',
-      width: 180,
+      width: 100,
       sorter: {
         compare: (a: any, b: any) => a.tableLength - b.tableLength,
       },
@@ -139,7 +139,7 @@ export const createSpaceTableColumns = () => {
       title: '索引空间',
       dataIndex: 'indexLength',
       key: 'indexLength',
-      width: 200,
+      width: 100,
       ellipsis:true,
       sorter: {
         compare: (a: any, b: any) => a.indexLength - b.indexLength,
