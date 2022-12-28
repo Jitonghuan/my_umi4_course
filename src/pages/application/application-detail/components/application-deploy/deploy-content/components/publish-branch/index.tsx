@@ -288,7 +288,7 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
                 rowKey="id"
                 bordered
                 dataSource={dataSource}
-                loading={loading}
+                // loading={loading}
                 pagination={false}
                 columns={branchColumns}
                 scroll={{ x: '100%' }}
