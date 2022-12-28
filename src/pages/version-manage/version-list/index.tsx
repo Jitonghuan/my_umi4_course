@@ -5,13 +5,13 @@ import { ContentCard } from '@/components/vc-page-content';
 import { Form, Button, Table, message } from 'antd';
 import { listSchema } from './schema';
 import CreateVersion from './create-version';
-import { history} from 'umi';
+import { history } from 'umi';
 import { stringify } from 'query-string';
 import { FeContext } from '@/common/hooks';
 import OperateModal from './operate-modal';
 import { versionSortFn } from '@/utils';
-import { getReleaseList,updateRelease,releasePublish } from '../service';
-import {UpdateItems} from '../type'
+import { getReleaseList, updateRelease, releasePublish } from '../service';
+import { UpdateItems } from '../type'
 import './index.less';
 
 export default function VersionList() {
@@ -19,7 +19,7 @@ export default function VersionList() {
     const [data, setData] = useState<any>([]);
     const [visible, setVisible] = useState<boolean>(false);
     const { categoryData } = useContext(FeContext);
-    const [appCategory, setAppCategroy] = useState<any>( {});
+    const [appCategory, setAppCategroy] = useState<any>({});
     const [form] = Form.useForm();
     const [action, setAction] = useState<string>('')
     const [operateVisible, setOperateVisible] = useState<boolean>(false);
@@ -28,39 +28,39 @@ export default function VersionList() {
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(20);
     const [loading, setLoading] = useState<boolean>(false);
-    const [optLoading,setOptLoading] = useState<boolean>(false);
-    const [userPermission,setUserPermission]= useState<string>("");
-    useEffect(()=>{
-        let user:any={}
+    const [optLoading, setOptLoading] = useState<boolean>(false);
+    const [userPermission, setUserPermission] = useState<string>("");
+    useEffect(() => {
+        let user: any = {}
         try {
-            user=  localStorage.getItem('USER_INFO');
+            user = localStorage.getItem('USER_INFO');
             if (user) {
                 user = JSON.parse(user);
                 setUserPermission(user?.name)
-               
+
             }
-            
+
         } catch (error) {
-            
+
         }
-    },[])
-   
-    useEffect(()=>{
+    }, [])
+
+    useEffect(() => {
         try {
-            let sessionData:any=JSON.parse(sessionStorage.getItem('version_list_form') || '{}');
+            let sessionData: any = JSON.parse(sessionStorage.getItem('version_list_form') || '{}');
             setAppCategroy(sessionData['categoryCode'] || categoryData[0] || {})
             form.setFieldsValue({
                 categoryCode: sessionData['categoryCode'] || categoryData[0] || {},
                 releaseNumber: sessionData?.releaseNumber || ''
             });
-            
+
         } catch (error) {
             console.log(error)
-            
+
         }
-        
+
         queryList({ pageSize, pageIndex });
-    },[])
+    }, [])
 
     const maxVersion = useMemo(() => {
         const versionList = (data || []).map((item: any) => item.releaseNumber);
@@ -68,29 +68,29 @@ export default function VersionList() {
         return res.length ? res[0] : '';
     }, [JSON.stringify(data)]);
 
-    const updateReleaseAction=(params:UpdateItems)=>{
+    const updateReleaseAction = (params: UpdateItems) => {
         setOptLoading(true)
-        updateRelease({...params}).then((res)=>{
-            if(res?.success){
+        updateRelease({ ...params }).then((res) => {
+            if (res?.success) {
                 message.success("操作成功！")
                 queryList({ pageSize, pageIndex });
 
             }
 
-        }).finally(()=>{
-           
+        }).finally(() => {
+            setOptLoading(false)
         })
 
     }
-    const releasePublishAction=(id:number)=>{
+    const releasePublishAction = (id: number) => {
         setOptLoading(true)
-        releasePublish(id).then((res)=>{
-            if(res?.success){
+        releasePublish(id).then((res) => {
+            if (res?.success) {
                 message.success("操作成功！")
                 queryList({ pageSize, pageIndex });
             }
-        }).finally(()=>{
-           // setOptLoading(false)
+        }).finally(() => {
+            setOptLoading(false)
 
         })
     }
@@ -115,37 +115,37 @@ export default function VersionList() {
             mergeVersion: (record: any) => {
                 openModal('merge', record)
             },
-            onLock: (record: any,index:number) => {
-                updateReleaseAction({...record,locked:record?.locked===0?1:0})
+            onLock: (record: any, index: number) => {
+                updateReleaseAction({ ...record, locked: record?.locked === 0 ? 1 : 0 })
             },
-            onPublish:(record: any,index:number)=>{
+            onPublish: (record: any, index: number) => {
                 releasePublishAction(record?.id)
             },
-            onDisabledAction:(record: any,index:number)=>{
-                updateReleaseAction({...record,status:"disable"})
+            onDisabledAction: (record: any, index: number) => {
+                updateReleaseAction({ ...record, status: "disable" })
             },
-            onEnableAction:(record: any,index:number)=>{
-                updateReleaseAction({...record,status:"packFinish"})
+            onEnableAction: (record: any, index: number) => {
+                updateReleaseAction({ ...record, status: "packFinish" })
             },
-            userPermission:userPermission
+            userPermission: userPermission
 
 
         }) as any;
-    }, [ appCategory?.label,appCategory?.value]);
+    }, [appCategory?.label, appCategory?.value]);
     useEffect(() => {
-       
+
         let intervalId = setInterval(() => {
-            if(appCategory?.value){
+            if (appCategory?.value) {
                 queryList({ pageSize, pageIndex });
-            
+
             }
-           
-        }, 1000*10);
-      
+
+        }, 1000 * 10);
+
         return () => {
-          clearInterval(intervalId);
+            clearInterval(intervalId);
         };
-      }, []);
+    }, []);
 
     // 获取列表
     const queryList = (params: any) => {
@@ -155,17 +155,17 @@ export default function VersionList() {
             if (res?.success) {
                 setData(res?.data || []);
                 setTotal(res?.data.length)
-                
-            }else{
-                setData( []);
+
+            } else {
+                setData([]);
                 setTotal(0)
-               
+
             }
-        }).finally(() => { 
+        }).finally(() => {
             setLoading(false)
             setOptLoading(false)
             //setOptLoading(false)
-         })
+        })
     }
 
     const initSearch = () => {
@@ -193,11 +193,11 @@ export default function VersionList() {
                     onClose={() => { setOperateVisible(false) }}
                     initData={initData}
                     appCategory={appCategory}
-                    onSave={()=>{
+                    onSave={() => {
                         setOptLoading(true)
                         queryList({ pageSize, pageIndex })
                         setOperateVisible(false)
-                       
+
 
                     }}
                 />
@@ -232,9 +232,9 @@ export default function VersionList() {
                             <Input placeholder='请输入版本号' />
                         </Form.Item>
                         <Form.Item>
-                            <Button type="primary" onClick={()=>{
+                            <Button type="primary" onClick={() => {
                                 form.setFieldsValue({
-                                    releaseNumber:""
+                                    releaseNumber: ""
                                 })
                                 queryList({ pageSize, pageIndex })
 
@@ -269,7 +269,7 @@ export default function VersionList() {
                 </div>
                 <Table
                     dataSource={data}
-                    loading={optLoading?optLoading:data?.length>0? false:loading}
+                    loading={optLoading ? optLoading : data?.length > 0 ? false : loading}
                     bordered
                     rowKey="id"
                     pagination={{

@@ -64,6 +64,7 @@ export default function DeployContent(props: DeployContentProps) {
   const [unDeployedLoad, setUnDeployedLoad] = useState(false);
   const newPublish = useRef<any>(undefined);//是否是新的cicd
   const [versionData, setVersionData] = useState<any>([]);//请求版本列表数据
+  const isHbosVersion = appData?.appCategoryCode === 'hbos' && checkVersion && envTypeCode === 'version';
   useEffect(() => {
     if (!appCode || !isActive || !pipelineCode) return;
     isNewPublish();
@@ -263,7 +264,7 @@ export default function DeployContent(props: DeployContentProps) {
             pipelineCode={pipelineCode}
             deployedList={deployed}
             appStatusInfo={appStatusInfo}
-            loading={deployedLoad}
+            // loading={deployedLoad}
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
@@ -275,30 +276,30 @@ export default function DeployContent(props: DeployContentProps) {
           //   requestDeployBranch();
           // }}
           />
-          {envTypeCode !== "version" && (
-            <PublishBranch
-              deployInfo={deployInfo}
-              hasPublishContent={!!(deployed && deployed.length)}
-              dataSource={unDeployed}
-              env={envTypeCode}
-              versionData={versionData}
-              checkVersion={checkVersion}
-              onSearch={searchUndeployedBranch}
-              pipelineCode={pipelineCode}
-              onSubmitBranch={(status) => {
-                timerHandle(status === 'start' ? 'stop' : 'do', true);
-              }}
-              masterBranchChange={(masterBranch: string) => {
-                masterBranchName.current = masterBranch;
-                timerHandle('do', true);
-              }}
-              loading={unDeployedLoad}
-              changeBranchName={(branchName: string) => {
-                // cachebranchName.current = branchName;
-              }}
-              newPublish={newPublish.current}
-            />
-          )}
+          {(envTypeCode !== 'version' || isHbosVersion) && <PublishBranch
+            deployInfo={deployInfo}
+            hasPublishContent={!!(deployed && deployed.length)}
+            dataSource={unDeployed}
+            env={envTypeCode}
+            versionData={versionData}
+            checkVersion={checkVersion}
+            onSearch={searchUndeployedBranch}
+            pipelineCode={pipelineCode}
+            onSubmitBranch={(status) => {
+              timerHandle(status === 'start' ? 'stop' : 'do', true);
+            }}
+            masterBranchChange={(masterBranch: string) => {
+              masterBranchName.current = masterBranch;
+              timerHandle('do', true);
+            }}
+            // loading={unDeployedLoad}
+            changeBranchName={(branchName: string) => {
+              // cachebranchName.current = branchName;
+            }}
+            newPublish={newPublish.current}
+            isHbosVersion={isHbosVersion}
+          />
+          }
 
         </Spin>
       </div>

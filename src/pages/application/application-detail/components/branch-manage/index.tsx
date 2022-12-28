@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import moment from 'moment';
-import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select } from 'antd';
+import { Button, message, Form, Input, Table, Popconfirm, Tooltip, Select, Space, Tag } from 'antd';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { usePaginated } from '@cffe/vc-hulk-table';
@@ -13,6 +13,7 @@ import { postRequest } from '@/utils/request';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import appConfig from '@/app.config';
+import AppendDemand from './append-demand';
 import './index.less'
 
 export default function BranchManage() {
@@ -26,6 +27,8 @@ export default function BranchManage() {
   const [selectMaster, setSelectMaster] = useState<any>('master');
   const [masterListData] = useMasterBranchList({ branchType: 'master', appCode });
   const selectRef = useRef(null) as any;
+  const [visible, setVisible] = useState<boolean>(false);
+  const [initData, setInitData] = useState<any>({})
 
   // 查询数据
   const { run: queryBranchList, tableProps } = usePaginated({
@@ -145,14 +148,14 @@ export default function BranchManage() {
           width={400}
           render={(value) => (
             <div>
-              <p>
+              <div>
                 <span>{value}</span>
                 <CopyToClipboard text={value} onCopy={() => message.success('复制成功！')}>
                   <span style={{ marginLeft: 8, color: '#3591ff' }}>
                     <CopyOutlined />
                   </span>
                 </CopyToClipboard>
-              </p>
+              </div>
             </div>
           )}
         />
@@ -167,6 +170,27 @@ export default function BranchManage() {
             <Tooltip placement="topLeft" title={value}>
               {value}
             </Tooltip>
+          )}
+        />
+        <Table.Column
+          title="关联需求/bug"
+          dataIndex={['relationStatus', 'statusList']}
+          width={200}
+          ellipsis={{
+            showTitle: false,
+          }}
+          render={(value, record: any) => (
+            Array.isArray(value) && value.length ? (
+              value.map((item: any) => (
+                <div className='demand-cell'>
+                  <Tooltip title={item.title}>{record.relatedPlat === 'demandPlat' ?
+                    <a target='_blank' href={item.url} >{item.title}</a> :
+                    <span>{item.title}</span>
+                  }</Tooltip>
+                  <Tag color={record.relatedPlat === 'demandPlat' ? '#2db7f5' : '#f50'}>{record.relatedPlat === 'demandPlat' ? '需求' : 'bug'}</Tag>
+                </div>
+              ))
+            ) : null
           )}
         />
         <Table.Column title="reviewID" dataIndex="reviewId" width={200} render={reviewUrl} />
@@ -197,9 +221,12 @@ export default function BranchManage() {
           title="操作"
           width={200}
           fixed="right"
-          align="center"
+          // align="center"
           render={(_, record: any, index) => (
-            <div className="action-cell">
+            <Space>
+              {!(record?.relationStatus?.statusList || []).length && <a onClick={() => { setInitData(record); setVisible(true) }}>
+                关联需求
+              </a>}
               {appConfig.envType !== 'base-poc' && (
                 <a onClick={() => creatReviewUrl(record)}>
                   创建Review
@@ -211,7 +238,7 @@ export default function BranchManage() {
                   作废
                 </a>
               </Popconfirm>
-            </div>
+            </Space>
           )}
         />
       </Table>
@@ -231,6 +258,23 @@ export default function BranchManage() {
         onClose={() => setBranchEditMode('HIDE')}
         masterBranchOptions={masterBranchOptions}
         selectMaster={selectMaster}
+      />
+      <AppendDemand
+        visible={visible}
+        appCode={appCode!}
+        appCategoryCode={appCategoryCode || ''}
+        onSubmit={() => {
+          setVisible(false);
+          queryBranchList({
+            pageIndex: 1,
+            branchType: 'feature',
+            masterBranch: selectMaster,
+          });
+        }}
+        onClose={() => setVisible(false)}
+        masterBranchOptions={masterBranchOptions}
+        selectMaster={selectMaster}
+        initData={initData}
       />
     </ContentCard>
   );
