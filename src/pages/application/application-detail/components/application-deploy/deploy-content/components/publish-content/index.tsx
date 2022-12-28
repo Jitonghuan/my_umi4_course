@@ -254,7 +254,7 @@ export default function PublishContent(props: IProps) {
         rowKey="id"
         dataSource={deployedList}
         pagination={false}
-        loading={loading}
+        // loading={loading}
         bordered
         scroll={{ x: '100%' }}
         rowSelection={{
