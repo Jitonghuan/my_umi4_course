@@ -350,6 +350,10 @@ export default function PublishBranch(publishBranchProps: PublishBranchProps, pr
         width={((publishType === "version" && isGmcProd) || isHbosVersion) ? 800 : 550}
         confirmLoading={confirmLoading}
         onOk={() => {
+          if (!deployEnv?.length) {
+            message.error('请选择要发布的环境！');
+            return;
+          }
           setConfirmLoading(true);
           return submit().then(() => {
             setDeployVisible(false);
