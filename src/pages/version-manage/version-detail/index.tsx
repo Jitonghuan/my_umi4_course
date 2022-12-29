@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useContext, } from 'react';
-import { Select, Descriptions, Tabs, Space, Spin ,Empty} from 'antd';
+import { Select, Descriptions, Tabs, Space, Spin, Empty } from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { Button } from 'antd';
@@ -23,27 +23,27 @@ import './index.less';
 const { TabPane } = Tabs;
 
 const getLocalCategory = () => {
-    let item={}
+    let item = {}
     try {
-        item=  sessionStorage.getItem('version-detail-category') ? JSON.parse(sessionStorage.getItem('version-detail-category') as any) : {}
-    
+        item = sessionStorage.getItem('version-detail-category') ? JSON.parse(sessionStorage.getItem('version-detail-category') as any) : {}
+
     } catch (error) {
-        
+
     }
     return item
 
-    
+
 }
 const getLocalVersion = () => {
-    let item={}
+    let item = {}
     try {
-        item=   sessionStorage.getItem('version-detail-version') ? JSON.parse(sessionStorage.getItem('version-detail-version') as any) : {}
-        
+        item = sessionStorage.getItem('version-detail-version') ? JSON.parse(sessionStorage.getItem('version-detail-version') as any) : {}
+
     } catch (error) {
-        
+
     }
     return item
-   
+
 }
 
 export default function VersionDetail() {
@@ -68,7 +68,7 @@ export default function VersionDetail() {
         { label: '变更配置', key: 'config', component: ModifyConfig },
         { label: '变更SQL', key: 'sql', component: ModifySql },
     ]
-    
+
 
     const versionChange = (v: any) => {
         try {
@@ -79,17 +79,17 @@ export default function VersionDetail() {
                 setSelectVersion({ label: v.label, value: v.value });
                 sessionStorage.setItem('version-detail-version', JSON.stringify({ label: v.label, value: v.value }));
             }
-            
+
         } catch (error) {
-            
+
         }
-       
+
     }
     const categoryChange = (v: any) => {
         setAppCategroy({ label: v?.label, value: v?.value });
-       
+
         sessionStorage.setItem('version-detail-category', JSON.stringify({ label: v?.label, value: v?.value }));
-       
+
         loadVersionOption({ categoryCode: v.value })
         versionChange(null)
     }
@@ -108,7 +108,7 @@ export default function VersionDetail() {
         if (categoryData?.length && !appCategory.value) {
             categoryChange(categoryData[0])
         }
-    }, [JSON.stringify(categoryData) ])
+    }, [JSON.stringify(categoryData)])
 
     useEffect(() => {
         if (selectVersion?.label && appCategory?.value) {
@@ -131,6 +131,9 @@ export default function VersionDetail() {
 
     const keyChange = (key: string) => {
         setActiveTab(key);
+        if (['app', 'config', 'sql'].includes(key)) {
+            getDataSource()
+        }
         history.push({
             pathname: '/matrix/version-manage/detail',
             search: stringify({ key })
@@ -157,8 +160,8 @@ export default function VersionDetail() {
                         configInfo: Object.keys(ele?.config)?.length,
                         sqlInfo: Object.keys(ele?.sql)?.length,
                         relationDemandsInfo: ele?.relationDemands?.length,
-                        configVersionSum:typeof(ele?.config)==="object"? Object.keys(ele?.config):[],
-                        sqlVersionSum:typeof(ele?.sql)==="object"? Object.keys(ele?.sql):[]
+                        configVersionSum: typeof (ele?.config) === "object" ? Object.keys(ele?.config) : [],
+                        sqlVersionSum: typeof (ele?.sql) === "object" ? Object.keys(ele?.sql) : []
 
                     })
 
@@ -228,60 +231,60 @@ export default function VersionDetail() {
                         </div>
                     </div>
                 </div>
-                {!selectVersion?.value ?<Empty  description={"该应用下无版本号，暂无数据"}/>:<div>
+                {!selectVersion?.value ? <Empty description={"该应用下无版本号，暂无数据"} /> : <div>
                     <Spin spinning={loading}>
-                    <Descriptions title="概述" bordered column={4} extra={
-                        <Button
-                            type="primary"
-                            icon={<RedoOutlined />}
-                            onClick={() => {
-                                queryData();
-                                getDataSource()
-                                setCount(count => count + 1)
-                            }}
-                            size="small"
-                        >
-                            刷新
+                        <Descriptions title="概述" bordered column={4} extra={
+                            <Button
+                                type="primary"
+                                icon={<RedoOutlined />}
+                                onClick={() => {
+                                    queryData();
+                                    getDataSource()
+                                    setCount(count => count + 1)
+                                }}
+                                size="small"
+                            >
+                                刷新
                   </Button>
-                    }>
-                        <Descriptions.Item label="版本号">{data?.releaseNumber || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="应用分类">{data?.categoryCode || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="版本负责人">{data?.owner || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="版本状态"><span style={{ color: statusMap[data?.status]?.color || "gray" }}>{data.status ? statusMap[data?.status]?.label : '--'}</span></Descriptions.Item>
-                        <Descriptions.Item label="创建时间">{moment(data?.gmtCreate).format("YYYY-MM-DD HH:mm:ss") || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="计划发版本时间">{data?.planTime || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="发版时间">{data?.finishTime || '--'}</Descriptions.Item>
-                        <Descriptions.Item label="下载次数"><a onClick={() => { setVisible(true) }}>{data?.downloadCount || 0}</a></Descriptions.Item>
-                        <Descriptions.Item label="简述" >{data?.sketch || ''}</Descriptions.Item>
-                        <Descriptions.Item label="备注" >{data?.desc || ''}</Descriptions.Item>
-                    </Descriptions>
-                </Spin>
-                <div className='tab-container'>
-                    <Tabs
-                        activeKey={activeTab}
-                        onChange={keyChange}
-                    >
-                        {TabList.map((item: any) => (
-                            <TabPane tab={item.label} key={item.key} />
-                        ))}
-                    </Tabs>
-                    <detailContext.Provider
-                        value={{ releaseId: selectVersion?.value || '', categoryCode: appCategory?.value || '', categoryName: appCategory?.label || '' }}
-                    >
-                        <GetComponent
-                            activeTab={activeTab}
-                            detailInfo={data}
-                            infoLoading={tableLoading}
-                            count={count}
-                            dataSource={dataSource}
-                            setDataSource={setDataSource}
-                            originData={originData}
-                            onReload={queryData} />
-                    </detailContext.Provider>
-                </div>
+                        }>
+                            <Descriptions.Item label="版本号">{data?.releaseNumber || '--'}</Descriptions.Item>
+                            <Descriptions.Item label="应用分类">{data?.categoryCode || '--'}</Descriptions.Item>
+                            <Descriptions.Item label="版本负责人">{data?.owner || '--'}</Descriptions.Item>
+                            <Descriptions.Item label="版本状态"><span style={{ color: statusMap[data?.status]?.color || "gray" }}>{data.status ? statusMap[data?.status]?.label : '--'}</span></Descriptions.Item>
+                            <Descriptions.Item label="创建时间">{moment(data?.gmtCreate).format("YYYY-MM-DD HH:mm:ss") || '--'}</Descriptions.Item>
+                            <Descriptions.Item label="计划发版本时间">{data?.planTime || '--'}</Descriptions.Item>
+                            <Descriptions.Item label="发版时间">{data?.finishTime || '--'}</Descriptions.Item>
+                            <Descriptions.Item label="下载次数"><a onClick={() => { setVisible(true) }}>{data?.downloadCount || 0}</a></Descriptions.Item>
+                            <Descriptions.Item label="简述" >{data?.sketch || ''}</Descriptions.Item>
+                            <Descriptions.Item label="备注" >{data?.desc || ''}</Descriptions.Item>
+                        </Descriptions>
+                    </Spin>
+                    <div className='tab-container'>
+                        <Tabs
+                            activeKey={activeTab}
+                            onChange={keyChange}
+                        >
+                            {TabList.map((item: any) => (
+                                <TabPane tab={item.label} key={item.key} />
+                            ))}
+                        </Tabs>
+                        <detailContext.Provider
+                            value={{ releaseId: selectVersion?.value || '', categoryCode: appCategory?.value || '', categoryName: appCategory?.label || '' }}
+                        >
+                            <GetComponent
+                                activeTab={activeTab}
+                                detailInfo={data}
+                                infoLoading={tableLoading}
+                                count={count}
+                                dataSource={dataSource}
+                                setDataSource={setDataSource}
+                                originData={originData}
+                                onReload={queryData} />
+                        </detailContext.Provider>
+                    </div>
 
-                    </div>}
-         
+                </div>}
+
             </ContentCard>
         </PageContainer >
     )
