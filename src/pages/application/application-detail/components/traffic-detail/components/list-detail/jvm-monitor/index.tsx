@@ -36,7 +36,7 @@ const jvmLayoutGrid = {
   xxxl: 1,
 };
 export default function InstanceMonitor() {
-  const { appCode, envCode, startTime, hostName, hostIP, count, endTime, selectTimeType } = useContext(DetailContext);
+  const { appCode, envCode, startTime, hostName, hostIP, count, endTime, selectTimeType ,isClick} = useContext(DetailContext);
   const appConfig = [
     {
       title: 'GC瞬时次数/每分钟',
@@ -69,7 +69,7 @@ export default function InstanceMonitor() {
           <AppCard
             key={index}
             {...el}
-            requestParams={{ envCode, appCode, ip: hostIP, startTime: startTime, hostName: hostName, count, endTime, selectTimeType }}
+            requestParams={{ envCode, appCode, ip: hostIP, startTime: startTime, hostName: hostName, count, endTime, selectTimeType,isClick }}
           />
         ))}
       </VCCardLayout>
@@ -79,7 +79,7 @@ export default function InstanceMonitor() {
             title= 'JVM线程数/每分钟'
             getOption= {getThreadsChartOption}
             queryFn= {queryJvmCurrentThreads}
-            requestParams={{ envCode, appCode, ip: hostIP, startTime: startTime, endTime, selectTimeType, hostName: hostName, count }}
+            requestParams={{ envCode, appCode, ip: hostIP, startTime: startTime, endTime, selectTimeType, hostName: hostName, count,isClick }}
           />
       </VCCardLayout>
       <div>

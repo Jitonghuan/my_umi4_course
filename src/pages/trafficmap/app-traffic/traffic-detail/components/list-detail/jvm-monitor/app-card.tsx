@@ -94,6 +94,7 @@ const Coms = (props: IProps) => {
         appCode: requestParams.appCode,
         envCode: requestParams.envCode,
         ip: requestParams.ip,
+        isTotal:requestParams?.isClick === requestParams.appCode?true:false,
         // start: Number((now - requestParams.startTime) / 1000),
         // end: Number(now / 1000),
         start: start,
@@ -130,12 +131,13 @@ const Coms = (props: IProps) => {
       start = startTime;
       end = Number(endTime);
     }
-    console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), 'jvm监控 全屏')
+   
     queryFn({
       data: {
         appCode: requestParams.appCode,
         envCode: requestParams.envCode,
         ip: requestParams.ip,
+        isTotal:requestParams?.isClick === requestParams.appCode?true:false,
         // start: Number((now - startTime) / 1000).toFixed(0),
         // end: Number(now / 1000).toFixed(0),
         start: start.toFixed(0),
