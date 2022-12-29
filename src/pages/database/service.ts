@@ -122,3 +122,11 @@ export const  getCapacityStatistic =`${dbmsApiPrefix}${appConfig.apiPrefix}/capa
 export const  getAbnormalTableList =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listAbnormalTable`;
 //异常表 
 export const  getTableSpaceList =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listTableSpace`;
+/* 慢日志统计 */
+export const  getSlowLogList =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/statistic`;
+/* 慢日志明细 */
+export const  getSlowLogDetail =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/detail`;
+/* 获取日志配置 */
+export const  getSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/status`;
+/* 修改日志配置 */
+export const  updateSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLogConfig`;

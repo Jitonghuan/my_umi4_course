@@ -93,6 +93,19 @@ export const createSpaceTableColumns = () => {
       //   compare: (a: any, b: any) => a.host.localeCompare(b.host),
       // },
     },
+    //filesize
+    {
+      title: '物理文件大小',
+      dataIndex: 'filesize',
+      key: 'filesize',
+      width: 120,
+      sorter: {
+        compare: (a: any, b: any) => a.filesize - b.filesize,
+      },
+      render: (value: any) => {
+        return <span>{value} GB</span>;
+      },
+    },
     {
       title: '存储引擎',
       dataIndex: 'engine',

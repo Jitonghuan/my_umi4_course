@@ -112,25 +112,28 @@ export default function ScriptEditor(props: GrantProps) {
                 setGlobalPrivs(globalPrivsDataSource);
                 setDefaultRow(globalPrivsDataSource)
                 if (dbPrivs?.length > 0) {
-                       let data=   dbPrivs?.map((item:any)=>({
+                       let data=   dbPrivs?.map((item:any,index:number)=>({
                           ...item,
-                          privs:item?.privs?.join(' ')
+                          id:index,
+                        //   privs:item?.privs?.join(' ')
                       }))
                     setDbPrivs(dbPrivs);
                     setDataBaseSource(data)
                 }
                 if (tablePrivs?.length > 0) {
-                     let data=   tablePrivs?.map((item:any)=>({
+                     let data=   tablePrivs?.map((item:any,index:number)=>({
                         ...item,
-                        privs:item?.privs?.join(' ')
+                        id:index,
+                        // privs:item?.privs?.join(',')
                     }))
                     setTablePrivs(tablePrivs);
                     setTableSource(data)
                 }
                 if (columnPrivs?.length > 0) {
-                     let data=   columnPrivs?.map((item:any)=>({
+                     let data=   columnPrivs?.map((item:any,index:number)=>({
                         ...item,
-                        privs:item?.privs?.join(' ')
+                        id:index,
+                        // privs:item?.privs?.join(',')
                     }))
                     setColumnPrivs(columnPrivs)
                     setColumnTableSource(data)
@@ -146,6 +149,14 @@ export default function ScriptEditor(props: GrantProps) {
     const databseTableColumns = useMemo(() => {
         return createDatabseEditColumns({
             schemaOptions,
+            onEdit:(record,  action)=>{
+                console.log("record.id",record.id)
+                action?.startEditable?.(record.id);
+                setType('edit');
+                // setRecord(record)
+                
+               
+              },
             onDelete: (record: any) => {
                 setDataBaseSource(databaseSource.filter((item) => item.id !== record.id))
 
@@ -323,7 +334,7 @@ export default function ScriptEditor(props: GrantProps) {
                             <div>
 
                                 <EditableProTable
-                                    // rowKey="id"
+                                    rowKey="id"
                                     loading={infoLoading}
                                     scroll={{x:'100%'}}
                                     actionRef={databaseActionRef}
@@ -354,7 +365,7 @@ export default function ScriptEditor(props: GrantProps) {
                         {activeValue === "table" &&
                             <Spin spinning={infoLoading}>
                                 <EditableProTable
-                                    // rowKey="id"
+                                    rowKey="id"
                                     scroll={{x:'100%'}}
                                     loading={infoLoading}
                                     actionRef={tableActionRef}
@@ -385,7 +396,7 @@ export default function ScriptEditor(props: GrantProps) {
                         }
                         {activeValue === "column" &&
                             <EditableProTable
-                                // rowKey="column"
+                                rowKey="id"
                                 loading={infoLoading}
                                 scroll={{x:'100%'}}
                                 actionRef={actionRef}

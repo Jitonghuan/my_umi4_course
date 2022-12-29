@@ -7,7 +7,7 @@ import LowSqlDetail from './lowSql-detail';
 import LowSqlStatistics from './lowSql-statistics';
 export default function SessionDiag(){
     const { TabPane } = Tabs;
-    const [activeKey,setActiveKey]=useState<string>("manage")
+    const [activeKey,setActiveKey]=useState<string>("statistics")
     const filteredTabList = useMemo(() => {
       return[
         {key:"statistics",tab:"慢日志统计",component:<LowSqlStatistics/>},

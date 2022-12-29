@@ -1,7 +1,9 @@
 import type { ColumnsType } from 'antd/es/table';
-import { Select} from 'antd';
+import { Select,Tag} from 'antd';
 
 export interface DataType {
+  id: React.Key;
+  readonly?: string;
   key: React.Key;
   title: string;
 }
@@ -13,7 +15,8 @@ export const columns: ColumnsType<DataType> = [
 ];
 
 export const createDatabseEditColumns = (params: {
-  schemaOptions: any
+  schemaOptions: any;
+  onEdit: (record: any, action: any,) => void;
   onDelete:(record:any)=>void;
 }) => {
   return [
@@ -65,6 +68,7 @@ export const createDatabseEditColumns = (params: {
           errorType: 'default',
         };
       },
+      render: (_, row) => row?.privs?.map((item) => <Tag  key={item}>{item}</Tag>),
       renderFormItem: (text, record, _, action) => {
         console.log("record",record)
         return (
@@ -82,6 +86,16 @@ export const createDatabseEditColumns = (params: {
       valueType: 'option',
       width: 100,
       render: (text, record, _, action) => [
+        <a
+        key="editable"
+        onClick={() => {
+          debugger
+        params?.onEdit(record,action)
+        
+        }}
+      >
+        编辑
+      </a>,
      
         <a
           key="delete"
@@ -94,7 +108,7 @@ export const createDatabseEditColumns = (params: {
       ],
     },
   
-  ]
+  ] 
 }
 
 export const createTableEditColumns = (params: {
@@ -179,6 +193,7 @@ export const createTableEditColumns = (params: {
           errorType: 'default',
         };
       },
+      render: (_, row) => row?.privs?.map((item) => <Tag  key={item}>{item}</Tag>),
       renderFormItem: () => {
         return (
           <Select
@@ -207,7 +222,7 @@ export const createTableEditColumns = (params: {
       ],
     },
   
-  ]
+  ] 
 }
 
 export const createEditColumns = (params: {
@@ -323,6 +338,7 @@ export const createEditColumns = (params: {
           errorType: 'default',
         };
       },
+      render: (_, row) => row?.privs?.map((item) => <Tag  key={item}>{item}</Tag>),
       renderFormItem: () => {
         return (
           <Select
