@@ -110,7 +110,7 @@ export const  addsessionRateLimitApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/se
 //sql限流-获取sql模板
 export const  getSqlTemplate =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/getSqlTemplate`;
 //sql限流-修改 
-export const  updateRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimiter/update`;
+export const  updateRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/update`;
 //sql限流-关闭 
 export const  closeDownRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/closeDown`;
 // 锁分析
@@ -127,6 +127,6 @@ export const  getSlowLogList =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLo
 /* 慢日志明细 */
 export const  getSlowLogDetail =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/detail`;
 /* 获取日志配置 */
-export const  getSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/status`;
+export const  getSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/status`;
 /* 修改日志配置 */
-export const  updateSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLogConfig`;
+export const  updateSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/updateStatus`;

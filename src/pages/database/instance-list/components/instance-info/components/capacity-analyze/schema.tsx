@@ -96,11 +96,11 @@ export const createSpaceTableColumns = () => {
     //filesize
     {
       title: '物理文件大小',
-      dataIndex: 'filesize',
-      key: 'filesize',
+      dataIndex: 'fileSize',
+      key: 'fileSize',
       width: 120,
       sorter: {
-        compare: (a: any, b: any) => a.filesize - b.filesize,
+        compare: (a: any, b: any) => a.fileSize - b.fileSize,
       },
       render: (value: any) => {
         return <span>{value} GB</span>;
