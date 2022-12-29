@@ -318,7 +318,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             {dataSource?.length > 0 && (
                                 Object.keys(dataSource[0])?.map((item: any) => {
                                     return (
-                                        <Table.Column title={item} width={100} dataIndex={item} ellipsis key={item} render={(value) => (
+                                        <Table.Column title={item} width={item&&item?.length<7?100:item&&item?.length>6?item?.length*10:100} dataIndex={item} ellipsis key={item} render={(value) => (
                                             <Tooltip placement="topLeft" title={value}>
                                               {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                             </Tooltip>
@@ -384,7 +384,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                     {dataSource?.length > 0 && (
                                         Object.keys(dataSource[0])?.map((item: any) => {
                                             return (
-                                                <Table.Column title={item} dataIndex={item}  width={100} ellipsis key={item}  render={(value) => (
+                                                <Table.Column title={item} dataIndex={item}  width={item&&item?.length<7?100:item&&item?.length>6?item?.length*10:100} ellipsis key={item}  render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
                                                        {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                     </Tooltip>
@@ -440,7 +440,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                 {dataSource?.length > 0 && (
                                     Object.keys(dataSource[0])?.map((item: any) => {
                                         return (
-                                            <Table.Column title={item} dataIndex={item} key={item}  width={100} ellipsis render={(value) => (
+                                            <Table.Column title={item} dataIndex={item} key={item}  width={item&&item?.length<7?100:item&&item?.length>6?item?.length*10:100} ellipsis render={(value) => (
                                                 <Tooltip placement="topLeft" title={value}>
                                                   {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                 </Tooltip>
@@ -626,7 +626,7 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                                     {dataSource?.length > 0 && (
                                         Object.keys(dataSource[0])?.map((item: any) => {
                                             return (
-                                                <Table.Column title={item}   width={100}  dataIndex={item} key={item} ellipsis  render={(value) => (
+                                                <Table.Column title={item}   width={item&&item?.length<7?100:item&&item?.length>6?item?.length*10:100}  dataIndex={item} key={item} ellipsis  render={(value) => (
                                                     <Tooltip placement="topLeft" title={value}>
                                                        {value==="(null)"?<span style={{color:"#A9A9A9"}}>{value}</span>:<span>{value}</span>}
                                                     </Tooltip>
