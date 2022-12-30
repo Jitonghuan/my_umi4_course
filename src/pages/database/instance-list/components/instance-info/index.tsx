@@ -20,7 +20,7 @@ export default function InstanceInfo() {
   const clusterId:number = curRecordData?.clusterId;
   const optType:string = curRecordData?.optType;
   const clusterRole=curRecordData?.curRecord?.clusterRole;
-  const [activeTab, setActiveTab] = useState<string | number>('logger');
+  const [activeTab, setActiveTab] = useState<string | number>('detail');
   
   const changeInfoOption = (value: string | number) => {
     setActiveTab(value);
@@ -28,7 +28,7 @@ export default function InstanceInfo() {
   useEffect(() => {
     if (optType) {
       if (optType === 'instance-list-manage') {
-        setActiveTab('logger');
+        setActiveTab('detail');
       }
       if (optType === 'instance-list-trend' || optType === 'overview-list-trend') {
         setActiveTab('trend');
