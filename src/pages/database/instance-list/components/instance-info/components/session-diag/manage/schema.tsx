@@ -8,13 +8,13 @@ export const createTableColumns = () => {
         title: 'ID',
         dataIndex: 'id',
         key: 'id',
-        width: 50,
+        width: 98,
       },
       {
         title: '用户',
         dataIndex: 'user',
         key: 'user',
-        width: 50,
+        width: 150,
         ellipsis:true,
         sorter: {
           compare: (a: any, b: any) => a.user.localeCompare(b.user),
@@ -57,7 +57,7 @@ export const createTableColumns = () => {
         title: '执行时间（秒）',
         dataIndex: 'time',
         key: 'time',
-        width: 180,
+        width: 130,
         sorter: {
           compare: (a: any, b: any) => a.time - b.time,
         },
@@ -101,7 +101,7 @@ export const createTableColumns = () => {
         title: '事务持续时间（秒）',
         dataIndex: 'trxRunTime',
         key: 'trxRunTime',
-        width: 90,
+        width: 160,
         sorter: {
           compare: (a: any, b: any) => a.trxRunTime - b.trxRunTime,
         },

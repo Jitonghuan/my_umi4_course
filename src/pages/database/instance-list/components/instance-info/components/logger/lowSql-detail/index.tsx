@@ -157,6 +157,7 @@ export default function LowSqlStatistics(){
             <Table  dataSource={dataSource} 
              loading={tableLoading} 
              columns={columns}
+             scroll={{x:'100%'}}
              pagination={{
                 current: pageInfo?.pageIndex,
                 total:pageInfo?.total,

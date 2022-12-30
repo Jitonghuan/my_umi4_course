@@ -102,7 +102,6 @@ export default function LockAnalyze() {
       <div>
         <Table dataSource={dataSource} bordered
           loading={loading}
-          //252
           scroll={{ x: '100%',y:window.innerHeight-252 }}
           pagination={false}
           locale={{
@@ -122,13 +121,13 @@ export default function LockAnalyze() {
                  
                   <span> {value?datetimeCellRender(value):""}</span> 
                 
-                )} />: item?.includes("sql")?<Table.Column title={item} dataIndex={item} width={275} key={item}  render={(value) => (
+                )} />: item?.includes("sql")?<Table.Column title={item} dataIndex={item} width={375} key={item}  render={(value) => (
                  
                   <Tooltip placement="topLeft" title={value}>
                   {value}
                 </Tooltip>
                 
-                )} />: <Table.Column title={item} dataIndex={item} key={item} render={(value) => (
+                )} />: <Table.Column title={item} dataIndex={item} width={item?item?.length*20:170} key={item} render={(value) => (
                   <Tooltip placement="topLeft" title={value}>
                     {value}
                   </Tooltip>

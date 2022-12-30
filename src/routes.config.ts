@@ -133,8 +133,8 @@ export default [
     redirect: `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
   },
   {
-    path: `${baseRoutePath}/matrix/database/backup`,
-    redirect: `${baseRoutePath}/matrix/database/backup/plan`,
+    path: `${baseRoutePath}/database/backup`,
+    redirect: `${baseRoutePath}/database/backup/plan`,
   },
 
   

@@ -90,7 +90,7 @@ export const lowSqlDetailColumns=()=>{
         title: '执行完成时间',
         dataIndex: 'tsMin',
         key: 'tsMin',
-        // width: '35%',
+        width: 200,
         // ellipsis:true,
         render:(value)=><span>
         {value?datetimeCellRender(value):""}
@@ -106,16 +106,14 @@ export const lowSqlDetailColumns=()=>{
         title: '库名',
         dataIndex: 'database',
         key: 'database',
-        // width: '35%',
-        // ellipsis:true,
-       
+        width: 200,
+      
       },
       {
         title: '客户端',
         dataIndex: 'client',
         key: 'client',
-        // width: '15%',
-        // ellipsis:true,
+        width: 200,
         render:(value)=><Tooltip title={value}>
           <span>{value}</span>
         </Tooltip>
@@ -124,40 +122,35 @@ export const lowSqlDetailColumns=()=>{
         title: '用户',
         dataIndex: 'user',
         key: 'user',
-        // width: '35%',
-        // ellipsis:true,
+        width: 200,
        
       },
       {
         title: '执行耗时',
         dataIndex: 'queryTimeSum',
         key: 'queryTimeSum',
-        // width: '35%',
-        // ellipsis:true,
+        width: 100,
        
       },
       {
         title: '锁等待耗时',
         dataIndex: 'lockTimeSum',
         key: 'lockTimeSum',
-        // width: '35%',
-        // ellipsis:true,
+        width: 100,
        
       },
       {
         title: '扫描行',
         dataIndex: 'rowsExaminedSum',
         key: 'rowsExaminedSum',
-        // width: '35%',
-        // ellipsis:true,
+        width: 100,
        
       },
       {
         title: '返回行',
         dataIndex: 'rowsSentSum',
         key: 'rowsSentSum',
-        // width: '35%',
-        // ellipsis:true,
+        width: 100,
        
       },
   

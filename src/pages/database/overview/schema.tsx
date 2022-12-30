@@ -68,10 +68,9 @@ export const tableSchema = ({
       dataIndex: 'cpu',
       width: 200,
       render: (value: any) => {
-        return <div  style={{margin:12}}> 
+        return <div  style={{margin:12,display:"flex"}}> 
         {value}%
         <Progress percent={Number(value)}
-        // status="active" 
         showInfo={false} 
         strokeColor={Number(value)>70?"red":"#1a78fd"} 
        
@@ -85,10 +84,9 @@ export const tableSchema = ({
 
       width: 200,
       render: (value: any) => {
-        return <div style={{margin:12}}> 
+        return <div style={{margin:12,display:"flex"}}> 
            {value}%
         <Progress 
-        // status="active"  
         showInfo={false} percent={Number(value)}  />
         </div>;
       },
@@ -96,13 +94,11 @@ export const tableSchema = ({
     {
       title: 'Disk',
       dataIndex: 'disk',
-
       width: 200,
       render: (value: any) => {
-        return <div style={{margin:12}}> 
+        return <div style={{margin:12,display:"flex"}}> 
          {value}%
         <Progress 
-        // status="active"
         showInfo={false}
          percent={Number(value)}  strokeColor={Number(value)>70?"red":"#1a78fd"}  />
         </div>;
@@ -111,44 +107,35 @@ export const tableSchema = ({
     {
       title: 'TPS',
       dataIndex: 'tps',
-
-      width: 200,
-      // render: (value: any) => {
-      //   return <div style={{margin:12}}> <Progress percent={Number(value)}   /></div>;
-      // },
+      width: 100,
+  
     },
     {
       title: 'QPS',
       dataIndex: 'qps',
-      width: 200,
-      // render: (value: any) => {
-      //   return <div style={{margin:12}}> <Progress percent={Number(value)}  /></div>;
-      // },
+      width: 100,
     },
     {
       title: 'SlowQueries',
       dataIndex: 'slowQueries',
-      width: 200,
-      // render: (value: any) => {
-      //   return <div style={{margin:12}}> <Progress percent={Number(value)}  /></div>;
-      // },
+      width: 100,
     },
     {
       title: 'ConnectedThreads',
       dataIndex: 'connectedThreads',
-      width: 200,
+      width: 150,
     },
-    //runningThreads
     {
       title: 'RunningThreads',
       dataIndex: 'runningThreads',
-      width: 200,
+      width: 150,
     },
     {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
       fixed:"right",
+      align:"center",
       width: 150,
       render: (value: string, record: any, index: number) => {
         return (
@@ -174,7 +161,7 @@ export const tableSchema = ({
       {
         title: '实例',
         dataIndex: 'instancename',
-        width: 100,
+        width: 50,
         ellipsis:true,
         render: (value: any) => {
           return <Tooltip title={value}>{value}</Tooltip>
@@ -183,7 +170,7 @@ export const tableSchema = ({
       {
         title: '库名',
         dataIndex: 'db_max',
-        width: 120,
+        width: 100,
         ellipsis:true,
         render: (value: any) => {
           return <Tooltip title={value}>{value}</Tooltip>
@@ -192,7 +179,11 @@ export const tableSchema = ({
       {
         title: '执行次数',
         dataIndex: 'sum',
-        width: 100,
+        width: 90,
+        ellipsis:true,
+        render: (value: any) => {
+          return <Tooltip title={value}>{value}</Tooltip>
+        },
         sorter: {
           compare: (a: any, b: any) => a.sum - b.sum,
         },

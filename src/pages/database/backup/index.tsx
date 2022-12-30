@@ -1,5 +1,5 @@
 
-import React, { useState,useEffect} from 'react';
+import React, { useState} from 'react';
 import { Tabs} from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard} from '@/components/vc-page-content';
@@ -9,10 +9,6 @@ import './index.less'
 const { TabPane } = Tabs;
 export default function AuthorityManage() {
   const [tabKey, setTabKey] = useState<any>('plan');
-  useEffect(()=>{
-    history.push("/matrix/database/backup/plan")
-  },[])
-  
   return (<PageContainer className="nacos-config-wrap">
     <ContentCard>
     <div className="nacos-manage-page">
