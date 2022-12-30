@@ -129,7 +129,7 @@ export const getNacosNsDataIdApi= addAPIPrefix('/opsManage/k8s/multiple/getNacos
 
     return getRequest(getClusterTopologyUrlApi, { data: { envCode } });
   }
-  export const getCurrentDistrictInfo = (params:{infoType: string,key:string}) => {
+  export const getCurrentDistrictInfo = (params:{infoType: string,key:string,envCode:string}) => {
     const url = `${appConfig.apiPrefix}/opsManage/multiple/common/getCurrentDistrictInfo`;
     return getRequest(url, { data: params });
   }

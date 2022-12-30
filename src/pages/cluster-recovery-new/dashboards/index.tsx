@@ -61,7 +61,8 @@ export default function Dashboards(){
 
         getCurrentDistrictInfo({
           infoType,
-          key:value
+          key:value,
+          envCode
     
         }).then((res)=>{
           if(res?.success){
