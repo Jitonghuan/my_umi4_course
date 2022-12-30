@@ -130,3 +130,17 @@ export const  getSlowLogDetail =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slow
 export const  getSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/status`;
 /* 修改日志配置 */
 export const  updateSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/updateStatus`;
+
+/* -------------备份管理----------- */
+/* 备份计划列表 */
+export const  getBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/list`;
+/* 获取备份类型 */
+export const  getBackupTypeList =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/type/list`;
+/* 创建备份计划 */
+export const  createBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/create`;
+/* 更新备份计划 */
+export const  updateBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/update`;
+/* 删除备份计划 */
+export const  deleteBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/delete`;
+/* 备份记录列表 */
+export const  getRecordList =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/record/list`;

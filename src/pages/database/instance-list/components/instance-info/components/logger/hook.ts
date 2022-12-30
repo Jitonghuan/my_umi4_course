@@ -90,5 +90,5 @@ export function useGetSlowLogList(): [boolean, any,any,any, (paramsObj: { instan
   export const updateSlowLogConfig = (params:{
     instanceId: number,envCode:string,status:boolean
   }) => {
-    return putRequest(`${APIS.updateSlowLogConfig}`,{data:params});
+    return putRequest(`${APIS.updateSlowLogConfig}?instanceId=${params?.instanceId}&envCode=${params?.envCode}&status=${params?.status}`);
   };

@@ -132,6 +132,12 @@ export default [
     path: `${baseRoutePath}/cluster-recovery/cluster-sync`,
     redirect: `${baseRoutePath}/cluster-recovery/cluster-sync/full`,
   },
+  {
+    path: `${baseRoutePath}/matrix/database/backup`,
+    redirect: `${baseRoutePath}/matrix/database/backup/plan`,
+  },
+
+  
 
 
 
@@ -1446,18 +1452,17 @@ export default [
 
         ]
       },
-
-      {
-        path: `${baseRoutePath}/database/instance-list`,
-        name: '实例列表',
-        key: 'instance-list',
-        component: '@/pages/database/instance-list',
-      },
       {
         path: `${baseRoutePath}/database/cluster-list`,
         name: '集群列表',
         key: 'cluster-list',
         component: '@/pages/database/cluster-list',
+      },
+      {
+        path: `${baseRoutePath}/database/instance-list`,
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
       },
       {
         path: `${baseRoutePath}/database/backup`,
@@ -1473,7 +1478,7 @@ export default [
             hideInMenu: true,
           },
           {
-            path: `${baseRoutePath}/database/backup/`,
+            path: `${baseRoutePath}/database/backup/record`,
             name: '备份记录',
             key: 'backup',
             component: '@/pages/database/backup/backup-record',

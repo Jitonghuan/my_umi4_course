@@ -57,10 +57,12 @@ export const START_TIME_ENUMS = [
 const sqlTypes = [{
   label: "SELECT",
   value: "SELECT"
-}, {
-  label: "UPDATE",
-  value: "UPDATE"
-}]
+},
+//  {
+//   label: "UPDATE",
+//   value: "UPDATE"
+// }
+]
 interface Iprops {
   mode: EditorMode;
   onClose: () => void;
@@ -330,13 +332,13 @@ export default function SQLLimit(props: Iprops) {
             <Button type="primary" onClick={getSql} >{limitMode==="keyWorld"?"关键字生成与校验":"SQL模版生成和校验"}</Button>
           </div>
         </div>
-        {/* <Form.Item style={{ marginLeft: 108 }}>
-          <Alert message="限流关键词示例" type="info"
-            description={<><p>原始语句：SELECT * FROM test where name = 'das'</p>
-              <p>关键词:SELECT~FROM~test~where~name (也可以带上具体参数，即增加"～das"）</p></>}
+        <Form.Item style={{ marginLeft: 108 }}>
+          <Alert message="限流sql模板示例：" type="info"
+            description={<><p>原始语句：select sleep(3) from mysql.user;</p>
+              <p>生成sql模板语句：select `sleep` ( ? ) from `mysql` . `user`;</p></>}
             showIcon />
 
-        </Form.Item> */}
+        </Form.Item>
       </Form>}
       {tabActiveKey === "run" && <div>
         <div>

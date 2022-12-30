@@ -170,6 +170,7 @@ export default function LowSqlStatistics(){
                 total:pageInfo?.total,
                 pageSize:pageInfo?.pageSize,
                 showSizeChanger: true,
+                pageSizeOptions:[30,50,100],
                 onShowSizeChange: (_, size) => {
                   setPageInfo({
                     pageSize:size,
