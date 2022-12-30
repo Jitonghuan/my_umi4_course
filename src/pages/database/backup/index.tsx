@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Select } from 'antd';
 import PageContainer from '@/components/page-container';
-import { history, useLocation } from 'umi';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import VCPermission from '@/components/vc-permission';
 import { parse, stringify } from 'query-string';
+import {history, useLocation,Outlet } from 'umi';
 
 import './index.less'
 const { TabPane } = Tabs;
@@ -14,7 +14,7 @@ export default function AuthorityManage() {
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
-  const [tabKey, setTabKey] = useState<any>('nacos');
+  const [tabKey, setTabKey] = useState<any>('plan');
   const [envOptions, setEnvOptions] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [curEnvCode, setCurEnvCode] = useState<string>('')
@@ -31,7 +31,7 @@ export default function AuthorityManage() {
           setTabKey(val);
 
           history.push({
-            pathname: `/matrix/config/nacos-config/${val}`,
+            pathname: `/matrix/database/backup/${val}`,
 
           });
         }}
@@ -43,25 +43,17 @@ export default function AuthorityManage() {
         </div>
         }
       >
-        <TabPane tab="nacos配置" key="nacos">
-          {/* <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>
-            <VCPermission code={window.location.pathname} isShowErrorPage >
-              <NacosPage />
-            </VCPermission>
-          </DetailContext.Provider> */}
-
+        <TabPane tab="备份计划" key="plan">
+          
         </TabPane>
-        <TabPane tab="命名空间" key="namespace">
-          {/* <DetailContext.Provider value={{ envCode: curEnvCode,tabKey:tabKey }}>
-            <VCPermission code={window.location.pathname} isShowErrorPage>
-
-              <NamespacePage />
-
-            </VCPermission>
-          </DetailContext.Provider> */}
-
+        <TabPane tab="备份记录" key="record">
+         
         </TabPane>
       </Tabs>
+      <VCPermission code={window.location.pathname} isShowErrorPage>
+        {/* {props.children} */}
+        <Outlet/>
+      </VCPermission>
     </div>
     </ContentCard>
     {/* </ContentCard> */}

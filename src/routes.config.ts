@@ -1464,6 +1464,22 @@ export default [
         name: '备份管理',
         key: 'backup',
         component: '@/pages/database/backup',
+        routes:[
+          {
+            path: `${baseRoutePath}/database/backup/plan`,
+            name: '备份计划',
+            key: 'backup',
+            component: '@/pages/database/backup/backup-plan',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/database/backup/`,
+            name: '备份记录',
+            key: 'backup',
+            component: '@/pages/database/backup/backup-record',
+            hideInMenu: true,
+          },
+        ]
       }
     ],
   },
