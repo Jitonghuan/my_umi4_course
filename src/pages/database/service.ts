@@ -144,3 +144,5 @@ export const  updateBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/p
 export const  deleteBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/delete`;
 /* 备份记录列表 */
 export const  getRecordList =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/record/list`;
+/* ------------引擎图表--------- */
+export const  getInnodbMonitor =`${dbmsApiPrefix}${appConfig.apiPrefix}/instance/innodbMonitor`;

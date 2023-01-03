@@ -2,38 +2,31 @@
 // @author JITONGHUAN <muxi@come-future.com>
 // @create 2021/08/09 10:30
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React from 'react';
 import { Line } from '@ant-design/charts';
 import { colorUtil } from '@cffe/fe-datav-components';
-import { getRequest } from '@/utils/request';
-import * as APIS from './service';
 export interface ChartCaseListProps {
   data: any;
   loading?: boolean;
 }
 const { ColorContainer } = colorUtil.context;
-export default function MemoryUsingLine(props: ChartCaseListProps) {
+export default function CpuUsingLine(props: ChartCaseListProps) {
   const { data, loading } = props;
   const config = {
     data,
     xField: 'time',
     yField: 'count',
     seriesField: 'category',
+    xAxis: {
+      // tickInterval:6,
+      // tickCount:20
+    },
     yAxis: {
-      // title: {
-      //   text: '内存',
-      // },
       label: {
         // 数值格式化为带百分号
-        formatter: (v: any) => `${v}K`,
+        // formatter: (v: any) => `${v}%`,
       },
     },
-    LegendCfg: {
-      legend: {
-        position: 'top-left',
-      },
-    },
-
     width: 550,
     height: 260,
   };
@@ -41,7 +34,7 @@ export default function MemoryUsingLine(props: ChartCaseListProps) {
   return (
     <section data-loading={loading}>
       <header>
-        <h3>MySQL存储空间使用量</h3>
+        <h3>MySQL cpu/内存利用率</h3>
       </header>
       <div>
         <div style={{ height: 'calc(100% - 120px)' }}>

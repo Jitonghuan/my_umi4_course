@@ -1,4 +1,4 @@
-import { Button, Space ,Tooltip,Progress} from 'antd';
+import { Button, Space ,Tooltip,Progress,Tag} from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import './index.less';
 //3:mysql 4:postgresql 5:redis 6:mongdb 7:rds
@@ -60,8 +60,8 @@ export const tableSchema = ({
       title: '健康状态',
       dataIndex: 'status',
 
-      width: 100,
-      render:(status)=><span>{status==="正常"?<span style={{color:"green"}}>正常</span>:<span style={{color:"red"}}>繁忙</span>}</span>
+      width: 90,
+      render:(status)=><span>{status==="正常"?<Tag color="green">正常</Tag>:<Tag color="orange">繁忙</Tag>}</span>
     },
     {
       title: 'CPU',
@@ -69,12 +69,12 @@ export const tableSchema = ({
       width: 200,
       render: (value: any) => {
         return <div  style={{margin:12,display:"flex"}}> 
-        {value}%
+       
         <Progress percent={Number(value)}
         showInfo={false} 
         strokeColor={Number(value)>70?"red":"#1a78fd"} 
        
-         />
+         />{value}%
          </div>;
       },
     },
@@ -85,9 +85,9 @@ export const tableSchema = ({
       width: 200,
       render: (value: any) => {
         return <div style={{margin:12,display:"flex"}}> 
-           {value}%
+         
         <Progress 
-        showInfo={false} percent={Number(value)}  />
+        showInfo={false} percent={Number(value)}  />{value}%
         </div>;
       },
     },
@@ -97,10 +97,10 @@ export const tableSchema = ({
       width: 200,
       render: (value: any) => {
         return <div style={{margin:12,display:"flex"}}> 
-         {value}%
+       
         <Progress 
         showInfo={false}
-         percent={Number(value)}  strokeColor={Number(value)>70?"red":"#1a78fd"}  />
+         percent={Number(value)}  strokeColor={Number(value)>70?"red":"#1a78fd"}  />  {value}%
         </div>;
       },
     },

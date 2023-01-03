@@ -5,7 +5,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Line, Scatter, Mix } from '@ant-design/charts';
 import { getRequest } from '@/utils/request';
-import * as APIS from './service';
+import * as APIS from '../service';
 import { EchartsReact, colorUtil } from '@cffe/fe-datav-components';
 export interface ChartCaseListProps {
   data: any;

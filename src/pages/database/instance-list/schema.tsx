@@ -41,7 +41,7 @@ export const infoOptions = [
     label: (
       <div style={{ padding: 4 }}>
         <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<HourglassOutlined />} />
-        <div>会话管理</div>
+        <div>会话诊断</div>
       </div>
     ),
     value: 'session',
