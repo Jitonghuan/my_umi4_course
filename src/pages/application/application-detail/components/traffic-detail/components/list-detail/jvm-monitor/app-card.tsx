@@ -89,7 +89,6 @@ const Coms = (props: IProps) => {
       start = startTime;
       end = Number(endTime);
     }
-    console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), '应用监控--jvm监控')
     queryFn({
       data: {
         appCode: requestParams.appCode,
@@ -97,6 +96,7 @@ const Coms = (props: IProps) => {
         ip: requestParams.ip,
         start: start,
         end: end,
+        isTotal:requestParams?.isClick === requestParams.appCode?true:false,
         // start: Number((now - requestParams.startTime) / 1000),
         // end: Number(now / 1000),
         hostName: requestParams.hostName,
@@ -139,6 +139,7 @@ const Coms = (props: IProps) => {
         ip: requestParams.ip,
         start: start.toFixed(0),
         end: end.toFixed(0),
+        isTotal: requestParams?.isClick === requestParams.appCode?true:false,
         // start: Number((now - startTime) / 1000).toFixed(0),
         // end: Number(now / 1000).toFixed(0),
         hostName: requestParams.hostName,

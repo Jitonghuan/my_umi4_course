@@ -42,7 +42,6 @@ export default function InstanceMonitor() {
         start = startTime;
         end = Number(endTime);
       }
-      console.log(new Date(Number(start) * 1000).toLocaleString(), '-', new Date(Number(end) * 1000).toLocaleString(), '应用监控--实例监控')
       getChartsDataSource({
         hostName: hostName,
         envCode: envCode,

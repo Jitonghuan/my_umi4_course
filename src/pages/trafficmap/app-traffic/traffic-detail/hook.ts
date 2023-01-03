@@ -99,8 +99,7 @@ export const getCountOverview = (params: queryCountOverviewParams) =>
     }
     return [];
   });
-  export const queryTrafficList = async (params: { envCode: string, start: string, end: string, needMetric?: boolean, keyWord?: string, isPreciseApp?:boolean, ip?:string;
-    hostName?:string }) =>
+  export const queryTrafficList = async (params: { envCode: string, start: string, end: string, needMetric?: boolean, keyWord?: string, isPreciseApp?:boolean, ip?:string;hostName?:string }) =>
 
   await getRequest(APIS.getTrafficList, { data: params })
     .then((result) => {
