@@ -58,6 +58,13 @@ export const getTpsOption: any = (data = []) => {
             // type: 'time',
             // tickCount: 5,
         },
+        tooltip: {
+            formatter: (datum: any) => {
+                return { name: datum.category, value: datum.count + 'k' };
+              },
+
+          },
+       
         yAxis: {
             // title:{
             //   text:'内存'
@@ -154,6 +161,12 @@ export const getDirtyPctOption: any = (data = []) => {
             // tickInterval:6,
             // tickCount:20
         },
+        tooltip: {
+            formatter: (datum: any) => {
+                return { name: datum.category, value: datum.count + '%' };
+              },
+
+          },
         yAxis: {
             label: {
                 // 数值格式化为带百分号
@@ -170,6 +183,12 @@ export const getHitOption: any = (data = []) => {
         xField: 'time',
         yField: 'count',
         seriesField: 'category',
+        tooltip: {
+            formatter: (datum: any) => {
+                return { name: datum.category, value: datum.count + '%' };
+              },
+
+          },
         xAxis: {
             // tickInterval:6,
             // tickCount:20
@@ -190,6 +209,12 @@ export const getUsageOption: any = (data = []) => {
         xField: 'time',
         yField: 'count',
         seriesField: 'category',
+        tooltip: {
+            formatter: (datum: any) => {
+                return { name: datum.category, value: datum.count + '%' };
+              },
+
+          },
         xAxis: {
             // tickInterval:6,
             // tickCount:20
@@ -215,6 +240,12 @@ export const getWrittenOption: any = (data = []) => {
             // tickInterval:6,
             // tickCount:20
         },
+        tooltip: {
+            formatter: (datum: any) => {
+                return { name: datum.category, value: datum.count + 'k' };
+              },
+
+          },
         yAxis: {
             label: {
                 // 数值格式化为带百分号
@@ -236,6 +267,12 @@ export const getReadOption: any = (data = []) => {
             // tickInterval:6,
             // tickCount:20
         },
+        tooltip: {
+            formatter: (datum: any) => {
+                return { name: datum.category, value: datum.count + 'k' };
+              },
+
+          },
         yAxis: {
             label: {
                 // 数值格式化为带百分号
@@ -254,6 +291,13 @@ export const getRowsOpsOption: any = (data = []) => {
         xField: 'time',
         yField: 'count',
         seriesField: 'category',
+        tooltip: {
+            formatter: (datum: any) => {
+             
+                return { name: datum.category, value:datum.category==="Rows read"?  datum.count + 'k':datum.count };
+              },
+
+          },
         xAxis: {
             // tickInterval:6,
             // tickCount:20

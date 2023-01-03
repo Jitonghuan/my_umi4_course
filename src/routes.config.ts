@@ -1437,18 +1437,7 @@ export default [
             key: 'instance-list',
             component: '@/pages/database/account-manage',
           },
-          {
-            path: `${baseRoutePath}/database/info/sql`,
-            name: '慢sql',
-            key: 'instance-list',
-            component: '@/pages/database/wait-page',
-          },
-          {
-           path: `${baseRoutePath}/database/info/waitting`,
-           name: '敬请期待',
-           key: 'instance-list',
-           component: '@/pages/database/wait-page',
-         },
+         
 
         ]
       },

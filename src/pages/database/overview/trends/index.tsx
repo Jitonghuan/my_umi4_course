@@ -23,7 +23,7 @@ export default function DashboardsInfo(props: any) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-  const { instanceId,envCode } = useContext(DetailContext)
+  const { instanceId} = useContext(DetailContext)
   useEffect(() => {
     if (instanceId) {
       queryPerformanceTrends({
@@ -35,7 +35,6 @@ export default function DashboardsInfo(props: any) {
         instanceId: instanceId,
         start: startTimestamp,
         end: endTimestamp,
-        envCode
       })
     }
   }, [instanceId, startTimestamp]);

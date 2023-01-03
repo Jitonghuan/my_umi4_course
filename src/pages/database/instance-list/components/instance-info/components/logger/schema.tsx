@@ -27,6 +27,8 @@ export const lowSqlStatisticsColumns=()=>{
         title: 'SQL语句',
         dataIndex: 'sample',
         key: 'sample',
+        width: 200,
+        ellipsis:true,
         // width: '15%',
       },
       {
@@ -100,6 +102,8 @@ export const lowSqlDetailColumns=()=>{
         title: 'SQL',
         dataIndex: 'sample',
         key: 'sample',
+        width: 200,
+        ellipsis:true,
         // width: '15%',
       },
       {

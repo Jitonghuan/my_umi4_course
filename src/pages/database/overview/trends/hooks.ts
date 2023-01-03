@@ -217,12 +217,20 @@ export function useQueryPerformanceTrends() {
   return [dataSource, loading, queryPerformanceTrends];
 }
 
+const keyMap:any={
+  deleted:'Rows deleted',
+  inserted:'Rows inserted',
+  read:'Rows read',
+  updated:'Rows updated'
+
+
+
+}
 //getInnodbMonitor
 export function useQueryInnodbMonitor() {
   const [dataSource, setDataSource] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(false);
-
-  const getInnodbMonitor = async (paramsObj: { instanceId: number; start: any; end: any,envCode:string }) => {
+  const getInnodbMonitor = async (paramsObj: { instanceId: number; start: any; end: any, }) => {
     setLoading(true);
     await getRequest(APIS.getInnodbMonitor, { data: paramsObj })
       .then((res) => {
@@ -236,10 +244,7 @@ export function useQueryInnodbMonitor() {
           let bufferPoolUsagePctData:any=[]
           let innodbDataWrittenData:any=[]
           let innodbDataReadData:any=[];
-          let rowsOpsDeletedData:any=[]
-          let rowsOpsInsertedData:any=[]
-          let rowsOpsReadData:any=[]
-          let rowsOpsUpdatedData:any=[]
+          let rowsOpsDataArry:any=[]
 
          
 
@@ -257,7 +262,7 @@ export function useQueryInnodbMonitor() {
           }
           /* ------------------------------ */
           if (dataSource?.bufferPoolHit && dataSource?.bufferPoolHit?.length > 0) {
-            dataSource?.pvcUsage?.map((item: any, index: number) => {
+            dataSource?.bufferPoolHit?.map((item: any, index: number) => {
               const key = Object.keys(item)[0];
               item[key]?.map((ele: any) => {
                 bufferPoolHitData.push({
@@ -310,55 +315,19 @@ export function useQueryInnodbMonitor() {
                 }
             
 
-        
-          /* ------------------------------ */
-          if (dataSource?.rowsOps?.deleted && dataSource?.rowsOps?.deleted?.length > 0) {
-            dataSource?.rowsOps?.deleted?.map((item: any, index: number) => {
-            
-                rowsOpsDeletedData.push({
-                  category:  'Rows deleted',
-                  time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(item[1]).toFixed(1)),
-               
+         /* ------------------------------ */
+         if (dataSource?.rowsOps && dataSource?.rowsOps?.length > 0) {
+          dataSource?.rowsOps?.map((item: any, index: number) => {
+            const key = Object.keys(item)[0];
+            item[key]?.map((ele: any) => {
+              rowsOpsDataArry.push({
+                category: keyMap[key]||key,
+                time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
+                count: Number(Number(ele[1]).toFixed(1)),
+              });
             });
-            })
-          }
-        
-          /* ------------------------------ */
-          if (dataSource?.rowsOps?.inserted && dataSource?.rowsOps?.inserted?.length > 0) {
-            dataSource?.rowsOps?.inserted?.map((item: any, index: number) => {
-            
-                rowsOpsInsertedData.push({
-                  category:  'Rows inserted',
-                  time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(item[1]).toFixed(1)),
-               
-            });
-            })
-          }
-          /* ------------------------------ */
-          if (dataSource?.rowsOps?.read && dataSource?.rowsOps?.read?.length > 0) {
-            dataSource?.rowsOps?.read?.map((item: any, index: number) => {
-                rowsOpsReadData.push({
-                  category:  'Rows read',
-                  time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(item[1]).toFixed(1)),
-               
-            });
-            })
-          }
-          /* ------------------------------ */
-          if (dataSource?.rowsOps?.updated && dataSource?.rowsOps?.updated?.length > 0) {
-            dataSource?.rowsOps?.updated?.map((item: any, index: number) => {
-            
-                rowsOpsUpdatedData.push({
-                  category:  'Rows updated',
-                  time: moment(parseInt(item[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(item[1]).toFixed(1)),
-               
-            });
-            })
-          }
+          });
+        }
          
           setDataSource({
             //脏页比例
@@ -372,7 +341,7 @@ export function useQueryInnodbMonitor() {
             //Innodb读数据
             innodbDataRead:innodbDataReadData,
             //Innodb  row ops
-            rowsOps: rowsOpsDeletedData.concat(rowsOpsInsertedData,rowsOpsReadData,rowsOpsUpdatedData),
+            rowsOps: rowsOpsDataArry,
           });
         }
       })

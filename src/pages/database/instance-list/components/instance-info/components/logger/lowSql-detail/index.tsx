@@ -158,6 +158,10 @@ export default function LowSqlStatistics(){
              loading={tableLoading} 
              columns={columns}
              scroll={{x:'100%'}}
+             expandable={{
+              expandedRowRender: record => <p style={{ margin: 4 }}>{record?.sample}</p>,
+             
+            }}
              pagination={{
                 current: pageInfo?.pageIndex,
                 total:pageInfo?.total,

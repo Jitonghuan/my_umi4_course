@@ -165,6 +165,10 @@ export default function LowSqlStatistics(){
             <Table dataSource={dataSource} 
              loading={tableLoading} 
              columns={columns}
+             expandable={{
+              expandedRowRender: record => <p style={{ margin: 4 }}>{record?.sample}</p>,
+             
+            }}
              pagination={{
                 current: pageInfo?.pageIndex,
                 total:pageInfo?.total,
