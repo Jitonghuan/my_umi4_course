@@ -31,11 +31,11 @@ export default function DashboardsInfo(props: any) {
         start: startTimestamp,
         end: endTimestamp,
       });
-      getInnodbMonitor({
-        instanceId: instanceId,
-        start: startTimestamp,
-        end: endTimestamp,
-      })
+      // getInnodbMonitor({
+      //   instanceId: instanceId,
+      //   start: startTimestamp,
+      //   end: endTimestamp,
+      // })
     }
   }, [instanceId, startTimestamp]);
 
@@ -143,7 +143,7 @@ export default function DashboardsInfo(props: any) {
         
         </TabPane>
         <TabPane tab="引擎监控" key="engine">
-          <Spin spinning={engineLoading}>
+          {/* <Spin spinning={engineLoading}>
             <VCCardLayout grid={infoLayoutGrid} className="database-line-content">
               {engineConfig.map((el, index) => (
                 <LineCard
@@ -153,7 +153,7 @@ export default function DashboardsInfo(props: any) {
               ))}
             </VCCardLayout>
 
-          </Spin>
+          </Spin> */}
         </TabPane>
       </Tabs>
 

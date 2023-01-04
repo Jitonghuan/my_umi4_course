@@ -269,8 +269,8 @@ export const schemaStructOption = [
 ];
 export const schemaManageOption = [
   {
-    key: 'grant',
-    title: 'GRANT',
+    key: 'grant option',
+    title: 'GRANT OPTION',
   },
   {
     key: 'lcok tables',
@@ -283,8 +283,8 @@ export const schemaManageOption = [
 ];
 export const globalManageOption = [
   {
-    key: 'grant',
-    title: 'GRANT',
+    key: 'grant option',
+    title: 'GRANT OPTION',
   },
   {
     key: 'super',
@@ -380,8 +380,8 @@ export const tableListOptions={
   ],
   2:[
     {
-      key: 'grant',
-      title: 'GRANT',
+      key: 'grant option',
+      title: 'GRANT OPTION',
     },
   
     {
