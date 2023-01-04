@@ -1,4 +1,4 @@
-import { Button, Space } from 'antd';
+import { Button, Space ,Tooltip,Progress,Tag} from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
 import './index.less';
 //3:mysql 4:postgresql 5:redis 6:mongdb 7:rds
@@ -57,65 +57,86 @@ export const tableSchema = ({
       width: 200,
     },
     {
+      title: '健康状态',
+      dataIndex: 'status',
+
+      width: 90,
+      render:(status)=><span>{status==="正常"?<Tag color="green">正常</Tag>:<Tag color="orange">繁忙</Tag>}</span>
+    },
+    {
       title: 'CPU',
       dataIndex: 'cpu',
-      width: 180,
+      width: 200,
       render: (value: any) => {
-        return <span>{value}%</span>;
+        return <div  style={{margin:12,display:"flex"}}> 
+       
+        <Progress percent={Number(value)}
+        showInfo={false} 
+        strokeColor={Number(value)>70?"red":"#1a78fd"} 
+       
+         />{value}%
+         </div>;
       },
     },
     {
       title: 'Memory',
       dataIndex: 'memory',
 
-      width: 220,
+      width: 200,
       render: (value: any) => {
-        return <span>{value}%</span>;
+        return <div style={{margin:12,display:"flex"}}> 
+         
+        <Progress 
+        showInfo={false} percent={Number(value)}  />{value}%
+        </div>;
       },
     },
     {
       title: 'Disk',
       dataIndex: 'disk',
-
-      width: 300,
+      width: 200,
       render: (value: any) => {
-        return <span>{value}%</span>;
+        return <div style={{margin:12,display:"flex"}}> 
+       
+        <Progress 
+        showInfo={false}
+         percent={Number(value)}  strokeColor={Number(value)>70?"red":"#1a78fd"}  />  {value}%
+        </div>;
       },
     },
     {
       title: 'TPS',
       dataIndex: 'tps',
-
-      width: 200,
+      width: 100,
+  
     },
     {
       title: 'QPS',
       dataIndex: 'qps',
-
-      width: 200,
+      width: 100,
     },
     {
       title: 'SlowQueries',
       dataIndex: 'slowQueries',
-
-      width: 200,
+      width: 100,
     },
     {
       title: 'ConnectedThreads',
       dataIndex: 'connectedThreads',
-      width: 200,
+      width: 150,
     },
-    //runningThreads
     {
       title: 'RunningThreads',
       dataIndex: 'runningThreads',
-      width: 200,
+      width: 150,
     },
     {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
-      width: 50,
+      fixed:"right",
+      align:"center",
+      width: 150,
       render: (value: string, record: any, index: number) => {
         return (
           <Space>
@@ -127,3 +148,45 @@ export const tableSchema = ({
       },
     },
   ] as ColumnProps[];
+  export const sqlTableSchema = () =>
+    [
+      {
+        title: '排名',
+        dataIndex: 'name',
+        width: 50,
+        render: (value: any,record:any,index:number) => {
+          return <span>{index+1}</span>
+        },
+      },
+      {
+        title: '实例',
+        dataIndex: 'instancename',
+        width: 50,
+        ellipsis:true,
+        render: (value: any) => {
+          return <Tooltip title={value}>{value}</Tooltip>
+        },
+      },
+      {
+        title: '库名',
+        dataIndex: 'db_max',
+        width: 100,
+        ellipsis:true,
+        render: (value: any) => {
+          return <Tooltip title={value}>{value}</Tooltip>
+        },
+      },
+      {
+        title: '执行次数',
+        dataIndex: 'sum',
+        width: 90,
+        ellipsis:true,
+        render: (value: any) => {
+          return <Tooltip title={value}>{value}</Tooltip>
+        },
+        sorter: {
+          compare: (a: any, b: any) => a.sum - b.sum,
+        },
+      },
+     
+    ] as ColumnProps[];

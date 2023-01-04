@@ -8,9 +8,9 @@ type clusterTypeItem = {
 };
 
 export const CLUSTER_TYPE: Record<number, clusterTypeItem> = {
-  3: { tagText: 'operator模式', color: 'green' },
+  3: { tagText: 'operator模式', color: 'green' },//
   4: { tagText: '主机部署', color: 'cyan' },
-  5: { tagText: '云数据库', color: 'geekblue' },
+  5: { tagText: '云数据库', color: 'geekblue' },//
 };
 export const clusterTypeOption = [
   {
@@ -47,13 +47,13 @@ export const createTableColumns = (params: {
       title: '所属环境',
       dataIndex: 'envCode',
       key: 'envCode',
-      width: '14%',
+      width: '10%',
     },
     {
       title: '部署类型',
       dataIndex: 'clusterType',
       key: 'clusterType',
-      width: '14%',
+      width: '12%',
       render: (value: number) => {
         return <Tag color={CLUSTER_TYPE[value]?.color || 'default'}>{CLUSTER_TYPE[value]?.tagText}</Tag>;
       },
@@ -81,17 +81,17 @@ export const createTableColumns = (params: {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '10%',
+      width: '16%',
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
-          {/* <a
+          <a
             onClick={() => {
               params?.onView(record);
             }}
           >
             详情
-          </a> */}
+          </a>
           <a
             onClick={() => {
               params?.onEdit(record);
