@@ -75,9 +75,9 @@ export default function LowSqlStatistics(){
                    <Form.Item name="status">
                        <Radio.Group options={options} />
                    </Form.Item>
-                   <Form.Item label="保留时间">
+                   {/* <Form.Item label="保留时间">
                     <InputNumber  min={0} value={15} disabled={true} addonAfter="天"/>
-                   </Form.Item>
+                   </Form.Item> */}
 
 
                </Form>
