@@ -24,7 +24,7 @@ export const createAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/cre
 export const deleteAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/delete`;
 
 /**6、 POST 账号授权 */
-export const grantAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/batchGrant`;
+export const grantAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/batchModify`;
 
 /**7、 PUT 修改密码 */
 export const changePassword = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/changePassword`;

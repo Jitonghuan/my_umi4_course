@@ -167,6 +167,14 @@ export const privTypeOptions = [
     label: '库权限',
     value: 'schema',
   },
+  {
+    label: '表权限',
+    value: 'table',
+  },
+  {
+    label: '列权限',
+    value: 'column',
+  },
 ];
 
 export const schemaDataTreeOption = [
@@ -319,3 +327,91 @@ export const globalManageOption = [
     title: 'CREATE USER',
   },
 ];
+
+export const tableListOptions={
+  0:[
+    {
+      key: 'select',
+      title: 'SELECT',
+    },
+    {
+      key: 'insert',
+      title: 'INSERT',
+    },
+    {
+      key: 'update',
+      title: 'UPDATE',
+    },
+    {
+      key: 'delete',
+      title: 'DELETE',
+    },
+
+  ],
+  1:[
+    {
+      key: 'create',
+      title: 'CREATE',
+    },
+    {
+      key: 'alter',
+      title: 'ALTER',
+    },
+    {
+      key: 'index',
+      title: 'INDEX',
+    },
+    {
+      key: 'drop',
+      title: 'DROP',
+    },
+    {
+      key: 'show view',
+      title: 'SHOW VIEW',
+    },
+    {
+      key: 'create view',
+      title: 'CREATE VIEW',
+    },
+    {
+      key: 'trigger',
+      title: 'TRIGGER',
+    },
+  ],
+  2:[
+    {
+      key: 'grant',
+      title: 'GRANT',
+    },
+  
+    {
+      key: 'references',
+      title: 'REFERENCES',
+    },
+
+  ]
+}
+export const columnListOptions={
+  0:[
+    {
+      key: 'select',
+      title: 'SELECT',
+    },
+    {
+      key: 'insert',
+      title: 'INSERT',
+    },
+    {
+      key: 'update',
+      title: 'UPDATE',
+    },
+
+  ],
+  1:[
+    {
+      key: 'references',
+      title: 'REFERENCES',
+    },
+  ],
+  
+}

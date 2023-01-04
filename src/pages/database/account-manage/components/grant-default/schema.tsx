@@ -37,21 +37,20 @@ export const createDatabseEditColumns = (params: {
           errorType: 'default',
         };
       },
-      renderFormItem: () => {
-
+      renderFormItem: (text, record, _, action) => {
+       
         return (
           <Select
             options={params?.schemaOptions}
             showSearch
             allowClear
+            // onChange={()=>{ params?.onChangeSave(record,action)}}
             optionFilterProp="label"
            
           />
         );
       },
-    },
-  
-   
+    }, 
     {
       title: '权限',
       key: 'privs',
@@ -70,11 +69,12 @@ export const createDatabseEditColumns = (params: {
       },
       render: (_, row) => row?.privs?.map((item) => <Tag  key={item}>{item}</Tag>),
       renderFormItem: (text, record, _, action) => {
-        console.log("record",record)
+      
         return (
           <Select
             options={schemaDataTreeOption}
             showSearch
+            // onChange={()=>{ params?.onChangeSave(record,action)}}
             mode="multiple"
             allowClear
           ></Select>
@@ -89,7 +89,6 @@ export const createDatabseEditColumns = (params: {
         <a
         key="editable"
         onClick={() => {
-          debugger
         params?.onEdit(record,action)
         
         }}
@@ -372,79 +371,79 @@ export const createEditColumns = (params: {
 
 export const schemaDataTreeOption = [
   {
-    value: 'select',
+    value: 'SELECT',
     label: 'SELECT',
   },
   {
-    value: 'insert',
+    value: 'INSERT',
     label: 'INSERT',
   },
   {
-    value: 'update',
+    value: 'UPDATE',
     label: 'UPDATE',
   },
   {
-    value: 'delete',
+    value: 'DELETE',
     label: 'DELETE',
   },
   {
-    value: 'create',
+    value: 'CREATE',
     label: 'CREATE',
   },
   {
-    value: 'alter',
+    value: 'ALTER',
     label: 'ALTER',
   },
   {
-    value: 'index',
+    value: 'INDEX',
     label: 'INDEX',
   },
   {
-    value: 'drop',
+    value: 'DROP',
     label: 'DROP',
   },
   {
-    value: 'create temporary tables',
+    value: 'CREATE TEMPORARY TABLES',
     label: 'CREATE TEMPORARY TABLES',
   },
   {
-    value: 'show view',
+    value: 'SHOW VIEW',
     label: 'SHOW VIEW',
   },
   {
-    value: 'create routime',
+    value: 'CREATE ROUTINE',
     label: 'CREATE ROUTINE',
   },
   {
-    value: 'alter routine',
+    value: 'ALTER ROUTINE',
     label: 'ALTER ROUTINE',
   },
   {
-    value: 'execute',
+    value: 'EXECUT',
     label: 'EXECUTE',
   },
   {
-    value: 'create view',
+    value: 'CREATE VIEW',
     label: 'CREATE VIEW',
   },
   {
-    value: 'envent',
+    value: 'ENVENT',
     label: 'ENVENT',
   },
   {
-    value: 'trigger',
+    value: 'TRIGGER',
     label: 'TRIGGER',
   },
   {
-    value: 'grant',
+    value: 'GRANT',
     label: 'GRANT',
   },
   {
-    value: 'lcok tables',
+    value: 'LOCK TABLES',
     label: 'LOCK TABLES',
   },
   {
-    value: 'references',
+    value: 'REFERENCES',
     label: 'REFERENCES',
   },
 ];
@@ -452,75 +451,75 @@ export const schemaDataTreeOption = [
 
 export const columnOption=[
   {
-    value: 'select',
+    value: 'SELECT',
     label: 'SELECT',
   },
   {
-    value: 'insert',
+    value: 'INSERT',
     label: 'INSERT',
   },
   {
-    value: 'update',
+    value: 'UPDATE',
     label: 'UPDATE',
   },
   {
-    value: 'references',
+    value: 'REFERENCES',
     label: 'REFERENCES',
   },
 ]
 
 export const tableOption =[
   {
-    value: 'select',
+    value: 'SELECT',
     label: 'SELECT',
   },
   {
-    value: 'insert',
+    value: 'INSERT',
     label: 'INSERT',
   },
   {
-    value: 'update',
+    value: 'UPDATE',
     label: 'UPDATE',
   },
   {
-    value: 'delete',
+    value: 'DELETE',
     label: 'DELETE',
   },
   {
-    value: 'create',
+    value: 'CREATE',
     label: 'CREATE',
   },
   {
-    value: 'alter',
+    value: 'ALTER',
     label: 'ALTER',
   },
   {
-    value: 'index',
+    value: 'INDEX',
     label: 'INDEX',
   },
   {
-    value: 'drop',
+    value: 'DROP',
     label: 'DROP',
   },
   {
-    value: 'show view',
+    value: 'SHOW VIEW',
     label: 'SHOW VIEW',
   },
   {
-    value: 'create view',
+    value: 'CREATE VIEW',
     label: 'CREATE VIEW',
   },
   {
-    value: 'trigger',
+    value: 'TRIGGER',
     label: 'TRIGGER',
   },
   {
-    value: 'grant',
+    value: 'GRANT',
     label: 'GRANT',
   },
   
   {
-    value: 'references',
+    value: 'REFERENCES',
     label: 'REFERENCES',
   },
 ]

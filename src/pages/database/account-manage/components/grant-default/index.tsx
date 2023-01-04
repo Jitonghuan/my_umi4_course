@@ -7,7 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Modal, Space, Button, Form, Segmented, Table, Spin, message } from 'antd';
+import { Modal, Space, Button, Form, Segmented, Table, Spin, message, Select, Tag } from 'antd';
 import { useGetSchemaList } from '../../hook';
 import { getPrivsDetail, getTableColumnList, modifyPrivs } from "./hook";
 import GrantRecycle from '../grant-recycle';
@@ -16,6 +16,7 @@ import type { ProFormInstance } from '@ant-design/pro-form';
 import { EditableProTable } from '@ant-design/pro-table';
 import type { ActionType } from '@ant-design/pro-table';
 import PreviewSql from "../preview-sql";
+import { schemaDataTreeOption } from "./schema";
 import { schemaStructOption, globalDataTreeOption, globalManageOption, } from '../../schema';
 import './index.less';
 
@@ -48,6 +49,7 @@ export default function ScriptEditor(props: GrantProps) {
     const [columnTableSource, setColumnTableSource] = useState<any>([])
     const [tableSource, setTableSource] = useState<any>([])
     const [databaseSource, setDataBaseSource] = useState<any>([])
+    const [defaultData, setDefaultData] = useState<any>([])
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [tableEditableKeys, setTableEditableRowKeys] = useState<React.Key[]>([]);
     const [dataBaseEditableKeys, setDataBaseEditableRowKeys] = useState<React.Key[]>([]);
@@ -66,7 +68,7 @@ export default function ScriptEditor(props: GrantProps) {
     const [defaultRow, setDefaultRow] = useState<any>([])
     const [ensureLoading, setEnsureLoading] = useState<boolean>(false);
     const [previewSqlMode, setPreviewSqlMode] = useState<EditorMode>('HIDE');
-    const [count,setCount]=useState<number>(0)
+    const [count, setCount] = useState<number>(0)
 
     const getTableColumnListData = (dbName?: string, tableName?: string) => {
         getTableColumnList({ clusterId, dbName, tableName }).then((res) => {
@@ -92,7 +94,7 @@ export default function ScriptEditor(props: GrantProps) {
             getPrivsDetailData()
             getSchemaList({ clusterId })
         }
-        return()=>{
+        return () => {
             setActiveValue('global')
         }
     }, [clusterId, mode])
@@ -101,6 +103,10 @@ export default function ScriptEditor(props: GrantProps) {
         setGlobalPrivs([])
         setDefaultRow([])
         setDbPrivs([])
+        setDataBaseSource([])
+        // setDefaultData([])
+        setColumnTableSource([])
+        setTableSource([])
         setTablePrivs([])
         setColumnPrivs([])
         getPrivsDetail({ clusterId, user: curRecord?.user, host: curRecord?.host }).then((res) => {
@@ -112,27 +118,29 @@ export default function ScriptEditor(props: GrantProps) {
                 setGlobalPrivs(globalPrivsDataSource);
                 setDefaultRow(globalPrivsDataSource)
                 if (dbPrivs?.length > 0) {
-                       let data=   dbPrivs?.map((item:any,index:number)=>({
-                          ...item,
-                          id:index,
+                    let data = dbPrivs?.map((item: any, index: number) => ({
+                        ...item,
+                        id: index,
                         //   privs:item?.privs?.join(' ')
-                      }))
+                    }))
                     setDbPrivs(dbPrivs);
                     setDataBaseSource(data)
+                
+                    // setDefaultData(data)
                 }
                 if (tablePrivs?.length > 0) {
-                     let data=   tablePrivs?.map((item:any,index:number)=>({
+                    let data = tablePrivs?.map((item: any, index: number) => ({
                         ...item,
-                        id:index,
+                        id: index,
                         // privs:item?.privs?.join(',')
                     }))
                     setTablePrivs(tablePrivs);
                     setTableSource(data)
                 }
                 if (columnPrivs?.length > 0) {
-                     let data=   columnPrivs?.map((item:any,index:number)=>({
+                    let data = columnPrivs?.map((item: any, index: number) => ({
                         ...item,
-                        id:index,
+                        id: index,
                         // privs:item?.privs?.join(',')
                     }))
                     setColumnPrivs(columnPrivs)
@@ -147,23 +155,20 @@ export default function ScriptEditor(props: GrantProps) {
 
     //库
     const databseTableColumns = useMemo(() => {
+
         return createDatabseEditColumns({
             schemaOptions,
-            onEdit:(record,  action)=>{
-                console.log("record.id",record.id)
+            onEdit: (record, action) => {
                 action?.startEditable?.(record.id);
                 setType('edit');
-                // setRecord(record)
-                
-               
-              },
+            },
             onDelete: (record: any) => {
-                setDataBaseSource(databaseSource.filter((item) => item.id !== record.id))
+                setDataBaseSource(databaseSource.filter((item: any) => item.id !== record.id))
 
-            }
+            },
         }) as any
 
-    }, [schemaOptions])
+    }, [schemaOptions, databaseSource])
     //表
     const tableColumns = useMemo(() => {
         return createTableEditColumns({
@@ -179,7 +184,7 @@ export default function ScriptEditor(props: GrantProps) {
 
         }) as any
 
-    }, [schemaOptions, tableOptions])
+    }, [schemaOptions, tableOptions, tableSource])
     //列
     const cloumnTableColumns = useMemo(() => {
         return createEditColumns({
@@ -198,7 +203,7 @@ export default function ScriptEditor(props: GrantProps) {
             }
         }) as any
 
-    }, [schemaOptions, tableOptions, columnOptions])
+    }, [schemaOptions, tableOptions, columnOptions, columnTableSource])
 
     useEffect(() => {
         if (mode !== 'HIDE') {
@@ -241,8 +246,8 @@ export default function ScriptEditor(props: GrantProps) {
     }
     return (
         <>
-            <PreviewSql 
-                mode={previewSqlMode} 
+            <PreviewSql
+                mode={previewSqlMode}
                 onClose={() => { setPreviewSqlMode("HIDE") }}
                 curRecord={curRecord}
                 oldPrivs={oldPrivs}
@@ -254,13 +259,18 @@ export default function ScriptEditor(props: GrantProps) {
                         columnPrivs: columnTableSource
                     }
                 }
-                onSave={() => { setPreviewSqlMode("HIDE") }} />
+                onSave={() => { 
+                    setPreviewSqlMode("HIDE")
+                   
+                     }} />
             <GrantRecycle
                 mode={grantRecycleMode}
                 onClose={() => { setGrantRecycleMode("HIDE") }}
                 clusterId={clusterId}
                 curRecord={curRecord}
-                onSave={() => { setGrantRecycleMode("HIDE") }} />
+                onSave={() => { setGrantRecycleMode("HIDE") 
+                onSave()
+                }} />
             <Modal
                 title={<Space><span>{"编辑权限"}</span><span>(当前用户：<span style={{ color: '#1E90FF' }}>{curRecord?.user}</span>)</span></Space>}
                 width={'70%'}
@@ -273,7 +283,7 @@ export default function ScriptEditor(props: GrantProps) {
                         key="getValue"
                         type="primary"
                         loading={ensureLoading}
-                        disabled={count===0}
+                        disabled={count === 0}
                         onClick={() => {
                             handleSubmit()
                         }}
@@ -284,10 +294,9 @@ export default function ScriptEditor(props: GrantProps) {
                         key="getValue"
                         type="primary"
                         loading={ensureLoading}
-                        // disabled={!oldPrivs?.length || !defaultRow || !curRecord?.user || !curRecord?.host}
                         onClick={() => {
                             setPreviewSqlMode("VIEW")
-                            setCount(count=>count+1)
+                            setCount(count => count + 1)
                         }}
                     >
                         预览SQL
@@ -336,9 +345,9 @@ export default function ScriptEditor(props: GrantProps) {
                                 <EditableProTable
                                     rowKey="id"
                                     loading={infoLoading}
-                                    scroll={{x:'100%'}}
-                                    actionRef={databaseActionRef}
-                                    formRef={databaseRef}
+                                    scroll={{ x: '100%' }}
+                                    // actionRef={databaseActionRef}
+                                    // formRef={databaseRef}
                                     recordCreatorProps={{
                                         position: 'bottom',
                                         // newRecordType: 'dataSource',
@@ -346,18 +355,30 @@ export default function ScriptEditor(props: GrantProps) {
                                         record: { id: (Math.random() * 1000000).toFixed(0) },
                                     }}
                                     columns={databseTableColumns}
+
                                     value={databaseSource}
                                     onChange={setDataBaseSource}
+                                    // controlled={type==="edit"?true:false}
                                     pagination={false}
                                     editable={{
-                                        form: databaseForm,
+                                        // form: databaseForm,
                                         editableKeys: dataBaseEditableKeys,
                                         onCancel: async () => { setType("") },
-                                        onSave: async () => {
+                                        onSave: async (rowKey, data, row) => {
+                                            let dataArry = databaseSource.filter((item: any) => item.id !== rowKey)
+                                            const tableDataSource = databaseForm.getFieldsValue() as any[];
+                                            console.log("---", data)
+
+
+                                            let source = [...dataArry, { ...tableDataSource[rowKey], id: rowKey }]
+                                            setDataBaseSource(source)
+
+
 
                                         },
                                         onChange: setDataBaseEditableRowKeys,
                                         actionRender: (row, config, dom) => [dom.save, dom.cancel],
+
                                     }}
                                 />
                             </div>
@@ -366,10 +387,10 @@ export default function ScriptEditor(props: GrantProps) {
                             <Spin spinning={infoLoading}>
                                 <EditableProTable
                                     rowKey="id"
-                                    scroll={{x:'100%'}}
+                                    scroll={{ x: '100%' }}
                                     loading={infoLoading}
                                     actionRef={tableActionRef}
-                                    formRef={tableRef}
+                                    // formRef={tableRef}
                                     recordCreatorProps={{
                                         position: 'bottom',
                                         // newRecordType: 'dataSource',
@@ -383,7 +404,7 @@ export default function ScriptEditor(props: GrantProps) {
                                     editable={{
                                         form: tableForm,
                                         editableKeys: tableEditableKeys,
-                                        onCancel: async () => { setType("") },
+                                        onCancel: async () => { },
                                         onSave: async () => {
 
                                         },
@@ -398,9 +419,9 @@ export default function ScriptEditor(props: GrantProps) {
                             <EditableProTable
                                 rowKey="id"
                                 loading={infoLoading}
-                                scroll={{x:'100%'}}
+                                scroll={{ x: '100%' }}
                                 actionRef={actionRef}
-                                formRef={ref}
+                                // formRef={ref}
                                 recordCreatorProps={{
                                     position: 'bottom',
                                     // newRecordType: 'dataSource',
@@ -414,7 +435,7 @@ export default function ScriptEditor(props: GrantProps) {
                                 editable={{
                                     form,
                                     editableKeys,
-                                    onCancel: async () => { setType("") },
+                                    onCancel: async () => { },
                                     onSave: async () => {
 
                                     },

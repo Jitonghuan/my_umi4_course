@@ -15,8 +15,11 @@ import {
   schemaManageOption,
   globalDataTreeOption,
   globalManageOption,
+  tableListOptions,
+  columnListOptions
 } from '../../schema';
 import { useGrantAccount, useGetSchemaList } from '../../hook';
+import { getPrivsDetail, getTableColumnList, modifyPrivs } from "../grant-default/hook";
 import './index.less';
 
 export interface GrantProps {
@@ -40,6 +43,8 @@ export default function ScriptEditor(props: GrantProps) {
   const [selectedStructKeys, setSelectedStructKeys] = useState<any>([]);
   const [selectedManageKeys, setSelectedManageKeys] = useState<any>([]);
   const [curPrivType, setCurPrivType] = useState<string>('');
+  const [tableOptions, setTableOptions] = useState<any>([]);
+  const [columnOptions, setCoumnOptions] = useState<any>([]);
   useEffect(() => {
     if (mode !== 'HIDE') {
       getSchemaList({ clusterId });
@@ -82,16 +87,16 @@ export default function ScriptEditor(props: GrantProps) {
     const objParams = await objectForm.validateFields();
     let privsDataArry: any = [];
     privsDataArry = selectedDataKeys.concat(selectedStructKeys, selectedManageKeys);
-   
       grantAccount({
         grantType:activeValue==='grant'?1:2,
-        // grantType: curRecord?.grantType,
         clusterId,
         id: curRecord?.id,
         privs: privsDataArry,
         privType: objParams?.privType,
         object: {
-          schemaList: objParams?.schemaList,
+          schemaList: typeof(objParams?.schemaList)==="string"?[objParams?.schemaList]:objParams?.schemaList,
+          tableList:typeof(objParams?.tableList)==="string"?[objParams?.tableList]:objParams?.tableList,
+          columnList:typeof(objParams?.columnList)==="string"?[objParams?.columnList]:objParams?.columnList
         },
       }).then(() => {
         onSave();
@@ -103,7 +108,29 @@ export default function ScriptEditor(props: GrantProps) {
 
   const changePrivType = (value: string) => {
     setCurPrivType(value);
+    const values = objectForm.getFieldsValue() || {};
+    const valueList = Object.keys(values).map((v) => v);
+    objectForm.resetFields([...valueList.filter((v) => v !== 'privType')]);
   };
+  const getTableColumnListData = (dbName?: string, tableName?: string) => {
+    getTableColumnList({ clusterId, dbName, tableName }).then((res) => {
+        if (res?.success) {
+            let data = res?.data;
+            let source = data?.map((ele: any) => ({
+                label: ele,
+                value: ele
+            }))
+            if (tableName) {
+                setCoumnOptions(source)
+            } else {
+                setTableOptions(source)
+            }
+
+
+        }
+
+    })
+}
 
   return (
     <>
@@ -157,6 +184,37 @@ export default function ScriptEditor(props: GrantProps) {
                   <Select options={schemaOptions} loading={loading} allowClear showSearch mode="multiple" />
                 </Form.Item>
               )}
+                {curPrivType === 'table' && (
+                  <div>
+                <Form.Item label="请选择数据库:" name="schemaList" rules={[{ required: true, message: '请选择' }]}>
+                  <Select options={schemaOptions} loading={loading} allowClear showSearch  onChange={(value)=>{  getTableColumnListData(value)}} />
+                </Form.Item>
+                <Form.Item label="请选择表:" name="tableList" rules={[{ required: true, message: '请选择' }]}>
+                  <Select options={tableOptions} loading={loading} allowClear showSearch mode="multiple" />
+                </Form.Item>
+
+
+                  </div>
+              
+              )}
+                 {curPrivType === 'column' && (
+                  <div>
+                <Form.Item label="请选择数据库:" name="schemaList" rules={[{ required: true, message: '请选择' }]}>
+                  <Select options={schemaOptions} loading={loading} allowClear showSearch onChange={(value)=>{  getTableColumnListData(value)}} />
+                </Form.Item>
+                <Form.Item label="请选择表:" name="tableList" rules={[{ required: true, message: '请选择' }]}>
+                  <Select options={tableOptions} loading={loading} allowClear showSearch onChange={ (value) => {
+                getTableColumnListData(objectForm?.getFieldValue("schemaList"),value )
+            }}  />
+                </Form.Item>
+                <Form.Item label="请选择列:" name="columnList" rules={[{ required: true, message: '请选择' }]}>
+                  <Select options={columnOptions} loading={loading} allowClear showSearch  mode="multiple"/>
+                </Form.Item>
+
+
+                  </div>
+              
+              )}
             </Form>
           </Card>
           <Card title="权限选择" style={{ flex: 1, marginLeft: 14 }}>
@@ -170,10 +228,15 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedDataKeys}
                   onCheck={onDataCheck}
                   height={495}
-                  treeData={curPrivType === 'schema' ? schemaDataTreeOption : globalDataTreeOption}
+                  //columnOptions
+                  treeData={
+                    curPrivType === 'schema' ? schemaDataTreeOption : 
+                    curPrivType==="table"?tableListOptions[0]:
+                    curPrivType==="column"?columnListOptions[0]:
+                    globalDataTreeOption}
                 />
               </Col>
-              <Col span={8}>
+              {curPrivType!=="column"&& <Col span={8}>
                 <h3>结构</h3>
                 <Divider />
                 <Tree
@@ -182,9 +245,10 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedStructKeys}
                   onCheck={onStructCheck}
                   height={495}
-                  treeData={schemaStructOption}
+                  treeData={curPrivType==="table"?tableListOptions[1]:schemaStructOption}
                 />
-              </Col>
+              </Col>}
+             
               <Col span={8}>
                 <h3>管理</h3>
                 <Divider />
@@ -194,7 +258,9 @@ export default function ScriptEditor(props: GrantProps) {
                   checkedKeys={selectedManageKeys}
                   onCheck={onManageCheck}
                   height={495}
-                  treeData={curPrivType === 'schema' ? schemaManageOption : globalManageOption}
+                  treeData={curPrivType === 'schema' ? schemaManageOption :
+                  curPrivType==="table"?tableListOptions[2]:
+                    curPrivType==="column"?columnListOptions[1]: globalManageOption}
                 />
               </Col>
             </Row>

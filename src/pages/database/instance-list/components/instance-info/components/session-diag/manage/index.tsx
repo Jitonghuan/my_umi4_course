@@ -16,9 +16,10 @@ export default function SessionManage() {
     const [snapshotLoading, snapshotInfo, getSnapshot] = useGetSnapshot()
     const [rowSelected, setRowSelected] = useState<any>([])
     const [killLoading, setKillLoading] = useState<boolean>(false)
-    const [visible, setVisible] = useState<boolean>(false)
     const [mode, setMode] = useState<EditorMode>("HIDE")
     const [originData, setOriginData] = useState<any>([])
+    const [type,setType]=useState<string>("active")
+    const [inputValue,setInputValue]=useState<string>("")
     useEffect(() => {
         if (!instanceId) return
 
@@ -37,11 +38,9 @@ export default function SessionManage() {
                 }
             })
             setOriginData(source)
-            // setOriginData(data)
-
         }
 
-    }, [snapshotInfo?.sessionList?.length])
+    }, [snapshotInfo?.sessionList])
     const columns = useMemo(() => {
         return createTableColumns() as any;
     }, []);
@@ -82,6 +81,8 @@ export default function SessionManage() {
         })
     }
 
+   
+
     const filter = debounce((value) => onSearch(value), 500)
     const onSearch = (value: string) => {
         let data: any = []
@@ -116,6 +117,8 @@ export default function SessionManage() {
     }
     const querySearch = (value: string) => {
         let data: any = []
+        setType(value)
+        setInputValue('')
         if (value === "all") {
             setOriginData(snapshotInfo?.sessionList)
         }
@@ -154,6 +157,9 @@ export default function SessionManage() {
                     <div className="caption-right">
                         <Button type="primary" onClick={() => {
                             getSnapshot({ instanceId })
+                            setType("active");
+                            setInputValue('')
+                          
                         }}>刷新</Button>
                     </div>
 
@@ -177,7 +183,7 @@ export default function SessionManage() {
                             <Button type="primary" onClick={() => {
                                 setMode("ADD")
                             }}>SQL限流</Button>
-                            <Select placeholder="活跃会话" defaultValue={'active'} style={{ width: 200 }} onChange={querySearch} options={[{
+                            <Select placeholder="活跃会话" defaultValue={'active'} value={type}  style={{ width: 200 }} onChange={querySearch} options={[{
                                 label: "全部会话",
                                 value: "all"
 
@@ -188,9 +194,10 @@ export default function SessionManage() {
                                 label: "异常会话",
                                 value: "error"
                             }]} />
-                            <Input placeholder="搜索会话" style={{ width: 280 }} onKeyUp={(e) => {
+                            <Input placeholder="搜索会话" style={{ width: 280 }} value={inputValue} onChange={(e:any) => {
 
                                 filter(e.target.value)
+                                setInputValue(e.target.value)
 
                             }} />
                         </Space>
@@ -212,6 +219,7 @@ export default function SessionManage() {
                     rowKey="id"
                     bordered
                     scroll={{ x: "100%" }}
+                    loading={snapshotLoading}
                     dataSource={originData || []}
                     rowSelection={{
                         type: "checkbox",
