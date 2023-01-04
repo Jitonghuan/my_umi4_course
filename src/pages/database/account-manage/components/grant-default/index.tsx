@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 17:24:55,2022-12-19 11:39
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-12 16:55:26
+ * @LastEditTime: 2023-01-04 19:44:13
  * @FilePath: /fe-matrix/src/pages/database/account-manage/components/grant/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -124,6 +124,7 @@ export default function ScriptEditor(props: GrantProps) {
                         //   privs:item?.privs?.join(' ')
                     }))
                     setDbPrivs(dbPrivs);
+                    
                     setDataBaseSource(data)
                 
                     // setDefaultData(data)
@@ -163,6 +164,7 @@ export default function ScriptEditor(props: GrantProps) {
                 setType('edit');
             },
             onDelete: (record: any) => {
+
                 setDataBaseSource(databaseSource.filter((item: any) => item.id !== record.id))
 
             },
@@ -346,8 +348,8 @@ export default function ScriptEditor(props: GrantProps) {
                                     rowKey="id"
                                     loading={infoLoading}
                                     scroll={{ x: '100%' }}
-                                    // actionRef={databaseActionRef}
-                                    // formRef={databaseRef}
+                                    actionRef={databaseActionRef}
+                                    formRef={databaseRef}
                                     recordCreatorProps={{
                                         position: 'bottom',
                                         // newRecordType: 'dataSource',
@@ -357,24 +359,28 @@ export default function ScriptEditor(props: GrantProps) {
                                     columns={databseTableColumns}
 
                                     value={databaseSource}
-                                    onChange={setDataBaseSource}
-                                    // controlled={type==="edit"?true:false}
+                                    onChange={(values)=>{
+                                        setDataBaseSource(databaseSource)}}
                                     pagination={false}
                                     editable={{
-                                        // form: databaseForm,
+                                        form: databaseForm,
                                         editableKeys: dataBaseEditableKeys,
                                         onCancel: async () => { setType("") },
                                         onSave: async (rowKey, data, row) => {
-                                            let dataArry = databaseSource.filter((item: any) => item.id !== rowKey)
-                                            const tableDataSource = databaseForm.getFieldsValue() as any[];
-                                            console.log("---", data)
+                                        const tableDataSource:any = databaseForm.getFieldsValue() ;
+                                        let dataSource=databaseSource
+                                        const index = databaseSource.findIndex((item: any) => item?.id===rowKey);
+                                           if(index===-1){    
+                                            dataSource.push(data)
+                                           }else{
+                                               
+                                            dataSource= databaseSource?.map((item:any,index:number)=>(
+                                                item.id === rowKey?tableDataSource[rowKey]:item
+                                               ))
 
-
-                                            let source = [...dataArry, { ...tableDataSource[rowKey], id: rowKey }]
-                                            setDataBaseSource(source)
-
-
-
+                                           }
+                                        setDataBaseSource(dataSource)
+                                           
                                         },
                                         onChange: setDataBaseEditableRowKeys,
                                         actionRender: (row, config, dom) => [dom.save, dom.cancel],
@@ -390,7 +396,7 @@ export default function ScriptEditor(props: GrantProps) {
                                     scroll={{ x: '100%' }}
                                     loading={infoLoading}
                                     actionRef={tableActionRef}
-                                    // formRef={tableRef}
+                                    formRef={tableRef}
                                     recordCreatorProps={{
                                         position: 'bottom',
                                         // newRecordType: 'dataSource',
@@ -399,13 +405,27 @@ export default function ScriptEditor(props: GrantProps) {
                                     }}
                                     columns={tableColumns}
                                     value={tableSource}
-                                    onChange={setTableSource}
+                                    onChange={()=>{setTableSource(tableSource)}}
                                     pagination={false}
                                     editable={{
                                         form: tableForm,
                                         editableKeys: tableEditableKeys,
                                         onCancel: async () => { },
-                                        onSave: async () => {
+                                        onSave: async (rowKey, data, row) => {
+                                            const tableDataSource:any = tableForm.getFieldsValue() ;
+                                            let dataSource=tableSource
+                                            const index = tableSource.findIndex((item: any) => item?.id===rowKey);
+                                               if(index===-1){    
+                                                dataSource.push(data)
+                                               }else{
+                                                   
+                                                dataSource= tableSource?.map((item:any,index:number)=>(
+                                                    item.id === rowKey?tableDataSource[rowKey]:item
+                                                   ))
+    
+                                               }
+                                           setTableSource(dataSource)
+                                           
 
                                         },
                                         onChange: setTableEditableRowKeys,
@@ -421,7 +441,7 @@ export default function ScriptEditor(props: GrantProps) {
                                 loading={infoLoading}
                                 scroll={{ x: '100%' }}
                                 actionRef={actionRef}
-                                // formRef={ref}
+                                formRef={ref}
                                 recordCreatorProps={{
                                     position: 'bottom',
                                     // newRecordType: 'dataSource',
@@ -430,14 +450,24 @@ export default function ScriptEditor(props: GrantProps) {
                                 }}
                                 columns={cloumnTableColumns}
                                 value={columnTableSource}
-                                onChange={setColumnTableSource}
+                                onChange={()=>{setColumnTableSource(columnTableSource)}}
                                 pagination={false}
                                 editable={{
                                     form,
                                     editableKeys,
                                     onCancel: async () => { },
-                                    onSave: async () => {
-
+                                    onSave: async (rowKey, data, row) => {
+                                        const tableDataSource:any = form.getFieldsValue() ;
+                                        let dataSource=columnTableSource
+                                        const index = columnTableSource.findIndex((item: any) => item?.id===rowKey);
+                                           if(index===-1){    
+                                            dataSource.push(data)
+                                           }else{
+                                            dataSource= columnTableSource?.map((item:any,index:number)=>(
+                                                item.id === rowKey?tableDataSource[rowKey]:item
+                                               ))
+                                           }
+                                           setColumnTableSource(dataSource)
                                     },
                                     onChange: setEditableRowKeys,
                                     actionRender: (row, config, dom) => [dom.save, dom.cancel],

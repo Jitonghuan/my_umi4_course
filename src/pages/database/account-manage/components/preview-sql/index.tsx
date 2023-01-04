@@ -33,16 +33,31 @@ export default function CreateArticle(props: IProps) {
         setLoading(true)
         previewGrantSql({oldPrivs,newPrivs,user:curRecord?.user,host:curRecord?.host}).then((res)=>{
             if(res?.success){
-                let data=res?.data?.grantSql
-                if(data?.length>0){
-                    let sql=data?.join('</n>')
+                let data=res?.data
+                let source=[]
+                if(data?.globalGrantsSql?.length>0){
+                    source=data?.globalGrantsSql
+
+                }
+                if(data?.columnGrantsSql?.length>0){
+                 
+                    source=[...source,...data?.columnGrantsSql]
+                }
+                if(data?.dbGrantsSql?.length>0){
+                   
+                    source=[...source,...data?.dbGrantsSql]
+                }
+                if(data?.tableGrantsGql?.length>0){
+                    source=[...source,...data?.tableGrantsGql]
+                }
+              
+                    // debugger
+                    let sql=source?.join(' \n')
                     setDataSource(data)
                     sqlForm.setFieldsValue({
                         showSql:sql
                     })
-                }else{
-                    setDataSource([])  
-                }
+               
                
 
             }
@@ -54,7 +69,7 @@ export default function CreateArticle(props: IProps) {
    
     return (
         <>
-          <Modal title="预览SQL" destroyOnClose width={"80%"} footer={false} onCancel={onClose}>
+          <Modal title="预览SQL" destroyOnClose width={"80%"} visible={mode!=="HIDE"} footer={false} onCancel={onClose}>
               <Spin spinning={loading}>
               <Form form={sqlForm} preserve={false}>
           <Form.Item name="showSql">
