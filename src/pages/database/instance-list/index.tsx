@@ -2,23 +2,54 @@ import React, { useMemo, useEffect, useState } from 'react';
 import PageContainer from '@/components/page-container';
 import { Button, Table, Form, Input, Select } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
-import { history } from 'umi';
-import { createTableColumns, instanceTypeOption } from './schema';
+import { history,useLocation } from 'umi';
+import { parse,stringify } from 'query-string';
+import { createTableColumns,  } from './schema';
+import {getEnumerateData} from '../overview/hook'
 import CreateInstance from './components/create-instance';
 import { useDeleteInstance, useGetClusterList, useInstanceList } from './hook';
 export default function InstanceList() {
   const [instanceForm] = Form.useForm();
+  let location = useLocation();
+  const query:any = parse(location.search);
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [listLoading, pageInfo, dataSource, getInstanceList] = useInstanceList();
   const [delLoading, deleteInstance] = useDeleteInstance();
+  const [instanceTypeOption,setInstanceTypeOption]=useState<any>([])
+  const getOptions=()=>{
+    getEnumerateData().then((res)=>{
+      if(res?.success){
+        setInstanceTypeOption(res?.data?.databaseType)
+      }
+
+    })
+  }
+  useEffect(()=>{
+    getOptions()
+  },[])
   useEffect(() => {
     getClusterList();
-    getInstanceList({
-      pageIndex: 1,
-      pageSize: 20,
-    });
+    if(query?.clusterId){
+    instanceForm.setFieldsValue({
+      clusterId:{ value:query?.clusterId,label:query?.clusterName,key:query?.clusterId}
+    })
+      getInstanceList({
+        pageIndex: 1,
+        pageSize: 20,
+        clusterId:Number(query?.clusterId)
+
+      });
+
+    }else{
+      getInstanceList({
+        pageIndex: 1,
+        pageSize: 20,
+      });
+
+    }
+   
   }, []);
   const columns = useMemo(() => {
     return createTableColumns({
@@ -28,7 +59,7 @@ export default function InstanceList() {
       },
       onManage: (record, index) => {
         history.push({
-          pathname: 'info',
+          pathname: '/matrix/database/info',
          }, {
             curRecord: record,
             instanceId: record?.id,
@@ -39,7 +70,7 @@ export default function InstanceList() {
       },
       onViewPerformance: (record, index) => {
         history.push({
-          pathname: 'info',
+          pathname: '/matrix/database/info',
          }, {
             curRecord: record,
             instanceId: record?.id,
@@ -71,7 +102,7 @@ export default function InstanceList() {
 
   const loadListData = (params: any) => {
     let value = instanceForm.getFieldsValue();
-    getInstanceList({ ...params, ...value });
+    getInstanceList({ ...params, ...value ,clusterId:value?.clusterId?.value});
   };
 
   return (
@@ -82,6 +113,7 @@ export default function InstanceList() {
         onClose={() => {
           setMode('HIDE');
         }}
+        instanceTypeOption={instanceTypeOption}
         onSave={() => {
           setMode('HIDE');
           loadListData({
@@ -98,6 +130,7 @@ export default function InstanceList() {
             onFinish={(values: any) => {
               getInstanceList({
                 ...values,
+                clusterId:values?.clusterId?.value,
                 pageIndex: 1,
                 pageSize: 20,
               });
@@ -116,8 +149,16 @@ export default function InstanceList() {
             <Form.Item label="类型" name="type">
               <Select placeholder="请选择实例类型" options={instanceTypeOption} style={{ width: 200 }} />
             </Form.Item>
-            <Form.Item label="所属集群" name="clusterName">
-              <Select placeholder="请选择集群" options={clusterOptions} allowClear showSearch style={{ width: 200 }} />
+            <Form.Item label="所属集群" name="clusterId">
+              <Select placeholder="请选择集群" options={clusterOptions} labelInValue  allowClear showSearch 
+                // filterOption={(input, option) => {
+                //   return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                // }} 
+                onChange={(data:any)=>{
+                  console.log("data",data)
+
+                }}
+                style={{ width: 200 }} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
@@ -153,6 +194,7 @@ export default function InstanceList() {
             columns={columns}
             dataSource={dataSource}
             loading={listLoading}
+            scroll={{x:"100%"}}
             pagination={{
               current: pageInfo.pageIndex,
               total: pageInfo.total,

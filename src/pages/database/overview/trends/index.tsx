@@ -1,63 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Select } from 'antd';
-import CpuUtilization from './cpu-utilization-line';
-import TpsQps from './tps-qps-line';
-import MemroyUtilization from './memory-utilization-line';
-import SessionConnection from './ session-connection-line';
-import ExecutionsCount from './executions-count';
-import TrafficThroughput from './traffic-throughput';
-import { useQueryPerformanceTrends } from './hooks';
+import React, { useState, useEffect, useContext } from 'react';
+import { Select, Tabs, Spin } from 'antd';
+import { ContentCard } from '@/components/vc-page-content';
+import VCCardLayout from '@cffe/vc-b-card-layout';
+import { useQueryPerformanceTrends ,useQueryInnodbMonitor} from './hooks';
+import LineCard from "./line-card";
+import { getMemoryOption, getCpuOption, getTpsOption, getTrafficOption, getSessionOption, getExecutionOption } from "./schema";
+import { getRowsOpsOption,getReadOption,getWrittenOption,getUsageOption,getHitOption,getDirtyPctOption } from "./schema";
+import DetailContext from '../../instance-list/components/instance-info/context';
+import { infoLayoutGrid, START_TIME_ENUMS } from "./types";
 import './index.less';
 
-export interface DashboardProps {
-  instanceId: any;
-}
-export const START_TIME_ENUMS = [
-  {
-    label: 'Last 15 minutes',
-    value: 15 * 60 * 1000,
-  },
-  {
-    label: 'Last 30 minutes',
-    value: 30 * 60 * 1000,
-  },
-  {
-    label: 'Last 1 hours',
-    value: 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 6 hours',
-    value: 6 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 12 hours',
-    value: 12 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 24 hours',
-    value: 24 * 60 * 60 * 1000,
-  },
-  {
-    label: 'Last 3 days',
-    value: 24 * 60 * 60 * 1000 * 3,
-  },
-  {
-    label: 'Last 7 days',
-    value: 24 * 60 * 60 * 1000 * 7,
-  },
-  {
-    label: 'Last 30 days',
-    value: 24 * 60 * 60 * 1000 * 30,
-  },
-];
-
-export default function DashboardsInfo(props: DashboardProps) {
-  const { instanceId } = props;
-
+const { TabPane } = Tabs;
+export default function DashboardsInfo(props: any) {
   const [lineData, loading, queryPerformanceTrends] = useQueryPerformanceTrends();
-
-  //数据驱动视图 ，需要用useState来驱动，不可以在选择事件中直接赋值
-
+  const [engineData, engineLoading, getInnodbMonitor]=useQueryInnodbMonitor()
+  const [tabKey, setTabKey] = useState<any>('resource');
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
   const now = new Date().getTime();
@@ -66,7 +23,7 @@ export default function DashboardsInfo(props: DashboardProps) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-
+  const { instanceId} = useContext(DetailContext)
   useEffect(() => {
     if (instanceId) {
       queryPerformanceTrends({
@@ -74,6 +31,11 @@ export default function DashboardsInfo(props: DashboardProps) {
         start: startTimestamp,
         end: endTimestamp,
       });
+      // getInnodbMonitor({
+      //   instanceId: instanceId,
+      //   start: startTimestamp,
+      //   end: endTimestamp,
+      // })
     }
   }, [instanceId, startTimestamp]);
 
@@ -86,55 +48,116 @@ export default function DashboardsInfo(props: DashboardProps) {
     setStartTimestamp(startTimepl);
     setEndTimestamp(endTimepl);
   };
+  const appConfig = [
+    {
+      title: 'MySQL cpu/内存利用率',
+      config: getCpuOption(lineData?.cpuMem),
+    },
+    {
+      title: 'MySQL存储空间使用量',
+      config: getMemoryOption(lineData?.memLimit),
+    },
+    {
+      title: 'TPS/QPS',
+      config: getTpsOption(lineData?.tpsQps),
+
+    },
+    {
+      title: '会话连接',
+      config: getSessionOption(lineData?.connection),
+    },
+    {
+      title: '流量吞吐（KB）',
+      config: getTrafficOption(lineData?.transmit),
+    },
+    {
+      title: '执行次数',
+      config: getExecutionOption(lineData?.rowsOpsData),
+    },
+  ];
+
+  const engineConfig=[
+    {
+      title: 'buffer pool 脏页比例',
+      config: getDirtyPctOption(engineData?.bufferPoolDirtyPct),
+   },
+   {
+    title: 'buffer pool 命中率',
+    config: getHitOption(engineData?.bufferPoolHit),
+ },
+ {
+  title: 'buffer pool 利用率',
+  config: getUsageOption(engineData?.bufferPoolUsagePct),
+},
+{
+  title: 'innodb 写数据',
+  config: getWrittenOption(engineData?.innodbDataWritten),
+},
+{
+  title: 'innodb 读数据',
+  config: getReadOption(engineData?.innodbDataRead),
+},
+{
+  title: 'innodb row ops',
+  config: getRowsOpsOption(engineData?.rowsOps),
+},
+]
 
   return (
-    <>
-      <div>
-        <span style={{ marginRight: 12, float: 'right', paddingTop: 12 }}>
-          <Select value={startTime} onChange={selectRelativeTime} style={{ width: 140 }}>
-            <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
-            {START_TIME_ENUMS.map((time) => (
-              <Select.Option key={time.value} value={time.value}>
-                {time.label}
-              </Select.Option>
-            ))}
-          </Select>
-        </span>
-      </div>
-      <div className="blockDiv">
-        <div className="block">
-          <section data-loading={loading}>
-            <CpuUtilization data={lineData?.cpuMem || []} loading={loading} />
-          </section>
-        </div>
-        <div className="block">
-          <section data-loading={loading}>
-            <MemroyUtilization data={lineData?.memLimit || []} loading={loading} />
-          </section>
-        </div>
-        <div className="block">
-          <section data-loading={loading}>
-            <TpsQps data={lineData?.tpsQps || []} loading={loading} />
-          </section>
-        </div>
+    <ContentCard className="database-line-wrapper">
+      <Tabs
+        activeKey={tabKey}
+        onChange={(val) => {
+          setTabKey(val);
+        }}
+        tabBarExtraContent={
+          <div>
+            <span style={{ marginRight: 12, float: 'right', paddingTop: 12 }}>
+              <Select value={startTime} onChange={selectRelativeTime} style={{ width: 240 }}>
+                <Select.OptGroup label="Relative time ranges"></Select.OptGroup>
+                {START_TIME_ENUMS.map((time) => (
+                  <Select.Option key={time.value} value={time.value}>
+                    {time.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </span>
+          </div>
+        }
 
-        <div className="block">
-          <section data-loading={loading}>
-            <SessionConnection data={lineData?.connection || []} loading={loading} />
-          </section>
-        </div>
-        <div className="block">
-          <section data-loading={loading}>
-            <TrafficThroughput data={lineData?.transmit || []} loading={loading} />
-          </section>
-        </div>
+      >
+        <TabPane tab="资源监控" key="resource">
+          <Spin spinning={loading}>
 
-        <div className="block">
-          <section data-loading={loading}>
-            <ExecutionsCount data={lineData?.rowsOpsData || []} loading={loading} />
-          </section>
-        </div>
-      </div>
-    </>
+            <VCCardLayout grid={infoLayoutGrid} className="database-line-content">
+
+              {appConfig.map((el, index) => (
+                <LineCard
+                  key={index}
+                  {...el}
+                />
+              ))}
+            </VCCardLayout>
+          </Spin>
+
+        
+        </TabPane>
+        <TabPane tab="引擎监控" key="engine">
+          {/* <Spin spinning={engineLoading}>
+            <VCCardLayout grid={infoLayoutGrid} className="database-line-content">
+              {engineConfig.map((el, index) => (
+                <LineCard
+                  key={index}
+                  {...el}
+                />
+              ))}
+            </VCCardLayout>
+
+          </Spin> */}
+        </TabPane>
+      </Tabs>
+
+
+    </ContentCard>
   );
 }

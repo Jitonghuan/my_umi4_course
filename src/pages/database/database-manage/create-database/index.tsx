@@ -91,9 +91,9 @@ export default function CreateDataBase(props: CreateDataBaseProps) {
           <Form.Item label="支持字符集" name="characterset">
             <Select options={CharacterSetListOptions} loading={loading} allowClear showSearch style={{ width: 200 }} />
           </Form.Item>
-          <Form.Item label="owner" name="owner" rules={[{ required: true, message: '请选择' }]}>
+          {/* <Form.Item label="owner" name="owner" rules={[{ required: true, message: '请选择' }]}>
             <Select options={userOptions} allowClear showSearch style={{ width: 200 }} />
-          </Form.Item>
+          </Form.Item> */}
           <Row>
             <Form.Item
               style={{ width: '60%' }}

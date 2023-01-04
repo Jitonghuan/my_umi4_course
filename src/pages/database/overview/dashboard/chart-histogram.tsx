@@ -1,3 +1,4 @@
+import React, { useMemo} from 'react';
 import { Column } from '@ant-design/plots';
 export interface ChartHistorgramIProps {
   dataSource: any;
@@ -9,6 +10,7 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
   let data: any = [];
   columnTypeData?.map((item: string) => {
     data.push({
+     
       type: item,
       value: dataSource[item],
     });
@@ -18,9 +20,9 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
     data,
     xField: 'type',
     yField: 'value',
-    seriesField: '',
-    minColumnWidth: 20,
-    maxColumnWidth: 30,
+    seriesField: 'type',
+    minColumnWidth: 10,
+    maxColumnWidth: 20,
     label: {
       content: (originData: any) => {
         // const val = parseFloat(originData.value);
@@ -30,7 +32,10 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
       },
       offset: 10,
     },
-    legend: true,
+    legend: {
+      // layout: 'horizontal',
+      position: 'right'
+    },
     xAxis: {
       label: {
         autoHide: true,
@@ -46,8 +51,13 @@ export default function ChartHistogram(props: ChartHistorgramIProps) {
   return (
     <>
       <h3>按集群部署类型分布情况</h3>
-      <div style={{ padding: 10, height: 210 }}>
-        <Column {...config} />
+      <div 
+      style={{ padding: 0, height: 150 }}
+      >
+      
+        {
+            useMemo(() =>  <Column {...config} />, [dataSource,columnTypeData])
+        }
       </div>
     </>
   );

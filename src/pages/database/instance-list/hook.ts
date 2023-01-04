@@ -16,7 +16,7 @@ export function useInstanceList() {
   const getInstanceList = async (paramObj: {
     name?: string;
     type?: number | string;
-    clusterName?: string;
+    clusterId?: string;
     pageIndex?: number;
     pageSize?: number;
   }) => {
@@ -27,12 +27,34 @@ export function useInstanceList() {
           let dataSource = result.data?.dataSource;
           let dataArry: any = [];
           dataSource?.map((item: any) => {
+            let slaveInfoData:any=[]
+            if(typeof(item?.slaveInfo)==="object" ){
+              item?.slaveInfo?.map((ele:any)=>{
+                slaveInfoData.push({
+                  ...ele,
+                  clusterType:ele?.cluster?.clusterType,
+                  envCode:ele?.cluster?.envCode,
+                  clusterName:ele?.cluster?.name,
+                  key:ele?.id,
+                })
+
+              })
+
+
+            }
+            
             dataArry.push({
-              ...item?.instance,
-              status: item?.status,
-              clusterName: item?.clusterName,
-              envCode: item?.envCode,
-            });
+
+              ...item?.masterInfo,
+              clusterType:item?.masterInfo?.cluster?.clusterType,
+              envCode:item?.masterInfo?.cluster?.envCode,
+              clusterName:item?.masterInfo?.cluster?.name,
+              key:item?.masterInfo?.id,
+              children:item?.slaveInfo?slaveInfoData:null,
+              
+            
+             
+            })
           });
           const pageInfo = result.data.pageInfo;
           setSource(dataArry);
@@ -203,7 +225,7 @@ export function useGetInstanceDetail(): [boolean, any, any, (paramsObj: { id: nu
     setLoading(true);
     await getRequest(`${APIS.getInstanceDetail}`, { data: { id: paramsObj?.id } })
       .then((result) => {
-        if (result.success) {
+        if (result?.success) {
           let dataSource = result?.data;
           setData(dataSource?.instance || {});
           setTopoData(dataSource?.topology || []);

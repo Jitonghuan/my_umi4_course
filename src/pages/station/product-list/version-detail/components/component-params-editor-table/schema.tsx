@@ -182,6 +182,7 @@ export const createCompontentsTableColumns = (params: {
             valueType: 'option',
             width: 150,
             render: (text, record, _, action) => [
+              //text, record, _, action
               <a
                 key="editable"
                 onClick={() => {

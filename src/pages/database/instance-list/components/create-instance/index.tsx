@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Drawer, Form, Button, Select, Input, Row, Tag, message } from 'antd';
 import { addInstance, updateInstance } from '../../hook';
-import { instanceTypeOption, roleTypeOption } from '../../schema';
+import { roleTypeOption } from '../../schema';
+
 import { useGetClusterList } from '../../hook';
 import CreateCluster from '../../../cluster-list/create-cluster';
 import './index.less';
@@ -11,14 +12,16 @@ export interface CreateInstanceProps {
   curRecord?: any;
   onClose: () => any;
   onSave: () => any;
+  instanceTypeOption:any
 }
 
 export default function CreateInstance(props: CreateInstanceProps) {
-  const { mode, onClose, onSave, curRecord } = props;
+  const { mode, onClose, onSave, curRecord,instanceTypeOption } = props;
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [editForm] = Form.useForm<Record<string, string>>();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [clusterMode, setClusterMode] = useState<EditorMode>('HIDE');
+
 
   useEffect(() => {
     if (mode === 'HIDE') return;
@@ -97,12 +100,12 @@ export default function CreateInstance(props: CreateInstanceProps) {
             <Form.Item label="实例名称" name="name" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode === 'VIEW'} style={{ width: 360 }} />
             </Form.Item>
-            <Form.Item label="数据库类型" name="instanceType">
+            <Form.Item label="数据库类型" name="instanceType" rules={[{ required: true, message: '请输入' }]}>
               <Select options={instanceTypeOption} disabled={mode !== 'ADD'} style={{ width: 360 }} />
             </Form.Item>
-            <Form.Item label="数据库版本" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
+            {/* <Form.Item label="数据库版本" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode !== 'ADD'} style={{ width: 360 }} />
-            </Form.Item>
+            </Form.Item> */}
 
             <Row className="row-layout" style={{ width: '100%' }}>
               <Form.Item
@@ -135,7 +138,7 @@ export default function CreateInstance(props: CreateInstanceProps) {
               )}
             </Row>
             <Form.Item label="集群角色" name="clusterRole" rules={[{ required: true, message: '请选择' }]}>
-              <Select options={roleTypeOption} disabled={mode !== 'ADD'} style={{ width: 360 }} />
+              <Select options={roleTypeOption}  style={{ width: 360 }} />
             </Form.Item>
             <Form.Item label="实例地址" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="格式如：192.168.0.1" />

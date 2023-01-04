@@ -1,35 +1,43 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState,useContext } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
 import { Button, Modal, Form, Input, message } from 'antd';
 import { getAccountList } from '../service';
 import useTable from '@/utils/useTable';
-import { createTableColumns } from './schema';
+import { createTableColumns ,readonlyColumns} from './schema';
 import CreateAccount from './components/create-account';
 import UpdatePassword from './components/update-password';
 import { useDeleteAccount } from './hook';
-import GrantModal from './components/grant';
+import GrantModal from './components/grant-default';
+import  DetailContext  from '../instance-list/components/instance-info/context'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-export interface AccountProps {
-  clusterId: number;
-}
-export default function AccountList(props: AccountProps) {
-  //clusterId={clusterId}
+import './index.less';
+// export interface AccountProps {
+//   clusterId: number;
+//   clusterRole:number
+// }
+export default function AccountList(props:any) {
+ 
   const [form] = Form.useForm();
   const [ensureForm] = Form.useForm();
-  const { clusterId } = props;
+  // const { clusterId ,clusterRole} = props;
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [updateMode, setUpdateMode] = useState<EditorMode>('HIDE');
   const [grantMode, setGrantMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteAccount] = useDeleteAccount();
   const [curId, setCurId] = useState<any>();
   const [curRecord, setCurRecord] = useState<any>({});
+  const {clusterId,clusterRole}=useContext(DetailContext)
   useEffect(() => {
     if (!clusterId) return;
   }, [clusterId]);
+  const readonlyTableColumns=useMemo(()=>{
+    return readonlyColumns() as any
+  },[])
 
   const columns = useMemo(() => {
     return createTableColumns({
+      clusterRole,
       onDelete: async (record) => {
         ensureModal(record);
       },
@@ -38,13 +46,13 @@ export default function AccountList(props: AccountProps) {
         setUpdateMode('EDIT');
       },
       onGrant: (record) => {
-        setCurRecord({ ...record, grantType: 1 });
+        setCurRecord({ ...record });
         setGrantMode('ADD');
       },
-      onRecovery: (record) => {
-        setCurRecord({ ...record, grantType: 2 });
-        setGrantMode('EDIT');
-      },
+      // onRecovery: (record) => {
+      //   setCurRecord({ ...record, grantType: 2 });
+      //   setGrantMode('EDIT');
+      // },
       deleteLoading: delLoading,
     }) as any;
   }, []);
@@ -56,6 +64,7 @@ export default function AccountList(props: AccountProps) {
     method: 'GET',
     form,
     formatter: (params) => {
+
       return {
         ...params,
         clusterId,
@@ -112,7 +121,7 @@ export default function AccountList(props: AccountProps) {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className="account-card">
       <CreateAccount
         mode={mode}
         clusterId={clusterId}
@@ -150,8 +159,22 @@ export default function AccountList(props: AccountProps) {
       />
       <TableSearch
         bordered
-        splitLayout={false}
-        columns={columns}
+        form={form}
+        formLayout="inline"
+        // splitLayout={false}
+        formOptions={[
+          {
+            key: '1',
+            type: 'input',
+            label: '账号',
+            dataIndex: 'user',
+            width: '200px',
+            placeholder: '请输入',
+            
+          },
+         
+        ]}
+        columns={  clusterRole===3?columns:readonlyTableColumns}
         {...tableProps}
         pagination={{
           ...tableProps.pagination,
@@ -162,14 +185,14 @@ export default function AccountList(props: AccountProps) {
         }}
         extraNode={
           <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-            <Button
+           {clusterRole===3 && <Button
               type="primary"
               onClick={() => {
                 setMode('ADD');
               }}
             >
               创建账号
-            </Button>
+            </Button>}
           </div>
         }
         className="table-form"
