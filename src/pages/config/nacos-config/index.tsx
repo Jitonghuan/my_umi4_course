@@ -21,11 +21,6 @@ export default function AuthorityManage() {
   const [envOptions, setEnvOptions] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [curEnvCode, setCurEnvCode] = useState<string>('')
-  // useEffect(()=>{
-  // history.push({
-  //       pathname:  `/matrix/config/nacos-config/nacos`,        
-  //     });
-  // },[])
   const getEnvOptions = () => {
     setLoading(true)
     getNacosEnvs().then((res) => {
@@ -93,6 +88,5 @@ export default function AuthorityManage() {
       </Tabs>
     </div>
     </ContentCard>
-    {/* </ContentCard> */}
   </PageContainer>)
 }
