@@ -10,7 +10,7 @@ import { Descriptions, Button, Modal, message, Checkbox } from 'antd';
 import { getRequest } from '@/utils/request';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import DetailContext from '@/pages/application/application-detail/context';
-import { cancelDeploy, deployReuse, queryEnvsReq } from '@/pages/application/service';
+import { cancelDeploy, deployReuse, queryEnvsReq,newDeployReuse } from '@/pages/application/service';
 import { IProps } from './types';
 import { history } from 'umi';
 import { getPipelineUrl } from '@/pages/application/service';
@@ -19,7 +19,7 @@ import './index.less';
 const rootCls = 'publish-detail-compo';
 const { confirm } = Modal;
 
-const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => {
+const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode,newPublish }: IProps) => {
   const { appData } = useContext(DetailContext);
   let { metadata, branchInfo, envInfo, buildInfo, status } = deployInfo || {};
   const { buildUrl } = buildInfo || {};
@@ -102,7 +102,8 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
                 title: '确定要把当前部署分支发布到下一个环境中？',
                 icon: <ExclamationCircleOutlined />,
                 onOk: () => {
-                  return deployReuse({
+                  const deploy = newPublish ? newDeployReuse : deployReuse;
+                  return deploy({
                     envCodes: [],
                     pipelineCode: nextPipeline,
                     reusePipelineCode: pipelineCode,
@@ -162,9 +163,11 @@ const PublishDetail = ({ deployInfo, env, onOperate, pipelineCode }: IProps) => 
         <Descriptions.Item label="部署分支">{branchInfo?.releaseBranch || '--'}</Descriptions.Item>
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
         <Descriptions.Item label="主干分支">{branchInfo?.masterBranch || '--'}</Descriptions.Item>
-        <Descriptions.Item label="冲突分支" span={2}>
-          {branchInfo?.conflictFeature || '--'}
-        </Descriptions.Item>
+        {!newPublish &&
+         <Descriptions.Item label="冲突分支" span={2}>
+         {branchInfo?.conflictFeature || '--'}
+       </Descriptions.Item>}
+       
 
         <Descriptions.Item label="合并分支" span={2}>
           {branchInfo?.features.join(',') || '--'}

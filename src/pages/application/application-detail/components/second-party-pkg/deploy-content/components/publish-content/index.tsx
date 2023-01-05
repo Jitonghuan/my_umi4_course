@@ -30,6 +30,7 @@ const PublishContent = ({
   onSpin,
   stopSpin,
   onOperate,
+  newPublish 
 }: IProps) => {
   const isProd = envTypeCode === 'cProd';
   let { metadata, status, envInfo } = deployInfo || {};
@@ -79,12 +80,6 @@ const PublishContent = ({
           </Button>
         )}
       </div>
-
-      {/* {isProd ? (
-        <ProdSteps appCode={appCode} deployInfo={deployInfo} onOperate={onOperate} />
-      ) : (
-        <OtherEnvSteps deployInfo={deployInfo} onOperate={onOperate} />
-      )} */}
       <DeploySteps
         stepData={deployNodes}
         deployInfo={deployInfo}

@@ -503,7 +503,7 @@ export const queryFeatureDeployed = async (params: {
   pipelineCode?: string;
   masterBranch?: string;
   isNpm?: boolean;
-  needRelationInfo: number
+  needRelationInfo?: number
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,
