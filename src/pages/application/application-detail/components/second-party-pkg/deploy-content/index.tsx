@@ -157,6 +157,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
+            appData={appData}
           />
           <PublishBranch
             deployInfo={deployInfo}

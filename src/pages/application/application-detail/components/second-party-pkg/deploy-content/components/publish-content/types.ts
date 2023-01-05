@@ -10,6 +10,7 @@ export interface IProps {
   onSpin: any;
   stopSpin: any;
   newPublish:any ;
+  appData:any;
   onOperate: (type: OperateType) => void;
 }
 

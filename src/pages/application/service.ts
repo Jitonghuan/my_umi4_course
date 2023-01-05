@@ -527,7 +527,7 @@ export const createDeploy = (params: {
   // isClient: boolean;
   masterBranch?: string;
   buildType?: string;
-  deployModel: string;
+  deployModel?: string;
 }) =>
   postRequest(createDeployUrl, {
     data: params,
