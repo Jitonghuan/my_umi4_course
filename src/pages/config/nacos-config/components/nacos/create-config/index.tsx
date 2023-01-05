@@ -33,7 +33,7 @@ export default function CreateNacos(props: CreateNacosProps) {
   const [currentVersionOption,setCurrentVersionOption]=useState<any>({})
   const [formatType,setFormatType]=useState<AceDataType|string>("yaml")
   useEffect(()=>{
-    if(!namespaceId||!envCode)return
+    if(!envCode)return
     if(mode!=="HIDE"&&mode!=="ADD"){
       queryConfigVersions()
     }
