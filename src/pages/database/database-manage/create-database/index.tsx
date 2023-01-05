@@ -104,8 +104,9 @@ export default function CreateDataBase(props: CreateDataBaseProps) {
               <Select
                 options={accountData}
                 loading={accountListLoading}
+                allowClear showSearch
                 // style={{ width: 300 }}
-                placeholder="默认可以先不授权"
+                // placeholder="默认可以先不授权"
               />
             </Form.Item>
             <span style={{ marginTop: 4 }}>
