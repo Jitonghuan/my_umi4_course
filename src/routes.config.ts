@@ -564,12 +564,12 @@ export default [
   },
   {
     path: `${baseRoutePath}/config`,
-    name: '配置中心',
+    name: '组件控制台',
     icon: 'icon-Time',
     routes: [
       {
         path: `${baseRoutePath}/config/nacos-config`,
-        name: 'nacos配置',
+        name: '配置中心',
         key: 'nacos-config',
         component: '@/pages/config/nacos-config',
         routes: [
