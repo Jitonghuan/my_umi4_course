@@ -21,6 +21,8 @@ export default function CreateInstance(props: CreateInstanceProps) {
   const [editForm] = Form.useForm<Record<string, string>>();
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [clusterMode, setClusterMode] = useState<EditorMode>('HIDE');
+  const [clusterType,setClusterType]=useState<number|string>()
+
 
 
   useEffect(() => {
@@ -30,10 +32,12 @@ export default function CreateInstance(props: CreateInstanceProps) {
       editForm.setFieldsValue({
         ...curRecord,
       });
+      setClusterType(curRecord?.clusterType||"")
     }
 
     return () => {
       editForm.resetFields();
+      setClusterType("")
     };
   }, [mode]);
   const handleSubmit = async () => {
@@ -100,9 +104,11 @@ export default function CreateInstance(props: CreateInstanceProps) {
             <Form.Item label="实例名称" name="name" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode === 'VIEW'} style={{ width: 360 }} />
             </Form.Item>
+            
             <Form.Item label="数据库类型" name="instanceType" rules={[{ required: true, message: '请输入' }]}>
               <Select options={instanceTypeOption} disabled={mode !== 'ADD'} style={{ width: 360 }} />
             </Form.Item>
+          
             {/* <Form.Item label="数据库版本" name="instanceVersion" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode !== 'ADD'} style={{ width: 360 }} />
             </Form.Item> */}
@@ -120,6 +126,11 @@ export default function CreateInstance(props: CreateInstanceProps) {
                   showSearch
                   options={clusterOptions}
                   disabled={mode !== 'ADD'}
+                  onChange={(value)=>{
+              
+                    const result = clusterOptions?.filter((el:any) => el.value === value);
+                 
+                    setClusterType(result[0]?.clusterType||"")}}
                   // style={{ width: 360 }}
                   placeholder="请选择"
                 />
@@ -140,6 +151,10 @@ export default function CreateInstance(props: CreateInstanceProps) {
             <Form.Item label="集群角色" name="clusterRole" rules={[{ required: true, message: '请选择' }]}>
               <Select options={roleTypeOption}  style={{ width: 360 }} />
             </Form.Item>
+            {(clusterType===5||clusterType===6)&&<Form.Item label="实例ID" name="instanceId" rules={[{ required: true, message: '请输入' }]}>
+              <Input disabled={mode !== 'ADD'} style={{ width: 360 }} placeholder="operator部署模式下为hostName" />
+            </Form.Item>}
+            
             <Form.Item label="实例地址" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
               <Input disabled={mode === 'VIEW'} style={{ width: 360 }} placeholder="格式如：192.168.0.1" />
             </Form.Item>

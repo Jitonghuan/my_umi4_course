@@ -19,6 +19,7 @@ export interface CreateAccountItem {
 export interface CreateInstanceItem {
   name: string;
   instanceType: number;
+  instanceId?:string;
   instanceVersion: string;
   clusterId: number;
   clusterRole: number;
@@ -34,6 +35,7 @@ export interface UpdateInstanceItem {
   id: number;
   name: string;
   instanceType: number;
+  instanceId?:string;
   instanceVersion: string;
   clusterId: number;
   clusterRole: number;
