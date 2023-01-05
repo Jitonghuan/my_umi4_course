@@ -71,7 +71,7 @@ export default function PublishBranch(props: IProps) {
       envCodes: deployEnv,
       // isClient: true,
       pipelineCode,
-      buildType: 'beClientBuild',
+      buildType: appData?.appType==="backend"?'beClientBuild':"feClientBuild",
       masterBranch: selectMaster, //主干分支
       deployModel: appData?.deployModel,
     }).then((res: any) => {
@@ -121,7 +121,7 @@ export default function PublishBranch(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
-      <div className="second-table-caption">
+      <div className="table-caption">
         <div className="caption-left">
           {/* <span className={`${rootCls}__list-header-text`}>分支列表</span> */}
           <span>主干分支：</span>
