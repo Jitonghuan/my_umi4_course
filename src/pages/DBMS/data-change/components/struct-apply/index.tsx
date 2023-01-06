@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Tabs, Form, Select, Input, Button, Radio, Segmented, Table, Drawer, Space, Spin, message, Divider, Modal } from 'antd';
+import { Badge, Form, Select, Input, Button, Radio, Segmented, Table, Drawer, Space, Spin, message, Divider, Modal } from 'antd';
 import { createDiffTableColumns } from './schema'
 import ShuttleFrame from '@/components/shuttle-frame';
 import { ContentCard } from '@/components/vc-page-content';
 import PageContainer from '@/components/page-container';
 import { getRequest } from '@/utils/request';
+import {ExclamationCircleOutlined} from '@ant-design/icons'
 import { history } from 'umi';
 import * as APIS from '../../../common-service';
 import AceEditor from '@/components/ace-editor';
@@ -376,9 +377,23 @@ export default function StructApply() {
 
                             <Segmented onChange={changeInfoOption} value={activeTab} options={[
 
-                                { label: '新建的表', value: 'createTables', },
+                                { label: <span>{
+                                createError?.length>0?<span>
+                                    
+                                     新建的表 <ExclamationCircleOutlined style={{color:"red"}} />
+                                   
+                                   
 
-                                { label: '修改的表', value: 'modifyTables', },
+                                </span>:<span>新建的表</span>}</span>, value: 'createTables', },
+
+                                { label:<span>{
+                                    modifyError?.length>0?<span>
+                                        
+                                         修改的表 <ExclamationCircleOutlined style={{color:"red"}} />
+                                       
+                                       
+    
+                                    </span>:<span>修改的表</span>}</span>, value: 'modifyTables', },
 
                             ]} />
 
