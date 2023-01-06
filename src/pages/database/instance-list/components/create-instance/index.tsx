@@ -152,7 +152,9 @@ export default function CreateInstance(props: CreateInstanceProps) {
               <Select options={roleTypeOption}  style={{ width: 360 }} />
             </Form.Item>
             {(clusterType===5||clusterType===6)&&<Form.Item label="实例ID" name="instanceId" rules={[{ required: true, message: '请输入' }]}>
-              <Input disabled={mode !== 'ADD'} style={{ width: 360 }} placeholder="operator部署模式下为hostName" />
+              <Input disabled={mode !== 'ADD'} style={{ width: 360 }} 
+              // placeholder="operator部署模式下为hostName"
+               />
             </Form.Item>}
             
             <Form.Item label="实例地址" name="instanceHost" rules={[{ required: true, message: '请输入' }]}>
