@@ -68,7 +68,7 @@ export default function AddConfigSql(props: any) {
                             options={appList}
                             showSearch
                             allowClear
-                            labelInValue
+                            // labelInValue
                             optionFilterProp="label"
                         />
                     </Form.Item>
