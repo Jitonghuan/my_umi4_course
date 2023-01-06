@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Space, Tooltip, Spin, Tag, Input, Button } from 'antd';
-import { QuestionCircleOutlined, EditOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, EditOutlined, EditFilled } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import EditModal from '../edit-config-sql';
 import { debounce } from 'lodash';
@@ -147,7 +147,7 @@ export default function ModifyConfig(props: Iprops) {
 
                                     </Space>
                                     <Space>
-                                        <EditOutlined onClick={() => { setInitData(item); setType('config'); }} style={{ color: '#3591ff' }} />
+                                        <EditFilled onClick={() => { setInitData(item); setType('config'); }} style={{ color: '#3591ff' }} />
                                     </Space>
                                 </p>
                                 <div>

@@ -2,6 +2,7 @@ import React, { useState, useRef, useContext, useEffect, useMemo } from 'react';
 import { Modal, Form, Select, message } from 'antd';
 import AceEditor from '@/components/ace-editor';
 import { addConfig, getAppList } from '../../../service';
+import './index.less';
 
 export default function AddConfigSql(props: any) {
     const { visible, onClose, onSave, categoryData, releaseId, initCategory } = props;

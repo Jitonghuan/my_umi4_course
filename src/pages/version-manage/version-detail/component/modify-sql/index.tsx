@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Space, Tooltip, Spin, Tag } from 'antd';
-import { QuestionCircleOutlined, EditOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, EditFilled } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
 import { debounce } from 'lodash';
 import EditModal from '../edit-config-sql';
@@ -153,7 +153,7 @@ export default function ModifySql(props: Iprops) {
 
                                     </Space>
                                     <Space>
-                                        <EditOutlined onClick={() => { setInitData(item); setType('sql'); }} style={{ color: '#3591ff' }} />
+                                        <EditFilled onClick={() => { setInitData(item); setType('sql'); }} style={{ color: '#3591ff' }} />
                                     </Space>
 
                                 </p>
