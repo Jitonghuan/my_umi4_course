@@ -12,7 +12,7 @@ import PublishBranch from './components/publish-branch';
 import PublishRecord from './components/publish-record';
 import useInterval from './useInterval';
 import DetailContext from '@/pages/application/application-detail/context';
-import { queryDeployList, queryFeatureDeployed, queryActiveDeployInfo } from '@/pages/application/service';
+import { queryDeployList, queryFeatureDeployed, queryActiveDeployInfo,getNewDeployInfo,judgeIsNew } from '@/pages/application/service';
 import './index.less';
 import { Spin } from 'antd';
 
@@ -30,7 +30,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
   const { appData } = useContext(DetailContext);
   const { appCode } = appData || {};
   const cachebranchName = useRef<string>();
-
+  const newPublish = useRef<any>(undefined);//是否是新的cicd
   const [updating, setUpdating] = useState(false);
   const [deployInfo, setDeployInfo] = useState({});
   const [branchInfo, setBranchInfo] = useState<{
@@ -39,21 +39,20 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
   }>({ deployed: [], unDeployed: [] });
   const masterBranchName = useRef<string>('master');
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!appCode || !pipelineCode) return;
+    isNewPublish();
+   
+
+  }, [appCode, pipelineCode])
 
   const requestData = async () => {
     if (!appCode || !pipelineCode) return;
 
     setUpdating(true);
-    const resp = await queryActiveDeployInfo({ pipelineCode: pipelineCode });
-
-    // const resp1 = await queryDeployList({
-    //   appCode: appCode!,
-    //   envTypeCode: env,
-    //   isActive: 1,
-    //   pageIndex: 1,
-    //   pageSize: 10,
-    // });
-
+    // debugger
+    let queryDeployInfo = newPublish.current ? getNewDeployInfo : queryActiveDeployInfo;
+    const resp = await queryDeployInfo({ pipelineCode: pipelineCode });
     const resp2 = await queryFeatureDeployed({
       appCode: appCode!,
       envTypeCode: env,
@@ -69,11 +68,6 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
       masterBranch: masterBranchName.current,
       pipelineCode,
     });
-
-    // if (resp1?.data?.dataSource && resp1?.data?.dataSource.length > 0) {
-    //   setDeployInfo(resp1?.data?.dataSource[0]);
-    // }
-
     if (resp && resp.success) {
       if (resp?.data) {
         setDeployInfo(resp.data);
@@ -106,10 +100,9 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode || !pipelineCode) return;
-
+    if (!appCode || !pipelineCode|| newPublish.current === undefined) return;
     timerHandle('do', true);
-  }, [appCode, pipelineCode]);
+  }, [appCode, pipelineCode,newPublish.current]);
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;
@@ -124,6 +117,18 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
     setLoading(false);
   };
 
+  // 判断该应用是否要用新的发布流程
+  const isNewPublish = () => {
+    judgeIsNew({ appCode: appData?.appCode }).then((res: any) => {
+      if (res?.success) {
+        res?.data === 'v1' ? newPublish.current = false : newPublish.current = true;
+      } else {
+        newPublish.current = false;
+      }
+    }).finally(() => { timerHandle('do', true) })
+  }
+
+
   return (
     <div className={rootCls}>
       <div className={`${rootCls}-body`}>
@@ -132,6 +137,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
             env={env}
             deployInfo={deployInfo}
             pipelineCode={pipelineCode}
+            newPublish={newPublish.current}
             onOperate={(type) => {
               if (type === 'deployNextEnvSuccess') {
                 onDeployNextEnvSuccess();
@@ -146,16 +152,19 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
             pipelineCode={pipelineCode}
             envTypeCode={env}
             deployInfo={deployInfo}
+            newPublish={newPublish.current}
             deployedList={branchInfo.deployed}
             onOperate={onOperate}
             onSpin={onSpin}
             stopSpin={stopSpin}
+            appData={appData}
           />
           <PublishBranch
             deployInfo={deployInfo}
             hasPublishContent={!!(branchInfo.deployed && branchInfo.deployed.length)}
             dataSource={branchInfo.unDeployed}
             env={env}
+            newPublish={newPublish.current}
             pipelineCode={pipelineCode}
             onSearch={searchUndeployedBranch}
             onSubmitBranch={(status) => {
@@ -169,7 +178,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
         </Spin>
       </div>
       <div className={`${rootCls}-sider`}>
-        <PublishRecord env={env} appCode={appCode} />
+        <PublishRecord env={env} appCode={appCode}   newPublish={newPublish.current}/>
       </div>
     </div>
   );

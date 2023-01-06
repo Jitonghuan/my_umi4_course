@@ -20,7 +20,7 @@ import './index.less';
 const rootCls = 'publish-record-compo';
 
 const PublishRecord = (props: IProps) => {
-  const { env, appCode } = props;
+  const { env, appCode,newPublish } = props;
 
   const { appData } = useContext(DetailContext);
   const { appCategoryCode } = appData || {};
@@ -187,7 +187,7 @@ const PublishRecord = (props: IProps) => {
       ) : null}
 
       <Modal title="发布详情" width={600} visible={visible} footer={false} onCancel={() => setVisible(false)}>
-        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} />
+        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} newPublish={newPublish} />
       </Modal>
 
       {/* <Modal title="发布详情" visible={visible} onCancel={() => setVisible(false)}>

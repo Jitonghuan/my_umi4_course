@@ -9,6 +9,8 @@ export interface IProps {
   pipelineCode: string;
   onSpin: any;
   stopSpin: any;
+  newPublish:any ;
+  appData:any;
   onOperate: (type: OperateType) => void;
 }
 
