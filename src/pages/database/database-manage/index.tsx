@@ -110,7 +110,7 @@ export default function DataBasePage(props:any) {
 
       <TableSearch
         bordered
-        
+        form={form}
         // splitLayout={false}
         formLayout="inline"
         columns={clusterRole===3? columns:readonlyTableColumns}
@@ -120,20 +120,20 @@ export default function DataBasePage(props:any) {
             key: '1',
             type: 'input',
             label: '数据库名称',
-            dataIndex: 'name',
+            dataIndex: 'dbName',
             width: '200px',
             placeholder: '请输入',
             
           },
-          {
-            key: '2',
-            type: 'input',
-            label: '授权账号',
-            dataIndex: 'owner',
-            width: '200px',
-            placeholder: '请输入',
+          // {
+          //   key: '2',
+          //   type: 'input',
+          //   label: '授权账号',
+          //   dataIndex: 'owner',
+          //   width: '200px',
+          //   placeholder: '请输入',
             
-          },
+          // },
         ]}
         pagination={{
           ...tableProps.pagination,

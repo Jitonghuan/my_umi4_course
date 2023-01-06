@@ -22,12 +22,12 @@ export const readonlyColumns=()=>{
       key: 'characterset',
       width: '25%',
     },
-    {
-      title: '授权账号',
-      dataIndex: 'owner',
-      key: 'owner',
-      width: '25%',
-    },
+    // {
+    //   title: '授权账号',
+    //   dataIndex: 'owner',
+    //   key: 'owner',
+    //   width: '25%',
+    // },
 
     {
       title: '备注说明',
@@ -54,12 +54,12 @@ export const createTableColumns = (params: {
       key: 'characterset',
       width: '20%',
     },
-    {
-      title: '授权账号',
-      dataIndex: 'owner',
-      key: 'owner',
-      width: '25%',
-    },
+    // {
+    //   title: '授权账号',
+    //   dataIndex: 'owner',
+    //   key: 'owner',
+    //   width: '25%',
+    // },
 
     {
       title: '备注说明',

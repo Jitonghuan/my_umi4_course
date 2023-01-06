@@ -2,18 +2,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Select, Tabs, Spin } from 'antd';
 import { ContentCard } from '@/components/vc-page-content';
 import VCCardLayout from '@cffe/vc-b-card-layout';
-import { useQueryPerformanceTrends ,useQueryInnodbMonitor} from './hooks';
+import { useQueryPerformanceTrends, useQueryInnodbMonitor } from './hooks';
 import LineCard from "./line-card";
-import { getMemoryOption, getCpuOption, getTpsOption, getTrafficOption, getSessionOption, getExecutionOption } from "./schema";
-import { getRowsOpsOption,getReadOption,getWrittenOption,getUsageOption,getHitOption,getDirtyPctOption } from "./schema";
+import { getMemoryOption, getCpuOption, getTpsOption, getTrafficOption, getDiskOption, getExecutionOption } from "./schema";
+import { getRowsOpsOption, getReadOption, getWrittenOption, getUsageOption, getHitOption, getDirtyPctOption,getQpsOption,getConnections } from "./schema";
 import DetailContext from '../../instance-list/components/instance-info/context';
-import { infoLayoutGrid, START_TIME_ENUMS } from "./types";
+import { infoLayoutGrid, START_TIME_ENUMS,lonelyLayoutGrid } from "./types";
 import './index.less';
 
 const { TabPane } = Tabs;
 export default function DashboardsInfo(props: any) {
   const [lineData, loading, queryPerformanceTrends] = useQueryPerformanceTrends();
-  const [engineData, engineLoading, getInnodbMonitor]=useQueryInnodbMonitor()
+  const [engineData, engineLoading, getInnodbMonitor] = useQueryInnodbMonitor()
   const [tabKey, setTabKey] = useState<any>('resource');
   // 请求开始时间，由当前时间往前
   const [startTime, setStartTime] = useState<number>(30 * 60 * 1000);
@@ -23,7 +23,7 @@ export default function DashboardsInfo(props: any) {
   let end = Number(now / 1000).toString();
   const [startTimestamp, setStartTimestamp] = useState<any>(start); //开始时间
   const [endTimestamp, setEndTimestamp] = useState<any>(end); //结束时间
-  const { instanceId} = useContext(DetailContext)
+  const { instanceId } = useContext(DetailContext)
   useEffect(() => {
     if (instanceId) {
       queryPerformanceTrends({
@@ -31,11 +31,11 @@ export default function DashboardsInfo(props: any) {
         start: startTimestamp,
         end: endTimestamp,
       });
-      // getInnodbMonitor({
-      //   instanceId: instanceId,
-      //   start: startTimestamp,
-      //   end: endTimestamp,
-      // })
+      getInnodbMonitor({
+        instanceId: instanceId,
+        start: startTimestamp,
+        end: endTimestamp,
+      })
     }
   }, [instanceId, startTimestamp]);
 
@@ -50,58 +50,70 @@ export default function DashboardsInfo(props: any) {
   };
   const appConfig = [
     {
-      title: 'MySQL cpu/内存利用率',
-      config: getCpuOption(lineData?.cpuMem),
+      title: 'MySQL CPU使用率',
+      config: getCpuOption(lineData?.cpuUsage),
     },
     {
-      title: 'MySQL存储空间使用量',
-      config: getMemoryOption(lineData?.memLimit),
+      title: 'MySQL 内存使用率',
+      config: getMemoryOption(lineData?.memUsage),
     },
     {
-      title: 'TPS/QPS',
-      config: getTpsOption(lineData?.tpsQps),
-
-    },
-    {
-      title: '会话连接',
-      config: getSessionOption(lineData?.connection),
+      title: 'MySQL 磁盘使用率',
+      config: getDiskOption(lineData?.diskUsage),
     },
     {
       title: '流量吞吐（KB）',
       config: getTrafficOption(lineData?.transmit),
     },
-    {
-      title: '执行次数',
-      config: getExecutionOption(lineData?.rowsOpsData),
-    },
+  
   ];
 
-  const engineConfig=[
+  const engineConfig = [
+    {
+      title: 'TPS',
+      config: getTpsOption(engineData?.tps),
+
+    },
+    {
+      title: 'QPS',
+      config: getQpsOption(engineData?.qps),
+
+    },
+    {
+      title: 'MySQL Connections',
+      config: getConnections(engineData?.connections),
+    },
+    {
+      title: 'innodb row ops',
+      config: getRowsOpsOption(engineData?.rowsOps),
+    },
+    {
+      title: 'innodb 读数据',
+      config: getReadOption(engineData?.innodbDataRead),
+    },
+    {
+      title: 'innodb 写数据',
+      config: getWrittenOption(engineData?.innodbDataWritten),
+    },
     {
       title: 'buffer pool 脏页比例',
       config: getDirtyPctOption(engineData?.bufferPoolDirtyPct),
-   },
-   {
-    title: 'buffer pool 命中率',
-    config: getHitOption(engineData?.bufferPoolHit),
- },
- {
-  title: 'buffer pool 利用率',
-  config: getUsageOption(engineData?.bufferPoolUsagePct),
-},
-{
-  title: 'innodb 写数据',
-  config: getWrittenOption(engineData?.innodbDataWritten),
-},
-{
-  title: 'innodb 读数据',
-  config: getReadOption(engineData?.innodbDataRead),
-},
-{
-  title: 'innodb row ops',
-  config: getRowsOpsOption(engineData?.rowsOps),
-},
-]
+    },
+    {
+      title: 'buffer pool 命中率',
+      config: getHitOption(engineData?.bufferPoolHit),
+    },
+   
+   
+   
+   
+   
+  ]
+  const enginOnlyConfig=[ {
+    title: 'buffer pool 利用率',
+    config: getUsageOption(engineData?.bufferPoolUsagePct),
+  },]
+  
 
   return (
     <ContentCard className="database-line-wrapper">
@@ -138,12 +150,13 @@ export default function DashboardsInfo(props: any) {
                 />
               ))}
             </VCCardLayout>
+            
           </Spin>
 
-        
+
         </TabPane>
         <TabPane tab="引擎监控" key="engine">
-          {/* <Spin spinning={engineLoading}>
+          <Spin spinning={engineLoading}>
             <VCCardLayout grid={infoLayoutGrid} className="database-line-content">
               {engineConfig.map((el, index) => (
                 <LineCard
@@ -152,8 +165,16 @@ export default function DashboardsInfo(props: any) {
                 />
               ))}
             </VCCardLayout>
+            <VCCardLayout grid={lonelyLayoutGrid} className="database-line-content">
+              {enginOnlyConfig.map((el, index) => (
+                <LineCard
+                  key={index}
+                  {...el}
+                />
+              ))}
+            </VCCardLayout>
 
-          </Spin> */}
+          </Spin>
         </TabPane>
       </Tabs>
 
