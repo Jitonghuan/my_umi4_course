@@ -238,16 +238,19 @@ export default function PublishRecord(props: IProps) {
                     依赖
                   </a>
                 )}
-                {/*{item.deployStatus === 'finish' &&*/}
-                {/*appConfig.IS_Matrix === 'public' &&*/}
-                {/*appType === 'frontend' &&*/}
-                {/*item.envTypeCode === 'test' &&*/}
-                {/*appCategoryCode === 'hbos' && (*/}
-                {/*  <a style={{ marginLeft: '10px' }} target="_blank"*/}
-                {/*     href={`http://venus.cfuture.shop/application-detail?appCode=${appCode}&tab=5`}>*/}
-                {/*    Eslint分析*/}
-                {/*  </a>*/}
-                {/*)}*/}
+                {item.deployStatus === 'finish' &&
+                  appConfig.IS_Matrix === 'public' &&
+                  appType === 'frontend' &&
+                  item.envTypeCode === 'test' &&
+                  appCategoryCode === 'hbos' && (
+                    <a
+                      style={{ marginLeft: '10px' }}
+                      target="_blank"
+                      href={`http://venus.cfuture.shop/application-detail?appCode=${appCode}&tab=5`}
+                    >
+                      Eslint分析
+                    </a>
+                  )}
               </List.Item>
             )}
           />
@@ -292,14 +295,14 @@ export default function PublishRecord(props: IProps) {
               >
                 详情查看
               </a>
-              {/*<a*/}
-              {/*  target="_blank"*/}
-              {/*  download*/}
-              {/*  style={{marginLeft: '20px'}}*/}
-              {/*  href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${curEnvCode}/${deploymentName}/${curVersion}/yarn.lock`}*/}
-              {/*>*/}
-              {/*  lock依赖下载*/}
-              {/*</a>*/}
+              <a
+                target="_blank"
+                download
+                style={{ marginLeft: '20px' }}
+                href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${curEnvCode}/${deploymentName}/${curVersion}/yarn.lock`}
+              >
+                lock依赖下载
+              </a>
             </Tabs.TabPane>
           </Tabs>
         </Modal>
