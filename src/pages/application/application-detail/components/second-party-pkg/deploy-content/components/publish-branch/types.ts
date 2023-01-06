@@ -17,4 +17,5 @@ export interface IProps {
   /** 提交分支事件 */
   onSubmitBranch: (status: 'start' | 'end') => void;
   pipelineCode: string;
+  newPublish:any 
 }

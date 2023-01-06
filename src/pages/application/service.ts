@@ -503,7 +503,7 @@ export const queryFeatureDeployed = async (params: {
   pipelineCode?: string;
   masterBranch?: string;
   isNpm?: boolean;
-  needRelationInfo: number
+  needRelationInfo?: number
 }) => {
   return getRequest(queryFeatureDeployedUrl, {
     data: params,
@@ -527,7 +527,7 @@ export const createDeploy = (params: {
   // isClient: boolean;
   masterBranch?: string;
   buildType?: string;
-  deployModel: string;
+  deployModel?: string;
 }) =>
   postRequest(createDeployUrl, {
     data: params,

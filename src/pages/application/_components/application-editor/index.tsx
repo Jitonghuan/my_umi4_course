@@ -436,6 +436,12 @@ export default function ApplicationEditor(props: IProps) {
                 >
                   <Radio.Group options={appFeProjectTypeOptions} />
                 </FormItem>
+                <FormItem label="是否为二方包" name="isClient" initialValue={0}>
+                    <Radio.Group options={isClientOptions} />
+                </FormItem>
+                <FormItem label="是否包含二方包" name="isContainClient" initialValue={0}>
+                    <Radio.Group options={isClientOptions} />
+                </FormItem>
                 <FormItem noStyle shouldUpdate={shouldUpdate(['projectType', 'microFeType'])}>
                   {({ getFieldValue }) =>
                     getFieldValue('projectType') === 'micro' ? (
@@ -562,6 +568,7 @@ export default function ApplicationEditor(props: IProps) {
               </>
             )
           }
+         
         </FormItem>
       </Form>
     </Drawer>

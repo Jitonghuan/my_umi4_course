@@ -11,7 +11,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import HulkTable from '@cffe/vc-hulk-table';
 import { createTableSchema } from './schema';
 import DetailContext from '@/pages/application/application-detail/context';
-import { createDeploy, updateFeatures, queryEnvsReq } from '@/pages/application/service';
+import { createDeploy, updateFeatures, queryEnvsReq,newUpdateFetures,newCreateDeploy } from '@/pages/application/service';
 import { IProps } from './types';
 import { useMasterBranchList } from '@/pages/application/application-detail/components/branch-manage/hook';
 import './index.less';
@@ -20,7 +20,7 @@ const rootCls = 'publish-branch-compo';
 const { confirm } = Modal;
 
 export default function PublishBranch(props: IProps) {
-  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, pipelineCode, onSearch, masterBranchChange } =
+  const { hasPublishContent, deployInfo, dataSource, onSubmitBranch, env, pipelineCode, onSearch, masterBranchChange,newPublish } =
     props;
   const { metadata, branchInfo } = deployInfo || {};
   const { appData } = useContext(DetailContext);
@@ -51,9 +51,10 @@ export default function PublishBranch(props: IProps) {
 
   const submit = () => {
     const filter = dataSource.filter((el) => selectedRowKeys.includes(el.id)).map((el) => el.branchName);
+    const updateFeature = newPublish ? newUpdateFetures : updateFeatures;
     // 如果有发布内容，接口调用为 更新接口，否则为 创建接口
     if (hasPublishContent) {
-      return updateFeatures({
+      return updateFeature({
         id: metadata.id,
         features: filter,
       }).then((res: any) => {
@@ -63,15 +64,15 @@ export default function PublishBranch(props: IProps) {
         }
       });
     }
-
-    return createDeploy({
+    const create = newPublish ? newCreateDeploy : createDeploy;
+    return create({
       appCode: appCode!,
       envTypeCode: env,
       features: filter,
       envCodes: deployEnv,
       // isClient: true,
       pipelineCode,
-      buildType: 'beClientBuild',
+      buildType: appData?.appType==="backend"?'beClientBuild':"feClientBuild",
       masterBranch: selectMaster, //主干分支
       deployModel: appData?.deployModel,
     }).then((res: any) => {
@@ -121,7 +122,7 @@ export default function PublishBranch(props: IProps) {
   return (
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>待发布的分支</div>
-      <div className="second-table-caption">
+      <div className="table-caption">
         <div className="caption-left">
           {/* <span className={`${rootCls}__list-header-text`}>分支列表</span> */}
           <span>主干分支：</span>
@@ -147,7 +148,9 @@ export default function PublishBranch(props: IProps) {
             onSearch={() => onSearch?.(searchText)}
           />
 
-          <div className="caption-right">
+         
+        </div>
+        <div className="caption-right">
             {appData?.deployModel === 'online' && (
               <Button
                 type="primary"
@@ -159,9 +162,9 @@ export default function PublishBranch(props: IProps) {
               </Button>
             )}
           </div>
-        </div>
-
-        <HulkTable
+      
+      </div>
+      <HulkTable
           rowKey="id"
           className={`${rootCls}__list-table`}
           dataSource={dataSource}
@@ -177,8 +180,6 @@ export default function PublishBranch(props: IProps) {
           }}
           columns={createTableSchema() as any}
         />
-      </div>
-
       <Modal
         title="选择发布环境"
         visible={deployVisible}
