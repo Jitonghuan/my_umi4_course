@@ -29,7 +29,6 @@ export default function ModifyConfig(props: Iprops) {
 
     useEffect(() => {
         const res = modalData.concat(configData)
-        console.log(res, 'res')
         setFinalData(res);
     }, [modalData, configData])
 
@@ -90,11 +89,13 @@ export default function ModifyConfig(props: Iprops) {
         if (configSqlData?.length) {
             let data: any = [];
             configSqlData.map((item: any) => {
-                data.push({
-                    label: item.releaseNumber,
-                    value: item.config,
-                    appCode: item?.appCode
-                })
+                if (item?.config) {
+                    data.push({
+                        label: item.releaseNumber,
+                        value: item.config,
+                        appCode: item?.appCode
+                    })
+                }
             })
             setConfigData(data)
         } else {

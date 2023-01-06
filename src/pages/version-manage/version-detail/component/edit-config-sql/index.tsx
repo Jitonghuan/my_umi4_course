@@ -13,7 +13,6 @@ export default function EditModal(props: any) {
             form.resetFields();
             if (type === 'config') {
                 form.setFieldsValue({ config: initData.value })
-                console.log(initData.value, 'hhah')
             }
             if (type === 'sql') {
                 form.setFieldsValue({ sql: initData.value })
@@ -24,7 +23,6 @@ export default function EditModal(props: any) {
     const handleSubmit = async () => {
         const value = await form.validateFields();
         setLoading(true)
-        console.log(initData?.label, 'label')
         editData({ ...value, appCode: initData?.appCode, releaseId }).then((res) => {
             if (res?.success) {
                 message.success('编辑成功！');

@@ -98,11 +98,13 @@ export default function ModifySql(props: Iprops) {
         if (configSqlData?.length) {
             let data: any = [];
             configSqlData.map((item: any) => {
-                data.push({
-                    label: item.releaseNumber,
-                    value: item.sql,
-                    appCode: item?.appCode
-                })
+                if (item?.sql) {
+                    data.push({
+                        label: item.releaseNumber,
+                        value: item.sql,
+                        appCode: item?.appCode
+                    })
+                }
             })
             setSqlData(data)
         } else {
