@@ -50,6 +50,7 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
     if (!appCode || !pipelineCode) return;
 
     setUpdating(true);
+    // debugger
     let queryDeployInfo = newPublish.current ? getNewDeployInfo : queryActiveDeployInfo;
     const resp = await queryDeployInfo({ pipelineCode: pipelineCode });
     const resp2 = await queryFeatureDeployed({
@@ -99,10 +100,9 @@ export default function DeployContent({ env, onDeployNextEnvSuccess, pipelineCod
 
   // appCode变化时
   useEffect(() => {
-    if (!appCode || !pipelineCode) return;
-
+    if (!appCode || !pipelineCode|| newPublish.current === undefined) return;
     timerHandle('do', true);
-  }, [appCode, pipelineCode]);
+  }, [appCode, pipelineCode,newPublish.current]);
 
   const searchUndeployedBranch = (branchName?: string) => {
     cachebranchName.current = branchName;
