@@ -5,6 +5,9 @@ import { datetimeCellRender } from '@/utils';
 
 
 export const createDiffTableColumns = (params: {
+    // createError:any,
+    // modifyError:any,
+    onViewError:(record: any, index: number) => void;
     onDetail: (record: any, index: number) => void;
   }) => {
     return [
@@ -29,11 +32,13 @@ export const createDiffTableColumns = (params: {
         key: 'option',
         fixed: 'right',
         align: 'center',
-        width: 90,
+        width: 120,
         render: (_: string, record, index: number) => (
           //根据不同类型跳转
           <Space>
             <a onClick={() => params.onDetail(record, index)}>查看</a>
+            {record?.errorMessage&& <a style={{color:"red"}} onClick={() => params.onViewError(record, index)}>错误信息</a>}
+           
           </Space>
         ),
       },
