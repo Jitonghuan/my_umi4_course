@@ -24,7 +24,7 @@ export default function AddConfigSql(props: any) {
         const value = await form.validateFields();
         value.category = undefined;
         setLoading(true)
-        addConfig({ ...value, releaseId }).then((res) => {
+        addConfig({ ...value, releaseId: Number(releaseId) }).then((res) => {
             if (res?.success) {
                 message.success('新增成功！');
                 onClose();

@@ -23,7 +23,7 @@ export default function EditModal(props: any) {
     const handleSubmit = async () => {
         const value = await form.validateFields();
         setLoading(true)
-        editData({ ...value, appCode: initData?.appCode, releaseId }).then((res) => {
+        editData({ ...value, appCode: initData?.appCode, releaseId: Number(releaseId) }).then((res) => {
             if (res?.success) {
                 message.success('编辑成功！');
                 onClose();
