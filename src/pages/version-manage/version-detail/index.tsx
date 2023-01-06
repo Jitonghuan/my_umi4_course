@@ -11,13 +11,14 @@ import ContentList from './component/content-list';
 import ModifyConfig from './component/modify-config';
 import ModifySql from './component/modify-sql'
 import detailContext from './context';
-import { releaseAppRel } from '../service';
+import { releaseAppRel, getDataList } from '../service';
 import { useReleaseOption } from '../hook';
 import { getReleaseList } from '../service';
 import OperateModal from '../version-list/operate-modal';
 import { RedoOutlined } from '@ant-design/icons';
 import { statusMap } from '../type';
 import moment from 'moment';
+import AddConfigSql from './component/add-config-sql';
 import './index.less';
 
 const { TabPane } = Tabs;
@@ -61,7 +62,9 @@ export default function VersionDetail() {
     const [tableLoading, setTableLoading] = useState<boolean>(false);
     const [count, setCount] = useState<number>(0)
     const [originData, setOriginData] = useState<any>([]);
-    const [dataSource, setDataSource] = useState<any>([])
+    const [dataSource, setDataSource] = useState<any>([]);
+    const [addVisible, setAddVisible] = useState<boolean>(false);
+    const [configSqlData, setConfigSqlData] = useState<any>([]);
     const TabList = [
         { label: '内容列表', key: 'list', component: ContentList },
         { label: '变更应用', key: 'app', component: ModifyApp },
@@ -115,7 +118,8 @@ export default function VersionDetail() {
             queryData(selectVersion?.label, appCategory?.value)
         }
         if (selectVersion?.value) {
-            getDataSource(selectVersion?.value)
+            getDataSource(selectVersion?.value);
+            getData(selectVersion?.value);
         }
 
     }, [appCategory?.value, selectVersion?.label, selectVersion?.value])
@@ -132,7 +136,10 @@ export default function VersionDetail() {
     const keyChange = (key: string) => {
         setActiveTab(key);
         if (['app', 'config', 'sql'].includes(key)) {
-            getDataSource()
+            getDataSource();
+            if (['config', 'sql'].includes(key)) {
+                getData();
+            }
         }
         history.push({
             pathname: '/matrix/version-manage/detail',
@@ -181,6 +188,33 @@ export default function VersionDetail() {
         })
     }
 
+    // 配置/sql（数据来源有两个接口） 第二个接口
+    const getData = (releaseId = selectVersion.value) => {
+        getDataList({ releaseId }).then((res) => {
+            if (res?.success) {
+                let dataArray = [];
+                dataArray = Object.keys(res?.data || {}).map((e: any) => ({
+                    ...res?.data[e]
+                }))
+                setConfigSqlData(dataArray)
+                // setOriginData(data)
+
+            } else {
+                setConfigSqlData([])
+                // setOriginData([])
+            }
+        })
+    }
+
+    const refresh = () => {
+        queryData();
+        getDataSource();
+        setCount(count => count + 1)
+        if (['config', 'sql'].includes(activeTab)) {
+            getData();
+        }
+    }
+
 
     return (
         <PageContainer className='version-detail-page'>
@@ -191,6 +225,14 @@ export default function VersionDetail() {
                     onClose={() => { setVisible(false) }}
                     initData={initData}
                     appCategory={appCategory}
+                />
+                <AddConfigSql
+                    visible={addVisible}
+                    onClose={() => { setAddVisible(false) }}
+                    categoryData={categoryData || []}
+                    initCategory={appCategory}
+                    releaseId={selectVersion?.value || ''}
+                    onSave={() => { refresh() }}
                 />
                 <div className="page-top-search">
                     <Space>
@@ -234,18 +276,18 @@ export default function VersionDetail() {
                 {!selectVersion?.value ? <Empty description={"该应用下无版本号，暂无数据"} /> : <div>
                     <Spin spinning={loading}>
                         <Descriptions title="概述" bordered column={4} extra={
-                            <Button
-                                type="primary"
-                                icon={<RedoOutlined />}
-                                onClick={() => {
-                                    queryData();
-                                    getDataSource()
-                                    setCount(count => count + 1)
-                                }}
-                                size="small"
-                            >
-                                刷新
+                            <Space>
+                                <Button
+                                    // type="primary"
+                                    icon={<RedoOutlined />}
+                                    onClick={() => {
+                                        refresh();
+                                    }}
+                                    size="small"
+                                >
+                                    刷新
                   </Button>
+                            </Space>
                         }>
                             <Descriptions.Item label="版本号">{data?.releaseNumber || '--'}</Descriptions.Item>
                             <Descriptions.Item label="应用分类">{data?.categoryCode || '--'}</Descriptions.Item>
@@ -263,6 +305,9 @@ export default function VersionDetail() {
                         <Tabs
                             activeKey={activeTab}
                             onChange={keyChange}
+                            tabBarExtraContent={
+                                ['waitPack', 'developing'].includes(data?.status) && !loading ? <Button type='primary' size='small' onClick={() => { setAddVisible(true) }}>新增配置/sql</Button> : null
+                            }
                         >
                             {TabList.map((item: any) => (
                                 <TabPane tab={item.label} key={item.key} />
@@ -279,7 +324,11 @@ export default function VersionDetail() {
                                 dataSource={dataSource}
                                 setDataSource={setDataSource}
                                 originData={originData}
-                                onReload={queryData} />
+                                onReload={queryData}
+                                configSqlData={configSqlData}
+                                onSave={refresh}
+                                releaseId={selectVersion?.value || ''}
+                            />
                         </detailContext.Provider>
                     </div>
 

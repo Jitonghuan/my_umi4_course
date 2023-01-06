@@ -1,38 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { Space, Tooltip, Spin, Tag, Input } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Space, Tooltip, Spin, Tag, Input, Button } from 'antd';
+import { QuestionCircleOutlined, EditOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
+import EditModal from '../edit-config-sql';
 import { debounce } from 'lodash';
 interface Iprops {
     dataSource: any;
     originData: any;
     infoLoading: boolean
-    setDataSource: any
+    setDataSource: any;
+    configSqlData?: any;
+    onSave?: any;
+    releaseId?: any
 }
 
 
 export default function ModifyConfig(props: Iprops) {
-    const { dataSource, originData, infoLoading, setDataSource } = props;
+    const { dataSource, originData, infoLoading, setDataSource, configSqlData = [], onSave, releaseId } = props;
     const [pageTotal, setPageTotal] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(2);
-    const [total, setTotal] = useState<number>(0)
+    // const [total, setTotal] = useState<number>(0)
     const [modalData, setModalData] = useState<any>([]);
-    const filter = debounce((value) => filterData(value), 800)
+    const filter = debounce((value) => filterData(value), 800);
+    const [configData, setConfigData] = useState<any>([]);
+    const [finalData, setFinalData] = useState<any>([]);
+    const [type, setType] = useState<any>('');
+    const [initData, setInitData] = useState<any>({});
+
+    useEffect(() => {
+        const res = modalData.concat(configData)
+        console.log(res, 'res')
+        setFinalData(res);
+    }, [modalData, configData])
+
+    const total = useMemo(() => finalData.length, [finalData])
 
     const filterData = (value: string) => {
+        const res = modalData.concat(configData)
         if (!value) {
-            setDataSource(originData);
+            setFinalData(res);
             return;
         }
         try {
-            const data = JSON.parse(JSON.stringify(originData));
+            const data = JSON.parse(JSON.stringify(finalData));
             const afterFilter: any = [];
             data?.forEach((item: any) => {
-                if (item.appCode?.indexOf(value) !== -1 || item?.configVersionSum?.includes(value)) {
+                if (item.appCode?.indexOf(value) !== -1) {
                     afterFilter.push(item);
                 }
             });
-            setDataSource(afterFilter);
+            setFinalData(afterFilter);
         } catch (error) {
 
         }
@@ -59,26 +76,42 @@ export default function ModifyConfig(props: Iprops) {
                     }
                 }
             })
-            setTotal(sum)
+            // setTotal(sum)
             setPageTotal(sum)
             setModalData(data)
         } else {
-            setTotal(0)
+            // setTotal(0)
             setModalData([])
             setPageTotal(0)
         }
     }, [JSON.stringify(dataSource)])
-    //触发分页
-    const pageSizeClick = (page: number, pageSize: number) => {
-        let obj = {
-            pageIndex: page,
-            pageSize: pageSize,
-        };
-        setPageSize(pageSize);
-    };
+
+    useEffect(() => {
+        if (configSqlData?.length) {
+            let data: any = [];
+            configSqlData.map((item: any) => {
+                data.push({
+                    label: item.releaseNumber,
+                    value: item.config,
+                    appCode: item?.appCode
+                })
+            })
+            setConfigData(data)
+        } else {
+            setConfigData([])
+        }
+    }, [configSqlData])
+
 
     return (
         <>
+            <EditModal
+                type={type}
+                onClose={() => { setType('') }}
+                initData={initData}
+                onSave={onSave}
+                releaseId={releaseId}
+            />
             <div className='content-top'>
                 <div className='flex-space-between'>
                     <Space>
@@ -91,7 +124,7 @@ export default function ModifyConfig(props: Iprops) {
                         搜索：
                         <Input
                             style={{ width: 220 }}
-                            placeholder='输入内容进行查询过滤'
+                            placeholder='输入应用code进行查询'
                             className="ant-input ant-input-sm"
                             onChange={(e: any) => {
                                 filter(e.target.value)
@@ -103,19 +136,22 @@ export default function ModifyConfig(props: Iprops) {
             </div>
             <div className="sql-content">
                 <Spin spinning={infoLoading}>
-                    {modalData?.map((item: any) => {
+                    {finalData?.map((item: any) => {
                         return (
                             <div style={{ marginTop: 10 }}>
-                                <p className="version-title-content">
+                                <p className="version-title-content flex-space-between">
                                     <Space size="large">
 
                                         <span><label>版本号：</label><Tag color="cyan">{item?.label}</Tag></span>
                                         <span> <label>应用CODE：</label><Tag color="green">{item?.appCode}</Tag></span>
 
                                     </Space>
+                                    <Space>
+                                        <EditOutlined onClick={() => { setInitData(item); setType('config'); }} style={{ color: '#3591ff' }} />
+                                    </Space>
                                 </p>
                                 <div>
-                                    <AceEditor mode="yaml" defaultValue={item?.value} height={200} readOnly />
+                                    <AceEditor mode="yaml" value={item?.value} height={200} readOnly />
 
                                 </div>
                             </div>
