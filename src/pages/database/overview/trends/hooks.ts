@@ -18,43 +18,19 @@ export function useQueryPerformanceTrends() {
       .then((res) => {
         if (res?.success) {
           let dataSource = res?.data;
-          // let dataSource=data;
-          //会话链接
-          let connectionsDataArry: any = [];
-          //CPU内存利用率
-          let cpuLimitDataArry: any = [];
-          let cpuUseDataArry: any = [];
-          //磁盘读取
-          let pvcUsagDataArry: any = [];
-          let diskWritesDataArry: any = [];
-          //memLimitInfo
-          let memLimitInfoDataArry: any = [];
-          let qpsDataArry: any = [];
-          let receiveDataArry: any = [];
-          let rowsOpsDataArry: any = [];
-          let rssInfoDataArry: any = [];
-          let tpsDataArry: any = [];
-          let transmitDataArry: any = [];
-          let wssInfoDataArry: any = [];
-          if (dataSource?.connections && dataSource?.connections?.length > 0) {
-            dataSource?.connections?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                connectionsDataArry.push({
-                  category: key,
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
-                });
-              });
-            });
-          }
+          let cpuUseData: any = [];
+          let diskUsageData: any = [];
+          let memUsageData: any = [];
+          let receiveData: any = [];
+          let transmitData: any = [];
+         
 
           /* ------------------------------ */
-          if (dataSource?.cpuLimit && dataSource?.cpuLimit?.length > 0) {
-            dataSource?.cpuLimit?.map((item: any, index: number) => {
+          if (dataSource?.cpuUsage && dataSource?.cpuUsage?.length > 0) {
+            dataSource?.cpuUsage?.map((item: any, index: number) => {
               const key = Object.keys(item)[0];
               item[key]?.map((ele: any) => {
-                cpuLimitDataArry.push({
+                cpuUseData.push({
                   category: key,
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                   count: Number(Number(ele[1]).toFixed(1)),
@@ -62,39 +38,15 @@ export function useQueryPerformanceTrends() {
               });
             });
           }
-          /* ------------------------------ */
-          if (dataSource?.cpuUse && dataSource?.cpuUse?.length > 0) {
-            dataSource?.cpuUse?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                cpuUseDataArry.push({
-                  category: key + '_cpu_use',
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
-                });
-              });
-            });
-          }
-          /* ------------------------------ */
-          if (dataSource?.pvcUsage && dataSource?.pvcUsage?.length > 0) {
-            dataSource?.pvcUsage?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                pvcUsagDataArry.push({
-                  category: key,
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
-                });
-              });
-            });
-          }
+        
+       
 
           /* ------------------------------ */
-          if (dataSource?.memLimitInfo && dataSource?.memLimitInfo?.length > 0) {
-            dataSource?.memLimitInfo?.map((item: any, index: number) => {
+          if (dataSource?.diskUsage && dataSource?.diskUsage?.length > 0) {
+            dataSource?.diskUsage?.map((item: any, index: number) => {
               const key = Object.keys(item)[0];
               item[key]?.map((ele: any) => {
-                memLimitInfoDataArry.push({
+                diskUsageData.push({
                   category: key,
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                   count: Number(Number(ele[1]).toFixed(1)),
@@ -102,111 +54,57 @@ export function useQueryPerformanceTrends() {
               });
             });
           }
-          /* ------------------------------ */
-          if (dataSource?.qps && dataSource?.qps?.length > 0) {
-            dataSource?.qps?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                qpsDataArry.push({
-                  category: key + '_qps',
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
-                });
-              });
-            });
-          }
+         
           /* ------------------------------ */
           if (dataSource?.receive && dataSource?.receive?.length > 0) {
             dataSource?.receive?.map((item: any, index: number) => {
               const key = Object.keys(item)[0];
               item[key]?.map((ele: any) => {
-                receiveDataArry.push({
-                  category: key + '_receive',
+                receiveData.push({
+                  category: key+"_receive",
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                   count: Number(Number(ele[1]).toFixed(1)),
                 });
               });
             });
           }
-          /* ------------------------------ */
-          if (dataSource?.rowsOps && dataSource?.rowsOps?.length > 0) {
-            dataSource?.rowsOps?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                rowsOpsDataArry.push({
-                  category: key,
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
+        
+            /* ------------------------------ */
+            if (dataSource?.memUsage && dataSource?.memUsage?.length > 0) {
+              dataSource?.memUsage?.map((item: any, index: number) => {
+                const key = Object.keys(item)[0];
+                item[key]?.map((ele: any) => {
+                  memUsageData.push({
+                    category: key ,
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
+                    count: Number(Number(ele[1]).toFixed(1)),
+                  });
                 });
               });
-            });
-          }
-          /* ------------------------------ */
-          if (dataSource?.rssInfo && dataSource?.rssInfo?.length > 0) {
-            dataSource?.rssInfo?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                rssInfoDataArry.push({
-                  category: key + '_rss',
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
-                });
-              });
-            });
-          }
-          /* ------------------------------ */
-          if (dataSource?.tps && dataSource?.tps?.length > 0) {
-            dataSource?.tps?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                tpsDataArry.push({
-                  category: key + '_tps',
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
-                });
-              });
-            });
-          }
+            }
+          
+        
           /* ------------------------------ */
           if (dataSource?.transmit && dataSource?.transmit?.length > 0) {
             dataSource?.transmit?.map((item: any, index: number) => {
               const key = Object.keys(item)[0];
               item[key]?.map((ele: any) => {
-                transmitDataArry.push({
-                  category: key + '_transmit',
+                transmitData.push({
+                  category: key+"_transmit",
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
                   count: Number(Number(ele[1]).toFixed(1)),
                 });
               });
             });
           }
-          /* ------------------------------ */
-          if (dataSource?.wssInfo && dataSource?.wssInfo?.length > 0) {
-            dataSource?.wssInfo?.map((item: any, index: number) => {
-              const key = Object.keys(item)[0];
-              item[key]?.map((ele: any) => {
-                wssInfoDataArry.push({
-                  category: key,
-                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
-                });
-              });
-            });
-          }
+        
 
           setDataSource({
             //cpu内存利用率
-            cpuMem: cpuUseDataArry.concat(rssInfoDataArry),
-            //存储空间
-            memLimit: pvcUsagDataArry,
-            //TPS/QPS
-            tpsQps: tpsDataArry.concat(qpsDataArry),
-            //会话链接
-            connection: connectionsDataArry,
-            //流量吞吐
-            transmit: receiveDataArry.concat(transmitDataArry),
-            //执行次数
-            rowsOpsData: rowsOpsDataArry,
+            cpuUsage: cpuUseData,
+            diskUsage: diskUsageData,     
+            memUsage: memUsageData,     
+            transmit:transmitData.concat(receiveData)
           });
         }
       })
@@ -245,8 +143,49 @@ export function useQueryInnodbMonitor() {
           let innodbDataWrittenData:any=[]
           let innodbDataReadData:any=[];
           let rowsOpsDataArry:any=[]
+          let tpsDataArry: any = [];
+          let connectionsData:any=[]
 
-         
+          let qpsDataArry: any = [];
+             /* ------------------------------ */
+             if (dataSource?.qps && dataSource?.qps?.length > 0) {
+              dataSource?.qps?.map((item: any, index: number) => {
+                const key = Object.keys(item)[0];
+                item[key]?.map((ele: any) => {
+                  qpsDataArry.push({
+                    category: key ,
+                    time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
+                    count: Number(Number(ele[1]).toFixed(1)),
+                  });
+                });
+              });
+            }
+              /* ------------------------------ */
+              if (dataSource?.connections && dataSource?.connections?.length > 0) {
+                dataSource?.connections?.map((item: any, index: number) => {
+                  const key = Object.keys(item)[0];
+                  item[key]?.map((ele: any) => {
+                    connectionsData.push({
+                      category: key ,
+                      time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
+                      count: Number(Number(ele[1]).toFixed(1)),
+                    });
+                  });
+                });
+              }
+          /* ------------------------------ */
+          if (dataSource?.tps && dataSource?.tps?.length > 0) {
+            dataSource?.tps?.map((item: any, index: number) => {
+              const key = Object.keys(item)[0];
+              item[key]?.map((ele: any) => {
+                tpsDataArry.push({
+                  category: key ,
+                  time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
+                  count: Number(Number(ele[1]).toFixed(1)),
+                });
+              });
+            });
+          }
 
           if (dataSource?.bufferPoolDirtyPct && dataSource?.bufferPoolDirtyPct?.length > 0) {
             dataSource?.bufferPoolDirtyPct?.map((item: any, index: number) => {
@@ -342,6 +281,9 @@ export function useQueryInnodbMonitor() {
             innodbDataRead:innodbDataReadData,
             //Innodb  row ops
             rowsOps: rowsOpsDataArry,
+            qps:qpsDataArry,
+            tps:tpsDataArry,
+            connections:connectionsData
           });
         }
       })

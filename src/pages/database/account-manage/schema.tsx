@@ -179,151 +179,151 @@ export const privTypeOptions = [
 
 export const schemaDataTreeOption = [
   {
-    key: 'select',
+    key: 'SELECT',
     title: 'SELECT',
   },
   {
-    key: 'insert',
+    key: 'INSERT',
     title: 'INSERT',
   },
   {
-    key: 'update',
+    key: 'UPDATE',
     title: 'UPDATE',
   },
   {
-    key: 'delete',
+    key: 'DELETE',
     title: 'DELETE',
   },
 ];
 export const globalDataTreeOption = [
   {
-    key: 'select',
+    key: 'SELECT',
     title: 'SELECT',
   },
   {
-    key: 'insert',
+    key: 'INSERT',
     title: 'INSERT',
   },
   {
-    key: 'update',
+    key: 'UPDATE',
     title: 'UPDATE',
   },
   {
-    key: 'delete',
+    key: 'DELETE',
     title: 'DELETE',
   },
   {
-    key: 'file',
+    key: 'FILE',
     title: 'FILE',
   },
 ];
 export const schemaStructOption = [
   {
-    key: 'create',
+    key: 'CREATE',
     title: 'CREATE',
   },
   {
-    key: 'alter',
+    key: 'ALTER',
     title: 'ALTER',
   },
   {
-    key: 'index',
+    key: 'INDEX',
     title: 'INDEX',
   },
   {
-    key: 'drop',
+    key: 'DROP',
     title: 'DROP',
   },
   {
-    key: 'create temporary tables',
+    key: 'CREATE TEMPORARY TABLES',
     title: 'CREATE TEMPORARY TABLES',
   },
   {
-    key: 'show view',
+    key: 'SHOW VIEW',
     title: 'SHOW VIEW',
   },
   {
-    key: 'create routime',
+    key: 'CREATE ROUTINE',
     title: 'CREATE ROUTINE',
   },
   {
-    key: 'alter routine',
+    key: 'ALTER ROUTINE',
     title: 'ALTER ROUTINE',
   },
   {
-    key: 'execute',
+    key: 'EXECUTE',
     title: 'EXECUTE',
   },
   {
-    key: 'create view',
+    key: 'CREATE VIEW',
     title: 'CREATE VIEW',
   },
   {
-    key: 'envent',
+    key: 'ENVENT',
     title: 'ENVENT',
   },
   {
-    key: 'trigger',
+    key: 'TRIGGER',
     title: 'TRIGGER',
   },
 ];
 export const schemaManageOption = [
   {
-    key: 'grant option',
+    key: 'GRANT OPTION',
     title: 'GRANT OPTION',
   },
   {
-    key: 'lcok tables',
+    key: 'LOCK TABLES',
     title: 'LOCK TABLES',
   },
   {
-    key: 'references',
+    key: 'REFERENCES',
     title: 'REFERENCES',
   },
 ];
 export const globalManageOption = [
   {
-    key: 'grant option',
+    key: 'GRANT OPTION',
     title: 'GRANT OPTION',
   },
   {
-    key: 'super',
+    key: 'SUPER',
     title: 'SUPER',
   },
   {
-    key: 'process',
+    key: 'PROCESS',
     title: 'PROCESS',
   },
   {
-    key: 'reload',
+    key: 'RELOAD',
     title: 'RELOAD',
   },
   {
-    key: 'shutdown',
+    key: 'SHUTDOWN',
     title: 'SHUTDOWN',
   },
   {
-    key: 'show databases',
+    key: 'SHOW DATABASES',
     title: 'SHOW DATABASES',
   },
   {
-    key: 'lcok tables',
+    key: 'LOCK TABLES',
     title: 'LOCK TABLES',
   },
   {
-    key: 'references',
+    key: 'REFERENCES',
     title: 'REFERENCES',
   },
   {
-    key: 'replication client',
+    key: 'REPLICATION CLIENT',
     title: 'REPLICATION CLIENT',
   },
   {
-    key: 'replication slave',
+    key: 'REPLICATION SLAVE',
     title: 'REPLICATION SLAVE',
   },
   {
-    key: 'create user',
+    key: 'CREATE USER',
     title: 'CREATE USER',
   },
 ];
@@ -331,61 +331,61 @@ export const globalManageOption = [
 export const tableListOptions={
   0:[
     {
-      key: 'select',
+      key: 'SELECT',
       title: 'SELECT',
     },
     {
-      key: 'insert',
+      key: 'INSERT',
       title: 'INSERT',
     },
     {
-      key: 'update',
+      key: 'UPDATE',
       title: 'UPDATE',
     },
     {
-      key: 'delete',
+      key: 'DELETE',
       title: 'DELETE',
     },
 
   ],
   1:[
     {
-      key: 'create',
+      key: 'CREATE',
       title: 'CREATE',
     },
     {
-      key: 'alter',
+      key: 'ALTER',
       title: 'ALTER',
     },
     {
-      key: 'index',
+      key: 'INDEX',
       title: 'INDEX',
     },
     {
-      key: 'drop',
+      key: 'DROP',
       title: 'DROP',
     },
     {
-      key: 'show view',
+      key: 'SHOW VIEW',
       title: 'SHOW VIEW',
     },
     {
-      key: 'create view',
+      key: 'CREATE VIEW',
       title: 'CREATE VIEW',
     },
     {
-      key: 'trigger',
+      key: 'TRIGGER',
       title: 'TRIGGER',
     },
   ],
   2:[
     {
-      key: 'grant option',
+      key: 'GRANT OPTION',
       title: 'GRANT OPTION',
     },
   
     {
-      key: 'references',
+      key: 'REFERENCES',
       title: 'REFERENCES',
     },
 
@@ -394,22 +394,22 @@ export const tableListOptions={
 export const columnListOptions={
   0:[
     {
-      key: 'select',
+      key: 'SELECT',
       title: 'SELECT',
     },
     {
-      key: 'insert',
+      key: 'INSERT',
       title: 'INSERT',
     },
     {
-      key: 'update',
+      key: 'UPDATE',
       title: 'UPDATE',
     },
 
   ],
   1:[
     {
-      key: 'references',
+      key: 'REFERENCES',
       title: 'REFERENCES',
     },
   ],

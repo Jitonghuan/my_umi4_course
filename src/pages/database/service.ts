@@ -94,7 +94,7 @@ export const  getPreviewGrantSql =`${dbmsApiPrefix}${appConfig.apiPrefix}/accoun
 
 export const  getTableColumnList =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/getTableColumnList`;
 
-export const  previewGrantSql =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/previewGrantSql`;
+export const  previewGrantSql =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/preViewGrantSql`;
 
 export const  modifyPrivs =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/modifyPrivs`;
 
