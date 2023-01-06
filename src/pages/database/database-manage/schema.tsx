@@ -8,8 +8,39 @@
  */
 import { Space, Popconfirm, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
+export const readonlyColumns=()=>{
+  return [
+    {
+      title: '数据库名称',
+      dataIndex: 'name',
+      key: 'name',
+      width: '25%',
+    },
+    {
+      title: '字符集',
+      dataIndex: 'characterset',
+      key: 'characterset',
+      width: '25%',
+    },
+    // {
+    //   title: '授权账号',
+    //   dataIndex: 'owner',
+    //   key: 'owner',
+    //   width: '25%',
+    // },
+
+    {
+      title: '备注说明',
+      dataIndex: 'description',
+      key: 'description',
+      width: '25%',
+    },
+
+  ]
+}
 // 列表页-表格
-export const createTableColumns = (params: { onDelete: (record: any) => void; delLoading: boolean }) => {
+export const createTableColumns = (params: { 
+  onDelete: (record: any) => void; delLoading: boolean }) => {
   return [
     {
       title: '数据库名称',
@@ -23,12 +54,12 @@ export const createTableColumns = (params: { onDelete: (record: any) => void; de
       key: 'characterset',
       width: '20%',
     },
-    {
-      title: '授权账号',
-      dataIndex: 'owner',
-      key: 'owner',
-      width: '25%',
-    },
+    // {
+    //   title: '授权账号',
+    //   dataIndex: 'owner',
+    //   key: 'owner',
+    //   width: '25%',
+    // },
 
     {
       title: '备注说明',
@@ -42,6 +73,7 @@ export const createTableColumns = (params: { onDelete: (record: any) => void; de
       key: 'option',
       width: 100,
       render: (_: string, record, index: number) => (
+        
         //根据不同类型跳转
         <Space>
           <Popconfirm
@@ -49,9 +81,10 @@ export const createTableColumns = (params: { onDelete: (record: any) => void; de
             onConfirm={() => {
               params?.onDelete(record);
             }}
+            
           >
             <Spin spinning={params?.delLoading}>
-              <a style={{ color: 'rgb(255, 48, 3)' }}>删除</a>
+              <a >删除</a>
             </Spin>
           </Popconfirm>
         </Space>

@@ -1,13 +1,23 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { FilterCard } from '@/components/vc-page-content';
+import VCCardLayout from '@cffe/vc-b-card-layout';
 import { history } from 'umi';
-import { Card, Segmented, Table } from 'antd';
-import { tableSchema } from './schema';
+import { Card, Segmented, Table, Statistic, Spin, Progress } from 'antd';
+import { tableSchema, sqlTableSchema } from './schema';
 import { useQueryOverviewDashboards, useQueryOverviewInstances, getEnumerateData } from './hook';
 import PieOne from './dashboard/pie-one';
 import SchemaChart from './dashboard/chart-histogram';
+import './index.less'
+export const infoLayoutGrid = {
+  xs: 1,
+  sm: 1,
+  md: 2,
+  lg: 4,
+  xl: 4,
+  xxl: 4,
+  xxxl: 4,
+};
 export default function DatabaseOverView() {
   const [loading, infodata, getOverviewDashboards] = useQueryOverviewDashboards();
   const [tableLoading, tableData, getOverviewInstances] = useQueryOverviewInstances();
@@ -19,71 +29,101 @@ export default function DatabaseOverView() {
   useEffect(() => {
     getEnumerateData().then((result) => {
       if (result?.success) {
-        let databaseType = result?.data?.databaseType;
+        let databaseType = result?.data?.databaseType || [];
         let clusterDeployType = result?.data?.clusterDeployType;
         let databaseTypeArry: any = [];
         let clusterDeployTypeArry: any = [];
-        let options: any = [];
-
         databaseType?.map((item: any) => {
           databaseTypeArry.push(item?.label);
-          options.push({
-            label: item?.label,
-            value: item?.values,
-          });
         });
         clusterDeployType?.map((item: any) => {
           clusterDeployTypeArry.push(item?.label);
         });
-
-        setDatabaseType(options);
+        setDatabaseType(databaseType);
         setPieTypeData(databaseTypeArry);
         setColumnTypeData(clusterDeployTypeArry);
-        getOverviewInstances({ instanceType: options[0].value });
-        setActiveValue(options[0].value);
+        getOverviewInstances({ instanceType: databaseType[0]?.value });
+        setActiveValue(databaseType[0]?.value);
       }
     });
   }, []);
   useEffect(() => {
     getOverviewDashboards();
   }, []);
+  const sqlTableSchemaColumns = useMemo(() => {
+    return sqlTableSchema() as any;
 
+  }, [])
   // 表格列配置
   const tableColumns = useMemo(() => {
     return tableSchema({
       onPerformanceTrendsClick: (record, index) => {
         history.push({
           pathname: 'info',
-         }, {
-            instanceId: record?.id,
-            clusterId: record?.clusterId,
-            optType: 'overview-list-trend',
-        
+        }, {
+          instanceId: record?.id,
+          clusterId: record?.clusterId,
+          optType: 'overview-list-trend',
+
         });
       },
     }) as any;
   }, []);
   const upperGridStyle: React.CSSProperties = {
     width: '50%',
-    // textAlign: 'center',
-    height: 280,
+    height: 200,
+    margin: 12,
+  };
+  const lowSqlGridStyle: React.CSSProperties = {
+    width: '28%',
+    height: 370,
     margin: 12,
   };
 
   return (
-    <PageContainer>
-      <FilterCard>
+    <PageContainer className="database-overview">
+      <ContentCard>
         <div style={{ display: 'flex' }}>
-          <Card style={upperGridStyle}>
-            <PieOne dataSource={infodata} pieTypeData={pieTypeData} />
-          </Card>
+          <div style={{ width: '72%', }}>
+            <div style={{ width: '100%', display: 'flex' }}>
+              <Card style={upperGridStyle}>
+                <PieOne dataSource={infodata} pieTypeData={pieTypeData} />
+              </Card>
+              <Card style={upperGridStyle}>
+                <SchemaChart dataSource={infodata} columnTypeData={columnTypeData} />
+              </Card>
+            </div>
+            <Spin spinning={loading}>
+              <div className="statistic-content">
+                <VCCardLayout grid={infoLayoutGrid}>
+                  <Statistic title="备份开启/未开启" value={infodata?.sumBakEnable || 0} suffix={` / ${infodata?.sumBakDisable || 0}`} valueStyle={{ color: '#1E90FF', fontSize: 52, textAlign: 'center' }} />
+                  <Statistic title="繁忙实例" value={infodata?.sumFullInstance || 0} valueStyle={{ color: '#00FF00', fontSize: 52, textAlign: 'center' }} />
+                  <Statistic title="活跃限流任务" value={infodata?.sumRateLimit || 0} valueStyle={{ color: '#cf1322', fontSize: 52, textAlign: 'center' }} />
+                  <Statistic title="今日新增慢sql" value={`${infodata?.increaseSlowLog || 0}`} valueStyle={{ color: '#DAA520', fontSize: 52, textAlign: 'center' }} />
+                </VCCardLayout>
+              </div>
+            </Spin>
+          </div>
+          <Card style={lowSqlGridStyle} title="慢Sql黑榜" >
+            <Table
+              columns={sqlTableSchemaColumns}
+              loading={loading}
+              // bordered
+              dataSource={infodata?.slowLogBlackList || []}
+              scroll={{ y: window.innerHeight - 450 }}
+              // locale={{
+              //   emptyText: (
+              //     <div className="custom-table-holder">
+              //       {loading ? '加载中……' : infodata?.slowLogBlackList?.length < 1 ? '没有数据' : " "
+              //       }
+              //     </div>
+              //   ),
+              // }}
+              pagination={false}
+            />
 
-          <Card style={upperGridStyle}>
-            <SchemaChart dataSource={infodata} columnTypeData={columnTypeData} />
           </Card>
         </div>
-      </FilterCard>
-      <ContentCard>
         <Segmented
           size="large"
           //  block
@@ -96,9 +136,10 @@ export default function DatabaseOverView() {
           }}
         />
         <div style={{ marginTop: 10 }}>
-          <Table loading={tableLoading} columns={tableColumns} dataSource={tableData || []} />
+          <Table bordered scroll={{ x: "100%" }} loading={tableLoading} columns={tableColumns} dataSource={tableData || []} />
         </div>
       </ContentCard>
+
     </PageContainer>
   );
 }

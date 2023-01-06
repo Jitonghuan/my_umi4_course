@@ -6,12 +6,60 @@
  * @FilePath: /fe-matrix/src/pages/database/account-manage/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Tag, Popconfirm, Spin, Modal, Form } from 'antd';
+import { Space, Tag, Popconfirm, Spin, Modal, Form ,Tooltip} from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+export const readonlyColumns=()=>{
+  return [
+    {
+      title: '账号',
+      dataIndex: 'user',
+      key: 'user',
+      width: '35%',
+      ellipsis:true,
+      render:(value)=><Tooltip title={value}>
+        <span>{value}</span>
+      </Tooltip>
+    },
+    {
+      title: 'HOST',
+      dataIndex: 'host',
+      key: 'host',
+      width: '15%',
+    },
+    {
+      title: '权限',
+      dataIndex: 'grantPrivs',
+      key: 'grantPrivs',
+      width: '35%',
+      ellipsis:true,
+      render: (grantPrivs: any, record, index: number) =>{
+        return <Tooltip placement="topLeft" title= { grantPrivs?.map((item: string) => {
+          return <p>{item};</p>;
+        })}>
+         { grantPrivs?.map((item: string) => {
+          return <span>{item};</span>;
+        })}</Tooltip>
+      }
+      ,
+    },
+    {
+      title: '备注',
+      dataIndex: 'description',
+      key: 'description',
+      width: '15%',
+      ellipsis:true,
+      render:(value)=><Tooltip title={value}>
+        <span>{value}</span>
+      </Tooltip>
+    },
+
+  ]
+}
 
 // 列表页-表格
 export const createTableColumns = (params: {
+  clusterRole:number,
   onDelete: (record: any) => void;
   onUpdate: (id: any) => void;
   onGrant: (record: any) => void;
@@ -23,7 +71,11 @@ export const createTableColumns = (params: {
       title: '账号',
       dataIndex: 'user',
       key: 'user',
-      width: '6%',
+      width: '8%',
+      ellipsis:true,
+      render:(value)=><Tooltip title={value}>
+        <span>{value}</span>
+      </Tooltip>
     },
     {
       title: 'HOST',
@@ -36,16 +88,26 @@ export const createTableColumns = (params: {
       dataIndex: 'grantPrivs',
       key: 'grantPrivs',
       width: '34%',
-      render: (grantPrivs: any, record, index: number) =>
-        grantPrivs?.map((item: string) => {
+      ellipsis:true,
+      render: (grantPrivs: any, record, index: number) =>{
+        return <Tooltip placement="topLeft" title= { grantPrivs?.map((item: string) => {
           return <p>{item};</p>;
-        }),
+        })}>
+         { grantPrivs?.map((item: string) => {
+          return <span>{item};</span>;
+        })}</Tooltip>
+      }
+      ,
     },
     {
       title: '备注',
       dataIndex: 'description',
       key: 'description',
-      width: '10%',
+      width: '8%',
+      ellipsis:true,
+      render:(value)=><Tooltip title={value}>
+        <span>{value}</span>
+      </Tooltip>
     },
     {
       title: '操作',
@@ -56,20 +118,23 @@ export const createTableColumns = (params: {
         //根据不同类型跳转
         <Space>
           <a
+         
             onClick={() => {
               params?.onGrant(record);
             }}
           >
-            授权
+            权限管理
           </a>
-          <a
+          {/* <a
+          
             onClick={() => {
               params?.onRecovery(record);
             }}
           >
             回收
-          </a>
+          </a> */}
           <a
+         
             onClick={() => {
               params?.onUpdate(record.id);
             }}
@@ -81,9 +146,10 @@ export const createTableColumns = (params: {
             onConfirm={() => {
               params?.onDelete(record);
             }}
+           
           >
             <Spin spinning={params?.deleteLoading}>
-              <a>删除</a>
+              <a >删除</a>
             </Spin>
           </Popconfirm>
         </Space>
@@ -101,155 +167,251 @@ export const privTypeOptions = [
     label: '库权限',
     value: 'schema',
   },
+  {
+    label: '表权限',
+    value: 'table',
+  },
+  {
+    label: '列权限',
+    value: 'column',
+  },
 ];
 
 export const schemaDataTreeOption = [
   {
-    key: 'select',
+    key: 'SELECT',
     title: 'SELECT',
   },
   {
-    key: 'insert',
+    key: 'INSERT',
     title: 'INSERT',
   },
   {
-    key: 'update',
+    key: 'UPDATE',
     title: 'UPDATE',
   },
   {
-    key: 'delete',
+    key: 'DELETE',
     title: 'DELETE',
   },
 ];
 export const globalDataTreeOption = [
   {
-    key: 'select',
+    key: 'SELECT',
     title: 'SELECT',
   },
   {
-    key: 'insert',
+    key: 'INSERT',
     title: 'INSERT',
   },
   {
-    key: 'update',
+    key: 'UPDATE',
     title: 'UPDATE',
   },
   {
-    key: 'delete',
+    key: 'DELETE',
     title: 'DELETE',
   },
   {
-    key: 'file',
+    key: 'FILE',
     title: 'FILE',
   },
 ];
 export const schemaStructOption = [
   {
-    key: 'create',
+    key: 'CREATE',
     title: 'CREATE',
   },
   {
-    key: 'alter',
+    key: 'ALTER',
     title: 'ALTER',
   },
   {
-    key: 'index',
+    key: 'INDEX',
     title: 'INDEX',
   },
   {
-    key: 'drop',
+    key: 'DROP',
     title: 'DROP',
   },
   {
-    key: 'create temporary tables',
+    key: 'CREATE TEMPORARY TABLES',
     title: 'CREATE TEMPORARY TABLES',
   },
   {
-    key: 'show view',
+    key: 'SHOW VIEW',
     title: 'SHOW VIEW',
   },
   {
-    key: 'create routime',
+    key: 'CREATE ROUTINE',
     title: 'CREATE ROUTINE',
   },
   {
-    key: 'alter routine',
+    key: 'ALTER ROUTINE',
     title: 'ALTER ROUTINE',
   },
   {
-    key: 'execute',
+    key: 'EXECUTE',
     title: 'EXECUTE',
   },
   {
-    key: 'create view',
+    key: 'CREATE VIEW',
     title: 'CREATE VIEW',
   },
   {
-    key: 'envent',
+    key: 'ENVENT',
     title: 'ENVENT',
   },
   {
-    key: 'trigger',
+    key: 'TRIGGER',
     title: 'TRIGGER',
   },
 ];
 export const schemaManageOption = [
   {
-    key: 'grant',
-    title: 'GRANT',
+    key: 'GRANT OPTION',
+    title: 'GRANT OPTION',
   },
   {
-    key: 'lcok tables',
+    key: 'LOCK TABLES',
     title: 'LOCK TABLES',
   },
   {
-    key: 'references',
+    key: 'REFERENCES',
     title: 'REFERENCES',
   },
 ];
 export const globalManageOption = [
   {
-    key: 'grant',
-    title: 'GRANT',
+    key: 'GRANT OPTION',
+    title: 'GRANT OPTION',
   },
   {
-    key: 'super',
+    key: 'SUPER',
     title: 'SUPER',
   },
   {
-    key: 'process',
+    key: 'PROCESS',
     title: 'PROCESS',
   },
   {
-    key: 'reload',
+    key: 'RELOAD',
     title: 'RELOAD',
   },
   {
-    key: 'shutdown',
+    key: 'SHUTDOWN',
     title: 'SHUTDOWN',
   },
   {
-    key: 'show databases',
+    key: 'SHOW DATABASES',
     title: 'SHOW DATABASES',
   },
   {
-    key: 'lcok tables',
+    key: 'LOCK TABLES',
     title: 'LOCK TABLES',
   },
   {
-    key: 'references',
+    key: 'REFERENCES',
     title: 'REFERENCES',
   },
   {
-    key: 'replication client',
+    key: 'REPLICATION CLIENT',
     title: 'REPLICATION CLIENT',
   },
   {
-    key: 'replication slave',
+    key: 'REPLICATION SLAVE',
     title: 'REPLICATION SLAVE',
   },
   {
-    key: 'create user',
+    key: 'CREATE USER',
     title: 'CREATE USER',
   },
 ];
+
+export const tableListOptions={
+  0:[
+    {
+      key: 'SELECT',
+      title: 'SELECT',
+    },
+    {
+      key: 'INSERT',
+      title: 'INSERT',
+    },
+    {
+      key: 'UPDATE',
+      title: 'UPDATE',
+    },
+    {
+      key: 'DELETE',
+      title: 'DELETE',
+    },
+
+  ],
+  1:[
+    {
+      key: 'CREATE',
+      title: 'CREATE',
+    },
+    {
+      key: 'ALTER',
+      title: 'ALTER',
+    },
+    {
+      key: 'INDEX',
+      title: 'INDEX',
+    },
+    {
+      key: 'DROP',
+      title: 'DROP',
+    },
+    {
+      key: 'SHOW VIEW',
+      title: 'SHOW VIEW',
+    },
+    {
+      key: 'CREATE VIEW',
+      title: 'CREATE VIEW',
+    },
+    {
+      key: 'TRIGGER',
+      title: 'TRIGGER',
+    },
+  ],
+  2:[
+    {
+      key: 'GRANT OPTION',
+      title: 'GRANT OPTION',
+    },
+  
+    {
+      key: 'REFERENCES',
+      title: 'REFERENCES',
+    },
+
+  ]
+}
+export const columnListOptions={
+  0:[
+    {
+      key: 'SELECT',
+      title: 'SELECT',
+    },
+    {
+      key: 'INSERT',
+      title: 'INSERT',
+    },
+    {
+      key: 'UPDATE',
+      title: 'UPDATE',
+    },
+
+  ],
+  1:[
+    {
+      key: 'REFERENCES',
+      title: 'REFERENCES',
+    },
+  ],
+  
+}

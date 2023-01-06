@@ -136,6 +136,12 @@ export default [
     path: `${baseRoutePath}/config/registry`,
     redirect: `${baseRoutePath}/config/registry/provider`,
   },
+    {path: `${baseRoutePath}/database/backup`,
+    redirect: `${baseRoutePath}/database/backup/plan`,
+  },
+
+  
+
 
 
   {
@@ -558,12 +564,12 @@ export default [
   },
   {
     path: `${baseRoutePath}/config`,
-    name: '配置中心',
+    name: '组件控制台',
     icon: 'icon-Time',
     routes: [
       {
         path: `${baseRoutePath}/config/nacos-config`,
-        name: 'nacos配置',
+        name: '配置中心',
         key: 'nacos-config',
         component: '@/pages/config/nacos-config',
         routes: [
@@ -1552,13 +1558,40 @@ export default [
         key: 'instance-list',
         component: '@/pages/database/instance-list/components/instance-info',
         hideInMenu: true,
-      },
+        routes:[
+          {
+            path: `${baseRoutePath}/database/info/detail`,
+            name: '实例详情',
+            key: 'instance-list',
+            component: '@/pages/database/instance-list/components/instance-info/components/instance-detail',
+          },
+          {
+            path: `${baseRoutePath}/database/info/trend`,
+            name: '性能趋势',
+            key: 'instance-list',
+            component: '@/pages/database/overview/trends',
+          },
+          {
+            path: `${baseRoutePath}/database/info/database`,
+            name: '数据库管理',
+            key: 'instance-list',
+            component: '@/pages/database/database-manage',
+          },
+          {
+            path: `${baseRoutePath}/database/info/session`,
+            name: '会话管理',
+            key: 'instance-list',
+            component: '@/pages/database/instance-list/components/instance-info/components/session-diag',
+          },
+          {
+            path: `${baseRoutePath}/database/info/account`,
+            name: '账号管理',
+            key: 'instance-list',
+            component: '@/pages/database/account-manage',
+          },
+         
 
-      {
-        path: `${baseRoutePath}/database/instance-list`,
-        name: '实例列表',
-        key: 'instance-list',
-        component: '@/pages/database/instance-list',
+        ]
       },
       {
         path: `${baseRoutePath}/database/cluster-list`,
@@ -1566,6 +1599,34 @@ export default [
         key: 'cluster-list',
         component: '@/pages/database/cluster-list',
       },
+      {
+        path: `${baseRoutePath}/database/instance-list`,
+        name: '实例列表',
+        key: 'instance-list',
+        component: '@/pages/database/instance-list',
+      },
+      {
+        path: `${baseRoutePath}/database/backup`,
+        name: '备份管理',
+        key: 'backup',
+        component: '@/pages/database/backup',
+        routes:[
+          {
+            path: `${baseRoutePath}/database/backup/plan`,
+            name: '备份计划',
+            key: 'backup',
+            component: '@/pages/database/backup/backup-plan',
+            hideInMenu: true,
+          },
+          {
+            path: `${baseRoutePath}/database/backup/record`,
+            name: '备份记录',
+            key: 'backup',
+            component: '@/pages/database/backup/backup-record',
+            hideInMenu: true,
+          },
+        ]
+      }
     ],
   },
   {

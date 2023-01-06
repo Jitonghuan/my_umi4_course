@@ -1,33 +1,39 @@
 //数据库管理接口
 //https://come-future.yuque.com/sekh46/bbgc7f/zphmwi/edit#KjKDb
+
+//二期
+// https://come-future.yuque.com/sekh46/bbgc7f/ywgfqx?singleDoc#ko3BP
 import appConfig from '@/app.config';
+let env = appConfig.BUILD_ENV === 'prod' ? 'prod' : 'dev';
+const dbmsApiPrefix=`matrix-dbms`;
+
 
 /**1、POST 新建数据库 */
-export const createSchema = `${appConfig.apiPrefix}/databaseManage/schema/create`;
+export const createSchema = `${dbmsApiPrefix}${appConfig.apiPrefix}/database/create`;
 
 /**2、DELETE 删除数据库 */
-export const deleteSchema = `${appConfig.apiPrefix}/databaseManage/schema/delete`;
+export const deleteSchema = `${dbmsApiPrefix}${appConfig.apiPrefix}/database/delete`;
 
 /**3、GET 数据库列表 */
-export const getSchemaList = `${appConfig.apiPrefix}/databaseManage/schema/list`;
+export const getSchemaList = `${dbmsApiPrefix}${appConfig.apiPrefix}/database/list`;
 
 /**4、POST 新建账号 */
-export const createAccount = `${appConfig.apiPrefix}/databaseManage/account/create`;
+export const createAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/create`;
 
 /**5、 DELETE 删除账号 */
-export const deleteAccount = `${appConfig.apiPrefix}/databaseManage/account/delete`;
+export const deleteAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/delete`;
 
 /**6、 POST 账号授权 */
-export const grantAccount = `${appConfig.apiPrefix}/databaseManage/account/grantAccount`;
+export const grantAccount = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/batchModify`;
 
 /**7、 PUT 修改密码 */
-export const changePassword = `${appConfig.apiPrefix}/databaseManage/account/changePassword`;
+export const changePassword = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/changePassword`;
 
 /**8、 GET 账号列表 */
-export const getAccountList = `${appConfig.apiPrefix}/databaseManage/account/list`;
+export const getAccountList = `${dbmsApiPrefix}${appConfig.apiPrefix}/account/list`;
 
 /**9、 GET 日志管理-慢日志统计 */
-export const getStatistics = `${appConfig.apiPrefix}/databaseManage/log/slowLog/statistics`;
+export const getStatistics = `${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/statistics`;
 
 /**10、 GET 获取用户名 */
 export const getUserList = `${appConfig.apiPrefix}/appManage/user/listAll`;
@@ -35,46 +41,108 @@ export const getUserList = `${appConfig.apiPrefix}/appManage/user/listAll`;
 /* -----------------------概览-------------------- */
 
 /**11、 GET 仪表盘概览 */
-export const getOverviewDashboards = `${appConfig.apiPrefix}/databaseManage/overview/dashboards`;
+export const getOverviewDashboards = `${dbmsApiPrefix}${appConfig.apiPrefix}/overview/dashboards`;
 
 /**12、 GET 实例概览列表 */
-export const getOverviewInstances = `${appConfig.apiPrefix}/databaseManage/overview/instances`;
+export const getOverviewInstances = `${dbmsApiPrefix}${appConfig.apiPrefix}/overview/instances`;
 
 /**13、 GET 实例性能趋势 */
-export const getPerformanceTrends = `${appConfig.apiPrefix}/databaseManage/instance/performanceTrends`;
+export const getPerformanceTrends = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/performanceTrends`;
 
 /**14、 GET 实例列表 */
-export const getInstanceList = `${appConfig.apiPrefix}/databaseManage/instance/list`;
+export const getInstanceList = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/list`;
 
 /**15、 POST 新增实例 */
-export const addInstance = `${appConfig.apiPrefix}/databaseManage/instance/add`;
+export const addInstance = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/add`;
 /**16、 PUT 新增实例 */
-export const updateInstance = `${appConfig.apiPrefix}/databaseManage/instance/update`;
+export const updateInstance = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/update`;
 /**17、 DELETE 删除实例 */
-export const deleteInstance = `${appConfig.apiPrefix}/databaseManage/instance/delete`;
+export const deleteInstance = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/delete`;
 /**18、 GET 实例详情 */
-export const getInstanceDetail = `${appConfig.apiPrefix}/databaseManage/instance/detail`;
+export const getInstanceDetail = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/detail`;
 
 /**19、 GET 集群列表 */
-export const getClusterList = `${appConfig.apiPrefix}/databaseManage/cluster/list`;
+export const getClusterList = `${dbmsApiPrefix}${appConfig.apiPrefix}/cluster/list`;
 /**20、 POST 新增集群 */
-export const addCluster = `${appConfig.apiPrefix}/databaseManage/cluster/add`;
+export const addCluster = `${dbmsApiPrefix}${appConfig.apiPrefix}/cluster/add`;
 
-export const updateCluster = `${appConfig.apiPrefix}/databaseManage/cluster/update`;
+export const updateCluster = `${dbmsApiPrefix}${appConfig.apiPrefix}/cluster/update`;
 
-export const deleteCluster = `${appConfig.apiPrefix}/databaseManage/cluster/delete`;
+export const deleteCluster = `${dbmsApiPrefix}${appConfig.apiPrefix}/cluster/delete`;
 
 /**23、 GET 同步元数据 */
-export const syncMetaData = `${appConfig.apiPrefix}/databaseManage/syncMetaData`;
+export const syncMetaData = `${dbmsApiPrefix}${appConfig.apiPrefix}/overview/syncMetaData`;
 
 /**24、GET 获取应用环境 */
 export const envList = `${appConfig.apiPrefix}/appManage/env/list`;
 
 /**25、GET获取schema字符集和排序规则 */
-export const getCharacterSetList = `${appConfig.apiPrefix}/databaseManage/schema/getCharacterSetList`;
+export const getCharacterSetList = `${dbmsApiPrefix}${appConfig.apiPrefix}/database/getCharacterSetList`;
 
 /**26、 GET 实例性能趋势 */
-export const performanceTrends = `${appConfig.apiPrefix}/databaseManage/instance/performanceTrends`;
+export const performanceTrends = `${dbmsApiPrefix}${appConfig.apiPrefix}/instance/performanceTrends`;
 
 /**26、 GET 枚举数据 */
-export const getEnumerateData = `${appConfig.apiPrefix}/databaseManage/getEnumerateData`;
+export const getEnumerateData = `${dbmsApiPrefix}${appConfig.apiPrefix}/overview/getEnumerateData`;
+
+
+/* -------------------------二期------------------ */
+
+export const  getPrivsDetail =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/privsDetail`;
+
+export const  getPreviewGrantSql =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/previewGrantSql`;
+
+export const  getTableColumnList =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/getTableColumnList`;
+
+export const  previewGrantSql =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/preViewGrantSql`;
+
+export const  modifyPrivs =`${dbmsApiPrefix}${appConfig.apiPrefix}/account/modifyPrivs`;
+
+/* ----会话管理----- */
+// 会话快照
+export const  snapshotApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/snapshot/stat`;
+// 会话kill
+export const  sessionKillApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/kill`;
+//sql限流-列表 
+export const  sessionRateLimitListApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/list`;
+//sql限流-创建 
+export const  addsessionRateLimitApi =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/add`;
+//sql限流-获取sql模板
+export const  getSqlTemplate =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/getSqlTemplate`;
+//sql限流-修改 
+export const  updateRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/update`;
+//sql限流-关闭 
+export const  closeDownRateLimiter =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/rateLimit/closeDown`;
+// 锁分析
+export const  lockSession =`${dbmsApiPrefix}${appConfig.apiPrefix}/session/lock/list`;
+// 实例-容量分析模块
+//空间分析 
+export const  getCapacityStatistic =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listCapacityInfo`;
+//异常表 
+export const  getAbnormalTableList =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listAbnormalTable`;
+//异常表 
+export const  getTableSpaceList =`${dbmsApiPrefix}${appConfig.apiPrefix}/capacity/listTableSpace`;
+/* 慢日志统计 */
+export const  getSlowLogList =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/statistic`;
+/* 慢日志明细 */
+export const  getSlowLogDetail =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/detail`;
+/* 获取日志配置 */
+export const  getSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/status`;
+/* 修改日志配置 */
+export const  updateSlowLogConfig =`${dbmsApiPrefix}${appConfig.apiPrefix}/log/slowLog/updateStatus`;
+
+/* -------------备份管理----------- */
+/* 备份计划列表 */
+export const  getBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/list`;
+/* 获取备份类型 */
+export const  getBackupTypeList =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/type/list`;
+/* 创建备份计划 */
+export const  createBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/create`;
+/* 更新备份计划 */
+export const  updateBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/update`;
+/* 删除备份计划 */
+export const  deleteBackupPlan =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/plan/delete`;
+/* 备份记录列表 */
+export const  getRecordList =`${dbmsApiPrefix}${appConfig.apiPrefix}/backup/record/list`;
+/* ------------引擎图表--------- */
+export const  getInnodbMonitor =`${dbmsApiPrefix}${appConfig.apiPrefix}/instance/innodbMonitor`;

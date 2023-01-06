@@ -2,11 +2,11 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-07-07 11:08:37
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-07-21 00:48:49
+ * @LastEditTime: 2022-12-20 13:04:42
  * @FilePath: /fe-matrix/src/pages/database/instance-list/schema.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Space, Avatar, Popconfirm, Tag, Spin } from 'antd';
+import { Space, Avatar, Popconfirm, Tag, Spin,Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
   HomeOutlined,
@@ -26,7 +26,7 @@ export const infoOptions = [
         <div>实例详情</div>
       </div>
     ),
-    value: 'info',
+    value: 'detail',
   },
   {
     label: (
@@ -41,7 +41,7 @@ export const infoOptions = [
     label: (
       <div style={{ padding: 4 }}>
         <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<HourglassOutlined />} />
-        <div>会话管理</div>
+        <div>会话诊断</div>
       </div>
     ),
     value: 'session',
@@ -53,7 +53,7 @@ export const infoOptions = [
         <div>数据库管理</div>
       </div>
     ),
-    value: 'schema',
+    value: 'database',
   },
   {
     label: (
@@ -68,19 +68,19 @@ export const infoOptions = [
     label: (
       <div style={{ padding: 4 }}>
         <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<ForkOutlined />} />
-        <div>慢SQL</div>
+        <div>日志管理</div>
       </div>
     ),
-    value: 'sql',
+    value: 'logger',
   },
   {
     label: (
       <div style={{ padding: 4 }}>
         <Avatar size="small" style={{ backgroundColor: '#6495ED' }} icon={<MoreOutlined />} />
-        <div>敬请期待</div>
+        <div>容量分析</div>
       </div>
     ),
-    value: 'waitting',
+    value: 'capacity',
   },
 ];
 export const formOptions = [
@@ -119,9 +119,10 @@ type instanceTypeItem = {
 
 export const INSTANCE_TYPE: Record<number, instanceTypeItem> = {
   3: { tagText: 'mysql', color: 'green' },
-  4: { tagText: 'postgresql', color: 'default' },
-  5: { tagText: 'redis', color: 'default' },
-  6: { tagText: 'mongdb', color: 'default' },
+  4: { tagText: 'postgresql', color: 'geekblue' },
+  5: { tagText: 'redis', color: 'magenta' },
+  6: { tagText: 'mongdb', color: 'volcano' },
+  7:{tagText:'tidb',color:'cyan'}
 };
 export const typeOptions = [
   { key: 3, label: 'mysql', value: 3 },
@@ -157,8 +158,8 @@ type clusterRoleTypeItem = {
 };
 
 export const ROLE_TYPE: Record<number, clusterRoleTypeItem> = {
-  3: { tagText: '主库', color: 'green' },
-  4: { tagText: '从库', color: 'blue' },
+  3: { tagText: '主库', color: '#2db7f5' },
+  4: { tagText: '从库', color: '#87d068' },
 };
 export const roleTypeOption = [
   {
@@ -194,19 +195,31 @@ export const createTableColumns = (params: {
       title: '实例名称',
       dataIndex: 'name',
       key: 'name',
-      width: '14%',
+      width: 200,
+      ellipsis:true,
+      render:(value,record,index)=>(
+       <Tooltip title={value}>
+         <a onClick={() => params.onManage(record, index)}>{value}</a>
+       </Tooltip> 
+      )
     },
     {
       title: 'Host',
       dataIndex: 'instanceHost',
       key: 'instanceHost',
-      width: '14%',
+      width: 240,
+      ellipsis:true,
+      render:(value,record,index)=>(
+        <Tooltip title={value}>
+          <span>{value}</span>
+        </Tooltip> 
+       )
     },
     {
       title: '数据库类型',
       dataIndex: 'instanceType',
       key: 'instanceType',
-      width: '10%',
+      width: 110,
       ellipsis: true,
       render: (value) => (
         <Tag color={INSTANCE_TYPE[value]?.color || 'default'}>{INSTANCE_TYPE[value]?.tagText || '--'}</Tag>
@@ -216,40 +229,52 @@ export const createTableColumns = (params: {
       title: '所属集群',
       dataIndex: 'clusterName',
       key: 'clusterName',
-      width: '14%',
+      width: 180,
+    },
+    {
+      title: '实例角色',
+      dataIndex: 'clusterRole',
+      key: 'clusterRole',
+      width: 100,
+      render:(value:number)=>(
+        <Tag color={ROLE_TYPE[value]?.color||"default"}>{ROLE_TYPE[value]?.tagText}</Tag>
+      )
     },
     {
       title: '所属环境',
       dataIndex: 'envCode',
       key: 'envCode',
-      width: '10%',
-    },
-    {
-      title: '实例简述',
-      dataIndex: 'description',
-      key: 'description',
-      width: '12%',
+      width: 180,
     },
     {
       title: '服务状态',
       dataIndex: 'status',
       key: 'status',
-      width: '10%',
+      width: 100,
       render: (value: number) => {
-        return <Tag color={CLUSTER_STATUS_TYPE[value]?.color || 'default'}>{CLUSTER_STATUS_TYPE[value].tagText}</Tag>;
+        return <Tag color={CLUSTER_STATUS_TYPE[value]?.color || 'default'}>{CLUSTER_STATUS_TYPE[value]?.tagText}</Tag>;
       },
     },
+    {
+      title: '实例简述',
+      dataIndex: 'description',
+      key: 'description',
+      width: 200,
+    },
+  
     {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
-      width: '16%',
+      width: 180,
+      fixed:"right",
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
-          <a onClick={() => params.onEdit(record, index)}>编辑</a>
+        
           <a onClick={() => params.onManage(record, index)}>管理</a>
           <a onClick={() => params.onViewPerformance(record, index)}>性能</a>
+          <a onClick={() => params.onEdit(record, index)}>编辑</a>
           <Popconfirm
             title="确认删除?"
             onConfirm={() => {
