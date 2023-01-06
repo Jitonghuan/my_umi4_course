@@ -160,7 +160,7 @@ export default function PublishRecord(props: IProps) {
         `https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${envCode}/${deploymentName}/${item.version}/npm-tile.json`,
       );
       setNpmJson(res?.data ? JSON.stringify(res.data, null, 4) : '');
-    } catch (e) { }
+    } catch (e) {}
 
     try {
       let lastItem = data.find(
@@ -174,7 +174,7 @@ export default function PublishRecord(props: IProps) {
         );
         setOriginNpmJson(originRes?.data ? JSON.stringify(originRes.data, null, 4) : '');
       }
-    } catch (e) { }
+    } catch (e) {}
     setLoading(false);
   }
 
@@ -199,7 +199,7 @@ export default function PublishRecord(props: IProps) {
                   <label>{recordFieldMapOut['deployedTime']}</label>:
                   {moment(item['deployedTime']).format('YYYY-MM-DD HH:mm:ss')}
                 </div>
-                {appType !== "backend" && (
+                {appType !== 'backend' && (
                   <div>
                     <label>版本号</label>:{item['version']}
                   </div>
@@ -233,14 +233,21 @@ export default function PublishRecord(props: IProps) {
                   </div>
                 )}
                 <a onClick={() => handleShowDetail(item)}>详情</a>
-                {item.deployStatus === 'finish' &&
-                  appConfig.IS_Matrix === 'public' &&
-                  appType === 'frontend' &&
-                  appCategoryCode === 'hbos' && (
-                    <a style={{ marginLeft: '10px' }} onClick={() => showDepDetail(item, i)}>
-                      依赖
-                    </a>
-                  )}
+                {item.deployStatus === 'finish' && appConfig.IS_Matrix === 'public' && appType === 'frontend' && (
+                  <a style={{ marginLeft: '10px' }} onClick={() => showDepDetail(item, i)}>
+                    依赖
+                  </a>
+                )}
+                {/*{item.deployStatus === 'finish' &&*/}
+                {/*appConfig.IS_Matrix === 'public' &&*/}
+                {/*appType === 'frontend' &&*/}
+                {/*item.envTypeCode === 'test' &&*/}
+                {/*appCategoryCode === 'hbos' && (*/}
+                {/*  <a style={{ marginLeft: '10px' }} target="_blank"*/}
+                {/*     href={`http://venus.cfuture.shop/application-detail?appCode=${appCode}&tab=5`}>*/}
+                {/*    Eslint分析*/}
+                {/*  </a>*/}
+                {/*)}*/}
               </List.Item>
             )}
           />
@@ -283,14 +290,27 @@ export default function PublishRecord(props: IProps) {
                 target="_blank"
                 href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${curEnvCode}/${deploymentName}/${curVersion}/npm.json`}
               >
-                查看
+                详情查看
               </a>
+              {/*<a*/}
+              {/*  target="_blank"*/}
+              {/*  download*/}
+              {/*  style={{marginLeft: '20px'}}*/}
+              {/*  href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${curEnvCode}/${deploymentName}/${curVersion}/yarn.lock`}*/}
+              {/*>*/}
+              {/*  lock依赖下载*/}
+              {/*</a>*/}
             </Tabs.TabPane>
           </Tabs>
         </Modal>
       )}
-      <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)} >
-        <VCDescription labelStyle={{ width: 90, justifyContent: 'flex-end' }} column={1} dataSource={curRecord} newPublish={newPublish} />
+      <Modal title="发布详情" width={800} visible={visible} footer={false} onCancel={() => setVisible(false)}>
+        <VCDescription
+          labelStyle={{ width: 90, justifyContent: 'flex-end' }}
+          column={1}
+          dataSource={curRecord}
+          newPublish={newPublish}
+        />
       </Modal>
     </div>
   );

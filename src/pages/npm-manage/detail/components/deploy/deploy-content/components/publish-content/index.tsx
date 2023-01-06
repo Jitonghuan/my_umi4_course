@@ -12,7 +12,6 @@ import { cancelDeploy, reCommit, withdrawFeatures } from '@/pages/npm-manage/det
 import { IProps } from './types';
 import './index.less';
 
-
 const rootCls = 'publish-content-compo';
 
 export default function PublishContent(props: IProps) {
@@ -29,13 +28,7 @@ export default function PublishContent(props: IProps) {
 
   // 重新提交分支
   const handleReDeploy = () => {
-    Modal.confirm({
-      title: '确定要重新提交吗?',
-      icon: <ExclamationCircleOutlined />,
-      onOk: async () => {
-        setDeployVisible(true);
-      },
-    });
+    setDeployVisible(true);
   };
 
   const onReSubmit = async (params: any) => {
@@ -45,12 +38,12 @@ export default function PublishContent(props: IProps) {
       data: {
         id: metadata.id,
         features,
-        ...params || {}
-      }
+        ...(params || {}),
+      },
     });
     setLoading(false);
     setDeployVisible(false);
-  }
+  };
 
   // 批量退出分支
   const handleBatchExit = () => {
@@ -67,7 +60,7 @@ export default function PublishContent(props: IProps) {
           data: {
             features,
             id: metadata?.id,
-          }
+          },
         }).then((res) => {
           onOperate('batchExitEnd');
         });
@@ -87,8 +80,8 @@ export default function PublishContent(props: IProps) {
           data: {
             id: metadata?.id,
             envCode,
-          }
-        }).then(() => { });
+          },
+        }).then(() => {});
       },
     });
   }
@@ -124,7 +117,7 @@ export default function PublishContent(props: IProps) {
     <div className={rootCls}>
       <div className={`${rootCls}__title`}>发布内容</div>
       <div className={`${rootCls}__right-top-btns`}>
-        { deployStatus === 'process' && (
+        {deployStatus === 'process' && (
           <Button
             danger
             onClick={() => {
