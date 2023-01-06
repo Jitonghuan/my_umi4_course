@@ -273,7 +273,7 @@ export const createTableColumns = (params: {
         <Space>
         
           <a onClick={() => params.onManage(record, index)}>管理</a>
-          {/* <a onClick={() => params.onViewPerformance(record, index)}>性能</a> */}
+          <a onClick={() => params.onViewPerformance(record, index)}>性能</a>
           <a onClick={() => params.onEdit(record, index)}>编辑</a>
           <Popconfirm
             title="确认删除?"
