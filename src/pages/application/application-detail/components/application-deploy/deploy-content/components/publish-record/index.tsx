@@ -295,14 +295,16 @@ export default function PublishRecord(props: IProps) {
               >
                 详情查看
               </a>
-              <a
-                target="_blank"
-                download
-                style={{ marginLeft: '20px' }}
-                href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${curEnvCode}/${deploymentName}/${curVersion}/yarn.lock`}
-              >
-                lock依赖下载
-              </a>
+              {appCategoryCode === 'hbos' && (
+                <a
+                  target="_blank"
+                  download
+                  style={{ marginLeft: '20px' }}
+                  href={`https://c2f-resource.oss-cn-hangzhou.aliyuncs.com/${curEnvCode}/${deploymentName}/${curVersion}/yarn.lock`}
+                >
+                  lock依赖下载
+                </a>
+              )}
             </Tabs.TabPane>
           </Tabs>
         </Modal>
