@@ -280,13 +280,13 @@ export const getRowsOpsOption: any = (data = []) => {
         xField: 'time',
         yField: 'count',
         seriesField: 'category',
-        tooltip: {
-            formatter: (datum: any) => {
+        // tooltip: {
+        //     formatter: (datum: any) => {
              
-                return { name: datum.category, value:datum.category==="Rows read"?  datum.count + 'k':datum.count };
-              },
+        //         return { name: datum.category, value:datum.category==="Rows read"?  datum.count + 'k':datum.count };
+        //       },
 
-          },
+        //   },
         xAxis: {
             // tickInterval:6,
             // tickCount:20
@@ -294,7 +294,7 @@ export const getRowsOpsOption: any = (data = []) => {
         yAxis: {
             label: {
                 // 数值格式化为带百分号
-                formatter: (v: any) => `${v}K`,
+                // formatter: (v: any) => `${v}K`,
                 // formatter: (v: any) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
             },
         },
@@ -314,12 +314,12 @@ export const getTpsOption: any = (data = []) => {
             // type: 'time',
             // tickCount: 5,
         },
-        tooltip: {
-            formatter: (datum: any) => {
-                return { name: datum.category, value: datum.count + 'k' };
-              },
+        // tooltip: {
+        //     formatter: (datum: any) => {
+        //         return { name: datum.category, value: datum.count + 'k' };
+        //       },
 
-          },
+        //   },
        
         yAxis: {
             // title:{
@@ -327,7 +327,7 @@ export const getTpsOption: any = (data = []) => {
             // },
             label: {
                 // 数值格式化为带百分号
-                formatter: (v: any) => `${v}k`,
+                // formatter: (v: any) => `${v}k`,
             },
         },
         width: 550,
@@ -346,21 +346,21 @@ export const getQpsOption: any = (data = []) => {
             // type: 'time',
             // tickCount: 5,
         },
-        tooltip: {
-            formatter: (datum: any) => {
-                return { name: datum.category, value: datum.count + 'k' };
-              },
+        // tooltip: {
+        //     formatter: (datum: any) => {
+        //         return { name: datum.category, value: datum.count + 'k' };
+        //       },
 
-          },
+        //   },
        
         yAxis: {
             // title:{
             //   text:'内存'
             // },
-            label: {
-                // 数值格式化为带百分号
-                formatter: (v: any) => `${v}k`,
-            },
+            // label: {
+            //     // 数值格式化为带百分号
+            //     formatter: (v: any) => `${v}k`,
+            // },
         },
         width: 550,
         height: 260,
@@ -377,21 +377,21 @@ export const getConnections: any = (data = []) => {
             // type: 'time',
             // tickCount: 5,
         },
-        tooltip: {
-            formatter: (datum: any) => {
-                return { name: datum.category, value: datum.count + 'k' };
-              },
+        // tooltip: {
+        //     formatter: (datum: any) => {
+        //         return { name: datum.category, value: datum.count + 'k' };
+        //       },
 
-          },
+        //   },
        
         yAxis: {
             // title:{
             //   text:'内存'
             // },
-            label: {
-                // 数值格式化为带百分号
-                formatter: (v: any) => `${v}k`,
-            },
+            // label: {
+            //     // 数值格式化为带百分号
+            //     formatter: (v: any) => `${v}k`,
+            // },
         },
         width: 550,
         height: 260,
