@@ -63,7 +63,7 @@ export function useQueryPerformanceTrends() {
                 receiveData.push({
                   category: key+"_receive",
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
+                  count: Number((Number(ele[1])/1000).toFixed(1)),
                 });
               });
             });
@@ -92,7 +92,7 @@ export function useQueryPerformanceTrends() {
                 transmitData.push({
                   category: key+"_transmit",
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
+                  count: Number((Number(ele[1])/1000).toFixed(1)),
                 });
               });
             });
@@ -233,7 +233,7 @@ export function useQueryInnodbMonitor() {
                 innodbDataWrittenData.push({
                   category: key,
                   time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                  count: Number(Number(ele[1]).toFixed(1)),
+                  count: Number((Number(ele[1]/1000)).toFixed(1)),
                 });
               });
             });
@@ -247,7 +247,7 @@ export function useQueryInnodbMonitor() {
                     innodbDataReadData.push({
                         category: key,
                         time: moment(parseInt(ele[0]) * 1000).format('MM-DD HH:mm'),
-                        count: Number(Number(ele[1]).toFixed(1)),
+                        count: Number((Number(ele[1]/1000)).toFixed(1)),
                       });
                     });
                    });
