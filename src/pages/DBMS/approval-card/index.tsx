@@ -16,9 +16,10 @@ interface Iprops{
     onAgree:()=>void;
     onRefuse:()=>void;
     auditLoading:boolean;
+    canAudit:boolean
 }
 export default function ApprovalCard(props:Iprops){
-    const {auditInfo,subTime,onAgree,onRefuse,auditLoading} =props;
+    const {auditInfo,subTime,onAgree,onRefuse,auditLoading,canAudit} =props;
     const getCurrent =useCallback(()=>{
         if (!auditInfo?.length ) return -1
         let status:any=[]
@@ -53,16 +54,18 @@ export default function ApprovalCard(props:Iprops){
           subTitle={ item?.AuditTime?`审批时间：${item?.AuditTime}`:null}
           description={<p>
            
-            <span>审批人：</span><span>{item?.Groups?.join(',') || ''}</span>&nbsp;&nbsp;<span>{item?.AuditRemark}</span>
-            <p>
+            <div><span>审批人：</span><span>{item?.Groups?.join(',') || ''}</span></div>
+            {item?.AuditRemark?  <div><span>操作原因：</span><span>{item?.AuditRemark}</span></div>:null}
+            {item?.AuditUserName?<div><span><b>操作人：</b>{item?.AuditUserName}</span></div>:null} 
+           
             {
-                  item?.canAudit ? <Spin spinning={auditLoading}>
+                getCurrent()-1===index&&  canAudit ?<p> <Spin spinning={auditLoading}>
                       <Space>
                     <Tag color="success" onClick={onAgree}>审批通过</Tag>
                     <Tag color="volcano" onClick={onRefuse}>拒绝</Tag>
                   </Space>
-                  </Spin> : null} 
-            </p>
+                  </Spin></p> : null} 
+            
           </p>} />)}
 
         </Steps>

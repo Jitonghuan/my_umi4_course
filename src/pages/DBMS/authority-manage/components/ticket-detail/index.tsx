@@ -215,6 +215,7 @@ export default function CreateArticle(props: CreateArticleProps) {
               auditInfo={auditInfo}
               subTime={info?.startTime||"-"}
               auditLoading={auditLoading}
+              canAudit={info?.canAudit||false}
               onAgree={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
                   afferentId?getInfo(afferentId):  getInfo()

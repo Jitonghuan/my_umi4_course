@@ -513,6 +513,7 @@ export default function ApprovalEnd() {
           <Spin spinning={auditLoading}>
           <ApprovalCard 
         auditInfo={auditInfo}
+        canAudit={info?.canAudit||false}
         subTime={info?.startTime||"-"}
         auditLoading={auditLoading}
         onAgree={()=>{

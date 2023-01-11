@@ -539,6 +539,7 @@ export default function ApprovalEnd() {
         auditInfo={auditInfo}
         subTime={info?.startTime||"-"}
         auditLoading={auditLoading}
+        canAudit={info?.canAudit||false}
         onAgree={()=>{
           auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
             onRefresh()
