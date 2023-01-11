@@ -40,6 +40,7 @@ export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
   className?: string;
   validatorMessage?: string;
   pattern?: RegExp;
+  rules?:any;
   isReadOnly?: boolean;
   mode?: 'multiple' | 'tags';
   id?: string;
@@ -52,6 +53,7 @@ export interface FormProps<T = any> extends FormItemProps, TextAreaProps {
 export interface TableSearchProps extends TableProps<any> {
   formOptions: FormProps[];
   extraNode?: React.ReactNode;
+  bottomRender?:React.ReactNode;
   showSearch?: boolean;
   showReset?: boolean;
   searchText?: string;

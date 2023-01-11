@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tooltip, Table, Tag } from 'antd';
+import { Button, Tooltip, Table, Tag, Space, Input } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import AddSilence from './component/add-silence';
 import ListSilence from './component/list-silence';
@@ -7,6 +7,7 @@ import './index.less';
 import { getCluster, getCurrentAlerts } from './service';
 import { Form, Select } from '@cffe/h2o-design';
 import { datetimeCellRender } from '@/utils';
+import { debounce } from 'lodash';
 
 type statusTypeItem = {
   color: string;
@@ -28,7 +29,8 @@ export default function CurrentAlarm(props: any) {
   const [dataList, setDataList] = useState([]);
   const [addVisible, setAddVisible] = useState(false);
   const [addParam, setAddParam] = useState({});
-
+  const [originData, setOriginData] = useState<any>([])
+  const [inputValue,setInputValue]=useState<string>("")
   useEffect(() => {
     getCluster().then((res) => {
       if (res.success) {
@@ -64,33 +66,69 @@ export default function CurrentAlarm(props: any) {
     const res = await getCurrentAlerts({
       clusterId: clusterCode,
     });
-    setDataList(res?.data || []);
+    let source=(res?.data || [])?.map((item:any,index:number)=>({
+      ...item,
+      index
+
+
+    }))
+    setDataList(source || []);
+    let copySource=JSON.parse(JSON.stringify(source || []))
+    setOriginData(copySource)
   }
 
   const onClusterChange = (value: number) => {
     setClusterCode(value);
     const localstorageData = { clusterCode: value };
+    setInputValue("")
     localStorage.setItem('__monitor_board_cluster_selected', JSON.stringify(localstorageData));
   };
-
+  const filter = debounce((value) => onSearch(value), 500)
+  const onSearch = (value: string) => {
+    let data: any = []
+    if (!value) {
+      setOriginData(dataList)
+    }
+    if (value) {
+      (dataList)?.map((ele: any) => {
+        if (ele?.alertname?.indexOf(value) > -1 || ele?.description?.indexOf(value) > -1) {
+          data.push(ele)
+        } 
+      })
+      const dataSource = [...new Set(data)]
+      setOriginData(dataSource)
+    }
+  }
   return (
     <>
       <FilterCard>
         <div style={{ display: 'flex', justifyContent: 'space-between', height: 30 }}>
           <div style={{ display: 'flex' }}>
-            <Form style={{ marginRight: '10px' }}>
-              <Form style={{ marginRight: '10px' }}>
-                <Form.Item label="集群选择">
-                  <Select
-                    clearIcon={false}
-                    style={{ width: '250px' }}
-                    options={clusterList}
-                    value={clusterCode}
-                    onChange={onClusterChange}
-                  />
-                </Form.Item>
-              </Form>
+            {/* <Form style={{ marginRight: '10px' }} layout="inline"> */}
+            <Form style={{ marginRight: '10px' }} layout="inline">
+              <Form.Item label="集群选择">
+                <Select
+                  clearIcon={false}
+                  style={{ width: '250px' }}
+                  options={clusterList}
+                  value={clusterCode}
+                  onChange={onClusterChange}
+                />
+              </Form.Item>
+              <Form.Item>
+
+                <Input style={{ width: '290px' }} onChange={(e: any) => {
+
+                  filter(e.target.value)
+                  setInputValue(e.target.value)
+
+
+                }} placeholder="请输入报警名称或描述，支持模糊搜索" />
+
+
+              </Form.Item>
             </Form>
+            {/* </Form> */}
           </div>
           <div>
             <Button type="primary" onClick={() => setVisible(true)} style={{ margin: '0 10px' }}>
@@ -101,9 +139,18 @@ export default function CurrentAlarm(props: any) {
       </FilterCard>
       <ContentCard>
         <Table
-          dataSource={dataList}
-          rowKey="name"
+          dataSource={originData}
+          rowKey="index"
           scroll={{ x: '100%' }}
+          expandable={{
+            expandedRowRender: record =><div className="alert-expandable">
+              {Object?.keys(record?.labels)?.map((item)=><p className="alert-expandable-item" >
+                <span><Tag color="purple">{item}</Tag></span>:<span>{record?.labels[item]}</span>
+                </p>
+              )}
+            </div> ,
+            // rowExpandable: record => record.name !== 'Not Expandable',
+          }}
           pagination={false}
           columns={[
             {

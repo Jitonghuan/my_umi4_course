@@ -12,6 +12,7 @@ import { stepTableMap } from '../../../basic/util';
 import { getRequest } from '@/utils/request';
 import { useAppOptions } from '../../hooks';
 import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../basic/services';
+import { getCluster} from '../../../../monitor/current-alarm/service';
 import { useUserOptions } from './hooks';
 import './index.less';
 import UserSelector from "@/components/user-selector";
@@ -54,7 +55,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [envTypeCode, setEnvTypeCode] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
+  const [clusterList, setClusterList] = useState<any>([]);
   const [getSilenceValue, setGetSilenceValue] = useState(0);
+  
+  
   const envTypeData = [
     {
       key: 'dev',
@@ -220,6 +224,19 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       return;
     }
     groupList();
+    getCluster().then((res)=>{
+      if(res?.success){
+        const data=res?.data?.map((item: any)=>{
+          return {
+            label: item.clusterName,
+            value: item.id,
+          }
+        })
+        setClusterList(data);
+
+      }
+
+    })
   }, [visible]);
 
   useEffect(() => {
@@ -349,7 +366,11 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警分类" name="group" required={true}>
           <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
-        <Form.Item label="环境分类" name="envTypeCode" required={true}>
+        <Form.Item label="集群选择"  name="clusterId">
+          <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
+
+        </Form.Item>
+        {/* <Form.Item label="环境分类" name="envTypeCode" required={true}>
           <Select
             showSearch
             allowClear
@@ -369,7 +390,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             showSearch
             allowClear
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="Namespace" name="namespace">
           <Input style={{ width: '400px' }} placeholder="输入Namespace名称" />
         </Form.Item>
@@ -412,9 +433,13 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="通知对象" name="receiver">
           <UserSelector style={{ width: '400px' }} />
         </Form.Item>
-        <Form.Item label="DingToken" name="dingToken">
-          <Input />
+        <Form.Item label="通知组" name="groupName">
+          <Select  style={{ width: '400px' }}  allowClear showSearch/>
         </Form.Item>
+        
+        {/* <Form.Item label="DingToken" name="dingToken">
+          <Input />
+        </Form.Item> */}
         <Form.Item
           label="是否静默"
           name="silence"

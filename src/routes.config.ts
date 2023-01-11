@@ -796,6 +796,15 @@ export default [
         path: `${baseRoutePath}/monitor/alarm-rules`,
         name: '报警中心',
         component: '@/pages/monitor/alarm-center',
+        key:'alarm-rules',
+       
+      },
+      {
+        path: `${baseRoutePath}/monitor/alarm-rules/group-push`,
+        name: '报警分组推送',
+        key: 'alarm-rules',
+        component: '@/pages/monitor/alarm-group/group-push',
+        hideInMenu: true,
       },
 
       {
