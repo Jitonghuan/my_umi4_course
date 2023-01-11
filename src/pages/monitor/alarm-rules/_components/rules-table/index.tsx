@@ -104,17 +104,18 @@ export default function RulesTable(props: RulesTableProps) {
       width: 120,
     },
     {
+      title: '命名空间',
+      dataIndex: 'nameSpace',
+      key: 'nameSpace',
+      width: 120,
+    },
+    {
       title: '关联应用',
       dataIndex: 'appCode',
       key: 'appCode',
       width: 120,
     },
-    {
-      title: 'NameSpace',
-      dataIndex: 'nameSpace',
-      key: 'nameSpace',
-      width: 120,
-    },
+   
     {
       title: '报警级别',
       dataIndex: 'level',

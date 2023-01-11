@@ -145,7 +145,7 @@ export default function CurrentAlarm(props: any) {
           expandable={{
             expandedRowRender: record =><div className="alert-expandable">
               {Object?.keys(record?.labels)?.map((item)=><p className="alert-expandable-item" >
-                <span><Tag color="purple">{item}</Tag></span>:<span>{record?.labels[item]}</span>
+                <span><Tag color="geekblue">{item}</Tag></span>:<span>{record?.labels[item]}</span>
                 </p>
               )}
             </div> ,
