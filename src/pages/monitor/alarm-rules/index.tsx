@@ -60,7 +60,7 @@ export default function AlarmRules() {
         const data=res?.data?.map((item: any)=>{
           return {
             label: item.clusterName,
-            value: item.id,
+            value: item.clusterName,
           }
         })
         setClusterList(data);

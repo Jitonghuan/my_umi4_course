@@ -229,7 +229,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         const data=res?.data?.map((item: any)=>{
           return {
             label: item.clusterName,
-            value: item.id,
+            value: item.clusterName,
           }
         })
         setClusterList(data);
@@ -366,7 +366,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警分类" name="group" required={true}>
           <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
-        <Form.Item label="集群选择"  name="clusterId">
+        <Form.Item label="集群选择"  name="clusterName">
           <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
 
         </Form.Item>

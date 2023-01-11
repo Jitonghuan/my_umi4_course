@@ -5,7 +5,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Drawer, Form, Button, Select, Input, message } from 'antd';
 import UserSelector from "@/components/user-selector";
-import {addAlertGroup,updateAlertGroup} from '../hook'
+import {addAlertGroup,updateAlertGroup,checkName} from '../hook'
 
 export interface CreateIProps {
     mode?: EditorMode;
@@ -20,6 +20,7 @@ export default function CreateArticle(props: CreateIProps) {
     const [editForm] = Form.useForm<Record<string, string>>();
     const [viewDisabled, seViewDisabled] = useState<boolean>(false);
     const [loading,setLoading] = useState<boolean>(false);
+    const []=useState<boolean>(false)
     
 
     useEffect(() => {
@@ -111,13 +112,13 @@ export default function CreateArticle(props: CreateIProps) {
                 <Form.Item label="分组名称" name="groupName" rules={[{ required: true, message: '请输入' }]}>
                     <Input disabled={viewDisabled} style={{ width: 320 }} />
                 </Form.Item>
-                <Form.Item label="分组用户" name="groupUser" rules={[{ required: true, message: '请选择' }]}>
+                <Form.Item label="分组用户" name="groupUser" >
                     <UserSelector style={{ width: '400px' }} disabled={viewDisabled} />
                 </Form.Item>
                 <Form.Item label="DingToken" name="dingToken" rules={[{ required: true, message: '请输入' }]}>
                     <Input disabled={viewDisabled} style={{ width: 520 }} />
                 </Form.Item>
-                <Form.Item label="备注" name="remark" rules={[{ required: true, message: '请输入' }]}>
+                <Form.Item label="备注" name="remark" >
                     <Input.TextArea disabled={viewDisabled} style={{ width: 520 }} />
                 </Form.Item>
 

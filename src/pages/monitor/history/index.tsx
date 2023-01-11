@@ -67,6 +67,12 @@ const HistoryCom: React.FC = () => {
       // width: '3%',
     },
     {
+      title: '命名空间',
+      dataIndex: 'namespace',
+      key: 'namespace',
+      // width: '3%',
+    },
+    {
       title: '报警名称',
       dataIndex: 'alertName',
       key: 'alertName',

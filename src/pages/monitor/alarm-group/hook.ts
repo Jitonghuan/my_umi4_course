@@ -58,3 +58,8 @@ export function useDeleteAlertGroup(): [boolean, (id: number) => Promise<void>] 
   
     return [loading, pushAlertGroup];
   }
+
+  //checkName
+  export const checkName = (groupName:string) =>
+  putRequest(`${APIS.checkName}?groupName=${groupName}`,);
+  
