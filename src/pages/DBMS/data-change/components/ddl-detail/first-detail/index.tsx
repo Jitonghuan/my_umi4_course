@@ -1,11 +1,12 @@
-import { Card, Descriptions, Space, Tag, Table, Input, Modal,Drawer, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip } from 'antd';
+import { Card, Descriptions, Space, Tag, Table, Input, Modal,Drawer, Typography, Button, Form, Spin, Radio, DatePicker,Popconfirm, Tooltip } from 'antd';
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
-import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined,CopyOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined,  } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import { createTableColumns } from './schema';
 import { history, useLocation } from 'umi';
+import ApprovalCard from '../../../../approval-card';
 import NextEnvDraw from './next-env-draw'
 import moment from 'moment';
 import AceEditor from '@/components/ace-editor';
@@ -34,13 +35,7 @@ const runModeOnlyOptions = [
   },
 
 ]
-const { Step } = Steps;
-const StatusMapping: Record<string, number> = {
-  wait: 1,
-  pass: 2,
-  reject: 2,
-  abort: 2
-};
+
 const { Paragraph } = Typography;
 export default function ApprovalEnd() {
   const [info, setInfo] = useState<any>({});
@@ -52,18 +47,19 @@ export default function ApprovalEnd() {
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setstatus] = useState<string>("");
   const [runMode, setRunMode] = useState<string>("now")
-  const [owner, setOwner] = useState<any>([]);
   const [auditLoading, auditTicket] = useAuditTicket();
   const [visiable, setVisiable] = useState<boolean>(false);
-  //useRunSql
   const [runLoading, runSql] = useRunSql();
-  const [statusText, setStatusText] = useState<string>("");
   const [executeResultData, setExecuteResultData] = useState<any>([])
   const [reviewContentData, setReviewContentData] = useState<any>([])
   const [dateString, setDateString] = useState<string>("");
   const [nextEnvmode, setNextEnvmode] = useState<EditorMode>("HIDE")
   const [label, setLabel] = useState<any>([])
+   const [auditInfo,setAuditInfo]= useState<any>([]);
   const [showSql,setShowSql]=useState<boolean>(false)
+  const [createLoading,setCreateLoading]= useState<boolean>(false);
+  const [needCheckAffectedRows,setNeedCheckAffectedRows]= useState<boolean>(false);
+  const [affectedRowsTotal,setAffectedRowsTotal]=useState<number>(0)
   let location = useLocation();
   const query = parse(location.search);
   const initInfo: any = location.state || {};
@@ -196,25 +192,15 @@ export default function ApprovalEnd() {
 
       if (Object.keys(res)?.length < 1) return
       setInfo(res)
-      let auditUsers = [];
-
       const executeResult = JSON.parse(res?.executeResult || "{}")
       //reviewContent
       const reviewContent = JSON.parse(res?.reviewContent || "{}")
       setReviewContentData(reviewContent)
       setExecuteResultData(executeResult)
-
-      if (res?.audit?.length > 0) {
-        setstatus(res?.audit[0]?.AuditStatus)
-        setStatusText(res?.audit[0]?.AuditStatusDesc)
-        auditUsers = res?.audit[0]?.Groups
-        setOwner(auditUsers)
-      } else {
-        setstatus("")
-        setStatusText("")
-        auditUsers = []
-        setOwner([])
-      }
+      setAuditInfo(res?.audit||[])
+      setNeedCheckAffectedRows(res?.needCheckAffectedRows||false)
+      setAffectedRowsTotal(res?.affectedRowsTotal||0)
+      setstatus(res?.currentStatus)
     }).finally(() => {
       setLoading(false)
     })
@@ -322,6 +308,49 @@ export default function ApprovalEnd() {
   const columns = useMemo(() => {
     return createTableColumns() as any;
   }, []);
+  const runAction=async()=>{
+    const info=  await   runSqlform.validateFields()
+    if (info?.runMode === "now") {
+      setCreateLoading(true)
+      runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
+        //afferentId ? getInfo(afferentId) : getInfo()
+        setVisible(false)
+
+
+      }).then(() => {
+       
+          if ((query?.detail === "true" && query?.id) || query?.parentId) {
+            getInfo(afferentId)
+            getWorkflowLog(afferentId)
+          } else {
+            getInfo()
+            getWorkflowLog(initInfo?.record?.id || afferentId)
+          }
+
+      
+      }).finally(()=>{
+        setCreateLoading(false)
+      })
+    } else {
+      setCreateLoading(true)
+      runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
+        //afferentId ? getInfo(afferentId) : getInfo()
+        setVisible(false)
+
+      }).then(() => {
+        if ((query?.detail === "true" && query?.id) || query?.parentId) {
+          getInfo(afferentId)
+          getWorkflowLog(afferentId)
+        } else {
+          getInfo()
+          getWorkflowLog(initInfo?.record?.id || afferentId)
+        }
+      }).finally(()=>{
+        setCreateLoading(false)
+      })
+    }
+
+   }
   return (
     <PageContainer className="approval-end">
       <Drawer title="sql详情" visible={showSql} footer={false} width={"70%"} onClose={()=>{setShowSql(false)}} destroyOnClose>
@@ -356,45 +385,28 @@ export default function ApprovalEnd() {
         sqlContent={info?.sqlContent}
       />
       <ContentCard>
-        <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} onCancel={() => { setVisible(false) }} onOk={
-          () => {
-            runSqlform.validateFields().then((info) => {
-              if (info?.runMode === "now") {
-                runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
-                  //afferentId ? getInfo(afferentId) : getInfo()
-                  setVisible(false)
+        <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible}
+         footer={
+          <div className="drawer-footer">
+            {needCheckAffectedRows? <Popconfirm title={
+             <span>当前影响行数为：<b style={{color:"red"}}>{affectedRowsTotal}</b> 行,确定仍要继续提交吗？</span> 
+              } onConfirm={runAction}>
+            <Button type="primary" loading={createLoading} >
+          提交申请
+        </Button>
 
+            </Popconfirm>:  <Button type="primary" loading={createLoading} onClick={runAction} >
+          提交申请
+        </Button>}
+           
+         
+          <Button type="default" onClick={()=>{
+            setVisible(false)}}>
+            取消
+          </Button>
+          </div>
 
-                }).then(() => {
-                  setTimeout(() => {
-                    if ((query?.detail === "true" && query?.id) || query?.parentId) {
-                      getInfo(afferentId)
-                      getWorkflowLog(afferentId)
-                    } else {
-                      getInfo()
-                      getWorkflowLog(initInfo?.record?.id || afferentId)
-                    }
-
-                  }, 300);
-                })
-              } else {
-                runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
-                  //afferentId ? getInfo(afferentId) : getInfo()
-                  setVisible(false)
-
-                }).then(() => {
-                  if ((query?.detail === "true" && query?.id) || query?.parentId) {
-                    getInfo(afferentId)
-                    getWorkflowLog(afferentId)
-                  } else {
-                    getInfo()
-                    getWorkflowLog(initInfo?.record?.id || afferentId)
-                  }
-                })
-              }
-            })
-          }
-        }>
+        } onCancel={() => { setVisible(false) }} onOk={runAction}>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
             {info?.allowTiming === true ?
               <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
@@ -458,12 +470,9 @@ export default function ApprovalEnd() {
                 </span>
                 <span className="second-info-right">
                   <Space>
-                    {status === "wait" && info?.userName === userName &&
+                    {(status === "manReviewing"||status === "reviewPass")&& info?.userName === userName &&
                       <Tag color="orange" onClick={() => { showConfirm("abort") }} >撤销工单</Tag>
                     }
-
-
-
                   </Space>
                 </span>
 
@@ -500,40 +509,32 @@ export default function ApprovalEnd() {
           </Descriptions>
         </Spin>
         {/* ------------------------------- */}
-        <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
+        <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度：</span>}>
           <Spin spinning={auditLoading}>
-            <Steps direction="vertical" current={StatusMapping[status] || -1} size="small">
-              <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
-              <Step title="库Owner" icon={<DingdingOutlined />} description={`审批人:
-              ${owner?.join(',') || ''}`} />
-              <Step title={info?.currentStatusDesc}
-                icon={info?.currentStatus === "abort" ? <CloseCircleOutlined style={{ color: "red" }} /> :
-                  info?.currentStatus === "autoReviewWrong" ? <CloseCircleOutlined style={{ color: "red" }} /> :
-                    info?.currentStatus === "exception" ? <CloseCircleOutlined style={{ color: "red" }} /> : info?.currentStatus === "reject" ? <CloseCircleOutlined style={{ color: "red" }} /> : status === "wait" ? <LoadingOutlined style={{ color: "#2db7f5" }} /> :
-                      <CheckCircleTwoTone />}
-                description={
-                  status === "wait" && owner?.join(',')?.includes(userName) ? <Space>
-                    <Tag color="success" onClick={() => {
-                      auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
-                        //afferentId ? getInfo(afferentId) : getInfo()
-                        setTimeout(() => {
-                          if ((query?.detail === "true" && query?.id) || query?.parentId) {
-                            getInfo(afferentId)
-                            getWorkflowLog(afferentId)
-                          } else {
-                            getInfo()
-                            getWorkflowLog(initInfo?.record?.id)
-                          }
+          <ApprovalCard 
+        auditInfo={auditInfo}
+        subTime={info?.startTime||"-"}
+        auditLoading={auditLoading}
+        onAgree={()=>{
+          auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
+          
+              if ((query?.detail === "true" && query?.id) || query?.parentId) {
+                getInfo(afferentId)
+                getWorkflowLog(afferentId)
+              } else {
+                getInfo()
+                getWorkflowLog(initInfo?.record?.id)
+              }
 
-                        }, 300);
+         
 
-                      })
-                    }}>审批通过</Tag>
-
-
-                    <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
-                  </Space> : null} />
-            </Steps>
+          })
+        }}
+        onRefuse={()=>{
+          showConfirm("reject")
+        }}
+        />
+          
 
           </Spin>
         </Card>
@@ -543,7 +544,7 @@ export default function ApprovalEnd() {
             <Space  >
               <span>
                 <span style={{ display: "inline-flex" }}>
-                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
+                  <b>{ ( executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
                   <Spin spinning={runLoading} >
                     {info?.currentStatus === "reviewPass" && <Button type="primary" onClick={showRunSqlConfirm}>开始执行</Button>}
                   </Spin>
@@ -568,13 +569,8 @@ export default function ApprovalEnd() {
             </span>
 
           </div>
-          {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
-            {reviewContentData?.length > 0 && (
-              renderInfo(reviewContentData[0])
-
-            )}
-          </Table>)}
-          {status !== "wait" && (executeResultData?.length > 0 ?
+         
+          {(executeResultData?.length > 0 ?
             <Table bordered scroll={{ x: '100%' }} dataSource={executeResultData} loading={loading} >
               {executeResultData?.length > 0 && (
                 renderInfo(executeResultData[0])
