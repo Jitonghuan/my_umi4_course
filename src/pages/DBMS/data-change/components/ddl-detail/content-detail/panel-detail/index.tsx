@@ -185,10 +185,20 @@ export default function PanelDetail(props: Iprops) {
 
             if (Object.keys(res)?.length < 1) return
             setInfo(res)
-            const executeResult = JSON.parse(res?.executeResult || "{}")
-            const reviewContent = JSON.parse(res?.reviewContent || "{}")
-            setReviewContentData(reviewContent)
-            setExecuteResultData(executeResult)
+            if(res?.executeResult){
+                const executeResult = JSON.parse(res?.executeResult || "{}")
+                setExecuteResultData(executeResult)
+        
+              }
+              if(res?.reviewContent){
+                const reviewContent = JSON.parse(res?.reviewContent || "{}")
+                setReviewContentData(reviewContent)
+        
+              }
+            // const executeResult = JSON.parse(res?.executeResult || "{}")
+            // const reviewContent = JSON.parse(res?.reviewContent || "{}")
+            // setReviewContentData(reviewContent)
+            // setExecuteResultData(executeResult)
             setNeedCheckAffectedRows(res?.needCheckAffectedRows||false)
             setAffectedRowsTotal(res?.affectedRowsTotal||0)
             setstatus(res?.currentStatus)

@@ -189,10 +189,20 @@ export default function ApprovalEnd() {
     useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
       if (Object.keys(res)?.length < 1) return
       setInfo(res)
-      const executeResult = JSON.parse(res?.executeResult || "{}")
-      const reviewContent = JSON.parse(res?.reviewContent || "{}")
-      setReviewContentData(reviewContent)
-      setExecuteResultData(executeResult)
+      if(res?.executeResult){
+        const executeResult = JSON.parse(res?.executeResult || "{}")
+        setExecuteResultData(executeResult)
+
+      }
+      if(res?.reviewContent){
+        const reviewContent = JSON.parse(res?.reviewContent || "{}")
+        setReviewContentData(reviewContent)
+
+      }
+     
+     
+     
+      
       setstatus(res?.currentStatus)
       setNeedCheckAffectedRows(res?.needCheckAffectedRows||false)
       setAffectedRowsTotal(res?.affectedRowsTotal||0)

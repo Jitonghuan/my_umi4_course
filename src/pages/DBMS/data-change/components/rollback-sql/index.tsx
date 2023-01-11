@@ -3,8 +3,10 @@
 // @create 2022/06/15 14:50
 
 import React, { useState, useEffect,} from 'react';
-import { Modal, Table,Typography,Form,Drawer } from 'antd';
+import { Modal, Table,Typography,Form,Drawer,Button,message } from 'antd';
 import AceEditor from '@/components/ace-editor';
+import {CopyOutlined} from '@ant-design/icons'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import {useGetRollbackSQL} from './hook'
 const { Paragraph } = Typography;
 
@@ -21,6 +23,7 @@ export default function CreateArticle(props: IProps) {
     const { visiable,  onClose,curId } = props;
     const [loading,setLoading]=useState<boolean>(false)
     const [dataSource,setDataSource]=useState<any>([])
+    const [copySql,setCopySql]=useState<string>("")
     const [sqlForm] =Form.useForm()
     const [showSql,setShowSql]=useState<boolean>(false)
     const columns=[
@@ -69,8 +72,15 @@ export default function CreateArticle(props: IProps) {
     },[curId,visiable])
     const getRollbackSQL=()=>{
         setLoading(true)
+        setCopySql("")
         useGetRollbackSQL(curId).then((data)=>{
             setDataSource(data)
+            let rollbackSQL:any=[];
+            (data||[])?.map((item:any)=>{
+              rollbackSQL.push(item?.rollbackSQL)
+
+            })
+            setCopySql(rollbackSQL?.join('\n \n ')||"")
 
         }).finally(()=>{
             setLoading(false)
@@ -90,6 +100,14 @@ export default function CreateArticle(props: IProps) {
 
       </Drawer>
         <Modal title="回滚sql语句" visible={visiable} destroyOnClose width={"80%"} footer={false} onCancel={onClose}>
+          <div style={{display:"flex",justifyContent:"flex-end"}}>
+            <div>
+            <CopyToClipboard text={copySql} onCopy={() => message.success('复制成功！')}>
+                 <Button type="primary" icon={<CopyOutlined />}>复制所有回滚语句</Button>
+            </CopyToClipboard>
+          
+              </div>
+          </div>
             <Table columns={columns} loading={loading}  scroll={{ x: '100%' }} dataSource={dataSource} />  
         </Modal>
         </>

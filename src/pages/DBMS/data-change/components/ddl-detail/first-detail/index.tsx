@@ -192,11 +192,21 @@ export default function ApprovalEnd() {
 
       if (Object.keys(res)?.length < 1) return
       setInfo(res)
-      const executeResult = JSON.parse(res?.executeResult || "{}")
+      if(res?.executeResult){
+        const executeResult = JSON.parse(res?.executeResult || "{}")
+        setExecuteResultData(executeResult)
+
+      }
+      if(res?.reviewContent){
+        const reviewContent = JSON.parse(res?.reviewContent || "{}")
+        setReviewContentData(reviewContent)
+
+      }
+      // const executeResult = JSON.parse(res?.executeResult || "{}")
       //reviewContent
-      const reviewContent = JSON.parse(res?.reviewContent || "{}")
-      setReviewContentData(reviewContent)
-      setExecuteResultData(executeResult)
+      // const reviewContent = JSON.parse(res?.reviewContent || "{}")
+      // setReviewContentData(reviewContent)
+      // setExecuteResultData(executeResult)
       setAuditInfo(res?.audit||[])
       setNeedCheckAffectedRows(res?.needCheckAffectedRows||false)
       setAffectedRowsTotal(res?.affectedRowsTotal||0)
