@@ -6,18 +6,19 @@
  * @FilePath: /fe-matrix/src/pages/DBMS/data-change/components/approval-end/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import { Card, Descriptions, Space, Tag, Table, Drawer, Input, Modal, Typography, Button, Form, Spin, Radio, DatePicker, Steps, Tooltip, Segmented } from 'antd';
+import {  Descriptions, Space, Tag, Table, Drawer, Input, Modal, Button, Form, Spin, Radio, DatePicker, Card, Tooltip, Segmented ,Popconfirm} from 'antd';
 import React, { useMemo, useState, useEffect } from 'react';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
 import PageContainer from '@/components/page-container';
 import AceEditor from '@/components/ace-editor';
-import { ExclamationCircleOutlined, DingdingOutlined, CheckCircleTwoTone, StarOutlined, CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined}from'@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import RollbackSql from '../rollback-sql'
 import { createTableColumns } from './schema';
+import ApprovalCard from '../../../approval-card';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
-import { parse } from 'query-string';
+import { parse,stringify } from 'query-string';
 import { CurrentStatusStatus, PrivWfType } from '../../../authority-manage/components/authority-apply/schema'
 import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog, useGetSyncInfo } from './hook';
 import { createDiffTableColumns } from '../struct-apply/schema'
@@ -40,38 +41,36 @@ const runModeOnlyOptions = [
   },
 
 ]
-const { Step } = Steps;
-const StatusMapping: Record<string, number> = {
-  wait: 1,
-  pass: 2,
-  reject: 2,
-  abort: 2
-};
-const { Paragraph } = Typography;
+
+
 export default function ApprovalEnd() {
   const [info, setInfo] = useState<any>({});
   const [syncInfo, setSyncInfo] = useState<any>({})
   const [tableLoading, logData, getWorkflowLog] = useworkflowLog()
   const [form] = Form.useForm()
   const [sqlForm] = Form.useForm()
+  const [errorForm] = Form.useForm()
   const [visiable, setVisiable] = useState<boolean>(false);
   const [runSqlform] = Form.useForm()
   const [loading, setLoading] = useState<boolean>(false);
   const [showSql, setShowSql] = useState<boolean>(false)
-  const [status, setstatus] = useState<string>("");
   const [runMode, setRunMode] = useState<string>("now")
-  const [owner, setOwner] = useState<any>([]);
   const [auditLoading, auditTicket] = useAuditTicket();
   const [runLoading, runSql] = useRunSql();
-  const [statusText, setStatusText] = useState<string>("");
+  const [status, setstatus] = useState<string>("");
   const [executeResultData, setExecuteResultData] = useState<any>([])
   const [reviewContentData, setReviewContentData] = useState<any>([])
   const [dateString, setDateString] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string | number>('createTables');
   const [createTablesData, setCreateTablesData] = useState<any>([])
   const [modifyTablesData, setModifyTablesData] = useState<any>([])
+  const [errorVisible,setErrorVisible]= useState<boolean>(false);
+  const [auditInfo,setAuditInfo]= useState<any>([])
+  const [needCheckAffectedRows,setNeedCheckAffectedRows]= useState<boolean>(false);
+  const [affectedRowsTotal,setAffectedRowsTotal]=useState<number>(0)
+  const [createLoading,setCreateLoading]= useState<boolean>(false);
   let location = useLocation();
-  const query = parse(location.search);
+  const query:any = parse(location.search);
   const initInfo: any = location.state || {};
   let sqlWfType = initInfo?.record?.sqlWfType||query?.sqlWfType
   const afferentId = Number(query?.id)
@@ -90,6 +89,13 @@ export default function ApprovalEnd() {
           showSql: record?.syncSQLContent?.replace(/\\n/g, '<br/>')
         })
       },
+      onViewError:(record, index)=>{
+        errorForm.setFieldsValue({
+            error:record?.errorMessage
+        })
+        setErrorVisible(true)
+
+    }
     }) as any;
   }, []);
 
@@ -100,20 +106,14 @@ export default function ApprovalEnd() {
       getWorkflowLog(afferentId)
     }
     return () => {
-      // history.push(location.pathname)
+    
     }
   }, [afferentId])
   useEffect(() => {
     let intervalId = setInterval(() => {
       onRefresh()
-      // if (query?.detail === "true" && query?.id) {
-      //   getInfo(afferentId)
-      //   getWorkflowLog(afferentId)
-      // } else {
-      //   getInfo()
-      //   getWorkflowLog(initInfo?.record?.id)
-      // }
-    }, 10000 * 6);
+    
+    }, 10000 * 6 * 3);
 
     return () => {
       clearInterval(intervalId);
@@ -163,13 +163,6 @@ export default function ApprovalEnd() {
             close()
           }).then(() => {
             onRefresh()
-            // if (query?.detail === "true" && query?.id) {
-            //   getInfo(afferentId)
-            //   getWorkflowLog(afferentId)
-            // } else {
-            //   getInfo()
-            //   getWorkflowLog(initInfo?.record?.id)
-            // }
           })
         })
 
@@ -196,21 +189,27 @@ export default function ApprovalEnd() {
     useGetSqlInfo(initInfo?.record?.id || id).then((res) => {
       if (Object.keys(res)?.length < 1) return
       setInfo(res)
-      let auditUsers = [];
-      const executeResult = JSON.parse(res?.executeResult || "{}")
-      const reviewContent = JSON.parse(res?.reviewContent || "{}")
-      setReviewContentData(reviewContent)
-      setExecuteResultData(executeResult)
+      if(res?.executeResult){
+        const executeResult = JSON.parse(res?.executeResult || "{}")
+        setExecuteResultData(executeResult)
+
+      }
+      if(res?.reviewContent){
+        const reviewContent = JSON.parse(res?.reviewContent || "{}")
+        setReviewContentData(reviewContent)
+
+      }
+     
+     
+     
+      
+      setstatus(res?.currentStatus)
+      setNeedCheckAffectedRows(res?.needCheckAffectedRows||false)
+      setAffectedRowsTotal(res?.affectedRowsTotal||0)
       if (res?.audit?.length > 0) {
-        setstatus(res?.audit[0]?.AuditStatus)
-        setStatusText(res?.audit[0]?.AuditStatusDesc)
-        auditUsers = res?.audit[0]?.Groups
-        setOwner(auditUsers)
+        setAuditInfo(res?.audit)
       } else {
-        setstatus("")
-        setStatusText("")
-        auditUsers = []
-        setOwner([])
+        setAuditInfo([])
       }
     }).finally(() => {
       setLoading(false)
@@ -334,13 +333,51 @@ export default function ApprovalEnd() {
       getWorkflowLog(initInfo?.record?.id)
     }
   }
-
-
+  
   const columns = useMemo(() => {
     return createTableColumns() as any;
   }, []);
+  const showWarning=()=>{
+   //affectedRowsTotal
+  }
+  const runAction=async()=>{
+ 
+    const info=await runSqlform.validateFields();
+    
+      if (info?.runMode === "now") {
+        setCreateLoading(true)
+         runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
+          setVisible(false)
+        }).then(() => {
+          onRefresh()
+        }).finally(()=>{
+          setCreateLoading(false)
+        })
+      } else {
+        setCreateLoading(true)
+        runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
+          setVisible(false)
+        }).then(() => {
+          onRefresh()
+        
+        }).finally(()=>{
+          setCreateLoading(false)
+        })
+      }
+   
+
+  }
   return (
     <PageContainer className="approval-end">
+        <Modal visible={errorVisible} width={800} destroyOnClose onCancel={()=>{setErrorVisible(false)}} footer={false}>
+                <Form form={errorForm} preserve={false}>
+                    <Form.Item name="error">
+                    <AceEditor height={600} />
+                    </Form.Item>
+                </Form>
+              
+
+            </Modal>
       <Drawer title="sql详情" visible={showSql} footer={false} width={"70%"} onClose={() => { setShowSql(false) }} destroyOnClose>
         <Form form={sqlForm} preserve={false}>
           <Form.Item name="showSql">
@@ -353,43 +390,29 @@ export default function ApprovalEnd() {
       </Drawer>
       <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id} />
       <ContentCard>
-        <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} onCancel={() => { setVisible(false) }} onOk={
-          () => {
-            runSqlform.validateFields().then((info) => {
-              if (info?.runMode === "now") {
-                runSql({ runMode: "now", id: initInfo?.record?.id || afferentId }).then(() => {
+        <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} 
+        footer={
+          <div className="drawer-footer">
+            {needCheckAffectedRows? <Popconfirm title={
+             <span>当前影响行数为：<b style={{color:"red"}}>{affectedRowsTotal}</b> 行,确定仍要继续提交吗？</span> 
+              } onConfirm={runAction}>
+            <Button type="primary" loading={createLoading} >
+          提交申请
+        </Button>
 
+            </Popconfirm>:  <Button type="primary" loading={createLoading} onClick={runAction} >
+          提交申请
+        </Button>}
+           
+         
+          <Button type="default" onClick={()=>{
+            setVisible(false)}}>
+            取消
+          </Button>
+          </div>
 
-                  setVisible(false)
-                }).then(() => {
-                  onRefresh()
-                  // if (query?.detail === "true" && query?.id) {
-                  //   getInfo(afferentId)
-                  //   getWorkflowLog(afferentId)
-                  // } else {
-                  //   getInfo()
-                  //   getWorkflowLog(initInfo?.record?.id)
-                  // }
-                })
-              } else {
-                runSql({ runMode: "timing", runDate: info?.runTime.format('YYYY-MM-DD HH:mm:ss'), id: initInfo?.record?.id || afferentId }).then(() => {
-
-
-                  setVisible(false)
-                }).then(() => {
-                  onRefresh()
-                  // if (query?.detail === "true" && query?.id) {
-                  //   getInfo(afferentId)
-                  //   getWorkflowLog(afferentId)
-                  // } else {
-                  //   getInfo()
-                  //   getWorkflowLog(initInfo?.record?.id)
-                  // }
-                })
-              }
-            })
-          }
-        }>
+        }
+        onCancel={() => { setVisible(false) }}>
           <Form form={runSqlform} labelCol={{ flex: '140px' }}>
             {info?.allowTiming === true ?
               <Form.Item name="runMode" label="执行方式" rules={[{ required: true, message: '请输入' }]} >
@@ -427,21 +450,17 @@ export default function ApprovalEnd() {
               <Button onClick={onRefresh} type="primary" ghost>刷新</Button>
 
             <Button type="primary" className="back-go" onClick={() => {
+              let info={...query}
               history.push({
                 pathname: "/matrix/DBMS/data-change",
+                search: stringify(info),
 
               })
             }}>
               返回
               </Button>
-
             </Space>
-            
-
           </span></h3>
-
-
-
         </div>
 
         {/* ------------------------------- */}
@@ -457,7 +476,7 @@ export default function ApprovalEnd() {
                 </span>
                 <span className="second-info-right">
                   <Space>
-                    {status === "wait" && info?.userName === userName &&
+                    {(status === "manReviewing"||status === "reviewPass") && info?.userName === userName &&
                       <Tag color="orange" onClick={() => { showConfirm("abort") }} >撤销工单</Tag>
                     }
                   </Space>
@@ -506,7 +525,6 @@ export default function ApprovalEnd() {
 
           </Descriptions>
         </Spin>
-        {/* sqlWfType==="sync" */}
         {/* --------------新建的表 、修改的表----------------- */}
         {sqlWfType === "sync" && <div  >
           <div className='table-header'>
@@ -528,47 +546,32 @@ export default function ApprovalEnd() {
                               }} />
         </div>}
         {/* ------------------------------- */}
-        <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度：<span className="processing-title">{statusText}</span></span>}>
-          <Spin spinning={auditLoading}>
-            <Steps direction="vertical" current={StatusMapping[status] || -1} size="small">
-              <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
-              <Step title="库Owner" icon={<DingdingOutlined />} description={`审批人:
-              ${owner?.join(',') || ''}`} />
-              <Step title={info?.currentStatusDesc}
-                icon={info?.currentStatus === "abort" ? <CloseCircleOutlined style={{ color: "red" }} /> :
-                  info?.currentStatus === "autoReviewWrong" ? <CloseCircleOutlined style={{ color: "red" }} /> :
-                    info?.currentStatus === "exception" ? <CloseCircleOutlined style={{ color: "red" }} /> : info?.currentStatus === "reject" ? <CloseCircleOutlined style={{ color: "red" }} /> : status === "wait" ? <LoadingOutlined style={{ color: "#2db7f5" }} /> :
-                      <CheckCircleTwoTone />}
-                description={
-                  status === "wait" && owner?.join(',')?.includes(userName) ? <Space>
-                    <Tag color="success" onClick={() => {
-                      auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
-                        setTimeout(() => {
-                          onRefresh()
-                          // if (query?.detail === "true" && query?.id) {
-                          //   getInfo(afferentId)
-                          //   getWorkflowLog(afferentId)
-                          // } else {
-                          //   getInfo()
-                          //   getWorkflowLog(initInfo?.record?.id)
-                          // }
+        <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度</span>}>
+        <ApprovalCard 
+        auditInfo={auditInfo}
+        subTime={info?.startTime||"-"}
+        auditLoading={auditLoading}
+        canAudit={info?.canAudit||false}
+        onAgree={()=>{
+          auditTicket({ auditType: "pass", id: initInfo?.record?.id || afferentId }).then(() => {
+            onRefresh()
+        })
+        }}
+        onRefuse={()=>{
+          showConfirm("reject")
+        }}
+        />
 
-                        }, 300);
-                      })
-                    }}>审批通过</Tag>
-                    <Tag color="volcano" onClick={() => showConfirm("reject")}>拒绝</Tag>
-                  </Space> : null} />
-            </Steps>
-
-          </Spin>
         </Card>
+       
+
         {/* ------------------------------- */}
         <div style={{ marginTop: 12 }} >
           <div className="ticket-detail-env-title" >
             <Space  >
               <span>
                 <span style={{ display: "inline-flex" }}>
-                  <b>{(status === "wait" && reviewContentData?.length > 0) ? "检测详情" : (status !== "wait" && executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
+                  <b>{(executeResultData?.length > 0) ? "执行详情" : "检测详情"}</b>&nbsp;&nbsp;
                   <Spin spinning={runLoading} >
                     {info?.currentStatus === "reviewPass" && <Button type="primary" onClick={showRunSqlConfirm}>开始执行</Button>}
                   </Spin>
@@ -585,15 +588,9 @@ export default function ApprovalEnd() {
                 setVisiable(true)
               }}>获取回滚语句</Button>}
             </span>
-
           </div>
-          {status === "wait" && (<Table bordered scroll={{ x: '100%' }} dataSource={reviewContentData} loading={loading} >
-            {reviewContentData?.length > 0 && (
 
-              renderInfo(reviewContentData[0])
-            )}
-          </Table>)}
-          {status !== "wait" && (executeResultData?.length > 0 ?
+          {(executeResultData?.length > 0 ?
             <Table bordered scroll={{ x: '100%' }} dataSource={executeResultData} loading={loading} >
               {executeResultData?.length > 0 && (
                 renderInfo(executeResultData[0])

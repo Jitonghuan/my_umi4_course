@@ -204,7 +204,7 @@ export const createTableColumns = (params: {
       // width: '10%',
       width: 120,
       //"我审批的"
-       render: (wfUserType) =>  <Tag color={wfUserType==="我审批的"?"#2db7f5":"pink"}>{wfUserType}</Tag>,
+       render: (wfUserType) => <div>{wfUserType?<Tag color={wfUserType==="我审批的"?"#2db7f5":"pink"}>{wfUserType}</Tag>:null}</div> ,
     },
     {
       title: '标题',

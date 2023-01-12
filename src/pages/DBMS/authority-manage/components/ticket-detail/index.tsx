@@ -4,13 +4,13 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Drawer, Form, Spin, Input, Steps, Card ,Tag,Descriptions,Space,Modal,Table,Empty} from 'antd';
-import {CloseCircleOutlined,DingdingOutlined,CheckCircleTwoTone,StarOutlined,LoadingOutlined} from '@ant-design/icons'
+import { Drawer, Form, Spin, Input,  Card ,Tag,Descriptions,Modal,Table} from 'antd';
 import './index.less';
-import { getRequest, postRequest, } from '@/utils/request';
+import { getRequest, } from '@/utils/request';
 import { history } from 'umi';
 import {createTableColumns} from './schema';
 import {useGetPrivInfo,useAuditTicket} from './hook';
+import ApprovalCard from '../../../approval-card';
 import {useworkflowLog} from '../../../data-change/components/approval-end/hook'
 import {CurrentStatusStatus,PrivWfType} from '../authority-apply/schema';
 import {getPrivInfoApi} from  '../../../service'
@@ -24,26 +24,18 @@ export interface CreateArticleProps {
   onSave: () => any;
   getList: () => any;
 }
-const { Step } = Steps;
-const StatusMapping: Record<string, number> = {
-  wait:1,
-  pass:2,
-  reject:2,
-  abort:2
-};
+
 export default function CreateArticle(props: CreateArticleProps) {
   const { mode, curRecord, onClose, onSave,getList,queryId } = props;
   const afferentId=Number(queryId)
   const [tableLoading,logData, getWorkflowLog]=useworkflowLog()
   const { confirm } = Modal;
   const [form]=Form.useForm()
+  const [status, setstatus] = useState<string>("");
   const [info,setInfo]=useState<any>({});
   const [loading,setLoading]=useState<boolean>(false);
- 
-  const [owner,setOwner]=useState<any>([]);
-  const [status,setstatus]=useState<string>("");
+  const [auditInfo,setAuditInfo]= useState<any>([])
   const [auditLoading, auditTicket]= useAuditTicket();
-  const [auditStatusDesc,setAuditStatusDesc]=useState<string>("")
   const [privWfType,setPrivWfType]=useState<any>([]);
   const [idActive,setIdActive]=useState<boolean>(true)
   let userInfo: any = localStorage.getItem('USER_INFO');
@@ -87,7 +79,6 @@ export default function CreateArticle(props: CreateArticleProps) {
     getRequest(getPrivInfoApi,{data:{id:curRecord?.id||id}}).then((res: any) => {
       if (res?.success){
         setInfo(res?.data)
-        let auditUsers=[];
         let privList:any=[]
         res?.data?.privList?.map((item:any)=>{
           if(item==="query"){
@@ -103,19 +94,12 @@ export default function CreateArticle(props: CreateArticleProps) {
   
         })
         setPrivWfType(privList)
-        if(res?.data?.audit?.length>0){
-          setstatus(res?.data?.audit[0]?.AuditStatus)
-          // if(res?.audit[0]?.AuditStatus==="wait"){
-            auditUsers=res?.data?.audit[0]?.Groups||[] 
-            setOwner(auditUsers)
-           
-            setAuditStatusDesc(res?.data?.audit[0]?.AuditStatusDesc)
-           
-          // }
-  
+        setstatus(res?.data?.currentStatus)
+        if (res?.data?.audit?.length > 0) {
+          setAuditInfo(res?.data?.audit)
+        } else {
+          setAuditInfo([])
         }
-        
-       
         setIdActive(true)
       }else{
         setIdActive(false)
@@ -184,7 +168,7 @@ export default function CreateArticle(props: CreateArticleProps) {
                     <Descriptions.Item label="标题" span={2}><span style={{width:320,overflow:"auto",textOverflow:"ellipsis"}}>{info?.title}</span></Descriptions.Item>
                     <Descriptions.Item  label="工单状态"><Tag color={CurrentStatusStatus[info?.currentStatus]?.tagColor||"default"}>{info?.currentStatusDesc}</Tag> </Descriptions.Item>
                     <Descriptions.Item label="">
-                      {status==="wait"&&info?.userName===userName&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
+                      {!(status === "reject"||status === "finish"||status === "exception")&&info?.userName===userName&&  <Tag color="volcano" onClick={()=>showConfirm("abort")}>撤销工单</Tag>}
                     
                     </Descriptions.Item>
                     
@@ -223,41 +207,26 @@ export default function CreateArticle(props: CreateArticleProps) {
             </Spin>
              
           </Card>
-          <Card size="small" style={{ width: "90%" ,marginTop:16 }} title={<span>审批进度：<span className="processing-title">{auditStatusDesc}</span></span>}>
+          <Card size="small" style={{ width: "90%" ,marginTop:16 }} title={<span>审批进度</span>}>
           <Spin spinning={loading}>
-          <Steps direction="vertical" current={StatusMapping[status] || -1} size="small" >
-           <Step title="提交" icon={<StarOutlined />} description={`提交时间:${info?.startTime}`} />
-           <Step title="库Owner" icon={<DingdingOutlined />} 
-           description={`审批人:
-           ${owner?.join(',') || ''}
-         `} />
-           {/* LoadingOutlined */}
-           <Step title={info?.currentStatusDesc} icon={info?.currentStatus==="abort"?<CloseCircleOutlined style={{color:"red"}} />:
-              info?.currentStatus==="autoReviewWrong"?<CloseCircleOutlined style={{color:"red"}}/>:
-              info?.currentStatus==="exception"?<CloseCircleOutlined style={{color:"red"}} />:  info?.currentStatus==="reject"?<CloseCircleOutlined style={{color:"red"}} />:
-              status==="wait"?<LoadingOutlined style={{color:"#2db7f5"}} />:
-              <CheckCircleTwoTone />} 
-              description={
-             <Spin spinning={auditLoading}>
-             {status==="wait"&&owner?.join(',')?.includes(userName)?(
-                <Space> 
-                <Tag color="geekblue" onClick={()=>{
+          
+              <ApprovalCard 
+              auditInfo={auditInfo}
+              subTime={info?.startTime||"-"}
+              auditLoading={auditLoading}
+              canAudit={info?.canAudit||false}
+              
+              onAgree={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
                   afferentId?getInfo(afferentId):  getInfo()
                 
                   getList()
                 })
-             }}>同意</Tag> 
-             <Tag color="volcano" onClick={()=>showConfirm("reject")}>拒绝</Tag>   
-             </Space>):null}
-            
-          
-
-             </Spin>
-          } />
-         </Steps>
-
-
+              }}
+              onRefuse={()=>{
+                showConfirm("reject")
+              }}
+              />
           </Spin>
         
 

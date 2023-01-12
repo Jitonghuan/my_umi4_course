@@ -3,13 +3,16 @@ import {Form, Button, Table,Select,Input ,Space} from 'antd';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest } from '@/utils/request';
+import { parse,stringify } from 'query-string';
 import { createTableColumns,statusOptions,privWfTypeOptions} from './schema';
 import {querySqlListApi} from '../service';
 import {currentAuditsApi} from '../service'
 import {useSearchUser} from '../common-hook'
-import {history} from 'umi';
+import {history,useLocation} from 'umi';
 export default function AuthorityApply (){
     const [form] = Form.useForm();
+    let location:any = useLocation();
+    const query:any = parse(location.search);
     const [dataSource,setDataSource]=useState<any>([]);
     const [total, setTotal] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(20);
@@ -19,8 +22,19 @@ export default function AuthorityApply (){
       searchUser()
     },[])
     useEffect(()=>{
-        queryList()
-    },[])
+      
+        if(location.search){
+          queryList({
+            ...query
+          })
+          form.setFieldsValue({
+            ...query
+          })
+
+        }else{
+          queryList()
+        }
+    },[location.search])
    
     const queryList = (obj?:{pageIndex?:number,pageSize?:number,currentStatus?:string,wfUserType?:string,userName?:string,title?:string}) => {
         setTableLoading(true)
@@ -77,9 +91,12 @@ export default function AuthorityApply (){
         return createTableColumns({
             dataSource:dataSource,
           onDetail: (record, index) => {
+            let value = form.getFieldsValue();
+            let query={...value}
             if(record?.sqlWfType==="ddl"){
               history.push({
-                pathname:"/matrix/DBMS/ddl-detail"
+                pathname:"/matrix/DBMS/ddl-detail",
+                search: stringify(query),
               },{
                 record
               })
@@ -87,7 +104,7 @@ export default function AuthorityApply (){
             }else{
               history.push({
                 pathname:"/matrix/DBMS/approval-end",
-                
+                search: stringify(query),
               
               },{
                 record

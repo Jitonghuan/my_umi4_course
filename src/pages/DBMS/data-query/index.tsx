@@ -392,7 +392,7 @@ export default function ResizeLayout() {
       showIcon={true}
       leftContent={leftContent}
       rightContent={rightContent}
-      initWidth={150}
+      initWidth={300}
       least={20}
       getIconAction={(close:boolean)=>{
       

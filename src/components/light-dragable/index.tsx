@@ -68,7 +68,7 @@ export default function ResizeLayout(props:Iprops) {
       e.stopPropagation();
       setClose(!close);
       setSiderWidth(close?initWidth:least)
-      //localStorage.setItem('siderWidth', close?initWidth+"":least+"");
+      // localStorage.setItem('siderWidth', close?initWidth+"":least+"");
       setStartPageX(e.pageX);
       setDragging(false);
       if(getIconAction){
