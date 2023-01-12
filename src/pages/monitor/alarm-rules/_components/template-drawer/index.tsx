@@ -13,7 +13,7 @@ import { getRequest } from '@/utils/request';
 import { useAppOptions } from '../../hooks';
 import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../basic/services';
 import { getCluster} from '../../../../monitor/current-alarm/service';
-import { useUserOptions } from './hooks';
+import { useUserOptions,useGroupOptions } from './hooks';
 import './index.less';
 import UserSelector from "@/components/user-selector";
 
@@ -55,6 +55,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [envTypeCode, setEnvTypeCode] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
+  const [groupOptions]=useGroupOptions()
   const [clusterList, setClusterList] = useState<any>([]);
   const [getSilenceValue, setGetSilenceValue] = useState(0);
   
@@ -188,6 +189,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     const setValues = {
       ...record,
       receiver: currentReceiver,
+      groupName:record?.groupName?record?.groupName?.split(','):[],
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
@@ -286,6 +288,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       const obj = {
         ...value,
         receiver: (value?.receiver || []).join(','),
+        groupName: (value?.groupName || []).join(','),
         labels: stepTableMap(labelTableData),
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,
@@ -430,11 +433,11 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警消息" name="message" required={true}>
           <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }} />
         </Form.Item>
-        <Form.Item label="通知对象" name="receiver">
+        <Form.Item label="通知对象" name="receiver" >
           <UserSelector style={{ width: '400px' }} />
         </Form.Item>
-        <Form.Item label="通知组" name="groupName">
-          <Select  style={{ width: '400px' }}  allowClear showSearch/>
+        <Form.Item label="通知组" name="groupName" initialValue={['默认组','运维组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>
         
         {/* <Form.Item label="DingToken" name="dingToken">

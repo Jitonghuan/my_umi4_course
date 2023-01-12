@@ -760,6 +760,7 @@ export default function DpMonitorEdit(props: any) {
         <RulesEdit
           visible={rulesVisible}
           record={rulesRecord}
+          uniquelyIdentify={'business'}
           bizMonitorId={recordData?.id}
           bizMonitorType={bizMonitorType}
           envCode={currentEnvCode}

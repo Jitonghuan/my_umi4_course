@@ -23,12 +23,13 @@ interface IPros {
   envCode: string;
   probeName?:string
   monitorName?:string;
+  uniquelyIdentify?:string
 }
 
 
 
 const RulesEdit = (props: IPros) => {
-  const { type = 'add', onCancel, onConfirm, visible,probeName,entryType,monitorName, record = {}, bizMonitorId, bizMonitorType, envCode } = props;
+  const { type = 'add', onCancel, onConfirm, visible,probeName,uniquelyIdentify,entryType,monitorName, record = {}, bizMonitorId, bizMonitorType, envCode } = props;
   const [unit, setUnit] = useState('m'); // 单位
   const [getSilenceValue, setGetSilenceValue] = useState(0);
   const [labelTableData, setLabelTableData] = useState<any[]>([]);
@@ -55,6 +56,7 @@ const RulesEdit = (props: IPros) => {
     if(probeName&&visible){
 
       getPromQL()
+      
     }
   },[visible])
 
@@ -69,6 +71,14 @@ const RulesEdit = (props: IPros) => {
           };
         }),
       );
+
+      if(uniquelyIdentify&&uniquelyIdentify==="business"){
+        form.setFieldsValue({
+          group:"业务监控"
+        })
+
+
+      }
     }
   }
 
@@ -79,6 +89,7 @@ const RulesEdit = (props: IPros) => {
   const annotationsFun = (value: any[]) => {
     setAnnotationsTableData(value);
   };
+  
 
   const onFinish = async () => {
     const params = await form.validateFields();
@@ -121,6 +132,7 @@ const RulesEdit = (props: IPros) => {
 
   useEffect(() => {
     if (visible) {
+     
       if (type === 'add') {
         setLabelTableData([]);
         setAnnotationsTableData([]);
@@ -206,7 +218,7 @@ const RulesEdit = (props: IPros) => {
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item label="告警分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
-          <Select placeholder="请选择" options={groupData} />
+          <Select placeholder="请选择" options={groupData} disabled={uniquelyIdentify==="business"} />
         </Form.Item>
         {bizMonitorType==="netProbe"&&( <Form.Item label="环境分类" name="envTypeCode" required={true}>
           <Select

@@ -20,11 +20,14 @@ export default function CreateArticle(props: CreateIProps) {
     const [editForm] = Form.useForm<Record<string, string>>();
     const [viewDisabled, seViewDisabled] = useState<boolean>(false);
     const [loading,setLoading] = useState<boolean>(false);
-    const []=useState<boolean>(false)
+    const [serverRightInfo, setServerRightInfo] = useState<boolean>(false);
+    const [serverType, setServerType]=useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
     
 
     useEffect(() => {
         if (mode === 'HIDE') return;
+        
      
         if (mode !== 'ADD') {
             let currentGroupUser: any = [];
@@ -33,7 +36,7 @@ export default function CreateArticle(props: CreateIProps) {
             } else {
                 currentGroupUser = initData?.groupUser?.split(',');
             }
-            console.log("currentGroupUser",currentGroupUser)
+     
             editForm.setFieldsValue({
               ...initData,
               groupUser:currentGroupUser
@@ -53,6 +56,26 @@ export default function CreateArticle(props: CreateIProps) {
            
         };
     }, [mode]);
+    const getCheck=()=>{
+        const name=editForm.getFieldsValue()?.groupName;
+        checkName(name).then((res)=>{
+            if(res?.success){
+                if (res.success && res.data === 'success') {
+                    setServerRightInfo(true)
+                    setServerType('success');
+                    setErrorMessage("");
+                  } else if (res.success && res.data !== 'success') {
+                    setServerRightInfo(false)
+                    setServerType('error');
+                    setErrorMessage(res?.data);
+                   
+                  }
+
+            }
+
+        })
+    }
+    //groupName
     const handleSubmit = async() => {
         const params:any = await editForm.validateFields();
         setLoading(true)
@@ -109,8 +132,23 @@ export default function CreateArticle(props: CreateIProps) {
             }
         >
             <Form form={editForm} labelCol={{ flex: '100px' }}>
-                <Form.Item label="分组名称" name="groupName" rules={[{ required: true, message: '请输入' }]}>
-                    <Input disabled={viewDisabled} style={{ width: 320 }} />
+                <Form.Item label="分组名称" name="groupName"
+                 
+                 rules={[{ required: true, message: '请输入' }]}
+                 hasFeedback
+                 validateTrigger="onBlur"
+                 validateStatus={
+                  serverRightInfo && !loading && serverType === 'success'
+                     ? 'success'
+                     : !serverRightInfo && !loading && serverType === 'begin'
+                     ? 'validating'
+                     : serverType === 'error'
+                     ? 'error'
+                     : 'warning'
+                 }
+                 help={serverType === 'success' ? '分组名称唯一性检查通过' : serverType === 'error' ? errorMessage : '等待检查分组名称是否唯一'}
+                 >
+                    <Input disabled={viewDisabled} style={{ width: 320 }} onBlur={getCheck} />
                 </Form.Item>
                 <Form.Item label="分组用户" name="groupUser" >
                     <UserSelector style={{ width: '400px' }} disabled={viewDisabled} />

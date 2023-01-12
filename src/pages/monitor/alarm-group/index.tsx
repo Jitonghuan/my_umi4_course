@@ -47,7 +47,7 @@ export default function AlarmGroup(){
         title: '操作',
         dataIndex: 'option',
         key: 'option',
-        width: '10%',
+        width: '12%',
         render: (_: string, record, index: number) => (
           //根据不同类型跳转
           <Space>
