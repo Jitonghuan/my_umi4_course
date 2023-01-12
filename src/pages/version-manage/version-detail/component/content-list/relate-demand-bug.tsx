@@ -44,7 +44,7 @@ export default function RealteDemandBug(props: IProps) {
     const handleSubmit = async () => {
         const values = await form.validateFields();
         setLoading(true);
-        const res = await demandRel({ ...values, releaseId: Number(releaseId) || "", relatedPlat: type === 'demand' ? 'demandPlat' : 'regulus' })
+        const res = await demandRel({ ...values, releaseId: Number(releaseId) || "", relatedPlat: type === 'demand' ? 'demandPlat' : 'regulus', needCallback: true })
         if (res?.success) {
             message.success('操作成功！');
             onClose();
