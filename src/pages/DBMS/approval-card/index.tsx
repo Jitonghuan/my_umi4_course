@@ -48,6 +48,7 @@ export default function ApprovalCard(props:Iprops){
         // <Card style={{ width: "100%", marginTop: 12 }} size="small" className="approval-card" title={<span>审批进度</span>}>
         <Steps direction="vertical" current={ getCurrent()|| -1} size="small">
           <Step title="提交" icon={<StarOutlined />} description={`提交时间:${subTime}`} />
+          {console.log("auditInfo",auditInfo)}
           {auditInfo?.map((item:any,index:number)=> <Step 
           title={item?.Name} 
           icon={(auditInfo[index-1]&&auditInfo[index-1]?.AuditStatus!=="pass")?<MinusCircleOutlined />: StatusMappingIcon[item?.AuditStatus]||<LoadingOutlined/>}  

@@ -79,7 +79,6 @@ export default function CreateArticle(props: CreateArticleProps) {
     getRequest(getPrivInfoApi,{data:{id:curRecord?.id||id}}).then((res: any) => {
       if (res?.success){
         setInfo(res?.data)
-        let auditUsers=[];
         let privList:any=[]
         res?.data?.privList?.map((item:any)=>{
           if(item==="query"){
@@ -97,7 +96,7 @@ export default function CreateArticle(props: CreateArticleProps) {
         setPrivWfType(privList)
         setstatus(res?.data?.currentStatus)
         if (res?.data?.audit?.length > 0) {
-          setAuditInfo(res?.audit)
+          setAuditInfo(res?.data?.audit)
         } else {
           setAuditInfo([])
         }
@@ -216,6 +215,7 @@ export default function CreateArticle(props: CreateArticleProps) {
               subTime={info?.startTime||"-"}
               auditLoading={auditLoading}
               canAudit={info?.canAudit||false}
+              
               onAgree={()=>{
                 auditTicket({auditType:"pass",id:curRecord?.id||afferentId}).then(()=>{
                   afferentId?getInfo(afferentId):  getInfo()
