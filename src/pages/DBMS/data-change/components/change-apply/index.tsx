@@ -318,7 +318,8 @@ export default function ResizeLayout() {
         leftContent={leftContent}
         rightContent={rightContent}
         showIcon={false}
-        // initWidth={400}
+        initWidth={300}
+        least={20}
         dataChangeinitWidth={330}
       />
     </PageContainer>

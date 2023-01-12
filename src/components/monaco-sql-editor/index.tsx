@@ -8,7 +8,7 @@
  */
 import React, {useState, useEffect, useCallback } from 'react';
 import * as monaco from 'monaco-editor';
-import {Space,Spin,message} from 'antd';
+import {Space,Spin,message,Modal} from 'antd';
 import _ from "lodash";
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/editor/contrib/find/findController.js';
@@ -291,6 +291,16 @@ export default function SqlEditor(props: Iprops) {
           {/* {isSqlExecuteBtn &&!actionDisabled&& implementDisabled && <span className={`${rootCls}-btn-disabled`} id="one-disabled">执行</span>} */}
           {isSqlBueatifyBtn && <span className={`${rootCls}-btn`} id="three" onClick={formatSql}>sql美化</span>}
           {isSqlCheckBtn && <span className={`${rootCls}-btn`} id="two" onClick={() => {
+            if((instance?.getValue()||"")?.length > 10*1024*1024){
+              // message.error("Sql内容大于10MB，请分开执行！")
+              Modal.error({
+                title: 'Sql内容大于10MB，请分开执行！！',
+               
+              });
+              return
+
+            }
+
              //@ts-ignore
             sqlCheck(instance?.getValue() || "")
             setCount(count=>count+1)
