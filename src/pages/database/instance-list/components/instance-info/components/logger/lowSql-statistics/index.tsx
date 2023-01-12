@@ -19,7 +19,7 @@ export const START_TIME_ENUMS = [
         value: 30 * 60 ,
       },
       {
-        label: '半小时',
+        label: '一小时',
         value: 60 * 60 ,
       },
 
