@@ -18,7 +18,7 @@ import { createTableColumns } from './schema';
 import ApprovalCard from '../../../approval-card';
 import { history, useLocation } from 'umi';
 import moment from 'moment';
-import { parse } from 'query-string';
+import { parse,stringify } from 'query-string';
 import { CurrentStatusStatus, PrivWfType } from '../../../authority-manage/components/authority-apply/schema'
 import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog, useGetSyncInfo } from './hook';
 import { createDiffTableColumns } from '../struct-apply/schema'
@@ -70,7 +70,7 @@ export default function ApprovalEnd() {
   const [affectedRowsTotal,setAffectedRowsTotal]=useState<number>(0)
   const [createLoading,setCreateLoading]= useState<boolean>(false);
   let location = useLocation();
-  const query = parse(location.search);
+  const query:any = parse(location.search);
   const initInfo: any = location.state || {};
   let sqlWfType = initInfo?.record?.sqlWfType||query?.sqlWfType
   const afferentId = Number(query?.id)
@@ -113,7 +113,7 @@ export default function ApprovalEnd() {
     let intervalId = setInterval(() => {
       onRefresh()
     
-    }, 10000 * 6);
+    }, 10000 * 6 * 3);
 
     return () => {
       clearInterval(intervalId);
@@ -450,8 +450,10 @@ export default function ApprovalEnd() {
               <Button onClick={onRefresh} type="primary" ghost>刷新</Button>
 
             <Button type="primary" className="back-go" onClick={() => {
+              let info={...query}
               history.push({
                 pathname: "/matrix/DBMS/data-change",
+                search: stringify(info),
 
               })
             }}>

@@ -47,7 +47,7 @@ export default function MyAuthority (){
         return createTableColumns({
           onDelete: (record, index) => {
             deletePriv(record).then(()=>{
-              reset()
+              submit()
             })
             
           },

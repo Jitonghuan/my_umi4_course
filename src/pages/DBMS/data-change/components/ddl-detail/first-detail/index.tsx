@@ -12,7 +12,7 @@ import moment from 'moment';
 import AceEditor from '@/components/ace-editor';
 import { useGetDdlDesignFlow } from '../hook'
 import DetailContext from '../context';
-import { parse } from 'query-string';
+import { parse,stringify } from 'query-string';
 import { CurrentStatusStatus, PrivWfType } from '../../../../authority-manage/components/authority-apply/schema'
 import { useGetSqlInfo, useAuditTicket, useRunSql, useworkflowLog } from './hook'
 import RollbackSql from '../../rollback-sql'
@@ -92,7 +92,7 @@ export default function ApprovalEnd() {
         getInfo()
         getWorkflowLog(initInfo?.record?.id)
       }
-    }, 1000 * 60);
+    }, 1000 * 60 * 3);
 
     return () => {
       clearInterval(intervalId);
@@ -453,8 +453,10 @@ export default function ApprovalEnd() {
           <Space>
               <Button onClick={onRefresh} type="primary" ghost>刷新</Button>
             <Button type="primary" className="back-go" onClick={() => {
+                 let info={...query}
               history.push({
                 pathname: "/matrix/DBMS/data-change",
+                search: stringify(info),
 
               })
             }}>

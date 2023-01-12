@@ -87,7 +87,7 @@ export default function PanelDetail(props: Iprops) {
                 getInfo(parentWfId)
                 getWorkflowLog(parentWfId)
             }
-        }, 1000 * 60);
+        }, 1000 * 60 * 3);
 
         return () => {
             clearInterval(intervalId);
