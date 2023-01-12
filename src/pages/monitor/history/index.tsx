@@ -61,17 +61,18 @@ const HistoryCom: React.FC = () => {
       // ),
     },
     {
-      title: '环境名称',
-      dataIndex: 'envCode',
-      key: 'envCode',
-      // width: '3%',
-    },
-    {
       title: '命名空间',
       dataIndex: 'namespace',
       key: 'namespace',
       // width: '3%',
     },
+    {
+      title: '环境名称',
+      dataIndex: 'clusterName',
+      key: 'envCode',
+      // width: '3%',
+    },
+   
     {
       title: '报警名称',
       dataIndex: 'alertName',

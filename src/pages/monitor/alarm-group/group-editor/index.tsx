@@ -138,7 +138,7 @@ export default function CreateArticle(props: CreateIProps) {
             }
         >
             <Form form={editForm} labelCol={{ flex: '100px' }}>
-                <Form.Item label="分组名称" name="groupName"
+                {mode==="ADD"? <Form.Item label="分组名称" name="groupName"
                  
                  rules={[{ required: true, message: '请输入' }]}
                  hasFeedback
@@ -154,8 +154,11 @@ export default function CreateArticle(props: CreateIProps) {
                  }
                  help={serverType === 'success' ? '分组名称唯一性检查通过' : serverType === 'error' ? errorMessage : '等待检查分组名称是否唯一'}
                  >
-                    <Input disabled={mode!=="ADD"} style={{ width: 320 }} onBlur={getCheck} />
-                </Form.Item>
+                    <Input  style={{ width: 320 }} onBlur={getCheck} />
+                </Form.Item>:<Form.Item label="分组名称" name="groupName">
+                <Input  disabled={true} style={{ width: 320 }}/>
+                    </Form.Item>}
+               
                 <Form.Item label="分组用户" name="groupUser" >
                     <UserSelector style={{ width: '400px' }} disabled={viewDisabled} />
                 </Form.Item>
