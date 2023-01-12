@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { putRequest,delRequest,postRequest } from '@/utils/request';
+import { putRequest,delRequest,postRequest,getRequest } from '@/utils/request';
 import { message } from 'antd';
 import * as APIS from './service';
 //删除交付配置参数
@@ -61,5 +61,5 @@ export function useDeleteAlertGroup(): [boolean, (id: number) => Promise<void>] 
 
   //checkName
   export const checkName = (groupName:string) =>
-  postRequest(`${APIS.checkName}?groupName=${groupName}`,);
+  getRequest(`${APIS.checkName}?groupName=${groupName}`,);
   

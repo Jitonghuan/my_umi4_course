@@ -58,19 +58,25 @@ export default function CreateArticle(props: CreateIProps) {
     }, [mode]);
     const getCheck=()=>{
         const name=editForm.getFieldsValue()?.groupName;
-        checkName(name).then((res)=>{
+        checkName(name).then((res:any)=>{
             if(res?.success){
-                if (res.success && res.data === 'success') {
+              
                     setServerRightInfo(true)
                     setServerType('success');
                     setErrorMessage("");
-                  } else if (res.success && res.data !== 'success') {
-                    setServerRightInfo(false)
-                    setServerType('error');
-                    setErrorMessage(res?.data);
+                 
+                //   else if (res.success && res.data !== 'success') {
+                //     setServerRightInfo(false)
+                //     setServerType('error');
+                //     setErrorMessage(res?.data);
                    
-                  }
+                //   }
 
+            }else{
+                setServerRightInfo(false)
+                setServerType('error');
+                setErrorMessage(res?.errorMsg);
+               
             }
 
         })
@@ -148,7 +154,7 @@ export default function CreateArticle(props: CreateIProps) {
                  }
                  help={serverType === 'success' ? '分组名称唯一性检查通过' : serverType === 'error' ? errorMessage : '等待检查分组名称是否唯一'}
                  >
-                    <Input disabled={viewDisabled} style={{ width: 320 }} onBlur={getCheck} />
+                    <Input disabled={mode!=="ADD"} style={{ width: 320 }} onBlur={getCheck} />
                 </Form.Item>
                 <Form.Item label="分组用户" name="groupUser" >
                     <UserSelector style={{ width: '400px' }} disabled={viewDisabled} />
