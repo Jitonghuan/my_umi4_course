@@ -189,7 +189,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     const setValues = {
       ...record,
       receiver: currentReceiver,
-      groupName:record?.groupName?record?.groupName?.split(','):[],
+      receiverGroup:typeof(record?.receiverGroup)==="string"?[record?.receiverGroup]: record?.receiverGroup?record?.receiverGroup?.split(','):[],
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
@@ -288,7 +288,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       const obj = {
         ...value,
         receiver: (value?.receiver || []).join(','),
-        groupName: (value?.groupName || []).join(','),
+        receiverGroup: (value?.receiverGroup || []).join(','),
         labels: stepTableMap(labelTableData),
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,
@@ -436,7 +436,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="通知对象" name="receiver" >
           <UserSelector style={{ width: '400px' }} />
         </Form.Item>
-        <Form.Item label="通知组" name="groupName" initialValue={['默认组','运维组']}>
+        <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
           <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>
         

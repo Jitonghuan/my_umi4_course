@@ -11,7 +11,7 @@ export interface AlertNameProps {
 export interface Item {
   key?: React.Key;
   value?: string;
-  groupName?:string;
+  receiverGroup?:string;
   group?: string;
   expression?: string;
   message?: string;

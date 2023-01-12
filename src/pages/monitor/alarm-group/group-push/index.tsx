@@ -186,11 +186,17 @@ export default function AlarmPush(){
 
                 </Popconfirm>
                 
-                <Button onClick={()=>{
+                <Button ghost type="primary" onClick={()=>{
                       setSelectedRowKeys([]);
                 }}>
                    取消
                 </Button>
+                <Button onClick={()=>{
+                  history.push({
+                    pathname:'/matrix/monitor/alarm-rules',
+                    search:"?tab=group"
+                  })
+                }}>返回</Button>
             </Space>
   
         </div>
