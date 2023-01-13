@@ -760,9 +760,11 @@ export default function DpMonitorEdit(props: any) {
         <RulesEdit
           visible={rulesVisible}
           record={rulesRecord}
+          uniquelyIdentify={'business'}
           bizMonitorId={recordData?.id}
           bizMonitorType={bizMonitorType}
           envCode={currentEnvCode}
+          appCode={logForm?.getFieldValue('appCode')}
           onCancel={() => setRulesVisible(false)}
           onConfirm={() => {
             setRulesVisible(false);

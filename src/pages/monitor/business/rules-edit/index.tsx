@@ -7,6 +7,7 @@ import { getRequest, postRequest, putRequest } from "@/utils/request";
 import { stepTableMap, formatTableDataMap } from "@/pages/monitor/basic/util";
 import { getEnvCodeList ,getPromQLApi} from '../../basic/services';
 import moment from "moment";
+import {useGroupOptions} from '../../alarm-rules/_components/template-drawer/hooks'
 import {envTypeData,rulesOptions,silenceOptions,editColumns,ALERT_LEVEL} from './type'
 
 const { TextArea } = Input;
@@ -23,12 +24,14 @@ interface IPros {
   envCode: string;
   probeName?:string
   monitorName?:string;
+  uniquelyIdentify?:string;
+  appCode?:string
 }
 
 
 
 const RulesEdit = (props: IPros) => {
-  const { type = 'add', onCancel, onConfirm, visible,probeName,entryType,monitorName, record = {}, bizMonitorId, bizMonitorType, envCode } = props;
+  const { type = 'add', onCancel, onConfirm, visible,probeName,uniquelyIdentify,entryType,monitorName, record = {}, bizMonitorId, bizMonitorType, envCode,appCode =""} = props;
   const [unit, setUnit] = useState('m'); // 单位
   const [getSilenceValue, setGetSilenceValue] = useState(0);
   const [labelTableData, setLabelTableData] = useState<any[]>([]);
@@ -38,6 +41,7 @@ const RulesEdit = (props: IPros) => {
   const [form] = Form.useForm();
   const [clusterEnvOptions, setClusterEnvOptions] = useState<any[]>([]);
   const [promQL,setPromQL]=useState<string>("")
+  const [groupOptions]=useGroupOptions()
   //getPromQLApi
   const getPromQL=()=>{
     getRequest(getPromQLApi,{data:{probeName}}).then((res)=>{
@@ -55,6 +59,7 @@ const RulesEdit = (props: IPros) => {
     if(probeName&&visible){
 
       getPromQL()
+      
     }
   },[visible])
 
@@ -69,6 +74,14 @@ const RulesEdit = (props: IPros) => {
           };
         }),
       );
+
+      if(uniquelyIdentify&&uniquelyIdentify==="business"){
+        form.setFieldsValue({
+          group:"业务监控"
+        })
+
+
+      }
     }
   }
 
@@ -79,6 +92,7 @@ const RulesEdit = (props: IPros) => {
   const annotationsFun = (value: any[]) => {
     setAnnotationsTableData(value);
   };
+  
 
   const onFinish = async () => {
     const params = await form.validateFields();
@@ -91,7 +105,8 @@ const RulesEdit = (props: IPros) => {
       duration: `${params.duration}${unit}`,
       bizMonitorId,
       bizMonitorType,
-      envCode:bizMonitorType==="netProbe"?params?.envCode:envCode
+      envCode:bizMonitorType==="netProbe"?params?.envCode:envCode,
+      receiverGroup: (params?.receiverGroup || []).join(','),
     }
     if (params?.silence) {
       data.silenceStart = moment(params.silenceStart).format('HH:mm');
@@ -121,6 +136,7 @@ const RulesEdit = (props: IPros) => {
 
   useEffect(() => {
     if (visible) {
+     
       if (type === 'add') {
         setLabelTableData([]);
         setAnnotationsTableData([]);
@@ -142,6 +158,7 @@ const RulesEdit = (props: IPros) => {
           duration: list.slice(0, list.length - 1).join(''),
           timeType: list[list?.length - 1],
           level: ALERT_LEVEL[record.level as number]?.value,
+          receiverGroup: record?.receiverGroup?record?.receiverGroup?.split(','):[],
         };
         if (record?.silence) {
           silenceStart = moment(record?.silenceStart, 'HH:mm');
@@ -156,8 +173,8 @@ const RulesEdit = (props: IPros) => {
         form.setFieldsValue({
           ...setValues,
         });
-
-        setLabelTableData(formatTableDataMap(record?.labels as Record<string, string>));
+//as Record<string, string>
+        setLabelTableData(formatTableDataMap({...record?.labels,appCode:appCode }));
         setAnnotationsTableData(formatTableDataMap(record?.annotations as Record<string, string>));
       }
       void getGroupList();
@@ -206,7 +223,7 @@ const RulesEdit = (props: IPros) => {
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item label="告警分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
-          <Select placeholder="请选择" options={groupData} />
+          <Select placeholder="请选择" options={groupData} disabled={uniquelyIdentify==="business"} />
         </Form.Item>
         {bizMonitorType==="netProbe"&&( <Form.Item label="环境分类" name="envTypeCode" required={true}>
           <Select
@@ -256,9 +273,13 @@ const RulesEdit = (props: IPros) => {
         <Form.Item label="告警级别" name="level" rules={[{ required: true, message: '请选择告警级别!' }]}>
           <Select options={rulesOptions} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
+      
         <Form.Item label="通知对象" name="receiver" rules={[{ required: true, message: '请填写' }]}>
           <UserSelector />
         </Form.Item>
+        {uniquelyIdentify&&uniquelyIdentify==="business"&& <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
+        </Form.Item>}
         <Form.Item
           label="是否静默"
           name="silence"

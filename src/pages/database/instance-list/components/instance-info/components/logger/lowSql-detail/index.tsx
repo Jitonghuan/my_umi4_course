@@ -71,22 +71,28 @@ export default function LowSqlStatistics(){
     }, []);
     const onTimeChange = (value: any) => {
         setTimeRange(value);
+        setType("time-range")
         setValue(undefined)
         getDataSource({
     
           start: value && value[0] ? moment(value[0]).unix() + '' : undefined,
           end: value && value[1] ? moment(value[1]).unix() + '' : undefined,
+          pageSize:pageInfo?.pageSize,
+          pageIndex:pageInfo?.pageIndex,
         });
       };
       const onChange = (e: number) => {
         setTimeRange([])
+        setType("time-recent")
         setValue(e)
         const now=Date.parse(new Date())/1000;
         let start = Number((now - e));
         let end = Number(now)
         getDataSource({
           start: start + "",
-          end: end + ""
+          end: end + "",
+          // pageSize:pageInfo?.pageSize,
+          // pageIndex:pageInfo?.pageIndex,
         })
     
       }

@@ -12,7 +12,8 @@ import { stepTableMap } from '../../../basic/util';
 import { getRequest } from '@/utils/request';
 import { useAppOptions } from '../../hooks';
 import { queryRuleTemplatesList, queryGroupList, getEnvCodeList } from '../../../basic/services';
-import { useUserOptions } from './hooks';
+import { getCluster} from '../../../../monitor/current-alarm/service';
+import { useUserOptions,useGroupOptions } from './hooks';
 import './index.less';
 import UserSelector from "@/components/user-selector";
 
@@ -54,7 +55,11 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
   const [envTypeCode, setEnvTypeCode] = useState('');
   const [ruleTemplatesList, setRuleTemplatesList] = useState<Item[]>([]);
   const [userOptions] = useUserOptions();
+  const [groupOptions]=useGroupOptions()
+  const [clusterList, setClusterList] = useState<any>([]);
   const [getSilenceValue, setGetSilenceValue] = useState(0);
+  
+  
   const envTypeData = [
     {
       key: 'dev',
@@ -184,6 +189,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     const setValues = {
       ...record,
       receiver: currentReceiver,
+      receiverGroup: record?.receiverGroup?record?.receiverGroup?.split(','):[],
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,
@@ -220,6 +226,19 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       return;
     }
     groupList();
+    getCluster().then((res)=>{
+      if(res?.success){
+        const data=res?.data?.map((item: any)=>{
+          return {
+            label: item.clusterName,
+            value: item.clusterName,
+          }
+        })
+        setClusterList(data);
+
+      }
+
+    })
   }, [visible]);
 
   useEffect(() => {
@@ -269,6 +288,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
       const obj = {
         ...value,
         receiver: (value?.receiver || []).join(','),
+        receiverGroup: (value?.receiverGroup || []).join(','),
         labels: stepTableMap(labelTableData),
         annotations: stepTableMap(annotationsTableData),
         duration: `${value.duration}${value.timeType}`,
@@ -349,7 +369,11 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警分类" name="group" required={true}>
           <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
-        <Form.Item label="环境分类" name="envTypeCode" required={true}>
+        <Form.Item label="集群选择"  name="clusterName">
+          <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
+
+        </Form.Item>
+        {/* <Form.Item label="环境分类" name="envTypeCode" required={true}>
           <Select
             showSearch
             allowClear
@@ -369,7 +393,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
             showSearch
             allowClear
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="Namespace" name="namespace">
           <Input style={{ width: '400px' }} placeholder="输入Namespace名称" />
         </Form.Item>
@@ -409,12 +433,16 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警消息" name="message" required={true}>
           <Input placeholder="消息便于更好识别报警" style={{ width: '400px' }} />
         </Form.Item>
-        <Form.Item label="通知对象" name="receiver">
+        <Form.Item label="通知对象" name="receiver" >
           <UserSelector style={{ width: '400px' }} />
         </Form.Item>
-        <Form.Item label="DingToken" name="dingToken">
-          <Input />
+        <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>
+        
+        {/* <Form.Item label="DingToken" name="dingToken">
+          <Input />
+        </Form.Item> */}
         <Form.Item
           label="是否静默"
           name="silence"

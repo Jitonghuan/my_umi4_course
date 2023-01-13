@@ -8,6 +8,7 @@ import './index.less';
 const TableSearch: React.FC<TableSearchProps> = ({
   showTableTitle,
   extraNode,
+  bottomRender,
   style,
   className,
   tableTitle,
@@ -51,6 +52,7 @@ const TableSearch: React.FC<TableSearchProps> = ({
         }
 
         <Table className={className} columns={columns} loading={!rest?.dataSource}  {...rest} rowKey={rest.rowKey || 'id'} />
+        <>{bottomRender}</>
       </ContentCard>
     </>
   );

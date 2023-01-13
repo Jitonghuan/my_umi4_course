@@ -12,6 +12,7 @@ import { useLocation } from 'umi';
 import { queryGroupList, queryRulesList } from '../basic/services';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import useRequest from '@/utils/useRequest';
+import { getCluster} from '../../monitor/current-alarm/service';
 import UserSelector from '@/components/user-selector';
 import './index.less';
 import { getRequest } from '@/utils/request';
@@ -46,6 +47,7 @@ export default function AlarmRules() {
   const [tableProps, setTableProps] = useState<any>({});
   const [currentEnvType, setCurrentEnvType] = useState('');
   const [currentEnvCode, setCurrentEnvCode] = useState(''); // 环境code
+  const [clusterList, setClusterList] = useState<any>([]);
   const [pageInfo,setPageInfo]=useState<any>({
     pageIndex:1,
     total:0,
@@ -53,6 +55,19 @@ export default function AlarmRules() {
   })
   useEffect(()=>{
     // if(!curRecord?.appID) return
+    getCluster().then((res)=>{
+      if(res?.success){
+        const data=res?.data?.map((item: any)=>{
+          return {
+            label: item.clusterName,
+            value: item.clusterName,
+          }
+        })
+        setClusterList(data);
+
+      }
+
+    })
     if (curRecord?.appCode && curRecord?.envCode) {
       setCurrentEnvType(curRecord?.envTypeCode);
       setCurrentEnvCode(curRecord?.envCode);
@@ -146,7 +161,11 @@ export default function AlarmRules() {
             queryList();
           }}
         >
-          <Form.Item label="环境" name="envCode">
+          <Form.Item label="集群选择" name="clusterName">
+            <Select options={clusterList} showSearch allowClear style={{width:220}}/>
+
+          </Form.Item>
+          {/* <Form.Item label="环境" name="envCode">
             <Select
               style={{ width: '100px' }}
               options={envTypeData}
@@ -169,7 +188,7 @@ export default function AlarmRules() {
               value={currentEnvCode}
               allowClear
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item label="关联应用" name="appCode">
             <Select showSearch allowClear style={{ width: 140 }} options={appOptions} />
           </Form.Item>
