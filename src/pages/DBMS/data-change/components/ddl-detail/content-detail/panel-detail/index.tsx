@@ -182,7 +182,6 @@ export default function PanelDetail(props: Iprops) {
         //@ts-ignore
         let curId = id ? id : parentWfId
         useGetSqlInfo(curId).then((res) => {
-
             if (Object.keys(res)?.length < 1) return
             setInfo(res)
             if(res?.executeResult){
@@ -498,6 +497,7 @@ export default function PanelDetail(props: Iprops) {
                     <Spin spinning={auditLoading}>
                     <ApprovalCard 
         auditInfo={auditInfo}
+        canAudit={info?.canAudit||false}
         subTime={info?.startTime||"-"}
         auditLoading={auditLoading}
         onAgree={()=>{

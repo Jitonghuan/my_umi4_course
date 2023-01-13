@@ -564,7 +564,7 @@ export default [
   },
   {
     path: `${baseRoutePath}/config`,
-    name: '组件控制台',
+    name: '微服务组件',
     icon: 'icon-Time',
     routes: [
       {
