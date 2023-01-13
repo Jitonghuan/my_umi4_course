@@ -10,6 +10,7 @@ import { Form, Select, Button, DatePicker, Divider, Input, Empty } from 'antd';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { getApplicationList, getInstance, getTrace, getEnvs, getTraceInfo } from '../service';
 import { leftItem } from './type';
+import { parse, stringify } from 'query-string';
 const { RangePicker } = DatePicker;
 import './index.less';
 
@@ -42,7 +43,9 @@ const START_TIME_ENUMS = [
 
 export default function Tracking() {
   let location: any = useLocation();
-  const infoRecord: any = location.state || {};
+  let infoRecord: any = location.state || {};
+  const query: any = parse(location.search);
+  Object.assign(infoRecord, { ...query })
   const [listData, setListData] = useState<leftItem[]>(); //左侧list数据
   const [rightData, setRightData] = useState<any>([]); //右侧渲染图的数据
   const [form] = Form.useForm();
