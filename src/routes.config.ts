@@ -942,6 +942,12 @@ export default [
         ],
       },
       {
+        path: `${baseRoutePath}/operation/pipeline-tmpl`,
+        name: '流水线模版',
+        key: 'pipeline-tmpl',
+        component: '@/pages/operation/pipeline-tmpl',
+      },
+      {
         path: `${baseRoutePath}/operation/env-manage`,
         name: '环境管理',
         key: 'env-manage',
