@@ -66,11 +66,11 @@ export default function LoggerSearch() {
     const [hitCount, setHitCount] = useState<number>(0); //命中次数
     const [detailLogResult, setDetailLogResult] = useState<any>([]); //手风琴一次展示的20条数据
     const [logsResult, setLogsResult] = useState<any>([])//除了第一次剪切到的20条数据剩下的数据
-    useEffect(()=>{
+    useEffect(() => {
         if (receiveInfo.startTime || receiveInfo.endTime) {
             rangePickerForm.setFieldsValue({ rangeDate: [moment(start, 'X'), moment(end, 'X')] });
         }
-    },[receiveInfo.startTime,receiveInfo.endTime])
+    }, [receiveInfo.startTime, receiveInfo.endTime])
     useLayoutEffect(() => {
         if (Object.keys(receiveInfo).length !== 0) {
             let appCodeArry = [];
@@ -123,9 +123,9 @@ export default function LoggerSearch() {
             setEndTime(endTimepl);
             queryLogResult({ start: startTimepl, end: endTimepl })
         }
-        if(type==="rangePicker"){
+        if (type === "rangePicker") {
 
-         rangePickerForm.setFieldsValue({ rangeDate: [moment(startTime, 'X'), moment(endTime, 'X')] });
+            rangePickerForm.setFieldsValue({ rangeDate: [moment(startTime, 'X'), moment(endTime, 'X')] });
         }
     };
 
@@ -509,17 +509,19 @@ export default function LoggerSearch() {
                                                                                     {item?.[key]?.includes('span') ? <a dangerouslySetInnerHTML={{ __html: item?.[key] }}
                                                                                         onClick={() => {
                                                                                             var doc: any = new DOMParser().parseFromString(item?.[key], "text/html");
-                                                                                            history.push({
-                                                                                                pathname: "/matrix/trafficmap/tracking"
+                                                                                            // history.push({
+                                                                                            //     pathname: "/matrix/trafficmap/tracking"
 
-                                                                                            }, {
-                                                                                                entry: "logSearch",
-                                                                                                envCode: envCode,
-                                                                                                // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
-                                                                                                traceId: doc.body.innerText,
-                                                                                                startTime: "",
-                                                                                                endTime: ""
-                                                                                            })
+                                                                                            // }, {
+                                                                                            //     entry: "logSearch",
+                                                                                            //     envCode: envCode,
+                                                                                            //     // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
+                                                                                            //     traceId: doc.body.innerText,
+                                                                                            //     startTime: "",
+                                                                                            //     endTime: ""
+                                                                                            // })
+                                                                                            const url = `/matrix/trafficmap/tracking?envCode=${envCode}&traceId=${doc.body.innerText}&startTime=&endTime=&entry=logSearch`
+                                                                                            window.open(url, '_blank')
                                                                                         }} >
 
 
@@ -527,17 +529,19 @@ export default function LoggerSearch() {
 
 
                                                                                         : <a onClick={() => {
-                                                                                            history.push({
-                                                                                                pathname: "/matrix/trafficmap/tracking"
+                                                                                            // history.push({
+                                                                                            //     pathname: "/matrix/trafficmap/tracking"
 
-                                                                                            }, {
-                                                                                                entry: "logSearch",
-                                                                                                envCode: envCode,
-                                                                                                // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
-                                                                                                traceId: item?.traceId,
-                                                                                                startTime: startTime,
-                                                                                                endTime: endTime
-                                                                                            })
+                                                                                            // }, {
+                                                                                            //     entry: "logSearch",
+                                                                                            //     envCode: envCode,
+                                                                                            //     // appCode:subInfoForm.getFieldValue("appCode")||item?.appCode,
+                                                                                            //     traceId: item?.traceId,
+                                                                                            //     startTime: startTime,
+                                                                                            //     endTime: endTime
+                                                                                            // })
+                                                                                            const url = `/matrix/trafficmap/tracking?envCode=${envCode}&traceId=${item?.traceId}&startTime=${startTime}&endTime=${endTime}&entry=logSearch`
+                                                                                            window.open(url, '_blank')
                                                                                         }}>
                                                                                             {item?.[key]}
                                                                                         </a>}
