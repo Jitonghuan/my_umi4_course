@@ -149,6 +149,47 @@ const HistoryCom: React.FC = () => {
           },
           {
             key: '2',
+            type: 'input',
+            label: '集群名称',
+            dataIndex: 'clusterName',
+            width: '154px',
+            placeholder: '请输入',
+          },
+          {
+            key: '3',
+            type: 'input',
+            label: '应用名称',
+            dataIndex: 'appCode',
+            width: '154px',
+            placeholder: '请输入',
+          },
+          {
+            key: '4',
+            type: 'select',
+            label: '报警级别',
+            dataIndex: 'level',
+            width: '154px',
+            placeholder: '请选择',
+            option: [
+              {
+                key: '2',
+                value: '警告',
+                label: '警告',
+              },
+              {
+                key: '3',
+                value: '严重',
+                label: '严重',
+              },
+              {
+                key: '4',
+                value: '灾难',
+                label: '灾难',
+              },
+            ],
+          },
+          {
+            key: '5',
             type: 'select',
             label: '报警状态',
             dataIndex: 'status',
@@ -177,47 +218,9 @@ const HistoryCom: React.FC = () => {
               },
             ],
           },
-          {
-            key: '3',
-            type: 'select',
-            label: '报警级别',
-            dataIndex: 'level',
-            width: '154px',
-            placeholder: '请选择',
-            option: [
-              {
-                key: '2',
-                value: '警告',
-                label: '警告',
-              },
-              {
-                key: '3',
-                value: '严重',
-                label: '严重',
-              },
-              {
-                key: '4',
-                value: '灾难',
-                label: '灾难',
-              },
-            ],
-          },
-          {
-            key: '4',
-            type: 'input',
-            label: '应用名称',
-            dataIndex: 'appCode',
-            width: '154px',
-            placeholder: '请输入',
-          },
-          {
-            key: '5',
-            type: 'input',
-            label: '环境名称',
-            dataIndex: 'envCode',
-            width: '154px',
-            placeholder: '请输入',
-          },
+        
+         
+         
         ]}
         formLayout="inline"
         columns={columns}
