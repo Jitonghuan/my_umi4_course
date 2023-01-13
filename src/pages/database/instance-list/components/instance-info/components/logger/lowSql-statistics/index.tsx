@@ -150,6 +150,8 @@ export default function LowSqlStatistics(){
             <Radio.Group optionType="button" buttonStyle="solid" options={START_TIME_ENUMS} value={value} onChange={(e) => { onChange(e.target.value) }} />
             <RangePicker onChange={onTimeChange}
               value={timeRange}
+              // disabledDate={disabledDate}
+              // disabledTime={disabledRangeTime}
               showTime={{
                 hideDisabledOptions: true,
                 defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
