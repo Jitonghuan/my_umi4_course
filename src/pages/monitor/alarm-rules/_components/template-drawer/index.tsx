@@ -189,7 +189,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
     const setValues = {
       ...record,
       receiver: currentReceiver,
-      receiverGroup:typeof(record?.receiverGroup)==="string"?[record?.receiverGroup]: record?.receiverGroup?record?.receiverGroup?.split(','):[],
+      receiverGroup: record?.receiverGroup?record?.receiverGroup?.split(','):[],
       duration: list.slice(0, list.length - 1).join(''),
       timeType: list[list?.length - 1],
       level: ALERT_LEVEL[record.level as number]?.value,

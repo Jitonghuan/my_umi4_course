@@ -98,7 +98,7 @@ export default function RulesTable(props: RulesTableProps) {
       width: 140,
     },
     {
-      title: '环境',
+      title: '集群',
       dataIndex: 'clusterName',
       key: 'clusterName',
       width: 120,

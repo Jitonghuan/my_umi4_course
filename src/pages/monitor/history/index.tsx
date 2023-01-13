@@ -45,75 +45,58 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'key',
       key: 'key',
       width: 70,
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
-    },
-    {
-      title: '应用名称',
-      dataIndex: 'appCode',
-      key: 'applyName',
-      // width: '6%',
-      // render: (text) => (
-      //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
-    },
-    {
-      title: '环境名称',
-      dataIndex: 'clusterName',
-      key: 'envCode',
-      // width: '3%',
-    },
-    {
-      title: '命名空间',
-      dataIndex: 'namespace',
-      key: 'namespace',
-      // width: '3%',
-    },
     
-   
+    },
+
     {
       title: '报警名称',
       dataIndex: 'alertName',
       key: 'alertName',
-      // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+    
     },
+    {
+      title: '集群',
+      dataIndex: 'clusterName',
+      key: 'clusterName',
+     
+    },
+    {
+      title: '命名空间',
+      dataIndex: 'envCode',
+      key: 'envCode',
+     
+    },
+    {
+      title: '应用名称',
+      dataIndex: 'appCode',
+      key: 'appCode',
+    
+    },
+   
     {
       title: '实例地址',
       dataIndex: 'instance',
       key: 'instance',
-      // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+    
     },
     {
       title: '报警级别',
       dataIndex: 'level',
       key: 'level',
-      // width: '5%',
+     
       render: (text: string) => ALERT_LEVEL[text] ?? '',
     },
     {
       title: '开始时间',
       dataIndex: 'startTime',
       key: 'startTime',
-      // width: '6%',
+     
     },
     {
       title: '结束时间',
       dataIndex: 'endTime',
       key: 'endTime',
-      // width: '6%',
+      
     },
     {
       title: '通知对象',
@@ -142,7 +125,7 @@ const HistoryCom: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      // width: '4%',
+     
       render: (text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>,
     },
   ];

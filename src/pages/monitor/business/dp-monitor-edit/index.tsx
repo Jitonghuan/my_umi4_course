@@ -764,6 +764,7 @@ export default function DpMonitorEdit(props: any) {
           bizMonitorId={recordData?.id}
           bizMonitorType={bizMonitorType}
           envCode={currentEnvCode}
+          appCode={logForm?.getFieldValue('appCode')}
           onCancel={() => setRulesVisible(false)}
           onConfirm={() => {
             setRulesVisible(false);
