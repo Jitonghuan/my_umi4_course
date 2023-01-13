@@ -161,7 +161,7 @@ export default function AlarmRules() {
             queryList();
           }}
         >
-          <Form.Item label="集群选择" name="clusterId">
+          <Form.Item label="集群选择" name="clusterName">
             <Select options={clusterList} showSearch allowClear style={{width:220}}/>
 
           </Form.Item>
