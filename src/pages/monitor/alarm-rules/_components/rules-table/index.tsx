@@ -98,17 +98,26 @@ export default function RulesTable(props: RulesTableProps) {
       width: 140,
     },
     {
-      title: '环境',
-      dataIndex: 'envName',
-      key: 'envName',
+      title: '集群',
+      dataIndex: 'clusterName',
+      key: 'clusterName',
       width: 120,
     },
+    {
+      title: '命名空间',
+      dataIndex: 'nameSpace',
+      key: 'nameSpace',
+      width: 120,
+    },
+   
+  
     {
       title: '关联应用',
       dataIndex: 'appCode',
       key: 'appCode',
       width: 120,
     },
+   
     {
       title: '报警级别',
       dataIndex: 'level',

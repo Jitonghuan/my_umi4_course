@@ -45,67 +45,58 @@ const HistoryCom: React.FC = () => {
       dataIndex: 'key',
       key: 'key',
       width: 70,
-      // render: (text) => (
-      //   <Link to={`./function/checkFunction?id=${text}`}>{text}</Link>
-      // ),
+    
     },
-    {
-      title: '应用名称',
-      dataIndex: 'appCode',
-      key: 'applyName',
-      // width: '6%',
-      // render: (text) => (
-      //   <div style={{ width: 100, wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
-    },
-    {
-      title: '环境名称',
-      dataIndex: 'envCode',
-      key: 'envCode',
-      // width: '3%',
-    },
+
     {
       title: '报警名称',
       dataIndex: 'alertName',
       key: 'alertName',
-      // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+    
     },
+    {
+      title: '集群',
+      dataIndex: 'clusterName',
+      key: 'clusterName',
+     
+    },
+    {
+      title: '命名空间',
+      dataIndex: 'envCode',
+      key: 'envCode',
+     
+    },
+    {
+      title: '应用名称',
+      dataIndex: 'appCode',
+      key: 'appCode',
+    
+    },
+   
     {
       title: '实例地址',
       dataIndex: 'instance',
       key: 'instance',
-      // width: '5%',
-      // render: (text) => (
-      //   <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-      //     {text}
-      //   </div>
-      // ),
+    
     },
     {
       title: '报警级别',
       dataIndex: 'level',
       key: 'level',
-      // width: '5%',
+     
       render: (text: string) => ALERT_LEVEL[text] ?? '',
     },
     {
       title: '开始时间',
       dataIndex: 'startTime',
       key: 'startTime',
-      // width: '6%',
+     
     },
     {
       title: '结束时间',
       dataIndex: 'endTime',
       key: 'endTime',
-      // width: '6%',
+      
     },
     {
       title: '通知对象',
@@ -134,7 +125,7 @@ const HistoryCom: React.FC = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      // width: '4%',
+     
       render: (text: number) => <Tag color={STATUS_TYPE[text]?.color}>{STATUS_TYPE[text]?.text}</Tag>,
     },
   ];
@@ -158,6 +149,47 @@ const HistoryCom: React.FC = () => {
           },
           {
             key: '2',
+            type: 'input',
+            label: '集群名称',
+            dataIndex: 'clusterName',
+            width: '154px',
+            placeholder: '请输入',
+          },
+          {
+            key: '3',
+            type: 'input',
+            label: '应用名称',
+            dataIndex: 'appCode',
+            width: '154px',
+            placeholder: '请输入',
+          },
+          {
+            key: '4',
+            type: 'select',
+            label: '报警级别',
+            dataIndex: 'level',
+            width: '154px',
+            placeholder: '请选择',
+            option: [
+              {
+                key: '2',
+                value: '警告',
+                label: '警告',
+              },
+              {
+                key: '3',
+                value: '严重',
+                label: '严重',
+              },
+              {
+                key: '4',
+                value: '灾难',
+                label: '灾难',
+              },
+            ],
+          },
+          {
+            key: '5',
             type: 'select',
             label: '报警状态',
             dataIndex: 'status',
@@ -186,47 +218,9 @@ const HistoryCom: React.FC = () => {
               },
             ],
           },
-          {
-            key: '3',
-            type: 'select',
-            label: '报警级别',
-            dataIndex: 'level',
-            width: '154px',
-            placeholder: '请选择',
-            option: [
-              {
-                key: '2',
-                value: '警告',
-                label: '警告',
-              },
-              {
-                key: '3',
-                value: '严重',
-                label: '严重',
-              },
-              {
-                key: '4',
-                value: '灾难',
-                label: '灾难',
-              },
-            ],
-          },
-          {
-            key: '4',
-            type: 'input',
-            label: '应用名称',
-            dataIndex: 'appCode',
-            width: '154px',
-            placeholder: '请输入',
-          },
-          {
-            key: '5',
-            type: 'input',
-            label: '环境名称',
-            dataIndex: 'envCode',
-            width: '154px',
-            placeholder: '请输入',
-          },
+        
+         
+         
         ]}
         formLayout="inline"
         columns={columns}

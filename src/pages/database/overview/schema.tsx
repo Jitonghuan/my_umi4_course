@@ -161,10 +161,10 @@ export const tableSchema = ({
       {
         title: '实例',
         dataIndex: 'instancename',
-        width: 50,
+        width: 100,
         ellipsis:true,
         render: (value: any) => {
-          return <Tooltip title={value}>{value}</Tooltip>
+          return <Tooltip  placement="topLeft" title={value}>{value}</Tooltip>
         },
       },
       {
@@ -179,7 +179,7 @@ export const tableSchema = ({
       {
         title: '执行次数',
         dataIndex: 'sum',
-        width: 90,
+        width: 60,
         ellipsis:true,
         render: (value: any) => {
           return <Tooltip title={value}>{value}</Tooltip>

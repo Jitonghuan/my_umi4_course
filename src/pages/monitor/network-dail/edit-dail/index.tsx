@@ -184,11 +184,6 @@ export default function EditDail() {
 
       dataParams = {
         ...payload,
-        // clusterName:payload?.clusterName,
-        // probeInterval:payload?.probeInterval,
-        // probeName:payload?.probeName,
-        // probeType:payload?.probeType,
-        // probeUrl: payload?.probeUrl, 
         probeTimeout: `${payload?.probeTimeout}s`,
         probeConfig: JSON.stringify(configObj)
       }
@@ -306,7 +301,7 @@ export default function EditDail() {
                 <Input style={{ width: 320 }} />
               </Form.Item>
 
-              <Form.Item label="DNS 服务器" name="probeUrl" rules={[{ required: true, message: '请填写' }]}>
+              <Form.Item label={dailType === "dns"?"DNS 服务器":"拨测地址"} name="probeUrl" rules={[{ required: true, message: '请填写' }]}>
                 <Input style={{ width: 320 }} />
               </Form.Item>
 

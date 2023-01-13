@@ -388,7 +388,7 @@ export default function ApprovalEnd() {
 
 
       </Drawer>
-      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={initInfo?.record?.id} />
+      <RollbackSql visiable={visiable} onClose={() => { setVisiable(false) }} curId={ initInfo?.record?.id || afferentId } />
       <ContentCard>
         <Modal width={700} title="请选择执行方式" destroyOnClose visible={visible} 
         footer={
