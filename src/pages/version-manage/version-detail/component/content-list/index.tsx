@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext, useMemo, forwardRef} from 'react';
-import { Tag, Button, Table, Space, Tooltip, Popconfirm, message, Spin,Input } from 'antd';
+import React, { useEffect, useState, useContext, useMemo, forwardRef } from 'react';
+import { Tag, Button, Table, Space, Tooltip, Popconfirm, message, Spin, Input } from 'antd';
 import { QuestionCircleOutlined, CloseCircleFilled } from '@ant-design/icons';
 import RealteDemandBug from './relate-demand-bug';
 import detailContext from '../../context';
@@ -13,12 +13,12 @@ interface Iprops {
     detailInfo: any
     onReload: any;
     infoLoading: boolean
-    count:number
+    count: number
 
 
 }
 export default forwardRef(function ContentList(props: Iprops) {
-    const { activeTab, detailInfo, onReload, infoLoading,count } = props;
+    const { activeTab, detailInfo, onReload, infoLoading, count } = props;
     const [type, setType] = useState<string>('hide');
     const { categoryCode, releaseId } = useContext(detailContext);
     const [dataSource, setDataSource] = useState<any>([])
@@ -28,7 +28,7 @@ export default forwardRef(function ContentList(props: Iprops) {
     const demandTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat === 'demandPlat')?.length, [JSON.stringify(dataSource)])
     const bugTotal = useMemo(() => (dataSource || []).filter((item: any) => item.relatedPlat !== 'demandPlat')?.length, [JSON.stringify(dataSource)])
 
-    const filterData =(value: string) => {
+    const filterData = (value: string) => {
         if (!value) {
             setDataSource(originData);
             return;
@@ -37,17 +37,17 @@ export default forwardRef(function ContentList(props: Iprops) {
             const data = JSON.parse(JSON.stringify(originData));
             const afterFilter: any = [];
             data?.forEach((item: any) => {
-                if (item.title?.indexOf(value) !== -1||item?.entryCode?.indexOf(value) !== -1) {
+                if (item.title?.indexOf(value) !== -1 || item?.entryCode?.indexOf(value) !== -1) {
                     afterFilter.push(item);
                 }
             });
-    
+
             setDataSource(afterFilter);
-            
+
         } catch (error) {
-            
+
         }
-       
+
     }
     const getDataSource = () => {
         setLoading(true)
@@ -55,7 +55,7 @@ export default forwardRef(function ContentList(props: Iprops) {
             if (res?.success) {
                 setDataSource(res?.data)
                 setOriginData(res?.data)
-            }else{
+            } else {
                 setDataSource([])
                 setOriginData([])
 
@@ -65,17 +65,17 @@ export default forwardRef(function ContentList(props: Iprops) {
         })
     }
     useEffect(() => {
-        if(releaseId){
+        if (releaseId) {
             getDataSource()
 
-        }else{
+        } else {
             setDataSource([])
             setOriginData([])
 
         }
-       
 
-    }, [releaseId, activeTab,categoryCode,count])
+
+    }, [releaseId, activeTab, categoryCode, count])
 
 
     const columns: any = [
@@ -85,7 +85,7 @@ export default forwardRef(function ContentList(props: Iprops) {
             width: 160,
             sorter: {
                 compare: (a: any, b: any) => a.entryCode?.toLowerCase().localeCompare(b.entryCode?.toLowerCase()),
-              },
+            },
             render: (value: string, record: any) =>
                 <a onClick={() => {
                     if (record?.url) { window.open(record.url, '_blank') }
@@ -97,7 +97,7 @@ export default forwardRef(function ContentList(props: Iprops) {
             width: 200,
             sorter: {
                 compare: (a: any, b: any) => a.title.localeCompare(b.title),
-              },
+            },
         },
         {
             title: '类型',
@@ -111,7 +111,7 @@ export default forwardRef(function ContentList(props: Iprops) {
             width: 120,
             sorter: {
                 compare: (a: any, b: any) => a.demandStatus.localeCompare(b.demandStatus),
-              },
+            },
             render: (value: string) => <span style={{ color: demandStatusTypes[value]?.color || "gray" }}>
 
                 {value}</span>
@@ -145,7 +145,7 @@ export default forwardRef(function ContentList(props: Iprops) {
     ]
 
     const handleDelete = async (id: any) => {
-        const res = await deleteDemand({ ids: [id] })
+        const res = await deleteDemand({ ids: [id], needCallback: true })
         if (res?.success) {
             //onSave();
             onReload()
@@ -177,8 +177,8 @@ export default forwardRef(function ContentList(props: Iprops) {
     return (
         <>
             <RealteDemandBug type={type} onClose={() => { setType('hide') }} releaseId={releaseId} onSave={() => {
-                 onReload()
-                 getDataSource()
+                onReload()
+                getDataSource()
 
             }} />
             <div className='table-top'>
@@ -197,8 +197,8 @@ export default forwardRef(function ContentList(props: Iprops) {
                             style={{ width: 220 }}
                             placeholder='输入内容进行查询过滤'
                             className="ant-input ant-input-sm"
-                            onChange={(e:any) => {
-                                  filter(e.target.value)
+                            onChange={(e: any) => {
+                                filter(e.target.value)
                             }}
                         />
                         {/* <input
