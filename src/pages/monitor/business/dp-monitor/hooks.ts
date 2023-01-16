@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {getRequest, postRequest} from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 import { message } from 'antd';
 import * as APIS from '../service';
 
@@ -45,30 +45,34 @@ export function useAppOptions() {
   return [source];
 }
 
-export function useGetListMonitor(queryMonitorName:string,tab:string) {
+export function useGetListMonitor(queryMonitorName: string, tab: string) {
   const [listSource, setListSource] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageCurrentIndex] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(20);
+  const [pageSize, setPageSize] = useState<number>(10);
 
   useEffect(() => {
-    if(!queryMonitorName){
+    if (!queryMonitorName) {
       getListMonitor(1, 10);
-
     }
-   
   }, [queryMonitorName]);
 
   const getListMonitor = async (
-    pageIndex: number,
-    pageSize: number,
+    page?: number,
+    size?: number,
     monitorName?: string,
     metricName?: string,
     appCode?: string,
     envCode?: string,
   ) => {
+    if (page) {
+      setPageCurrentIndex(page);
+    }
+    if (size) {
+      setPageSize(size);
+    }
     await getRequest(APIS.getDbListMonitor, {
-      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 10, monitorName, metricName, appCode, envCode },
+      data: { pageIndex: page || pageIndex, pageSize: size || pageSize, monitorName, metricName, appCode, envCode },
     }).then((result) => {
       if (result?.success) {
         let ListSource = result?.data?.dataSource || [];
@@ -84,7 +88,7 @@ export function useGetListMonitor(queryMonitorName:string,tab:string) {
 export function useEnableMonitor() {
   const enableMonitor = async (id: string, callBack: () => void) => {
     await postRequest(`${APIS.enableDbMonitor}/${id}`, {
-      data: { id }
+      data: { id },
     }).then((result) => {
       if (result.success) {
         message.success('启动业务监控成功！');
@@ -98,7 +102,7 @@ export function useEnableMonitor() {
 export function useDisableMonitor() {
   const disableMonitor = async (id: string, callBack: () => void) => {
     await postRequest(`${APIS.disableDbMonitor}/${id}`, {
-      data: { id }
+      data: { id },
     }).then((result) => {
       if (result.success) {
         message.success('停止业务监控成功！');
@@ -112,7 +116,7 @@ export function useDisableMonitor() {
 export function useDelMonitor() {
   const delMonitor = async (id: string, callBack: () => void) => {
     await postRequest(`${APIS.deleteDbMonitor}/${id}`, {
-      data: { id }
+      data: { id },
     }).then((result) => {
       if (result?.success) {
         message.success('删除业务监控成功！');
