@@ -45,32 +45,36 @@ export function useAppOptions() {
   return [source];
 }
 
-export function useGetListMonitor(queryMonitorName:string,tab:string) {
+export function useGetListMonitor(queryMonitorName: string, tab: string) {
   const [listSource, setListSource] = useState<any>([]);
   const [total, setTotal] = useState<number>(0);
+  const [pageIndex, setPageCurrentIndex] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
 
   useEffect(() => {
-    if(!queryMonitorName){
+    if (!queryMonitorName) {
       getListMonitor(1, 10);
-
     }
-   
   }, [queryMonitorName]);
 
   const getListMonitor = async (
-    pageIndex: number,
-    pageSize: number,
+    page: number,
+    size: number,
     name?: string,
     metricsUrl?: string,
     appCode?: string,
     envCode?: string,
   ) => {
+    if (page) {
+      setPageCurrentIndex(page);
+    }
+    if (size) {
+      setPageSize(size);
+    }
     await getRequest(APIS.queryPrometheusList, {
-      
-      data: { pageIndex: pageIndex || 1, pageSize: pageSize || 10, name, metricsUrl, appCode, envCode },
+      data: { pageIndex: page || pageIndex, pageSize: size || pageSize, name, metricsUrl, appCode, envCode },
     }).then((result) => {
       if (result?.success) {
-       
         let ListSource = result?.data?.dataSource || [];
         setListSource(ListSource);
         setTotal(result?.data?.pageInfo.total);

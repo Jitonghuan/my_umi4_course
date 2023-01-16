@@ -47,9 +47,14 @@ export default function DpMonitor(props: any) {
     );
   };
 
+  const onQuery = (page?: number, pageSize?: number) => {
+    const values = form.getFieldsValue();
+    getListMonitor(page, pageSize, values?.name, values?.metricName, values?.appCode, currentEnvCode);
+  };
+
   const delMonitorClick = (id: string) => {
     delMonitor(id, () => {
-      getListMonitor(1, 5);
+      onQuery(1, 10);
     });
   };
 
@@ -60,13 +65,13 @@ export default function DpMonitor(props: any) {
           layout="inline"
           form={form}
           onFinish={(values: any) => {
-            getListMonitor(1, 10, values?.name, values?.metricName, values?.appCode, currentEnvCode);
+            onQuery(1, 10);
           }}
           onReset={() => {
             form.resetFields();
             setCurrentEnvCode('');
             setCurrentEnvType('');
-            getListMonitor(1, 10);
+            onQuery(1, 10);
           }}
         >
           <Form.Item label="环境" name="envCode">
@@ -144,11 +149,10 @@ export default function DpMonitor(props: any) {
         {listSource.length !== 0 ? (
           <Table
             pagination={{
-              onChange: (page) => {
-                getListMonitor(page, 5);
+              onChange: (page, pageSize) => {
+                onQuery(page, pageSize);
               },
               total: total,
-              pageSize: 5,
             }}
             dataSource={listSource}
             bordered
