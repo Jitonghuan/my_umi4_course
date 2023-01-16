@@ -1,7 +1,7 @@
 import React, { useMemo, useState,useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Button, Space, Form } from 'antd';
+import { Button, Space, Form,Table } from 'antd';
 import { createRecordTableColumns,  } from '../schema';
 import useTable from '@/utils/useTable';
 import * as APIS from '../../service';
@@ -40,7 +40,7 @@ export default function AdminList() {
       <PageContainer>
         <TableSearch
           form={form}
-          bordered
+          // bordered
           formOptions={[
             {
                 key: '1',
@@ -79,6 +79,16 @@ export default function AdminList() {
           }
           className="table-form"
           onSearch={submit}
+          expandable={{
+            expandedRowRender: record => <p style={{ margin: 4 }}>
+              <Table dataSource={record?.backupResult||[]}>
+                <Table.Column dataIndex="filename"  title="备份文件名称"/>
+                <Table.Column dataIndex="fileSize" title="备份文件大小"/>
+                <Table.Column dataIndex="lastModified" title="最后修改时间"/>
+              </Table>
+            </p>,
+           
+          }}
           reset={reset}
           // scroll={tableProps.dataSource.length > 0 ? { x: '100%' } : {}}
           searchText="查询"
