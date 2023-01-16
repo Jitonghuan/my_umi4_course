@@ -13,7 +13,7 @@ export function useClusterList() {
     total: 0,
   });
 
-  const getClusterList = async (paramObj: {
+  const getClusterList =  (paramObj: {
     name?: string;
     clusterType?: number;
     envCode?: string;
@@ -21,15 +21,14 @@ export function useClusterList() {
     pageSize?: number;
   }) => {
     setLoading(true);
-    await getRequest(APIS.getClusterList, { data: paramObj })
-      .then((result) => {
+     getRequest(APIS.getClusterList, { data: paramObj }).then((result) => {
         if (result?.success) {
+          debugger
           const dataSource = result?.data?.dataSource || [];
           const pageInfo = result?.data?.pageInfo||{};
           setSource(dataSource);
-          // setPageInfo(pageInfo);
+          setPageInfo(pageInfo);
         }
-
       }).finally(() => {
         setLoading(false);
       });
