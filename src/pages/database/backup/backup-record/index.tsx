@@ -1,7 +1,7 @@
 import React, { useMemo, useState,useEffect } from 'react';
 import PageContainer from '@/components/page-container';
 import TableSearch from '@/components/table-search';
-import { Button, Space, Form } from 'antd';
+import { Button, Space, Form,Table } from 'antd';
 import { createRecordTableColumns,  } from '../schema';
 import useTable from '@/utils/useTable';
 import * as APIS from '../../service';
@@ -26,6 +26,8 @@ export default function AdminList() {
       formatter: (params) => {
         return {
           ...params,
+          pageSize:-1,
+          pageIndex:-1
         };
       },
       formatResult: (result) => {
@@ -40,7 +42,7 @@ export default function AdminList() {
       <PageContainer>
         <TableSearch
           form={form}
-          bordered
+          // bordered
           formOptions={[
             {
                 key: '1',
@@ -64,13 +66,14 @@ export default function AdminList() {
           formLayout="inline"
           columns={columns}
           {...tableProps}
-          pagination={{
-            ...tableProps.pagination,
-            showTotal: (total) => `共 ${total} 条`,
-            showSizeChanger: true,
+          pagination={false}
+          // pagination={{
+          //   ...tableProps.pagination,
+          //   showTotal: (total) => `共 ${total} 条`,
+          //   showSizeChanger: true,
           
-            defaultPageSize: 20,
-          }}
+          //   defaultPageSize: 20,
+          // }}
           extraNode={
             <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
               <h3>列表</h3>
@@ -79,6 +82,16 @@ export default function AdminList() {
           }
           className="table-form"
           onSearch={submit}
+          expandable={{
+            expandedRowRender: record => <p style={{ margin: 4 }}>
+              <Table dataSource={record?.backupResult||[]}>
+                <Table.Column dataIndex="filename"  title="备份文件名称"/>
+                <Table.Column dataIndex="fileSize" title="备份文件大小"/>
+                <Table.Column dataIndex="lastModified" title="最后修改时间"/>
+              </Table>
+            </p>,
+           
+          }}
           reset={reset}
           // scroll={tableProps.dataSource.length > 0 ? { x: '100%' } : {}}
           searchText="查询"

@@ -85,7 +85,7 @@ export default function CreatePlan(props: CreateArticleProps) {
   return (
     <Drawer
       width={900}
-      title={mode === 'EDIT' ? '编辑' : mode === 'VIEW' ? '查看' : '新增'}
+      title={mode === 'EDIT' ? '编辑备份' : mode === 'VIEW' ? '查看备份' : '新增备份'}
       placement="right"
       visible={mode !== 'HIDE'}
       onClose={onClose}

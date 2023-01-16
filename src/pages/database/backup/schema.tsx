@@ -82,53 +82,53 @@ export const createTableColumns = (params: {
         title: '备份计划名称',
         dataIndex: 'backupName',
         key: 'backupName',
-        width: '14%',
+        width: '33%',
       },
       {
         title: '备份集群/库表',
         dataIndex: 'backupObj',
         key: 'backupObj',
-        width: '14%',
+        width: '33%',
       },
     
       {
         title: '备份类型',
         dataIndex: 'backupType',
         key: 'backupType',
-        width: '20%',
+        width: '33%',
         // render: (value) => <>{datetimeCellRender(value)} </>,
       },
-      {
-        title: '备份开始时间',
-        dataIndex: 'backupStart',
-        key: 'backupStart',
-        width: '10%',
+      // {
+      //   title: '备份开始时间',
+      //   dataIndex: 'backupStart',
+      //   key: 'backupStart',
+      //   width: '10%',
        
-      },
-      {
-        title: '备份结束时间',
-        dataIndex: 'backupEnd',
-        key: 'backupEnd',
-        width: '10%',
+      // },
+      // {
+      //   title: '备份结束时间',
+      //   dataIndex: 'backupEnd',
+      //   key: 'backupEnd',
+      //   width: '10%',
        
-      },
-      {
-        title: '备份大小',
-        dataIndex: 'backupSize',
-        key: 'backupSize',
-        width: '10%',
+      // },
+      // {
+      //   title: '备份大小',
+      //   dataIndex: 'backupSize',
+      //   key: 'backupSize',
+      //   width: '10%',
        
-      },
-      {
-        title: '备份状态',
-        dataIndex: 'backupState',
-        key: 'backupState',
-        width: '10%',
-        render:(value)=>{
-          return <Tag color={value==="已完成"?"green":"default"}>{value}</Tag>
-        }
+      // },
+      // {
+      //   title: '备份状态',
+      //   dataIndex: 'backupState',
+      //   key: 'backupState',
+      //   width: '10%',
+      //   render:(value)=>{
+      //     return <Tag color={value==="已完成"?"green":"default"}>{value}</Tag>
+      //   }
        
-      },
+      // },
      
     ] as ColumnsType<any>;
   };
