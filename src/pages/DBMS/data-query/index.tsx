@@ -163,7 +163,7 @@ export default function ResizeLayout() {
             const values = form?.getFieldsValue();
             setOptions([])
             queryTableFields({ ...values, tableCode: value })
-            setSqlDrawMode("VIEW")
+          
             //queryTableFieldsMethods({ ...values, tableCode: value})
             setFirstInitSqlValue(`select * from ${value} limit 10`)
             getFirstInitSqlValue(`select * from ${value} limit 10`)
@@ -180,7 +180,7 @@ export default function ResizeLayout() {
         {tablesSource?.map((item: any) => {
           return (
             <Panel
-              header={<span><InsertRowAboveOutlined />&nbsp;{item?.value}</span>}
+              header={<span onDoubleClick={()=>{  setSqlDrawMode("VIEW")}}><InsertRowAboveOutlined />&nbsp;{item?.value}</span>}
               key={item?.value}
               className="site-collapse-custom-panel"
             >
