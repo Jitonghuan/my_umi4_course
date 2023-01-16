@@ -4,10 +4,12 @@ import TableSearch from '@/components/table-search';
 import { Button, Modal, Form, Input, message } from 'antd';
 import { getAccountList } from '../service';
 import useTable from '@/utils/useTable';
+import {buttonPession} from "@/pages/database/utils"
 import { createTableColumns ,readonlyColumns} from './schema';
 import CreateAccount from './components/create-account';
 import UpdatePassword from './components/update-password';
 import { useDeleteAccount } from './hook';
+import { FeContext } from '@/common/hooks';
 import GrantModal from './components/grant-default';
 import  DetailContext  from '../instance-list/components/instance-info/context'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -28,6 +30,10 @@ export default function AccountList(props:any) {
   const [curId, setCurId] = useState<any>();
   const [curRecord, setCurRecord] = useState<any>({});
   const {clusterId,clusterRole}=useContext(DetailContext)
+  const { btnPermission } = useContext(FeContext);
+  const canEdit = useMemo(() => btnPermission.includes('matrix:1014:account-update-password'), [btnPermission])
+  const canDelete = useMemo(() => btnPermission.includes('matrix1013:new-account-delete'), [btnPermission])
+  const canManage = useMemo(() => btnPermission.includes('matrix:1015:permissions-manage'), [btnPermission])
   useEffect(() => {
     if (!clusterId) return;
   }, [clusterId]);
@@ -49,13 +55,18 @@ export default function AccountList(props:any) {
         setCurRecord({ ...record });
         setGrantMode('ADD');
       },
+      canEdit,
+      canDelete,
+      canManage,
       // onRecovery: (record) => {
       //   setCurRecord({ ...record, grantType: 2 });
       //   setGrantMode('EDIT');
       // },
       deleteLoading: delLoading,
     }) as any;
-  }, []);
+  }, [canEdit,
+    canDelete,
+    canManage,]);
   const {
     tableProps,
     search: { submit, reset },
@@ -185,7 +196,7 @@ export default function AccountList(props:any) {
         }}
         extraNode={
           <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-           {clusterRole===3 && <Button
+           {clusterRole===3 &&buttonPession("matrix:1012:new-account-add")&& <Button
               type="primary"
               onClick={() => {
                 setMode('ADD');

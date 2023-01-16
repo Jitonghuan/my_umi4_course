@@ -189,6 +189,8 @@ export const createTableColumns = (params: {
   onViewPerformance: (record: any, index: number) => void;
   onDelete: (record: any) => void;
   delLoading: boolean;
+  canEdit:boolean;
+  canDelete:boolean;
 }) => {
   return [
     {
@@ -274,8 +276,8 @@ export const createTableColumns = (params: {
         
           <a onClick={() => params.onManage(record, index)}>管理</a>
           <a onClick={() => params.onViewPerformance(record, index)}>性能</a>
-          <a onClick={() => params.onEdit(record, index)}>编辑</a>
-          <Popconfirm
+          {params?.canEdit&& <a onClick={() => params.onEdit(record, index)}>编辑</a>}
+          {params?.canDelete&&  <Popconfirm
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record.id);
@@ -284,7 +286,9 @@ export const createTableColumns = (params: {
             <Spin spinning={params?.delLoading}>
               <a >删除</a>
             </Spin>
-          </Popconfirm>
+          </Popconfirm>}
+         
+        
         </Space>
       ),
     },

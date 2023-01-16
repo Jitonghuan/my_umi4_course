@@ -3,8 +3,9 @@ import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request
 import * as APIS from '../service';
 import { message } from 'antd';
 import { CreateClusterItem, UpdateClusterItem } from '../interfaces';
+
 //列表查询
-export function useClusterList() {
+export function useGetClusterList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>([]);
   const [pageInfo, setPageInfo] = useState({
@@ -23,7 +24,6 @@ export function useClusterList() {
     setLoading(true);
      getRequest(APIS.getClusterList, { data: paramObj }).then((result) => {
         if (result?.success) {
-          debugger
           const dataSource = result?.data?.dataSource || [];
           const pageInfo = result?.data?.pageInfo||{};
           setSource(dataSource);

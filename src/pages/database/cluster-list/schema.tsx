@@ -35,6 +35,8 @@ export const createTableColumns = (params: {
   onEdit: (record: any) => void;
   onView: (record: any) => void;
   onDelete: (record: any) => void;
+  canEdit:boolean,
+  canDelete:boolean,
   delLoading: boolean;
 }) => {
   return [
@@ -93,14 +95,14 @@ export const createTableColumns = (params: {
           >
             详情
           </a>
-          {buttonPession("matrix:1002:new-cluster-edit")&& <a
+          {params?.canEdit&& <a
             onClick={() => {
               params?.onEdit(record);
             }}
           >
             编辑
           </a>}
-          {buttonPession("matrix:1003:new-cluster-delete")&& <Popconfirm
+          {params?.canDelete&& <Popconfirm
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record?.id);

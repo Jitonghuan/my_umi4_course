@@ -65,6 +65,9 @@ export const createTableColumns = (params: {
   onGrant: (record: any) => void;
   onRecovery: (record: any) => void;
   deleteLoading: boolean;
+  canManage:boolean,
+  canEdit:boolean,
+  canDelete:boolean,
 }) => {
   return [
     {
@@ -117,14 +120,15 @@ export const createTableColumns = (params: {
       render: (_: string, record, index: number) => (
         //根据不同类型跳转
         <Space>
-          <a
+          {params?.canManage&&  <a
          
-            onClick={() => {
-              params?.onGrant(record);
-            }}
-          >
-            权限管理
-          </a>
+         onClick={() => {
+           params?.onGrant(record);
+         }}
+       >
+         权限管理
+       </a>}
+        
           {/* <a
           
             onClick={() => {
@@ -133,15 +137,15 @@ export const createTableColumns = (params: {
           >
             回收
           </a> */}
-          <a
+          {params?.canEdit&& <a
          
-            onClick={() => {
-              params?.onUpdate(record.id);
-            }}
-          >
-            改密
-          </a>
-          <Popconfirm
+         onClick={() => {
+           params?.onUpdate(record.id);
+         }}
+       >
+         改密
+       </a>}
+       {params?.canDelete&&  <Popconfirm
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record);
@@ -151,7 +155,9 @@ export const createTableColumns = (params: {
             <Spin spinning={params?.deleteLoading}>
               <a >删除</a>
             </Spin>
-          </Popconfirm>
+          </Popconfirm>}
+         
+
         </Space>
       ),
     },

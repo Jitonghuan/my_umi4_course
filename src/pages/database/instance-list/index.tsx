@@ -1,23 +1,28 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState,useContext } from 'react';
 import PageContainer from '@/components/page-container';
 import { Button, Table, Form, Input, Select } from 'antd';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { history,useLocation } from 'umi';
+import {buttonPession} from '../utils'
 import { parse,stringify } from 'query-string';
 import { createTableColumns,  } from './schema';
 import {getEnumerateData} from '../overview/hook'
 import CreateInstance from './components/create-instance';
+import { FeContext } from '@/common/hooks';
 import { useDeleteInstance, useGetClusterList, useInstanceList } from './hook';
 export default function InstanceList() {
   const [instanceForm] = Form.useForm();
   let location = useLocation();
   const query:any = parse(location.search);
+  const { btnPermission } = useContext(FeContext);
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [curRecord, setcurRecord] = useState<any>({});
   const [loading, clusterOptions, getClusterList] = useGetClusterList();
   const [listLoading, pageInfo, dataSource, getInstanceList] = useInstanceList();
   const [delLoading, deleteInstance] = useDeleteInstance();
   const [instanceTypeOption,setInstanceTypeOption]=useState<any>([])
+  const canEdit = useMemo(() => btnPermission.includes('matrix:1006:new-instance-edit'), [btnPermission])
+  const canDelete = useMemo(() => btnPermission.includes('matrix:1005:new-instance-delete'), [btnPermission])
   const getOptions=()=>{
     getEnumerateData().then((res)=>{
       if(res?.success){
@@ -57,6 +62,8 @@ export default function InstanceList() {
         setcurRecord(record);
         setMode('EDIT');
       },
+      canEdit,
+      canDelete,
       onManage: (record, index) => {
         history.push({
           pathname: '/matrix/database/info',
@@ -89,7 +96,7 @@ export default function InstanceList() {
       },
       delLoading: delLoading,
     }) as any;
-  }, []);
+  }, [canDelete,canEdit]);
   //触发分页
   const pageSizeClick = (pagination: any) => {
     let obj = {
@@ -179,14 +186,16 @@ export default function InstanceList() {
             <h3>实例列表</h3>
           </div>
           <div className="caption-right">
-            <Button
+
+            {buttonPession("matrix:1004:new-instance-add")&& <Button
               type="primary"
               onClick={() => {
                 setMode('ADD');
               }}
             >
               + 新实例接入
-            </Button>
+            </Button> }
+            
           </div>
         </div>
         <div>
