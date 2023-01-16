@@ -8,6 +8,7 @@ import AceEditor from '@/components/ace-editor';
 import {CopyOutlined} from '@ant-design/icons'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import {useGetRollbackSQL} from './hook'
+import {exportRollbackSQLApi}  from '../../../service';
 const { Paragraph } = Typography;
 
 
@@ -26,6 +27,7 @@ export default function CreateArticle(props: IProps) {
     const [copySql,setCopySql]=useState<string>("")
     const [sqlForm] =Form.useForm()
     const [showSql,setShowSql]=useState<boolean>(false)
+    const [downLoadDisabled, setDownLoadDisabled] = useState<boolean>(false);
     const columns=[
         {
             title: 'originalSQL',
@@ -102,9 +104,22 @@ export default function CreateArticle(props: IProps) {
         <Modal title="回滚sql语句" visible={visiable} destroyOnClose width={"80%"} footer={false} onCancel={onClose}>
           <div style={{display:"flex",justifyContent:"flex-end"}}>
             <div>
-            <CopyToClipboard text={copySql} onCopy={() => message.success('复制成功！')}>
+              <Button type="primary"
+                target="_blank"
+                href={`${exportRollbackSQLApi}`}
+                disabled={downLoadDisabled}
+                className="downloadButton"
+                onClick={() => {
+                  message.info('开始导出...');
+                  setDownLoadDisabled(true);
+                  setTimeout(() => {
+                    setDownLoadDisabled(false);
+                  }, 1000*60);
+                }}
+              >下载所有回滚语句</Button>
+            {/* <CopyToClipboard text={copySql} onCopy={() => message.success('复制成功！')}>
                  <Button type="primary" icon={<CopyOutlined />}>复制所有回滚语句</Button>
-            </CopyToClipboard>
+            </CopyToClipboard> */}
           
               </div>
           </div>
