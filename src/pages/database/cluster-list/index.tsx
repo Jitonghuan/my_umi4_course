@@ -4,6 +4,7 @@ import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { Button, Form, Table, Input, Select } from 'antd';
 import { createTableColumns, clusterTypeOption } from './schema';
 import CreateCluster from './create-cluster';
+import {buttonPession} from '../utils'
 import {history} from 'umi';
 import { useDeleteCluster, useQueryEnvList, useClusterList } from './hook';
 export default function ClusterList() {
@@ -129,14 +130,15 @@ export default function ClusterList() {
             <h3>集群列表</h3>
           </div>
           <div className="caption-right">
-            <Button
+            {buttonPession("matrix:1001:new-cluster-add")&&   <Button
               type="primary"
               onClick={() => {
                 setMode('ADD');
               }}
             >
               + 新集群接入
-            </Button>
+            </Button>}
+         
           </div>
         </div>
         <div>

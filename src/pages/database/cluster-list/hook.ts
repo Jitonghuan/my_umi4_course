@@ -24,16 +24,13 @@ export function useClusterList() {
     await getRequest(APIS.getClusterList, { data: paramObj })
       .then((result) => {
         if (result?.success) {
-          const dataSource = result.data.dataSource || [];
-          const pageInfo = result.data.pageInfo;
+          const dataSource = result?.data?.dataSource || [];
+          const pageInfo = result?.data?.pageInfo||{};
           setSource(dataSource);
-          setPageInfo(pageInfo);
+          // setPageInfo(pageInfo);
         }
-        if (!result?.success) {
-          return;
-        }
-      })
-      .finally(() => {
+
+      }).finally(() => {
         setLoading(false);
       });
   };
@@ -57,9 +54,7 @@ export function useAddCluster(): [boolean, (paramsObj: CreateClusterItem) => Pro
       .then((result) => {
         if (result.success) {
           message.success(result.data);
-        } else {
-          return;
-        }
+        } 
       })
       .finally(() => {
         setLoading(false);
@@ -78,9 +73,7 @@ export function useUpdateCluster(): [boolean, (paramsObj: UpdateClusterItem) => 
       .then((result) => {
         if (result.success) {
           message.success(result.data);
-        } else {
-          return;
-        }
+        } 
       })
       .finally(() => {
         setLoading(false);
@@ -99,9 +92,7 @@ export function useDeleteCluster(): [boolean, (paramsObj: { id: number }) => Pro
       .then((result) => {
         if (result.success) {
           message.success(result.data);
-        } else {
-          return;
-        }
+        } 
       })
       .finally(() => {
         setLoading(false);
@@ -127,8 +118,6 @@ export function useQueryEnvList() {
             key: item.envCode,
           }));
           setEnvDataSource(options);
-        } else {
-          return [];
         }
       })
       .finally(() => {
