@@ -206,7 +206,8 @@ export default function ResizeLayout() {
             }} />
           </Form.Item>
           <Form.Item name="instanceId" label="实例：" rules={[{ required: true, message: '请填写' }]}>
-            <Select placeholder="选择实例" options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId) => {
+            <Select placeholder="选择实例" 
+             options={instanceOptions} allowClear showSearch loading={instanceLoading} onChange={(instanceId) => {
               queryDatabases({ instanceId })
               form?.setFieldsValue({
                 dbCode: "",
@@ -214,10 +215,15 @@ export default function ResizeLayout() {
               })
 
 
+            }}
+            filterOption={(input, option) => {
+              //@ts-ignore
+              return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
             }} />
           </Form.Item>
           <Form.Item name="dbCode" label="库：" rules={[{ required: true, message: '请填写' }]}>
-            <Select placeholder="选择库" options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode) => {
+            <Select placeholder="选择库" 
+            options={databasesOptions} allowClear showSearch loading={databasesOptionsLoading} onChange={(dbCode) => {
               queryTables({ dbCode, instanceId: form?.getFieldsValue()?.instanceId })
               form?.setFieldsValue({
                 tableCode: ""
