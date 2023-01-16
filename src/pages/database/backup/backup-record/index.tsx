@@ -26,6 +26,8 @@ export default function AdminList() {
       formatter: (params) => {
         return {
           ...params,
+          pageSize:-1,
+          pageIndex:-1
         };
       },
       formatResult: (result) => {
@@ -64,13 +66,14 @@ export default function AdminList() {
           formLayout="inline"
           columns={columns}
           {...tableProps}
-          pagination={{
-            ...tableProps.pagination,
-            showTotal: (total) => `共 ${total} 条`,
-            showSizeChanger: true,
+          pagination={false}
+          // pagination={{
+          //   ...tableProps.pagination,
+          //   showTotal: (total) => `共 ${total} 条`,
+          //   showSizeChanger: true,
           
-            defaultPageSize: 20,
-          }}
+          //   defaultPageSize: 20,
+          // }}
           extraNode={
             <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
               <h3>列表</h3>
