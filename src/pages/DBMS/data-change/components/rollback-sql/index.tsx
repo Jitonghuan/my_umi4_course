@@ -108,6 +108,7 @@ export default function CreateArticle(props: IProps) {
                 target="_blank"
                 href={`${exportRollbackSQLApi}?id=${curId}`}
                 disabled={downLoadDisabled}
+                style={{lineHeight:2,marginBottom:10}}
                 className="downloadButton"
                 onClick={() => {
                   message.info('开始导出...');
