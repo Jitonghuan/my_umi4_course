@@ -106,7 +106,7 @@ export default function CreateArticle(props: IProps) {
             <div>
               <Button type="primary"
                 target="_blank"
-                href={`${exportRollbackSQLApi}`}
+                href={`${exportRollbackSQLApi}?id=${curId}`}
                 disabled={downLoadDisabled}
                 className="downloadButton"
                 onClick={() => {
@@ -114,7 +114,7 @@ export default function CreateArticle(props: IProps) {
                   setDownLoadDisabled(true);
                   setTimeout(() => {
                     setDownLoadDisabled(false);
-                  }, 1000*60);
+                  }, 1000*10);
                 }}
               >下载所有回滚语句</Button>
             {/* <CopyToClipboard text={copySql} onCopy={() => message.success('复制成功！')}>
