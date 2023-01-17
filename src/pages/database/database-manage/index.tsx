@@ -6,7 +6,9 @@ import useTable from '@/utils/useTable';
 import { createTableColumns,readonlyColumns } from './schema';
 import CreateDataBase from './create-database';
 import { getSchemaList } from '../service';
+import {buttonPession} from "@/pages/database/utils"
 import { useDeleteSchema } from './hook';
+import { FeContext } from '@/common/hooks';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useSyncMetaData } from '../instance-list/hook';
 import DetailContext from '../instance-list/components/instance-info/context';
@@ -20,10 +22,13 @@ export default function DataBasePage(props:any) {
   const [form] = Form.useForm();
   // const { clusterId ,clusterRole} = props;
   const [ensureForm] = Form.useForm();
+  const { btnPermission } = useContext(FeContext)
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [delLoading, deleteSchema] = useDeleteSchema();
   const [syncLoading, syncMetaData] = useSyncMetaData();
   const {clusterId,clusterRole}=useContext(DetailContext)
+  //matrix:1011:new-database-delete
+  const canDelete = useMemo(() => btnPermission.includes('matrix:1011:new-database-delete'), [btnPermission])
   
   useEffect(() => {
     if (!clusterId) return;
@@ -38,8 +43,9 @@ export default function DataBasePage(props:any) {
         ensureModal(record);
       },
       delLoading: delLoading,
+      canDelete,
     }) as any;
-  }, [clusterRole]);
+  }, [clusterRole,canDelete]);
 
   const ensureModal = (record: any) => {
     // ensureForm.resetFields();
@@ -145,7 +151,7 @@ export default function DataBasePage(props:any) {
         extraNode={
           <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
             <Space>
-            <Button
+              {buttonPession("matrix:1009:sync-data")&&  <Button
                 type="primary"
                 loading={syncLoading}
                 onClick={() => {
@@ -153,8 +159,9 @@ export default function DataBasePage(props:any) {
                 }}
               >
                 同步元数据
-              </Button>
-              {clusterRole===3&&   <Button
+              </Button>}
+          
+              {clusterRole===3&&buttonPession("matrix:1010:new-database-add")&&    <Button
               type="primary"
               ghost
               onClick={() => {

@@ -39,7 +39,8 @@ export const readonlyColumns=()=>{
   ]
 }
 // 列表页-表格
-export const createTableColumns = (params: { 
+export const createTableColumns = (params: {
+  canDelete:boolean, 
   onDelete: (record: any) => void; delLoading: boolean }) => {
   return [
     {
@@ -76,17 +77,19 @@ export const createTableColumns = (params: {
         
         //根据不同类型跳转
         <Space>
-          <Popconfirm
+           {params?.canDelete&&  <Popconfirm
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record);
             }}
             
           >
+           
             <Spin spinning={params?.delLoading}>
               <a >删除</a>
             </Spin>
-          </Popconfirm>
+          </Popconfirm>}
+        
         </Space>
       ),
     },

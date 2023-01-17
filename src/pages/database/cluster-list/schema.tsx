@@ -1,5 +1,6 @@
 import { Space, Tag, Popconfirm, Spin } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
+import {buttonPession} from "../utils"
 
 // 实例类型枚举       3:mysql 4:postgresql 5:redis 6:mongdb
 type clusterTypeItem = {
@@ -34,6 +35,8 @@ export const createTableColumns = (params: {
   onEdit: (record: any) => void;
   onView: (record: any) => void;
   onDelete: (record: any) => void;
+  canEdit:boolean,
+  canDelete:boolean,
   delLoading: boolean;
 }) => {
   return [
@@ -92,14 +95,14 @@ export const createTableColumns = (params: {
           >
             详情
           </a>
-          <a
+          {params?.canEdit&& <a
             onClick={() => {
               params?.onEdit(record);
             }}
           >
             编辑
-          </a>
-          <Popconfirm
+          </a>}
+          {params?.canDelete&& <Popconfirm
             title="确认删除?"
             onConfirm={() => {
               params?.onDelete(record?.id);
@@ -108,7 +111,9 @@ export const createTableColumns = (params: {
             <Spin spinning={params?.delLoading}>
               <a >删除</a>
             </Spin>
-          </Popconfirm>
+          </Popconfirm>}
+         
+         
         </Space>
       ),
     },
