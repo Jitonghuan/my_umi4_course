@@ -84,5 +84,6 @@ export const getSyncInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflo
 export const compareSyncInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sync/compare`;
 //提交结构同步工单
 export const createSyncInfoApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sync/create`;
+///dmp/workflow/sql/rollbackSQL/export
 
-
+export const exportRollbackSQLApi = `${dmpApiPrefix}${appConfig.apiPrefix}/dmp/workflow/sql/rollbackSQL/export`;

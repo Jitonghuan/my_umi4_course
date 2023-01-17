@@ -278,10 +278,7 @@ export default function SqlEditor(props: Iprops) {
               }else{
                  //@ts-ignore
                 subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })
-                // _.throttle( function(){ subChange({ sqlContent: instance?.getValue() || "", sqlType: "query" })} ,3000,{
-                //   leading: true,
-                //   trailing: false
-                // })
+              
                 
               }
              

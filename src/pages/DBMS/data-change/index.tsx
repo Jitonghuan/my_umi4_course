@@ -16,6 +16,7 @@ export default function AuthorityApply (){
     const [dataSource,setDataSource]=useState<any>([]);
     const [total, setTotal] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(20);
+    const [pageIndex,setPageIndex]= useState<number>(1);
     const [tableLoading, setTableLoading] = useState<any>(false);
     const [loading, userNameOptions, searchUser] =useSearchUser()
     useEffect(()=>{
@@ -30,7 +31,8 @@ export default function AuthorityApply (){
           form.setFieldsValue({
             ...query
           })
-
+          setPageSize(query?.pageSize)
+          setPageIndex(query?.pageIndex)
         }else{
           queryList()
         }
@@ -62,6 +64,7 @@ export default function AuthorityApply (){
               let pageInfo=result?.data?.pageInfo
               setTotal(pageInfo?.total);
               setPageSize(pageInfo?.pageSize);
+              setPageIndex(pageInfo?.pageIndex)
             }else{
               setDataSource([])
             }
@@ -77,6 +80,7 @@ export default function AuthorityApply (){
       pageSize: pagination.pageSize,
     };
     setPageSize(pagination.pageSize);
+    setPageIndex(pagination.current)
 
     loadListData(obj);
   };
@@ -92,7 +96,7 @@ export default function AuthorityApply (){
             dataSource:dataSource,
           onDetail: (record, index) => {
             let value = form.getFieldsValue();
-            let query={...value}
+            let query={...value,pageSize:pageSize,pageIndex:pageIndex}
             if(record?.sqlWfType==="ddl"){
               history.push({
                 pathname:"/matrix/DBMS/ddl-detail",
@@ -219,6 +223,7 @@ export default function AuthorityApply (){
             scroll={{ x: '100%' }}
             pagination={{
               // current: taskTablePageInfo.pageIndex,
+              current:pageIndex,
               total: total,
               pageSize: pageSize,
               showSizeChanger: true,
