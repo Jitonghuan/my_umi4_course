@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, } from 'react';
-import { Tabs, Form, Space, Select, message, Collapse, Spin, Input } from 'antd';
+import { Tabs, Form, Space, Select, message, Collapse, Spin, Input,Typography } from 'antd';
 import { BarsOutlined, ReloadOutlined, InsertRowAboveOutlined, PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
 import LightDragable from "@/components/light-dragable";
 import RightContent from "./components/right-content";
@@ -7,6 +7,7 @@ import SqlDraw from './components/sql-draw'
 import { useEnvList, querySqlResultInfo, useInstanceList, useQueryDatabasesOptions, useQueryTableFieldsOptions, queryTables } from '../common-hook'
 import './index.less';
 const { Panel } = Collapse;
+const { Paragraph } = Typography;
 export default function ResizeLayout() {
   const rightContentRef = useRef<any>(null);
   const formRef = useRef<any>(null)
@@ -163,9 +164,9 @@ export default function ResizeLayout() {
             const values = form?.getFieldsValue();
             setOptions([])
             queryTableFields({ ...values, tableCode: value })
-            setSqlDrawMode("VIEW")
+          
             //queryTableFieldsMethods({ ...values, tableCode: value})
-            setFirstInitSqlValue(`select * from ${value} limit 10`)
+            // setFirstInitSqlValue(`select * from ${value} limit 10`)
             getFirstInitSqlValue(`select * from ${value} limit 10`)
             if (!values?.instanceId || !values?.dbCode || !value) {
               setImplementDisabled(true)
@@ -180,7 +181,9 @@ export default function ResizeLayout() {
         {tablesSource?.map((item: any) => {
           return (
             <Panel
-              header={<span><InsertRowAboveOutlined />&nbsp;{item?.value}</span>}
+              header={<span style={{display:"flex",justifyContent:"flex-start",}} onDoubleClick={()=>{  setSqlDrawMode("VIEW")}}>
+                <InsertRowAboveOutlined style={{marginTop:4}} />&nbsp; <Paragraph copyable>{item?.value}</Paragraph>
+              </span>}
               key={item?.value}
               className="site-collapse-custom-panel"
             >
@@ -306,8 +309,8 @@ export default function ResizeLayout() {
               </Form.Item>
             </Space>
             <p style={{ marginTop: 8, width: "100%", marginBottom: 0 }}>
-          
               <li className={close?"close-tooltip-content":"tooltip-content"} >查询结果行数限制见权限管理，会选择查询涉及表的最小limit值</li>
+              <li className={close?"close-tooltip-content":"tooltip-content"}>双击表名展示Create SQL</li>
             </p>
             <Form.Item name="tableCode" style={{ marginTop: 0, height: '100%', paddingBottom: 18 }}>
               <Spin spinning={tablesOptionsLoading}>

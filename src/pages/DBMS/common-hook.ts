@@ -45,7 +45,7 @@ export function useInstanceList() {
           dataSource?.map((item: any) => {
             dataArry.push({
              label:item?.InstanceName,
-             value:item?.InstanceId
+             value:item?.InstanceId,
             });
           });
          

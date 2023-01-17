@@ -97,7 +97,6 @@ export default forwardRef(function RightContent(props: Iprops, ref: any) {
                             isSqlExecutePlanBtn={true}
                             tableFields={tableFields}
                             initValue={firstInitSqlValue || "select * from user limit 10"}
-
                             subChange={(params: { sqlContent: string, sqlType: string }) => {
                                 querySqlResult(params)
                                 setSql(params?.sqlContent)
