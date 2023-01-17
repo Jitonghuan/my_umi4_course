@@ -3,7 +3,7 @@
 // @create 2019/02/11
 
 import React, { Component } from 'react';
-import { Alert } from 'antd';
+import { Result,Button } from 'antd';
 
 export default class ErrorBoundary extends Component {
   static getDerivedStateFromError() {
@@ -22,11 +22,11 @@ export default class ErrorBoundary extends Component {
 
   render() {
     return this.state.hasError ? (
-      <Alert
-        message="ERROR"
-        description="页面出错啦！请刷新重试 ( F12 打开控制台，可查看错误信息 )"
-        type="error"
-        showIcon
+      <Result
+          status="500"
+          title=""
+          subTitle="页面出错啦，请尝试刷新一下吧～"
+          extra={<Button type="primary" onClick={() => history.go(0)}>刷新</Button>}
       />
     ) : (
       this.props.children
