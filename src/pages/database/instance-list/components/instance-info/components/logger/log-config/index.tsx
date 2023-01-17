@@ -4,6 +4,7 @@ import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
 import { Button, Space, Input, Table, Radio, DatePicker, Card,message,Form,InputNumber } from 'antd';
 import {useGetSlowLogConfig,updateSlowLogConfig} from '../hook'
+import {buttonPession} from "@/pages/database/utils"
 import  DetailContext  from '../../../context';
 
 
@@ -64,7 +65,7 @@ export default function LowSqlStatistics(){
     return(
         <div>
            <Card title="慢日志配置" style={{ width: '100%',padding:16 }} extra={<Space>
-            <Button type="primary" onClick={update} loading={ensureLoading}>提交</Button>
+           {buttonPession("matrix:1016:log-config-submit")&&<Button type="primary" onClick={update} loading={ensureLoading}>提交</Button>} 
             <Button onClick={()=>{
                 form.setFieldsValue({
                   status:dataSource?.status

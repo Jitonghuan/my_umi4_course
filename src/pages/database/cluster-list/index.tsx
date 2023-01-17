@@ -1,18 +1,23 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState,useContext } from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { Button, Form, Table, Input, Select } from 'antd';
 import { createTableColumns, clusterTypeOption } from './schema';
 import CreateCluster from './create-cluster';
+import { FeContext } from '@/common/hooks';
+import {buttonPession} from '../utils'
 import {history} from 'umi';
-import { useDeleteCluster, useQueryEnvList, useClusterList } from './hook';
+import { useDeleteCluster, useQueryEnvList, useGetClusterList} from './hook';
 export default function ClusterList() {
   const [clusterForm] = Form.useForm();
-  const [tableLoading, clusterTablePageInfo, clusterTableSource, getClusterList] = useClusterList();
+  const { btnPermission } = useContext(FeContext);
+  const [tableLoading, clusterTablePageInfo, clusterTableSource, getClusterList] = useGetClusterList();
   const [mode, setMode] = useState<EditorMode>('HIDE');
   const [envListLoading, envDataSource, queryEnvData] = useQueryEnvList();
   const [curRecord, setcurRecord] = useState<any>({});
   const [delLoading, deleteCluster] = useDeleteCluster();
+  const canEdit = useMemo(() => btnPermission.includes('matrix:1002:new-cluster-edit'), [btnPermission])
+  const canDelete = useMemo(() => btnPermission.includes('matrix:1003:new-cluster-delete'), [btnPermission])
   useEffect(() => {
     queryEnvData();
     getClusterList({
@@ -27,6 +32,8 @@ export default function ClusterList() {
         setcurRecord(record);
         setMode('EDIT');
       },
+      canEdit,
+      canDelete,
       onView: (record) => {
         // setcurRecord(record);
         // setMode('VIEW');
@@ -43,7 +50,7 @@ export default function ClusterList() {
       },
       delLoading: delLoading,
     }) as any;
-  }, []);
+  }, [canDelete,canEdit]);
 
   //触发分页
   const pageSizeClick = (pagination: any) => {
@@ -129,20 +136,21 @@ export default function ClusterList() {
             <h3>集群列表</h3>
           </div>
           <div className="caption-right">
-            <Button
+            {buttonPession("matrix:1001:new-cluster-add")&&   <Button
               type="primary"
               onClick={() => {
                 setMode('ADD');
               }}
             >
               + 新集群接入
-            </Button>
+            </Button>}
+         
           </div>
         </div>
         <div>
           <Table
             columns={columns}
-            dataSource={clusterTableSource}
+            dataSource={clusterTableSource||[]}
             loading={tableLoading}
             pagination={{
               current: clusterTablePageInfo.pageIndex,

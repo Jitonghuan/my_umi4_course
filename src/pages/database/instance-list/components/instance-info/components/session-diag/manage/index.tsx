@@ -5,12 +5,11 @@ import VCCardLayout from '@cffe/vc-b-card-layout';
 import { useGetSnapshot, sessionKill } from "./hook";
 import { createTableColumns, createUserTableColumns, createDbTableColumns, createOriginTableColumns } from "./schema";
 import { layoutGrid, infoLayoutGrid } from "./type";
+import {buttonPession} from "@/pages/database/utils"
 import { debounce } from 'lodash';
 import SqlLimit from './sql-limit-modal'
-
 import './index.less';
 const rootCls = 'session-manage-compo';
-
 export default function SessionManage() {
     const { clusterId, clusterRole, instanceId } = useContext(DetailContext);
     const [snapshotLoading, snapshotInfo, getSnapshot] = useGetSnapshot()
@@ -180,9 +179,10 @@ export default function SessionManage() {
                 <div className="table-caption">
                     <div className="caption-left">
                         <Space>
-                            <Button type="primary" onClick={() => {
+                            {buttonPession("matrix:1007:sql-limit")&& <Button type="primary" onClick={() => {
                                 setMode("ADD")
-                            }}>SQL限流</Button>
+                            }}>SQL限流</Button>}
+                           
                             <Select placeholder="活跃会话" defaultValue={'active'} value={type}  style={{ width: 200 }} onChange={querySearch} options={[{
                                 label: "全部会话",
                                 value: "all"
@@ -204,13 +204,15 @@ export default function SessionManage() {
 
                     </div>
                     <div className="caption-right">
-                        <Popconfirm
+                    {buttonPession("matrix:1008:finish-session")&&<Popconfirm
                             title="确认结束会话吗?"
                             onConfirm={onSessionKill}
                         >
+                           
                             <Button type="primary" loading={killLoading} >结束选中会话</Button>
                         </Popconfirm>
-
+}
+                        
                     </div>
                 </div>
 

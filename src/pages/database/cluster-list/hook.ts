@@ -3,8 +3,9 @@ import { getRequest, postRequest, delRequest, putRequest } from '@/utils/request
 import * as APIS from '../service';
 import { message } from 'antd';
 import { CreateClusterItem, UpdateClusterItem } from '../interfaces';
+
 //列表查询
-export function useClusterList() {
+export function useGetClusterList() {
   const [loading, setLoading] = useState<boolean>(false);
   const [source, setSource] = useState<any>([]);
   const [pageInfo, setPageInfo] = useState({
@@ -13,7 +14,7 @@ export function useClusterList() {
     total: 0,
   });
 
-  const getClusterList = async (paramObj: {
+  const getClusterList =  (paramObj: {
     name?: string;
     clusterType?: number;
     envCode?: string;
@@ -21,19 +22,14 @@ export function useClusterList() {
     pageSize?: number;
   }) => {
     setLoading(true);
-    await getRequest(APIS.getClusterList, { data: paramObj })
-      .then((result) => {
+     getRequest(APIS.getClusterList, { data: paramObj }).then((result) => {
         if (result?.success) {
-          const dataSource = result.data.dataSource || [];
-          const pageInfo = result.data.pageInfo;
+          const dataSource = result?.data?.dataSource || [];
+          const pageInfo = result?.data?.pageInfo||{};
           setSource(dataSource);
           setPageInfo(pageInfo);
         }
-        if (!result?.success) {
-          return;
-        }
-      })
-      .finally(() => {
+      }).finally(() => {
         setLoading(false);
       });
   };
@@ -57,9 +53,7 @@ export function useAddCluster(): [boolean, (paramsObj: CreateClusterItem) => Pro
       .then((result) => {
         if (result.success) {
           message.success(result.data);
-        } else {
-          return;
-        }
+        } 
       })
       .finally(() => {
         setLoading(false);
@@ -78,9 +72,7 @@ export function useUpdateCluster(): [boolean, (paramsObj: UpdateClusterItem) => 
       .then((result) => {
         if (result.success) {
           message.success(result.data);
-        } else {
-          return;
-        }
+        } 
       })
       .finally(() => {
         setLoading(false);
@@ -99,9 +91,7 @@ export function useDeleteCluster(): [boolean, (paramsObj: { id: number }) => Pro
       .then((result) => {
         if (result.success) {
           message.success(result.data);
-        } else {
-          return;
-        }
+        } 
       })
       .finally(() => {
         setLoading(false);
@@ -127,8 +117,6 @@ export function useQueryEnvList() {
             key: item.envCode,
           }));
           setEnvDataSource(options);
-        } else {
-          return [];
         }
       })
       .finally(() => {
