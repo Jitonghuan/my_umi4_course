@@ -2,9 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Input, Table, Form, Button, Space,Select } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import PageContainer from '@/components/page-container';
+import CreateTmpl from './create-tmpl';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import {tableSchema} from './schema';
 export default function PipeLineTmpl(){
+    const [mode,setMode]=useState<EditorMode>("HIDE")
     // 表格列配置
   const tableColumns = useMemo(() => {
     return tableSchema({
@@ -26,6 +28,7 @@ export default function PipeLineTmpl(){
 
     return(
         <PageContainer>
+            <CreateTmpl mode={mode}/>
             <FilterCard>
                 <Form layout="inline">
                     <Form.Item label="应用类型">
@@ -69,7 +72,7 @@ export default function PipeLineTmpl(){
 
                     </div>
                     <div className="right-caption">
-                        <Button type="primary">新建模版</Button>
+                        <Button type="primary" onClick={()=>{setMode("ADD")}}>新建模版</Button>
 
                     </div>
                 </div>
