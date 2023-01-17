@@ -6,13 +6,15 @@ export const tableSchema = ({
   onEditClick,
   onViewClick,
   onDelClick,
-  onGetExecutionDetailClick,
+  onPushTmpl,
+  onCopy,
  
 }: {
+  onCopy: (record: any, index: number) => void;
   onEditClick: (record: any, index: number) => void;
   onViewClick: (record: any, index: number) => void;
   onDelClick: (record: any, index: number) => void;
-  onGetExecutionDetailClick: (record: any, index: number) => void;
+  onPushTmpl: (record: any, index: number) => void;
   
 }) =>
   [
@@ -23,13 +25,13 @@ export const tableSchema = ({
     },
     {
       title: '模板名称',
-      dataIndex: 'jobName',
+      dataIndex: 'templateName',
       width: 230,
       render: (value, record, index) => <a onClick={() => onViewClick(record, index)}>{value}</a>,
     },
     {
       title: '模版类型',
-      dataIndex: 'jobCode',
+      dataIndex: 'templateType',
       width: 180,
       ellipsis: {
         showTitle: false,
@@ -44,29 +46,29 @@ export const tableSchema = ({
       title: '构建类型',
       width: 320,
       ellipsis: true,
-      dataIndex: 'desc',
+      dataIndex: 'buildType',
     },
     {
       title: '应用类型',
       width: 200,
-      dataIndex: 'createUser',
+      dataIndex: 'appType',
     },
     {
       title: '应用分类',
-      dataIndex: 'lastExecStatus',
+      dataIndex: 'appCategoryCode',
       width: 120,
 
      
     },
     {
       title: '应用语言',
-      dataIndex: 'enable',
+      dataIndex: 'appLanguage',
       width: 100,
      
     },
     {
         title: '环境大类',
-        dataIndex: 'enable',
+        dataIndex: 'envTypeCode',
         width: 100,
        
       },
@@ -77,7 +79,7 @@ export const tableSchema = ({
       dataIndex: 'operate',
       render: (_: any, record: any, index: number) => (
         <div className="action-cell">
-          <a onClick={() => onGetExecutionDetailClick(record, index)}>复制</a>
+          <a onClick={() => onCopy(record, index)}>复制</a>
           <a onClick={() => onViewClick(record, index)}>详情</a>
 
           <a
@@ -89,7 +91,7 @@ export const tableSchema = ({
           </a>
           <a
             onClick={() => {
-              onEditClick(record, index);
+              onPushTmpl(record, index);
             }}
           >
             推送

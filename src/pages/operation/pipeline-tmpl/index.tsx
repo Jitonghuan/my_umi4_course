@@ -1,35 +1,181 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Input, Table, Form, Button, Space,Select } from 'antd';
-import { RedoOutlined } from '@ant-design/icons';
+import TableSearch from '@/components/table-search';
 import PageContainer from '@/components/page-container';
 import CreateTmpl from './create-tmpl';
+import {appDevelopLanguageOptions,envTypeData} from './types'
+import useTable from '@/utils/useTable';
+import {history} from "umi";
+import { parse,stringify } from 'query-string';
+import {getCicdTemplateList} from './service'
+import {useQueryCategory,useDeleteCicdTemplate} from './hook'
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import {tableSchema} from './schema';
 export default function PipeLineTmpl(){
+    const [form] = Form.useForm();
     const [mode,setMode]=useState<EditorMode>("HIDE")
+    const [categoryData] = useQueryCategory();
+    const [curRecord,setCurRecord]=useState<any>({})
+    const [deleteCicdTemplate]=useDeleteCicdTemplate();
     // 表格列配置
   const tableColumns = useMemo(() => {
     return tableSchema({
       onEditClick: (record, index) => {
-        
+        setCurRecord(record)
+        setMode("EDIT")
       },
       onViewClick: (record, index) => {
-        
+        setCurRecord(record)
+        setMode("VIEW")
       },
       onDelClick: async (record, index) => {
-      
+        deleteCicdTemplate(record?.id)
+        
       },
-      onGetExecutionDetailClick: (record, index) => {
-       
+      onPushTmpl: (record, index) => {
+          const values=form.getFieldsValue()
+          let query={...values}
+        history.push({
+            pathname:"/matrix/operation/push-tmpl",
+            search:stringify(query)
+
+        },{
+            record
+        })
       },
+      onCopy:(record, index)=>{
+        setCurRecord(record)
+        setMode("COPY")
+      }
     
     }) as any;
   }, []);
+  const {
+    tableProps,
+    search: { submit, reset },
+  } = useTable({
+    url: getCicdTemplateList,
+    method: 'GET',
+    form,
+    formatter: (params) => {
+      return {
+        ...params,
+      };
+    },
+    formatResult: (result) => {
+        let data=[]
+      return {
+        total: result.data?.pageInfo?.total,
+        list: result.data?.dataSource || [],
+      };
+    },
+  });
 
     return(
         <PageContainer>
-            <CreateTmpl mode={mode}/>
-            <FilterCard>
+            <CreateTmpl mode={mode} onClose={()=>{setMode("HIDE")}} categoryData={categoryData} curRecord={curRecord}/>
+            <TableSearch
+        form={form}
+        bordered
+        formOptions={[
+          {
+            key: '1',
+            type: 'select',
+            label: '应用类型',
+            dataIndex: 'appType',
+            width: '180px',
+            option: [],
+          },
+          {
+            key: '2',
+            type: 'select',
+            label: '应用分类',
+            dataIndex: 'appCategoryCode',
+            width: '200px',
+            renderLabel:true,
+            option: categoryData,
+          },
+          {
+            key: '3',
+            type: 'select',
+            label: '应用语言',
+            dataIndex: 'appLanguage',
+            width: '120px',
+            renderLabel:true,
+            option:appDevelopLanguageOptions,
+          },
+          {
+            key: '4',
+            type: 'select',
+            label: '环境大类',
+            dataIndex: 'envTypeCode',
+            width: '100px',
+            renderLabel:true,
+            option:envTypeData,
+          },
+          {
+            key: '5',
+            type: 'select',
+            label: '模版类型',
+            dataIndex: 'templateType',
+            width: '120px',
+            renderLabel:true,
+            option: [{
+                label:"CICD",
+                value:'cicd',
+                key:'cicd'
+            }],
+          },
+
+          {
+            key: '6',
+            type: 'select',
+            label: '构建类型',
+            dataIndex: 'buildType',
+            width: '120px',
+            option: [],
+          }, {
+            key: '7',
+            type: 'input',
+            label: '模板名称',
+            dataIndex: 'templateName',
+            width: '220px',
+          },
+        ]}
+        formLayout="inline"
+        columns={tableColumns}
+        {...tableProps}
+        pagination={{
+          ...tableProps.pagination,
+          showTotal: (total) => `共 ${total} 条`,
+          showSizeChanger: true,
+          // size: 'small',
+          defaultPageSize: 20,
+        }}
+        extraNode={
+         
+        <div style={{ display: 'flex', justifyContent: 'space-between',width:'100%' }}>
+        <div className="left-caption">
+                       <h3> 模版列表</h3>
+
+                    </div>
+                    <div className="right-caption">
+                        <Button type="primary" onClick={()=>{setMode("ADD")}}>+ 新建模版</Button>
+
+                    </div>
+
+        </div>
+
+              
+         
+        }
+        className="table-form"
+        onSearch={submit}
+        reset={reset}
+        scroll={{x: '100%'}}
+        searchText="查询"
+      />
+            {/* <FilterCard>
                 <Form layout="inline">
                     <Form.Item label="应用类型">
                         <Select style={{width:220}} />
@@ -66,19 +212,10 @@ export default function PipeLineTmpl(){
 
             </FilterCard>
             <ContentCard>
-                <div className="table-caption">
-                    <div className="left-caption">
-                        模版列表
-
-                    </div>
-                    <div className="right-caption">
-                        <Button type="primary" onClick={()=>{setMode("ADD")}}>新建模版</Button>
-
-                    </div>
-                </div>
+               
                 <Table columns={tableColumns} dataSource={[]}/>
 
-            </ContentCard>
+            </ContentCard> */}
         </PageContainer>
     )
 }

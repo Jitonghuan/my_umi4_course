@@ -948,6 +948,13 @@ export default [
         component: '@/pages/operation/pipeline-tmpl',
       },
       {
+        path: `${baseRoutePath}/operation/push-tmpl`,
+        name: '推送流水线模版',
+        key: 'pipeline-tmpl',
+        component: '@/pages/operation/pipeline-tmpl/push-tmpl',
+        hideInMenu: true,
+      },
+      {
         path: `${baseRoutePath}/operation/env-manage`,
         name: '环境管理',
         key: 'env-manage',

@@ -16,10 +16,11 @@ declare var window: Window & typeof globalThis;
 declare interface IOption<ValueType = string, T = Record<string, any>> extends Record<string, any> {
   label: string;
   value: ValueType;
+  key?:string|number;
   /** 用于挂载到选项上的业务数据 */
   data?: T;
   children?: IOption<ValueType>[];
 }
 
 /** 编辑弹层显示状态: 隐藏 | 编辑 | 新增 */
-declare type EditorMode = 'HIDE' | 'EDIT' | 'ADD' | 'VIEW';
+declare type EditorMode = 'HIDE' | 'EDIT' | 'ADD' | 'VIEW' | "COPY";
