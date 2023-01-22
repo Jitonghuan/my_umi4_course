@@ -259,6 +259,13 @@ export default [
             component: '@/pages/application/application-detail/components/application-params',
           },
           {
+            path: `${baseRoutePath}/application/detail/pipeLineTmpl`,
+            name: '流水线模版',
+            key: 'appList',
+            hideInMenu: true,
+            component: '@/pages/application/application-detail/components/pipeline-tmpl',
+          },
+          {
             path: `${baseRoutePath}/application/detail/addConfig`,
             name: '新增配置',
             key: 'appList',
