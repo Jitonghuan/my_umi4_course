@@ -1,10 +1,9 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { Form, Radio, Button, Modal, message,Spin,Space } from 'antd';
-import { ArrowRightOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined,ThunderboltOutlined } from '@ant-design/icons';
 import { ContentCard } from '@/components/vc-page-content';
 import {  useClusterSource } from '../hooks';
-import appConfig from '@/app.config';
 import * as APIS from '../../service';
 import { postRequest} from '@/utils/request';
 import './index.less';
@@ -118,24 +117,26 @@ export default function TrafficScheduling() {
   const handleReset = useCallback(() => {
     editField.setFieldsValue({});
   }, [editField]);
+  const checkout=(type:string)=>{
+    const names= (sourceData||[])?.map((group:any, index:number) => (group?.name!||""))
+     if(names?.length>0){
+      names?.map((item:string)=>{
+        editField.setFieldValue(item,type)
+      })
+    }
+   
+  }
 
   return (
     <ContentCard className="page-scheduling">
-      <div className="table-caption"
-
-
->
-        <div className="caption-left"
-        >
+      <div className="table-caption">
+        <div className="caption-left">
         <h3>请选择调度：</h3>
-
         </div>
         <div className="caption-right">
           <Space>
-            <Button></Button>
-
-
-
+            <Button type="primary" disabled={sourceData?.length<1} onClick={()=>{checkout('cluster_a')}}><ThunderboltOutlined />一键切换至A集群</Button>
+            <Button type="primary" disabled={sourceData?.length<1}  onClick={()=>{checkout('cluster_b')}}><ThunderboltOutlined />一键切换至B集群</Button>
           </Space>
           
           </div>
@@ -162,7 +163,7 @@ export default function TrafficScheduling() {
           ))}
         </div>
         <div className="action-group">
-          <Button type="primary" loading={pending} size="large" onClick={handleSubmit}>
+          <Button type="primary" loading={pending} size="large" disabled={sourceData?.length<1}  onClick={handleSubmit}>
             开始调度
           </Button>
           <Button hidden type="default" size="large" onClick={handleReset} style={{ marginLeft: 12 }}>
