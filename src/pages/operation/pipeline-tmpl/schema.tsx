@@ -27,7 +27,7 @@ export const tableSchema = ({
       title: '模板名称',
       dataIndex: 'templateName',
       width: 230,
-      render: (value, record, index) => <a onClick={() => onViewClick(record, index)}>{value}</a>,
+      render: (value, record, index) => <a onClick={() => onPushTmpl(record, index)}>{value}</a>,
     },
     {
       title: '模版类型',
@@ -62,16 +62,16 @@ export const tableSchema = ({
     },
     {
       title: '应用语言',
-      dataIndex: 'appLanguage',
+      dataIndex: 'languageCode',
       width: 100,
      
     },
-    {
-        title: '环境大类',
-        dataIndex: 'envTypeCode',
-        width: 100,
+    // {
+    //     title: '环境大类',
+    //     dataIndex: 'envTypeCode',
+    //     width: 100,
        
-      },
+    //   },
     {
       width: 180,
       title: '操作',
@@ -97,7 +97,7 @@ export const tableSchema = ({
             推送
           </a>
           <Popconfirm
-            title="确定要删除该应用吗？"
+            title="确定要删除该模版吗？"
             onConfirm={() => onDelClick(record, index)}
             okText="确定"
             cancelText="取消"

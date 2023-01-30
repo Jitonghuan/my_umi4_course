@@ -537,6 +537,18 @@ export default function Push(props: any) {
       <ContentCard>
         <div>
           <Form onFinish={pushTmpls} form={formTmpl}>
+            <div className="table-caption">
+            <div className="left-caption">
+                   <h3> 应用列表</h3>
+
+                </div>
+                <div className="right-caption">
+                当前模版：
+            <Tag color="blue">{tmplDetailData?.tmplName!||""}</Tag>
+
+                </div>
+
+    </div>
             <Form.Item name="tableData">
               <Table
                 bordered

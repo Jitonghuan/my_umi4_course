@@ -26,8 +26,8 @@ export function useQueryCategory() {
 
   //删除数据
 export function useDeleteCicdTemplate() {
-    const deleteCicdTemplate = (id: number) => {
-      postRequest(APIS.deleteCicdTemplate, {
+    const deleteCicdTemplate = async(id: number) => {
+     await postRequest(APIS.deleteCicdTemplate, {
         data: { id },
       }).then((resp) => {
         if (resp?.success) {

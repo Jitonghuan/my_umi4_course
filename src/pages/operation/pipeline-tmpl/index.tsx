@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Input, Table, Form, Button, Space,Select } from 'antd';
 import TableSearch from '@/components/table-search';
+import { history,useLocation } from 'umi';
 import PageContainer from '@/components/page-container';
 import CreateTmpl from './create-tmpl';
 import {appDevelopLanguageOptions,envTypeData} from './types'
 import useTable from '@/utils/useTable';
-import {history} from "umi";
 import { parse,stringify } from 'query-string';
 import {getCicdTemplateList} from './service'
 import {useQueryCategory,useDeleteCicdTemplate} from './hook'
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import {tableSchema} from './schema';
 export default function PipeLineTmpl(){
+  let location:any = useLocation();
+  const query :any= parse(location.search);
+  const tmplDetailData:any =  location.state?.record||{};
     const [form] = Form.useForm();
     const [mode,setMode]=useState<EditorMode>("HIDE")
     const [categoryData] = useQueryCategory();
@@ -29,12 +32,16 @@ export default function PipeLineTmpl(){
         setMode("VIEW")
       },
       onDelClick: async (record, index) => {
-        deleteCicdTemplate(record?.id)
+        deleteCicdTemplate(record?.id).then(()=>{
+          submit()
+        })
         
       },
       onPushTmpl: (record, index) => {
           const values=form.getFieldsValue()
-          let query={...values}
+          let query={...values, templateCode: record?.templateCode,
+            languageCode: record?.languageCode,}
+         
         history.push({
             pathname:"/matrix/operation/push-tmpl",
             search:stringify(query)
@@ -65,15 +72,19 @@ export default function PipeLineTmpl(){
     formatResult: (result) => {
         let data=[]
       return {
-        total: result.data?.pageInfo?.total,
-        list: result.data?.dataSource || [],
+        total: result.data?.total,
+        list: result.data?.items || [],
       };
     },
   });
 
     return(
         <PageContainer>
-            <CreateTmpl mode={mode} onClose={()=>{setMode("HIDE")}} categoryData={categoryData} curRecord={curRecord}/>
+            <CreateTmpl mode={mode} onClose={()=>{setMode("HIDE")}} onSave={()=>{
+              setMode("HIDE");
+              submit()
+
+            }} categoryData={categoryData} curRecord={curRecord}/>
             <TableSearch
         form={form}
         bordered
@@ -104,15 +115,7 @@ export default function PipeLineTmpl(){
             renderLabel:true,
             option:appDevelopLanguageOptions,
           },
-          {
-            key: '4',
-            type: 'select',
-            label: '环境大类',
-            dataIndex: 'envTypeCode',
-            width: '100px',
-            renderLabel:true,
-            option:envTypeData,
-          },
+         
           {
             key: '5',
             type: 'select',

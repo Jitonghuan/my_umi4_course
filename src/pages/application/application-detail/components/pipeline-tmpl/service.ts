@@ -7,3 +7,6 @@ import { addAPIPrefix } from '@/utils';
 /* GET 1、 查询cicd模版  */
 
 export const getCicdTemplateList = addAPIPrefix('/appManage/cicdTemplateObj/list');
+/* GET 2、 更新cicd模版  */
+
+export const updateCicdTemplate = addAPIPrefix('/appManage/cicdTemplateObj/update');

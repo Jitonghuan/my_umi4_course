@@ -9,13 +9,15 @@ interface Iprops{
     onClose:()=>void;
     categoryData:any;
     curRecord:any;
+    onSave:()=>void;
 
 
 }
 export default function CreateTmpl(props:Iprops){
-    const {mode,onClose,categoryData,curRecord}=props
+    const {mode,onClose,categoryData,curRecord,onSave}=props
     const [form]=Form.useForm()
     const [loading,setLoading]=useState<boolean>(false)
+    const [appType,setAppType]=useState<string>("")
     const handleSubmit=async()=>{
         const values=await form.validateFields()
         const createRequest=mode==="ADD"?createCicdTemplate:mode==="COPY"?createCicdTemplate:updateCicdTemplate;
@@ -24,6 +26,7 @@ export default function CreateTmpl(props:Iprops){
         createRequest({...playloads,}).then((res)=>{
             if(res?.success){
                 message.success(`${mode==="ADD"?"新增成功！":"编辑成功！"}`)
+                onSave()
 
 
             }
@@ -39,6 +42,7 @@ export default function CreateTmpl(props:Iprops){
             form.setFieldsValue({
                 ...curRecord
             })
+            setAppType(curRecord?.appType)
 
         }
         return()=>{
@@ -68,18 +72,20 @@ export default function CreateTmpl(props:Iprops){
             <Form.Item label="模版类型" name="templateType" rules={[{ required: true, message: '请选择' }]}>
             <Select style={{width:300}} disabled={mode!=="ADD"} options={[{
                 label:"CICD",
-                value:'cicd',
-                key:'cicd'
+                value:'CICD',
+                key:'CICD'
             }]}/>
             </Form.Item>
          
             <Form.Item label="应用类型" name="appType" rules={[{ required: true, message: '请选择' }]}>
-            <Select style={{width:300}} disabled={mode!=="ADD"} options={[
+            <Select style={{width:300}} disabled={mode!=="ADD"} value={appType} onChange={(type)=>{
+             setAppType(type)
+            }} options={[
                 {label:'前端',value:"front"},
                 {label:'后端',value:"backend"}
             ]}/>
             </Form.Item>
-            <Form.Item label="应用语言" name="appLanguage" rules={[{ required: true, message: '请选择' }]}>
+            <Form.Item label="应用语言" name="languageCode" rules={[{ required: appType==="front"?false: true, message: '请选择' }]}>
                <Select style={{width:300}} disabled={mode!=="ADD"} options={appDevelopLanguageOptions}/>
             </Form.Item>
             <Form.Item label="应用分类" name="appCategoryCode" rules={[{ required: true, message: '请选择' }]}>

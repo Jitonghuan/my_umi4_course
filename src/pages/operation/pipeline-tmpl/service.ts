@@ -19,9 +19,8 @@ export const updateCicdTemplate = addAPIPrefix('/opsManage/cicdTemplate/update')
 
 export const deleteCicdTemplate = addAPIPrefix('/opsManage/cicdTemplate/delete');
 
-/* POST 5、 dns记录状态变更 */
+export const pushCicdTemplate = addAPIPrefix('/opsManage/cicdTemplate/push');
 
-export const updateDnsManageStatus = addAPIPrefix('/opsManage/dnsManage/status');
 
 /** 查看应用分类接口 */
 export const appTypeList = addAPIPrefix('/appManage/category/list');
