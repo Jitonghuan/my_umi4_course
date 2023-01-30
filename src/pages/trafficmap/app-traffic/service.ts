@@ -2,6 +2,7 @@ import appConfig from '@/app.config';
 import { delRequest, getRequest, postRequest, putRequest } from '@/utils/request';
 /** 查看环境 */
 export const queryEnvList = `${appConfig.apiPrefix}/appManage/env/list`;
+export const queryAppEnvList = `${appConfig.apiPrefix}/appManage/env/listAppEnv`;
 /** 查询应用实例 */
 export const queryInstanceListApi = `${appConfig.apiPrefix}/trafficMap/application/instance/list`;
 /** 查询主机详情 */

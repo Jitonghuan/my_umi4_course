@@ -4,7 +4,7 @@ import PageContainer from '@/components/page-container';
 import { ContentCard, FilterCard } from '@/components/vc-page-content';
 import { getRequest } from '@/utils/request';
 import { parse,stringify } from 'query-string';
-import { createTableColumns,statusOptions,privWfTypeOptions} from './schema';
+import { createTableColumns,statusOptions,privWfTypeOptions,ticketTypeOptions} from './schema';
 import {querySqlListApi} from '../service';
 import {currentAuditsApi} from '../service'
 import {useSearchUser} from '../common-hook'
@@ -138,7 +138,7 @@ export default function AuthorityApply (){
        
        <Form.Item label="工单状态" name="currentStatus">
             <Select
-              placeholder="请输入"
+              placeholder="请选择"
               showSearch
               allowClear
               style={{ width: 160 }}
@@ -148,7 +148,7 @@ export default function AuthorityApply (){
           </Form.Item>
           <Form.Item label="工单类别" name="wfUserType">
           <Select
-              placeholder="请输入"
+              placeholder="请选择"
               showSearch
               allowClear
               style={{ width: 160 }}
@@ -156,9 +156,23 @@ export default function AuthorityApply (){
              
             />
           </Form.Item>
+        
+          <Form.Item label="工单类型" name="sqlWfType">
+          <Select
+              placeholder="请选择"
+              showSearch
+              allowClear
+              style={{ width: 160 }}
+              options={ticketTypeOptions}
+             
+            />
+          </Form.Item>
+
+         
+
           <Form.Item label="申请人" name="userName">
           <Select
-              placeholder="请输入"
+              placeholder="请选择"
               showSearch
               allowClear
               style={{ width: 150 }}
@@ -167,10 +181,22 @@ export default function AuthorityApply (){
              
             />
           </Form.Item>
+          <Form.Item label="变更库" name="dbCode">
+          <Input
+              placeholder="请输入"  
+              style={{ width: 180 }}
+            />
+          </Form.Item>
           <Form.Item label="标题" name="title">
           <Input
               placeholder="请输入"  
               style={{ width: 180 }}
+            />
+          </Form.Item>
+          <Form.Item label="变更SQL" name="sqlContent">
+          <Input
+              placeholder="请输入"  
+              style={{ width: 480 }}
             />
           </Form.Item>
           <Form.Item>

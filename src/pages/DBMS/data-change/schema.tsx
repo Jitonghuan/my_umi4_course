@@ -123,6 +123,24 @@ export const privWfTypeOptions=[
   },
  
 ]
+export const ticketTypeOptions=[
+  {
+    label:"数据变更",
+    value:"dml",
+    key:"dml",
+  },
+  {
+    label:"结构变更",
+    value:"ddl",
+    key:"ddl",
+  },
+  {
+    label:"结构同步",
+    value:"sync",
+    key:"sync",
+  },
+ 
+]
 // 列表页-表格
 export const createTableColumns = (params: {
   dataSource:any,

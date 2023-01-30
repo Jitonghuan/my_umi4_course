@@ -132,7 +132,7 @@ export default function TrafficDetail() {
   }
   const queryEnvs = () => {
     setEnvLoading(true)
-    queryEnvList().then((resp) => {
+    queryEnvList(curRecord?.appCode||"").then((resp) => {
       setEnvOptions(resp)
     }).finally(() => {
       setEnvLoading(false)
