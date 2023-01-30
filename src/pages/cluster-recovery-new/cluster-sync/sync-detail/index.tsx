@@ -285,7 +285,7 @@ export default function ClusterSyncDetail(props: any) {
         </pre>
       ) : null}
       {currStep !== 7 ? (
-        <Spin spinning={pending} tip="执行中，请勿关闭或切换页面">
+        <Spin spinning={pending} tip={ currState === 'SyncClusterApp' ?"前端资源文件较多，比对、、校验、同步所需时间较长，请耐心等待":"执行中，请勿关闭或切换页面"}>
           <div className="action-row">
             {currState === 'Pass' ? (
               <Button type="primary" onClick={configDiff}>

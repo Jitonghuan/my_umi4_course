@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PageContainer from '@/components/page-container';
 import { ContentCard } from '@/components/vc-page-content';
-import { Button, Form, Input, Popconfirm, Table, Modal, message,Select } from 'antd';
+import { Button, Form, Input, Popconfirm, Table, Modal, message,Select,Alert,Space } from 'antd';
 import { getRequest, postRequest, putRequest, delRequest } from '@/utils/request';
 import { addHospitalDistrictInfo, updateHospitalDistrictInfo, getHospitalDistrictInfo, deleteHospitalDistrictInfo,getEnvListApi } from '../service';
 import { getCommonEnvCode } from '@/pages/cluster-recovery-new/service';
@@ -124,7 +124,14 @@ const DistrictManage = () => {
         
       <div className="district-header">
           <div className="table-caption">
-              <div className="caption-left"><h3>机构列表</h3></div>
+              <div className="caption-left">
+                <Space>
+                <h3>机构列表</h3>
+                <Alert message="新增、删除、修改机构信息后需要进行一次机构维度流量调度才能使最新配置生效!" type="info" showIcon/>
+
+                </Space>
+               
+              </div>
               <div className="caption-right">
               <Button type="primary" onClick={onAddClick}>新增机构</Button>
               </div>
