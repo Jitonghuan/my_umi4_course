@@ -1,10 +1,8 @@
 
-import React, { useContext, useRef, useMemo } from 'react';
-import { Button, Row, Col, Form, Select, Tag, Space, message, Spin, Modal, Radio, Popconfirm } from 'antd';
-import { ContentCard } from '@/components/vc-page-content';
-import { getRequest, putRequest, postRequest } from '@/utils/request';
+import React, { useMemo } from 'react';
+import { Button,Form, Select, Tag, Space, message, Modal, } from 'antd';
+import { getRequest, postRequest } from '@/utils/request';
 import TableSearch from '@/components/table-search';
-
 import { history, useLocation } from 'umi';
 import { pushCicdTemplate } from '../service'
 import { parse } from 'query-string';
@@ -15,9 +13,7 @@ import { useState, useEffect } from 'react';
 import { appList, appTypeList } from '../../app-tmpl/service';
 import { createTableColumns } from '../../app-tmpl/push/schema';
 import { queryAppGroupReq } from '../../app-tmpl/push/service'
-import AceEditor from '@/components/ace-editor';
-import DetailContext from '@/pages/application/application-detail/context';
-import EditorTable from '@cffe/pc-editor-table';
+
 
 
 
@@ -114,6 +110,7 @@ const PushPipeLineTmpl = () => {
                 title="请选择发布类型"
                 open={open}
                 onOk={onPushTmpl}
+                destroyOnClose
                 confirmLoading={confirmLoading}
                 onCancel={() => { setOpen(false); }}
             >
