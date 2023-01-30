@@ -279,6 +279,16 @@ export default function PublishDetail(props: IProps) {
     beforeUploadAction(e.target.value);
   }
 
+  const deployVersion = () => {
+    if (newPublish && buildInfo?.version) {
+      return <Paragraph copyable>{buildInfo?.version || '--'}</Paragraph>
+    }
+    if (!newPublish && buildInfo?.buildResultInfo?.version) {
+      return <Paragraph copyable>{buildInfo?.buildResultInfo?.version || ''}</Paragraph>
+    }
+    return '--'
+  }
+
 
   return (
     <div className={rootCls}>
@@ -363,11 +373,12 @@ export default function PublishDetail(props: IProps) {
         </Descriptions.Item>
         {appData?.appType === 'frontend' && (
           <Descriptions.Item label="部署版本" contentStyle={{ whiteSpace: 'nowrap' }}>
-            {buildInfo?.buildResultInfo?.version ? (
+            {deployVersion()}
+            {/* {buildInfo?.buildResultInfo?.version ? (
               <Paragraph copyable>{buildInfo?.buildResultInfo?.version}</Paragraph>
             ) : (
               '---'
-            )}
+            )} */}
           </Descriptions.Item>
         )}
         <Descriptions.Item label="发布环境">{envNames || '--'}</Descriptions.Item>
