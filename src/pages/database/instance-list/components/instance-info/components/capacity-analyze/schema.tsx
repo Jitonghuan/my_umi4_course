@@ -199,7 +199,7 @@ export const createSpaceTableColumns = () => {
      
     },
     {
-      title: '平均时长',
+      title: '平均行长',
       dataIndex: 'avgRowLength',
       key: 'avgRowLength',
       width: 90,

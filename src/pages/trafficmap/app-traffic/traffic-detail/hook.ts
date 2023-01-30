@@ -3,11 +3,11 @@ import * as APIS from '../service';
 
 
 /** 查询环境列表 */
-export const queryEnvList = async () =>
-  await getRequest(APIS.queryEnvList, { data: { pageIndex: -1, pageSize: -1, envModel: "currency-deploy" } })
+export const queryEnvList = async (appCode:string) =>
+  await getRequest(APIS.queryAppEnvList, { data: { pageIndex: -1, pageSize: -1, appCode } })
     .then((result) => {
       if (result?.success) {
-        const dataSource = result.data.dataSource || [];
+        const dataSource = result.data || [];
         let option = dataSource?.map((ele: any) => ({
           label: ele?.envName,
           value: ele?.envCode
