@@ -167,6 +167,7 @@ export default function LowSqlStatistics(){
             <Table dataSource={dataSource} 
              loading={tableLoading} 
              columns={columns}
+             rowKey="key"
              expandable={{
               expandedRowRender: record => <p style={{ margin: 4 }}>{record?.sample}</p>,
              

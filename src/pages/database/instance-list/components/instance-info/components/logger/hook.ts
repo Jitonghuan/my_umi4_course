@@ -19,8 +19,13 @@ export function useGetSlowLogList(): [boolean, any,any,any, (paramsObj: { instan
         .then((result) => {
           if (result?.success) {
             let dataSource = result?.data?.dataSource;
+            const dataArry=  (dataSource || [])?.map((item:any,index:number)=>({
+              ...item,
+              key:index
+
+            }))
           
-              setData(dataSource || []);
+              setData(dataArry || []);
               setPageInfo(result?.data?.pageInfo)
            
            
@@ -51,8 +56,13 @@ export function useGetSlowLogList(): [boolean, any,any,any, (paramsObj: { instan
         .then((result) => {
           if (result?.success) {
             let dataSource = result?.data?.dataSource;
+          const dataArry=  (dataSource || [])?.map((item:any,index:number)=>({
+              ...item,
+              key:index
+
+            }))
           
-              setData(dataSource || []);
+              setData(dataArry || []);
               setPageInfo(result?.data?.pageInfo)
            
            
