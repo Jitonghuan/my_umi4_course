@@ -126,8 +126,8 @@ export const privWfTypeOptions=[
 export const ticketTypeOptions=[
   {
     label:"数据变更",
-    value:"dml",
-    key:"dml",
+    value:"sql",
+    key:"sql",
   },
   {
     label:"结构变更",
