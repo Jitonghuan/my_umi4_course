@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, message, Select, Checkbox, Drawer, Tree } from 'antd';
+import { Button, Form, message, Select, Checkbox, Drawer, Tree,Input } from 'antd';
 import { applyTemplate, graphTemplateList, queryRuleTemplatesList } from '../../service';
 import UserSelector from '@/components/user-selector';
+import { getCluster} from '../../../../monitor/current-alarm/service';
 import { useEnvListOptions } from '@/pages/monitor/alarm-rules/hooks';
 import './index.less';
 
@@ -40,6 +41,7 @@ const ApplyTemplate = (props: IProps) => {
   const [form] = Form.useForm();
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
+  const [clusterList, setClusterList] = useState<any>([]);
 
   //获取模板列表
   const getTemplate = async () => {
@@ -106,6 +108,19 @@ const ApplyTemplate = (props: IProps) => {
   useEffect(() => {
     if (visible) {
       void getTemplate();
+      getCluster().then((res)=>{
+        if(res?.success){
+          const data=res?.data?.map((item: any)=>{
+            return {
+              label: item.clusterName,
+              value: item.clusterName,
+            }
+          })
+          setClusterList(data);
+  
+        }
+  
+      })
     }
   }, [visible]);
 
@@ -129,7 +144,15 @@ const ApplyTemplate = (props: IProps) => {
       }
     >
       <Form form={form} labelCol={{ flex: '80px' }}>
-        <Form.Item label="环境" name="envCode">
+      <Form.Item label="集群选择"  name="clusterName">
+          <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
+
+        </Form.Item>
+        <Form.Item label="Namespace"  name="namespace">
+          <Input style={{ width: '400px' }} />
+
+        </Form.Item>
+        {/* <Form.Item label="环境" name="envCode">
           <Select
             style={{ width: '100px' }}
             options={envTypeData}
@@ -152,7 +175,7 @@ const ApplyTemplate = (props: IProps) => {
             value={currentEnvCode}
             allowClear
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="开发通知人" name="devNotifiers">
           <UserSelector />
         </Form.Item>
