@@ -86,7 +86,7 @@ export default function AlarmPush(){
       });
     return(
  <PageContainer>
-{console.log("clusterList",clusterList)}
+
       <TableSearch
         form={form}
         rowKey="id"

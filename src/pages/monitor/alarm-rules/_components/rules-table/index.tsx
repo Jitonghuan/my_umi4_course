@@ -105,8 +105,8 @@ export default function RulesTable(props: RulesTableProps) {
     },
     {
       title: '命名空间',
-      dataIndex: 'nameSpace',
-      key: 'nameSpace',
+      dataIndex: 'namespace',
+      key: 'namespace',
       width: 120,
     },
    

@@ -41,9 +41,9 @@ export const createTableColumns = () => {
           },
           //nameSpace
           {
-            title: 'NameSpace',
-            dataIndex: 'nameSpace',
-            key: 'nameSpace',
+            title: '命名空间',
+            dataIndex: 'namespace',
+            key: 'namespace',
             width: 120,
           },
           {
