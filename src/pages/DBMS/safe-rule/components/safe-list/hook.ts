@@ -23,7 +23,7 @@ export const createRuleSet = (params: createItems) =>
     designFlow?: string;
 
 }
-//新建安全规则
+
 export const updateRuleSet = (params: updateItems) =>
   postRequest(APIS.updateRuleSetApi, {
     data: params,
