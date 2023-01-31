@@ -1,5 +1,14 @@
 import { Popconfirm, Tooltip, Switch, Tag } from 'antd';
 import type { ColumnProps } from '@cffe/vc-hulk-table';
+import {  Html5Outlined, CodeOutlined, } from '@ant-design/icons';
+const APP_TYPE_TAG: Record<string, [string, React.ReactNode]> = {
+  front: ['geekblue', <Html5Outlined />],
+  backend: ['cyan', <CodeOutlined />],
+};
+const APP_TYPE_MAP: { [index: string]: any } = {
+  front: '前端',
+  backend: '后端',
+};
 
 // 表格 schema
 export const tableSchema = ({
@@ -52,6 +61,11 @@ export const tableSchema = ({
       title: '应用类型',
       width: 200,
       dataIndex: 'appType',
+      render:(value)=>(
+        <Tag color={APP_TYPE_TAG[value]?.[0]} icon={APP_TYPE_TAG[value]?.[1]}>
+        {APP_TYPE_MAP[value]}
+      </Tag>
+      )
     },
     {
       title: '应用分类',

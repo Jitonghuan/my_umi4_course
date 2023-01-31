@@ -95,7 +95,11 @@ export default function PipeLineTmpl(){
             label: '应用类型',
             dataIndex: 'appType',
             width: '180px',
-            option: [],
+            renderLabel:true,
+            option: [
+              {label:'前端',value:"front",key:"front"},
+              {label:'后端',value:"backend",key:"backend"}
+          ],
           },
           {
             key: '2',
