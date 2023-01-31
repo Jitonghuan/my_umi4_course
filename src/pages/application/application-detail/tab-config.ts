@@ -9,6 +9,7 @@ export const tabsConfig: any = {
   deployInfo: '部署信息',
   configMgr: '配置管理',
   AppParameters: '应用模版',
+  pipeLineTmpl:"流水线模板",
   secondPartyPkg: '二方包',
   // changeDetails: '变更详情',
 
