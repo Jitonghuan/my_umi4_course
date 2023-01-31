@@ -63,7 +63,8 @@ const ApplyTemplate = (props: IProps) => {
   async function onConfirm() {
     const param = await form.validateFields();
     const res = await applyTemplate({
-      envCode: currentEnvCode,
+      // envCode: currentEnvCode,
+      ...param,
       devNotifiers: (param.devNotifiers || []).join(','),
       opsNotifiers: (param.opsNotifiers || []).join(','),
       monitorRuleTemplate: templatesList.filter((item: any) => checkedList.find((id: any) => id === item.id)),
