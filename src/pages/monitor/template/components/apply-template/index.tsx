@@ -4,6 +4,7 @@ import { applyTemplate, graphTemplateList, queryRuleTemplatesList } from '../../
 import UserSelector from '@/components/user-selector';
 import { getCluster} from '../../../../monitor/current-alarm/service';
 import { useEnvListOptions } from '@/pages/monitor/alarm-rules/hooks';
+import {useGroupOptions} from '../../../alarm-rules/_components/template-drawer/hooks'
 import './index.less';
 
 interface IProps {
@@ -42,6 +43,7 @@ const ApplyTemplate = (props: IProps) => {
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
   const [clusterList, setClusterList] = useState<any>([]);
+  const [groupOptions]=useGroupOptions()
 
   //获取模板列表
   const getTemplate = async () => {
@@ -129,7 +131,7 @@ const ApplyTemplate = (props: IProps) => {
     <Drawer
       visible={visible}
       title="一键应用模版"
-      width={500}
+      width={800}
       maskClosable={false}
       onClose={onClose}
       className="apply-template-modal"
@@ -144,7 +146,7 @@ const ApplyTemplate = (props: IProps) => {
         </div>
       }
     >
-      <Form form={form} labelCol={{ flex: '80px' }}>
+      <Form form={form} labelCol={{ flex: '100px' }}>
       <Form.Item label="集群选择"  name="clusterName">
           <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
 
@@ -182,6 +184,9 @@ const ApplyTemplate = (props: IProps) => {
         </Form.Item>
         <Form.Item label="运维通知人" name="opsNotifiers">
           <UserSelector />
+        </Form.Item>
+        <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>
         <Form.Item label="报警模版">
           <div>

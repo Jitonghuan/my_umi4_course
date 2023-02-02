@@ -6,6 +6,7 @@ import { rulesCreate, rulesUpdate, queryGroupList } from '@/pages/monitor/busine
 import { getRequest, postRequest, putRequest } from "@/utils/request";
 import { stepTableMap, formatTableDataMap } from "@/pages/monitor/basic/util";
 import { getEnvCodeList ,getPromQLApi} from '../../basic/services';
+import { getCluster} from '../../../monitor/current-alarm/service';
 import moment from "moment";
 import {useGroupOptions} from '../../alarm-rules/_components/template-drawer/hooks'
 import {envTypeData,rulesOptions,silenceOptions,editColumns,ALERT_LEVEL} from './type'
@@ -38,8 +39,8 @@ const RulesEdit = (props: IPros) => {
   const [annotationsTableData, setAnnotationsTableData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [groupData, setGroupData] = useState<any[]>([]);
+  const [clusterList, setClusterList] = useState<any>([]);
   const [form] = Form.useForm();
-  const [clusterEnvOptions, setClusterEnvOptions] = useState<any[]>([]);
   const [promQL,setPromQL]=useState<string>("")
   const [groupOptions]=useGroupOptions()
   //getPromQLApi
@@ -59,6 +60,19 @@ const RulesEdit = (props: IPros) => {
     if(probeName&&visible){
 
       getPromQL()
+      getCluster().then((res)=>{
+        if(res?.success){
+          const data=res?.data?.map((item: any)=>{
+            return {
+              label: item.clusterName,
+              value: item.clusterName,
+            }
+          })
+          setClusterList(data);
+  
+        }
+  
+      })
       
     }
   },[visible])
@@ -180,23 +194,7 @@ const RulesEdit = (props: IPros) => {
       void getGroupList();
     }
   }, [visible]);
-  const queryEnvCodeList = async (envTypeCode: string) => {
-    await getRequest(getEnvCodeList, {
-      data: { envTypeCode },
-    }).then((resp) => {
-      if (resp?.success) {
-        let data = resp?.data;
-        let envOptions: any = [];
-        data?.map((item: any) => {
-          envOptions.push({
-            label: item.envCode,
-            value: item.envCode,
-          });
-        });
-        setClusterEnvOptions(envOptions);
-      }
-    });
-  };
+  
 
   return (
     <Drawer
@@ -225,26 +223,12 @@ const RulesEdit = (props: IPros) => {
         <Form.Item label="告警分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
           <Select placeholder="请选择" options={groupData} disabled={uniquelyIdentify==="business"} />
         </Form.Item>
-        {bizMonitorType==="netProbe"&&( <Form.Item label="环境分类" name="envTypeCode" required={true}>
-          <Select
-            showSearch
-            allowClear
-            options={envTypeData}
-            style={{ width: '400px' }}
-            onChange={(e: string) => {
-             // setEnvTypeCode(e);
-              queryEnvCodeList(e);
-            }}
-          />
+        {bizMonitorType==="netProbe"&&(   <Form.Item label="集群选择"  name="clusterName">
+          <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
+
         </Form.Item>)}
-        {bizMonitorType==="netProbe"&&(  <Form.Item label="选择环境" name="envCode" rules={[{ required: true, message: '请选择集群环境！' }]}>
-          <Select
-            options={clusterEnvOptions}
-            style={{ width: '400px' }}
-            placeholder="选择监控的集群环境"
-            showSearch
-            allowClear
-          />
+        {bizMonitorType==="netProbe"&&(  <Form.Item label="Namespace" name="namespace">
+          <Input style={{ width: '400px' }} placeholder="输入Namespace名称" />
         </Form.Item>)}
         <Form.Item
           label="告警表达式(PromQl)"
@@ -277,6 +261,11 @@ const RulesEdit = (props: IPros) => {
         <Form.Item label="通知对象" name="receiver" rules={[{ required: true, message: '请填写' }]}>
           <UserSelector />
         </Form.Item>
+        {bizMonitorType==="netProbe"&&(  <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
+        </Form.Item>)}
+        
+        
         {uniquelyIdentify&&uniquelyIdentify==="business"&& <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
           <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>}
