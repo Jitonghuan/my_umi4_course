@@ -133,7 +133,13 @@ export default function TrafficDetail() {
   const queryEnvs = () => {
     setEnvLoading(true)
     queryEnvList(curRecord?.appCode||"").then((resp) => {
-      setEnvOptions(resp)
+      let options:any=[];
+      (resp||[])?.map((ele:any)=>{
+        if(!ele?.value?.toLowerCase()?.includes("clusterb")){
+         options.push(ele)
+        }
+      })
+      setEnvOptions(options)
     }).finally(() => {
       setEnvLoading(false)
     })
@@ -508,7 +514,13 @@ export default function TrafficDetail() {
           <Form form={formInstance} layout="inline" className="monitor-filter-form" >
 
             <Form.Item label="选择环境" name="envCode">
-              <Select showSearch options={envOptions} onChange={(envCode) => {
+              <Select showSearch options={envOptions}
+                 optionFilterProp="label"
+                 filterOption={(input, option) => {
+                   //@ts-ignore
+                   return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                 }}
+               onChange={(envCode) => {
                 setCurtIp("");
                 setHostName("");
                 setCurrentTableData({})

@@ -51,10 +51,18 @@ export default function AppTrafficList() {
   const getEnvOptions = () => {
     setEnvOptionsLoading(true)
     queryEnvList().then((res) => {
-      setEnvOptions(res)
-      setCurEnv(res[0])
-      setCurEnvCode(res[0]?.value)
-      getDataSource({ envCode: res[0]?.value })
+      let options:any=[];
+     (res||[])?.map((ele:any)=>{
+       if(!ele?.value?.toLowerCase()?.includes("clusterb")){
+        options.push(ele)
+
+       }
+     })
+
+      setEnvOptions(options)
+      setCurEnv(options[0])
+      setCurEnvCode(options[0]?.value)
+      getDataSource({ envCode: options[0]?.value })
     }).finally(() => {
       setEnvOptionsLoading(false)
     })
@@ -91,10 +99,17 @@ export default function AppTrafficList() {
     <PageContainer className="app-traffic-page">
       <FilterCard className="app-traffic-page-header">
         <div className="app-traffic-filter">
-          <span>环境：<Select style={{ width: 220 }} loading={envOptionsLoading} options={envOptions} allowClear value={curEnvCode} showSearch onChange={(envCode, option: any) => {
+          <span>环境：<Select style={{ width: 220 }} 
+           optionFilterProp="label"
+           filterOption={(input, option) => {
+             //@ts-ignore
+             return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+           }}
+          loading={envOptionsLoading} options={envOptions} allowClear value={curEnvCode} showSearch onChange={(envCode, option: any) => {
             setCurEnvCode(envCode)
             setCurEnv(option)
             getDataSource({ envCode })
+
           }} />
           </span>
           <span className="app-traffic-filter-envName">{curEnv?.label}</span>

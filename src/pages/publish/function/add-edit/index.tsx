@@ -183,9 +183,18 @@ const EditTable: React.FC<EditTableProps> = ({ initData, type, title, defaultVal
       required: true,
       width: 220,
       item: (
-        <Select placeholder="必选，可多选" allowClear mode="multiple" style={{ width: 200 }}>
+        <Select 
+        placeholder="必选，可多选11" 
+        allowClear 
+        mode="multiple"  
+        // optionFilterProp="label"
+        // filterOption={(input, option) => {
+        //   //@ts-ignore
+        //   return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+        // }} 
+        style={{ width: 200 }}>
           {envsOptions?.map((item) => (
-            <Select.Option key={item.value} value={item.value}>
+            <Select.Option key={item.value} value={item.value} >
               {item.label}
             </Select.Option>
           ))}
