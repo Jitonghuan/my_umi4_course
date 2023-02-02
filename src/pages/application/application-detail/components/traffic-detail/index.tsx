@@ -68,11 +68,17 @@ export default function TrafficDetail() {
   const getListAppEnvData = () => {
     setEnvLoading(true)
     getListAppEnv({ appCode: appData?.appCode }).then((res) => {
-      setEnvOptions(res)
-      formInstance.setFieldsValue({
-        envCode: res?.length > 0 ? res[0]?.value : ""
+      let options:any=[];
+      (res||[])?.map((ele:any)=>{
+        if(!ele?.value?.toLowerCase()?.includes("clusterb")){
+         options.push(ele)
+        }
       })
-      getAppId({ envCode: res?.length > 0 ? res[0]?.value : "", startTime })
+      setEnvOptions(options)
+      formInstance.setFieldsValue({
+        envCode: options?.length > 0 ? options[0]?.value : ""
+      })
+      getAppId({ envCode: options?.length > 0 ? options[0]?.value : "", startTime })
     }).finally(() => {
       setEnvLoading(false)
     })
@@ -494,7 +500,14 @@ export default function TrafficDetail() {
           <Form form={formInstance} layout="inline" className="monitor-filter-form" >
 
             <Form.Item label="选择环境" name="envCode">
-              <Select showSearch options={envOptions} onChange={(envCode) => {
+              <Select showSearch 
+                options={envOptions}
+                optionFilterProp="label"
+                filterOption={(input, option) => {
+                  //@ts-ignore
+                  return option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+                }}
+                onChange={(envCode) => {
                 setCurtIp("");
                 setHostName("");
                 setCurrentTableData({})
@@ -502,9 +515,6 @@ export default function TrafficDetail() {
                   envCode,
                   appCode: appData?.appCode
                 })
-
-
-
               }} loading={envLoading} style={{ width: 200 }} />
             </Form.Item>
 
