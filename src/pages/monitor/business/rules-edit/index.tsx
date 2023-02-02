@@ -228,7 +228,7 @@ const RulesEdit = (props: IPros) => {
         <Form.Item label="告警分类" name="group" required={false} rules={[{ required: true, message: '请选择告警分类' }]}>
           <Select placeholder="请选择" options={groupData} disabled={uniquelyIdentify==="business"} />
         </Form.Item>
-        {bizMonitorType==="netProbe"&&(   <Form.Item label="集群选择"  name="clusterName">
+        {bizMonitorType==="netProbe"&&(   <Form.Item label="集群选择"  name="clusterName" rules={[{ required: true, message: '请选择！' }]}>
           <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
 
         </Form.Item>)}

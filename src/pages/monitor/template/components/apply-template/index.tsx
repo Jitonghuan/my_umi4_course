@@ -67,6 +67,7 @@ const ApplyTemplate = (props: IProps) => {
     const res = await applyTemplate({
       // envCode: currentEnvCode,
       ...param,
+      receiverGroup: (param?.receiverGroup || []).join(','),
       devNotifiers: (param.devNotifiers || []).join(','),
       opsNotifiers: (param.opsNotifiers || []).join(','),
       monitorRuleTemplate: templatesList.filter((item: any) => checkedList.find((id: any) => id === item.id)),
@@ -147,7 +148,7 @@ const ApplyTemplate = (props: IProps) => {
       }
     >
       <Form form={form} labelCol={{ flex: '100px' }}>
-      <Form.Item label="集群选择"  name="clusterName">
+      <Form.Item label="集群选择"  name="clusterName" rules={[{ required: true, message: '请选择！' }]}>
           <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
 
         </Form.Item>

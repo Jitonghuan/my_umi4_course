@@ -369,7 +369,7 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({
         <Form.Item label="报警分类" name="group" required={true}>
           <Select options={groupData} placeholder="请选择" style={{ width: '400px' }} allowClear />
         </Form.Item>
-        <Form.Item label="集群选择"  name="clusterName">
+        <Form.Item label="集群选择"  name="clusterName" rules={[{ required: true, message: '请选择！' }]}>
           <Select style={{ width: '400px' }} showSearch allowClear options={clusterList}/>
 
         </Form.Item>
