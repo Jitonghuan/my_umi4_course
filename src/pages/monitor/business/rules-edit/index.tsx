@@ -60,6 +60,12 @@ const RulesEdit = (props: IPros) => {
     if(probeName&&visible){
 
       getPromQL()
+     
+      
+    }
+  },[visible])
+  useEffect(()=>{
+    if(visible){
       getCluster().then((res)=>{
         if(res?.success){
           const data=res?.data?.map((item: any)=>{
@@ -73,7 +79,6 @@ const RulesEdit = (props: IPros) => {
         }
   
       })
-      
     }
   },[visible])
 
@@ -261,13 +266,13 @@ const RulesEdit = (props: IPros) => {
         <Form.Item label="通知对象" name="receiver" rules={[{ required: true, message: '请填写' }]}>
           <UserSelector />
         </Form.Item>
-        {bizMonitorType==="netProbe"&&(  <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
-          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
+        {bizMonitorType==="netProbe"&&(  <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>)}
         
         
-        {uniquelyIdentify&&uniquelyIdentify==="business"&& <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
-          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
+        {uniquelyIdentify&&uniquelyIdentify==="business"&& <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>}
         <Form.Item
           label="是否静默"

@@ -185,8 +185,8 @@ const ApplyTemplate = (props: IProps) => {
         <Form.Item label="运维通知人" name="opsNotifiers">
           <UserSelector />
         </Form.Item>
-        <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组','运维组']}>
-          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组','运维组']}  allowClear showSearch mode="multiple"/>
+        <Form.Item label="通知组" name="receiverGroup" initialValue={['默认组']}>
+          <Select  style={{ width: '400px' }} options={groupOptions} defaultValue={['默认组']}  allowClear showSearch mode="multiple"/>
         </Form.Item>
         <Form.Item label="报警模版">
           <div>
