@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Drawer, Form, Button, Select, Input, InputNumber,Checkbox,TimePicker } from 'antd';
 import { useGetSchemaList } from '../../../account-manage/hook';
 import { checkboxOption } from '../../schema';
-import { useGetClusterList } from "../../../instance-list/hook";
+import { useGetClusterList } from "./hooks";
 import moment from 'moment';
 import { useAddBackupPlan, useUpdateBackupPlan, CreateItems, useGetBackupTypeList } from '../../hook';
 

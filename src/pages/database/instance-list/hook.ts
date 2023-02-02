@@ -154,7 +154,7 @@ export function useGetClusterList(): [boolean, any, () => Promise<void>] {
   const [data, setData] = useState<any>([]);
   const getClusterList = async () => {
     setLoading(true);
-    await getRequest(`${APIS.getClusterList}`, { data: { pageIndex: -1, pageSize: -1,clusterType:3 } })
+    await getRequest(`${APIS.getClusterList}`, { data: { pageIndex: -1, pageSize: -1 } })
       .then((result) => {
         if (result?.success) {
           let dataSource = result?.data?.dataSource;
