@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { Modal, Table, Space, Tooltip, Tag, } from 'antd';
+import { Modal, Table, Space, Tooltip, Tag, Button, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import AceEditor from '@/components/ace-editor';
+import { downloadSource } from '@/pages/application/service';
 import moment from 'moment';
 import { history } from 'umi';
 import { debounce } from 'lodash';
@@ -15,12 +16,11 @@ interface Iprops {
     originData: any
     dataSource: any
     setDataSource: any
-
-
+    releaseVersion?: any
 }
 
 export default function ModifyApp(props: Iprops) {
-    const { activeTab, detailInfo, infoLoading, count, dataSource, originData, setDataSource } = props;
+    const { activeTab, detailInfo, infoLoading, count, dataSource, originData, setDataSource, releaseVersion } = props;
     const { categoryCode, releaseId, categoryName } = useContext(detailContext);
     const [mode, setMode] = useState<string>('hide');
     const [curRecord, setCurRecord] = useState<any>({});
@@ -144,8 +144,24 @@ export default function ModifyApp(props: Iprops) {
         {
             title: '应用版本状态',
             dataIndex: 'appStatus',
-            width: 120,
-            render: (value: string, record: any) => <span style={{ color: value === "内容开发" ? "#209EA5" : value === "出包完成" ? "#58A55C" : "gray" }}>{value}</span>
+            width: 130,
+            render: (value: string, record: any) => <span style={{ color: value === "内容开发" ? "#209EA5" : value === "出包完成" ? "#58A55C" : "gray" }}>
+                {value}
+                {value === '出包完成' &&
+                    <Button
+                        download
+                        target="_blank"
+                        size="small"
+                        style={{ marginLeft: 5, fontSize: 13 }}
+                        href={`${downloadSource}?id=${record?.deployId[releaseVersion]}&envCode=release-env`}
+                        // disabled={downLoadStatus}
+                        onClick={() => {
+                            message.info('开始下载');
+                        }}
+                    >
+                        下载
+                </Button>}
+            </span>
         },
         {
             title: '版本Tag',
