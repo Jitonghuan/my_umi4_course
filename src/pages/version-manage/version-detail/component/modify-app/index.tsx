@@ -153,7 +153,7 @@ export default function ModifyApp(props: Iprops) {
                         target="_blank"
                         size="small"
                         style={{ marginLeft: 5, fontSize: 13 }}
-                        href={`${downloadSource}?id=${record?.deployId[releaseVersion]}&envCode=release-env`}
+                        href={`${downloadSource}?id=${record?.deployId[releaseVersion]}`}
                         // disabled={downLoadStatus}
                         onClick={() => {
                             message.info('开始下载');
