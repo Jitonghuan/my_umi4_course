@@ -328,6 +328,7 @@ export default function VersionDetail() {
                                 configSqlData={configSqlData}
                                 onSave={refresh}
                                 releaseId={selectVersion?.value || ''}
+                                releaseVersion={selectVersion?.label || ''}
                             />
                         </detailContext.Provider>
                     </div>
