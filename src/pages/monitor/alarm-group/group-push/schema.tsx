@@ -28,9 +28,9 @@ export const createTableColumns = () => {
             width: 140,
           },
           {
-            title: '环境',
-            dataIndex: 'envName',
-            key: 'envName',
+            title: '集群',
+            dataIndex: 'clusterName',
+            key: 'clusterName',
             width: 120,
           },
           {
