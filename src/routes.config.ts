@@ -713,6 +713,18 @@ export default [
         key: 'ticketList',
         component: '@/pages/ticket/ticket-list',
       },
+      {
+        path: `${baseRoutePath}/ticket/approval`,
+        name: '工单审批',
+        key: 'ticket-approval',
+        component: '@/pages/ticket/ticket-approval',
+      },
+      {
+        path: `${baseRoutePath}/ticket/apply`,
+        name: '工单申请',
+        key: 'ticket-apply',
+        component: '@/pages/ticket/ace-apply',
+      },
     ],
   },
   {
