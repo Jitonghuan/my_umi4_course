@@ -17,7 +17,7 @@ const TicketApproval=()=>{
              className="ticket-iframe"
              id="ticket-iframe"
              name="ticket-iframe-detail"
-             src={"http://c2f.ace.cfuture.shop/user/WorkOrderListAssignment?appCode=OPS&pageCode=WorkOrderListAssignment&modelCode=WorkOrder&menuId=51433"} 
+             src={"http://c2f.ace.cfuture.shop/ace/user/WorkOrderListAssignment?appCode=OPS&pageCode=WorkOrderListAssignment&modelCode=WorkOrder&menuId=51433"} 
              frameBorder="0"
             //  onLoad={hideSlideMenu}
              ></iframe>
