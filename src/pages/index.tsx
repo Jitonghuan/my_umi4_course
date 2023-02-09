@@ -2,7 +2,7 @@
  * @Author: muxi.jth 2016670689@qq.com
  * @Date: 2022-08-09 14:46:09
  * @LastEditors: muxi.jth 2016670689@qq.com
- * @LastEditTime: 2022-08-09 14:47:55
+ * @LastEditTime: 2023-02-09 15:36:13
  * @FilePath: /my_umi4_course/src/pages/index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -20,6 +20,25 @@ export default () => {
   console.log(location);
   const a = searchParams.get("a");
   const b = searchParams.get("b");
+  const exportBugs = () => {
+    // void downloadRequest(exportBugList, { data: conditions }).then((res) => {
+    //   const url = window.URL.createObjectURL(
+    //     new Blob(
+    //       [res],
+    //       // 设置该文件的mime类型，这里对应的mime类型对应为.xlsx格式
+    //       { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    //     ),
+    //   );
+    //   const link = document.createElement('a');
+    //   link.href = url;
+    //   // 设置下载文件名
+    //   const timeStr = getCurrentTimeStr();
+    //   const fileName = decodeURI('Bug导出' + timeStr);
+    //   link.setAttribute('download', fileName);
+    //   document.body.appendChild(link);
+    //   link.click();
+    // });
+  };
   return (
     <div className="main">
       Index Page
