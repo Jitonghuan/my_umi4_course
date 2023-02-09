@@ -37,7 +37,7 @@
     "@cffe/fe-datav-components": "0.1.8",
     "@cffe/fe-tpl": "1.0.0",
     "@cffe/fe-zero-code-solution": "^2.1.16",
-    "@cffe/h2o-design": "css-var",
+    "@cffe/h2o-design": "^2.41.4",
     "@cffe/h2o-theme": "css-var",
     "@cffe/hmos-zero-code-material": "^2.2.32",
     "@cffe/hulk-wave-chart": "^0.0.4",
@@ -116,7 +116,7 @@
     "babel-plugin-import": "~1.13.3"
   },
   "resolutions": {
-    "@cffe/h2o-design": "css-var",
+    "@cffe/h2o-design": "^2.41.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "antd": "4.23.6"
